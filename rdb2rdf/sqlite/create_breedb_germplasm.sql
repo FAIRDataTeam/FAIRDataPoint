@@ -1,6 +1,12 @@
 /*
-  BreeDB schema (pp_accession table only) adjusted for SQLite. 
+   The original BreeDB schema (pp_accession table only) in MySQL was adjusted to work with SQLite.
+
+   DATE, TIME and TIMESTAMP -> TEXT
+   VARCHAR()                -> TEXT
+   INT()                    -> INTEGER
+
 */
+
 CREATE TABLE "pp_accession" (
   "accessionID" TEXT NOT NULL,
   "accessionName" TEXT DEFAULT NULL,
