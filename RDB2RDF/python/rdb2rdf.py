@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
-# This script converts a relational database (RDB) into RDF using a direct mapping approach.
+# This is a generic script to convert a relational database (RDB)
+# into an RDF serialization using Direct Mapping approach.
 #
 # Author: Arnold Kuzniar
 # Version: 0.1
