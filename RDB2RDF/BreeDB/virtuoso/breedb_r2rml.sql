@@ -15,6 +15,7 @@ DB.DBA.TTLP('
 @prefix germplasm: <http://example.com/germplasm#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix gterm: <http://purl.org/germplasm/germplasmTerm#> .
+@prefix dwc: <http://rs.tdwg.org/dwc/terms/> .
 
 <exa:#TriplesMap1>
     a rr:TriplesMap;
@@ -41,7 +42,7 @@ DB.DBA.TTLP('
 
     rr:predicateObjectMap
     [
-      rr:predicate germplasm:name;
+      rr:predicate gterm:germplasmIdentifier;
       rr:objectMap [ rr:column "accessionName" ];
     ];
 
@@ -61,6 +62,30 @@ DB.DBA.TTLP('
     [
       rr:predicate geo:alt;
       rr:objectMap [ rr:column "elevation"; rr:datatype xsd:decimal ];
+    ];
+
+    rr:predicateObjectMap
+    [
+      rr:predicate dwc:countryCode;
+      rr:objectMap [ rr:column "collectionSiteCountry" ];
+    ];
+
+    rr:predicateObjectMap
+    [
+      rr:predicate dwc:scientificName;
+      rr:objectMap [ rr:column "speciesName" ];
+    ];
+
+    rr:predicateObjectMap
+    [
+      rr:predicate gterm:acquisitionDate;
+      rr:objectMap [ rr:column "collectionDate"; rr:datatype xsd:date ];
+    ];
+
+    rr:predicateObjectMap
+    [
+      rr:predicate gterm:biologicalStatus;
+      rr:objectMap [ rr:column "germplasmStatus" ];
     ];
 .
 ', 'http://temp/germplasm', 'http://temp/germplasm')
