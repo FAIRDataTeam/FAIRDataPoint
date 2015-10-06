@@ -14,6 +14,11 @@ parser = argp.ArgumentParser(
    description = 'This script converts a relational database (RDB) into RDF using a direct mapping approach.')
 
 parser.add_argument(
+   '-o',
+   dest = 'outfile',
+   help = 'output file')
+
+parser.add_argument(
    '-v',
    action = 'version',
    version = 'version 0.1')
@@ -37,6 +42,8 @@ parser.add_argument( # Note: set HOST to '127.0.0.1' instead of 'localhost' to f
 
 args = parser.parse_args()
 dburl = args.dburl
+format = args.format
+outfile = args.outfile
 dbpfx = 'sqlite:///'
 
 if dburl.startswith(dbpfx) is True:
@@ -56,5 +63,12 @@ db = _sqla.create_engine(dburl, echo=False)
 register('rdb2rdf_dm', Store, 'rdb2rdf.stores', 'DirectMapping')
 graph = _rdf.Graph('rdb2rdf_dm')
 graph.open(db)
-print(graph.serialize(format=args.format))
+
+# write RDF into file or STDOUT
+if outfile is not None:
+   with open(outfile, 'w') as fout:
+      fout.write(graph.serialize(format=format))
+else:
+   print(graph.serialize(format=format))
+
 graph.close()
