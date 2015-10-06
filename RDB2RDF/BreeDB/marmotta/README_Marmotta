@@ -7,5 +7,11 @@ IF MySQL needs to be connected. Copy the JDBC connector from MySQL (Oracle Site)
 
 ## Sesame is the API associated with KiWi Triple Store of Apache Marmotta.
 
+It has support for languages:
+Java
+PHP
+Python
+R (http://opencube-toolkit.eu/r-statistical-analysis-module/)
 
+# OpenCube toolkit also supports R2RML mapping database
 
