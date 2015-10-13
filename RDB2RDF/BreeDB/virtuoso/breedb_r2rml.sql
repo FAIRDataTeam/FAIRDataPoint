@@ -102,4 +102,5 @@ EXEC('SPARQL ' || DB.DBA.R2RML_MAKE_QM_FROM_G('http://temp/germplasm'));
 
 -- SPARQL SELECT * FROM <http://example.com/germplasm/> WHERE { ?s ?p ?o } LIMIT 10;
 -- SPARQL SELECT * FROM <http://example.com/germplasm/> WHERE { ?s ?p ?o . FILTER(datatype(?o) = xsd:decimal) } LIMIT 10;
-
+-- SPARQL DESCRIBE <http://example.com/germplasm/EA00001> FROM <http://example.com/germplasm/>;
+-- SPARQL CONSTRUCT { <http://example.com/germplasm/EA00001> ?p ?o } FROM <http://example.com/germplasm/> WHERE { <http://example.com/germplasm/EA00001> ?p ?o };
