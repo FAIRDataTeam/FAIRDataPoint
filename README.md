@@ -1,8 +1,12 @@
-###SPARQL endpoint & LDP server for BreeDB
+###SPARQL endpoint for BreeDB germplasm data
 
 **Graph IRI: http://example.com/germplasm/**
 
 http://virtuoso.biotools.nl:8888/sparql/
+
+###LDP server for BreeDB germplasm data
+
+http://virtuoso.biotools.nl:8888/DAV/home/davuser/
 
 **Access Linked Data Platform Container (LDPC)**
 ```
