@@ -6,18 +6,17 @@
 
 -- clear graphs
 SPARQL CLEAR GRAPH <http://temp/germplasm>;
-SPARQL CLEAR GRAPH <http://example.com/germplasm/>;
+SPARQL CLEAR GRAPH <https://www.eu-sol.wur.nl/passport/>;
 
 -- insert R2RML into a temporary graph
 DB.DBA.TTLP('
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
-@prefix exa: <http://example.com/ns#> .
-@prefix germplasm: <http://example.com/germplasm#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix gterm: <http://purl.org/germplasm/germplasmTerm#> .
 @prefix dwc: <http://rs.tdwg.org/dwc/terms/> .
+@prefix dct: <http://purl.org/dc/terms/> .
 
-<exa:#TriplesMap1>
+<#TriplesMap1>
     a rr:TriplesMap;
 
     rr:logicalTable
@@ -29,15 +28,18 @@ DB.DBA.TTLP('
 
     rr:subjectMap
     [
-      rr:template "http://example.com/germplasm/{accessionID}";
+      rr:template "https://www.eu-sol.wur.nl/passport/{accessionID}";
       rr:class gterm:GermplasmAccession;
-      rr:graph <http://example.com/germplasm/>;
+      rr:graph <https://www.eu-sol.wur.nl/passport/>;
     ];
 
     rr:predicateObjectMap
     [
       rr:predicate gterm:germplasmID;
-      rr:objectMap [ rr:column "accessionID" ];
+      rr:objectMap [
+        rr:template "https://www.eu-sol.wur.nl/passport/SelectAccessionByAccessionID.do?accessionID={accessionID}";
+        rr:termType rr:IRI
+      ];
     ];
 
     rr:predicateObjectMap
@@ -66,14 +68,17 @@ DB.DBA.TTLP('
 
     rr:predicateObjectMap
     [
-      rr:predicate dwc:countryCode;
-      rr:objectMap [ rr:column "collectionSiteCountry" ];
+      rr:predicate dwc:countryCode;         # requires two-letter codes in ISO 3166-1-alpha-2
+      rr:objectMap [
+         rr:column "collectionSiteCountry"; # contains three-letter country codes (FIXME)
+         rr:datatype dct:Location           # dct:ISO3166
+      ];
     ];
 
     rr:predicateObjectMap
     [
       rr:predicate dwc:scientificName;
-      rr:objectMap [ rr:column "speciesName" ];
+      rr:objectMap [ rr:column "speciesName"; rr:datatype dwc:Taxon ];
     ];
 
     rr:predicateObjectMap
@@ -85,7 +90,19 @@ DB.DBA.TTLP('
     rr:predicateObjectMap
     [
       rr:predicate gterm:biologicalStatus;
-      rr:objectMap [ rr:column "germplasmStatus" ];
+      rr:objectMap [ rr:column "germplasmStatus"; rr:datatype gterm:BiologicalStatusType ];
+    ];
+
+    rr:predicateObjectMap
+    [
+      rr:predicate dct:modified;
+      rr:objectMap [ rr:column "lastUpdate"; rr:datatype xsd:date ];
+    ];
+
+    rr:predicateObjectMap
+    [
+      rr:predicate dct:created;
+      rr:objectMap [ rr:column "dateCreated"; rr:datatype xsd:date ];
     ];
 .
 ', 'http://temp/germplasm', 'http://temp/germplasm')
