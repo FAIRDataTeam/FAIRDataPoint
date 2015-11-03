@@ -18,5 +18,5 @@ curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:88
 ```
 **Access Linked Data Platform RDF Source (LDP-RS)**
 ```
-curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/DAV/home/davuser/germplasm.ttl
+curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/DAV/home/davuser/test.ttl
 ```
