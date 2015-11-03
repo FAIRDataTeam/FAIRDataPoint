@@ -26,7 +26,7 @@ DB.DBA.TTLP('
     ];
 
     rr:subjectMap [
-      rr:template "https://www.eu-sol.wur.nl/passport/{accessionID}";
+      rr:template "https://www.eu-sol.wur.nl/passport#{accessionID}";
       rr:class gterm:GermplasmAccession;
       rr:graph <https://www.eu-sol.wur.nl/passport>;
       rr:termType rr:IRI
