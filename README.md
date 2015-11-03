@@ -1,6 +1,6 @@
 ###SPARQL endpoint for BreeDB germplasm data
 
-**Graph IRI: http://example.com/germplasm/**
+**Graph IRI: https://www.eu-sol.wur.nl/passport/**
 
 http://virtuoso.biotools.nl:8888/sparql/
 
