@@ -6,7 +6,7 @@
 
 -- clear graphs
 SPARQL CLEAR GRAPH <http://temp/germplasm>;
-SPARQL CLEAR GRAPH <https://www.eu-sol.wur.nl/passport/>;
+SPARQL CLEAR GRAPH <https://www.eu-sol.wur.nl/passport>;
 
 -- insert R2RML into a temporary graph
 DB.DBA.TTLP('
@@ -30,7 +30,7 @@ DB.DBA.TTLP('
     [
       rr:template "https://www.eu-sol.wur.nl/passport/{accessionID}";
       rr:class gterm:GermplasmAccession;
-      rr:graph <https://www.eu-sol.wur.nl/passport/>;
+      rr:graph <https://www.eu-sol.wur.nl/passport>;
     ];
 
     rr:predicateObjectMap
