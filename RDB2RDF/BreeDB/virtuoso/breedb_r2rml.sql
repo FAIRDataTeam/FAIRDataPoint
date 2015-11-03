@@ -19,22 +19,20 @@ DB.DBA.TTLP('
 <#TriplesMap1>
     a rr:TriplesMap;
 
-    rr:logicalTable
-    [
+    rr:logicalTable [
       rr:tableSchema "R2RML";
       rr:tableOwner  "TEST";
       rr:tableName   "pp_accession";
     ];
 
-    rr:subjectMap
-    [
+    rr:subjectMap [
       rr:template "https://www.eu-sol.wur.nl/passport/{accessionID}";
       rr:class gterm:GermplasmAccession;
       rr:graph <https://www.eu-sol.wur.nl/passport>;
+      rr:termType rr:IRI
     ];
 
-    rr:predicateObjectMap
-    [
+    rr:predicateObjectMap [
       rr:predicate gterm:germplasmID;
       rr:objectMap [
         rr:template "https://www.eu-sol.wur.nl/passport/SelectAccessionByAccessionID.do?accessionID={accessionID}";
@@ -42,67 +40,92 @@ DB.DBA.TTLP('
       ];
     ];
 
-    rr:predicateObjectMap
-    [
+    rr:predicateObjectMap [
       rr:predicate gterm:germplasmIdentifier;
-      rr:objectMap [ rr:column "accessionName" ];
-    ];
-
-    rr:predicateObjectMap
-    [
-      rr:predicate geo:lat;
-      rr:objectMap [ rr:column "gpsLat"; rr:datatype xsd:decimal ];
-    ];
-
-    rr:predicateObjectMap
-    [
-      rr:predicate geo:long;
-      rr:objectMap [ rr:column "gpsLong"; rr:datatype xsd:decimal ];
-    ];
-
-    rr:predicateObjectMap
-    [
-      rr:predicate geo:alt;
-      rr:objectMap [ rr:column "elevation"; rr:datatype xsd:decimal ];
-    ];
-
-    rr:predicateObjectMap
-    [
-      rr:predicate dwc:countryCode;         # requires two-letter codes in ISO 3166-1-alpha-2
       rr:objectMap [
-         rr:column "collectionSiteCountry"; # contains three-letter country codes (FIXME)
-         rr:datatype dct:Location           # dct:ISO3166
+        rr:column "accessionName";
+        rr:termType rr:Literal
       ];
     ];
 
-    rr:predicateObjectMap
-    [
+    rr:predicateObjectMap [
+      rr:predicate geo:lat;
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "gpsLat";
+        rr:datatype xsd:decimal
+      ];
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate geo:long;
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "gpsLong";
+        rr:datatype xsd:decimal
+      ];
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate geo:alt;
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "elevation";
+        rr:datatype xsd:decimal
+      ];
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate dwc:countryCode; # requires two-letter codes in ISO 3166-1-alpha-2
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "collectionSiteCountry"; # contains three-letter country codes (FIXME)
+        rr:datatype dct:Location # dct:ISO3166
+      ];
+    ];
+
+    rr:predicateObjectMap [
       rr:predicate dwc:scientificName;
-      rr:objectMap [ rr:column "speciesName"; rr:datatype dwc:Taxon ];
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "speciesName";
+        rr:datatype dwc:Taxon
+      ];
     ];
 
-    rr:predicateObjectMap
-    [
+    rr:predicateObjectMap [
       rr:predicate gterm:acquisitionDate;
-      rr:objectMap [ rr:column "collectionDate"; rr:datatype xsd:date ];
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "collectionDate";
+        rr:datatype xsd:date
+      ];
     ];
 
-    rr:predicateObjectMap
-    [
+    rr:predicateObjectMap [
       rr:predicate gterm:biologicalStatus;
-      rr:objectMap [ rr:column "germplasmStatus"; rr:datatype gterm:BiologicalStatusType ];
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "germplasmStatus";
+        rr:datatype gterm:BiologicalStatusType
+      ];
     ];
 
-    rr:predicateObjectMap
-    [
+    rr:predicateObjectMap [
       rr:predicate dct:modified;
-      rr:objectMap [ rr:column "lastUpdate"; rr:datatype xsd:date ];
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "lastUpdate";
+        rr:datatype xsd:date
+      ];
     ];
 
-    rr:predicateObjectMap
-    [
+    rr:predicateObjectMap [
       rr:predicate dct:created;
-      rr:objectMap [ rr:column "dateCreated"; rr:datatype xsd:date ];
+      rr:objectMap [
+        rr:termType rr:Literal;
+        rr:column "dateCreated"; rr:datatype xsd:date
+      ];
     ];
 .
 ', 'http://temp/germplasm', 'http://temp/germplasm')
