@@ -6,7 +6,7 @@
 
 -- clear graphs
 SPARQL CLEAR GRAPH <http://temp/germplasm>;
-SPARQL CLEAR GRAPH <https://www.eu-sol.wur.nl/passport>;
+SPARQL CLEAR GRAPH <http://www.eu-sol.wur.nl/passport>;
 
 -- insert R2RML into a temporary graph
 DB.DBA.TTLP('
@@ -26,16 +26,16 @@ DB.DBA.TTLP('
     ];
 
     rr:subjectMap [
-      rr:template "https://www.eu-sol.wur.nl/passport#{accessionID}";
+      rr:template "http://www.eu-sol.wur.nl/passport#{accessionID}";
       rr:class gterm:GermplasmAccession;
-      rr:graph <https://www.eu-sol.wur.nl/passport>;
+      rr:graph <http://www.eu-sol.wur.nl/passport>;
       rr:termType rr:IRI
     ];
 
     rr:predicateObjectMap [
       rr:predicate gterm:germplasmID;
       rr:objectMap [
-        rr:template "https://www.eu-sol.wur.nl/passport/SelectAccessionByAccessionID.do?accessionID={accessionID}";
+        rr:template "http://www.eu-sol.wur.nl/passport/SelectAccessionByAccessionID.do?accessionID={accessionID}";
         rr:termType rr:IRI
       ];
     ];
@@ -137,10 +137,3 @@ DB.DBA.OVL_VALIDATE ('http://temp/germplasm', 'http://www.w3.org/ns/r2rml#OVL');
 
 -- convert R2RML into Virtuoso's own Linked Data Views script
 EXEC('SPARQL ' || DB.DBA.R2RML_MAKE_QM_FROM_G('http://temp/germplasm'));
-
--- graph queries
-
--- SPARQL SELECT * FROM <http://example.com/germplasm/> WHERE { ?s ?p ?o } LIMIT 10;
--- SPARQL SELECT * FROM <http://example.com/germplasm/> WHERE { ?s ?p ?o . FILTER(datatype(?o) = xsd:decimal) } LIMIT 10;
--- SPARQL DESCRIBE <http://example.com/germplasm/EA00001> FROM <http://example.com/germplasm/>;
--- SPARQL CONSTRUCT { <http://example.com/germplasm/EA00001> ?p ?o } FROM <http://example.com/germplasm/> WHERE { <http://example.com/germplasm/EA00001> ?p ?o };
