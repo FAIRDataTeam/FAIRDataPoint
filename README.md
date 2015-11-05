@@ -10,13 +10,13 @@ http://virtuoso.biotools.nl:8888/passport/
 
 **Access Linked Data Platform Container (LDPC)**
 ```
-curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/DAV/home/davuser/
+curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/
 ```
 **Access Linked Data Platform Non-RDF Source (LDP-NR)**
 ```
-curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/DAV/home/davuser/test.txt
+curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/test.txt
 ```
 **Access Linked Data Platform RDF Source (LDP-RS)**
 ```
-curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/DAV/home/davuser/test.ttl
+curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/test.ttl
 ```
