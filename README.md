@@ -6,7 +6,7 @@ http://virtuoso.biotools.nl:8888/sparql/
 
 ###LDP server for BreeDB germplasm data
 
-http://virtuoso.biotools.nl:8888/DAV/home/davuser/
+http://virtuoso.biotools.nl:8888/passport/
 
 **Access Linked Data Platform Container (LDPC)**
 ```
