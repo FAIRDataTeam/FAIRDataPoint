@@ -1,5 +1,6 @@
 --
 -- RDF View on relational data in BreeDB using R2RML mapping language.
+-- As an example, a single table (pp_accession) is exposed from BreeDB.
 --
 -- Author: Arnold Kuzniar
 --
@@ -20,8 +21,8 @@ DB.DBA.TTLP('
     a rr:TriplesMap;
 
     rr:logicalTable [
-      rr:tableSchema "R2RML";
-      rr:tableOwner  "TEST";
+      rr:tableSchema "BreeDB";
+      rr:tableOwner  "breedb";
       rr:tableName   "pp_accession";
     ];
 
