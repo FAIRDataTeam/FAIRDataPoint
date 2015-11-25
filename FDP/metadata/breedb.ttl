@@ -1,0 +1,27 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<breedb> a dcat:Dataset ;
+   rdfs:label "BreeDB dataset" ;
+   dct:title "BreeDB dataset" ;
+   dct:language lang:en ;
+   dct:identifier "breedb" ;
+   dcat:keyword "BreedDB" , "Plant breeding", "germplasm" ;
+   dct:publisher <http://orcid.org/0000-0002-4368-8058> ;
+   dcat:landingPage <https://www.eu-sol.wur.nl/passport> ;
+   dct:creator <http://orcid.org/0000-0002-4368-8058> ; 
+   dct:issued "2015-12-24"^^xsd:date ;
+   dct:mofified "2015-12-24"^^xsd:date ;
+   dcat:distribution <breedb-sparql> .
+
+<breedb-sparql> a dcat:Distribution ;
+   rdfs:label "BreeDB SPARQL endpoint" ;
+   dct:title "BreeDB SPARQL endpoint" ;
+   dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> ;
+   dcat:accessURL  <http://virtuoso.biotools.nl:8888/sparql/>;
+   dcat:format [ rdfs:label "SPARQL" ] .
