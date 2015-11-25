@@ -1,9 +1,10 @@
 #
-# Minimalistic FAIR Data Point Service
-# with the following endpoints:
-#    /
-#    /catalog
-#    /catalog/{dataset}
+# Minimalistic FAIR Data Point (FDP) Service with the following endpoints:
+#  /
+#  /catalog
+#  /catalog/{dataset} # with 'breedb' example dataset
+#
+# The service returns metadata using Data Catalog Vocabulary (DCAT).
 #
 
 from bottle import Bottle, run, static_file
