@@ -1,5 +1,5 @@
 #
-# Minimalistic FAIR Data Point (FDP) Service with the following endpoints:
+# Minimalist FAIR Data Point (FDP) Service with the following endpoints:
 #  /
 #  /catalog
 #  /catalog/{dataset} # with 'breedb' example dataset
@@ -24,7 +24,7 @@ def DatasetMetadata(dataset):
    filename = '{dataset}.ttl'.format(dataset=dataset)
    return static_file(filename, root='metadata')
 
-@app.get('/doc/<filename:re:.*>') # Swagger documentation '/index.html'
+@app.get('/doc/<filename:re:.*>') # Swagger API documentation '/doc/index.html'
 def html(filename):
    return static_file(filename, root='doc/')
 
