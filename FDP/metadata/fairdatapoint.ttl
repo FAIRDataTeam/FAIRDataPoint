@@ -6,6 +6,6 @@
    a dct:Agent ;
    rdfs:label "FAIR Data Point" ;
    dct:identifier "FDP-WUR-PB" ;
-   dct:description "FAIR Data Point for plant-specific genotype and phenotype data sets"
+   dct:description "FAIR Data Point for plant-specific genotype and phenotype data sets" ;
    dct:title "FAIR Data Point" ;
    dct:language lang:en .
