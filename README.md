@@ -20,3 +20,17 @@ curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:88
 ```
 curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/test.ttl
 ```
+###FAIR Data Point (FDP) Metadata Service
+
+**Start Python WSGI server including web app**
+```
+cd FDP
+python fdp.py
+```
+
+**Retrieve FDP-, catalog- and dataset-level metadata**
+```
+curl -iH 'Accept: text/turtle' http://localhost:8080/
+curl -iH 'Accept: text/turtle' http://localhost:8080/catalog
+curl -iH 'Accept: text/turtle' http://localhost:8080/catalog/breedb # example dataset 'breedb'
+```
