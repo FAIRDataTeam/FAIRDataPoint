@@ -2,8 +2,10 @@
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-<> a foaf:Organization ;
+<> a foaf:Group ;
    a dct:Agent ;
+   rdfs:seeAlso <doc/index.html> ;
+   rdfs:seeAlso <catalog> ;
    rdfs:label "FAIR Data Point" ;
    dct:identifier "FDP-WUR-PB" ;
    dct:description "FAIR Data Point for plant-specific genotype and phenotype data sets" ;
