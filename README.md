@@ -28,9 +28,15 @@ cd FDP
 python fdp.py
 ```
 
+**Go to this URL to see the Swagger UI documentation of the RESTful API**
+```
+http://localhost:8080/doc/index.html
+```
+
 **Retrieve FDP-, catalog- and dataset-level metadata**
 ```
 curl -iH 'Accept: text/turtle' http://localhost:8080/
 curl -iH 'Accept: text/turtle' http://localhost:8080/catalog
 curl -iH 'Accept: text/turtle' http://localhost:8080/catalog/breedb # example dataset 'breedb'
 ```
+
