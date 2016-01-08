@@ -6,7 +6,7 @@
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 @prefix dbc: <http://dbpedia.org/resource/Category:> .
 
-<breedb> a dcat:Dataset ;
+<> a dcat:Dataset ;
    rdfs:label "BreeDB dataset" ;
    dct:title "BreeDB dataset" ;
    dct:description "Tomato germplasm collection" ;
@@ -18,11 +18,19 @@
    dcat:keyword "BreedDB" , "Plant breeding", "germplasm" ;
    dcat:theme <dbc:Plant_breeding> ;
    dcat:landingPage <https://www.eu-sol.wur.nl/passport> ;
-   dcat:distribution <breedb-sparql> .
+   dcat:distribution <sparql> , <sql-dump> .
 
-<breedb-sparql> a dcat:Distribution ;
+<sparql> a dcat:Distribution ;
    rdfs:label "BreeDB SPARQL endpoint" ;
    dct:title "BreeDB SPARQL endpoint" ;
    dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> ;
    dcat:accessURL  <http://virtuoso.biotools.nl:8888/sparql/>;
    dcat:format [ rdfs:label "SPARQL" ] .
+
+<sql-dump> a dcat:Distribution ;
+   rdfs:label "SQL dump of the BreeDB tomato germplasm data" ;
+   dct:title "SQL dump of the BreeDB tomato germplasm data" ;
+   dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> ;
+   dcat:downloadURL <http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql>
+   dcat:mediaType "application/sql" .
+
