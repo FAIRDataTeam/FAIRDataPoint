@@ -12,7 +12,7 @@
     "produces": [
         "text/turtle"
     ],
-    "host": "localhost:8080",
+    "host": "fdp.biotools.8080",
     "paths": {
         "/": {
             "get": {

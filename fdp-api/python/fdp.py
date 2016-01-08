@@ -52,4 +52,4 @@ def DatasetMetadata(dataset):
 def html(filename):
    return static_file(filename, root='doc/')
 
-run(app, host='localhost', port='8080', debug=True)
+run(app, host='fdp.biotools.nl', port='8080', debug=True)
