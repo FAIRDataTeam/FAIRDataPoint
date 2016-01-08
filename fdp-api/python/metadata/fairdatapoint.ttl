@@ -6,8 +6,8 @@
    a dct:Agent ;
    rdfs:seeAlso <doc/index.html> ;
    rdfs:seeAlso <catalog> ;
-   rdfs:label "FAIR Data Point" ;
+   rdfs:label "FAIR Data Point - Plant Breeding WUR" ;
    dct:identifier "FDP-WUR-PB" ;
    dct:description "FAIR Data Point for plant-specific genotype and phenotype data sets" ;
-   dct:title "FAIR Data Point" ;
+   dct:title "FAIR Data Point - Plant Breeding WUR" ;
    dct:language lang:en .
