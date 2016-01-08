@@ -6,8 +6,6 @@ http://virtuoso.biotools.nl:8888/sparql/
 
 ###LDP server for BreeDB germplasm data
 
-http://virtuoso.biotools.nl:8888/passport/
-
 **Access Linked Data Platform Container (LDPC)**
 ```
 curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/
@@ -23,9 +21,8 @@ curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:88
 ###FAIR Data Point (FDP) Service
 
 **Swagger UI documentation of the RESTful API**
-```
+
 http://fdp.biotools.nl:8080/doc/index.html
-```
 
 **Access FDP-, catalog- and dataset-level metadata**
 ```
