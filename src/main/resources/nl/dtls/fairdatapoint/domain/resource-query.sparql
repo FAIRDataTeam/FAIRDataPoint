@@ -1,0 +1,5 @@
+SELECT DISTINCT ?predicate ?object {
+
+    ?subject ?predicate ?object.
+
+}

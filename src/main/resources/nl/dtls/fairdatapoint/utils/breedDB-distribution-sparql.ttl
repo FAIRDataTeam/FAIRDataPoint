@@ -1,0 +1,8 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<http://www.rdf.dtls.nl/fdp/plantBreeding/breedDB/distributionSparql> a dcat:Distribution ;
+dcterms:title "BreeDB germplasm dataset SPARQL endpoint";
+dcat:accessURL  <http://virtuoso.biotools.nl:8888/sparql/>;
+	dcterms:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> .
