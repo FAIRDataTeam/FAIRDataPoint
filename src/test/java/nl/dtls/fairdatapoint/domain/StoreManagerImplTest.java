@@ -35,7 +35,7 @@ public class StoreManagerImplTest {
     @Test
     public void retrieveExitingResource() throws RepositoryException, 
             StoreManagerException {        
-        String uri = "http://www.rdf.dtls.nl/fdp";        
+        String uri = "http://semlab1.liacs.nl:8080/fdp";        
         RepositoryResult<Statement> statements = 
                 testStoreManager.retrieveResource(uri);
         assertNotNull(statements);
@@ -44,7 +44,7 @@ public class StoreManagerImplTest {
     @Test
     public void retrieveNonExitingResource() throws RepositoryException, 
             StoreManagerException {        
-        String uri = "http://www.rdf.dtls.nl/dummy";        
+        String uri = "http://semlab1.liacs.nl:8080/dummy";        
         RepositoryResult<Statement> statements = 
                 testStoreManager.retrieveResource(uri);
         assertNull(statements);
