@@ -1,0 +1,8 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<http://semlab1.liacs.nl:8080/fdp/biosamples/ring14Biosamples/distributionLDP> a dcat:Distribution ;
+dcterms:title "Ring14 biosamples RDF resources (In a LDP container)";
+dcat:accessURL  <http://semlab1.liacs.nl:8080/marmotta/ldp/ring14/biosamples>;
+	dcterms:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> .

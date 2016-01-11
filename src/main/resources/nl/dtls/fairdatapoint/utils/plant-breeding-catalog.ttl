@@ -5,5 +5,6 @@
 <http://semlab1.liacs.nl:8080/fdp/plantBreeding> dct:title "Plant breeding catalog" ;
        a dcat:Catalog ; 
        dct:language lang:en  ;
+       dcat:themeTaxonomy <http://rdf.biosemantics.org/conceptSchemes/plantBreeding> ;
        dcat:dataset <http://semlab1.liacs.nl:8080/plantBreeding/breedDB> .
 

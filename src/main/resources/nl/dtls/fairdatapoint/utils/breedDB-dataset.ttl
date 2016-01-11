@@ -14,7 +14,7 @@
 	dcat:keyword "BreedDB" , "Plant breeding" ;
 	dcat:landingPage <https://www.eu-sol.wur.nl/> ;        
 	dcterms:publisher <http://orcid.org/0000-0002-4368-8058> ;
-	dcat:theme <http:example.com/DataFairPort/ConceptSchemes/plantBreeding> ;
+	dcat:theme <http://rdf.biosemantics.org/concepts/plantBreeding> ;
 	dcterms:creator <http://orcid.org/0000-0002-4368-8058> ;
         dcat:distribution <http://semlab1.liacs.nl:8080/fdp/plantBreeding/breedDB/distributionSparql>;
         dcat:distribution <http://semlab1.liacs.nl:8080/fdp/plantBreeding/breedDB/distributionTurtle> .
