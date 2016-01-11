@@ -6,9 +6,8 @@
 package nl.dtls.fairdatapoint.service.impl.utils;
 
 import java.io.StringWriter;
-import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.service.impl.DataAccessorServiceImpl;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -27,7 +26,7 @@ import org.openrdf.rio.Rio;
 public class RDFUtils {
     
     private final static Logger LOGGER 
-            = Logger.getLogger(RDFUtils.class);
+            = LogManager.getLogger(RDFUtils.class);
     
     public static String writeToString(RepositoryResult<Statement> statements, 
             RDFFormat format) throws Exception {		
