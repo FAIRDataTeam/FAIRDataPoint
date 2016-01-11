@@ -1,12 +1,12 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
-@prefix dbc: <http://dbpedia.org/resource/Category:> .
+@prefix dbp: <http://dbpedia.org/resource/> .
+@base <http://fdp.biotools.nl:8080/catalog/breedb/> .
 
-<breedb> a dcat:Dataset ;
+<> a dcat:Dataset ;
    rdfs:label "BreeDB dataset" ;
    dct:title "BreeDB dataset" ;
    dct:description "Tomato germplasm collection" ;
@@ -16,13 +16,23 @@
    dct:mofified "2015-12-24"^^xsd:date ;
    dct:language lang:en ;
    dcat:keyword "BreedDB" , "Plant breeding", "germplasm" ;
-   dcat:theme <dbc:Plant_breeding> ;
+   dcat:theme dbp:Plant_breeding ;
    dcat:landingPage <https://www.eu-sol.wur.nl/passport> ;
-   dcat:distribution <breedb-sparql> .
+   dcat:distribution <breedb-sparql> , <breedb-sqldump> .
 
 <breedb-sparql> a dcat:Distribution ;
    rdfs:label "BreeDB SPARQL endpoint" ;
    dct:title "BreeDB SPARQL endpoint" ;
    dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> ;
-   dcat:accessURL  <http://virtuoso.biotools.nl:8888/sparql/>;
-   dcat:format [ rdfs:label "SPARQL" ] .
+   dct:language lang:en ;
+   dcat:accessURL <http://virtuoso.biotools.nl:8888/sparql> ; # TODO: Use SPARQL-SD to add named graph URI
+   dcat:mediaType "text/turtle" , "application/rdf+xml" .
+
+<breedb-sqldump> a dcat:Distribution ;
+   rdfs:label "SQL dump of the BreeDB tomato germplasm data" ;
+   dct:title "SQL dump of the BreeDB tomato germplasm data" ;
+   dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> ;
+   dct:language lang:en ;
+   dcat:downloadURL <http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql> ;
+   dcat:mediaType "application/sql" .
+
