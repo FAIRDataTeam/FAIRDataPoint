@@ -11,8 +11,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import org.apache.log4j.Logger;
 import org.openrdf.rio.RDFFormat;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -26,7 +27,7 @@ public class ExampleTurtle {
     public static final String CATALOG_METADATA = "plant-breeding-catalog.ttl";
     public static final String DATASET_METADATA = "breedDB-dataset.ttl";
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
-    private final static Logger LOGGER = Logger.getLogger(ExampleTurtle.class);
+    private final static Logger LOGGER = LogManager.getLogger(ExampleTurtle.class.getName());
     
     public static String getTurtleAsString(String fileName)  {        
         String content = "";        
