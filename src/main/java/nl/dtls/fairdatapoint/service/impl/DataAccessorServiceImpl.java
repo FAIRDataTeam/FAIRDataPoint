@@ -6,12 +6,11 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import nl.dtls.fairdatapoint.domain.StoreManager;
-import nl.dtls.fairdatapoint.domain.StoreManagerException;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
-import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
@@ -25,7 +24,7 @@ import org.openrdf.rio.RDFFormat;
 public class DataAccessorServiceImpl implements DataAccessorService {
     
     private final static Logger LOGGER 
-            = Logger.getLogger(DataAccessorServiceImpl.class);
+            = LogManager.getLogger(DataAccessorServiceImpl.class);
     
     private final StoreManager storeManager;
     private final String BASE_URI;
@@ -36,7 +35,7 @@ public class DataAccessorServiceImpl implements DataAccessorService {
         if(this.storeManager == null) {
             LOGGER.debug("The storeManager is NULL");
         }
-        if(baseURI !=null && !baseURI.isEmpty()) {
+        if(baseURI == null || baseURI.isEmpty()) {
             LOGGER.debug("The base URI is NULL (or) empty string");
         }
     }

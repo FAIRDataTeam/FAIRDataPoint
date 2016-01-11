@@ -9,7 +9,8 @@ import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
@@ -22,7 +23,7 @@ import org.openrdf.rio.RDFFormat;
  */
 public class FairMetaDataServiceImpl implements FairMetaDataService {
     private final static Logger LOGGER 
-            = Logger.getLogger(FairMetaDataServiceImpl.class);
+            = LogManager.getLogger(FairMetaDataServiceImpl.class);
     
     private final StoreManager storeManager;
     private final String BASE_URI;
@@ -33,7 +34,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         if(this.storeManager == null) {
             LOGGER.debug("The storeManager is NULL");
         }
-        if(baseURI !=null && !baseURI.isEmpty()) {
+        if(baseURI == null || baseURI.isEmpty()) {
             LOGGER.debug("The base URI is NULL (or) empty string");
         }
     }

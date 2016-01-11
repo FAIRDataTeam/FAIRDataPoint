@@ -14,7 +14,8 @@ import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
 import nl.dtls.fairdatapoint.utils.MediaType;
 import org.apache.http.HttpHeaders;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,8 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID}")
 public class DataAccessorController {   
     
-    private final static Logger logger 
-            = Logger.getLogger(DataAccessorController.class);
+    private final static Logger LOGGER 
+            = LogManager.getLogger(DataAccessorController.class);
     @Autowired
     private DataAccessorService dataAccessorService;
     
@@ -47,7 +48,8 @@ public class DataAccessorController {
             HttpServletRequest request,
                     HttpServletResponse response) {
         
-        logger.debug(("Get dataset distribution with ID = " + distributionID));
+        LOGGER.info("Request to get dataset's distribution {}", distributionID);
+        LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HandleHttpHeadersUtils.

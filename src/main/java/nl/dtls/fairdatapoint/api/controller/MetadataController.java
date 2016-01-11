@@ -16,7 +16,8 @@ import nl.dtls.fairdatapoint.api.controller.utils.HandleHttpHeadersUtils;
 import nl.dtls.fairdatapoint.utils.MediaType;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import org.apache.http.HttpHeaders;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Api(description = "FDP metadata")
 @RequestMapping(value = "/")
 public class MetadataController {  
-    private final static Logger logger 
-            = Logger.getLogger(MetadataController.class);
+    private final static Logger LOGGER 
+            = LogManager.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
     @ApiOperation(value = "FDP metadata")
@@ -45,6 +46,8 @@ public class MetadataController {
     public String getFDAMetaData(HttpServletRequest request,
                     HttpServletResponse response) { 
         String responseBody;
+        LOGGER.info("Request to get FDP metadata");
+        LOGGER.info("GET : " + request.getRequestURL());
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HandleHttpHeadersUtils.
                 requestedContentType(contentType); 
@@ -74,7 +77,8 @@ public class MetadataController {
     public String getCatalogMetaData(
             @PathVariable final String catalogID, HttpServletRequest request,
                     HttpServletResponse response) {
-        logger.debug(("Get metadata for the catalog with ID = " + catalogID));
+        LOGGER.info("Request to get CATALOG metadata {}", catalogID);
+        LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HandleHttpHeadersUtils.
@@ -107,7 +111,8 @@ public class MetadataController {
     public String getDatasetMetaData(@PathVariable final String catalogID,
             @PathVariable final String datasetID, HttpServletRequest request,
                     HttpServletResponse response) {  
-        logger.debug(("Get metadata for the dataset with ID = " + datasetID));
+        LOGGER.info("Request to get DATASET metadata {}", catalogID);
+        LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HandleHttpHeadersUtils.
@@ -131,9 +136,5 @@ public class MetadataController {
         }
         return responseBody;
     }
-    
-    
-    
-    
     
 }
