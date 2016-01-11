@@ -1,3 +1,4 @@
+# FAIR Data Point Service
 #
 # Copyright 2015 Netherlands eScience Center in collaboration with
 # Dutch Techcenter for Life Sciences.
@@ -14,42 +15,56 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#################################################################################
 #
-# Minimalist FAIR Data Point (FDP) Metadata Service with the following endpoints:
+# FAIR Data Point (FDP) Service exposes the following endpoints:
 #
-#  /                  = FDP metadata
-#  /catalog           = catalog-level metadata
-#  /catalog/{dataset} = dataset-level metadata with 'breedb' as an example
+#  /doc                 = Swagger documentation of the RESTful Data API
+#  /fdp                 = returns FDP metadata
+#  /catalog/{catalogID} = returns catalog metadata
+#  /dataset/{datasetID} = returns dataset metadata (default: breedb)
 #
-# The FDP service returns metadata using Data Catalog Vocabulary (DCAT).
+# Note: The metadata are based on Data Catalog Vocabulary (DCAT).
 #
-#################################################################################
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.1'
+__version__ = '0.2'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
-from bottle import Bottle, run, static_file
+import os
+import bottle
+from bottle import (get, route, run, static_file, redirect)
 
-app = Bottle()
+project_dir = os.path.dirname(os.path.abspath(__file__))
+metadata_dir = os.path.join(project_dir, 'metadata/')
+doc_dir = os.path.join(project_dir, 'doc/')
 
-@app.route('/')
+@get('/')
+def root():
+   pass
+
+@get('/doc')
+def degault_page():
+   redirect('/doc/index.html')
+
+@get('/doc/<fname:path>')
+def doc_page(fname):
+   return static_file(fname, root=doc_dir)
+
+@get('/fdp')
 def FAIRDataPointMetadata():
-   return static_file('fairdatapoint.ttl', root='metadata')
+   return static_file('fairdatapoint.ttl', root=metadata_dir)
 
-@app.route('/catalog')
-def CatalogMetadata():
-   return static_file('catalog.ttl', root='metadata')
+@get('/catalog/<catalogID>')
+def CatalogMetadata(catalogID):
+   filename = '{catalogID}.ttl'.format(catalogID=catalogID)
+   return static_file(filename, root=metadata_dir)
 
-@app.route('/catalog/<dataset>')
-def DatasetMetadata(dataset):
-   filename = '{dataset}.ttl'.format(dataset=dataset)
-   return static_file(filename, root='metadata')
+@get('/dataset/<datasetID>')
+def DatasetMetadata(datasetID):
+   filename = '{datasetID}.ttl'.format(datasetID=datasetID)
+   return static_file(filename, root=metadata_dir)
 
-@app.get('/doc/<filename:re:.*>') # Swagger API documentation '/doc/index.html'
-def html(filename):
-   return static_file(filename, root='doc/')
+if __name__ == '__main__':
+   run(host='fdp.biotools.nl', port=8080, server='wsgiref', debug=True)
 
-run(app, host='fdp.biotools.nl', port='8080', debug=True)

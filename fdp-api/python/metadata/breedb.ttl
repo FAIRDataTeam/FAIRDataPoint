@@ -4,9 +4,9 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 @prefix dbp: <http://dbpedia.org/resource/> .
-@base <http://fdp.biotools.nl:8080/catalog/breedb/> .
+@base <http://fdp.biotools.nl:8080/dataset/> .
 
-<> a dcat:Dataset ;
+<breedb> a dcat:Dataset ;
    rdfs:label "BreeDB dataset" ;
    dct:title "BreeDB dataset" ;
    dct:description "Tomato germplasm collection" ;

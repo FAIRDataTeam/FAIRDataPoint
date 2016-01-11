@@ -4,9 +4,9 @@
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dbp: <http://dbpedia.org/resource/> .
-@base <http://fdp.biotools.nl:8080/catalog/> .
+@base <http://fdp.biotools.nl:8080/> .
 
-<> a dcat:Catalog ;
+<catalog/catalog-01> a dcat:Catalog ;
    rdfs:label "Plant Breeding Data Catalog" ;
    dct:title "Plant Breeding Data Catalog" ;
    dct:language lang:en ;
@@ -14,4 +14,4 @@
    dct:issued "2015-11-24"^^xsd:date ;
    dct:modified "2015-11-24"^^xsd:date ;
    dcat:themeTaxonomy dbp:Breeding ; 
-   dcat:dataset <breedb> .
+   dcat:dataset <dataset/breedb> .
