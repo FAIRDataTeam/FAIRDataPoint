@@ -1,0 +1,9 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<http://semlab1.liacs.nl:8080/fdp/plantBreeding/breedDB/distributionTurtle> a dcat:Distribution ;
+dcterms:title "BreeDB germplasm dataset turtle distribution";
+dcat:accessURL  <https://github.com/DTL-FAIRData/ODEX-FAIRDataPoint/blob/master/RDB2RDF/python/breedb_germplasm.ttl>;
+	dcterms:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;
+        dcat:mediaType "text/turtle" .
