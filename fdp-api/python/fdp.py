@@ -16,14 +16,15 @@
 # limitations under the License.
 #
 #
-# FAIR Data Point (FDP) Service exposes the following endpoints:
+# FAIR Data Point (FDP) Service exposes the following endpoints (URL paths):
+#   /, /doc or /doc/     = Redirect to the RESTful Data API documentation (Swagger UI)
+#   /fdp                 = returns FDP metadata
+#   /catalog/{catalogID} = returns catalog metadata (default: catalog-01)
+#   /dataset/{datasetID} = returns dataset metadata (default: breedb)
 #
-#  /doc                 = Swagger documentation of the RESTful Data API
-#  /fdp                 = returns FDP metadata
-#  /catalog/{catalogID} = returns catalog metadata
-#  /dataset/{datasetID} = returns dataset metadata (default: breedb)
-#
-# Note: The metadata are based on Data Catalog Vocabulary (DCAT).
+# This services makes extensive use of metadata defined by:
+#   Data Catalog Vocabulary (DCAT, http://www.w3.org/TR/vocab-dcat/)
+#   and Dublin Core Metadata Terms (DCMI, http://dublincore.org/documents/dcmi-terms/)
 #
 
 __author__  = 'Arnold Kuzniar'
@@ -39,16 +40,12 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 metadata_dir = os.path.join(project_dir, 'metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
 
-@get('/')
-def root():
-   pass
-
-@get('/doc')
-def degault_page():
+@get(['/', '/doc', '/doc/'])
+def default_page():
    redirect('/doc/index.html')
 
 @get('/doc/<fname:path>')
-def doc_page(fname):
+def doc_files(fname):
    return static_file(fname, root=doc_dir)
 
 @get('/fdp')
