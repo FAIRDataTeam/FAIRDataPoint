@@ -2,8 +2,8 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 
-<http://www.rdf.dtls.nl/fdp/plantBreeding> dct:title "Plant breeding catalog" ;
+<http://semlab1.liacs.nl:8080/fdp/plantBreeding> dct:title "Plant breeding catalog" ;
        a dcat:Catalog ; 
        dct:language lang:en  ;
-       dcat:dataset <http://www.rdf.dtls.nl/plantBreeding/breedDB> .
+       dcat:dataset <http://semlab1.liacs.nl:8080/plantBreeding/breedDB> .
 

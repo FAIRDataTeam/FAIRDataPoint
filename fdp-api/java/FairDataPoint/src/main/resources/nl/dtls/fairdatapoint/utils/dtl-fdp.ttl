@@ -1,9 +1,9 @@
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
-@prefix dtlOnto: <http://www.rdf.dtls.nl/ontologies/fdpDummy/> .
+@prefix dtlOnto: <http://semlab1.liacs.nl:8080/ontologies/fdpDummy/> .
 
-<http://www.rdf.dtls.nl/fdp> dct:title "DTL beta FAIR data point" ;
+<http://semlab1.liacs.nl:8080/fdp> dct:title "DTL beta FAIR data point" ;
        dct:language lang:en;
-       dtlOnto:contains <http://www.rdf.dtls.nl/fdp/plantBreeding> .
+       dtlOnto:contains <http://semlab1.liacs.nl:8080/fdp/plantBreeding> .
         
