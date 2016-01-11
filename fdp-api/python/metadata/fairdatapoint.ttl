@@ -6,8 +6,8 @@
 
 <fdp> a foaf:Group ;
    a dct:Agent ;
-   rdfs:seeAlso <doc> ;
-   rdfs:seeAlso <catalog/catalog-01> ;
+   rdfs:seeAlso <doc> ;                # Note: FDP-specific
+   rdfs:seeAlso <catalog/catalog-01> ; # predicate needed here.
    rdfs:label "FAIR Data Point - Plant Breeding WUR" ;
    dct:identifier "FDP-WUR-PB" ;
    dct:description "FAIR Data Point for plant-specific genotype and phenotype data sets" ;

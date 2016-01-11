@@ -15,3 +15,4 @@
    dct:modified "2015-11-24"^^xsd:date ;
    dcat:themeTaxonomy dbp:Breeding ; 
    dcat:dataset <dataset/breedb> .
+# Note: The use of DCAT class dcat:CatalogRecord is optional.
