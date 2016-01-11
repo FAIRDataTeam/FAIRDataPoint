@@ -1,0 +1,19 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ldp: <http://www.w3.org/ns/ldp#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
+
+<http://semlab1.liacs.nl:8080/fdp/biosamples/ring14Biosamples> a dcat:Dataset ;
+	dcterms:title "Ring14 biosamples dataset" ;
+	dcterms:language lang:en ;
+	dcterms:description "Ring14 biosamples dataset" ;
+	dcterms:identifier "5e65ac73-eaec-485e-ad95-87063dbb1553" ;
+	dcat:keyword "Ring14 biosamples" , "Biosamples" , "Ring14" ;
+	dcat:landingPage <http://www.ring14.org/> ;        
+	dcterms:publisher <http://orcid.org/0000-0002-1215-167X> ;
+	dcat:theme <http://rdf.biosemantics.org/concepts/biosample> ;
+	dcterms:creator <https://it.linkedin.com/in/marco-crimi-aa90868> ;
+        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/biosamples/ring14Biosamples/distributionLDP> .
