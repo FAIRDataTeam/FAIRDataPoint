@@ -5,10 +5,11 @@
  */
 package nl.dtls.fairdatapoint.api.controller.utils;
 
+
 import javax.servlet.http.HttpServletResponse;
-import nl.dtls.fairdatapoint.utils.MediaType;
 import org.apache.http.HttpHeaders;
 import org.openrdf.rio.RDFFormat;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
@@ -24,7 +25,7 @@ public class HandleHttpHeadersUtils {
         String errorMessage = ("Internal server error; Error message : " 
                 + ex.getMessage());              
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);                
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
         return errorMessage;
     }
     
@@ -32,7 +33,7 @@ public class HandleHttpHeadersUtils {
             HttpServletResponse response, String contentType) {   
         if (responseBody == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);            
+            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);            
         }
         else {
             response.setStatus(HttpServletResponse.SC_OK);                
@@ -43,7 +44,7 @@ public class HandleHttpHeadersUtils {
     public static String setNotAcceptedResponseHeader(HttpServletResponse 
             response, String contentType) {               
         response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);                            
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);        
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);        
         return("Currently don't supported '" + contentType + "' content type");
     }
     
@@ -55,12 +56,12 @@ public class HandleHttpHeadersUtils {
     
     public static RDFFormat requestedContentType(String contentType) {        
         RDFFormat requesetedContentType = null;    
-        if (contentType.contentEquals(MediaType.TEXT_TURTLE) ||                         
+        if (contentType.contentEquals(RDFFormat.TURTLE.getDefaultMIMEType()) ||                         
                 contentType == null ||         
-                contentType.contains(MediaType.WILDCARD)) {
+                contentType.contains(MediaType.ALL_VALUE)) {
             requesetedContentType = RDFFormat.TURTLE;
         }
-        else if (contentType.contentEquals( MediaType.APPLICATION_JSONLD)) {
+        else if (contentType.contentEquals(RDFFormat.JSONLD.getDefaultMIMEType())) {
             requesetedContentType = RDFFormat.JSONLD;
         }
         return requesetedContentType;

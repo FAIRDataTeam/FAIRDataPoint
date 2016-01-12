@@ -13,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nl.dtls.fairdatapoint.api.controller.utils.HandleHttpHeadersUtils;
-import nl.dtls.fairdatapoint.utils.MediaType;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +40,7 @@ public class MetadataController {
     private FairMetaDataService fairMetaDataService;
     @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET,
-            produces = {MediaType.TEXT_TURTLE, MediaType.APPLICATION_JSONLD}
+            produces = {"application/ld+json", "text/turtle"}
     )
     public String getFDAMetaData(HttpServletRequest request,
                     HttpServletResponse response) { 
@@ -72,7 +71,7 @@ public class MetadataController {
         
     @ApiOperation(value = "Catalog metadata")
     @RequestMapping(value = "/{catalogID:[^.]+}", method = RequestMethod.GET,
-            produces = {MediaType.TEXT_TURTLE, MediaType.APPLICATION_JSONLD}
+            produces = {"application/ld+json", "text/turtle"}
     )
     public String getCatalogMetaData(
             @PathVariable final String catalogID, HttpServletRequest request,
@@ -106,7 +105,7 @@ public class MetadataController {
     @ApiOperation(value = "Dataset metadata")
     @RequestMapping(value = "/{catalogID}/{datasetID}", 
             method = RequestMethod.GET,
-            produces = {MediaType.TEXT_TURTLE, MediaType.APPLICATION_JSONLD}
+            produces = {"application/ld+json", "text/turtle"}
     )
     public String getDatasetMetaData(@PathVariable final String catalogID,
             @PathVariable final String datasetID, HttpServletRequest request,
