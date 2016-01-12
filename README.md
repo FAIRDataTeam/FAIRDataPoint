@@ -20,13 +20,14 @@ curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:88
 ```
 ###FAIR Data Point (FDP) Service
 
-**Swagger UI documentation of the RESTful API**
 
-http://fdp.biotools.nl:8080/doc/index.html
+**RESTful Data API documentation**
+
+http://fdp.biotools.nl:8080/doc
 
 **Access FDP-, catalog- and dataset-level metadata**
 ```
-curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/
-curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/catalog
-curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/catalog/breedb
+curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/fdp
+curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/catalog/catalog-01
+curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/dataset/breedb
 ```

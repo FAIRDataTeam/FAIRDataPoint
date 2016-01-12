@@ -1,58 +1,79 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "0.1.0",
+        "version": "0.2",
         "title": "FAIR Data Point Service",
-        "description": "#### Echos back every URL, method, parameter and header\nFeel free to make a path or an operation and use **Try Operation** to test it. The echo server will\nrender back everything.\n"
+        "description": "Provides metadata about the FAIR Data Point (FDP) itself, data catalogs and data sets available via the FDP.",
+        "contact": {
+            "name": "Netherlands eScience Center",
+            "url": "https://www.esciencecenter.nl",
+            "email": "a.kuzniar@esciencecenter.nl"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
     "schemes": [
         "http"
     ],
     "basePath": "/",
     "produces": [
-        "text/turtle"
+        "text/turtle",
+        "text/n3",
+        "application/rdf+xml",
+        "application/ld+json"
     ],
-    "host": "fdp.biotools.8080",
     "paths": {
-        "/": {
+        "/fdp": {
             "get": {
-                "description": "This endpoint returns information about the FAIR Data Point.",
-                "operationId": "getFdpMetadata",
+                "summary": "FDP metadata",
+                "description": "This endpoint returns information about the FDP itself.",
                 "responses": {
                     "200": {
-                        "description": "FAIRDataPointMetadata"
+                        "description": "Success"
                     }
                 }
             }
         },
-        "/catalog": {
+        "/catalog/{catalogID}": {
             "get": {
-                "description": "This endpoint returns a curated collection of metadata (catalog) about data sets available through the FAIR Data Point.",
-                "operationId": "getCatalogMetadata",
+                "summary": "Catalog metadata",
+                "description": "This endpoint returns a curated collection of metadata about data sets in a catalog available via the FDP.",
+                "parameters": [
+                    {
+                        "name": "catalogID",
+                        "in": "path",
+                        "description": "catalogID",
+                        "type": "string",
+                        "default": "catalog-01",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "CatalogMetadata"
+                        "description": "Success"
                     }
                 }
             }
         },
-        "/catalog/{dataset}": {
-            "parameters": [
-                {
-                    "name": "dataset",
-                    "in": "path",
-                    "description": "dataset ID",
-                    "type": "string",
-                    "default": "breedb",
-                    "required": true
-                }
-            ],
+        "/dataset/{datasetID}": {
             "get": {
-                "description": "This endpoint returns information about a data set available through the FAIR Data Point.",
-                "operationId": "getDatasetMetadata",
+                "summary": "Data set metadata",
+                "description": "This endpoint returns information about a data set available via the FDP.",
+                "parameters": [
+                    {
+                        "name": "datasetID",
+                        "in": "path",
+                        "description": "datasetID",
+                        "type": "string",
+                        "default": "breedb",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "DatasetMetadata"
+                        "description": "Success"
                     }
                 }
             }
