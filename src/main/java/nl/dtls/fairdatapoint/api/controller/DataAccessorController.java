@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import nl.dtls.fairdatapoint.api.controller.utils.HandleHttpHeadersUtils;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
-import nl.dtls.fairdatapoint.utils.MediaType;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +39,7 @@ public class DataAccessorController {
     private DataAccessorService dataAccessorService;
     
     @ApiOperation(value = "FAIR dataset distribution")
-    @RequestMapping(produces = {MediaType.TEXT_TURTLE, MediaType.APPLICATION_JSONLD}, 
+    @RequestMapping(produces = {"application/ld+json", "text/turtle"}, 
             method = RequestMethod.GET)
     public String getDatasetDistribution(@PathVariable final String catalogID,
             @PathVariable final String datasetID, 
