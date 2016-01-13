@@ -55,6 +55,7 @@ public class DataAccessorServiceImpl implements DataAccessorService {
                 datasetDistribution = 
                         RDFUtils.writeToString(statements, format);
             }
+            storeManager.closeRepositoryConnection();
         } catch (Exception ex) {
             LOGGER.error("Error retrieving dataset metadata of <" + 
                     datasetDistributionURI + ">");
