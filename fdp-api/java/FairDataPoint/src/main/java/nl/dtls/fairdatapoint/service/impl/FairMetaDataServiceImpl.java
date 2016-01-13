@@ -40,7 +40,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     }
 
     @Override
-    public String retrieveFDPMetaData(RDFFormat format) throws FairMetadataServiceException {
+    public String retrieveFDPMetaData(RDFFormat format) 
+            throws FairMetadataServiceException {
         String fdpURI = this.BASE_URI.concat("fdp");
         String fdpMetadata = null;
         try {
@@ -48,7 +49,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                     storeManager.retrieveResource(fdpURI);
             if(statements != null) {
                 fdpMetadata = RDFUtils.writeToString(statements, format);
-            }            
+            }    
+            storeManager.closeRepositoryConnection();
         } catch (Exception ex) {
             LOGGER.error("Error retrieving fdp's metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
@@ -57,7 +59,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     }
 
     @Override
-    public String retrieveCatalogMetaData(String catalogID, RDFFormat format) throws FairMetadataServiceException {
+    public String retrieveCatalogMetaData(String catalogID, RDFFormat format) 
+            throws FairMetadataServiceException {
         String catalogURI = this.BASE_URI.concat("fdp").concat("/").
                 concat(catalogID);
         String catalogMetadata = null;
@@ -67,6 +70,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             if(statements != null) {
                 catalogMetadata = RDFUtils.writeToString(statements, format);
             }
+            storeManager.closeRepositoryConnection();
         } catch (Exception ex) {
             LOGGER.error("Error retrieving catalog metadata of <" + 
                     catalogURI + ">");
@@ -76,7 +80,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     }
 
     @Override
-    public String retrieveDatasetMetaData(String catalogID, String datasetID, RDFFormat format) throws FairMetadataServiceException {
+    public String retrieveDatasetMetaData(String catalogID, 
+            String datasetID, RDFFormat format) 
+            throws FairMetadataServiceException {
         String datasetURI = this.BASE_URI.concat("fdp").concat("/").
                 concat(catalogID).concat("/").concat(datasetID);
         String datasetMetadata = null;
@@ -86,6 +92,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             if(statements != null) {
                 datasetMetadata = RDFUtils.writeToString(statements, format);
             }
+            storeManager.closeRepositoryConnection();
         } catch (Exception ex) {
             LOGGER.error("Error retrieving dataset metadata of <" + 
                     datasetURI + ">");

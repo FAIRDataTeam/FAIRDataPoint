@@ -5,18 +5,14 @@
  */
 package nl.dtls.fairdatapoint.domain;
 
-import java.io.File;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
-import org.openrdf.rio.RDFFormat;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.sail.SailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import nl.dtls.fairdatapoint.utils.ExampleTurtle;
 import org.openrdf.model.impl.ValueFactoryImpl;
 
 /**
@@ -36,23 +32,6 @@ public class StoreManagerImpl implements StoreManager {
             RepositoryException {
         this.repository = repository;
         this.repository.initialize();
-        if (this.repository.getClass() == SailRepository.class) {
-            
-            try {
-                uploadRDF(ExampleTurtle.getTurtleAsFile(
-                        ExampleTurtle.FDP_METADATA), 
-                        ExampleTurtle.FILES_RDF_FORMAT);
-                uploadRDF(ExampleTurtle.getTurtleAsFile(
-                        ExampleTurtle.CATALOG_METADATA), 
-                        ExampleTurtle.FILES_RDF_FORMAT);
-                uploadRDF(ExampleTurtle.getTurtleAsFile(
-                        ExampleTurtle.DATASET_METADATA), 
-                        ExampleTurtle.FILES_RDF_FORMAT);
-            } catch (StoreManagerException ex) {
-                LOGGER.debug("Error loading example turtle files");
-            }
-            
-        }
     }
 
     @Override
@@ -68,28 +47,18 @@ public class StoreManagerImpl implements StoreManager {
             if (conn.hasStatement(resourceSubj, null, null,false)) {
                statements = conn.getStatements(resourceSubj, null, null, false);  
                
-            }                       
+            }     
+            repositoryConnection = conn;
         }
         catch (Exception e) {
             LOGGER.error("Error retrieving resource <" + uri + ">");
             throw (new StoreManagerException(e.getMessage()));
         }
-        finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            }
-            catch (Exception e) {
-                LOGGER.error("Error closing repository connection!");
-                throw (new StoreManagerException(e.getMessage()));
-            }
-        }
         return statements;
     }
 
     @Override
-    public void close() throws Exception {
+    public void closeRepositoryConnection() throws Exception {
         
         try {            
             if ((repositoryConnection != null) && 
@@ -101,21 +70,21 @@ public class StoreManagerImpl implements StoreManager {
             LOGGER.error("Error closing repository connection!");
             throw (new StoreManagerException(e.getMessage()));
         }
-        finally {
-            repositoryConnection = null;
-
-            try {
-                if (repository != null) {
-                    repository.shutDown();
-                }
-            }
-            catch (Exception e) {
-                LOGGER.error("Error closing repository!");
-                throw (new StoreManagerException(e.getMessage()));
-            }
-            finally {
-                repository = null;
-            }
+    }    
+    @Override
+    public void closeRepository() throws Exception {
+            
+        try {                
+            if (repository != null) {                    
+                repository.shutDown();                
+            }            
+        }            
+        catch (Exception e) {                
+            LOGGER.error("Error closing repository!");                
+            throw (new StoreManagerException(e.getMessage()));            
+        }            
+        finally {                
+            repository = null;            
         }
     }
     
@@ -130,32 +99,5 @@ public class StoreManagerImpl implements StoreManager {
             repositoryConnection = repository.getConnection();
         }
         return repositoryConnection;    
-    }
-    
-    private void uploadRDF (File rdfFile, RDFFormat format) 
-            throws StoreManagerException{
-        RepositoryConnection conn = null;
-        try {
-            conn = getRepositoryConnection();   
-            conn.add(rdfFile, "", format);
-            LOGGER.info(rdfFile.getName() + " file uploaded to the store");                      
-        }
-        catch (Exception e) {
-            LOGGER.error("Error uploading <" + rdfFile.getName() + 
-                    "> file to the store");
-            throw (new StoreManagerException(e.getMessage()));
-        }
-        finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            }
-            catch (Exception e) {
-                LOGGER.error("Error closing repository connection!");
-                throw (new StoreManagerException(e.getMessage()));
-            }
-        }
-    }
-    
+    }    
 }
