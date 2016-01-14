@@ -53,6 +53,7 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     private String TRIPLE_STORE_PREPOPULATE;
     @Value("${store-url}")
     private String TRIPLE_STORE_URL;
+    private StoreManager STORE_MANAGER;
     
     @Bean
     public static PropertySourcesPlaceholderConfigurer 
@@ -65,55 +66,58 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     }
     @Bean
     public StoreManager tripleStoreManagerImp() throws RepositoryException {
-        Repository repository;    
-        StoreManager storeManager;        
-        repository = new SPARQLRepository(TRIPLE_STORE_URL);
-        storeManager = new StoreManagerImpl(repository);
-        return storeManager;
+        if (this.STORE_MANAGER == null) {      
+            Repository repository = new SPARQLRepository(TRIPLE_STORE_URL);
+            this.STORE_MANAGER = new StoreManagerImpl(repository);    
+        }
+        return this.STORE_MANAGER;
     }
     
     @Bean
     public StoreManager inMemoryStoreManagerImp() throws RepositoryException {
-        Sail store = new MemoryStore();
-        Repository repository;  
-        repository = new SailRepository(store);    
-        StoreManager storeManager = new StoreManagerImpl(repository);
-        if(Boolean.valueOf(TRIPLE_STORE_PREPOPULATE)) {
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                    ExampleTurtleFiles.FDP_METADATA, null);              
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                    ExampleTurtleFiles.PLANT_CATALOG_METADATA, null); 
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                    ExampleTurtleFiles.BREEDDB_DATASET_METADATA, null); 
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                    ExampleTurtleFiles.BREEDDB_DATASET_SPARQL_DISTRIBUTION, 
-                    null); 
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                    ExampleTurtleFiles.BREEDDB_DATASET_TURTLE_DISTRIBUTION, 
-                    null); 
+        if (this.STORE_MANAGER == null) {
+            Sail store = new MemoryStore();  
+            Repository repository = new SailRepository(store);    
+            this.STORE_MANAGER = new StoreManagerImpl(repository);
+            if(Boolean.valueOf(TRIPLE_STORE_PREPOPULATE)) {
+                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        ExampleTurtleFiles.FDP_METADATA, null, 
+                        METADATA_RDF_BASE_URI);              
+                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        ExampleTurtleFiles.PLANT_CATALOG_METADATA, null, 
+                        METADATA_RDF_BASE_URI); 
+                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        ExampleTurtleFiles.BREEDDB_DATASET_METADATA, null, 
+                        METADATA_RDF_BASE_URI); 
+                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        ExampleTurtleFiles.BREEDDB_DATASET_SPARQL_DISTRIBUTION, 
+                        null, METADATA_RDF_BASE_URI); 
+                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        ExampleTurtleFiles.BREEDDB_DATASET_TURTLE_DISTRIBUTION, 
+                        null, METADATA_RDF_BASE_URI); 
+            }
+            else {
+                LOGGER.info("FDP api is not prepopulated, "
+                        + "if you would like to prepopulated the api with "
+                        + "content, please set 'store-prepopulate' "
+                        + "property value to true");
+            } 
+        }
+        return this.STORE_MANAGER;
+    }
+    private StoreManager getStoreManager() throws RepositoryException {        
+        if (Integer.parseInt(TRIPLE_STORE_TYPE) == 2) {
+            return tripleStoreManagerImp();
         }
         else {
-            LOGGER.info("FDP api is not prepopulated, "
-                    + "if you would like to prepopulated the api with content, "
-                    + "please set 'store-prepopulate' property value to true");
-        }
-        return storeManager;
-    }
+         return  inMemoryStoreManagerImp();
+        }        
+    } 
     @Bean
     public FairMetaDataService fairMetaDataServiceImpl() 
             throws URISyntaxException, RepositoryException {
-        FairMetaDataService fdpService = null;
-        
-        if (Integer.parseInt(TRIPLE_STORE_TYPE) == 2) {
-            fdpService = new FairMetaDataServiceImpl(
-                tripleStoreManagerImp(), METADATA_RDF_BASE_URI);
-        }
-        else {
-            fdpService = new FairMetaDataServiceImpl(
-                inMemoryStoreManagerImp(), METADATA_RDF_BASE_URI);
-        }
-        
-        
+        FairMetaDataService fdpService = new FairMetaDataServiceImpl(
+                getStoreManager(), METADATA_RDF_BASE_URI);       
         return fdpService;
     }
     
@@ -121,7 +125,7 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     public DataAccessorService fairDataAccessorService() 
             throws URISyntaxException, RepositoryException {
         DataAccessorService dataAccessorService = new DataAccessorServiceImpl(
-                tripleStoreManagerImp(), METADATA_RDF_BASE_URI);
+                getStoreManager(), METADATA_RDF_BASE_URI);
         return dataAccessorService;
     }
     

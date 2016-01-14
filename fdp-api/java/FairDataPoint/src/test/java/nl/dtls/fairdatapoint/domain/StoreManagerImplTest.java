@@ -27,9 +27,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * @since 2016-01-05
  * @version 0.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {RestApiConfiguration.class})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@WebAppConfiguration
+//@ContextConfiguration(classes = {RestApiConfiguration.class})
 public class StoreManagerImplTest {  
     
     @Test
@@ -41,7 +41,7 @@ public class StoreManagerImplTest {
         Repository repository = new SailRepository(store);    
         StoreManager testStoreManager = new StoreManagerImpl(repository); 
         ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                ExampleTurtleFiles.FDP_METADATA, null);  
+                ExampleTurtleFiles.FDP_METADATA, null, null);  
         String uri = "http://semlab1.liacs.nl:8080/fdp";             
         RepositoryResult<Statement> statements = 
                 testStoreManager.retrieveResource(uri); 
@@ -64,7 +64,7 @@ public class StoreManagerImplTest {
         Repository repository = new SailRepository(store);    
         StoreManager testStoreManager = new StoreManagerImpl(repository); 
         ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                ExampleTurtleFiles.FDP_METADATA, null); 
+                ExampleTurtleFiles.FDP_METADATA, null, null); 
         String uri = "http://semlab1.liacs.nl:8080/dummy";             
         RepositoryResult<Statement> statements = 
                 testStoreManager.retrieveResource(uri); 
