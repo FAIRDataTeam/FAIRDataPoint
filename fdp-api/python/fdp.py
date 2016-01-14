@@ -34,7 +34,7 @@ __license__ = 'Apache Lincense, Version 2.0'
 
 import os
 import bottle
-from bottle import (get, route, run, static_file, redirect)
+from bottle import (get, run, static_file, redirect)
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 metadata_dir = os.path.join(project_dir, 'metadata/')
@@ -63,5 +63,5 @@ def DatasetMetadata(datasetID):
    return static_file(filename, root=metadata_dir)
 
 if __name__ == '__main__':
-   run(host='fdp.biotools.nl', port=8080, server='wsgiref', debug=True)
+   run(host='fdp.biotools.nl', port=8080, server='wsgiref')
 
