@@ -2,12 +2,16 @@ package nl.dtls.fairdatapoint.api.config;
 
 
 import java.net.URISyntaxException;
+import nl.dtls.fairdatapoint.api.controller.MetadataController;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.impl.DataAccessorServiceImpl;
 import nl.dtls.fairdatapoint.service.impl.FairMetaDataServiceImpl;
+import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
@@ -38,11 +42,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.api.controller")
 @PropertySource(value = {"classpath:/config/fdp-server.properties", 
     "classpath:/config/triple-store.properties"})
-public class RestApiConfiguration extends WebMvcConfigurerAdapter {    
+public class RestApiConfiguration extends WebMvcConfigurerAdapter {  
+    private final static Logger LOGGER 
+            = LogManager.getLogger(RestApiConfiguration.class);
     @Value("${base-uri}")
     private String METADATA_RDF_BASE_URI;
     @Value("${store-type}")
     private String TRIPLE_STORE_TYPE;
+    @Value("${store-prepopulate}")
+    private String TRIPLE_STORE_PREPOPULATE;
     @Value("${store-url}")
     private String TRIPLE_STORE_URL;
     
@@ -69,13 +77,43 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
         Sail store = new MemoryStore();
         Repository repository;  
         repository = new SailRepository(store);    
-        return new StoreManagerImpl(repository);
+        StoreManager storeManager = new StoreManagerImpl(repository);
+        if(Boolean.valueOf(TRIPLE_STORE_PREPOPULATE)) {
+            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                    ExampleTurtleFiles.FDP_METADATA, null);              
+            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                    ExampleTurtleFiles.PLANT_CATALOG_METADATA, null); 
+            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                    ExampleTurtleFiles.BREEDDB_DATASET_METADATA, null); 
+            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                    ExampleTurtleFiles.BREEDDB_DATASET_SPARQL_DISTRIBUTION, 
+                    null); 
+            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                    ExampleTurtleFiles.BREEDDB_DATASET_TURTLE_DISTRIBUTION, 
+                    null); 
+        }
+        else {
+            LOGGER.info("FDP api is not prepopulated, "
+                    + "if you would like to prepopulated the api with content, "
+                    + "please set 'store-prepopulate' property value to true");
+        }
+        return storeManager;
     }
     @Bean
     public FairMetaDataService fairMetaDataServiceImpl() 
             throws URISyntaxException, RepositoryException {
-        FairMetaDataService fdpService = new FairMetaDataServiceImpl(
+        FairMetaDataService fdpService = null;
+        
+        if (Integer.parseInt(TRIPLE_STORE_TYPE) == 2) {
+            fdpService = new FairMetaDataServiceImpl(
                 tripleStoreManagerImp(), METADATA_RDF_BASE_URI);
+        }
+        else {
+            fdpService = new FairMetaDataServiceImpl(
+                inMemoryStoreManagerImp(), METADATA_RDF_BASE_URI);
+        }
+        
+        
         return fdpService;
     }
     

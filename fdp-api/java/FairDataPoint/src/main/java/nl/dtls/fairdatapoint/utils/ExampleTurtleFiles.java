@@ -29,8 +29,13 @@ import org.openrdf.rio.RDFParseException;
 public class ExampleTurtleFiles {
     
     public static final String FDP_METADATA = "dtl-fdp.ttl";
-    public static final String CATALOG_METADATA = "plant-breeding-catalog.ttl";
-    public static final String DATASET_METADATA = "breedDB-dataset.ttl";
+    public static final String PLANT_CATALOG_METADATA = 
+            "plant-breeding-catalog.ttl";
+    public static final String BREEDDB_DATASET_METADATA = "breedDB-dataset.ttl";
+    public static final String BREEDDB_DATASET_SPARQL_DISTRIBUTION = 
+            "breedDB-distribution-sparql.ttl";
+    public static final String BREEDDB_DATASET_TURTLE_DISTRIBUTION = 
+            "breedDB-distribution-turtle.ttl";
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
