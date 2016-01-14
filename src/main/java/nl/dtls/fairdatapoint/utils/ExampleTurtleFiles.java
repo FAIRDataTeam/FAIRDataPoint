@@ -8,6 +8,7 @@ package nl.dtls.fairdatapoint.utils;
 import static com.google.common.io.Files.readLines;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +40,7 @@ public class ExampleTurtleFiles {
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
+    private final static String BASE_URI = "http://semlab1.liacs.nl:8080/";
     
     public static String getTurtleAsString(String fileName)  {        
         String content = "";        
@@ -69,17 +71,25 @@ public class ExampleTurtleFiles {
     }
     
     public static void storeTurtleFileToTripleStore (Repository repository, 
-            String fileName, Resource context) {
+            String fileName, Resource context, String baseURI) {
         RepositoryConnection conn = null;        
         try {
+            String content = getTurtleAsString(fileName);
+            if(baseURI != null && !baseURI.isEmpty()) {                
+                content = content.replaceAll(BASE_URI, baseURI);
+            }
+            else {
+                baseURI = BASE_URI;
+            }
+            StringReader reader = new StringReader(content);
             conn = repository.getConnection();
             if (context == null) {
-                conn.add(getTurtleAsFile(fileName), 
-                        null, ExampleTurtleFiles.FILES_RDF_FORMAT);       
+                conn.add(reader, 
+                        baseURI, ExampleTurtleFiles.FILES_RDF_FORMAT);       
             }         
             else {
-                conn.add(getTurtleAsFile(fileName), 
-                        null, ExampleTurtleFiles.FILES_RDF_FORMAT, context); 
+                conn.add(reader, 
+                        baseURI, ExampleTurtleFiles.FILES_RDF_FORMAT, context); 
             }
         }
         catch (RepositoryException | IOException | RDFParseException e) {
