@@ -1,0 +1,5 @@
+# development
+python -m bottle -b 127.0.0.1:8080 fdp
+
+# production
+nohup python fdp.py &
