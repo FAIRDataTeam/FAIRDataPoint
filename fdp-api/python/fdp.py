@@ -41,11 +41,11 @@ metadata_dir = os.path.join(project_dir, 'metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
 
 @get(['/', '/doc', '/doc/'])
-def default_page():
+def DefaultPage():
    redirect('/doc/index.html')
 
 @get('/doc/<fname:path>')
-def doc_files(fname):
+def DocFiles(fname):
    return static_file(fname, root=doc_dir)
 
 @get('/fdp')
