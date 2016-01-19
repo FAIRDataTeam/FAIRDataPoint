@@ -1,5 +1,5 @@
 # development
-python -m bottle -b 127.0.0.1:8080 fdp
+python -m bottle --debug --reload -b 127.0.0.1:8080 fdp
 
 # production
-nohup python fdp.py &
+nohup python -m bottle -b fdp.biotools.nl:8080 fdp &
