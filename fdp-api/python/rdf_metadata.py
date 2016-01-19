@@ -4,81 +4,103 @@ from rdflib.plugin import register, Serializer
 
 register('application/ld+json', Serializer, 'rdflib_jsonld.serializer', 'JsonLDSerializer')
 
-g = Graph()
-
 # define additional namespaces
 DCAT = Namespace('http://www.w3.org/ns/dcat#')
 LANG = Namespace('http://id.loc.gov/vocabulary/iso639-1/')
 DBPEDIA = Namespace('http://dbpedia.org/resource/')
 
-# manage prefix -> namespace mappings
-ns_mgr = NamespaceManager(g)
-ns_mgr.bind('dbp', DBPEDIA)
-ns_mgr.bind('dct', DCTERMS)
-ns_mgr.bind('dcat', DCAT)
-ns_mgr.bind('lang', LANG)
+class FAIRGraph(Graph):
+   def __init__(self, base_uri=None):
+      Graph.__init__(self)
+      self.__base_uri = base_uri
 
-base_uri = URIRef('http://fdp.biotools.nl:8080')
-doc_page = URIRef(base_uri + '/doc')
-fdp = URIRef(base_uri + '/fdp')
-cat = URIRef(base_uri + '/catalog/catalog-01')
-dts = URIRef(base_uri + '/dataset')
-breedb = URIRef(dts + '/breedb')
-breedb_sparql = URIRef(dts + '/breedb-sparql')
-breedb_sqldump = URIRef(dts + '/breedb-sqldump')
+      # manage prefix -> namespace mappings
+      mgr = NamespaceManager(self)
+      mgr.bind('dbp', DBPEDIA)
+      mgr.bind('dct', DCTERMS)
+      mgr.bind('dcat', DCAT)
+      mgr.bind('lang', LANG)
 
-# FDP metadata
-g.add( (fdp, RDF.type, DCTERMS.Agent) )
-g.add( (fdp, RDFS.seeAlso, doc_page) )
-g.add( (fdp, RDFS.seeAlso, cat) )
-g.add( (fdp, RDFS.label, Literal('FAIR Data Point - Plant Breeding WUR', lang='en')) )
-g.add( (fdp, DCTERMS.identifier, Literal('FDP-WUR-PB')) )
-g.add( (fdp, DCTERMS.description, Literal('FAIR Data Point for plant-specific genotype and phenotype data sets')) )
-g.add( (fdp, DCTERMS.title, Literal('FAIR Data Point - Plant Breeding WUR', lang='en')) )
-g.add( (fdp, DCTERMS.language, LANG.en) )
+   def baseURI(self):
+      return URIRef(self.__base_uri)
 
-# Data catalog metadata
-g.add( (cat, RDF.type, DCAT.Catalog) )
-g.add( (cat, RDFS.label, Literal('Plant Breeding Data Catalog', lang='en')) )
-g.add( (cat, DCTERMS.title, Literal('Plant Breeding Data Catalog', lang='en')) )
-g.add( (cat, DCTERMS.language, LANG.en) )
-g.add( (cat, DCTERMS.publisher, URIRef('http://orcid.org/0000-0002-4368-8058')) )
-g.add( (cat, DCTERMS.issued, Literal('2015-11-24', datatype=XSD.date)) )
-g.add( (cat, DCTERMS.modified, Literal('2015-11-24', datatype=XSD.date)) )
-g.add( (cat, DCAT.themeTaxonomy, DBPEDIA.Breeding) )
-g.add( (cat, DCAT.dataset, breedb) )
-# Note: The use of DCAT class dcat:CatalogRecord is optional.
+   def docURI(self):
+      return URIRef(self.baseURI() + '/doc')
 
-# Dataset metadata
-g.add( (breedb, RDF.type, DCAT.Dataset) )
-g.add( (breedb, RDFS.label, Literal('BreeDB passport data', lang='en')) )
-g.add( (breedb, DCTERMS.title, Literal('BreeDB passport data', lang='en')) )
-g.add( (breedb, DCTERMS.description, Literal('Tomato germplasm collection', lang='en')) )
-g.add( (breedb, DCTERMS.identifier, Literal('breedb')) )
-g.add( (breedb, DCTERMS.publisher, URIRef('http://orcid.org/0000-0002-4368-8058')) )
-g.add( (breedb, DCTERMS.issued, Literal('2015-11-24', datatype=XSD.date)) )
-g.add( (breedb, DCTERMS.modified, Literal('2015-11-24', datatype=XSD.date)) )
-g.add( (breedb, DCTERMS.language, LANG.en) )
-g.add( (breedb, DCAT.theme, DBPEDIA.Plant_breeding) )
-g.add( (breedb, DCAT.landingPage, URIRef('https://www.eu-sol.wur.nl/passport')) )
-[ g.add( (breedb, DCAT.keyword, Literal(kw, lang='en')) ) for kw in ['BreeDB', 'Plant breeding', 'germplasm', 'passport data'] ]
-[ g.add( (breedb, DCAT.distribution, dist) ) for dist in [breedb_sparql, breedb_sqldump] ]
-g.add( (breedb_sparql, RDF.type, DCAT.Distribution) )
-g.add( (breedb_sparql, RDFS.label, Literal('SPARQL endpoint for BreeDB passport data')) )
-g.add( (breedb_sparql, DCTERMS.title, Literal('SPARQL endpoint for BreeDB passport data')) )
-g.add( (breedb_sparql, DCTERMS.license, URIRef('http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0')) )
-g.add( (breedb_sparql, DCTERMS.language, LANG.en) )
-g.add( (breedb_sparql, DCAT.accessURL, URIRef('http://virtuoso.biotools.nl:8888/sparql')) )
-# TODO: Use SPARQL-SD to add named graph URI
-[ g.add( (breedb_sparql, DCAT.mediaType, Literal(mime)) ) for mime in ['text/turtle', 'application/rdf+xml', 'application/ld+json'] ]
-g.add( (breedb_sqldump, RDF.type, DCAT.Distribution) )
-g.add( (breedb_sqldump, RDFS.label, Literal('SQL dump of the BreeDB tomato germplasm data', lang='en')) )
-g.add( (breedb_sqldump, DCTERMS.title, Literal('SQL dump of the BreeDB tomato germplasm data', lang='en')) )
-g.add( (breedb_sqldump, DCTERMS.license, URIRef('http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0')) )
-g.add( (breedb_sqldump, DCTERMS.language, LANG.en) )
-g.add( (breedb_sqldump, DCAT.downloadURL, URIRef('http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql')) )
-g.add( (breedb_sqldump, DCAT.mediaType, Literal('application/sql')) )
+   def fdpURI(self):
+      return URIRef(self.baseURI() + '/fdp')
 
-print g.serialize(format='text/turtle') # pass mime-type
-#print g.serialize(format='application/rdf+xml')
-#print g.serialize(format='application/ld+json')
+   def catURI(self, id):
+      return URIRef(self.baseURI() + '/catalog/' + str(id))
+
+   def dtsURI(self, id):
+      return URIRef(self.baseURI() + '/dataset/' + str(id))
+
+   def desFDP(self): # FDP metadata
+      self.add( (self.fdpURI(), RDF.type, DCTERMS.Agent) )
+      self.add( (self.fdpURI(), RDFS.seeAlso, self.docURI()) )
+      self.add( (self.fdpURI(), RDFS.seeAlso, self.catURI('catalog-01')) )
+      self.add( (self.fdpURI(), RDFS.label, Literal('FAIR Data Point - Plant Breeding WUR', lang='en')) )
+      self.add( (self.fdpURI(), DCTERMS.title, Literal('FAIR Data Point - Plant Breeding WUR', lang='en')) )
+      self.add( (self.fdpURI(), DCTERMS.identifier, Literal('FDP-WUR-PB')) )
+      self.add( (self.fdpURI(), DCTERMS.description, Literal('FAIR Data Point for plant-specific genotype and phenotype data sets')) )
+      self.add( (self.fdpURI(), DCTERMS.language, LANG.en) )
+
+      return self
+
+   def desCatalog(self): # Data catalog metadata
+      self.add( (self.catURI('catalog-01'), RDF.type, DCAT.Catalog) )
+      self.add( (self.catURI('catalog-01'), RDFS.label, Literal('Plant Breeding Data Catalog', lang='en')) )
+      self.add( (self.catURI('catalog-01'), DCTERMS.title, Literal('Plant Breeding Data Catalog', lang='en')) )
+      self.add( (self.catURI('catalog-01'), DCTERMS.language, LANG.en) )
+      self.add( (self.catURI('catalog-01'), DCTERMS.publisher, URIRef('http://orcid.org/0000-0002-4368-8058')) )
+      self.add( (self.catURI('catalog-01'), DCTERMS.issued, Literal('2015-11-24', datatype=XSD.date)) )
+      self.add( (self.catURI('catalog-01'), DCTERMS.modified, Literal('2015-11-24', datatype=XSD.date)) )
+      self.add( (self.catURI('catalog-01'), DCAT.themeTaxonomy, DBPEDIA.Breeding) )
+      self.add( (self.catURI('catalog-01'), DCAT.dataset, self.dtsURI('breedb')) )
+      # Note: The use of DCAT class dcat:CatalogRecord is optional.
+
+      return self
+
+   def desDataset(self): # Dataset metadata
+      self.add( (self.dtsURI('breedb'), RDF.type, DCAT.Dataset) )
+      self.add( (self.dtsURI('breedb'), RDFS.label, Literal('BreeDB passport data', lang='en')) )
+      self.add( (self.dtsURI('breedb'), DCTERMS.title, Literal('BreeDB passport data', lang='en')) )
+      self.add( (self.dtsURI('breedb'), DCTERMS.description, Literal('Tomato germplasm collection', lang='en')) )
+      self.add( (self.dtsURI('breedb'), DCTERMS.identifier, Literal('breedb')) )
+      self.add( (self.dtsURI('breedb'), DCTERMS.publisher, URIRef('http://orcid.org/0000-0002-4368-8058')) )
+      self.add( (self.dtsURI('breedb'), DCTERMS.issued, Literal('2015-11-24', datatype=XSD.date)) )
+      self.add( (self.dtsURI('breedb'), DCTERMS.modified, Literal('2015-11-24', datatype=XSD.date)) )
+      self.add( (self.dtsURI('breedb'), DCTERMS.language, LANG.en) )
+      self.add( (self.dtsURI('breedb'), DCAT.theme, DBPEDIA.Plant_breeding) )
+      self.add( (self.dtsURI('breedb'), DCAT.landingPage, URIRef('https://www.eu-sol.wur.nl/passport')) )
+      [ self.add( (self.dtsURI('breedb'), DCAT.keyword, Literal(kw, lang='en')) ) for kw in ['BreeDB', 'Plant breeding', 'germplasm', 'passport data'] ]
+      [ self.add( (self.dtsURI('breedb'), DCAT.distribution, dist) ) for dist in [self.dtsURI('breedb-sparql'), self.dtsURI('breedb-sqldump')] ]
+      self.add( (self.dtsURI('breedb-sparql'), RDF.type, DCAT.Distribution) )
+      self.add( (self.dtsURI('breedb-sparql'), RDFS.label, Literal('SPARQL endpoint for BreeDB passport data')) )
+      self.add( (self.dtsURI('breedb-sparql'), DCTERMS.title, Literal('SPARQL endpoint for BreeDB passport data')) )
+      self.add( (self.dtsURI('breedb-sparql'), DCTERMS.license, URIRef('http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0')) )
+      self.add( (self.dtsURI('breedb-sparql'), DCTERMS.language, LANG.en) )
+      self.add( (self.dtsURI('breedb-sparql'), DCAT.accessURL, URIRef('http://virtuoso.biotools.nl:8888/sparql')) )
+      # TODO: Use SPARQL-SD to add named graph URI
+      [ self.add( (self.dtsURI('breedb-sparql'), DCAT.mediaType, Literal(mime)) ) for mime in ['text/turtle', 'application/rdf+xml', 'application/ld+json'] ]
+      self.add( (self.dtsURI('breedb-sqldump'), RDF.type, DCAT.Distribution) )
+      self.add( (self.dtsURI('breedb-sqldump'), RDFS.label, Literal('SQL dump of the BreeDB tomato germplasm data', lang='en')) )
+      self.add( (self.dtsURI('breedb-sqldump'), DCTERMS.title, Literal('SQL dump of the BreeDB tomato germplasm data', lang='en')) )
+      self.add( (self.dtsURI('breedb-sqldump'), DCTERMS.license, URIRef('http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0')) )
+      self.add( (self.dtsURI('breedb-sqldump'), DCTERMS.language, LANG.en) )
+      self.add( (self.dtsURI('breedb-sqldump'), DCAT.downloadURL, URIRef('http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql')) )
+      self.add( (self.dtsURI('breedb-sqldump'), DCAT.mediaType, Literal('application/sql')) )
+
+      return self
+
+if __name__ == '__main__':
+   g = FAIRGraph('http://fdp.biotools.nl:8080')
+   g.desFDP()
+   g.desCatalog()
+   g.desDataset()
+
+   print g.serialize(format='text/turtle') # pass mime-type
+   #print g.serialize(format='application/rdf+xml')
+   #print g.serialize(format='application/ld+json')
+
