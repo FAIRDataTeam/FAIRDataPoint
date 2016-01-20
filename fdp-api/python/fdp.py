@@ -17,18 +17,18 @@
 #
 #
 # FAIR Data Point (FDP) Service exposes the following endpoints (URL paths):
-#   /, /doc or /doc/     = Redirect to the RESTful Data API documentation (Swagger UI)
+#   [ /, /doc, /doc/ ]   = Redirect to the RESTful Data API documentation (Swagger UI)
 #   /fdp                 = returns FDP metadata
 #   /catalog/{catalogID} = returns catalog metadata (default: catalog-01)
 #   /dataset/{datasetID} = returns dataset metadata (default: breedb)
 #
 # This services makes extensive use of metadata defined by:
 #   Data Catalog Vocabulary (DCAT, http://www.w3.org/TR/vocab-dcat/)
-#   and Dublin Core Metadata Terms (DCMI, http://dublincore.org/documents/dcmi-terms/)
+#   Dublin Core Metadata Terms (DCMI, http://dublincore.org/documents/dcmi-terms/)
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3'
+__version__ = '0.3.1'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -41,9 +41,10 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 #metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
 
-# set FDP-, catalog- and dataset-level metadata (use case-specific)
-host=opt.bind
+# set use case-specific metadata for FDP, data catalog(s) and data set(s)
+host=opt.bind # host:[port] read from the command-line -b option
 g = FAIRGraph(host)
+
 g.setFdpMetadata(fdp_id='FDP-WUR-PB',
    catalog_ids=['catalog-01'],
    title='FAIR Data Point of the Plant Breeding Group, Wageningen UR',
@@ -89,52 +90,45 @@ g.setDatasetMetadata(
    ])
 
 # helper functions
-def httpError406():
-   abort(406, 'Requested RDF serialization of the metadata is not supported/valid.')
+def http_error406(mime_type):
+   return (406, "Sorry, the '%s' serialization of the metadata is not supported.\n" % mime_type)
+
+def http_response(graph, uri):
+   try:
+      mime_type = request.headers.get('Accept')
+      response.content_type = mime_type
+      return graph.serialize(uri, mime_type)
+
+   except:
+      response.content_type = 'plain/text'
+      response.status,response.body = http_error406(mime_type)
+      return response
 
 # implement request handlers
 @get(['/', '/doc', '/doc/'])
-def defaultPage():
+def default_page():
    redirect('/doc/index.html')
 
 @get('/doc/<fname:path>')
-def sourceDoc(fname):
+def source_doc(fname):
    return static_file(fname, root=doc_dir)
 
 @get('/fdp')
-def getFdpMetadata(graph=g):
+def fdp_metadata(graph=g):
    #return static_file('fairdatapoint.ttl', root=metadata_dir)
-   try:
-      mime_type = request.headers.get('Accept')
-      response.content_type = mime_type
-      return graph.serialize(graph.fdpURI(), mime_type)
-
-   except:
-      httpError406()
+   return http_response(graph, graph.fdpURI())
 
 @get('/catalog/<catalog_id>')
-def getCatalogMetadata(catalog_id, graph=g):
+def catalog_metadata(catalog_id, graph=g):
    #filename = '{catalog_id}.ttl'.format(catalog_id=catalog_id)
    #return static_file(filename, root=metadata_dir)
-   try:
-      mime_type = request.headers.get('Accept')
-      response.content_type = mime_type
-      return graph.serialize(graph.catURI(catalog_id), mime_type)
-
-   except:
-      httpError406()
+   return http_response(graph, graph.catURI(catalog_id))
 
 @get('/dataset/<dataset_id>')
-def getDatasetMetadata(dataset_id, graph=g):
+def dataset_metadata(dataset_id, graph=g):
    #filename = '{dataset_id}.ttl'.format(dataset_id=dataset_id)
    #return static_file(filename, root=metadata_dir)
-   try:
-      mime_type = request.headers.get('Accept')
-      response.content_type = mime_type
-      return graph.serialize(graph.datURI(dataset_id), mime_type)
-
-   except:
-      httpError406()
+   return http_response(graph, graph.datURI(dataset_id))
 
 if __name__ == '__main__':
    run(server='wsgiref')

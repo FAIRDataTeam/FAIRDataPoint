@@ -12,10 +12,10 @@ DBPEDIA = Namespace('http://dbpedia.org/resource/')
 
 class FAIRGraph(ConjunctiveGraph):
    def __init__(self, base_uri=None):
-      ConjunctiveGraph.__init__(self)
+      super(FAIRGraph, self).__init__()
       self.__base_uri = base_uri
 
-      # manage prefix -> namespace mappings
+      # bind prefixes to namespaces
       self.bind('dbp', DBPEDIA)
       self.bind('dct', DCTERMS)
       self.bind('dcat', DCAT)
