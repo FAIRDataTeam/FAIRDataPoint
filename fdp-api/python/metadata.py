@@ -1,5 +1,5 @@
-from rdflib import ConjunctiveGraph, URIRef, BNode, Literal
-from rdflib.namespace import Namespace, NamespaceManager, RDF, RDFS, DCTERMS, XSD, FOAF
+from rdflib import ConjunctiveGraph, URIRef, Literal
+from rdflib.namespace import Namespace, RDF, RDFS, DCTERMS, XSD
 from rdflib.plugin import register, Serializer
 
 # rdflib-jsonld module required

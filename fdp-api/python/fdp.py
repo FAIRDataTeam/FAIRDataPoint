@@ -33,9 +33,8 @@ __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
 import os
-import bottle
-from bottle import (get, run, static_file, redirect, response, request, abort, opt)
-from metadata import *
+from bottle import (get, run, static_file, redirect, response, request, opt)
+from metadata import FAIRGraph
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 #metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
