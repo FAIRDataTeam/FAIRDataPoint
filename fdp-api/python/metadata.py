@@ -11,17 +11,18 @@ LANG = Namespace('http://id.loc.gov/vocabulary/iso639-1/')
 DBPEDIA = Namespace('http://dbpedia.org/resource/')
 #SPARQLSD = Namespace('http://www.w3.org/ns/sparql-service-description#')
 
-class FAIRGraph(ConjunctiveGraph):
-   def __init__(self, base_uri=None):
-      super(FAIRGraph, self).__init__()
+class FAIRGraph(object):
+   def __init__(self, base_uri):
+      graph = ConjunctiveGraph()
+      self._graph = graph
       self.__base_uri = base_uri
 
       # bind prefixes to namespaces
-      self.bind('dbp', DBPEDIA)
-      self.bind('dct', DCTERMS)
-      self.bind('dcat', DCAT)
-      self.bind('lang', LANG)
-      #self.bind('sd', SPARQLSD)
+      graph.bind('dbp', DBPEDIA)
+      graph.bind('dct', DCTERMS)
+      graph.bind('dcat', DCAT)
+      graph.bind('lang', LANG)
+      #graph.bind('sd', SPARQLSD)
 
    @staticmethod
    def missingField(key, meta_type):
@@ -43,7 +44,7 @@ class FAIRGraph(ConjunctiveGraph):
       return URIRef(self.baseURI() + '/dataset/' + str(id))
 
    def serialize(self, uri, mime_type):
-      return self.get_context(uri).serialize(format=mime_type)
+      return self._graph_context(uri).serialize(format=mime_type)
 
    def setFdpMetadata(self, meta=None):
       assert(isinstance(meta, dict)), 'Use dict() for FDP metadata.'
@@ -51,7 +52,7 @@ class FAIRGraph(ConjunctiveGraph):
       assert(meta.has_key('catalog_ids')), self.missingField('catalog_ids', 'FDP')
 
       uri = self.fdpURI()
-      cg = self.get_context(uri)
+      cg = self._graph_context(uri)
       cg.add( (uri, RDF.type, DCTERMS.Agent) )
       cg.add( (uri, RDFS.seeAlso, self.docURI()) )
       cg.add( (uri, DCTERMS.identifier, Literal(meta['fdp_id'])) )
@@ -66,14 +67,14 @@ class FAIRGraph(ConjunctiveGraph):
       except:
          pass
 
-   def setCatalogMetadata(self, meta=None):
+   def setCatalogMetadata(self, meta):
       assert(isinstance(meta, dict)), 'Use dict() for Catalog metadata.'
       assert(meta.has_key('catalogs')), self.missingField('catalogs', 'Catalog')
       for cat in meta['catalogs']:
          assert(cat.has_key('catalog_id')), self.missingField('catalog_id', 'Catalog')
          assert(cat.has_key('dataset_ids')), self.missingField('dataset_ids', 'Catalog')
          uri = self.catURI(cat['catalog_id'])
-         cg = self.get_context(uri)
+         cg = self._graph_context(uri)
          cg.add( (uri, RDF.type, DCAT.Catalog) )
          cg.add( (uri, DCTERMS.identifier, Literal(cat['catalog_id'])) )
          cg.add( (uri, DCTERMS.language, LANG.en) )
@@ -91,14 +92,14 @@ class FAIRGraph(ConjunctiveGraph):
          except:
             pass
 
-   def setDatasetMetadata(self, meta=None):
+   def setDatasetMetadata(self, meta):
       assert(isinstance(meta, dict)), 'Use dict() for Dataset metadata.'
       assert(meta.has_key('datasets')), self.missingField('datasets', 'Dataset')
       for dat in meta['datasets']:
          assert(dat.has_key('dataset_id')), self.missingField('dataset_id', 'Dataset')
          assert(dat.has_key('distributions')), self.missingField('distributions', 'Dataset')
          uri_dat = self.datURI(dat['dataset_id'])
-         cg = self.get_context(uri_dat)
+         cg = self._graph_context(uri_dat)
          cg.add( (uri_dat, RDF.type, DCAT.Dataset) )
          cg.add( (uri_dat, DCTERMS.identifier, Literal(dat['dataset_id'])) )
          cg.add( (uri_dat, DCTERMS.language, LANG.en) )
@@ -136,3 +137,5 @@ class FAIRGraph(ConjunctiveGraph):
             except:
                pass
 
+   def _graph_context(self, uri):
+      return self._graph.get_context(uri)
