@@ -9,6 +9,7 @@ register('application/ld+json', Serializer, 'rdflib_jsonld.serializer', 'JsonLDS
 DCAT = Namespace('http://www.w3.org/ns/dcat#')
 LANG = Namespace('http://id.loc.gov/vocabulary/iso639-1/')
 DBPEDIA = Namespace('http://dbpedia.org/resource/')
+#SPARQLSD = Namespace('http://www.w3.org/ns/sparql-service-description#')
 
 class FAIRGraph(ConjunctiveGraph):
    def __init__(self, base_uri=None):
@@ -20,7 +21,12 @@ class FAIRGraph(ConjunctiveGraph):
       self.bind('dct', DCTERMS)
       self.bind('dcat', DCAT)
       self.bind('lang', LANG)
+      #self.bind('sd', SPARQLSD)
 
+   @staticmethod
+   def missingField(key, meta_type):
+      return "Missing key '%s' in %s metadata dict()." % (key, meta_type)
+   
    def baseURI(self):
       return URIRef(self.__base_uri)
 
@@ -39,72 +45,94 @@ class FAIRGraph(ConjunctiveGraph):
    def serialize(self, uri, mime_type):
       return self.get_context(uri).serialize(format=mime_type)
 
-   def setFdpMetadata(self, **kw):
+   def setFdpMetadata(self, meta=None):
+      assert(isinstance(meta, dict)), 'Use dict() for FDP metadata.'
+      assert(meta.has_key('fdp_id')), self.missingField('fdp_id', 'FDP')
+      assert(meta.has_key('catalog_ids')), self.missingField('catalog_ids', 'FDP')
+
       uri = self.fdpURI()
       cg = self.get_context(uri)
       cg.add( (uri, RDF.type, DCTERMS.Agent) )
       cg.add( (uri, RDFS.seeAlso, self.docURI()) )
-      if kw.has_key('catalog_ids'):
-         [ cg.add( (uri, RDFS.seeAlso, self.catURI(id)) )\
-            for id in kw['catalog_ids'] ]
-      if kw.has_key('title'): cg.add( (uri, RDFS.label, Literal(kw['title'], lang='en')) )
-      if kw.has_key('fdp_id'): cg.add( (uri, DCTERMS.identifier, Literal(kw['fdp_id'])) )
-      if kw.has_key('title'): cg.add( (uri, DCTERMS.title, Literal(kw['title'], lang='en')) )
-      if kw.has_key('des'): cg.add( (uri, DCTERMS.description, Literal(kw['des'])) )
+      cg.add( (uri, DCTERMS.identifier, Literal(meta['fdp_id'])) )
       cg.add( (uri, DCTERMS.language, LANG.en) )
+      [ cg.add( (uri, RDFS.seeAlso, self.catURI(id)) )\
+         for id in meta['catalog_ids'] ]
 
-   def setCatalogMetadata(self, **kw):
-      if not kw.has_key('catalogs'): return
-      for cat in kw['catalogs']:
-         if not cat.has_key('catalog_id'): return
+      try: # optional fields
+         cg.add( (uri, RDFS.label, Literal(meta['title'], lang='en')) )
+         cg.add( (uri, DCTERMS.title, Literal(meta['title'], lang='en')) )
+         cg.add( (uri, DCTERMS.description, Literal(meta['des'])) )
+      except:
+         pass
+
+   def setCatalogMetadata(self, meta=None):
+      assert(isinstance(meta, dict)), 'Use dict() for Catalog metadata.'
+      assert(meta.has_key('catalogs')), self.missingField('catalogs', 'Catalog')
+      for cat in meta['catalogs']:
+         assert(cat.has_key('catalog_id')), self.missingField('catalog_id', 'Catalog')
+         assert(cat.has_key('dataset_ids')), self.missingField('dataset_ids', 'Catalog')
          uri = self.catURI(cat['catalog_id'])
          cg = self.get_context(uri)
          cg.add( (uri, RDF.type, DCAT.Catalog) )
-         if cat.has_key('title'): cg.add( (uri, RDFS.label, Literal(cat['title'], lang='en')) )
-         if cat.has_key('catalog_id'): cg.add( (uri, DCTERMS.identifier, Literal(cat['catalog_id'])) )
-         if cat.has_key('title'): cg.add( (uri, DCTERMS.title, Literal(cat['title'], lang='en')) )
-         if cat.has_key('des'): cg.add( (uri, DCTERMS.description, Literal(cat['des'])) )
-         if cat.has_key('publisher'): cg.add( (uri, DCTERMS.publisher, URIRef(cat['publisher'])) )
-         if cat.has_key('issued'): cg.add( (uri, DCTERMS.issued, Literal(cat['issued'], datatype=XSD.date)) )
-         if cat.has_key('modified'): cg.add( (uri, DCTERMS.modified, Literal(cat['modified'], datatype=XSD.date)) )
+         cg.add( (uri, DCTERMS.identifier, Literal(cat['catalog_id'])) )
          cg.add( (uri, DCTERMS.language, LANG.en) )
          cg.add( (uri, DCAT.themeTaxonomy, DBPEDIA.Breeding) ) # FIXME
-         if cat.has_key('dataset_ids'):
-            [ cg.add( (uri, DCAT.dataset, self.datURI(dataset_id)) )\
-               for dataset_id in cat['dataset_ids'] ]
+         [ cg.add( (uri, DCAT.dataset, self.datURI(dataset_id)) )\
+            for dataset_id in cat['dataset_ids'] ]
 
-   def setDatasetMetadata(self, **kw):
-      if not kw.has_key('datasets'): return
-      for dat in kw['datasets']:
-         if not dat.has_key('dataset_id'): return
+         try: # optional fields
+            cg.add( (uri, RDFS.label, Literal(cat['title'], lang='en')) )
+            cg.add( (uri, DCTERMS.title, Literal(cat['title'], lang='en')) )
+            cg.add( (uri, DCTERMS.description, Literal(cat['des'])) )
+            cg.add( (uri, DCTERMS.publisher, URIRef(cat['publisher'])) )
+            cg.add( (uri, DCTERMS.issued, Literal(cat['issued'], datatype=XSD.date)) )
+            cg.add( (uri, DCTERMS.modified, Literal(cat['modified'], datatype=XSD.date)) )
+         except:
+            pass
+
+   def setDatasetMetadata(self, meta=None):
+      assert(isinstance(meta, dict)), 'Use dict() for Dataset metadata.'
+      assert(meta.has_key('datasets')), self.missingField('datasets', 'Dataset')
+      for dat in meta['datasets']:
+         assert(dat.has_key('dataset_id')), self.missingField('dataset_id', 'Dataset')
+         assert(dat.has_key('distributions')), self.missingField('distributions', 'Dataset')
          uri_dat = self.datURI(dat['dataset_id'])
          cg = self.get_context(uri_dat)
          cg.add( (uri_dat, RDF.type, DCAT.Dataset) )
-         if dat.has_key('title'): cg.add( (uri_dat, RDFS.label, Literal(dat['title'], lang='en')) )
-         if dat.has_key('dataset_id'): cg.add( (uri_dat, DCTERMS.identifier, Literal(dat['dataset_id'])) )
-         if dat.has_key('title'): cg.add( (uri_dat, DCTERMS.title, Literal(dat['title'], lang='en')) )
-         if dat.has_key('des'): cg.add( (uri_dat, DCTERMS.description, Literal(dat.has_key('des'), lang='en')) )
-         if dat.has_key('publisher'): cg.add( (uri_dat, DCTERMS.publisher, URIRef(dat['publisher'])) )
-         if dat.has_key('issued'): cg.add( (uri_dat, DCTERMS.issued, Literal(dat['issued'], datatype=XSD.date)) )
-         if dat.has_key('modified'): cg.add( (uri_dat, DCTERMS.modified, Literal(dat['modified'], datatype=XSD.date)) )
+         cg.add( (uri_dat, DCTERMS.identifier, Literal(dat['dataset_id'])) )
          cg.add( (uri_dat, DCTERMS.language, LANG.en) )
          cg.add( (uri_dat, DCAT.theme, DBPEDIA.Plant_breeding) ) # FIXME
-         if dat.has_key('landing_page'): cg.add( (uri_dat, DCAT.landingPage, URIRef(dat['landing_page'])) )
-         if dat.has_key('keywords'):
-            [ cg.add( (uri_dat, DCAT.keyword, Literal(kw, lang='en')) )\
-               for kw in dat['keywords'] ]
+
+         cg.add( (uri_dat, RDFS.label, Literal(dat['title'], lang='en')) )
+         cg.add( (uri_dat, DCTERMS.title, Literal(dat['title'], lang='en')) )
+         cg.add( (uri_dat, DCTERMS.description, Literal(dat.has_key('des'), lang='en')) )
+         cg.add( (uri_dat, DCTERMS.publisher, URIRef(dat['publisher'])) )
+         cg.add( (uri_dat, DCTERMS.issued, Literal(dat['issued'], datatype=XSD.date)) )
+         cg.add( (uri_dat, DCTERMS.modified, Literal(dat['modified'], datatype=XSD.date)) )
+         cg.add( (uri_dat, DCAT.landingPage, URIRef(dat['landing_page'])) )
+         [ cg.add( (uri_dat, DCAT.keyword, Literal(kw, lang='en')) )\
+            for kw in dat['keywords'] ]
 
          for dist in dat['distributions']:
+            assert(isinstance(dist, dict)), 'Use dict() for Dataset/distribution metadata.'
+            assert(dist.has_key('distribution_id')), self.missingField('distribution_id', 'Dataset/distribution')
             uri_dist = self.datURI(dist['distribution_id'])
             cg.add( (uri_dat, DCAT.distribution, uri_dist) )
             cg.add( (uri_dist, RDF.type, DCAT.Distribution) )
-            if dist.has_key('title'): cg.add( (uri_dist, RDFS.label, Literal(dist['title'])) )
-            if dist.has_key('title'): cg.add( (uri_dist, DCTERMS.title, Literal(dist['title'])) )
-            if dist.has_key('des'): cg.add( (uri_dist, DCTERMS.description, Literal(dist['des'], lang='en')) )
-            if dist.has_key('license'): cg.add( (uri_dist, DCTERMS.license, URIRef(dist['license'])) )
-            if dist.has_key('access_url'): cg.add( (uri_dist, DCAT.accessURL, URIRef(dist['access_url'])) )
-            if dist.has_key('download_url'): cg.add( (uri_dist, DCAT.downloadURL, URIRef(dist['download_url'])) )
-            if dist.has_key('media_types'):
+
+            #if (dist.has_key('access_url')): cg.add( (uri_dist, RDF.type, SPARQLSD.Service) )
+            
+            try:
+               cg.add( (uri_dist, RDFS.label, Literal(dist['title'])) )
+               cg.add( (uri_dist, DCTERMS.title, Literal(dist['title'])) )
+               cg.add( (uri_dist, DCTERMS.description, Literal(dist['des'], lang='en')) )
+               cg.add( (uri_dist, DCTERMS.license, URIRef(dist['license'])) )
+               cg.add( (uri_dist, DCAT.accessURL, URIRef(dist['access_url'])) )
+               cg.add( (uri_dist, DCAT.downloadURL, URIRef(dist['download_url'])) )
                [ cg.add( (uri_dist, DCAT.mediaType, Literal(mime)) ) for mime in dist['media_types'] ]
-            # TODO: Use SPARQL-SD to add named graph URI
+               #cg.add( (uri_dist, SPARQLSD.endpoint, URIRef(dist['access_url'])) )
+
+            except:
+               pass
 
