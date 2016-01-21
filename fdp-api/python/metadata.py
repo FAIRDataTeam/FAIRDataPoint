@@ -46,7 +46,7 @@ class FAIRGraph(object):
    def serialize(self, uri, mime_type):
       return self._graph_context(uri).serialize(format=mime_type)
 
-   def setFdpMetadata(self, meta=None):
+   def setFdpMetadata(self, meta):
       assert(isinstance(meta, dict)), 'Use dict() for FDP metadata.'
       assert(meta.has_key('fdp_id')), self.missingField('fdp_id', 'FDP')
       assert(meta.has_key('catalog_ids')), self.missingField('catalog_ids', 'FDP')
@@ -57,8 +57,8 @@ class FAIRGraph(object):
       cg.add( (uri, RDFS.seeAlso, self.docURI()) )
       cg.add( (uri, DCTERMS.identifier, Literal(meta['fdp_id'])) )
       cg.add( (uri, DCTERMS.language, LANG.en) )
-      [ cg.add( (uri, RDFS.seeAlso, self.catURI(id)) )\
-         for id in meta['catalog_ids'] ]
+      for id in meta['catalog_ids']:
+         cg.add( (uri, RDFS.seeAlso, self.catURI(id)) )
 
       try: # optional fields
          cg.add( (uri, RDFS.label, Literal(meta['title'], lang='en')) )
@@ -112,8 +112,8 @@ class FAIRGraph(object):
          cg.add( (uri_dat, DCTERMS.issued, Literal(dat['issued'], datatype=XSD.date)) )
          cg.add( (uri_dat, DCTERMS.modified, Literal(dat['modified'], datatype=XSD.date)) )
          cg.add( (uri_dat, DCAT.landingPage, URIRef(dat['landing_page'])) )
-         [ cg.add( (uri_dat, DCAT.keyword, Literal(kw, lang='en')) )\
-            for kw in dat['keywords'] ]
+         for kw in dat['keywords']:
+            cg.add( (uri_dat, DCAT.keyword, Literal(kw, lang='en')) )
 
          for dist in dat['distributions']:
             assert(isinstance(dist, dict)), 'Use dict() for Dataset/distribution metadata.'
@@ -131,7 +131,8 @@ class FAIRGraph(object):
                cg.add( (uri_dist, DCTERMS.license, URIRef(dist['license'])) )
                cg.add( (uri_dist, DCAT.accessURL, URIRef(dist['access_url'])) )
                cg.add( (uri_dist, DCAT.downloadURL, URIRef(dist['download_url'])) )
-               [ cg.add( (uri_dist, DCAT.mediaType, Literal(mime)) ) for mime in dist['media_types'] ]
+               for mime in dist['media_types']:
+                  cg.add( (uri_dist, DCAT.mediaType, Literal(mime)) )
                #cg.add( (uri_dist, SPARQLSD.endpoint, URIRef(dist['access_url'])) )
 
             except:
