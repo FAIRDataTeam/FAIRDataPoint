@@ -28,7 +28,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -72,7 +72,7 @@ g.setDatasetMetadata(meta=dict(
       publisher='http://orcid.org/0000-0002-4368-8058',
       issued='2015-11-24',
       modified='2015-11-24',
-      landing_page='https://www.eu-sol.wur.nl/passport',
+      landing_page='http://www.eu-sol.wur.nl/passport',
       keywords=['BreeDB', 'Plant breeding', 'germplasm', 'passport data'],
       distributions=[
          dict(distribution_id='breedb-sparql',
@@ -80,7 +80,8 @@ g.setDatasetMetadata(meta=dict(
             des='SPARQL endpoint for BreeDB tomato passport data',
             license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
             access_url='http://virtuoso.biotools.nl:8888/sparql',
-            media_types=['text/turtle', 'application/rdf+xml']
+            # graph_uri = 'https://www.eu-sol.wur.nl/passport', # TODO
+            media_types=['text/n3', 'application/rdf+xml']
          ),
          dict(distribution_id='breedb-sqldump',
             title='SQL dump of the BreeDB tomato passport data',
@@ -92,25 +93,21 @@ g.setDatasetMetadata(meta=dict(
       ])
    ]))
 
-# helper functions
-#def httpError406(mime_type):
-#   return (406, "Sorry, the '%s' serialization of the metadata is not supported.\n" % mime_type)
-
 def httpResponse(graph, uri):
+   mime_type = ''
    accept_header = request.headers.get('Accept')
-   mime_type = 'text/turtle' # default: turtle
-   if 'text/turtle' in accept_header: mime_type = 'text/turtle'
-   if 'rdf+xml' in accept_header: mime_type = 'application/rdf+xml'
-   if 'ld+json' in accept_header: mime_type = 'application/ld+json'
 
-   #try:
+   if 'n3' in accept_header:
+      mime_type = 'text/n3'
+   elif 'rdf+xml' in accept_header:
+      mime_type = 'application/rdf+xml'
+   elif 'ld+json' in accept_header:
+      mime_type = 'application/ld+json'
+   else:
+      mime_type = 'text/turtle'
+
    response.content_type = mime_type
    return graph.serialize(uri, mime_type)
-
-   #except:
-   #   response.content_type = 'plain/text'
-   #   response.status,response.body = httpError406(mime_type)
-   #   return response
 
 # implement request handlers
 @get(['/', '/doc', '/doc/'])
@@ -123,19 +120,14 @@ def sourceDocFiles(fname):
 
 @get('/fdp')
 def getFdpMetadata(graph=g):
-   #return static_file('fairdatapoint.ttl', root=metadata_dir)
    return httpResponse(graph, graph.fdpURI())
 
 @get('/catalog/<catalog_id>')
 def getCatalogMetadata(catalog_id, graph=g):
-   #filename = '{catalog_id}.ttl'.format(catalog_id=catalog_id)
-   #return static_file(filename, root=metadata_dir)
    return httpResponse(graph, graph.catURI(catalog_id))
 
 @get('/dataset/<dataset_id>')
 def getDatasetMetadata(dataset_id, graph=g):
-   #filename = '{dataset_id}.ttl'.format(dataset_id=dataset_id)
-   #return static_file(filename, root=metadata_dir)
    return httpResponse(graph, graph.datURI(dataset_id))
 
 if __name__ == '__main__':
