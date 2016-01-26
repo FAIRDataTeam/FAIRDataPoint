@@ -75,6 +75,10 @@ public class ExampleTurtleFiles {
         RepositoryConnection conn = null;        
         try {
             String content = getTurtleAsString(fileName);
+            /**
+             * we are using simple string replacement to replace the base uri of 
+             * RDF file. In future we should use more elegant code.  
+             */
             if(baseURI != null && !baseURI.isEmpty()) {                
                 content = content.replaceAll(BASE_URI, baseURI);
             }
