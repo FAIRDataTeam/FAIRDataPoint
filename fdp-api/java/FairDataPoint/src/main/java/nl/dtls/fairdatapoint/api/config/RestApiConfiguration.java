@@ -2,7 +2,6 @@ package nl.dtls.fairdatapoint.api.config;
 
 
 import java.net.URISyntaxException;
-import nl.dtls.fairdatapoint.api.controller.MetadataController;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
@@ -34,14 +33,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  *
  * @author Rajaram Kaliyaperumal
  * @since 2015-11-19
- * @version 0.1
+ * @version 0.1.1
  */
 @EnableWebMvc
 @Configuration
 @Import(ApplicationSwaggerConfig.class)
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.api.controller")
-@PropertySource(value = {"classpath:/config/fdp-server.properties", 
-    "classpath:/config/triple-store.properties"})
+@PropertySource({"${fdp.server.conf:classpath:/conf/fdp-server.properties}", 
+    "${fdp.tripleStore.conf:classpath:/conf/triple-store.properties}"})
 public class RestApiConfiguration extends WebMvcConfigurerAdapter {  
     private final static Logger LOGGER 
             = LogManager.getLogger(RestApiConfiguration.class);
