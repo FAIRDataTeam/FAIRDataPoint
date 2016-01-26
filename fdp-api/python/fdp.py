@@ -35,14 +35,17 @@ __license__ = 'Apache Lincense, Version 2.0'
 import os
 from bottle import (get, run, static_file, redirect, response, request, opt)
 from metadata import FAIRGraph
+from miniuri import Uri
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 #metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
 
 # set use case-specific metadata for FDP, data catalog(s) and data set(s)
-host=opt.bind # host:[port] read from the command-line -b option
-g = FAIRGraph(host)
+host = opt.bind # host:[port] read from the command-line -b option
+u = Uri(host)
+u.scheme = 'http' # add scheme to host
+g = FAIRGraph(u.uri)
 
 g.setFdpMetadata(meta=dict(
       fdp_id='FDP-WUR-PB',
