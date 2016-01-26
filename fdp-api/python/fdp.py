@@ -17,51 +17,127 @@
 #
 #
 # FAIR Data Point (FDP) Service exposes the following endpoints (URL paths):
-#   /, /doc or /doc/     = Redirect to the RESTful Data API documentation (Swagger UI)
+#   [ /, /doc, /doc/ ]   = Redirect to the RESTful Data API documentation (Swagger UI)
 #   /fdp                 = returns FDP metadata
 #   /catalog/{catalogID} = returns catalog metadata (default: catalog-01)
 #   /dataset/{datasetID} = returns dataset metadata (default: breedb)
 #
 # This services makes extensive use of metadata defined by:
 #   Data Catalog Vocabulary (DCAT, http://www.w3.org/TR/vocab-dcat/)
-#   and Dublin Core Metadata Terms (DCMI, http://dublincore.org/documents/dcmi-terms/)
+#   Dublin Core Metadata Terms (DCMI, http://dublincore.org/documents/dcmi-terms/)
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.2'
+__version__ = '0.3.3'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
 import os
-import bottle
-from bottle import (get, route, run, static_file, redirect)
+from bottle import (get, run, static_file, redirect, response, request, opt)
+from metadata import FAIRGraph
+from miniuri import Uri
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
-metadata_dir = os.path.join(project_dir, 'metadata/')
+#metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
 
+# set use case-specific metadata for FDP, data catalog(s) and data set(s)
+host = opt.bind # host:[port] read from the command-line -b option
+u = Uri(host)
+u.scheme = 'http' # add scheme to host
+g = FAIRGraph(u.uri)
+
+g.setFdpMetadata(meta=dict(
+      fdp_id='FDP-WUR-PB',
+      catalog_ids=['catalog-01'],
+      title='FAIR Data Point of the Plant Breeding Group, Wageningen UR',
+      des='This FDP provides metadata on plant-specific genotype/phenotype data sets.'))
+
+g.setCatalogMetadata(meta=dict(
+   catalogs=[
+     dict(catalog_id='catalog-01',
+     title='Plant Breeding Data Catalog',
+     des='Plant Breeding Data Catalog',
+     publisher='http://orcid.org/0000-0002-4368-8058',
+     issued='2015-11-24',
+     modified='2015-11-24',
+     dataset_ids=['breedb'])
+   ]))
+
+g.setDatasetMetadata(meta=dict(
+   datasets=[
+      dict(dataset_id='breedb',
+      title='BreeDB tomato passport data',
+      des='BreeDB tomato passport data',
+      publisher='http://orcid.org/0000-0002-4368-8058',
+      issued='2015-11-24',
+      modified='2015-11-24',
+      landing_page='https://www.eu-sol.wur.nl/passport',
+      keywords=['BreeDB', 'Plant breeding', 'germplasm', 'passport data'],
+      distributions=[
+         dict(distribution_id='breedb-sparql',
+            title='SPARQL endpoint for BreeDB tomato passport data',
+            des='SPARQL endpoint for BreeDB tomato passport data',
+            license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
+            access_url='http://virtuoso.biotools.nl:8888/sparql',
+            media_types=['text/turtle', 'application/rdf+xml']
+         ),
+         dict(distribution_id='breedb-sqldump',
+            title='SQL dump of the BreeDB tomato passport data',
+            des='SQL dump of the BreeDB tomato passport data',
+            license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
+            download_url='http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql',
+            media_types=['application/sql']
+         )
+      ])
+   ]))
+
+# helper functions
+#def httpError406(mime_type):
+#   return (406, "Sorry, the '%s' serialization of the metadata is not supported.\n" % mime_type)
+
+def httpResponse(graph, uri):
+   accept_header = request.headers.get('Accept')
+   mime_type = 'text/turtle' # default: turtle
+   if 'text/turtle' in accept_header: mime_type = 'text/turtle'
+   if 'rdf+xml' in accept_header: mime_type = 'application/rdf+xml'
+   if 'ld+json' in accept_header: mime_type = 'application/ld+json'
+
+   #try:
+   response.content_type = mime_type
+   return graph.serialize(uri, mime_type)
+
+   #except:
+   #   response.content_type = 'plain/text'
+   #   response.status,response.body = httpError406(mime_type)
+   #   return response
+
+# implement request handlers
 @get(['/', '/doc', '/doc/'])
-def default_page():
+def defaultPage():
    redirect('/doc/index.html')
 
 @get('/doc/<fname:path>')
-def doc_files(fname):
+def sourceDocFiles(fname):
    return static_file(fname, root=doc_dir)
 
 @get('/fdp')
-def FAIRDataPointMetadata():
-   return static_file('fairdatapoint.ttl', root=metadata_dir)
+def getFdpMetadata(graph=g):
+   #return static_file('fairdatapoint.ttl', root=metadata_dir)
+   return httpResponse(graph, graph.fdpURI())
 
-@get('/catalog/<catalogID>')
-def CatalogMetadata(catalogID):
-   filename = '{catalogID}.ttl'.format(catalogID=catalogID)
-   return static_file(filename, root=metadata_dir)
+@get('/catalog/<catalog_id>')
+def getCatalogMetadata(catalog_id, graph=g):
+   #filename = '{catalog_id}.ttl'.format(catalog_id=catalog_id)
+   #return static_file(filename, root=metadata_dir)
+   return httpResponse(graph, graph.catURI(catalog_id))
 
-@get('/dataset/<datasetID>')
-def DatasetMetadata(datasetID):
-   filename = '{datasetID}.ttl'.format(datasetID=datasetID)
-   return static_file(filename, root=metadata_dir)
+@get('/dataset/<dataset_id>')
+def getDatasetMetadata(dataset_id, graph=g):
+   #filename = '{dataset_id}.ttl'.format(dataset_id=dataset_id)
+   #return static_file(filename, root=metadata_dir)
+   return httpResponse(graph, graph.datURI(dataset_id))
 
 if __name__ == '__main__':
-   run(host='fdp.biotools.nl', port=8080, server='wsgiref', debug=True)
+   run(server='wsgiref')
 
