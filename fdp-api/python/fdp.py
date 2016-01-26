@@ -28,7 +28,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -93,19 +93,24 @@ g.setDatasetMetadata(meta=dict(
    ]))
 
 # helper functions
-def httpError406(mime_type):
-   return (406, "Sorry, the '%s' serialization of the metadata is not supported.\n" % mime_type)
+#def httpError406(mime_type):
+#   return (406, "Sorry, the '%s' serialization of the metadata is not supported.\n" % mime_type)
 
 def httpResponse(graph, uri):
-   try:
-      mime_type = request.headers.get('Accept')
-      response.content_type = mime_type
-      return graph.serialize(uri, mime_type)
+   accept_header = request.headers.get('Accept')
+   mime_type = 'text/turtle' # default: turtle
+   if 'text/turtle' in accept_header: mime_type = 'text/turtle'
+   if 'rdf+xml' in accept_header: mime_type = 'application/rdf+xml'
+   if 'ld+json' in accept_header: mime_type = 'application/ld+json'
 
-   except:
-      response.content_type = 'plain/text'
-      response.status,response.body = httpError406(mime_type)
-      return response
+   #try:
+   response.content_type = mime_type
+   return graph.serialize(uri, mime_type)
+
+   #except:
+   #   response.content_type = 'plain/text'
+   #   response.status,response.body = httpError406(mime_type)
+   #   return response
 
 # implement request handlers
 @get(['/', '/doc', '/doc/'])
