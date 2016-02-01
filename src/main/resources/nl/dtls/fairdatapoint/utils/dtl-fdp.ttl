@@ -5,6 +5,5 @@
 
 <http://semlab1.liacs.nl:8080/fdp> dct:title "DTL beta FAIR data point" ;
        dct:language lang:en;
-       dtlOnto:contains <http://semlab1.liacs.nl:8080/fdp/plantBreeding> ;
-       dtlOnto:contains <http://semlab1.liacs.nl:8080/fdp/biosamples> .
+       dtlOnto:contains <http://semlab1.liacs.nl:8080/fdp/plantBreeding> .
         
