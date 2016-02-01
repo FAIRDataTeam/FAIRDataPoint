@@ -27,24 +27,31 @@ class FAIRGraph(object):
    @staticmethod
    def missingField(key, meta_type):
       return "Missing key '%s' in %s metadata dict()." % (key, meta_type)
+
    
    def baseURI(self):
       return URIRef(self.__base_uri)
 
+
    def docURI(self):
       return URIRef(self.baseURI() + '/doc')
+
 
    def fdpURI(self):
       return URIRef(self.baseURI() + '/fdp')
 
+
    def catURI(self, id):
       return URIRef(self.baseURI() + '/catalog/' + str(id))
+
 
    def datURI(self, id):
       return URIRef(self.baseURI() + '/dataset/' + str(id))
 
+
    def serialize(self, uri, mime_type):
       return self._graph_context(uri).serialize(format=mime_type)
+
 
    def setFdpMetadata(self, meta):
       assert(isinstance(meta, dict)), 'Use dict() for FDP metadata.'
@@ -57,8 +64,8 @@ class FAIRGraph(object):
       cg.add( (uri, RDFS.seeAlso, self.docURI()) )
       cg.add( (uri, DCTERMS.identifier, Literal(meta['fdp_id'])) )
       cg.add( (uri, DCTERMS.language, LANG.en) )
-      for id in meta['catalog_ids']:
-         cg.add( (uri, RDFS.seeAlso, self.catURI(id)) )
+      for catalog_id in meta['catalog_ids']:
+         cg.add( (uri, RDFS.seeAlso, self.catURI(catalog_id)) )
 
       if 'title' in meta:
          cg.add( (uri, RDFS.label, Literal(meta['title'], lang='en')) )
@@ -66,6 +73,7 @@ class FAIRGraph(object):
 
       if 'des' in meta:
          cg.add( (uri, DCTERMS.description, Literal(meta['des'])) )
+
 
    def setCatalogMetadata(self, meta):
       assert(isinstance(meta, dict)), 'Use dict() for Catalog metadata.'
