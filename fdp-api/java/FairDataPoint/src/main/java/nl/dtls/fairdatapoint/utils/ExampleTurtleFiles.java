@@ -48,9 +48,12 @@ public class ExampleTurtleFiles {
         try {
             File npFile;
             npFile = new File(fileURL.toURI());
+            StringBuilder buf = new StringBuilder();
             for (String fileLine : readLines(npFile, StandardCharsets.UTF_8)) {
-                content += fileLine+"\n";
-            }          
+                buf.append(fileLine);
+                buf.append("\n");
+            }
+            content = buf.toString();
         } catch (IOException | URISyntaxException ex) {
             LOGGER.error("Error getting turle file",ex);   
         
@@ -97,6 +100,8 @@ public class ExampleTurtleFiles {
             }
         }
         catch (RepositoryException | IOException | RDFParseException e) {
+            LOGGER.error("Error storing RDF file",e);
+            LOGGER.error("File name <",fileName, ">");
         }
         finally {
             try {
@@ -105,6 +110,7 @@ public class ExampleTurtleFiles {
                 }
             }
             catch (Exception e) {
+                LOGGER.error("Error closing repository connection",e);
             }
         }
     }

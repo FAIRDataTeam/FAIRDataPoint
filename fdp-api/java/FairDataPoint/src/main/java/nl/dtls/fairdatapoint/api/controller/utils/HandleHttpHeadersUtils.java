@@ -56,8 +56,7 @@ public class HandleHttpHeadersUtils {
     
     public static RDFFormat requestedContentType(String contentType) {        
         RDFFormat requesetedContentType = null;    
-        if (contentType.contentEquals(RDFFormat.TURTLE.getDefaultMIMEType()) ||                         
-                contentType == null ||         
+        if (contentType.contentEquals(RDFFormat.TURTLE.getDefaultMIMEType()) ||         
                 contentType.contains(MediaType.ALL_VALUE)) {
             requesetedContentType = RDFFormat.TURTLE;
         }
