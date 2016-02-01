@@ -31,6 +31,9 @@
                 "description": "This endpoint returns information about the FDP itself.",
                 "responses": {
                     "200": {
+                        "schema": {
+                            "type": "string"
+                        },
                         "description": "Success"
                     }
                 }
@@ -52,6 +55,9 @@
                 ],
                 "responses": {
                     "200": {
+                        "schema": {
+                            "type": "string"
+                        },
                         "description": "Success"
                     }
                 }
@@ -73,6 +79,9 @@
                 ],
                 "responses": {
                     "200": {
+                        "schema": {
+                            "type": "string"
+                        },
                         "description": "Success"
                     }
                 }
