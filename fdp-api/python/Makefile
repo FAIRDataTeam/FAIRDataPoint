@@ -13,7 +13,7 @@ doc:
 	git clone https://github.com/swagger-api/swagger-ui.git
 	mv swagger-ui/dist/* doc
 	rm -fr swagger-ui
-	sed -i .org 's/http:.*\(swagger.json\)/\/doc\/\1/' doc/index.html
+	sed -i.org 's/http:.*\(swagger.json\)/\/doc\/\1/' doc/index.html
 
 install: requirements doc
 
@@ -22,7 +22,7 @@ reinstall:
 
 clean:
 	rm -f *.pyc
-	find doc ! -name swagger.json -delete
+	cd doc && find . ! -name swagger.json -delete
 
 serve-dev:
 	python -m bottle --debug --reload --bind $(HOST_DEV) $(APP)
