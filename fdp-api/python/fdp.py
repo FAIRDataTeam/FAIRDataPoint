@@ -107,6 +107,8 @@ def httpResponse(graph, uri):
       mime_type = 'text/turtle'
 
    response.content_type = mime_type
+   response.set_header('Allow', 'GET')  
+
    return graph.serialize(uri, mime_type)
 
 # implement request handlers
