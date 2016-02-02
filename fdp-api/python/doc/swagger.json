@@ -1,9 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "0.2",
+        "version": "0.3",
         "title": "FAIR Data Point Service",
-        "description": "Provides metadata about the FAIR Data Point (FDP) itself, data catalogs and data sets available via the FDP.",
+        "description": "Provides metadata about the FAIR Data Point (FDP) itself, catalogs, datasets and their distributions available through the FDP.",
         "contact": {
             "name": "Netherlands eScience Center",
             "url": "https://www.esciencecenter.nl",
@@ -28,7 +28,7 @@
         "/fdp": {
             "get": {
                 "summary": "FDP metadata",
-                "description": "This endpoint returns information about the FDP itself.",
+                "description": "This entry point returns information about FDP itself.",
                 "responses": {
                     "200": {
                         "schema": {
@@ -42,7 +42,7 @@
         "/catalog/{catalogID}": {
             "get": {
                 "summary": "Catalog metadata",
-                "description": "This endpoint returns a curated collection of metadata about data sets in a catalog available via the FDP.",
+                "description": "This entry point returns information about datasets available in a catalog.",
                 "parameters": [
                     {
                         "name": "catalogID",
@@ -65,8 +65,8 @@
         },
         "/dataset/{datasetID}": {
             "get": {
-                "summary": "Data set metadata",
-                "description": "This endpoint returns information about a data set available via the FDP.",
+                "summary": "Dataset metadata",
+                "description": "This entry point returns information about a dataset.",
                 "parameters": [
                     {
                         "name": "datasetID",
@@ -74,6 +74,30 @@
                         "description": "datasetID",
                         "type": "string",
                         "default": "breedb",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/distribution/{distributionID}": {
+            "get": {
+                "summary": "Distribution metadata",
+                "description": "This entry point returns information about a distribution of a dataset.",
+                "parameters": [
+                    {
+                        "name": "distributionID",
+                        "in": "path",
+                        "description": "distributionID",
+                        "type": "string",
+                        "default": "breedb-sparql",
                         "required": true
                     }
                 ],
