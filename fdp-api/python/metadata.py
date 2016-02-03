@@ -34,20 +34,22 @@ class FAIRGraph(object):
 
 
    def docURI(self):
-      return URIRef(self.baseURI() + '/doc')
+      return URIRef('%s/doc' % self.baseURI())
 
 
    def fdpURI(self):
-      return URIRef(self.baseURI() + '/fdp')
+      return URIRef('%s/fdp' % self.baseURI())
 
 
    def catURI(self, id):
-      return URIRef(self.baseURI() + '/catalog/' + str(id))
+      return URIRef('%s/catalog/%s' % (self.baseURI(), id))
 
 
    def datURI(self, id):
-      return URIRef(self.baseURI() + '/dataset/' + str(id))
+      return URIRef('%s/dataset/%s' % (self.baseURI(), id))
 
+   def distURI(self, id):
+      return URIRef('%s/distribution/%s' % (self.baseURI(), id))
 
    def serialize(self, uri, mime_type):
       return self._graph_context(uri).serialize(format=mime_type)
@@ -107,70 +109,71 @@ class FAIRGraph(object):
             cg.add( (uri, DCTERMS.modified, Literal(cat['modified'], datatype=XSD.date)) )
 
 
-   def setDatasetMetadata(self, meta):
+   def setDatasetAndDistributionMetadata(self, meta):
       assert(isinstance(meta, dict)), 'Use dict() for Dataset metadata.'
       assert('datasets' in meta), self.missingField('datasets', 'Dataset')
       for dat in meta['datasets']:
          assert('dataset_id' in dat), self.missingField('dataset_id', 'Dataset')
          assert('distributions' in dat), self.missingField('distributions', 'Dataset')
          uri_dat = self.datURI(dat['dataset_id'])
-         cg = self._graph_context(uri_dat)
-         cg.add( (uri_dat, RDF.type, DCAT.Dataset) )
-         cg.add( (uri_dat, DCTERMS.identifier, Literal(dat['dataset_id'])) )
-         cg.add( (uri_dat, DCTERMS.language, LANG.en) )
-         cg.add( (uri_dat, DCAT.theme, DBPEDIA.Plant_breeding) ) # FIXME
+         cg_dat = self._graph_context(uri_dat)
+         cg_dat.add( (uri_dat, RDF.type, DCAT.Dataset) )
+         cg_dat.add( (uri_dat, DCTERMS.identifier, Literal(dat['dataset_id'])) )
+         cg_dat.add( (uri_dat, DCTERMS.language, LANG.en) )
+         cg_dat.add( (uri_dat, DCAT.theme, DBPEDIA.Plant_breeding) ) # FIXME
 
          if 'title' in dat:
-            cg.add( (uri_dat, RDFS.label, Literal(dat['title'], lang='en')) )
-            cg.add( (uri_dat, DCTERMS.title, Literal(dat['title'], lang='en')) )
+            cg_dat.add( (uri_dat, RDFS.label, Literal(dat['title'], lang='en')) )
+            cg_dat.add( (uri_dat, DCTERMS.title, Literal(dat['title'], lang='en')) )
 
          if 'des' in dat:
-            cg.add( (uri_dat, DCTERMS.description, Literal(dat['des'], lang='en')) )
+            cg_dat.add( (uri_dat, DCTERMS.description, Literal(dat['des'], lang='en')) )
 
          if 'publisher' in dat:
-            cg.add( (uri_dat, DCTERMS.publisher, URIRef(dat['publisher'])) )
+            cg_dat.add( (uri_dat, DCTERMS.publisher, URIRef(dat['publisher'])) )
 
          if 'issued' in dat:
-            cg.add( (uri_dat, DCTERMS.issued, Literal(dat['issued'], datatype=XSD.date)) )
+            cg_dat.add( (uri_dat, DCTERMS.issued, Literal(dat['issued'], datatype=XSD.date)) )
 
          if 'modified' in dat:
-            cg.add( (uri_dat, DCTERMS.modified, Literal(dat['modified'], datatype=XSD.date)) )
+            cg_dat.add( (uri_dat, DCTERMS.modified, Literal(dat['modified'], datatype=XSD.date)) )
 
          if 'landing_page' in dat:
-            cg.add( (uri_dat, DCAT.landingPage, URIRef(dat['landing_page'])) )
+            cg_dat.add( (uri_dat, DCAT.landingPage, URIRef(dat['landing_page'])) )
 
          if 'keywords' in dat:
             for kw in dat['keywords']:
-               cg.add( (uri_dat, DCAT.keyword, Literal(kw, lang='en')) )
+               cg_dat.add( (uri_dat, DCAT.keyword, Literal(kw, lang='en')) )
 
          for dist in dat['distributions']:
             assert(isinstance(dist, dict)), 'Use dict() for Dataset/distribution metadata.'
             assert('distribution_id' in dist), self.missingField('distribution_id', 'Dataset/distribution')
-            uri_dist = self.datURI(dist['distribution_id'])
-            cg.add( (uri_dat, DCAT.distribution, uri_dist) )
-            cg.add( (uri_dist, RDF.type, DCAT.Distribution) )
-            #if (dist.has_key('access_url')): cg.add( (uri_dist, RDF.type, SPARQLSD.Service) )
+            uri_dist = self.distURI(dist['distribution_id'])
+            cg_dist = self._graph_context(uri_dist)
+            cg_dat.add( (uri_dat, DCAT.distribution, uri_dist) )
+            cg_dist.add( (uri_dist, RDF.type, DCAT.Distribution) )
+            #if (dist.has_key('access_url')): cg_dist.add( (uri_dist, RDF.type, SPARQLSD.Service) )
             
             if 'title' in dist:
-               cg.add( (uri_dist, RDFS.label, Literal(dist['title'])) )
-               cg.add( (uri_dist, DCTERMS.title, Literal(dist['title'])) )
+               cg_dist.add( (uri_dist, RDFS.label, Literal(dist['title'])) )
+               cg_dist.add( (uri_dist, DCTERMS.title, Literal(dist['title'])) )
 
             if 'des' in dist:
-               cg.add( (uri_dist, DCTERMS.description, Literal(dist['des'], lang='en')) )
+               cg_dist.add( (uri_dist, DCTERMS.description, Literal(dist['des'], lang='en')) )
 
             if 'license' in dist:
-               cg.add( (uri_dist, DCTERMS.license, URIRef(dist['license'])) )
+               cg_dist.add( (uri_dist, DCTERMS.license, URIRef(dist['license'])) )
 
             if 'access_url' in dist:
-               cg.add( (uri_dist, DCAT.accessURL, URIRef(dist['access_url'])) )
+               cg_dist.add( (uri_dist, DCAT.accessURL, URIRef(dist['access_url'])) )
 
             if 'download_url' in dist:
-               cg.add( (uri_dist, DCAT.downloadURL, URIRef(dist['download_url'])) )
+               cg_dist.add( (uri_dist, DCAT.downloadURL, URIRef(dist['download_url'])) )
 
             if 'media_types' in dist:
                for mime in dist['media_types']:
-                  cg.add( (uri_dist, DCAT.mediaType, Literal(mime)) )
-                  #cg.add( (uri_dist, SPARQLSD.endpoint, URIRef(dist['access_url'])) )
+                  cg_dist.add( (uri_dist, DCAT.mediaType, Literal(mime)) )
+                  #cg_dist.add( (uri_dist, SPARQLSD.endpoint, URIRef(dist['access_url'])) )
 
    def _graph_context(self, uri):
       return self._graph.get_context(uri)

@@ -17,10 +17,11 @@
 #
 #
 # FAIR Data Point (FDP) Service exposes the following endpoints (URL paths):
-#   [ /, /doc, /doc/ ]   = Redirect to the RESTful Data API documentation (Swagger UI)
-#   /fdp                 = returns FDP metadata
-#   /catalog/{catalogID} = returns catalog metadata (default: catalog-01)
-#   /dataset/{datasetID} = returns dataset metadata (default: breedb)
+#   [ /, /doc, /doc/ ]             = Redirect to the API documentation (Swagger UI)
+#   /fdp                           = returns FDP metadata
+#   /catalog/{catalogID}           = returns catalog metadata (default: catalog-01)
+#   /dataset/{datasetID}           = returns dataset metadata (default: breedb)
+#   /distribution/{distributionID} = returns distribution metadata (default: breedb-sparql)
 #
 # This services makes extensive use of metadata defined by:
 #   Data Catalog Vocabulary (DCAT, http://www.w3.org/TR/vocab-dcat/)
@@ -28,7 +29,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.4'
+__version__ = '0.3.5'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -64,7 +65,7 @@ g.setCatalogMetadata(meta=dict(
      dataset_ids=['breedb'])
    ]))
 
-g.setDatasetMetadata(meta=dict(
+g.setDatasetAndDistributionMetadata(meta=dict(
    datasets=[
       dict(dataset_id='breedb',
       title='BreeDB tomato passport data',
@@ -107,6 +108,8 @@ def httpResponse(graph, uri):
       mime_type = 'text/turtle'
 
    response.content_type = mime_type
+   response.set_header('Allow', 'GET')  
+
    return graph.serialize(uri, mime_type)
 
 # implement request handlers
@@ -129,6 +132,10 @@ def getCatalogMetadata(catalog_id, graph=g):
 @get('/dataset/<dataset_id>')
 def getDatasetMetadata(dataset_id, graph=g):
    return httpResponse(graph, graph.datURI(dataset_id))
+
+@get('/distribution/<distribution_id>')
+def getDistributionMetadata(distribution_id, graph=g):
+   return httpResponse(graph, graph.distURI(distribution_id))
 
 if __name__ == '__main__':
    run(server='wsgiref')
