@@ -63,6 +63,12 @@ public class HandleHttpHeadersUtils {
         else if (contentType.contentEquals(RDFFormat.JSONLD.getDefaultMIMEType())) {
             requesetedContentType = RDFFormat.JSONLD;
         }
+        else if (contentType.contentEquals(RDFFormat.N3.getDefaultMIMEType())) {
+            requesetedContentType = RDFFormat.N3;
+        }
+        else if (contentType.contentEquals(RDFFormat.RDFXML.getDefaultMIMEType())) {
+            requesetedContentType = RDFFormat.RDFXML;
+        }
         return requesetedContentType;
     }
     
