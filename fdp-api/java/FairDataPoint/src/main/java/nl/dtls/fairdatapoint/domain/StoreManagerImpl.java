@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 
 /**
- *
+ * Contains methods to store and access the triple store
+ * 
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
  * @version 0.1
@@ -33,11 +34,19 @@ public class StoreManagerImpl implements StoreManager {
         this.repository = repository;
         this.repository.initialize();
     }
-
+    
+    /**
+     * Retrieve all statements for an given URI
+     * 
+     * @param uri Valid RDF URI as a string
+     * @return  List of RDF statements
+     * @throws StoreManagerException 
+     */
+    
     @Override
     public RepositoryResult<Statement> retrieveResource(String uri) 
             throws StoreManagerException{
-        RepositoryConnection conn = null;
+        RepositoryConnection conn;
         RepositoryResult<Statement> statements = null;
         try {
             conn = getRepositoryConnection();   
@@ -56,7 +65,12 @@ public class StoreManagerImpl implements StoreManager {
         }
         return statements;
     }
-
+    
+    /**
+     * Method to close repository connection
+     * 
+     * @throws Exception 
+     */
     @Override
     public void closeRepositoryConnection() throws Exception {
         
@@ -71,6 +85,12 @@ public class StoreManagerImpl implements StoreManager {
             throw (new StoreManagerException(e.getMessage()));
         }
     }    
+    
+    /**
+     * Method to close the repository
+     * 
+     * @throws Exception 
+     */
     @Override
     public void closeRepository() throws Exception {
             
@@ -89,7 +109,7 @@ public class StoreManagerImpl implements StoreManager {
     }
     
     /**
-     * Repository connection to do SPARQL queries
+     * Repository connection to interact with the triple store
      * 
      * @return RepositoryConnection
      * @throws Exception 
