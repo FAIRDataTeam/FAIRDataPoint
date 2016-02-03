@@ -5,11 +5,9 @@
  */
 package nl.dtls.fairdatapoint.domain;
 
-import nl.dtls.fairdatapoint.api.config.RestApiConfiguration;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
@@ -17,9 +15,6 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.memory.MemoryStore;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  *

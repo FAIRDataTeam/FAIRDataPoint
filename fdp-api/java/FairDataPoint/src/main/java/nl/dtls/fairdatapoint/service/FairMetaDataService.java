@@ -15,16 +15,18 @@ import org.openrdf.rio.RDFFormat;
  */
 public interface FairMetaDataService {   
     /**
-     * Get FDP server's metadata
+     * Get FDP server metadata
+     * @param format RDFFormat serialization formats
      * @return  String object  
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException  
+     * @throws FairMetadataServiceException  
      */
     public String retrieveFDPMetaData(RDFFormat format) 
             throws FairMetadataServiceException;  
 
     /**
-     *  Get catalog's metadata
+     * Get catalog metadata
      * @param catalogID Unique catalog ID
+     * @param format RDFFormat serialization formats
      * @return  String object
      * @throws FairMetadataServiceException
      */
@@ -32,9 +34,10 @@ public interface FairMetaDataService {
         (String catalogID, RDFFormat format) throws FairMetadataServiceException;
 
     /**
-     *  Get dataset's metadata
+     * Get dataset metadata
      * @param catalogID
      * @param datasetID Unique dataset ID
+     * @param format RDFFormat serialization formats
      * @return  String object
      * @throws FairMetadataServiceException
      */

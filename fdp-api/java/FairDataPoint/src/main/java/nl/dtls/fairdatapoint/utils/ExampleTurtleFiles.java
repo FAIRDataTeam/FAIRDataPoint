@@ -5,6 +5,7 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
+import com.google.common.collect.ImmutableList;
 import static com.google.common.io.Files.readLines;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,10 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFParseException;
 
 /**
- *
+ * Contains references to the example metadata rdf files which are used in the 
+ * Junit tests. This class also has static methods to pre populate inmemory 
+ * triple store  
+ * 
  * @author Rajaram Kaliyaperumal
  * @since 2015-12-01
  * @version 0.1
@@ -30,13 +34,14 @@ import org.openrdf.rio.RDFParseException;
 public class ExampleTurtleFiles {
     
     public static final String FDP_METADATA = "dtl-fdp.ttl";
-    public static final String PLANT_CATALOG_METADATA = 
-            "plant-breeding-catalog.ttl";
-    public static final String BREEDDB_DATASET_METADATA = "breedDB-dataset.ttl";
-    public static final String BREEDDB_DATASET_SPARQL_DISTRIBUTION = 
-            "breedDB-distribution-sparql.ttl";
-    public static final String BREEDDB_DATASET_TURTLE_DISTRIBUTION = 
-            "breedDB-distribution-turtle.ttl";
+    public static final ImmutableList<String>  CATALOG_METADATA = 
+        ImmutableList.of("textmining-catalog.ttl");
+    public static final ImmutableList<String> DATASET_METADATA = 
+            ImmutableList.of("disgenet.ttl", "gda-lumc.ttl");
+    public static final ImmutableList<String> DATASET_DISTRIBUTIONS = 
+        ImmutableList.of("disgenet-html-page.ttl" , 
+                "disgenet-nanopubs-gzip.ttl", "disgenet-textfile-gzip.ttl", 
+                "gda-lumc-textfile.ttl", "gda-lumc-sparql.ttl");
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
@@ -101,7 +106,7 @@ public class ExampleTurtleFiles {
         }
         catch (RepositoryException | IOException | RDFParseException e) {
             LOGGER.error("Error storing RDF file",e);
-            LOGGER.error("File name <",fileName, ">");
+            LOGGER.error("File name <" + fileName + ">");
         }
         finally {
             try {

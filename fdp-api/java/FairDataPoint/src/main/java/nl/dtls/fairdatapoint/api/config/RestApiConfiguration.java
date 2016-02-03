@@ -81,19 +81,22 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
             if(Boolean.valueOf(TRIPLE_STORE_PREPOPULATE)) {
                 ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
                         ExampleTurtleFiles.FDP_METADATA, null, 
-                        METADATA_RDF_BASE_URI);              
-                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        ExampleTurtleFiles.PLANT_CATALOG_METADATA, null, 
+                        METADATA_RDF_BASE_URI);             
+                for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {
+                    ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        catalog, null, 
                         METADATA_RDF_BASE_URI); 
-                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        ExampleTurtleFiles.BREEDDB_DATASET_METADATA, null, 
+                }
+                for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {
+                    ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        dataset, null, 
                         METADATA_RDF_BASE_URI); 
-                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        ExampleTurtleFiles.BREEDDB_DATASET_SPARQL_DISTRIBUTION, 
-                        null, METADATA_RDF_BASE_URI); 
-                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        ExampleTurtleFiles.BREEDDB_DATASET_TURTLE_DISTRIBUTION, 
-                        null, METADATA_RDF_BASE_URI); 
+                } 
+                for (String distribution : ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {
+                    ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
+                        distribution, null, METADATA_RDF_BASE_URI);
+                }
+                
             }
             else {
                 LOGGER.info("FDP api is not prepopulated, "
