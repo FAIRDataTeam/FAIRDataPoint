@@ -40,7 +40,8 @@ public class MetadataController {
     private FairMetaDataService fairMetaDataService;
     @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET,
-            produces = {"application/ld+json", "text/turtle"}
+            produces = {"application/ld+json", "text/turtle", 
+                "application/rdf+xml", "text/n3"}
     )
     public String getFDAMetaData(HttpServletRequest request,
                     HttpServletResponse response) { 
@@ -71,7 +72,8 @@ public class MetadataController {
         
     @ApiOperation(value = "Catalog metadata")
     @RequestMapping(value = "/{catalogID:[^.]+}", method = RequestMethod.GET,
-            produces = {"application/ld+json", "text/turtle"}
+            produces = {"application/ld+json", "text/turtle", 
+                "application/rdf+xml", "text/n3"}
     )
     public String getCatalogMetaData(
             @PathVariable final String catalogID, HttpServletRequest request,
@@ -105,7 +107,8 @@ public class MetadataController {
     @ApiOperation(value = "Dataset metadata")
     @RequestMapping(value = "/{catalogID}/{datasetID}", 
             method = RequestMethod.GET,
-            produces = {"application/ld+json", "text/turtle"}
+            produces = {"application/ld+json", "text/turtle", 
+                "application/rdf+xml", "text/n3"}
     )
     public String getDatasetMetaData(@PathVariable final String catalogID,
             @PathVariable final String datasetID, HttpServletRequest request,

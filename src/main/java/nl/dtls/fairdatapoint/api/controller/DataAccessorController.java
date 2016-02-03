@@ -39,7 +39,8 @@ public class DataAccessorController {
     private DataAccessorService dataAccessorService;
     
     @ApiOperation(value = "FAIR dataset distribution")
-    @RequestMapping(produces = {"application/ld+json", "text/turtle"}, 
+    @RequestMapping(produces = {"application/ld+json", "text/turtle", 
+                "application/rdf+xml", "text/n3"}, 
             method = RequestMethod.GET)
     public String getDatasetDistribution(@PathVariable final String catalogID,
             @PathVariable final String datasetID, 
