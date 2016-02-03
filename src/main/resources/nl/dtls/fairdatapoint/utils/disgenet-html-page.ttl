@@ -1,0 +1,14 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/html> dcterms:title "DisGeNET html page"@en ;
+rdfs:label "DisGeNET html page"@en;
+	a dcat:Distribution ;
+        dcterms:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;
+	dcat:accessURL <http://www.disgenet.org/web/DisGeNET/menu/browser?12> ;                        
+        dcterms:created "2016-02-03T13:48:12+00:00"^^xsd:dateTime ;
+        dcterms:modified "2016-02-03T13:48:12+00:00"^^xsd:dateTime ; 
+        dcat:mediaType "text/html".

@@ -1,0 +1,27 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ldp: <http://www.w3.org/ns/ldp#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet> a dcat:Dataset ;
+	dcterms:title "DisGeNET"@en ;
+        rdfs:label "DisGeNET"@en ;
+	dcterms:language lang:en ;
+	dcterms:description "DisGeNET gene disease association dataset" ;
+	dcterms:identifier "gene-disease-association_disgenet" ;
+	dcat:keyword "DisGeNET" , "text mining", "gene-disease association" ;
+	dcat:landingPage <http://www.disgenet.org/> ;        
+	dcterms:publisher <http://orcid.org/0000-0003-0169-8159> ;
+        dcterms:created "2016-02-03T13:12:12+00:00"^^xsd:dateTime ;
+        dcterms:modified "2016-02-03T13:13:12+00:00"^^xsd:dateTime ; 
+	dcat:theme sio:statistical-association, <http://dbpedia.org/resource/Text_mining>  ;
+	dcterms:creator <http://orcid.org/0000-0003-0169-8159> ;
+        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/nanopubs-gzip> ;
+        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/textfile-gzip> ;
+        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/html> .
