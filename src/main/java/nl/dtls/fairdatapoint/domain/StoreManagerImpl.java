@@ -26,7 +26,7 @@ public class StoreManagerImpl implements StoreManager {
     
     private static final Logger LOGGER = 
             LoggerFactory.getLogger(StoreManagerImpl.class);
-    private Repository repository;
+    private final Repository repository;
     private RepositoryConnection repositoryConnection; 
     
     public StoreManagerImpl(Repository repository) throws 
@@ -96,27 +96,7 @@ public class StoreManagerImpl implements StoreManager {
         }
     }    
     
-    /**
-     * Method to close the repository
-     * 
-     * @throws Exception 
-     */
-    @Override
-    public void closeRepository() throws Exception {
-            
-        try {                
-            if (repository != null) {                    
-                repository.shutDown();                
-            }            
-        }            
-        catch (Exception e) {                
-            LOGGER.error("Error closing repository!");                
-            throw (new StoreManagerException(e.getMessage()));            
-        }            
-        finally {                
-            repository = null;            
-        }
-    }
+    
     
     /**
      * Repository connection to interact with the triple store

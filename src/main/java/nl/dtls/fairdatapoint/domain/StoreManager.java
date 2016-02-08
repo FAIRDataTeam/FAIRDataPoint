@@ -24,6 +24,4 @@ public interface StoreManager {
 	 * @throws Exception	 
     */	
     public void closeRepositoryConnection() throws Exception;
-    public void closeRepository() throws Exception;
-    
 }
