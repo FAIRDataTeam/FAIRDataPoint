@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 
 /**
- * Contains methods to store and access the triple store
+ * Contain methods to store and access the triple store
  * 
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
