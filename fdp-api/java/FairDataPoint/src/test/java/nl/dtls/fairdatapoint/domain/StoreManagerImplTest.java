@@ -48,9 +48,9 @@ public class StoreManagerImplTest {
      
      /**
       * The URI of a RDF resource can't be NULL, this test is excepted 
-      * to throw Runtime Exception
+      * to throw IllegalArgumentException
       */
-     @Test(expected = RuntimeException.class) 
+     @Test(expected = IllegalArgumentException.class) 
      public void nullURI() {         
          Sail store = new MemoryStore();       
          String uri = null;
@@ -70,9 +70,9 @@ public class StoreManagerImplTest {
      
      /**
       * The URI of a RDF resource can't be EMPTY, this test is excepted 
-      * to throw Runtime Exception
+      * to throw IllegalArgumentException
       */
-     @Test(expected = RuntimeException.class) 
+     @Test(expected = IllegalArgumentException.class) 
      public void emptyURI(){
          Sail store = new MemoryStore();       
          String uri = "";
