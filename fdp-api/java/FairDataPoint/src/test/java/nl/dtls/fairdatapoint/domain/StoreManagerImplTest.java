@@ -52,13 +52,12 @@ public class StoreManagerImplTest {
       */
      @Test(expected = IllegalArgumentException.class) 
      public void nullURI() {         
-         Sail store = new MemoryStore();       
-         String uri = null;
+         Sail store = new MemoryStore();   
          Repository repository = new SailRepository(store);            
          StoreManager testStoreManager;   
          try {
              testStoreManager = new StoreManagerImpl(repository);            
-             if (testStoreManager.retrieveResource(uri).hasNext()) {                
+             if (testStoreManager.retrieveResource(null).hasNext()) {                
                  fail("No RDF statements excepted for NULL URI");            
              }        
          } catch (RepositoryException | StoreManagerException ex) {            
