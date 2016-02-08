@@ -32,16 +32,26 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         this.storeManager = storeManager;
         this.BASE_URI = baseURI;
         if(this.storeManager == null) {
-            LOGGER.debug("The storeManager is NULL");
+            String errorMsg = "The storeManager can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
         }
         if(baseURI == null || baseURI.isEmpty()) {
-            LOGGER.debug("The base URI is NULL (or) empty string");
+            String errorMsg = "The base URI is can't be NULL (or) empty string";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
         }
     }
 
     @Override
     public String retrieveFDPMetaData(RDFFormat format) 
             throws FairMetadataServiceException {
+        
+        if(format == null) {
+            String errorMsg = "The RDFFormat can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
         String fdpURI = this.BASE_URI.concat("fdp");
         String fdpMetadata = null;
         try {
@@ -61,6 +71,17 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public String retrieveCatalogMetaData(String catalogID, RDFFormat format) 
             throws FairMetadataServiceException {
+        
+        if(format == null) {
+            String errorMsg = "The RDFFormat can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(catalogID == null || catalogID.isEmpty()) {
+            String errorMsg = "The catalogID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
         String catalogURI = this.BASE_URI.concat("fdp").concat("/").
                 concat(catalogID);
         String catalogMetadata = null;
@@ -83,6 +104,22 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public String retrieveDatasetMetaData(String catalogID, 
             String datasetID, RDFFormat format) 
             throws FairMetadataServiceException {
+        
+        if(format == null) {
+            String errorMsg = "The RDFFormat can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(catalogID == null || catalogID.isEmpty()) {
+            String errorMsg = "The catalogID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(datasetID == null || datasetID.isEmpty()) {
+            String errorMsg = "The datasetID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
         String datasetURI = this.BASE_URI.concat("fdp").concat("/").
                 concat(catalogID).concat("/").concat(datasetID);
         String datasetMetadata = null;
