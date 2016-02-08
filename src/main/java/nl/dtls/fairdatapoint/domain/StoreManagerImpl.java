@@ -49,7 +49,7 @@ public class StoreManagerImpl implements StoreManager {
         if (uri == null || uri.isEmpty()) {
             String errorMsg = "The resource URI can't be NULL or EMPTY";
             LOGGER.error(errorMsg);
-            throw (new RuntimeException(errorMsg));
+            throw (new IllegalArgumentException(errorMsg));
         }
         
         RepositoryConnection conn;
