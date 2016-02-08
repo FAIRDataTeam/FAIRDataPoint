@@ -88,15 +88,19 @@ public class StoreManagerImpl implements StoreManager {
             if ((repositoryConnection != null) && 
                     repositoryConnection.isOpen()) {
                 repositoryConnection.close();            
-            }        
+            }
+            else {
+                String errorMsg = "The connection is either NULL or already "
+                        + "CLOSED";
+                LOGGER.error(errorMsg);            
+                throw (new StoreManagerException(errorMsg));
+            }
         }
         catch (RepositoryException e) {
             LOGGER.error("Error closing repository connection!");
             throw (new StoreManagerException(e.getMessage()));
         }
-    }    
-    
-    
+    } 
     
     /**
      * Repository connection to interact with the triple store
