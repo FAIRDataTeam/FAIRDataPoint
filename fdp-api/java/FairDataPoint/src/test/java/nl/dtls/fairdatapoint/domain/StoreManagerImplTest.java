@@ -5,12 +5,10 @@
  */
 package nl.dtls.fairdatapoint.domain;
 
-import java.util.logging.Level;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
-import static org.mockito.Mockito.mock;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
