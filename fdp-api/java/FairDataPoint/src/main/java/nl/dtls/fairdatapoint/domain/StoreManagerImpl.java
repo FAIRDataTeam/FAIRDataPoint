@@ -46,17 +46,27 @@ public class StoreManagerImpl implements StoreManager {
     @Override
     public RepositoryResult<Statement> retrieveResource(String uri) 
             throws StoreManagerException{
+        if (uri == null || uri.isEmpty()) {
+            String errorMsg = "The resource URI can't be NULL or EMPTY";
+            LOGGER.error(errorMsg);
+            throw (new RuntimeException(errorMsg));
+        }
+        
         RepositoryConnection conn;
         RepositoryResult<Statement> statements = null;
         try {
             conn = getRepositoryConnection();   
             Resource resourceSubj = (new ValueFactoryImpl()).createURI(uri);
-            LOGGER.info("Get statements for the URI " + 
-                    resourceSubj.toString());
+            LOGGER.info("Get statements for the URI <" + 
+                    resourceSubj.toString() + ">");
             if (conn.hasStatement(resourceSubj, null, null,false)) {
                statements = conn.getStatements(resourceSubj, null, null, false);  
                
-            }     
+            }  
+            else {
+                LOGGER.info("No statements for the URI <" + 
+                        resourceSubj.toString() + ">");
+            }
             repositoryConnection = conn;
         }
         catch (Exception e) {
