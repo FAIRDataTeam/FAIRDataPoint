@@ -42,6 +42,9 @@ public class ExampleTurtleFiles {
         ImmutableList.of("disgenet-html-page.ttl" , 
                 "disgenet-nanopubs-gzip.ttl", "disgenet-textfile-gzip.ttl", 
                 "gda-lumc-textfile.ttl", "gda-lumc-sparql.ttl");
+    public static final String EXAMPLE_CATALOG_ID = "textmining";
+    public static final String EXAMPLE_DATASET_ID = 
+            "gene-disease-association_lumc";
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
