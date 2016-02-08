@@ -45,7 +45,7 @@ public class ExampleTurtleFiles {
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
-    private final static String BASE_URI = "http://semlab1.liacs.nl:8080/";
+    public final static String BASE_URI = "http://semlab1.liacs.nl:8080/";
     
     public static String getTurtleAsString(String fileName)  {        
         String content = "";        
