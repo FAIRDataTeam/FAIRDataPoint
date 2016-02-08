@@ -39,7 +39,7 @@ public class StoreManagerImplTest {
      public void exceptionForNullRepository(){
         try {
             Repository repository = new SailRepository(null);
-            StoreManager testStoreManager = new StoreManagerImpl(repository);
+            new StoreManagerImpl(repository);
         } catch (RepositoryException ex) {
             LOGGER.error(ex.getMessage());
             fail("The test is not excepted to throw RepositoryException");
