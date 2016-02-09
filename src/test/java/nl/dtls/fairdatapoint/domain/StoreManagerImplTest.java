@@ -28,9 +28,6 @@ import org.slf4j.LoggerFactory;
  */
 public class StoreManagerImplTest {  
     
-    private static final Logger LOGGER = 
-            LoggerFactory.getLogger(StoreManagerImplTest.class);
-    
     /**
      * The triple repository can't be NULL, this test is excepted to throw 
      * NullPointer exception 
@@ -41,7 +38,6 @@ public class StoreManagerImplTest {
             Repository repository = new SailRepository(null);
             new StoreManagerImpl(repository);
         } catch (RepositoryException ex) {
-            LOGGER.error(ex.getMessage());
             fail("The test is not excepted to throw RepositoryException");
         }
      }
@@ -60,8 +56,7 @@ public class StoreManagerImplTest {
              if (testStoreManager.retrieveResource(null).hasNext()) {                
                  fail("No RDF statements excepted for NULL URI");            
              }        
-         } catch (RepositoryException | StoreManagerException ex) {            
-             LOGGER.error(ex.getMessage());            
+         } catch (RepositoryException | StoreManagerException ex) {         
              fail("The test is not excepted to throw RepositoryException or "
                     + "StoreManagerException");        
          }
@@ -82,8 +77,7 @@ public class StoreManagerImplTest {
              if (testStoreManager.retrieveResource(uri).hasNext()) {                
                  fail("No RDF statements excepted for NULL URI");            
              }        
-         } catch (RepositoryException | StoreManagerException ex) {            
-             LOGGER.error(ex.getMessage());            
+         } catch (RepositoryException | StoreManagerException ex) {             
              fail("The test is not excepted to throw RepositoryException or "
                     + "StoreManagerException");        
          }
@@ -191,8 +185,7 @@ public class StoreManagerImplTest {
                 repository.shutDown();                
             }            
         }            
-        catch (Exception e) {                
-            LOGGER.error("Error closing repository!");                
+        catch (Exception e) {                                
             throw (new Exception(e.getMessage()));            
         }
     } 
