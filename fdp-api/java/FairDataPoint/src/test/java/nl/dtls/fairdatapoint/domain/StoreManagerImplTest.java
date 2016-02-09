@@ -165,9 +165,8 @@ public class StoreManagerImplTest {
     public void closeOpenedRepositoryConnection() throws Exception {             
         Sail store = new MemoryStore();
         Repository repository = new SailRepository(store);    
-        StoreManager testStoreManager = new StoreManagerImpl(repository); 
-        String uri = "http://semlab1.liacs.nl:8080/dummy";
-        testStoreManager.retrieveResource(uri);
+        StoreManager testStoreManager = new StoreManagerImpl(repository);
+        testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI);
         testStoreManager.closeRepositoryConnection(); 
         return;
     }
