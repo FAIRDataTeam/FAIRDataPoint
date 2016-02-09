@@ -30,20 +30,21 @@ public class HandleHttpHeadersUtils {
     }
     
     public static void setSuccessResponseHeader(String responseBody, 
-            HttpServletResponse response, String contentType) {   
+            HttpServletResponse response, RDFFormat requesetedContentType) {   
         if (responseBody == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);            
         }
         else {
             response.setStatus(HttpServletResponse.SC_OK);                
-            response.setHeader(HttpHeaders.CONTENT_TYPE, contentType); 
+            response.setHeader(HttpHeaders.CONTENT_TYPE, 
+                    requesetedContentType.getDefaultMIMEType()); 
         }
     }
     
-    public static String setNotAcceptedResponseHeader(HttpServletResponse 
+    public static String setUnsupportedResponseHeader(HttpServletResponse 
             response, String contentType) {               
-        response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);                            
+        response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);                            
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);        
         return("Currently don't supported '" + contentType + "' content type");
     }
@@ -54,9 +55,12 @@ public class HandleHttpHeadersUtils {
         response.setHeader(HttpHeaders.ALLOW, RequestMethod.GET.name());
     }
     
-    public static RDFFormat requestedContentType(String contentType) {        
+    public static RDFFormat requestedAcceptHeader(String contentType) {        
         RDFFormat requesetedContentType = null;    
-        if (contentType.contentEquals(RDFFormat.TURTLE.getDefaultMIMEType()) ||         
+        if (contentType == null || contentType.isEmpty()) {
+            requesetedContentType = RDFFormat.TURTLE;
+        }
+        else if (contentType.contentEquals(RDFFormat.TURTLE.getDefaultMIMEType()) ||         
                 contentType.contains(MediaType.ALL_VALUE)) {
             requesetedContentType = RDFFormat.TURTLE;
         }

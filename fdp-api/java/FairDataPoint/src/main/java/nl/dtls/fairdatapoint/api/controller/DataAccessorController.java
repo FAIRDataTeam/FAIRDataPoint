@@ -51,20 +51,19 @@ public class DataAccessorController {
         LOGGER.info("Request to get dataset's distribution {}", distributionID);
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
-        String contentType = request.getHeader(HttpHeaders.ACCEPT);
+        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HandleHttpHeadersUtils.
-                requestedContentType(contentType);        
+                requestedAcceptHeader(acceptHeader);        
         HandleHttpHeadersUtils.setMandatoryResponseHeader(response);
         if (requesetedContentType == null) {
-            responseBody = HandleHttpHeadersUtils.
-                    setNotAcceptedResponseHeader(response, contentType);               
+            responseBody = HandleHttpHeadersUtils.setUnsupportedResponseHeader(response, acceptHeader);               
         }        
         else {      
             try {
                 responseBody = dataAccessorService.retrieveDatasetDistribution(catalogID, 
                         datasetID, distributionID, requesetedContentType);
                 HandleHttpHeadersUtils.setSuccessResponseHeader(
-                        responseBody, response, contentType);
+                        responseBody, response, requesetedContentType);
             } catch (DataAccessorServiceException ex) {
                 responseBody = HandleHttpHeadersUtils.setErrorResponseHeader(
                         response, ex);

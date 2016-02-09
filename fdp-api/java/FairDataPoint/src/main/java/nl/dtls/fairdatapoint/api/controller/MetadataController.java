@@ -49,19 +49,17 @@ public class MetadataController {
         LOGGER.info("Request to get FDP metadata");
         LOGGER.info("GET : " + request.getRequestURL());
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HandleHttpHeadersUtils.
-                requestedContentType(contentType); 
+        RDFFormat requesetedContentType = HandleHttpHeadersUtils.requestedAcceptHeader(contentType); 
         HandleHttpHeadersUtils.setMandatoryResponseHeader(response);
         if (requesetedContentType == null) {
-            responseBody = HandleHttpHeadersUtils.
-                    setNotAcceptedResponseHeader(response, contentType);               
+            responseBody = HandleHttpHeadersUtils.setUnsupportedResponseHeader(response, contentType);               
         }        
         else {
             try {
             responseBody = fairMetaDataService.retrieveFDPMetaData(
                     requesetedContentType);
             HandleHttpHeadersUtils.setSuccessResponseHeader(
-                        responseBody, response, contentType);        
+                        responseBody, response, requesetedContentType);        
             } catch (FairMetadataServiceException ex) {            
                 responseBody = HandleHttpHeadersUtils.setErrorResponseHeader(
                     response, ex);        
@@ -82,12 +80,10 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HandleHttpHeadersUtils.
-                requestedContentType(contentType);         
+        RDFFormat requesetedContentType = HandleHttpHeadersUtils.requestedAcceptHeader(contentType);         
         HandleHttpHeadersUtils.setMandatoryResponseHeader(response);
         if (requesetedContentType == null) {
-            responseBody = HandleHttpHeadersUtils.
-                    setNotAcceptedResponseHeader(response, contentType);               
+            responseBody = HandleHttpHeadersUtils.setUnsupportedResponseHeader(response, contentType);               
         }        
         else {      
             try {
@@ -95,7 +91,7 @@ public class MetadataController {
                         retrieveCatalogMetaData(catalogID, 
                                 requesetedContentType);
                 HandleHttpHeadersUtils.setSuccessResponseHeader(
-                        responseBody, response, contentType);
+                        responseBody, response, requesetedContentType);
             } catch (FairMetadataServiceException ex) {
                 responseBody = HandleHttpHeadersUtils.setErrorResponseHeader(
                         response, ex);
@@ -117,12 +113,10 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HandleHttpHeadersUtils.
-                requestedContentType(contentType);        
+        RDFFormat requesetedContentType = HandleHttpHeadersUtils.requestedAcceptHeader(contentType);        
         HandleHttpHeadersUtils.setMandatoryResponseHeader(response);
         if (requesetedContentType == null) {
-            responseBody = HandleHttpHeadersUtils.
-                    setNotAcceptedResponseHeader(response, contentType);               
+            responseBody = HandleHttpHeadersUtils.setUnsupportedResponseHeader(response, contentType);               
         }        
         else {      
             try {
@@ -130,7 +124,7 @@ public class MetadataController {
                         retrieveDatasetMetaData(catalogID, datasetID, 
                                 requesetedContentType);
                 HandleHttpHeadersUtils.setSuccessResponseHeader(
-                        responseBody, response, contentType);
+                        responseBody, response, requesetedContentType);
             } catch (FairMetadataServiceException ex) {
                 responseBody = HandleHttpHeadersUtils.setErrorResponseHeader(
                         response, ex);
