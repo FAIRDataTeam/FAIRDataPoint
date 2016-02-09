@@ -16,8 +16,6 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.memory.MemoryStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * StoreManagerImpl class unit tests
@@ -98,8 +96,8 @@ public class StoreManagerImplTest {
         Sail store = new MemoryStore();
         Repository repository = new SailRepository(store);    
         StoreManager testStoreManager = new StoreManagerImpl(repository); 
-        ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                ExampleTurtleFiles.FDP_METADATA, null, null); 
+        testStoreManager.storeRDF(ExampleTurtleFiles.
+                getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null); 
         String uri = "http://semlab1.liacs.nl:8080/dummy";             
         RepositoryResult<Statement> statements = 
                 testStoreManager.retrieveResource(uri); 
@@ -127,8 +125,8 @@ public class StoreManagerImplTest {
         Sail store = new MemoryStore();
         Repository repository = new SailRepository(store);    
         StoreManager testStoreManager = new StoreManagerImpl(repository); 
-        ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                ExampleTurtleFiles.FDP_METADATA, null, null);             
+        testStoreManager.storeRDF(ExampleTurtleFiles.
+                getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null);            
         RepositoryResult<Statement> statements = 
                 testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI); 
         int countStatements = 0;

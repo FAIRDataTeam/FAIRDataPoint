@@ -3,6 +3,7 @@ package nl.dtls.fairdatapoint.api.config;
 
 import java.net.URISyntaxException;
 import nl.dtls.fairdatapoint.domain.StoreManager;
+import nl.dtls.fairdatapoint.domain.StoreManagerException;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
@@ -73,30 +74,30 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    public StoreManager inMemoryStoreManagerImp() throws RepositoryException {
+    public StoreManager inMemoryStoreManagerImp() throws RepositoryException, 
+            StoreManagerException {
         if (this.STORE_MANAGER == null) {
             Sail store = new MemoryStore();  
             Repository repository = new SailRepository(store);    
             this.STORE_MANAGER = new StoreManagerImpl(repository);
             if(Boolean.valueOf(TRIPLE_STORE_PREPOPULATE)) {
-                ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        ExampleTurtleFiles.FDP_METADATA, null, 
-                        METADATA_RDF_BASE_URI);             
+                this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
+                        getTurtleAsString(ExampleTurtleFiles.FDP_METADATA),
+                        null, METADATA_RDF_BASE_URI);             
                 for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {
-                    ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        catalog, null, 
-                        METADATA_RDF_BASE_URI); 
+                    this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
+                        getTurtleAsString(catalog),null, METADATA_RDF_BASE_URI);
                 }
                 for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {
-                    ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        dataset, null, 
-                        METADATA_RDF_BASE_URI); 
+                    this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
+                        getTurtleAsString(dataset),null, METADATA_RDF_BASE_URI); 
                 } 
-                for (String distribution : ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {
-                    ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        distribution, null, METADATA_RDF_BASE_URI);
-                }
-                
+                for (String distribution : 
+                        ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {
+                    this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
+                        getTurtleAsString(distribution),null, 
+                        METADATA_RDF_BASE_URI);
+                }                
             }
             else {
                 LOGGER.info("FDP api is not prepopulated, "
@@ -107,7 +108,8 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
         }
         return this.STORE_MANAGER;
     }
-    private StoreManager getStoreManager() throws RepositoryException {        
+    private StoreManager getStoreManager() throws RepositoryException, 
+            StoreManagerException {        
         if (Integer.parseInt(TRIPLE_STORE_TYPE) == 2) {
             return tripleStoreManagerImp();
         }
@@ -117,7 +119,8 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     } 
     @Bean
     public FairMetaDataService fairMetaDataServiceImpl() 
-            throws URISyntaxException, RepositoryException {
+            throws URISyntaxException, RepositoryException, 
+            StoreManagerException {
         FairMetaDataService fdpService = new FairMetaDataServiceImpl(
                 getStoreManager(), METADATA_RDF_BASE_URI);       
         return fdpService;
@@ -125,7 +128,8 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     
     @Bean
     public DataAccessorService fairDataAccessorService() 
-            throws URISyntaxException, RepositoryException {
+            throws URISyntaxException, RepositoryException, 
+            StoreManagerException {
         DataAccessorService dataAccessorService = new DataAccessorServiceImpl(
                 getStoreManager(), METADATA_RDF_BASE_URI);
         return dataAccessorService;

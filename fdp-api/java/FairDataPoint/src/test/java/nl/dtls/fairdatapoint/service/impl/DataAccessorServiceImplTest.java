@@ -6,6 +6,7 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import nl.dtls.fairdatapoint.domain.StoreManager;
+import nl.dtls.fairdatapoint.domain.StoreManagerException;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
@@ -37,28 +38,30 @@ public class DataAccessorServiceImplTest {
      * Pre populate the SailRepository with the example metadata triples
      * 
      * @throws org.openrdf.repository.RepositoryException
+     * @throws nl.dtls.fairdatapoint.domain.StoreManagerException
      */
     @Before
-    public void setUp() throws RepositoryException {
+    public void setUp() throws RepositoryException, StoreManagerException {
         Sail store = new MemoryStore();
         this.repository = new SailRepository(store);
         this.storeManager = new StoreManagerImpl(repository);
         this.dataAccessorService = new DataAccessorServiceImpl(
                 this.storeManager, ExampleTurtleFiles.BASE_URI);
-        ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                        ExampleTurtleFiles.FDP_METADATA, null, null); 
+        this.storeManager.storeRDF(ExampleTurtleFiles.
+                getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null);             
+                
         for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {                    
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                    catalog, null, null);                 
+            this.storeManager.storeRDF(ExampleTurtleFiles.                        
+                    getTurtleAsString(catalog),null, null);                
         }                
-        for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {
-                    
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository,                       
-                    dataset, null, null); 
+        for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {                    
+            this.storeManager.storeRDF(ExampleTurtleFiles.                        
+                    getTurtleAsString(dataset),null, null);                 
         }                 
-        for (String distribution : ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {                    
-            ExampleTurtleFiles.storeTurtleFileToTripleStore(repository,                       
-                    distribution, null, null);                
+        for (String distribution :                         
+                ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {                    
+            this.storeManager.storeRDF(ExampleTurtleFiles.                        
+                    getTurtleAsString(distribution), null, null);                
         }
     }
     /**
