@@ -9,8 +9,6 @@ import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
-import nl.dtls.fairdatapoint.service.FairMetaDataService;
-import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import org.junit.After;
 import org.junit.Test;
