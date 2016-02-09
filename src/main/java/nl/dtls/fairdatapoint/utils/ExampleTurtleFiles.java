@@ -45,6 +45,7 @@ public class ExampleTurtleFiles {
     public static final String EXAMPLE_CATALOG_ID = "textmining";
     public static final String EXAMPLE_DATASET_ID = 
             "gene-disease-association_lumc";
+    public static final String EXAMPLE_DISTRIBUTION_ID = "textfile";
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
