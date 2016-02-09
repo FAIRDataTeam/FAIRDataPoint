@@ -33,17 +33,42 @@ public class DataAccessorServiceImpl implements DataAccessorService {
         this.storeManager = storeManager;
         this.BASE_URI = baseURI;
         if(this.storeManager == null) {
-            LOGGER.debug("The storeManager is NULL");
+            String errorMsg = "The storeManager can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
         }
         if(baseURI == null || baseURI.isEmpty()) {
-            LOGGER.debug("The base URI is NULL (or) empty string");
+            String errorMsg = "The base URI is can't be NULL (or) empty string";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
         }
     }
 
     @Override
     public String retrieveDatasetDistribution(String catalogID, 
             String datasetID, String distributionID, RDFFormat format) 
-            throws DataAccessorServiceException {        
+            throws DataAccessorServiceException {  
+        
+        if(format == null) {
+            String errorMsg = "The RDFFormat can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(catalogID == null || catalogID.isEmpty()) {
+            String errorMsg = "The catalogID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(datasetID == null || datasetID.isEmpty()) {
+            String errorMsg = "The datasetID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(distributionID == null || distributionID.isEmpty()) {
+            String errorMsg = "The distributionID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
         String datasetDistributionURI = this.BASE_URI.concat("fdp").concat("/").
                 concat(catalogID).concat("/").concat(datasetID).
                 concat("/").concat(distributionID);
