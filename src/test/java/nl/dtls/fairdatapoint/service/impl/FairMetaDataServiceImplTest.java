@@ -13,6 +13,7 @@ import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import org.junit.After;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -192,6 +193,23 @@ public class FairMetaDataServiceImplTest {
     }
     
     /**
+     * Test to retrieve NonExiting catalog metadata, this test is excepted \
+     * to pass
+     */
+    @Test
+    public void retrieveNonExitingCatalogMetaData(){
+        try {
+            String actual = this.fairMetaDataService.retrieveCatalogMetaData(
+                    "dummpID676", RDFFormat.TURTLE);
+            assertNull(actual);
+        } catch (FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "FairMetadataServiceException";
+            fail(errorMsg);
+        }
+    }
+    
+    /**
      * Test to retrieve catalog metadata, this test is excepted to pass
      */
     @Test
@@ -208,56 +226,56 @@ public class FairMetaDataServiceImplTest {
     }
     
     /**
-     * Test to retrieve dataset metadata with NULL datasetID, 
+     * Test to retrieve dataset metadata with NULL catalog or dataset IDs, 
      * this test is excepted to throw IllegalArgumentException exception 
+     * 
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
-    @Test(expected = IllegalArgumentException.class) 
-    public void nullDatasetID(){
-        try {
-            this.fairMetaDataService.retrieveDatasetMetaData(
-                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID, null, 
-                    RDFFormat.TURTLE);
-            fail("This test is excepeted to throw IllegalArgumentException"); 
-        } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
-        }
-    }    
-    
-    /**
-     * Test to retrieve dataset metadata metadata with empty datasetID, 
-     * this test is excepted to throw IllegalArgumentException exception 
-     */
-    @Test(expected = IllegalArgumentException.class) 
-    public void emptyDatasetID(){
-        try {
-            String datasetID = "";
-            this.fairMetaDataService.retrieveDatasetMetaData(
-                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID, datasetID, 
-                    RDFFormat.TURTLE);                
-            fail("This test is excepeted to throw IllegalArgumentException");            
-        } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
-        }
-    }
-    /**
-     * Test to retrieve dataset metadata with NULL datasetID, 
-     * this test is excepted to throw IllegalArgumentException exception 
-     */
-    @Test(expected = IllegalArgumentException.class) 
-    public void validDatasetIDAndNullCatalogID(){
+    @Test
+    public void checkNullCatalogAndDatasetIDs() 
+            throws FairMetadataServiceException{
         try {
             this.fairMetaDataService.retrieveDatasetMetaData(
                     null, ExampleTurtleFiles.EXAMPLE_DATASET_ID, 
                     RDFFormat.TURTLE);
             fail("This test is excepeted to throw IllegalArgumentException"); 
-        } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
+        } 
+        catch (IllegalArgumentException ex) {
+        }
+        try {
+            this.fairMetaDataService.retrieveDatasetMetaData(
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID, null, 
+                    RDFFormat.TURTLE);
+            fail("This test is excepeted to throw IllegalArgumentException"); 
+        } 
+        catch (IllegalArgumentException ex) {
+        }
+    }    
+    
+    /**
+     * Test to retrieve dataset metadata with EMPTY catalog or dataset IDs, 
+     * this test is excepted to throw IllegalArgumentException exception 
+     * 
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     */
+    @Test 
+    public void checkEmptyCatalogAndDatasetIDs() 
+            throws FairMetadataServiceException{
+        try {
+            this.fairMetaDataService.retrieveDatasetMetaData(
+                    "", ExampleTurtleFiles.EXAMPLE_DATASET_ID, 
+                    RDFFormat.TURTLE);
+            fail("This test is excepeted to throw IllegalArgumentException"); 
+        } 
+        catch (IllegalArgumentException ex) {
+        }
+        try {
+            this.fairMetaDataService.retrieveDatasetMetaData(
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID, "", 
+                    RDFFormat.TURTLE);
+            fail("This test is excepeted to throw IllegalArgumentException"); 
+        } 
+        catch (IllegalArgumentException ex) {
         }
     }
     
@@ -280,7 +298,25 @@ public class FairMetaDataServiceImplTest {
     }
     
     /**
-     * Test to retrieve catalog metadata, this test is excepted to pass
+     * Test to retrieve NonExiting dataset metadata, this test is excepted 
+     * to pass
+     */
+    @Test
+    public void retrieveNonExitingdDatasetMetaData(){
+        try {
+            String actual = this.fairMetaDataService.retrieveDatasetMetaData(
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID, 
+                    "dummpID7549", RDFFormat.TURTLE);
+            assertNull(actual);
+        } catch (FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "FairMetadataServiceException";
+            fail(errorMsg);
+        }
+    }
+    
+    /**
+     * Test to retrieve dataset metadata, this test is excepted to pass
      */
     @Test
     public void retrieveDatasetMetaData(){
