@@ -128,10 +128,9 @@ public class StoreManagerImplTest {
         Repository repository = new SailRepository(store);    
         StoreManager testStoreManager = new StoreManagerImpl(repository); 
         ExampleTurtleFiles.storeTurtleFileToTripleStore(repository, 
-                ExampleTurtleFiles.FDP_METADATA, null, null);  
-        String uri = "http://semlab1.liacs.nl:8080/fdp";             
+                ExampleTurtleFiles.FDP_METADATA, null, null);             
         RepositoryResult<Statement> statements = 
-                testStoreManager.retrieveResource(uri); 
+                testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI); 
         int countStatements = 0;
         while(statements != null && statements.hasNext()){  
             countStatements = countStatements + 1;
