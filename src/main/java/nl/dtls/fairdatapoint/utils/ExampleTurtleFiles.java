@@ -83,46 +83,6 @@ public class ExampleTurtleFiles {
         return npFile;
     }
     
-    public static void storeTurtleFileToTripleStore (Repository repository, 
-            String fileName, Resource context, String baseURI) {
-        RepositoryConnection conn = null;        
-        try {
-            String content = getTurtleAsString(fileName);
-            /**
-             * we are using simple string replacement to replace the base uri of 
-             * RDF file. In future we should use more elegant code.  
-             */
-            if(baseURI != null && !baseURI.isEmpty()) {                
-                content = content.replaceAll(BASE_URI, baseURI);
-            }
-            else {
-                baseURI = BASE_URI;
-            }
-            StringReader reader = new StringReader(content);
-            conn = repository.getConnection();
-            if (context == null) {
-                conn.add(reader, 
-                        baseURI, ExampleTurtleFiles.FILES_RDF_FORMAT);       
-            }         
-            else {
-                conn.add(reader, 
-                        baseURI, ExampleTurtleFiles.FILES_RDF_FORMAT, context); 
-            }
-        }
-        catch (RepositoryException | IOException | RDFParseException e) {
-            LOGGER.error("Error storing RDF file",e);
-            LOGGER.error("File name <" + fileName + ">");
-        }
-        finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            }
-            catch (Exception e) {
-                LOGGER.error("Error closing repository connection",e);
-            }
-        }
-    }
+    
     
 }
