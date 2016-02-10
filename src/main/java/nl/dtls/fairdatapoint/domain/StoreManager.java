@@ -5,7 +5,6 @@
  */
 package nl.dtls.fairdatapoint.domain;
 
-import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 

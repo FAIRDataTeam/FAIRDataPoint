@@ -19,6 +19,7 @@ import org.openrdf.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openrdf.rio.RDFParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Contain methods to store and access the triple store
@@ -31,8 +32,9 @@ public class StoreManagerImpl implements StoreManager {
     
     private static final Logger LOGGER = 
             LoggerFactory.getLogger(StoreManagerImpl.class);
+    @Autowired
     private final Repository repository;
-    private RepositoryConnection repositoryConnection; 
+    private RepositoryConnection repositoryConnection;     
     
     public StoreManagerImpl(Repository repository) throws 
             RepositoryException {
@@ -175,5 +177,6 @@ public class StoreManagerImpl implements StoreManager {
             LOGGER.error("Error creating repository connection!");
             throw (new StoreManagerException(ex.getMessage()));
         }
-    }    
+    }   
+
 }

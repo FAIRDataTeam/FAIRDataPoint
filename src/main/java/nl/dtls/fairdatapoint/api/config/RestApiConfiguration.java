@@ -53,86 +53,80 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     private String TRIPLE_STORE_PREPOPULATE;
     @Value("${store-url}")
     private String TRIPLE_STORE_URL;
-    private StoreManager STORE_MANAGER;
+    
+    @Bean    
+    public Repository repository() throws RepositoryException { 
+        Repository repository;
+        if (Integer.parseInt(TRIPLE_STORE_TYPE) == 2) {
+            repository = new SPARQLRepository(TRIPLE_STORE_URL);        
+        } else { // In memory is the default store
+            Sail store = new MemoryStore();  
+            repository = new SailRepository(store);
+        }        
+        return repository;
+    } 
+    
+    @Bean    
+    public StoreManager storeManager() throws RepositoryException, 
+            StoreManagerException {          
+        
+        StoreManager storeManager = new StoreManagerImpl(repository());
+        // Only in memory store is pre populated
+        if (Integer.parseInt(TRIPLE_STORE_TYPE) != 2 &&                 
+                Boolean.valueOf(TRIPLE_STORE_PREPOPULATE)) {
+            // FDP metadata    
+            storeManager.storeRDF(ExampleTurtleFiles.                        
+                    getTurtleAsString(ExampleTurtleFiles.FDP_METADATA),                        
+                    null, METADATA_RDF_BASE_URI);             
+            // catalogs metadata    
+            for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {                    
+                storeManager.storeRDF(ExampleTurtleFiles.
+                        getTurtleAsString(catalog),null, METADATA_RDF_BASE_URI);                
+            }
+            // datasets metadata    
+            for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {
+                storeManager.storeRDF(ExampleTurtleFiles.                        
+                        getTurtleAsString(dataset),null, METADATA_RDF_BASE_URI);
+            } 
+            // distributions metadata
+            for (String distribution :                         
+                    ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {                    
+                storeManager.storeRDF(ExampleTurtleFiles.                        
+                        getTurtleAsString(distribution),null, 
+                        METADATA_RDF_BASE_URI);                
+            } 
+        }else {                
+            LOGGER.info("FDP api is not prepopulated, "                        
+                    + "if you would like to prepopulated the api with "                        
+                    + "content, please set 'store-prepopulate' "                        
+                    + "property value to true");            
+        }
+        return storeManager;
+    } 
     
     @Bean
     public static PropertySourcesPlaceholderConfigurer 
         propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-    @Bean
-    public String defaultControllerMsg() {
-        return "Method not implemented yet!!!";
-    }
-    @Bean
-    public StoreManager tripleStoreManagerImp() throws RepositoryException {
-        if (this.STORE_MANAGER == null) {      
-            Repository repository = new SPARQLRepository(TRIPLE_STORE_URL);
-            this.STORE_MANAGER = new StoreManagerImpl(repository);    
-        }
-        return this.STORE_MANAGER;
-    }
-    
-    @Bean
-    public StoreManager inMemoryStoreManagerImp() throws RepositoryException, 
-            StoreManagerException {
-        if (this.STORE_MANAGER == null) {
-            Sail store = new MemoryStore();  
-            Repository repository = new SailRepository(store);    
-            this.STORE_MANAGER = new StoreManagerImpl(repository);
-            if(Boolean.valueOf(TRIPLE_STORE_PREPOPULATE)) {
-                this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
-                        getTurtleAsString(ExampleTurtleFiles.FDP_METADATA),
-                        null, METADATA_RDF_BASE_URI);             
-                for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {
-                    this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
-                        getTurtleAsString(catalog),null, METADATA_RDF_BASE_URI);
-                }
-                for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {
-                    this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
-                        getTurtleAsString(dataset),null, METADATA_RDF_BASE_URI); 
-                } 
-                for (String distribution : 
-                        ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {
-                    this.STORE_MANAGER.storeRDF(ExampleTurtleFiles.
-                        getTurtleAsString(distribution),null, 
-                        METADATA_RDF_BASE_URI);
-                }                
-            }
-            else {
-                LOGGER.info("FDP api is not prepopulated, "
-                        + "if you would like to prepopulated the api with "
-                        + "content, please set 'store-prepopulate' "
-                        + "property value to true");
-            } 
-        }
-        return this.STORE_MANAGER;
-    }
-    private StoreManager getStoreManager() throws RepositoryException, 
-            StoreManagerException {        
-        if (Integer.parseInt(TRIPLE_STORE_TYPE) == 2) {
-            return tripleStoreManagerImp();
-        }
-        else {
-         return  inMemoryStoreManagerImp();
-        }        
-    } 
+        
+    @Bean    
+    public String baseURI()  { 
+        return this.METADATA_RDF_BASE_URI;
+    }     
+        
     @Bean
     public FairMetaDataService fairMetaDataServiceImpl() 
             throws URISyntaxException, RepositoryException, 
-            StoreManagerException {
-        FairMetaDataService fdpService = new FairMetaDataServiceImpl(
-                getStoreManager(), METADATA_RDF_BASE_URI);       
-        return fdpService;
+            StoreManagerException {      
+        return new FairMetaDataServiceImpl(storeManager(), baseURI());
     }
     
     @Bean
     public DataAccessorService fairDataAccessorService() 
             throws URISyntaxException, RepositoryException, 
             StoreManagerException {
-        DataAccessorService dataAccessorService = new DataAccessorServiceImpl(
-                getStoreManager(), METADATA_RDF_BASE_URI);
-        return dataAccessorService;
+        return new DataAccessorServiceImpl(storeManager(), baseURI());
     }
     
     @Override
@@ -146,7 +140,6 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         super.configureDefaultServletHandling(configurer); 
-    }
-    
+    }    
     
 }

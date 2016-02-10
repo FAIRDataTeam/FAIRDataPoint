@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
@@ -21,19 +23,21 @@ import org.openrdf.rio.RDFFormat;
  * @since 2016-01-07
  * @version 0.1
  */
+@Service
 public class DataAccessorServiceImpl implements DataAccessorService {
     
     private final static Logger LOGGER 
-            = LogManager.getLogger(DataAccessorServiceImpl.class);
+            = LogManager.getLogger(DataAccessorServiceImpl.class);    
     
     private final StoreManager storeManager;
-    private final String BASE_URI;
+    private final String baseURI;        
     
+    @Autowired
     public DataAccessorServiceImpl(StoreManager storeManager, String baseURI) {
         this.storeManager = storeManager;
-        this.BASE_URI = baseURI;
+        this.baseURI = baseURI;
         if(this.storeManager == null) {
-            String errorMsg = "The storeManager can't be NULL";
+            String errorMsg = "The STORE_MANAGER can't be NULL";
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
@@ -43,7 +47,7 @@ public class DataAccessorServiceImpl implements DataAccessorService {
             throw(new IllegalArgumentException(errorMsg));
         }
     }
-
+    
     @Override
     public String retrieveDatasetDistribution(String catalogID, 
             String datasetID, String distributionID, RDFFormat format) 
@@ -69,18 +73,19 @@ public class DataAccessorServiceImpl implements DataAccessorService {
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
-        String datasetDistributionURI = this.BASE_URI.concat("fdp").concat("/").
+        String datasetDistributionURI = this.baseURI.concat("fdp").concat("/").
                 concat(catalogID).concat("/").concat(datasetID).
                 concat("/").concat(distributionID);
         String datasetDistribution = null;
         try {
             RepositoryResult<Statement> statements = 
-                    storeManager.retrieveResource(datasetDistributionURI);
+                    this.storeManager.retrieveResource(
+                            datasetDistributionURI);
             if(statements != null) {
                 datasetDistribution = 
                         RDFUtils.writeToString(statements, format);
             }
-            storeManager.closeRepositoryConnection();
+            this.storeManager.closeRepositoryConnection();
         } catch (Exception ex) {
             LOGGER.error("Error retrieving dataset metadata of <" + 
                     datasetDistributionURI + ">");
