@@ -6,34 +6,49 @@
 package nl.dtls.fairdatapoint.api.controller.utils;
 
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
+import org.apache.logging.log4j.LogManager;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- *
+ * Handles http headers
+ * 
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-07
  * @version 0.1
  */
-public class HandleHttpHeadersUtils {
+public class HttpHeadersUtils {
     
-    public static String setErrorResponseHeader(HttpServletResponse 
+    private final static org.apache.logging.log4j.Logger LOGGER 
+            = LogManager.getLogger(HttpHeadersUtils.class);
+    
+    public static String set500ResponseHeaders(HttpServletResponse 
             response, Exception ex) {
         String errorMessage = ("Internal server error; Error message : " 
                 + ex.getMessage());              
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);                
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
-        return errorMessage;
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); 
+        try {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                    errorMessage);
+        } catch (IOException ex1) {
+            LOGGER.warn("Error setting error message for internal server "
+                    + "error; The error : " + ex1.getMessage());
+        }
+        response.setHeader(HttpHeaders.CONTENT_TYPE, 
+                MediaType.TEXT_PLAIN_VALUE);
+        return null;
     }
     
-    public static void setSuccessResponseHeader(String responseBody, 
+    public static void set200ResponseHeaders(String responseBody, 
             HttpServletResponse response, RDFFormat requesetedContentType) {   
         if (responseBody == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);            
+            response.setHeader(HttpHeaders.CONTENT_TYPE, 
+                    MediaType.TEXT_PLAIN_VALUE);            
         }
         else {
             response.setStatus(HttpServletResponse.SC_OK);                
@@ -42,16 +57,25 @@ public class HandleHttpHeadersUtils {
         }
     }
     
-    public static String setUnsupportedResponseHeader(HttpServletResponse 
+    public static String set415ResponseHeaders(HttpServletResponse 
             response, String contentType) {               
         response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);                            
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);        
-        return("Currently don't supported '" + contentType + "' content type");
+        response.setHeader(HttpHeaders.CONTENT_TYPE, 
+                MediaType.TEXT_PLAIN_VALUE);     
+        try {
+            response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
+                    ("Currently we don't supported '" + 
+                            contentType + "' content type"));
+        } catch (IOException ex) {
+            LOGGER.warn("Error setting error message for unsupported "
+                    + "mediaType; The error : " + ex.getMessage());
+        }
+        return null;
     }
     
-    public static void setMandatoryResponseHeader(HttpServletResponse 
+    public static void setMandatoryResponseHeaders(HttpServletResponse 
             response) { 
-        response.setHeader(HttpHeaders.SERVER, "FAIR data point server");             
+        response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");             
         response.setHeader(HttpHeaders.ALLOW, RequestMethod.GET.name());
     }
     
