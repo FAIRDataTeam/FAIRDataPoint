@@ -57,22 +57,6 @@ public class HttpHeadersUtils {
         }
     }
     
-    public static String set415ResponseHeaders(HttpServletResponse 
-            response, String contentType) {               
-        response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);                            
-        response.setHeader(HttpHeaders.CONTENT_TYPE, 
-                MediaType.TEXT_PLAIN_VALUE);     
-        try {
-            response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
-                    ("Currently we don't supported '" + 
-                            contentType + "' content type"));
-        } catch (IOException ex) {
-            LOGGER.warn("Error setting error message for unsupported "
-                    + "mediaType; The error : " + ex.getMessage());
-        }
-        return null;
-    }
-    
     public static void setMandatoryResponseHeaders(HttpServletResponse 
             response) { 
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");             
@@ -80,21 +64,25 @@ public class HttpHeadersUtils {
     }
     
     public static RDFFormat requestedAcceptHeader(String contentType) {        
-        RDFFormat requesetedContentType = null;    
+        RDFFormat requesetedContentType = null; 
         if (contentType == null || contentType.isEmpty()) {
             requesetedContentType = RDFFormat.TURTLE;
         }
-        else if (contentType.contentEquals(RDFFormat.TURTLE.getDefaultMIMEType()) ||         
+        else if (contentType.contentEquals(
+                RDFFormat.TURTLE.getDefaultMIMEType()) ||         
                 contentType.contains(MediaType.ALL_VALUE)) {
             requesetedContentType = RDFFormat.TURTLE;
         }
-        else if (contentType.contentEquals(RDFFormat.JSONLD.getDefaultMIMEType())) {
+        else if (contentType.contentEquals(
+                RDFFormat.JSONLD.getDefaultMIMEType())) {
             requesetedContentType = RDFFormat.JSONLD;
         }
-        else if (contentType.contentEquals(RDFFormat.N3.getDefaultMIMEType())) {
+        else if (contentType.contentEquals(
+                RDFFormat.N3.getDefaultMIMEType())) {
             requesetedContentType = RDFFormat.N3;
         }
-        else if (contentType.contentEquals(RDFFormat.RDFXML.getDefaultMIMEType())) {
+        else if (contentType.contentEquals(
+                RDFFormat.RDFXML.getDefaultMIMEType())) {
             requesetedContentType = RDFFormat.RDFXML;
         }
         return requesetedContentType;

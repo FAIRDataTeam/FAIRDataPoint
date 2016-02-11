@@ -50,21 +50,16 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType); 
-        HttpHeadersUtils.setMandatoryResponseHeaders(response);
-        if (requesetedContentType == null) {
-            responseBody = HttpHeadersUtils.set415ResponseHeaders(response, contentType);               
-        }        
-        else {
-            try {
+        HttpHeadersUtils.setMandatoryResponseHeaders(response);            
+        try { 
             responseBody = fairMetaDataService.retrieveFDPMetaData(
                     requesetedContentType);
-            HttpHeadersUtils.set200ResponseHeaders(
-                        responseBody, response, requesetedContentType);        
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                    requesetedContentType);        
             } catch (FairMetadataServiceException ex) {            
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
-                    response, ex);        
-            }
-        }        
+                        response, ex);
+            }        
         return responseBody;
     }
         
@@ -81,22 +76,16 @@ public class MetadataController {
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);         
-        HttpHeadersUtils.setMandatoryResponseHeaders(response);
-        if (requesetedContentType == null) {
-            responseBody = HttpHeadersUtils.set415ResponseHeaders(response, contentType);               
-        }        
-        else {      
-            try {
-                responseBody = fairMetaDataService.
-                        retrieveCatalogMetaData(catalogID, 
-                                requesetedContentType);
-                HttpHeadersUtils.set200ResponseHeaders(
-                        responseBody, response, requesetedContentType);
+        HttpHeadersUtils.setMandatoryResponseHeaders(response); 
+        try {                
+            responseBody = fairMetaDataService.                        
+                    retrieveCatalogMetaData(catalogID, requesetedContentType);
+                HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                        requesetedContentType);
             } catch (FairMetadataServiceException ex) {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
-        }
         return responseBody;
     }
     
@@ -115,21 +104,15 @@ public class MetadataController {
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);        
         HttpHeadersUtils.setMandatoryResponseHeaders(response);
-        if (requesetedContentType == null) {
-            responseBody = HttpHeadersUtils.set415ResponseHeaders(response, contentType);               
-        }        
-        else {      
-            try {
-                responseBody = fairMetaDataService.
-                        retrieveDatasetMetaData(catalogID, datasetID, 
-                                requesetedContentType);
-                HttpHeadersUtils.set200ResponseHeaders(
-                        responseBody, response, requesetedContentType);
-            } catch (FairMetadataServiceException ex) {
+        try {   
+            responseBody = fairMetaDataService.retrieveDatasetMetaData(
+                    catalogID, datasetID, requesetedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                    requesetedContentType);
+            } catch (FairMetadataServiceException ex) {                
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
-        }
         return responseBody;
     }
     

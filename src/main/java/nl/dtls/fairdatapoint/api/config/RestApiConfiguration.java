@@ -45,7 +45,8 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
             destroyMethod = "shutDown")    
     public Repository repository( Environment env) throws RepositoryException { 
         String storeURL = env.getProperty("store-url");
-        int storeType = env.getProperty("store-type", Integer.class);        
+        String storeTypeOption = env.getProperty("store-type"); 
+        int storeType = Integer.parseInt(storeTypeOption);
         Repository repository;
         if (storeType == 2) {
             repository = new SPARQLRepository(storeURL); 
