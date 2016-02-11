@@ -40,7 +40,7 @@ public class DataAccessorController {
     
     @ApiOperation(value = "FAIR dataset distribution")
     @RequestMapping(produces = {"application/ld+json", "text/turtle", 
-                "application/rdf+xml", "text/n3", "*/*"}, 
+                "application/rdf+xml", "text/n3"}, 
             method = RequestMethod.GET)
     public String getDatasetDistribution(@PathVariable final String catalogID,
             @PathVariable final String datasetID, 
@@ -54,20 +54,15 @@ public class DataAccessorController {
         String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.
                 requestedAcceptHeader(acceptHeader);        
-        HttpHeadersUtils.setMandatoryResponseHeaders(response);
-        if (requesetedContentType == null) {                    
-            HttpHeadersUtils.set415ResponseHeaders(response, acceptHeader);               
-        }        
-        else {      
-            try {
-                responseBody = dataAccessorService.retrieveDatasetDistribution(
-                        catalogID, datasetID, distributionID, 
-                        requesetedContentType);
-                HttpHeadersUtils.set200ResponseHeaders(
-                        responseBody, response, requesetedContentType);
-            } catch (DataAccessorServiceException ex) {                
-                HttpHeadersUtils.set500ResponseHeaders(response, ex);
-            }
+        HttpHeadersUtils.setMandatoryResponseHeaders(response);  
+        try {                
+            responseBody = dataAccessorService.retrieveDatasetDistribution(                       
+                    catalogID, datasetID, distributionID, 
+                    requesetedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                    requesetedContentType);            
+        } catch (DataAccessorServiceException ex) {                
+                HttpHeadersUtils.set500ResponseHeaders(response, ex);            
         }
         return responseBody;
     }

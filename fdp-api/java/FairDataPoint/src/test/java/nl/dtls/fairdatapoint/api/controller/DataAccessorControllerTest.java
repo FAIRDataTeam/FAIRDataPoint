@@ -6,25 +6,11 @@
 package nl.dtls.fairdatapoint.api.controller;
 
 import javax.servlet.http.HttpServletResponse;
-import nl.dtls.fairdatapoint.api.config.RestApiConfiguration;
 import nl.dtls.fairdatapoint.api.config.RestApiTestConfiguration;
-import nl.dtls.fairdatapoint.service.DataAccessorService;
-import nl.dtls.fairdatapoint.service.impl.DataAccessorServiceImpl;
-import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import org.apache.http.HttpHeaders;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import static org.mockito.Matchers.any;
-import org.mockito.Mock;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
-import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -32,12 +18,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 /**
  * DataAccessorController class unit tests
@@ -64,7 +46,7 @@ public class DataAccessorControllerTest {
      * 
      * @throws Exception 
      */    
-    @Test    
+    @Test(expected = Exception.class)    
     public void unsupportedAcceptHeader() throws Exception{  
         MockHttpServletRequest request;
         MockHttpServletResponse response;         
