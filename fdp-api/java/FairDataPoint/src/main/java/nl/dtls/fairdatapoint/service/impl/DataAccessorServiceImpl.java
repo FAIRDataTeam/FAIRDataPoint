@@ -13,7 +13,6 @@ import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
-import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,7 +68,7 @@ public class DataAccessorServiceImpl implements DataAccessorService {
             List<Statement> statements = 
                     this.storeManager.retrieveResource(
                             datasetDistributionURI);
-            if(statements != null) {
+            if(!statements.isEmpty()) {
                 datasetDistribution = 
                         RDFUtils.writeToString(statements, format);
             }

@@ -9,13 +9,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.BASE_URI;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
-//import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -97,14 +95,15 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
             throw (new IllegalArgumentException(errorMsg));
         }        
         RepositoryConnection conn = null;
-        List<Statement> statements = new  ArrayList();
+        List<Statement> statements = new ArrayList();
         try {
             conn = getRepositoryConnection();   
             URI resourceSubj = new URIImpl(uri);
             LOGGER.info("Get statements for the URI <" + 
                     resourceSubj.toString() + ">");
             if (conn.hasStatement(resourceSubj, null, null,false)) {
-               RepositoryResult<Statement> queryResult = conn.getStatements(resourceSubj, null, null, false);                
+               RepositoryResult<Statement> queryResult = conn.getStatements(
+                       resourceSubj, null, null, false); 
                while(queryResult.hasNext()) {
                    statements.add(queryResult.next());                  
                }
