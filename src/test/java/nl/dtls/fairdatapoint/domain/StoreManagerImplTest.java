@@ -25,7 +25,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * 
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
- * @version 0.1
+ * @version 0.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
