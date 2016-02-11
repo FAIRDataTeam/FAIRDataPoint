@@ -7,40 +7,77 @@ package nl.dtls.fairdatapoint.domain;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.BASE_URI;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.Repository;
+//import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openrdf.rio.RDFParseException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 
 /**
  * Contain methods to store and access the triple store
  * 
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
- * @version 0.1
+ * @version 0.2
  */
-public class StoreManagerImpl implements StoreManager {
+@Repository("storeManager")
+public class StoreManagerImpl implements StoreManager, InitializingBean {
     
     private static final Logger LOGGER = 
             LoggerFactory.getLogger(StoreManagerImpl.class);
     @Autowired
-    private final Repository repository;
-    private RepositoryConnection repositoryConnection;     
+    @Qualifier("repository")
+    private org.openrdf.repository.Repository repository;  
+    @Autowired
+    @Qualifier("baseURI")
+    private String rdfBaseURI;
+    @Autowired 
+    @Qualifier("prepopulateStore")               
+    private boolean prepopulateStore;
     
-    public StoreManagerImpl(Repository repository) throws 
-            RepositoryException {
-        this.repository = repository;
-        this.repository.initialize();
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        
+        if (prepopulateStore) {                
+// FDP metadata                    
+            storeRDF(ExampleTurtleFiles.getTurtleAsString(
+                    ExampleTurtleFiles.FDP_METADATA), null, rdfBaseURI); 
+// catalogs metadata
+            for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {
+                storeRDF(ExampleTurtleFiles.getTurtleAsString(catalog), null, 
+                        rdfBaseURI);
+            }                
+// datasets metadata 
+            for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {                    
+                storeRDF(ExampleTurtleFiles.getTurtleAsString(dataset), null, 
+                        rdfBaseURI);
+            }     
+// distributions metadata
+            for (String distribution :ExampleTurtleFiles.DATASET_DISTRIBUTIONS) 
+            { 
+                storeRDF(ExampleTurtleFiles.getTurtleAsString(distribution), 
+                        null, rdfBaseURI);
+            } 
+        }else { 
+            LOGGER.info("FDP api is not prepopulated");
+        }
     }
+    
+    
     
     /**
      * Retrieve all statements for an given URI
@@ -51,7 +88,7 @@ public class StoreManagerImpl implements StoreManager {
      */
     
     @Override
-    public RepositoryResult<Statement> retrieveResource(String uri) 
+    public List<Statement> retrieveResource(String uri) 
             throws StoreManagerException {
         
         if (uri == null || uri.isEmpty()) {
@@ -59,24 +96,35 @@ public class StoreManagerImpl implements StoreManager {
             LOGGER.error(errorMsg);
             throw (new IllegalArgumentException(errorMsg));
         }        
-        RepositoryConnection conn;
-        RepositoryResult<Statement> statements = null;
+        RepositoryConnection conn = null;
+        List<Statement> statements = new  ArrayList();
         try {
             conn = getRepositoryConnection();   
             URI resourceSubj = new URIImpl(uri);
             LOGGER.info("Get statements for the URI <" + 
                     resourceSubj.toString() + ">");
             if (conn.hasStatement(resourceSubj, null, null,false)) {
-               statements = conn.getStatements(resourceSubj, null, null, false);  
+               RepositoryResult<Statement> queryResult = conn.getStatements(resourceSubj, null, null, false);                
+               while(queryResult.hasNext()) {
+                   statements.add(queryResult.next());                  
+               }
                
             } else {
                 LOGGER.info("No statements for the URI <" + 
                         resourceSubj.toString() + ">");
             }
-            repositoryConnection = conn;
         } catch (RepositoryException ex) {            
             LOGGER.error("Error retrieving resource <" + uri + ">");
             throw (new StoreManagerException(ex.getMessage()));
+        }
+        finally {
+            try {
+                closeRepositoryConnection(conn);
+            } catch (StoreManagerException e) {                
+                LOGGER.error("Error closing connection",e); 
+                throw (new StoreManagerException(e.getMessage()));
+                
+            }
         }
         return statements;
     }
@@ -92,7 +140,7 @@ public class StoreManagerImpl implements StoreManager {
     @Override
     public void storeRDF (String content, String contextURI, String baseURI) 
             throws StoreManagerException {
-        RepositoryConnection conn;        
+        RepositoryConnection conn = null;        
         try {
             /**
              * we are using simple string replacement to replace the base uri of 
@@ -127,7 +175,7 @@ public class StoreManagerImpl implements StoreManager {
         }
         finally {
             try {
-                closeRepositoryConnection();
+                closeRepositoryConnection(conn);
             } catch (StoreManagerException e) {                
                 LOGGER.error("Error closing connection",e); 
                 throw (new StoreManagerException(e.getMessage()));
@@ -141,13 +189,12 @@ public class StoreManagerImpl implements StoreManager {
      * 
      * @throws nl.dtls.fairdatapoint.domain.StoreManagerException
      */
-    @Override
-    public void closeRepositoryConnection() throws StoreManagerException {
+    private void closeRepositoryConnection(RepositoryConnection conn) throws 
+            StoreManagerException {
         
         try {            
-            if ((repositoryConnection != null) && 
-                    repositoryConnection.isOpen()) {
-                repositoryConnection.close();            
+            if ((conn != null) && conn.isOpen()) {
+                conn.close();            
             } else {
                 String errorMsg = "The connection is either NULL or already "
                         + "CLOSED";
@@ -169,10 +216,7 @@ public class StoreManagerImpl implements StoreManager {
     private RepositoryConnection getRepositoryConnection() 
             throws StoreManagerException {
         try {
-            if (repositoryConnection == null || !repositoryConnection.isOpen()) {
-                repositoryConnection = repository.getConnection();
-            }
-            return repositoryConnection;
+            return this.repository.getConnection();
         } catch (RepositoryException ex) {
             LOGGER.error("Error creating repository connection!");
             throw (new StoreManagerException(ex.getMessage()));
