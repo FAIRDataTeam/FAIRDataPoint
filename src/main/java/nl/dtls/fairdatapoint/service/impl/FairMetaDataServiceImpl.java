@@ -5,6 +5,7 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import java.util.List;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
@@ -14,6 +15,9 @@ import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  *
@@ -21,27 +25,14 @@ import org.openrdf.rio.RDFFormat;
  * @since 2015-12-17
  * @version 0.2
  */
+@Service("fairMetaDataServiceImpl")
 public class FairMetaDataServiceImpl implements FairMetaDataService {
     private final static Logger LOGGER 
             = LogManager.getLogger(FairMetaDataServiceImpl.class);
-    
-    private final StoreManager storeManager;
-    private final String BASE_URI;
-    
-    public FairMetaDataServiceImpl(StoreManager storeManager, String baseURI) {
-        this.storeManager = storeManager;
-        this.BASE_URI = baseURI;
-        if(this.storeManager == null) {
-            String errorMsg = "The storeManager can't be NULL";
-            LOGGER.error(errorMsg);
-            throw(new IllegalArgumentException(errorMsg));
-        }
-        if(baseURI == null || baseURI.isEmpty()) {
-            String errorMsg = "The base URI is can't be NULL (or) empty string";
-            LOGGER.error(errorMsg);
-            throw(new IllegalArgumentException(errorMsg));
-        }
-    }
+    @Autowired
+    private StoreManager storeManager;
+    @Qualifier("baseURI")
+    private String baseURI;
 
     @Override
     public String retrieveFDPMetaData(RDFFormat format) 
@@ -52,15 +43,14 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
-        String fdpURI = this.BASE_URI.concat("fdp");
+        String fdpURI = this.baseURI.concat("fdp");
         String fdpMetadata = null;
         try {
-            RepositoryResult<Statement> statements = 
+            List<Statement> statements = 
                     storeManager.retrieveResource(fdpURI);
             if(statements != null) {
                 fdpMetadata = RDFUtils.writeToString(statements, format);
-            }    
-            storeManager.closeRepositoryConnection();
+            }
         } catch (Exception ex) {
             LOGGER.error("Error retrieving fdp's metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
@@ -82,16 +72,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
-        String catalogURI = this.BASE_URI.concat("fdp").concat("/").
+        String catalogURI = this.baseURI.concat("fdp").concat("/").
                 concat(catalogID);
         String catalogMetadata = null;
         try {
-            RepositoryResult<Statement> statements = 
+            List<Statement> statements = 
                     storeManager.retrieveResource(catalogURI);
             if(statements != null) {
                 catalogMetadata = RDFUtils.writeToString(statements, format);
             }
-            storeManager.closeRepositoryConnection();
         } catch (Exception ex) {
             LOGGER.error("Error retrieving catalog metadata of <" + 
                     catalogURI + ">");
@@ -120,16 +109,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
-        String datasetURI = this.BASE_URI.concat("fdp").concat("/").
+        String datasetURI = this.baseURI.concat("fdp").concat("/").
                 concat(catalogID).concat("/").concat(datasetID);
         String datasetMetadata = null;
         try {
-            RepositoryResult<Statement> statements = 
+            List<Statement> statements = 
                     storeManager.retrieveResource(datasetURI);
             if(statements != null) {
                 datasetMetadata = RDFUtils.writeToString(statements, format);
             }
-            storeManager.closeRepositoryConnection();
         } catch (Exception ex) {
             LOGGER.error("Error retrieving dataset metadata of <" + 
                     datasetURI + ">");
