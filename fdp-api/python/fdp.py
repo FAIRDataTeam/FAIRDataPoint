@@ -42,11 +42,11 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 #metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
 
-# set use case-specific metadata for FDP, data catalog(s) and data set(s)
-host = opt.bind # host:[port] read from the command-line -b option
-u = Uri(host)
-u.scheme = 'http' # add scheme to host
-g = FAIRGraph(u.uri)
+host = Uri(opt.bind) # pass host:[port] through the command-line -b option
+host.scheme = 'http' # add URI scheme
+
+# set metadata for FDP, data catalog(s) and data set(s)
+g = FAIRGraph(host.uri)
 
 g.setFdpMetadata(meta=dict(
       fdp_id='FDP-WUR-PB',
@@ -95,22 +95,20 @@ g.setDatasetAndDistributionMetadata(meta=dict(
    ]))
 
 def httpResponse(graph, uri):
-   mime_type = ''
    accept_header = request.headers.get('Accept')
+   fmt = 'text/turtle' # set default format (MIME type)
 
    if 'n3' in accept_header:
-      mime_type = 'text/n3'
-   elif 'rdf+xml' in accept_header:
-      mime_type = 'application/rdf+xml'
-   elif 'ld+json' in accept_header:
-      mime_type = 'application/ld+json'
-   else:
-      mime_type = 'text/turtle'
+      fmt = 'text/n3'
+   if 'rdf+xml' in accept_header:
+      fmt = 'application/rdf+xml'
+   if 'ld+json' in accept_header:
+      fmt = 'application/ld+json'
 
-   response.content_type = mime_type
+   response.content_type = fmt
    response.set_header('Allow', 'GET')  
 
-   return graph.serialize(uri, mime_type)
+   return graph.serialize(uri, fmt)
 
 # implement request handlers
 @get(['/', '/doc', '/doc/'])
