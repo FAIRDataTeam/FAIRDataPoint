@@ -13,7 +13,6 @@ import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
-import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +30,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             = LogManager.getLogger(FairMetaDataServiceImpl.class);
     @Autowired
     private StoreManager storeManager;
+    @Autowired
     @Qualifier("baseURI")
     private String baseURI;
 
@@ -48,7 +48,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(fdpURI);
-            if(statements != null) {
+            if(!statements.isEmpty()) {
                 fdpMetadata = RDFUtils.writeToString(statements, format);
             }
         } catch (Exception ex) {
@@ -78,7 +78,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(catalogURI);
-            if(statements != null) {
+            if(!statements.isEmpty()) {
                 catalogMetadata = RDFUtils.writeToString(statements, format);
             }
         } catch (Exception ex) {
@@ -115,7 +115,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(datasetURI);
-            if(statements != null) {
+            if(!statements.isEmpty()) {
                 datasetMetadata = RDFUtils.writeToString(statements, format);
             }
         } catch (Exception ex) {

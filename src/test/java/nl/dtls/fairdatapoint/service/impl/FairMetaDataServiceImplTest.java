@@ -5,27 +5,18 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
-import nl.dtls.fairdatapoint.api.config.RestApiConfiguration;
-import nl.dtls.fairdatapoint.domain.StoreManager;
-import nl.dtls.fairdatapoint.domain.StoreManagerException;
-import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
+import nl.dtls.fairdatapoint.api.config.RestApiTestConfiguration;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
-import org.junit.After;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.memory.MemoryStore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -35,82 +26,16 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * 
  * @author Rajaram Kaliyaperumal
  * @since 2016-02-08
- * @version 0.2
+ * @version 0.3
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {RestApiConfiguration.class})
-public class FairMetaDataServiceImplTest {    
-    private Repository repository;
-    private StoreManager storeManager;
+@ContextConfiguration(classes = {RestApiTestConfiguration.class})
+@DirtiesContext
+public class FairMetaDataServiceImplTest { 
+    
+    @Autowired
     private FairMetaDataService fairMetaDataService;
-    
-    /**
-     * Pre populate the SailRepository with the example metadata triples
-     * 
-     * @throws org.openrdf.repository.RepositoryException
-     * @throws nl.dtls.fairdatapoint.domain.StoreManagerException
-     */
-    @Before
-    public void setUp() throws RepositoryException, StoreManagerException {
-        Sail store = new MemoryStore();
-        this.repository = new SailRepository(store);
-        this.storeManager = new StoreManagerImpl(repository);
-        this.fairMetaDataService = new FairMetaDataServiceImpl(
-                this.storeManager, ExampleTurtleFiles.BASE_URI);
-        this.storeManager.storeRDF(ExampleTurtleFiles.
-                getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null);             
-                
-        for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {                    
-            this.storeManager.storeRDF(ExampleTurtleFiles.                        
-                    getTurtleAsString(catalog),null, null);                
-        }                
-        for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {                    
-            this.storeManager.storeRDF(ExampleTurtleFiles.                        
-                    getTurtleAsString(dataset),null, null);                 
-        }                 
-        for (String distribution :                         
-                ExampleTurtleFiles.DATASET_DISTRIBUTIONS) {                    
-            this.storeManager.storeRDF(ExampleTurtleFiles.                        
-                    getTurtleAsString(distribution), null, null);                
-        }
-    }
-    /**
-     * After all tests close the SailRepository
-     * 
-     * @throws RepositoryException 
-     */
-    @After
-    public void tearDown() throws RepositoryException {        
-        this.repository.shutDown();
-    }
-    
-    /**
-     * The StoreManager can't be NULL, this test is excepted to throw 
-     * IllegalArgumentException exception 
-     */
-    @Test(expected = IllegalArgumentException.class) 
-    public void nullStoreManager(){
-        new FairMetaDataServiceImpl(null, ExampleTurtleFiles.BASE_URI);
-    }
-    
-    /**
-     * The base URI can't be NULL, this test is excepted to throw 
-     * IllegalArgumentException exception 
-     */
-    @Test(expected = IllegalArgumentException.class) 
-    public void nullBaseURI(){
-        new FairMetaDataServiceImpl(this.storeManager, null);
-    }
-    
-    /**
-     * The base URI can't be EMPTY, this test is excepted to throw 
-     * IllegalArgumentException exception 
-     */
-    @Test(expected = IllegalArgumentException.class) 
-    public void emptyBaseURI(){
-        new FairMetaDataServiceImpl(this.storeManager, "");
-    }
     
     /**
      * The RDFFormat can't be NULL, this test is excepted to throw 
@@ -135,7 +60,7 @@ public class FairMetaDataServiceImplTest {
         try {
             String actual = this.fairMetaDataService.retrieveFDPMetaData(
                     RDFFormat.TURTLE);
-            assertTrue(actual.contains(ExampleTurtleFiles.BASE_URI));
+            assertNotNull(actual);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";

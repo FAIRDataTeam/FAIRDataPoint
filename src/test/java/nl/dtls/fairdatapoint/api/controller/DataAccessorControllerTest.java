@@ -7,6 +7,7 @@ package nl.dtls.fairdatapoint.api.controller;
 
 import javax.servlet.http.HttpServletResponse;
 import nl.dtls.fairdatapoint.api.config.RestApiConfiguration;
+import nl.dtls.fairdatapoint.api.config.RestApiTestConfiguration;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.impl.DataAccessorServiceImpl;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
@@ -47,37 +48,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {RestApiConfiguration.class})
+@ContextConfiguration(classes = {RestApiTestConfiguration.class})
 @DirtiesContext
 public class DataAccessorControllerTest {    
-       
-    @Mock
-    private DataAccessorService dataAccessorService;  
-    
-    @InjectMocks
-    private DataAccessorController controller;
     
     @Autowired
     private RequestMappingHandlerAdapter handlerAdapter;
 
     @Autowired
     private RequestMappingHandlerMapping handlerMapping;
-    
-    private MockMvc mockMvc;
-    
-    public DataAccessorControllerTest() {
-    }
-    
-    @Before
-    public void setup() throws Exception {        
-        MockitoAnnotations.initMocks(this);        
-        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        String exampleDistribution = ExampleTurtleFiles.getTurtleAsString(
-                ExampleTurtleFiles.DATASET_METADATA.get(0));
-        when(dataAccessorService.retrieveDatasetDistribution("catalogID", 
-                "datasetID", "distributionID", RDFFormat.TURTLE)).
-                thenReturn(exampleDistribution);
-    }
 
     
     /**
@@ -86,11 +65,21 @@ public class DataAccessorControllerTest {
      * @throws Exception 
      */    
     @Test    
-    public void unsupportedAcceptHeader() throws Exception{          
-        this.mockMvc.perform(get(
-                "/catalogID/datasetID/distributionID").
-                accept("application/trig")).andExpect(status().
-                        isUnsupportedMediaType());    
+    public void unsupportedAcceptHeader() throws Exception{  
+        MockHttpServletRequest request;
+        MockHttpServletResponse response;         
+        Object handler;  
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "application/trig");
+        request.setRequestURI(
+                "/textmining/gene-disease-association_lumc/sparql");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, 
+                response.getStatus());    
     }    
     /**
      * The default content type is text/turtle, when the accept header is not
@@ -100,8 +89,18 @@ public class DataAccessorControllerTest {
      */    
     @Test    
     public void noAcceptHeader() throws Exception{        
-        this.mockMvc.perform(get("/catalogID/datasetID/distributionID")).
-                andExpect(status().isOk());  
+        MockHttpServletRequest request;
+        MockHttpServletResponse response;         
+        Object handler;  
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.setRequestURI(
+                "/textmining/gene-disease-association_lumc/sparql");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
     
     /**
