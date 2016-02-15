@@ -37,7 +37,7 @@ curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/distribution/breedb-s
 ```
 Note: Metadata can be serialized in different RDF formats (mime-types):
 + Turtle (text/turtle)
-+ N-Triples (text/n3)
++ N-Triples (application/n-triples)
 + RDF/XML (application/rdf+xml)
 + JSON-LD (application/ld+json)
 
