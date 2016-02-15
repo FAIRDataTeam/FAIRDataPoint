@@ -98,8 +98,8 @@ def httpResponse(graph, uri):
    accept_header = request.headers.get('Accept')
    fmt = 'text/turtle' # set default format (MIME type)
 
-   if 'n3' in accept_header:
-      fmt = 'text/n3'
+   if 'triples' in accept_header:
+      fmt = 'application/n-triples'
 
    if 'rdf+xml' in accept_header:
       fmt = 'application/rdf+xml'
