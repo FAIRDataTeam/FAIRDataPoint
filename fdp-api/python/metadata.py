@@ -15,7 +15,7 @@ class FAIRGraph(object):
    def __init__(self, base_uri):
       graph = ConjunctiveGraph()
       self._graph = graph
-      self.__base_uri = base_uri
+      self._base_uri = base_uri
 
       # bind prefixes to namespaces
       graph.bind('dbp', DBPEDIA)
@@ -30,7 +30,7 @@ class FAIRGraph(object):
 
    
    def baseURI(self):
-      return URIRef(self.__base_uri)
+      return URIRef(self._base_uri)
 
 
    def docURI(self):
@@ -52,7 +52,8 @@ class FAIRGraph(object):
       return URIRef('%s/distribution/%s' % (self.baseURI(), id))
 
    def serialize(self, uri, mime_type):
-      return self._graph_context(uri).serialize(format=mime_type)
+      if len(self._graph_context(uri).all_nodes()) > 0:
+         return self._graph_context(uri).serialize(format=mime_type)
 
 
    def setFdpMetadata(self, meta):

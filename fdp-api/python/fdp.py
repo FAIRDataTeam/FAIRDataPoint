@@ -29,7 +29,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.5'
+__version__ = '0.3.6'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -100,15 +100,23 @@ def httpResponse(graph, uri):
 
    if 'n3' in accept_header:
       fmt = 'text/n3'
+
    if 'rdf+xml' in accept_header:
       fmt = 'application/rdf+xml'
+
    if 'ld+json' in accept_header:
       fmt = 'application/ld+json'
 
-   response.content_type = fmt
-   response.set_header('Allow', 'GET')  
+   graph_str = graph.serialize(uri, fmt)
 
-   return graph.serialize(uri, fmt)
+   if graph_str is None:
+      response.status = 404 # web resource not found
+      return
+
+   response.content_type = fmt
+   response.set_header('Allow', 'GET') 
+
+   return graph_str
 
 # implement request handlers
 @get(['/', '/doc', '/doc/'])
