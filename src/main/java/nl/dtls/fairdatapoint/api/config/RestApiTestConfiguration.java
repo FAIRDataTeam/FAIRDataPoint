@@ -24,8 +24,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
- *
- * @author rajaram
+ * Spring test context file
+ * 
+ * @author Rajaram Kaliyaperumal
+ * @since 2016-02-11
+ * @version 0.1
  */
 @EnableWebMvc
 @Configuration

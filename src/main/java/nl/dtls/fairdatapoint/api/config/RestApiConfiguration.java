@@ -26,10 +26,11 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- *
+ * Spring context file
+ * 
  * @author Rajaram Kaliyaperumal
  * @since 2015-11-19
- * @version 0.1.1
+ * @version 0.2
  */
 @EnableWebMvc
 @Configuration
@@ -45,8 +46,7 @@ public class RestApiConfiguration extends WebMvcConfigurerAdapter {
             destroyMethod = "shutDown")    
     public Repository repository( Environment env) throws RepositoryException { 
         String storeURL = env.getProperty("store-url");
-        String storeTypeOption = env.getProperty("store-type"); 
-        int storeType = Integer.parseInt(storeTypeOption);
+        int storeType = env.getProperty("store-type", Integer.class);
         Repository repository;
         if (storeType == 2) {
             repository = new SPARQLRepository(storeURL); 
