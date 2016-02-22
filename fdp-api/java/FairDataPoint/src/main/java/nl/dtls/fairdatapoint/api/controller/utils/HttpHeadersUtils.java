@@ -12,7 +12,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Handles http headers
@@ -55,12 +54,6 @@ public class HttpHeadersUtils {
             response.setHeader(HttpHeaders.CONTENT_TYPE, 
                     requesetedContentType.getDefaultMIMEType()); 
         }
-    }
-    
-    public static void setMandatoryResponseHeaders(HttpServletResponse 
-            response) { 
-        response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");             
-        response.setHeader(HttpHeaders.ALLOW, RequestMethod.GET.name());
     }
     
     public static RDFFormat requestedAcceptHeader(String contentType) {        
