@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nl.dtls.fairdatapoint.api.controller.utils.HttpHeadersUtils;
+import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
 import org.apache.http.HttpHeaders;
@@ -64,6 +65,7 @@ public class DataAccessorController {
         } catch (DataAccessorServiceException ex) {                
                 HttpHeadersUtils.set500ResponseHeaders(response, ex);            
         }
+        LoggerUtils.logRequest(LOGGER, request);
         return responseBody;
     }
     
