@@ -13,8 +13,10 @@ import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nl.dtls.fairdatapoint.api.controller.utils.HttpHeadersUtils;
+import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import org.apache.http.HttpHeaders;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.rio.RDFFormat;
@@ -47,7 +49,7 @@ public class MetadataController {
                     HttpServletResponse response) { 
         String responseBody;
         LOGGER.info("Request to get FDP metadata");
-        LOGGER.info("GET : " + request.getRequestURL());
+        LOGGER.info("GET : " + request.getRequestURL());       
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType); 
         HttpHeadersUtils.setMandatoryResponseHeaders(response);            
@@ -59,7 +61,8 @@ public class MetadataController {
             } catch (FairMetadataServiceException ex) {            
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
-            }        
+            }
+        LoggerUtils.logRequest(LOGGER, request);
         return responseBody;
     }
         
@@ -86,6 +89,7 @@ public class MetadataController {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
+        LoggerUtils.logRequest(LOGGER, request);
         return responseBody;
     }
     
@@ -113,6 +117,7 @@ public class MetadataController {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
+        LoggerUtils.logRequest(LOGGER, request);
         return responseBody;
     }
     
