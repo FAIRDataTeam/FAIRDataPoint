@@ -55,7 +55,6 @@ public class DataAccessorController {
         String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.
                 requestedAcceptHeader(acceptHeader);        
-        HttpHeadersUtils.setMandatoryResponseHeaders(response);  
         try {                
             responseBody = dataAccessorService.retrieveDatasetDistribution(                       
                     catalogID, datasetID, distributionID, 

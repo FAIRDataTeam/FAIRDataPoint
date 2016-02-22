@@ -16,7 +16,6 @@ import nl.dtls.fairdatapoint.api.controller.utils.HttpHeadersUtils;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import org.apache.http.HttpHeaders;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.rio.RDFFormat;
@@ -51,8 +50,7 @@ public class MetadataController {
         LOGGER.info("Request to get FDP metadata");
         LOGGER.info("GET : " + request.getRequestURL());       
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType); 
-        HttpHeadersUtils.setMandatoryResponseHeaders(response);            
+        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);        
         try { 
             responseBody = fairMetaDataService.retrieveFDPMetaData(
                     requesetedContentType);
@@ -78,8 +76,7 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);         
-        HttpHeadersUtils.setMandatoryResponseHeaders(response); 
+        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);   
         try {                
             responseBody = fairMetaDataService.                        
                     retrieveCatalogMetaData(catalogID, requesetedContentType);
@@ -106,8 +103,7 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);        
-        HttpHeadersUtils.setMandatoryResponseHeaders(response);
+        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);    
         try {   
             responseBody = fairMetaDataService.retrieveDatasetMetaData(
                     catalogID, datasetID, requesetedContentType);                
