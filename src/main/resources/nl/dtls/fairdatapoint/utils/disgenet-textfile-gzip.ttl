@@ -6,9 +6,10 @@
 
 <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/textfile-gzip> a dcat:Distribution ;
 dcterms:title "DisGeNET tab separated file, plain text file distribution(gzip)"@en;
+dcterms:identifier "textfile-gzip" ;
 rdfs:label "DisGeNET tab separated file, plain text file distribution(gzip)"@en;
 dcat:downloadURL  <http://www.disgenet.org/ds/DisGeNET/results/all_gene_disease_associations.txt.gz>;
 	dcterms:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;        
-        dcterms:created "2016-02-03T13:40:12+00:00"^^xsd:dateTime ;
-        dcterms:modified "2016-02-03T13:40:12+00:00"^^xsd:dateTime ; 
+        dcterms:issued "2016-02-03T13:40:12+00:00"^^xsd:dateTime ;
+        dcterms:modified "2016-02-22T13:40:12+00:00"^^xsd:dateTime ; 
         dcat:mediaType "application/gzip" .

@@ -18,8 +18,8 @@
 	dcat:keyword "DisGeNET" , "text mining", "gene-disease association" ;
 	dcat:landingPage <http://www.disgenet.org/> ;        
 	dcterms:publisher <http://orcid.org/0000-0003-0169-8159> ;
-        dcterms:created "2016-02-03T13:12:12+00:00"^^xsd:dateTime ;
-        dcterms:modified "2016-02-03T13:13:12+00:00"^^xsd:dateTime ; 
+        dcterms:issued "2016-02-03T13:12:12+00:00"^^xsd:dateTime ;
+        dcterms:modified "2016-02-22T13:13:12+00:00"^^xsd:dateTime ; 
 	dcat:theme sio:statistical-association, <http://dbpedia.org/resource/Text_mining>  ;
 	dcterms:creator <http://orcid.org/0000-0003-0169-8159> ;
         dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/nanopubs-gzip> ;
