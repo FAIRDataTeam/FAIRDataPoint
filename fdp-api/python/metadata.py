@@ -112,7 +112,6 @@ class FAIRGraph(object):
          cg.add( (uri, RDF.type, DCAT.Catalog) )
          cg.add( (uri, DCTERMS.identifier, Literal(cat['catalog_id'])) )
          cg.add( (uri, DCTERMS.language, LANG.en) )
-         cg.add( (uri, DCAT.themeTaxonomy, DBPEDIA.Breeding) ) # FIXME
 
          for dataset_id in cat['dataset_ids']:
             assert(self._store_uniq_id(dataset_id, 'dataset') is not None), 'Dataset ID:%s in Catalog metadata must be unique.' % dataset_id
@@ -135,6 +134,9 @@ class FAIRGraph(object):
          if 'modified' in cat:
             cg.add( (uri, DCTERMS.modified, Literal(cat['modified'], datatype=XSD.date)) )
 
+         if 'theme_taxonomy' in cat:
+            cg.add( (uri, DCAT.themeTaxonomy, eval(cat['theme_taxonomy'])) )
+
 
    def setDatasetAndDistributionMetadata(self, meta):
       assert(isinstance(meta, dict)), 'Use dict() for Dataset metadata.'
@@ -152,7 +154,6 @@ class FAIRGraph(object):
          cg_dat.add( (uri_dat, RDF.type, DCAT.Dataset) )
          cg_dat.add( (uri_dat, DCTERMS.identifier, Literal(dat_id)) )
          cg_dat.add( (uri_dat, DCTERMS.language, LANG.en) )
-         cg_dat.add( (uri_dat, DCAT.theme, DBPEDIA.Plant_breeding) ) # FIXME
 
          if 'title' in dat:
             cg_dat.add( (uri_dat, RDFS.label, Literal(dat['title'], lang='en')) )
@@ -176,6 +177,9 @@ class FAIRGraph(object):
          if 'keywords' in dat:
             for kw in dat['keywords']:
                cg_dat.add( (uri_dat, DCAT.keyword, Literal(kw, lang='en')) )
+
+         if 'theme' in dat:
+            cg_dat.add( (uri_dat, DCAT.theme, eval(dat['theme'])) )
 
          for dist in dat['distributions']:
             dist_id = dist['distribution_id']

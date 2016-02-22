@@ -26,10 +26,11 @@
 # This services makes extensive use of metadata defined by:
 #   Data Catalog Vocabulary (DCAT, http://www.w3.org/TR/vocab-dcat/)
 #   Dublin Core Metadata Terms (DCMI, http://dublincore.org/documents/dcmi-terms/)
+#   DBpedia (DBPEDIA, http://dbpedia.org/resource/)
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.7'
+__version__ = '0.3.8'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -62,7 +63,8 @@ g.setCatalogMetadata(meta=dict(
      publisher='http://orcid.org/0000-0002-4368-8058',
      issued='2015-11-24',
      modified='2015-11-24',
-     dataset_ids=['breedb'])
+     dataset_ids=['breedb'],
+     theme_taxonomy='DBPEDIA.Breeding')
    ]))
 
 g.setDatasetAndDistributionMetadata(meta=dict(
@@ -75,6 +77,7 @@ g.setDatasetAndDistributionMetadata(meta=dict(
       modified='2015-11-24',
       landing_page='http://www.eu-sol.wur.nl/passport',
       keywords=['BreeDB', 'Plant breeding', 'germplasm', 'passport data'],
+      theme='DBPEDIA.Plant_breeding',
       distributions=[
          dict(distribution_id='breedb-sparql',
             title='SPARQL endpoint for BreeDB tomato passport data',
