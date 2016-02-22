@@ -29,7 +29,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.6'
+__version__ = '0.3.7'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -42,12 +42,12 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 #metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
 
-host = Uri(opt.bind) # pass host:[port] through the command-line -b option
-host.scheme = 'http' # add URI scheme
+host = Uri(opt.bind)    # pass host:[port] through the command-line -b option
+host.scheme = 'http'    # add URI scheme
+g = FAIRGraph(host.uri) # populate FAIRGraph with metadata
 
 # set metadata for FDP, data catalog(s) and data set(s)
-g = FAIRGraph(host.uri)
-
+# Note: all IDs must be unique
 g.setFdpMetadata(meta=dict(
       fdp_id='FDP-WUR-PB',
       catalog_ids=['catalog-01'],
@@ -81,7 +81,7 @@ g.setDatasetAndDistributionMetadata(meta=dict(
             des='SPARQL endpoint for BreeDB tomato passport data',
             license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
             access_url='http://virtuoso.biotools.nl:8888/sparql',
-            # graph_uri = 'https://www.eu-sol.wur.nl/passport', # TODO
+            # graph_uri = 'https://www.eu-sol.wur.nl/passport', # TODO: Use SPARQL-SD?
             media_types=['text/n3', 'application/rdf+xml']
          ),
          dict(distribution_id='breedb-sqldump',
@@ -107,16 +107,16 @@ def httpResponse(graph, uri):
    if 'ld+json' in accept_header:
       fmt = 'application/ld+json'
 
-   graph_str = graph.serialize(uri, fmt)
+   serialized_graph = graph.serialize(uri, fmt)
 
-   if graph_str is None:
+   if serialized_graph is None:
       response.status = 404 # web resource not found
       return
 
    response.content_type = fmt
    response.set_header('Allow', 'GET') 
 
-   return graph_str
+   return serialized_graph
 
 # implement request handlers
 @get(['/', '/doc', '/doc/'])
