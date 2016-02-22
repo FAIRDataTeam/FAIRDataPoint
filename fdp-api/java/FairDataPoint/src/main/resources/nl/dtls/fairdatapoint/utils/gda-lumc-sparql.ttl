@@ -7,7 +7,9 @@
 <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_lumc/sparql> dcterms:title "GDA lumc SPARQL endpoint"@en ;
 rdfs:label "GDA lumc SPARQL endpoint"@en ;
 	a dcat:Distribution ;
+        dcterms:identifier "sparql" ;
         dcterms:license <http://136.243.4.200:8890/sparql>;
-        dcterms:created "2016-02-03T13:35:12+00:00"^^xsd:dateTime ;
-        dcterms:modified "2016-02-03T13:36:12+00:00"^^xsd:dateTime ; 
-	dcat:accessURL <http://136.243.4.200:8890/sparql> .
+        dcterms:issued "2016-02-03T13:35:12+00:00"^^xsd:dateTime ;
+        dcterms:modified "2016-02-22T13:36:12+00:00"^^xsd:dateTime ; 
+	dcat:accessURL <http://136.243.4.200:8890/sparql> ;
+        dcat:mediaType "application/json", "text/turtle", "text/html" .

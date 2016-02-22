@@ -16,8 +16,8 @@
 	dcterms:description "Gene disease association dataset from LUMC" ;
 	dcterms:identifier "gene-disease-association_lumc" ;
 	dcat:keyword "GDA lumc" , "text mining", "gene-disease association" ;
-        dcterms:created "2016-02-03T13:24:12+00:00"^^xsd:dateTime ;
-        dcterms:modified "2016-02-03T13:25:12+00:00"^^xsd:dateTime ; 
+        dcterms:issued "2016-02-03T13:24:12+00:00"^^xsd:dateTime ;
+        dcterms:modified "2016-02-22T13:25:12+00:00"^^xsd:dateTime ; 
 	dcat:landingPage <http://rdf.biosemantics.org/> ;        
 	dcterms:publisher <http://orcid.org/0000-0002-4182-7560> ;
 	dcat:theme sio:statistical-association, <http://dbpedia.org/resource/Text_mining>  ;

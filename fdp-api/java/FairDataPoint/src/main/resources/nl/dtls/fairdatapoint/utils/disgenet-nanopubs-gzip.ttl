@@ -6,9 +6,10 @@
 
 <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/nanopubs-gzip> a dcat:Distribution ;
 dcterms:title "DisGeNET nanopubs trig distribution(gzip)"@en;
+dcterms:identifier "nanopubs-gzip" ;
 rdfs:label "DisGeNET nanopubs trig distribution(gzip)"@en;
 dcat:downloadURL  <http://rdf.disgenet.org/download/v3.0.0/nanopublications_v3.0.0.0.trig.gz>;
 	dcterms:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;                
-        dcterms:created "2016-02-03T13:45:12+00:00"^^xsd:dateTime ;
-        dcterms:modified "2016-02-03T13:45:12+00:00"^^xsd:dateTime ; 
+        dcterms:issued "2016-02-03T13:45:12+00:00"^^xsd:dateTime ;
+        dcterms:modified "2016-02-22T13:45:12+00:00"^^xsd:dateTime ; 
         dcat:mediaType "application/gzip" .
