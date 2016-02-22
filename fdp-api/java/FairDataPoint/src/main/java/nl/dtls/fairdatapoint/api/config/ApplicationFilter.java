@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * 
+ * Filter to add mandatory headers to all request
  * 
  * @author Rajaram Kaliyaperumal
  * @since 2015-11-19
