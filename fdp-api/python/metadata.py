@@ -110,7 +110,7 @@ class FAIRGraph(object):
          uri = self.catURI(cat_id)
          cg = self._graph_context(uri)
          cg.add( (uri, RDF.type, DCAT.Catalog) )
-         cg.add( (uri, DCTERMS.identifier, Literal(cat['catalog_id'])) )
+         cg.add( (uri, DCTERMS.identifier, Literal(cat_id)) )
          cg.add( (uri, DCTERMS.language, LANG.en) )
 
          for dataset_id in cat['dataset_ids']:
