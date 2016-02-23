@@ -49,13 +49,13 @@ g = FAIRGraph(host.uri) # populate FAIRGraph with metadata
 
 # set metadata for FDP, data catalog(s) and data set(s)
 # Note: all IDs must be unique
-g.setFdpMetadata(meta=dict(
+g.setFdpMetadata(dict(
       fdp_id='FDP-WUR-PB',
       catalog_ids=['catalog-01'],
       title='FAIR Data Point of the Plant Breeding Group, Wageningen UR',
       des='This FDP provides metadata on plant-specific genotype/phenotype data sets.'))
 
-g.setCatalogMetadata(meta=dict(
+g.setCatalogMetadata(dict(
    catalogs=[
      dict(catalog_id='catalog-01',
      title='Plant Breeding Data Catalog',
@@ -67,7 +67,7 @@ g.setCatalogMetadata(meta=dict(
      theme_taxonomy='DBPEDIA.Breeding')
    ]))
 
-g.setDatasetAndDistributionMetadata(meta=dict(
+g.setDatasetAndDistributionMetadata(dict(
    datasets=[
       dict(dataset_id='breedb',
       title='BreeDB tomato passport data',
@@ -85,7 +85,7 @@ g.setDatasetAndDistributionMetadata(meta=dict(
             license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
             access_url='http://virtuoso.biotools.nl:8888/sparql',
             # graph_uri = 'https://www.eu-sol.wur.nl/passport', # TODO: Use SPARQL-SD?
-            media_types=['text/n3', 'application/rdf+xml']
+            media_types=['application/n-triples', 'application/rdf+xml']
          ),
          dict(distribution_id='breedb-sqldump',
             title='SQL dump of the BreeDB tomato passport data',
