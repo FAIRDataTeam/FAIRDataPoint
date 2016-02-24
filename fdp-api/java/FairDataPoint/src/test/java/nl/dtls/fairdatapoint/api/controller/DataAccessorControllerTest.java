@@ -6,7 +6,7 @@
 package nl.dtls.fairdatapoint.api.controller;
 
 import javax.servlet.http.HttpServletResponse;
-import nl.dtls.fairdatapoint.api.config.RestApiTestConfiguration;
+import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import org.apache.http.HttpHeaders;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {RestApiTestConfiguration.class})
+@ContextConfiguration(classes = {RestApiTestContext.class})
 @DirtiesContext
 public class DataAccessorControllerTest {    
     

@@ -19,7 +19,7 @@ public class ApplicationInitializer extends
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{RestApiConfiguration.class};
+        return new Class[]{RestApiContext.class};
     }
 
     @Override

@@ -38,9 +38,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
 @PropertySource({"${fdp.server.conf:classpath:/conf/fdp-server.properties}", 
     "${fdp.tripleStore.conf:classpath:/conf/triple-store.properties}"})
-public class RestApiConfiguration extends WebMvcConfigurerAdapter {  
+public class RestApiContext extends WebMvcConfigurerAdapter {  
     private final static Logger LOGGER 
-            = LogManager.getLogger(RestApiConfiguration.class);    
+            = LogManager.getLogger(RestApiContext.class);    
     
     @Bean(name="repository", initMethod = "initialize", 
             destroyMethod = "shutDown")    
