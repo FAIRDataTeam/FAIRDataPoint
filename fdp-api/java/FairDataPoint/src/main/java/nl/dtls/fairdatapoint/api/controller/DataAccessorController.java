@@ -39,7 +39,7 @@ public class DataAccessorController {
     @Autowired
     private DataAccessorService dataAccessorService;
     
-    @ApiOperation(value = "FAIR dataset distribution")
+    @ApiOperation(value = "Dataset distribution metadata")
     @RequestMapping(produces = { "text/turtle", 
         "application/ld+json", "application/rdf+xml", "text/n3"}, 
             method = RequestMethod.GET)
