@@ -8,7 +8,6 @@ package nl.dtls.fairdatapoint.api.controller.utils;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.http.MediaType;
@@ -25,6 +24,16 @@ public class HttpHeadersUtils {
     private final static org.apache.logging.log4j.Logger LOGGER 
             = LogManager.getLogger(HttpHeadersUtils.class);
     
+    public final static String[] SUPPORTED_HEADERS = { "text/turtle", 
+        "application/ld+json", "application/rdf+xml", "text/n3"};
+    
+    /**
+     * Set response header for the internal server errors
+     * 
+     * @param response  Http response
+     * @param ex    Server exception
+     * @return returns null (as a response body)
+     */
     public static String set500ResponseHeaders(HttpServletResponse 
             response, Exception ex) {
         String errorMessage = ("Internal server error; Error message : " 
@@ -37,26 +46,31 @@ public class HttpHeadersUtils {
             LOGGER.warn("Error setting error message for internal server "
                     + "error; The error : " + ex1.getMessage());
         }
-        response.setHeader(HttpHeaders.CONTENT_TYPE, 
-                MediaType.TEXT_PLAIN_VALUE);
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
         return null;
     }
     
+    /**
+     * Set response header for the successful call
+     * 
+     * @param responseBody ResponseBody
+     * @param response  Http response
+     * @param requesetedContentType Requeseted ContentType(i.e Accept header)
+     */
     public static void set200ResponseHeaders(String responseBody, 
             HttpServletResponse response, RDFFormat requesetedContentType) {   
         if (responseBody == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.setHeader(HttpHeaders.CONTENT_TYPE, 
-                    MediaType.TEXT_PLAIN_VALUE);            
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);            
         }
         else {
             response.setStatus(HttpServletResponse.SC_OK);                
-            response.setHeader(HttpHeaders.CONTENT_TYPE, 
-                    requesetedContentType.getDefaultMIMEType()); 
+            response.setContentType(requesetedContentType.
+                    getDefaultMIMEType()); 
         }
     }
     
-    public static RDFFormat requestedAcceptHeader(String contentType) {        
+    public static RDFFormat getRequestedAcceptHeader(String contentType) {        
         RDFFormat requesetedContentType = null; 
         if (contentType == null || contentType.isEmpty()) {
             requesetedContentType = RDFFormat.TURTLE;

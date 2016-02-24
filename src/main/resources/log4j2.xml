@@ -7,7 +7,7 @@ and open the template in the editor.
 
 <Configuration status="WARN">
     <Properties>
-        <Property name="log-path">/tmp/logs/fdp/</Property>
+        <Property name="log-path">logs/</Property>  <!--use ${env:VAR_NAME} for env variables --> 
     </Properties>
      <!-- Define custom levels before using them for filtering below. -->
     <CustomLevels>
@@ -41,7 +41,7 @@ and open the template in the editor.
         <RollingFile name="api-request-log" fileName="${log-path}/fdp-api-request.log"
                      filePattern="${log-path}/fdp-api-request-%d{yyyy-MM-dd}.log">
             <PatternLayout>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg%n</pattern>
+                <pattern>%X{ipAddress} - - %d{[dd/MM/yyyy:HH:mm:ss -SSSS]} \"%X{requestMethod} %X{requestURI} %X{requestProtocol}\" %X{responseStatus} %X{contentSize}%n</pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
