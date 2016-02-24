@@ -1,4 +1,4 @@
-FDP-WUR-PB	catalog-01	1	2
-catalog-01	breedb	2	3
-breedb	breedb-sparql	3	4
-breedb	breedb-sqldump	3	4
+FDP-WUR-PB	catalog-01
+catalog-01	breedb
+breedb	breedb-sparql
+breedb	breedb-sqldump
