@@ -6,7 +6,7 @@
 package nl.dtls.fairdatapoint.domain;
 
 import java.util.List;
-import nl.dtls.fairdatapoint.api.config.RestApiTestConfiguration;
+import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -29,7 +29,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {RestApiTestConfiguration.class})
+@ContextConfiguration(classes = {RestApiTestContext.class})
 @DirtiesContext
 public class StoreManagerImplTest {  
     

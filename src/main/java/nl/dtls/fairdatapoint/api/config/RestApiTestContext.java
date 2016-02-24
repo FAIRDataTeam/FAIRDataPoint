@@ -33,9 +33,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @Configuration
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-public class RestApiTestConfiguration {    
+public class RestApiTestContext {    
     private final static Logger LOGGER 
-            = LogManager.getLogger(RestApiConfiguration.class);    
+            = LogManager.getLogger(RestApiContext.class);    
     
     @Bean(name="repository", initMethod = "initialize", 
             destroyMethod = "shutDown")

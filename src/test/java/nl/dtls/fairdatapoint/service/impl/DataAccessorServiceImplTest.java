@@ -5,7 +5,7 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
-import nl.dtls.fairdatapoint.api.config.RestApiTestConfiguration;
+import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
@@ -28,7 +28,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {RestApiTestConfiguration.class})
+@ContextConfiguration(classes = {RestApiTestContext.class})
 @DirtiesContext
 public class DataAccessorServiceImplTest {
     
