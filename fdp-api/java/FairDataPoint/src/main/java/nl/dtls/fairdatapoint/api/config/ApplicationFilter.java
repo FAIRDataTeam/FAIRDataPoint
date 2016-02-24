@@ -12,7 +12,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,20 +29,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Component
 public class ApplicationFilter implements Filter {
-
+    
+    private FilterConfig filterConfig;
+ 
     @Override
-    public void init(FilterConfig fc) throws ServletException {}
+    public void init(FilterConfig filterConfig) throws ServletException {
+        this.filterConfig = filterConfig;
+    }
 
     @Override
     public void doFilter(ServletRequest sr, ServletResponse sr1, 
-            FilterChain fc) throws IOException, ServletException {
-    HttpServletResponse response = (HttpServletResponse) sr1;
-    response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
-    response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-    response.setHeader(HttpHeaders.ALLOW, (RequestMethod.GET.name()));
-    response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, 
-            (HttpHeaders.ACCEPT));
-    fc.doFilter(sr, sr1);
+                FilterChain fc) throws IOException, ServletException {
+        HttpServletResponse response = (HttpServletResponse) sr1; 
+        HttpServletRequest request = (HttpServletRequest)sr;
+        response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        response.setHeader(HttpHeaders.ALLOW, (RequestMethod.GET.name()));
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, 
+                (HttpHeaders.ACCEPT));   
+        ThreadContext.put("ipAddress", request.getRemoteAddr());
+        ThreadContext.put("responseStatus", String.valueOf(
+                response.getStatus()));         
+        fc.doFilter(sr, sr1);            
+        ThreadContext.clearAll();
     }
 
     @Override
