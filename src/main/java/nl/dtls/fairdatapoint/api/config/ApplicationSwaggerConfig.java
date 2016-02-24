@@ -35,8 +35,11 @@ public class ApplicationSwaggerConfig {
 
     private ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
-            "FDP API",
-            "This API is a prototype version, no testing has been carried during the development phase. If you find bugs in this api please contact the developer",
+            "FDP API Java based",
+            "<p>This API is a prototype version, If you find bugs in this api please contact the developer.</p>"
+                    + "<p>"
+                    + "<li><a target='_blank' href = 'https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+Software+Specification'>API specs</li>"
+                    + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/ODEX-FAIRDataPoint/tree/master/fdp-api/java'>Source code</a> </li></p>",
             "0.1 BETA",
             "ATO",
             "r.kaliyaperumal@lumc.nl",
