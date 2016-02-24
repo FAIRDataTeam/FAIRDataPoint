@@ -24,12 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-/**
- *
- * @author Rajaram Kaliyaperumal
- * @since 2015-11-18
- * @version 0.2
- */
+
 
 @RestController
 @Api(description = "FDP metadata")
@@ -39,18 +34,30 @@ public class MetadataController {
             = LogManager.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
+
+    /**
+     * To hander GET fdp metadata request.
+     * (Note:) The first value in the produces annotation is used as a fallback
+     * value, for the request with the accept header value (* / *),
+     * manually setting the contentType of the response is not working.
+     * 
+     * @param request   Http request
+     * @param response  Http response   
+     * @return  On success return FDP metadata
+     */
     @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET,
-            produces = {"application/ld+json", "text/turtle", 
-                "application/rdf+xml", "text/n3"}
+            produces = { "text/turtle", 
+        "application/ld+json", "application/rdf+xml", "text/n3"} 
     )
-    public String getFDAMetaData(HttpServletRequest request,
+    public String getFDAMetaData(final HttpServletRequest request,
                     HttpServletResponse response) { 
         String responseBody;
         LOGGER.info("Request to get FDP metadata");
-        LOGGER.info("GET : " + request.getRequestURL());       
+        LOGGER.info("GET : " + request.getRequestURL()); 
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);        
+        RDFFormat requesetedContentType = HttpHeadersUtils.
+                getRequestedAcceptHeader(contentType);        
         try { 
             responseBody = fairMetaDataService.retrieveFDPMetaData(
                     requesetedContentType);
@@ -60,14 +67,14 @@ public class MetadataController {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
-        LoggerUtils.logRequest(LOGGER, request);
+        LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }
         
     @ApiOperation(value = "Catalog metadata")
     @RequestMapping(value = "/{catalogID:[^.]+}", method = RequestMethod.GET,
-            produces = {"application/ld+json", "text/turtle", 
-                "application/rdf+xml", "text/n3"}
+            produces = { "text/turtle", 
+        "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     public String getCatalogMetaData(
             @PathVariable final String catalogID, HttpServletRequest request,
@@ -76,7 +83,7 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);   
+        RDFFormat requesetedContentType = HttpHeadersUtils.getRequestedAcceptHeader(contentType);   
         try {                
             responseBody = fairMetaDataService.                        
                     retrieveCatalogMetaData(catalogID, requesetedContentType);
@@ -86,15 +93,15 @@ public class MetadataController {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
-        LoggerUtils.logRequest(LOGGER, request);
+        LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }
     
     @ApiOperation(value = "Dataset metadata")
     @RequestMapping(value = "/{catalogID}/{datasetID}", 
             method = RequestMethod.GET,
-            produces = {"application/ld+json", "text/turtle", 
-                "application/rdf+xml", "text/n3"}
+            produces = { "text/turtle", 
+        "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     public String getDatasetMetaData(@PathVariable final String catalogID,
             @PathVariable final String datasetID, HttpServletRequest request,
@@ -103,7 +110,7 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.requestedAcceptHeader(contentType);    
+        RDFFormat requesetedContentType = HttpHeadersUtils.getRequestedAcceptHeader(contentType);    
         try {   
             responseBody = fairMetaDataService.retrieveDatasetMetaData(
                     catalogID, datasetID, requesetedContentType);                
@@ -113,7 +120,7 @@ public class MetadataController {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
-        LoggerUtils.logRequest(LOGGER, request);
+        LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }
     

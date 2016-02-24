@@ -40,8 +40,8 @@ public class DataAccessorController {
     private DataAccessorService dataAccessorService;
     
     @ApiOperation(value = "FAIR dataset distribution")
-    @RequestMapping(produces = {"application/ld+json", "text/turtle", 
-                "application/rdf+xml", "text/n3"}, 
+    @RequestMapping(produces = { "text/turtle", 
+        "application/ld+json", "application/rdf+xml", "text/n3"}, 
             method = RequestMethod.GET)
     public String getDatasetDistribution(@PathVariable final String catalogID,
             @PathVariable final String datasetID, 
@@ -53,8 +53,7 @@ public class DataAccessorController {
         LOGGER.info("GET : " + request.getRequestURL());
         String responseBody = null;
         String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.
-                requestedAcceptHeader(acceptHeader);        
+        RDFFormat requesetedContentType = HttpHeadersUtils.getRequestedAcceptHeader(acceptHeader);        
         try {                
             responseBody = dataAccessorService.retrieveDatasetDistribution(                       
                     catalogID, datasetID, distributionID, 
@@ -64,7 +63,7 @@ public class DataAccessorController {
         } catch (DataAccessorServiceException ex) {                
                 HttpHeadersUtils.set500ResponseHeaders(response, ex);            
         }
-        LoggerUtils.logRequest(LOGGER, request);
+        LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }
     
