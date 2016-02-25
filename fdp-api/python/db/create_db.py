@@ -9,7 +9,7 @@ class ResourceCoreMeta(Base):
    __tablename__ = 'RESOURCE_CORE_META'
 
    id          = Column(String(255), primary_key=True)
-   type        = Column(String(255),
+   type        = Column(Integer,
                        # resouce types referred to by integers:
                        # 1=FDP, 2=catalog, 3=dataset or 4=distribution
                        CheckConstraint('type BETWEEN 1 AND 4', name='ck_resource_type'),
