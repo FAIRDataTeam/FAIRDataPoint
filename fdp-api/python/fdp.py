@@ -30,73 +30,30 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.8'
+__version__ = '0.4.0'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
 import os
 from bottle import (get, run, static_file, redirect, response, request, opt)
-from metadata import FAIRGraph
+from metadata import FAIRConfigParser, FAIRGraph
 from miniuri import Uri
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
-#metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
 doc_dir = os.path.join(project_dir, 'doc/')
-
 host = Uri(opt.bind)    # pass host:[port] through the command-line -b option
 host.scheme = 'http'    # add URI scheme
-g = FAIRGraph(host.uri) # populate FAIRGraph with metadata
 
-# set metadata for FDP, data catalog(s) and data set(s)
-# Note: all IDs must be unique
-g.setFdpMetadata(dict(
-      fdp_id='FDP-WUR-PB',
-      catalog_ids=['catalog-01'],
-      title='FAIR Data Point of the Plant Breeding Group, Wageningen UR',
-      des='This FDP provides metadata on plant-specific genotype/phenotype data sets.'))
+# populate FAIR metadata from config file
+config_file = 'metadata.ini'
+parser = FAIRConfigParser()
+parser.read(config_file)
+g = FAIRGraph(host.uri)
 
-g.setCatalogMetadata(dict(
-   catalogs=[
-     dict(catalog_id='catalog-01',
-     title='Plant Breeding Data Catalog',
-     des='Plant Breeding Data Catalog',
-     publisher='http://orcid.org/0000-0002-4368-8058',
-     issued='2015-11-24',
-     modified='2015-11-24',
-     dataset_ids=['breedb'],
-     theme_taxonomy='DBPEDIA.Breeding')
-   ]))
+for triple in parser.triplify():
+   g.setMetadata(triple)
 
-g.setDatasetAndDistributionMetadata(dict(
-   datasets=[
-      dict(dataset_id='breedb',
-      title='BreeDB tomato passport data',
-      des='BreeDB tomato passport data',
-      publisher='http://orcid.org/0000-0002-4368-8058',
-      issued='2015-11-24',
-      modified='2015-11-24',
-      landing_page='http://www.eu-sol.wur.nl/passport',
-      keywords=['BreeDB', 'Plant breeding', 'germplasm', 'passport data'],
-      theme='DBPEDIA.Plant_breeding',
-      distributions=[
-         dict(distribution_id='breedb-sparql',
-            title='SPARQL endpoint for BreeDB tomato passport data',
-            des='SPARQL endpoint for BreeDB tomato passport data',
-            license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
-            access_url='http://virtuoso.biotools.nl:8888/sparql',
-            # graph_uri = 'https://www.eu-sol.wur.nl/passport', # TODO: Use SPARQL-SD?
-            media_types=['application/n-triples', 'application/rdf+xml']
-         ),
-         dict(distribution_id='breedb-sqldump',
-            title='SQL dump of the BreeDB tomato passport data',
-            des='SQL dump of the BreeDB tomato passport data',
-            license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
-            download_url='http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql',
-            media_types=['application/sql']
-         )
-      ])
-   ]))
-
+# HTTP response: FAIR metadata in RDF and JSON-LD formats
 def httpResponse(graph, uri):
    accept_header = request.headers.get('Accept')
    fmt = 'text/turtle' # set default format (MIME type)
@@ -121,7 +78,7 @@ def httpResponse(graph, uri):
 
    return serialized_graph
 
-# implement request handlers
+# HTTP request handlers
 @get(['/', '/doc', '/doc/'])
 def defaultPage():
    redirect('/doc/index.html')
