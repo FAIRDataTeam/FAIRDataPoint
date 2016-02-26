@@ -61,6 +61,17 @@ class FAIRConfigParser(object):
       return self._metadata[section][field]
 
 
+   def triplify(self):
+      for section in self.getSectionHeaders():
+         for field in self.getFields(section):
+            items = self.getItems(section, field)
+            if isinstance(items, list):
+               for item in items:
+                  yield (section, field, item)
+            else:
+               yield (section, field, items)
+
+
    def _validate(self):
       section_headers = self.getSectionHeaders()
       sections = dict((section,[]) for section in _REQUIRED_META.keys())
@@ -122,8 +133,13 @@ filename = 'metadata.ini'
 parser = FAIRConfigParser()
 parser.read(filename)
 
-print parser.getMetadata()
+#catalogs = [cat for cat in parser.getSectionHeaders() if 'catalog' in cat]
+#print catalogs
+#print parser.getMetadata()
 #print parser.getSectionHeaders()
-#print parser.getFields('dataset/breedb')
+#print parser.getFields('catalog/catalog-01')
 #print parser.getItems('fdp', 'fdp_id')
+
+for s,o,p in  parser.triplify():
+   print s, o, p
 
