@@ -1,16 +1,12 @@
 from ConfigParser import SafeConfigParser
-import re
 
+_CORE_META   = ['title','publisher','version','issued','modified']
+_REQUIRED_META = dict(fdp          = _CORE_META + ['fdp_id','catalog_id'],
+                      catalog      = _CORE_META + ['dataset_id','theme_taxonomy'],
+                      dataset      = _CORE_META + ['distribution_id','theme'],
+                      distribution = _CORE_META + ['access_url|download_url','media_type'])
 
-_MANDATORY_SECTIONS = ['fdp','catalog','dataset','distribution']
-_MANDATORY_FIELDS   = ['title','publisher','version','issued','modified']
-_FDP_FIELDS = _MANDATORY_FIELDS + ['fdp_id','catalog_id']
-_CATALOG_FIELDS = _MANDATORY_FIELDS + ['dataset_id','theme_taxonomy']
-_DATASET_FIELDS = _MANDATORY_FIELDS + ['distribution_id','theme']
-_DISTRIBUTION_FIELDS = _MANDATORY_FIELDS + ['access_url|download_url','media_type']
-
-
-class Metadata(object):
+class FAIRConfigParser(object):
    def __init__(self):
       parser = SafeConfigParser()
       self._parser = parser
@@ -23,13 +19,13 @@ class Metadata(object):
 
 
    @staticmethod
-   def mgs_field_not_found(field, section):
+   def msg_field_not_found(field, section):
       return "Field '%s' not found in section '%s'." % (field, section)
 
    
    @staticmethod
-   def msg_ids_not_ref(section, field, section_refby_field):
-      return "{f}(s) in the '{s}' section not referred in the '{r}/<{f}>' section header(s).".format(f=field, r=section_refby_field, s=section)
+   def msg_reference_not_found(section, field, ref_section_by_field):
+      return "{f}(s) in the '{s}' section not referenced in the '{r}/<{f}>' section header(s) or vice versa.".format(f=field, r=ref_section_by_field, s=section)
 
 
    def read(self, filename):
@@ -43,14 +39,13 @@ class Metadata(object):
             self._metadata[section][key] = value
 
       self._validate()
-      #for section in self._check_sections():
-      #   self._check_fields(section)
+
 
    def get_all(self):
       return self._metadata
 
 
-   def get_sections(self):
+   def get_section_headers(self):
       return self.get_all().keys()
 
 
@@ -63,84 +58,59 @@ class Metadata(object):
 
 
    def _validate(self):
-      _RE_SECTIONS = re.compile('(?P<fdp>^fdp)|'\
-                              + '^catalog/(?P<catalog_id>\S+$)|'\
-                              + '^dataset/(?P<dataset_id>\S+)$|'\
-                              + '^distribution/(?P<distribution_id>\S+)$')
-
-      lookup_sections = dict(fdp          = None,
-                             catalog      = [],
-                             dataset      = [],
-                             distribution = [])
-
-      lookup_fields = dict(fdp          = _FDP_FIELDS,
-                           catalog      = _CATALOG_FIELDS,
-                           dataset      = _DATASET_FIELDS,
-                           distribution = _DISTRIBUTION_FIELDS)
-   
-      sections = self.get_sections()
-
-      for section in sections:
-         fdp, cat, dat, dist = None, None, None, None
-         match = _RE_SECTIONS.search(section)
-
-         if match is not None:
-            fdp = match.group('fdp')
-            cat = match.group('catalog_id')
-            dat = match.group('dataset_id')
-            dist = match.group('distribution_id')
-
-         if fdp: lookup_sections['fdp'] = True
-         if cat: lookup_sections['catalog'].append(cat)
-         if dat: lookup_sections['dataset'].append(dat)
-         if dist: lookup_sections['distribution'].append(dist)
-
-      for section in _MANDATORY_SECTIONS:
-         assert(lookup_sections[section]), self.msg_section_not_found(section)
+      # check the presence of mandatory sections and fields in config file
+      section_headers = self.get_section_headers()
+      sections = dict((section,[]) for section in _REQUIRED_META.keys())
+      sfx = '_id'
+      fdp, cat, dat, dist = 'fdp', 'catalog', 'dataset', 'distribution'
+      cat_id, dat_id, dist_id = cat + sfx, dat + sfx, dist + sfx
 
       def _arrfy(item):
          if isinstance(item, str):
             return [item]
          return item
 
-      fdp = 'fdp'
-      cat = 'catalog'
-      cat_id = cat + '_id'
-      dat = 'dataset'
-      dat_id = dat + '_id'
-      dist = 'distribution'
-      dist_id = dist + '_id'
+      for sh in section_headers:
+         if sh in sections:
+            sections[sh] = True
 
-      for section in sections:
-         for field in lookup_fields[section.split('/')[0]]:
-            fields = self._metadata[section]
+         if '/' in sh:
+            section, resource_id = sh.split('/')
+            if section in sections:
+               sections[section].append(resource_id)
+
+      for section,resource in sections.items():
+         assert(resource), self.msg_section_not_found(section)
+
+      for section in section_headers:
+         for field in _REQUIRED_META[section.split('/')[0]]:
+            fields = self.get_fields(section)
          
-            if '|' in field: # two alternatives for distribution: access_url|download_url
+            if '|' in field: # distribution has two alternatives: access_url|download_url
                a, b = field.split('|')
                assert(a in fields or b in fields), self.msg_field_not_found(field, section)
             else:
                assert(field in fields), self.msg_field_not_found(field, section)
 
-
          if fdp in section:
             items = self.get_items(section, cat_id)
-            assert(_arrfy(items) == lookup_sections[cat]), self.msg_ids_not_ref(fdp, cat_id, cat)
+            assert(_arrfy(items) == sections[cat]), self.msg_reference_not_found(fdp, cat_id, cat)
 
          if cat in section:
             items = self.get_items(section, dat_id)
-            assert(_arrfy(items) == lookup_sections[dat]), self.msg_ids_not_ref(cat, dat_id, dat)
+            assert(_arrfy(items) == sections[dat]), self.msg_reference_not_found(cat, dat_id, dat)
 
          if dat in section:
             items = self.get_items(section, dist_id)
-            assert(_arrfy(items) == lookup_sections[dist]), self.msg_ids_not_ref(dat, dist_id, dist)
+            assert(_arrfy(items) == sections[dist]), self.msg_reference_not_found(dat, dist_id, dist)
 
 
 filename = 'metadata.ini'
-m = Metadata()
-m.read(filename)
+parser = FAIRConfigParser()
+parser.read(filename)
 
-print m.get_all()
-#print m.get_sections()
-#print m.get_fields('dataset/breedb')
-#print m.get_items('fdp', 'fdp_id')
+print parser.get_all()
+#print parser.get_section_headers()
+#print parser.get_fields('dataset/breedb')
+#print parser.get_items('fdp', 'fdp_id')
 
