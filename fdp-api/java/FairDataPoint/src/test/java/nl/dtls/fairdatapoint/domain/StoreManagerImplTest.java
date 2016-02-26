@@ -5,82 +5,68 @@
  */
 package nl.dtls.fairdatapoint.domain;
 
+import java.util.List;
+import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openrdf.model.Statement;
-import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.memory.MemoryStore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * StoreManagerImpl class unit tests
  * 
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
- * @version 0.1
+ * @version 0.2
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ContextConfiguration(classes = {RestApiTestContext.class})
+@DirtiesContext
 public class StoreManagerImplTest {  
     
-    /**
-     * The triple repository can't be NULL, this test is excepted to throw 
-     * NullPointer exception 
-     */
-    @Test(expected = NullPointerException.class) 
-     public void exceptionForNullRepository(){
-        try {
-            Repository repository = new SailRepository(null);
-            new StoreManagerImpl(repository);
-        } catch (RepositoryException ex) {
-            fail("The test is not excepted to throw RepositoryException");
-        }
-     }
+    @Autowired
+    StoreManager testStoreManager;
      
      /**
       * The URI of a RDF resource can't be NULL, this test is excepted 
       * to throw IllegalArgumentException
       */
-     @Test(expected = IllegalArgumentException.class) 
-     public void nullURI() {         
-         Sail store = new MemoryStore();   
-         Repository repository = new SailRepository(store);            
-         StoreManager testStoreManager;   
-         try {
-             testStoreManager = new StoreManagerImpl(repository);            
-             if (testStoreManager.retrieveResource(null).hasNext()) {                
-                 fail("No RDF statements excepted for NULL URI");            
-             }        
-         } catch (RepositoryException | StoreManagerException ex) {         
-             fail("The test is not excepted to throw RepositoryException or "
-                    + "StoreManagerException");        
-         }
-     }
+     @Test(expected = IllegalArgumentException.class)      
+     public void nullURI() {           
+             
+        try {
+            testStoreManager.retrieveResource(null); 
+            fail("No RDF statements excepted for NULL URI");
+        } catch (StoreManagerException ex) {
+            fail("This test is not excepted to throw StoreManagerException"); 
+        }
+     }  
      
      /**
       * The URI of a RDF resource can't be EMPTY, this test is excepted 
       * to throw IllegalArgumentException
       */
-     @Test(expected = IllegalArgumentException.class) 
+     @Test(expected = IllegalArgumentException.class)
      public void emptyURI(){
-         Sail store = new MemoryStore();       
-         String uri = "";
-         Repository repository = new SailRepository(store);            
-         StoreManager testStoreManager;   
+         String uri = "";  
          try {
-             testStoreManager = new StoreManagerImpl(repository);            
-             if (testStoreManager.retrieveResource(uri).hasNext()) {                
-                 fail("No RDF statements excepted for NULL URI");            
-             }        
-         } catch (RepositoryException | StoreManagerException ex) {             
+             testStoreManager.retrieveResource(uri);  
+             fail("No RDF statements excepted for NULL URI");       
+         } catch (StoreManagerException ex) {             
              fail("The test is not excepted to throw RepositoryException or "
                     + "StoreManagerException");        
          }
      }
-    
+     
      /**
       * The test is excepted to retrieve ZERO statements
       * 
@@ -92,23 +78,13 @@ public class StoreManagerImplTest {
     public void retrieveNonExitingResource() throws RepositoryException, 
             StoreManagerException,  
             Exception {  
-        
-        Sail store = new MemoryStore();
-        Repository repository = new SailRepository(store);    
-        StoreManager testStoreManager = new StoreManagerImpl(repository); 
+           
         testStoreManager.storeRDF(ExampleTurtleFiles.
                 getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null); 
         String uri = "http://semlab1.liacs.nl:8080/dummy";             
-        RepositoryResult<Statement> statements = 
+        List<Statement> statements = 
                 testStoreManager.retrieveResource(uri); 
-        int countStatements = 0;
-        while(statements != null && statements.hasNext()){  
-            countStatements = countStatements + 1;
-            break;
-        } 
-        testStoreManager.closeRepositoryConnection();
-        closeRepository(repository);  
-        assertTrue(countStatements == 0);
+        assertTrue(statements.isEmpty());
     }   
     
     /**
@@ -117,73 +93,15 @@ public class StoreManagerImplTest {
      * @throws StoreManagerException
      * @throws Exception 
      */
-    @Test
+    @Test 
     public void retrieveExitingResource() throws RepositoryException, 
             StoreManagerException,  
             Exception {  
         
-        Sail store = new MemoryStore();
-        Repository repository = new SailRepository(store);    
-        StoreManager testStoreManager = new StoreManagerImpl(repository); 
-        testStoreManager.storeRDF(ExampleTurtleFiles.
+        this.testStoreManager.storeRDF(ExampleTurtleFiles.
                 getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null);            
-        RepositoryResult<Statement> statements = 
-                testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI); 
-        int countStatements = 0;
-        while(statements != null && statements.hasNext()){  
-            countStatements = countStatements + 1;
-            break;
-        } 
-        testStoreManager.closeRepositoryConnection();
-        closeRepository(repository);  
-        assertTrue(countStatements > 0);
-    }
-    
-    /**
-     * Null RepositoryConnection connection can't be closed, the test is 
-     * excepted to throw exception
-     * 
-     * @throws Exception 
-     */
-    @Test(expected = StoreManagerException.class)    
-    public void closeNullRepositoryConnection() throws Exception {             
-        Sail store = new MemoryStore();
-        Repository repository = new SailRepository(store);    
-        StoreManager testStoreManager = new StoreManagerImpl(repository);  
-        testStoreManager.closeRepositoryConnection();        
-    }
-    
-    /**
-     * This test is attempt to close opened repositoryConnection, the test is
-     * excepted to pass
-     * 
-     * @throws Exception 
-     */
-    @Test    
-    public void closeOpenedRepositoryConnection() throws Exception {             
-        Sail store = new MemoryStore();
-        Repository repository = new SailRepository(store);    
-        StoreManager testStoreManager = new StoreManagerImpl(repository);
-        testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI);
-        testStoreManager.closeRepositoryConnection(); 
-        return;
-    }
-    
-    /**
-     * Method to close the repository
-     * 
-     * @throws Exception 
-     */
-    private void closeRepository(Repository repository) throws Exception {
-            
-        try {                
-            if (repository != null) {                    
-                repository.shutDown();                
-            }            
-        }            
-        catch (Exception e) {                                
-            throw (new Exception(e.getMessage()));            
-        }
-    } 
-    
+        List<Statement> statements = 
+                this.testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI); 
+        assertTrue(statements.size() > 0);
+    }    
 }

@@ -6,11 +6,11 @@
 package nl.dtls.fairdatapoint.service.impl.utils;
 
 import java.io.StringWriter;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
@@ -28,7 +28,7 @@ public class RDFUtils {
     private final static Logger LOGGER 
             = LogManager.getLogger(RDFUtils.class);
     
-    public static String writeToString(RepositoryResult<Statement> statements, 
+    public static String writeToString(List<Statement> statements, 
             RDFFormat format) throws Exception {		
         StringWriter sw = new StringWriter();		
         RDFWriter writer = Rio.createWriter(format, sw);
@@ -41,7 +41,7 @@ public class RDFUtils {
         return sw.toString();	
     }
 	
-    private static void propagateToHandler(RepositoryResult<Statement> 
+    private static void propagateToHandler(List<Statement> 
             statements, RDFHandler handler) 
             throws RDFHandlerException, RepositoryException{            
         handler.startRDF();	   
@@ -55,8 +55,8 @@ public class RDFUtils {
         handler.handleNamespace("dct", "http://purl.org/dc/terms/");
         handler.handleNamespace("lang", 
                 "http://id.loc.gov/vocabulary/iso639-1/");
-        while(statements.hasNext()){
-            handler.handleStatement(statements.next());            
+        for(Statement st: statements){
+            handler.handleStatement(st);            
         }  
         handler.endRDF();
     }

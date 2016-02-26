@@ -5,7 +5,7 @@
  */
 package nl.dtls.fairdatapoint.domain;
 
-import org.openrdf.model.Resource;
+import java.util.List;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryResult;
 
@@ -17,7 +17,7 @@ import org.openrdf.repository.RepositoryResult;
  */
 public interface StoreManager {
     
-    public RepositoryResult<Statement> retrieveResource(String uri) 
+    public List<Statement> retrieveResource(String uri) 
             throws StoreManagerException;
     /**
      * Store string RDF to the repository
@@ -29,11 +29,4 @@ public interface StoreManager {
      */
     public void storeRDF (String content, String contextURI, String baseURI) 
             throws StoreManagerException; 
-    /**
-	 
-         * Closes the StoreManager and the underlying Repository.
-	 * 
-	 * @throws Exception	 
-    */	
-    public void closeRepositoryConnection() throws Exception;
 }
