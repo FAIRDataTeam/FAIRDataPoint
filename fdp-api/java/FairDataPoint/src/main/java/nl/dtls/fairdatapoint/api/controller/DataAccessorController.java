@@ -9,7 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import nl.dtls.fairdatapoint.api.controller.utils.HandleHttpHeadersUtils;
+import nl.dtls.fairdatapoint.api.controller.utils.HttpHeadersUtils;
+import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.DataAccessorService;
 import nl.dtls.fairdatapoint.service.DataAccessorServiceException;
 import org.apache.http.HttpHeaders;
@@ -38,9 +39,9 @@ public class DataAccessorController {
     @Autowired
     private DataAccessorService dataAccessorService;
     
-    @ApiOperation(value = "FAIR dataset distribution")
-    @RequestMapping(produces = {"application/ld+json", "text/turtle", 
-                "application/rdf+xml", "text/n3"}, 
+    @ApiOperation(value = "Dataset distribution metadata")
+    @RequestMapping(produces = { "text/turtle", 
+        "application/ld+json", "application/rdf+xml", "text/n3"}, 
             method = RequestMethod.GET)
     public String getDatasetDistribution(@PathVariable final String catalogID,
             @PathVariable final String datasetID, 
@@ -50,25 +51,19 @@ public class DataAccessorController {
         
         LOGGER.info("Request to get dataset's distribution {}", distributionID);
         LOGGER.info("GET : " + request.getRequestURL());
-        String responseBody;
+        String responseBody = null;
         String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HandleHttpHeadersUtils.
-                requestedAcceptHeader(acceptHeader);        
-        HandleHttpHeadersUtils.setMandatoryResponseHeader(response);
-        if (requesetedContentType == null) {
-            responseBody = HandleHttpHeadersUtils.setUnsupportedResponseHeader(response, acceptHeader);               
-        }        
-        else {      
-            try {
-                responseBody = dataAccessorService.retrieveDatasetDistribution(catalogID, 
-                        datasetID, distributionID, requesetedContentType);
-                HandleHttpHeadersUtils.setSuccessResponseHeader(
-                        responseBody, response, requesetedContentType);
-            } catch (DataAccessorServiceException ex) {
-                responseBody = HandleHttpHeadersUtils.setErrorResponseHeader(
-                        response, ex);
-            }
+        RDFFormat requesetedContentType = HttpHeadersUtils.getRequestedAcceptHeader(acceptHeader);        
+        try {                
+            responseBody = dataAccessorService.retrieveDatasetDistribution(                       
+                    catalogID, datasetID, distributionID, 
+                    requesetedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                    requesetedContentType);            
+        } catch (DataAccessorServiceException ex) {                
+                HttpHeadersUtils.set500ResponseHeaders(response, ex);            
         }
+        LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }
     

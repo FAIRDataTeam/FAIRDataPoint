@@ -7,9 +7,16 @@ and open the template in the editor.
 
 <Configuration status="WARN">
     <Properties>
-        <Property name="log-path">/tmp/logs/fdp/</Property>
+        <Property name="log-path">logs/</Property>  <!--use ${env:VAR_NAME} for env variables --> 
     </Properties>
+     <!-- Define custom levels before using them for filtering below. -->
+    <CustomLevels>
+        <CustomLevel name="API-REQUEST" intLevel="350" />
+    </CustomLevels>
     <Appenders>
+        <Console name="console-log" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
+        </Console>
         <Console name="console-log" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
         </Console>
@@ -23,9 +30,18 @@ and open the template in the editor.
             </Policies>
         </RollingFile>
         <RollingFile name="error-log" fileName="${log-path}/fdp-api-error.log"
-                     filePattern="${log-path}/fdp-api-info-error-%d{yyyy-MM-dd}.log">
+                     filePattern="${log-path}/fdp-api-error-%d{yyyy-MM-dd}.log">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="api-request-log" fileName="${log-path}/fdp-api-request.log"
+                     filePattern="${log-path}/fdp-api-request-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <pattern>%X{ipAddress} - - %d{[dd/MM/yyyy:HH:mm:ss -SSSS]} \"%X{requestMethod} %X{requestURI} %X{requestProtocol}\" %X{responseStatus} %X{contentSize}%n</pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
@@ -37,6 +53,7 @@ and open the template in the editor.
             <appender-ref ref="trace-log" level="info"/>
             <appender-ref ref="error-log" level="error"/>
             <appender-ref ref="console-log" level="info"/>
+            <appender-ref ref="api-request-log" level="API-REQUEST"/>
         </Logger>
         <Root level="info" additivity="false">
             <AppenderRef ref="console-log"/>

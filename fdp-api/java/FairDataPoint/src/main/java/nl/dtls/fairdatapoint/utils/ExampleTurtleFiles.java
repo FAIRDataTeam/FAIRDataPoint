@@ -9,18 +9,12 @@ import com.google.common.collect.ImmutableList;
 import static com.google.common.io.Files.readLines;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import org.openrdf.rio.RDFFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openrdf.model.Resource;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFParseException;
 
 /**
  * Contains references to the example metadata rdf files which are used in the 
