@@ -35,23 +35,52 @@ __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
 import os
-from bottle import (get, run, static_file, redirect, response, request, opt)
+from bottle import (get, run, static_file, redirect, response, request, opt, install)
 from metadata import FAIRConfigParser, FAIRGraph
 from miniuri import Uri
+from datetime import datetime
+from functools import wraps
+import logging
+
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
-doc_dir = os.path.join(project_dir, 'doc/')
-host = Uri(opt.bind)    # pass host:[port] through the command-line -b option
-host.scheme = 'http'    # add URI scheme
+doc_dir = os.path.join(project_dir, 'doc/')               # Swagger UI files
+config_file = os.path.join(project_dir, 'metadata.ini')   # metadata config file
+access_log_file = os.path.join(project_dir, 'access.log') # HTTP access log file
+
+# log HTTP requests in Common Log Format
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(access_log_file)
+fh.setLevel(logging.INFO)
+logger.addHandler(fh)
+
+def logHttpRequests(fn):
+    @wraps(fn)
+    def _log_to_logger(*args, **kwargs):
+        request_time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
+        logger.info('%s - - [%s] "%s %s %s" %d' % (request.remote_addr,
+                                        request_time,
+                                        request.method,
+                                        request.urlparts.path,
+                                        request.get('SERVER_PROTOCOL'),
+                                        response.status_code))
+        return fn(*args, **kwargs)
+    return _log_to_logger
+
+install(logHttpRequests)
+
 
 # populate FAIR metadata from config file
-config_file = 'metadata.ini'
 parser = FAIRConfigParser()
 parser.read(config_file)
+host = Uri(opt.bind)    # pass host:[port] through the command-line -b option
+host.scheme = 'http'    # add URI scheme
 g = FAIRGraph(host.uri)
 
 for triple in parser.triplify():
    g.setMetadata(triple)
+
 
 # HTTP response: FAIR metadata in RDF and JSON-LD formats
 def httpResponse(graph, uri):
@@ -102,6 +131,7 @@ def getDatasetMetadata(dataset_id, graph=g):
 @get('/distribution/<distribution_id>')
 def getDistributionMetadata(distribution_id, graph=g):
    return httpResponse(graph, graph.distURI(distribution_id))
+
 
 if __name__ == '__main__':
    run(server='wsgiref')
