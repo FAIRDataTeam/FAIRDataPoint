@@ -2,6 +2,7 @@ from rdflib import ConjunctiveGraph, URIRef, Literal
 from rdflib.namespace import Namespace, RDF, RDFS, DCTERMS, XSD
 from rdflib.plugin import register, Serializer
 from ConfigParser import SafeConfigParser
+from datetime import datetime
 
 # rdflib-jsonld module required
 register('application/ld+json', Serializer, 'rdflib_jsonld.serializer', 'JsonLDSerializer')
@@ -20,9 +21,9 @@ _REQUIRED_META = dict(fdp          = _CORE_META + ['fdp_id','catalog_id'],
                       distribution = _CORE_META + ['access_url|download_url','media_type','license'])
 
 # map fields to XSD data types and ontologies/vocabularies
-_ONTO_MAP_PREDICATE = dict(fdp_id      = [ XSD.string, DCTERMS.identifier ],
-                           catalog_id  = [ XSD.string, DCTERMS.hasPart ],
-                           dataset_id  = [ None, DCTERMS.hasPart, DCAT.dataset ],
+_ONTO_MAP_PREDICATE = dict(fdp_id          = [ XSD.string, DCTERMS.identifier ],
+                           catalog_id      = [ XSD.string, DCTERMS.hasPart ],
+                           dataset_id      = [ None, DCTERMS.hasPart, DCAT.dataset ],
                            distribution_id = [ None, DCAT.distribution ],
                            title           = [ XSD.string, DCTERMS.title, RDFS.label ],
                            description     = [ XSD.string, DCTERMS.description ],
@@ -40,34 +41,34 @@ _ONTO_MAP_PREDICATE = dict(fdp_id      = [ XSD.string, DCTERMS.identifier ],
                            media_types     = [ None, DCAT.mediaTypes ] )
 
 
-class FAIRConfigParser(object):
-   def __init__(self):
+class FAIRConfigReader(object):
+   def __init__(self, file_name):
       parser = SafeConfigParser()
       self._parser = parser
       self._metadata = dict()
-
+      self._read(file_name)
 
    @staticmethod
-   def errorSectionNotFound(section):
+   def _errorSectionNotFound(section):
       return "Section '%s' is not found." % section
 
 
    @staticmethod
-   def errorFieldNotFound(field, section):
+   def _errorFieldNotFound(field, section):
       return "Field '%s' is not found in section '%s'." % (field, section)
 
 
    @staticmethod
-   def errorReferenceNotFound(section, field, ref_section_by_field):
+   def _errorReferenceNotFound(section, field, ref_section_by_field):
       return "{f}(s) in the '{s}' section is not referenced in the '{r}/<{f}>' section header(s) or vice versa.".format(f=field, r=ref_section_by_field, s=section)
 
    @staticmethod
-   def errorResourceIdNotUnique(id):
+   def _errorResourceIdNotUnique(id):
       return "Resource ID '%s' is not unique." % id
 
 
-   def read(self, filename):
-      self._parser.read(filename)
+   def _read(self, file_name):
+      self._parser.read(file_name)
 
       for section in self._parser.sections():
          self._metadata[section] = dict()
@@ -77,6 +78,7 @@ class FAIRConfigParser(object):
             self._metadata[section][key] = value
 
       self._validate()
+      return file_name
 
 
    def getMetadata(self):
@@ -94,7 +96,8 @@ class FAIRConfigParser(object):
    def getItems(self, section, field):
       return self._metadata[section][field]
 
-   def triplify(self):
+
+   def getTriples(self):
       for section in self.getSectionHeaders():
          for field in self.getFields(section):
             items = self.getItems(section, field)
@@ -103,6 +106,7 @@ class FAIRConfigParser(object):
                   yield (section, field, item)
             else:
                yield (section, field, items)
+
 
    def _validate(self):
       section_headers = self.getSectionHeaders()
@@ -131,7 +135,7 @@ class FAIRConfigParser(object):
                sections[section].append(resource_id)
 
       for section,resource in sections.items():
-         assert(resource), self.errorSectionNotFound(section)
+         assert(resource), self._errorSectionNotFound(section)
 
       # check mandatory fields and referenced sections
       for section in section_headers:
@@ -140,27 +144,27 @@ class FAIRConfigParser(object):
 
             if '|' in field: # distribution has two alternatives: access_url|download_url
                a, b = field.split('|')
-               assert(a in fields or b in fields), self.errorFieldNotFound(field, section)
+               assert(a in fields or b in fields), self._errorFieldNotFound(field, section)
             else:
-               assert(field in fields), self.errorFieldNotFound(field, section)
+               assert(field in fields), self._errorFieldNotFound(field, section)
 
             # resource IDs must be unique
             if field in [fdp_id, cat_id, dat_id, dist_id]:
                for resource_id in _arrfy(self.getItems(section, field)):
-                  assert(resource_id not in uniq_resource_ids), self.errorResourceIdNotUnique(resource_id)
+                  assert(resource_id not in uniq_resource_ids), self._errorResourceIdNotUnique(resource_id)
                   uniq_resource_ids[resource_id] = None
 
          if fdp in section:
             ids1, ids2 = _arrfy(self.getItems(section, cat_id)), sections[cat]
-            assert(ids1 == ids2), self.errorReferenceNotFound(fdp, cat_id, cat)
+            assert(ids1 == ids2), self._errorReferenceNotFound(fdp, cat_id, cat)
 
          if cat in section:
             ids1, ids2 = _arrfy(self.getItems(section, dat_id)), sections[dat]
-            assert(ids1 == ids2), self.errorReferenceNotFound(cat, dat_id, dat)
+            assert(ids1 == ids2), self._errorReferenceNotFound(cat, dat_id, dat)
 
          if dat in section:
             ids1, ids2 = _arrfy(self.getItems(section, dist_id)), sections[dist]
-            assert(ids1 == ids2), self.errorReferenceNotFound(dat, dist_id, dist)
+            assert(ids1 == ids2), self._errorReferenceNotFound(dat, dist_id, dist)
 
 
 class FAIRGraph(object):
@@ -176,10 +180,6 @@ class FAIRGraph(object):
       graph.bind('dcat', DCAT)
       graph.bind('lang', LANG)
       #graph.bind('sd', SPARQLSD)
-
-   @staticmethod
-   def missingField(key, meta_type):
-      return "Missing key '%s' in %s metadata dict()." % (key, meta_type)
 
    
    def baseURI(self):
@@ -212,7 +212,7 @@ class FAIRGraph(object):
 
 
    def setMetadata(self, triple):
-      assert(isinstance(triple, tuple)), 'Metadata must be in a tuple.'
+      assert(isinstance(triple, tuple) and len(triple) == 3), 'Metadata must be a triple.'
       s, p, o = triple
 
       # set FDP metadata
@@ -270,7 +270,9 @@ class FAIRGraph(object):
       if p in _ONTO_MAP_PREDICATE:
          dtype = _ONTO_MAP_PREDICATE[p][0]
 
-         for mp in _ONTO_MAP_PREDICATE[p][1:]:
+         for mp in _ONTO_MAP_PREDICATE[p][1:]: 
+            if dtype == XSD.date:
+               datetime.strptime(o, "%Y-%m-%d") # check date format for 'issued' and 'modified'
             o = URIRef(o) if dtype is None else Literal(o, datatype=dtype)
             g.add( (s, mp, o) )
 

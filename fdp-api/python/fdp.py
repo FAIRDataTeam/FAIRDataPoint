@@ -30,23 +30,25 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
+
 import os
+from os import path
 from bottle import (get, run, static_file, redirect, response, request, opt, install)
-from metadata import FAIRConfigParser, FAIRGraph
+from metadata import FAIRConfigReader, FAIRGraph
 from miniuri import Uri
 from datetime import datetime
 from functools import wraps
 import logging
 
 
-project_dir = os.path.dirname(os.path.abspath(__file__))
-doc_dir = os.path.join(project_dir, 'doc/')               # Swagger UI files
-config_file = os.path.join(project_dir, 'metadata.ini')   # metadata config file
-access_log_file = os.path.join(project_dir, 'access.log') # HTTP access log file
+project_dir = path.dirname(os.path.abspath(__file__))
+doc_dir = path.join(project_dir, 'doc/')               # Swagger UI files
+config_file = path.join(project_dir, 'metadata.ini')   # metadata config file
+access_log_file = path.join(project_dir, 'access.log') # HTTP access log file
 
 # log HTTP requests in Common Log Format
 logger = logging.getLogger(__name__)
@@ -72,13 +74,12 @@ install(logHttpRequests)
 
 
 # populate FAIR metadata from config file
-parser = FAIRConfigParser()
-parser.read(config_file)
+reader = FAIRConfigReader(config_file)
 host = Uri(opt.bind)    # pass host:[port] through the command-line -b option
 host.scheme = 'http'    # add URI scheme
 g = FAIRGraph(host.uri)
 
-for triple in parser.triplify():
+for triple in reader.getTriples():
    g.setMetadata(triple)
 
 
