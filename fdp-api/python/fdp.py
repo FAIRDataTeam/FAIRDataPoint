@@ -30,7 +30,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -38,7 +38,7 @@ __license__ = 'Apache Lincense, Version 2.0'
 import os
 from os import path
 from bottle import (get, run, static_file, redirect, response, request, opt, install)
-from metadata import FAIRConfigReader, FAIRGraph
+from metadata import FAIRConfigReader, FAIRGraph, FDPath
 #from miniuri import Uri
 from datetime import datetime
 from functools import wraps
@@ -107,28 +107,29 @@ def httpResponse(graph, uri):
 
    return serialized_graph
 
+
 # HTTP request handlers
 @get(['/', '/doc', '/doc/'])
 def defaultPage():
    redirect('/doc/index.html')
 
-@get('/doc/<fname:path>')
+@get(FDPath('doc', '<fname:path>'))
 def sourceDocFiles(fname):
    return static_file(fname, root=doc_dir)
 
-@get('/fdp')
+@get(FDPath('fdp'))
 def getFdpMetadata(graph=g):
    return httpResponse(graph, graph.fdpURI())
 
-@get('/catalog/<catalog_id>')
+@get(FDPath('cat', '<catalog_id>'))
 def getCatalogMetadata(catalog_id, graph=g):
    return httpResponse(graph, graph.catURI(catalog_id))
 
-@get('/dataset/<dataset_id>')
+@get(FDPath('dat', '<dataset_id>'))
 def getDatasetMetadata(dataset_id, graph=g):
    return httpResponse(graph, graph.datURI(dataset_id))
 
-@get('/distribution/<distribution_id>')
+@get(FDPath('dist', '<distribution_id>'))
 def getDistributionMetadata(distribution_id, graph=g):
    return httpResponse(graph, graph.distURI(distribution_id))
 

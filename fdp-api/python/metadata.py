@@ -21,26 +21,73 @@ _REQUIRED_META = dict(fdp          = _CORE_META + ['fdp_id','catalog_id'],
                       dataset      = _CORE_META + ['distribution_id','theme'],
                       distribution = _CORE_META + ['access_url|download_url','media_type','license'])
 
-# map fields to XSD data types and ontologies/vocabularies
-_ONTO_MAP_PREDICATE = dict(fdp_id          = [ ( DCTERMS.identifier, XSD.string ) ],
-                           catalog_id      = [ ( DCTERMS.hasPart, XSD.anyURI) ],
-                           dataset_id      = [ ( DCAT.dataset, XSD.anyURI) ],
-                           distribution_id = [ ( DCAT.distribution, XSD.anyURI ) ],
-                           title           = [ ( DCTERMS.title, XSD.string ),
-                                               ( RDFS.label, XSD.string ) ],
-                           description     = [ ( DCTERMS.description, XSD.string ) ],
-                           publisher       = [ ( DCTERMS.publisher, XSD.anyURI ) ],
-                           issued          = [ ( DCTERMS.issued, XSD.date ) ],
-                           modified        = [ ( DCTERMS.modified, XSD.date ) ],
-                           version         = [ ( DCTERMS.version, XSD.string ) ],
-                           license         = [ ( DCTERMS.license, XSD.anyURI ) ],
-                           theme           = [ ( DCAT.theme, XSD.anyURI ) ],
-                           theme_taxonomy  = [ ( DCAT.themeTaxonomy, XSD.anyURI ) ],
-                           lading_page     = [ ( DCAT.landingPage, XSD.anyURI ) ],
-                           keyword         = [ ( DCAT.keyword, XSD.string ) ],
-                           access_url      = [ ( DCAT.accessURL, XSD.anyURI ) ],
-                           download_url    = [ ( DCAT.downloadURL, XSD.anyURI ) ],
-                           media_type      = [ ( DCAT.mediaType, XSD.string ) ] )
+# mappings between fields in the config file and ontologies/vocabularies and data types
+_ONTO_MAP = dict(fdp_id          = [ ( DCTERMS.identifier, XSD.string ) ],
+                 catalog_id      = [ ( DCTERMS.hasPart, XSD.anyURI) ],
+                 dataset_id      = [ ( DCAT.dataset, XSD.anyURI) ],
+                 distribution_id = [ ( DCAT.distribution, XSD.anyURI ) ],
+                 title           = [ ( DCTERMS.title, XSD.string ),
+                                     ( RDFS.label, XSD.string ) ],
+                 description     = [ ( DCTERMS.description, XSD.string ) ],
+                 publisher       = [ ( DCTERMS.publisher, XSD.anyURI ) ],
+                 issued          = [ ( DCTERMS.issued, XSD.date ) ],
+                 modified        = [ ( DCTERMS.modified, XSD.date ) ],
+                 version         = [ ( DCTERMS.version, XSD.string ) ],
+                 license         = [ ( DCTERMS.license, XSD.anyURI ) ],
+                 theme           = [ ( DCAT.theme, XSD.anyURI ) ],
+                 theme_taxonomy  = [ ( DCAT.themeTaxonomy, XSD.anyURI ) ],
+                 landing_page    = [ ( DCAT.landingPage, XSD.anyURI ) ],
+                 keyword         = [ ( DCAT.keyword, XSD.string ) ],
+                 access_url      = [ ( DCAT.accessURL, XSD.anyURI ) ],
+                 download_url    = [ ( DCAT.downloadURL, XSD.anyURI ) ],
+                 media_type      = [ ( DCAT.mediaType, XSD.string ) ] )
+
+_RESOURCE_PATH = dict(fdp  = '/fdp',
+                      doc  = '/doc',
+                      cat  = '/catalog',
+                      dat  = '/dataset',
+                      dist = '/distribution')
+
+def _errorSectionNotFound(section):
+   return "Section '%s' not found." % section
+
+
+def _errorFieldNotFound(field):
+   return "Field '%s' not found." % field
+
+
+def _errorFieldInSectionNotFound(field, section):
+   return "Field '%s' not found in section '%s'." % (field, section)
+
+
+def _errorResourceIdNotUnique(id):
+   return "Resource ID '%s' must be unique." % id
+
+
+def _errorSectionNotReferenced(section, field, ref_section_by_field):
+   return "{f}(s) in the '{s}' section is not referenced in the '{r}/<{f}>' section header(s) or vice versa.".format(f=field, r=ref_section_by_field, s=section)
+
+
+def mandatoryFields(section):
+   assert(section in _REQUIRED_META), _errorSectionNotFound(section)
+   return _REQUIRED_META[section]
+
+
+def mapFieldToOnto(field):
+   assert(field in _ONTO_MAP), _errorFieldNotFound(field)
+   return _ONTO_MAP[field]
+
+
+def FDPath(resource, var=None):
+   assert(resource in _RESOURCE_PATH), _errorResourceNotFound(resource)
+
+   path = _RESOURCE_PATH[resource]
+   var = '' if var is None else '/%s' % str(var)
+
+   if resource != 'fdp':
+       path = _RESOURCE_PATH[resource] + var
+
+   return path
 
 
 class FAIRConfigReader(object):
@@ -49,24 +96,6 @@ class FAIRConfigReader(object):
       self._parser = parser
       self._metadata = dict()
       self._read(file_name)
-
-   @staticmethod
-   def _errorSectionNotFound(section):
-      return "Section '%s' is not found." % section
-
-
-   @staticmethod
-   def _errorFieldNotFound(field, section):
-      return "Field '%s' is not found in section '%s'." % (field, section)
-
-
-   @staticmethod
-   def _errorReferenceNotFound(section, field, ref_section_by_field):
-      return "{f}(s) in the '{s}' section is not referenced in the '{r}/<{f}>' section header(s) or vice versa.".format(f=field, r=ref_section_by_field, s=section)
-
-   @staticmethod
-   def _errorResourceIdNotUnique(id):
-      return "Resource ID '%s' is not unique." % id
 
 
    def _read(self, file_name):
@@ -137,36 +166,36 @@ class FAIRConfigReader(object):
                sections[section].append(resource_id)
 
       for section,resource in sections.items():
-         assert(resource), self._errorSectionNotFound(section)
+         assert(resource), _errorSectionNotFound(section)
 
       # check mandatory fields and referenced sections
       for section in section_headers:
-         for field in _REQUIRED_META[section.split('/')[0]]:
+         for field in mandatoryFields(section.split('/')[0]):
             fields = self.getFields(section)
 
             if '|' in field: # distribution has two alternatives: access_url|download_url
                a, b = field.split('|')
-               assert(a in fields or b in fields), self._errorFieldNotFound(field, section)
+               assert(a in fields or b in fields), _errorFieldInSectionNotFound(field, section)
             else:
-               assert(field in fields), self._errorFieldNotFound(field, section)
+               assert(field in fields), _errorFieldInSectionNotFound(field, section)
 
             # resource IDs must be unique
             if field in [fdp_id, cat_id, dat_id, dist_id]:
                for resource_id in _arrfy(self.getItems(section, field)):
-                  assert(resource_id not in uniq_resource_ids), self._errorResourceIdNotUnique(resource_id)
+                  assert(resource_id not in uniq_resource_ids), _errorResourceIdNotUnique(resource_id)
                   uniq_resource_ids[resource_id] = None
 
          if fdp in section:
             ids1, ids2 = _arrfy(self.getItems(section, cat_id)), sections[cat]
-            assert(ids1 == ids2), self._errorReferenceNotFound(fdp, cat_id, cat)
+            assert(ids1 == ids2), _errorSectionNotReferenced(fdp, cat_id, cat)
 
          if cat in section:
             ids1, ids2 = _arrfy(self.getItems(section, dat_id)), sections[dat]
-            assert(ids1 == ids2), self._errorReferenceNotFound(cat, dat_id, dat)
+            assert(ids1 == ids2), _errorSectionNotReferenced(cat, dat_id, dat)
 
          if dat in section:
             ids1, ids2 = _arrfy(self.getItems(section, dist_id)), sections[dist]
-            assert(ids1 == ids2), self._errorReferenceNotFound(dat, dist_id, dist)
+            assert(ids1 == ids2), _errorSectionNotReferenced(dat, dist_id, dist)
 
 
 class FAIRGraph(object):
@@ -187,27 +216,31 @@ class FAIRGraph(object):
 
    
    def baseURI(self):
-      return URIRef(self._base_uri)
+      return self._base_uri
+
+
+   def URI(self, resource, id=None):
+      return self.baseURI() + FDPath(resource, id)
 
 
    def docURI(self):
-      return URIRef('%s/doc' % self.baseURI())
+      return self.URI('doc')
 
 
    def fdpURI(self):
-      return URIRef('%s/fdp' % self.baseURI())
+      return self.URI('fdp')
 
 
    def catURI(self, id):
-      return URIRef('%s/catalog/%s' % (self.baseURI(), id))
+      return self.URI('cat', id)
 
 
    def datURI(self, id):
-      return URIRef('%s/dataset/%s' % (self.baseURI(), id))
+      return self.URI('dat', id)
 
 
    def distURI(self, id):
-      return URIRef('%s/distribution/%s' % (self.baseURI(), id))
+      return self.URI('dist', id)
 
 
    def serialize(self, uri, mime_type):
@@ -216,75 +249,81 @@ class FAIRGraph(object):
 
 
    def setMetadata(self, triple):
-      assert(isinstance(triple, tuple) and len(triple) == 3), 'Metadata must be a triple.'
+      assert(isinstance(triple, tuple) and len(triple) == 3), 'Input must be a triple (s, p, o).'
+
       s, p, o = triple
+      arr = s.split('/')
+      resource = arr[0]
+      resource_id = arr[1] if len(arr) == 2 else None
 
       # set FDP metadata
-      if s == 'fdp':
-         uri = self.fdpURI()
-         cg = self._graph_context(uri)
+      if resource == 'fdp':
+         s = URIRef(self.fdpURI())
+         g = self._graph_context(s)
 
-         cg.add( (uri, RDF.type, DCTERMS.Agent) )
-         cg.add( (uri, RDFS.seeAlso, self.docURI()) )
-         cg.add( (uri, DCTERMS.language, LANG.en) )
+         g.add( (s, RDF.type, DCTERMS.Agent) )
+         g.add( (s, RDFS.seeAlso, URIRef(self.docURI())) )
+         g.add( (s, DCTERMS.language, LANG.en) )
+         g.add( self._map_triple((s, p, o)) )
 
-         self._onto_map_predicate((cg, uri, p, o))
 
       # set Catalog metadata
-      if 'catalog/' in s:
-         cat_id = s.split('/')[1]
-         uri = self.catURI(cat_id)
-         cg = self._graph_context(uri)
+      if resource == 'catalog':
+         s = URIRef(self.catURI(resource_id))
+         g = self._graph_context(s)
 
-         cg.add( (uri, RDF.type, DCAT.Catalog) )
-         cg.add( (uri, DCTERMS.language, LANG.en) )
-         cg.add( (uri, DCTERMS.identifier, Literal(cat_id, datatype=XSD.string)) )
-
-         self._onto_map_predicate((cg, uri, p, o))
+         g.add( (s, RDF.type, DCAT.Catalog) )
+         g.add( (s, DCTERMS.language, LANG.en) )
+         g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
+         g.add( self._map_triple((s, p, o)) )
 
       # set Dataset metadata
-      if 'dataset/' in s:
-         dat_id = s.split('/')[1]
-         uri = self.datURI(dat_id)
-         cg = self._graph_context(uri)
+      if resource == 'dataset':
+         s = URIRef(self.datURI(resource_id))
+         g = self._graph_context(s)
 
-         cg.add( (uri, RDF.type, DCAT.Dataset) )
-         cg.add( (uri, DCTERMS.language, LANG.en) )
-         cg.add( (uri, DCTERMS.identifier, Literal(dat_id, datatype=XSD.string)) )
-
-         self._onto_map_predicate((cg, uri, p, o))
+         g.add( (s, RDF.type, DCAT.Dataset) )
+         g.add( (s, DCTERMS.language, LANG.en) )
+         g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
+         g.add( self._map_triple((s, p, o)) )
 
       # set Distribution metadata
-      if 'distribution/' in s:
-         dist_id = s.split('/')[1]
-         uri = self.distURI(dist_id)
-         cg = self._graph_context(uri)
+      if resource == 'distribution':
+         s = URIRef(self.distURI(resource_id))
+         g = self._graph_context(s)
 
-         cg.add( (uri, RDF.type, DCAT.Distribution) )
-         cg.add( (uri, DCTERMS.language, LANG.en) )
-         cg.add( (uri, DCTERMS.identifier, Literal(dist_id, datatype=XSD.string)) )
-
-         self._onto_map_predicate((cg, uri, p, o))
+         g.add( (s, RDF.type, DCAT.Distribution) )
+         g.add( (s, DCTERMS.language, LANG.en) )
+         g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
+         g.add( self._map_triple((s, p, o)) )
 
 
    def _graph_context(self, uri):
       return self._graph.get_context(uri)
 
 
-   def _onto_map_predicate(self, quad):
-      g, s, p, o = quad
+   def _map_triple(self, triple):
+      assert(isinstance(triple, tuple) and len(triple) == 3), 'Input must be a triple (s, p, o).'
 
-      if p in _ONTO_MAP_PREDICATE:
-         for (mp, dtype) in _ONTO_MAP_PREDICATE[p]:
-            if dtype == XSD.date: # check format for date fields
-               datetime.strptime(o, "%Y-%m-%d")
+      s, p, o = triple
 
-            if dtype == XSD.anyURI:
-               if '_id' in p: # fix resource path
-                  o = '../%s/%s' % (p.split('_')[0], o)
-               o = URIRef(o)
-            else:
-               o = Literal(o, datatype=dtype)
+      for (mp, dtype) in mapFieldToOnto(p):
+         if dtype == XSD.date: # check format for date fields
+            datetime.strptime(o, "%Y-%m-%d")
 
-            g.add( (s, mp, o) )
+         if dtype == XSD.anyURI:
+            if 'catalog_id' in p:
+               o = self.catURI(o)
+
+            if 'dataset_id' in p:
+               o = self.datURI(o)
+
+            if 'distribution_id' in p:
+               o = self.distURI(o)
+
+            o = URIRef(o)
+         else:
+            o = Literal(o, datatype=dtype)
+
+         return (s, mp, o)
 
