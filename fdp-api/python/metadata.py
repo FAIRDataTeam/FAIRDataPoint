@@ -3,6 +3,7 @@ from rdflib.namespace import Namespace, RDF, RDFS, DCTERMS, XSD
 from rdflib.plugin import register, Serializer
 from ConfigParser import SafeConfigParser
 from datetime import datetime
+from miniuri import Uri
 
 # rdflib-jsonld module required
 register('application/ld+json', Serializer, 'rdflib_jsonld.serializer', 'JsonLDSerializer')
@@ -21,24 +22,25 @@ _REQUIRED_META = dict(fdp          = _CORE_META + ['fdp_id','catalog_id'],
                       distribution = _CORE_META + ['access_url|download_url','media_type','license'])
 
 # map fields to XSD data types and ontologies/vocabularies
-_ONTO_MAP_PREDICATE = dict(fdp_id          = [ XSD.string, DCTERMS.identifier ],
-                           catalog_id      = [ XSD.string, DCTERMS.hasPart ],
-                           dataset_id      = [ None, DCTERMS.hasPart, DCAT.dataset ],
-                           distribution_id = [ None, DCAT.distribution ],
-                           title           = [ XSD.string, DCTERMS.title, RDFS.label ],
-                           description     = [ XSD.string, DCTERMS.description ],
-                           publisher       = [ None, DCTERMS.publisher ],
-                           issued          = [ XSD.date, DCTERMS.issued ],
-                           modified        = [ XSD.date, DCTERMS.modified ],
-                           version         = [ XSD.string, DCTERMS.version ],
-                           license         = [ None, DCTERMS.license ],
-                           theme           = [ None, DCAT.theme ],
-                           theme_taxonomy  = [ None, DCAT.themeTaxonomy ],
-                           lading_page     = [ None, DCAT.landingPage ],
-                           keyword         = [ XSD.string, DCAT.keyword ],
-                           access_url      = [ None, DCAT.accessURL ],
-                           download_url    = [ None, DCAT.downloadURL ],
-                           media_types     = [ None, DCAT.mediaTypes ] )
+_ONTO_MAP_PREDICATE = dict(fdp_id          = [ ( DCTERMS.identifier, XSD.string ) ],
+                           catalog_id      = [ ( DCTERMS.hasPart, XSD.anyURI) ],
+                           dataset_id      = [ ( DCAT.dataset, XSD.anyURI) ],
+                           distribution_id = [ ( DCAT.distribution, XSD.anyURI ) ],
+                           title           = [ ( DCTERMS.title, XSD.string ),
+                                               ( RDFS.label, XSD.string ) ],
+                           description     = [ ( DCTERMS.description, XSD.string ) ],
+                           publisher       = [ ( DCTERMS.publisher, XSD.anyURI ) ],
+                           issued          = [ ( DCTERMS.issued, XSD.date ) ],
+                           modified        = [ ( DCTERMS.modified, XSD.date ) ],
+                           version         = [ ( DCTERMS.version, XSD.string ) ],
+                           license         = [ ( DCTERMS.license, XSD.anyURI ) ],
+                           theme           = [ ( DCAT.theme, XSD.anyURI ) ],
+                           theme_taxonomy  = [ ( DCAT.themeTaxonomy, XSD.anyURI ) ],
+                           lading_page     = [ ( DCAT.landingPage, XSD.anyURI ) ],
+                           keyword         = [ ( DCAT.keyword, XSD.string ) ],
+                           access_url      = [ ( DCAT.accessURL, XSD.anyURI ) ],
+                           download_url    = [ ( DCAT.downloadURL, XSD.anyURI ) ],
+                           media_type      = [ ( DCAT.mediaType, XSD.string ) ] )
 
 
 class FAIRConfigReader(object):
@@ -168,10 +170,12 @@ class FAIRConfigReader(object):
 
 
 class FAIRGraph(object):
-   def __init__(self, base_uri):
+   def __init__(self, host):
       graph = ConjunctiveGraph()
+      h = Uri(host)
+      h.scheme = 'http' # add URI scheme
       self._graph = graph
-      self._base_uri = base_uri
+      self._base_uri = h.uri
       self._uniq_ids = dict()
 
       # bind prefixes to namespaces
@@ -234,6 +238,7 @@ class FAIRGraph(object):
 
          cg.add( (uri, RDF.type, DCAT.Catalog) )
          cg.add( (uri, DCTERMS.language, LANG.en) )
+         cg.add( (uri, DCTERMS.identifier, Literal(cat_id, datatype=XSD.string)) )
 
          self._onto_map_predicate((cg, uri, p, o))
 
@@ -245,6 +250,7 @@ class FAIRGraph(object):
 
          cg.add( (uri, RDF.type, DCAT.Dataset) )
          cg.add( (uri, DCTERMS.language, LANG.en) )
+         cg.add( (uri, DCTERMS.identifier, Literal(dat_id, datatype=XSD.string)) )
 
          self._onto_map_predicate((cg, uri, p, o))
 
@@ -256,6 +262,7 @@ class FAIRGraph(object):
 
          cg.add( (uri, RDF.type, DCAT.Distribution) )
          cg.add( (uri, DCTERMS.language, LANG.en) )
+         cg.add( (uri, DCTERMS.identifier, Literal(dist_id, datatype=XSD.string)) )
 
          self._onto_map_predicate((cg, uri, p, o))
 
@@ -268,11 +275,16 @@ class FAIRGraph(object):
       g, s, p, o = quad
 
       if p in _ONTO_MAP_PREDICATE:
-         dtype = _ONTO_MAP_PREDICATE[p][0]
+         for (mp, dtype) in _ONTO_MAP_PREDICATE[p]:
+            if dtype == XSD.date: # check format for date fields
+               datetime.strptime(o, "%Y-%m-%d")
 
-         for mp in _ONTO_MAP_PREDICATE[p][1:]: 
-            if dtype == XSD.date:
-               datetime.strptime(o, "%Y-%m-%d") # check date format for 'issued' and 'modified'
-            o = URIRef(o) if dtype is None else Literal(o, datatype=dtype)
+            if dtype == XSD.anyURI:
+               if '_id' in p: # fix resource path
+                  o = '../%s/%s' % (p.split('_')[0], o)
+               o = URIRef(o)
+            else:
+               o = Literal(o, datatype=dtype)
+
             g.add( (s, mp, o) )
 

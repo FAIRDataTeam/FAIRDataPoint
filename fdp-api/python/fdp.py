@@ -30,7 +30,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -39,7 +39,7 @@ import os
 from os import path
 from bottle import (get, run, static_file, redirect, response, request, opt, install)
 from metadata import FAIRConfigReader, FAIRGraph
-from miniuri import Uri
+#from miniuri import Uri
 from datetime import datetime
 from functools import wraps
 import logging
@@ -75,9 +75,8 @@ install(logHttpRequests)
 
 # populate FAIR metadata from config file
 reader = FAIRConfigReader(config_file)
-host = Uri(opt.bind)    # pass host:[port] through the command-line -b option
-host.scheme = 'http'    # add URI scheme
-g = FAIRGraph(host.uri)
+host = opt.bind # pass host:[port] through the command-line -b option
+g = FAIRGraph(host)
 
 for triple in reader.getTriples():
    g.setMetadata(triple)
