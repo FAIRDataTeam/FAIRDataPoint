@@ -1,0 +1,70 @@
+[
+  {
+    "@graph": [
+      {
+        "@id": "http://127.0.0.1:8080/distribution/breedb-sqldump",
+        "@type": [
+          "http://www.w3.org/ns/dcat#Distribution"
+        ],
+        "http://purl.org/dc/terms/description": [
+          {
+            "@value": "SQL dump of the BreeDB tomato passport data"
+          }
+        ],
+        "http://purl.org/dc/terms/identifier": [
+          {
+            "@value": "breedb-sqldump"
+          }
+        ],
+        "http://purl.org/dc/terms/issued": [
+          {
+            "@type": "http://www.w3.org/2001/XMLSchema#date",
+            "@value": "2015-11-24"
+          }
+        ],
+        "http://purl.org/dc/terms/language": [
+          {
+            "@id": "http://id.loc.gov/vocabulary/iso639-1/en"
+          }
+        ],
+        "http://purl.org/dc/terms/license": [
+          {
+            "@id": "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0"
+          }
+        ],
+        "http://purl.org/dc/terms/modified": [
+          {
+            "@type": "http://www.w3.org/2001/XMLSchema#date",
+            "@value": "2015-11-24"
+          }
+        ],
+        "http://purl.org/dc/terms/publisher": [
+          {
+            "@id": "http://orcid.org/0000-0002-4368-8058"
+          }
+        ],
+        "http://purl.org/dc/terms/title": [
+          {
+            "@value": "SQL dump of the BreeDB tomato passport data"
+          }
+        ],
+        "http://purl.org/dc/terms/version": [
+          {
+            "@value": "1.0"
+          }
+        ],
+        "http://www.w3.org/ns/dcat#downloadURL": [
+          {
+            "@id": "http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql"
+          }
+        ],
+        "http://www.w3.org/ns/dcat#mediaType": [
+          {
+            "@value": "application/sql"
+          }
+        ]
+      }
+    ],
+    "@id": "http://127.0.0.1:8080/distribution/breedb-sqldump"
+  }
+]

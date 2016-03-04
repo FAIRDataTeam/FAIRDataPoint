@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:dcat="http://www.w3.org/ns/dcat#"
+   xmlns:dct="http://purl.org/dc/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="http://127.0.0.1:8080/catalog/catalog-01">
+    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2015-11-24</dct:issued>
+    <dcat:dataset rdf:resource="http://127.0.0.1:8080/dataset/breedb"/>
+    <dct:language rdf:resource="http://id.loc.gov/vocabulary/iso639-1/en"/>
+    <dct:publisher rdf:resource="http://orcid.org/0000-0002-4368-8058"/>
+    <dct:title rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plant Breeding Data Catalog</dct:title>
+    <dcat:themeTaxonomy rdf:resource="http://dbpedia.org/resource/Breeding"/>
+    <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">catalog-01</dct:identifier>
+    <dct:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plant Breeding Data Catalog</dct:description>
+    <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Catalog"/>
+    <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2015-11-24</dct:modified>
+    <dct:version rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1.0</dct:version>
+  </rdf:Description>
+</rdf:RDF>
