@@ -10,3 +10,5 @@ make serve-prod # modify HOST_PROD (default: fdp.biotools.nl:8080)
 # Clean up: *.pyc and Swagger UI files in doc directory (except swagger.json)
 make clean
 
+# Run tests on running app (dev mode)
+nosetests -v -w tests
