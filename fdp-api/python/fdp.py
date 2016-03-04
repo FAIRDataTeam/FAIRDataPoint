@@ -39,22 +39,20 @@ import os
 from os import path
 from bottle import (get, run, static_file, redirect, response, request, opt, install)
 from metadata import FAIRConfigReader, FAIRGraph, FDPath
-#from miniuri import Uri
 from datetime import datetime
 from functools import wraps
-import logging
-
+from logging import getLogger, FileHandler, INFO
 
 project_dir = path.dirname(os.path.abspath(__file__))
 doc_dir = path.join(project_dir, 'doc/')               # Swagger UI files
 config_file = path.join(project_dir, 'metadata.ini')   # metadata config file
-access_log_file = path.join(project_dir, 'access.log') # HTTP access log file
+log_file = path.join(project_dir, 'access.log')        # HTTP access log file
 
 # log HTTP requests in Common Log Format
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler(access_log_file)
-fh.setLevel(logging.INFO)
+logger = getLogger(__name__)
+logger.setLevel(INFO)
+fh = FileHandler(log_file)
+fh.setLevel(INFO)
 logger.addHandler(fh)
 
 def logHttpRequests(fn):
