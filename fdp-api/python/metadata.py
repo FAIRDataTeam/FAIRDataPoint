@@ -3,7 +3,7 @@ from rdflib.namespace import Namespace, RDF, RDFS, DCTERMS, XSD
 from rdflib.plugin import register, Serializer
 from ConfigParser import SafeConfigParser
 from datetime import datetime
-from miniuri import Uri
+
 
 # rdflib-jsonld module required
 register('application/ld+json', Serializer, 'rdflib_jsonld.serializer', 'JsonLDSerializer')
@@ -201,10 +201,8 @@ class FAIRConfigReader(object):
 class FAIRGraph(object):
    def __init__(self, host):
       graph = ConjunctiveGraph()
-      h = Uri(host)
-      h.scheme = 'http' # add URI scheme
       self._graph = graph
-      self._base_uri = h.uri
+      self._base_uri = 'http://%s' % host
       self._uniq_ids = dict()
 
       # bind prefixes to namespaces
