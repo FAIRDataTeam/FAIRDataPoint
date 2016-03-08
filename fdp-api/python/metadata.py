@@ -3,6 +3,7 @@ from rdflib.namespace import Namespace, RDF, RDFS, DCTERMS, XSD
 from rdflib.plugin import register, Serializer
 from ConfigParser import SafeConfigParser
 from datetime import datetime
+from urllib2 import urlparse
 
 
 # rdflib-jsonld module required
@@ -327,6 +328,8 @@ class FAIRGraph(object):
             mo = self.distURI(o)
 
          if dtype == XSD.anyURI:
+            res = urlparse.urlparse(mo)
+            assert (res.scheme and res.netloc), "Invalid URL '%s'" % mo # check if valid URL
             mo = URIRef(mo)
 
          elif dtype == XSD.date:
