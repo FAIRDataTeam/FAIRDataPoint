@@ -53,6 +53,11 @@
             "@value": "1.0"
           }
         ],
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+          {
+            "@value": "SPARQL endpoint for BreeDB tomato passport data"
+          }
+        ],
         "http://www.w3.org/ns/dcat#accessURL": [
           {
             "@id": "http://virtuoso.biotools.nl:8888/sparql"
@@ -60,10 +65,10 @@
         ],
         "http://www.w3.org/ns/dcat#mediaType": [
           {
-            "@value": "application/rdf+xml"
+            "@value": "application/n-triples"
           },
           {
-            "@value": "application/n-triples"
+            "@value": "application/rdf+xml"
           }
         ]
       }

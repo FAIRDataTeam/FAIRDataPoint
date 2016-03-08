@@ -53,6 +53,11 @@
             "@value": "1.0"
           }
         ],
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+          {
+            "@value": "SQL dump of the BreeDB tomato passport data"
+          }
+        ],
         "http://www.w3.org/ns/dcat#downloadURL": [
           {
             "@id": "http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql"

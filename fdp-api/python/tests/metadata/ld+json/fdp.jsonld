@@ -53,9 +53,14 @@
             "@value": "1.0"
           }
         ],
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+          {
+            "@value": "FAIR Data Point of the Plant Breeding Group, Wageningen UR"
+          }
+        ],
         "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
           {
-            "@id": "http://127.0.0.1:8080/doc"
+            "@id": "http://127.0.0.1:8080/catalog/catalog-01"
           }
         ]
       }

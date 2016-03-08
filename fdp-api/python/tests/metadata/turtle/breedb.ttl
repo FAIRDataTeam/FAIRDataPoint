@@ -8,6 +8,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://127.0.0.1:8080/dataset/breedb> a dcat:Dataset ;
+    rdfs:label "BreeDB tomato passport data"^^xsd:string ;
     dct:description "BreeDB tomato passport data"^^xsd:string ;
     dct:identifier "breedb"^^xsd:string ;
     dct:issued "2015-11-24"^^xsd:date ;
@@ -16,6 +17,8 @@
     dct:publisher <http://orcid.org/0000-0002-4368-8058> ;
     dct:title "BreeDB tomato passport data"^^xsd:string ;
     dct:version "1.0"^^xsd:string ;
+    rdfs:seeAlso <http://127.0.0.1:8080/distribution/breedb-sparql>,
+        <http://127.0.0.1:8080/distribution/breedb-sqldump> ;
     dcat:distribution <http://127.0.0.1:8080/distribution/breedb-sparql>,
         <http://127.0.0.1:8080/distribution/breedb-sqldump> ;
     dcat:keyword "BreeDB"^^xsd:string,

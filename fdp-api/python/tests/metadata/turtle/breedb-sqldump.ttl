@@ -8,6 +8,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://127.0.0.1:8080/distribution/breedb-sqldump> a dcat:Distribution ;
+    rdfs:label "SQL dump of the BreeDB tomato passport data"^^xsd:string ;
     dct:description "SQL dump of the BreeDB tomato passport data"^^xsd:string ;
     dct:identifier "breedb-sqldump"^^xsd:string ;
     dct:issued "2015-11-24"^^xsd:date ;

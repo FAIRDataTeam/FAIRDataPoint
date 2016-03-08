@@ -8,6 +8,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://127.0.0.1:8080/fdp> a dct:Agent ;
+    rdfs:label "FAIR Data Point of the Plant Breeding Group, Wageningen UR"^^xsd:string ;
     dct:description "This FDP provides metadata on plant-specific genotype/phenotype data sets"^^xsd:string ;
     dct:hasPart <http://127.0.0.1:8080/catalog/catalog-01> ;
     dct:identifier "FDP-WUR-PB"^^xsd:string ;
@@ -17,5 +18,5 @@
     dct:publisher <http://orcid.org/0000-0002-4368-8058> ;
     dct:title "FAIR Data Point of the Plant Breeding Group, Wageningen UR"^^xsd:string ;
     dct:version "1.0"^^xsd:string ;
-    rdfs:seeAlso <http://127.0.0.1:8080/doc> .
+    rdfs:seeAlso <http://127.0.0.1:8080/catalog/catalog-01> .
 

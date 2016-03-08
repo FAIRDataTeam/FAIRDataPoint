@@ -8,6 +8,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://127.0.0.1:8080/distribution/breedb-sparql> a dcat:Distribution ;
+    rdfs:label "SPARQL endpoint for BreeDB tomato passport data"^^xsd:string ;
     dct:description "SPARQL endpoint for BreeDB tomato passport data"^^xsd:string ;
     dct:identifier "breedb-sparql"^^xsd:string ;
     dct:issued "2015-11-24"^^xsd:date ;

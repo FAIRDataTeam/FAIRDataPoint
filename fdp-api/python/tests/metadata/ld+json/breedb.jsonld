@@ -48,7 +48,12 @@
             "@value": "1.0"
           }
         ],
-        "http://www.w3.org/ns/dcat#distribution": [
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+          {
+            "@value": "BreeDB tomato passport data"
+          }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
           {
             "@id": "http://127.0.0.1:8080/distribution/breedb-sparql"
           },
@@ -56,15 +61,23 @@
             "@id": "http://127.0.0.1:8080/distribution/breedb-sqldump"
           }
         ],
+        "http://www.w3.org/ns/dcat#distribution": [
+          {
+            "@id": "http://127.0.0.1:8080/distribution/breedb-sqldump"
+          },
+          {
+            "@id": "http://127.0.0.1:8080/distribution/breedb-sparql"
+          }
+        ],
         "http://www.w3.org/ns/dcat#keyword": [
           {
             "@value": "BreeDB"
           },
           {
-            "@value": "germplasm"
+            "@value": "Plant breeding"
           },
           {
-            "@value": "Plant breeding"
+            "@value": "germplasm"
           },
           {
             "@value": "passport data"

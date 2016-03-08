@@ -8,6 +8,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://127.0.0.1:8080/catalog/catalog-01> a dcat:Catalog ;
+    rdfs:label "Plant Breeding Data Catalog"^^xsd:string ;
     dct:description "Plant Breeding Data Catalog"^^xsd:string ;
     dct:identifier "catalog-01"^^xsd:string ;
     dct:issued "2015-11-24"^^xsd:date ;
@@ -16,6 +17,7 @@
     dct:publisher <http://orcid.org/0000-0002-4368-8058> ;
     dct:title "Plant Breeding Data Catalog"^^xsd:string ;
     dct:version "1.0"^^xsd:string ;
+    rdfs:seeAlso <http://127.0.0.1:8080/dataset/breedb> ;
     dcat:dataset <http://127.0.0.1:8080/dataset/breedb> ;
     dcat:themeTaxonomy dbp:Breeding .
 
