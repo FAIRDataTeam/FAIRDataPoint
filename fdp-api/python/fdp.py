@@ -30,7 +30,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
