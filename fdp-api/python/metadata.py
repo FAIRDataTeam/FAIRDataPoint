@@ -23,9 +23,12 @@ _REQUIRED_META = dict(fdp          = _CORE_META + ['fdp_id','catalog_id'],
 
 # mappings between fields in the config file and ontologies/vocabularies and data types
 _ONTO_MAP = dict(fdp_id          = [ ( DCTERMS.identifier, XSD.string ) ],
-                 catalog_id      = [ ( DCTERMS.hasPart, XSD.anyURI) ],
-                 dataset_id      = [ ( DCAT.dataset, XSD.anyURI) ],
-                 distribution_id = [ ( DCAT.distribution, XSD.anyURI ) ],
+                 catalog_id      = [ ( DCTERMS.hasPart, XSD.anyURI ),
+                                     ( RDFS.seeAlso, XSD.anyURI ) ],
+                 dataset_id      = [ ( DCAT.dataset, XSD.anyURI ),
+                                     ( RDFS.seeAlso, XSD.anyURI ) ],
+                 distribution_id = [ ( DCAT.distribution, XSD.anyURI ), 
+                                     ( RDFS.seeAlso, XSD.anyURI ) ],
                  title           = [ ( DCTERMS.title, XSD.string ),
                                      ( RDFS.label, XSD.string ) ],
                  description     = [ ( DCTERMS.description, XSD.string ) ],
@@ -260,10 +263,10 @@ class FAIRGraph(object):
          g = self._graph_context(s)
 
          g.add( (s, RDF.type, DCTERMS.Agent) )
-         g.add( (s, RDFS.seeAlso, URIRef(self.docURI())) )
          g.add( (s, DCTERMS.language, LANG.en) )
-         g.add( self._map_triple((s, p, o)) )
 
+         for triple in self._map_triple( (s, p, o) ):
+            g.add(triple)
 
       # set Catalog metadata
       if resource == 'catalog':
@@ -273,7 +276,9 @@ class FAIRGraph(object):
          g.add( (s, RDF.type, DCAT.Catalog) )
          g.add( (s, DCTERMS.language, LANG.en) )
          g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
-         g.add( self._map_triple((s, p, o)) )
+
+         for triple in self._map_triple( (s, p, o) ):
+            g.add(triple)
 
       # set Dataset metadata
       if resource == 'dataset':
@@ -283,7 +288,9 @@ class FAIRGraph(object):
          g.add( (s, RDF.type, DCAT.Dataset) )
          g.add( (s, DCTERMS.language, LANG.en) )
          g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
-         g.add( self._map_triple((s, p, o)) )
+
+         for triple in self._map_triple( (s, p, o) ):
+            g.add(triple)
 
       # set Distribution metadata
       if resource == 'distribution':
@@ -293,7 +300,9 @@ class FAIRGraph(object):
          g.add( (s, RDF.type, DCAT.Distribution) )
          g.add( (s, DCTERMS.language, LANG.en) )
          g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
-         g.add( self._map_triple((s, p, o)) )
+
+         for triple in self._map_triple( (s, p, o) ):
+            g.add(triple)
 
 
    def _graph_context(self, uri):
@@ -306,22 +315,26 @@ class FAIRGraph(object):
       s, p, o = triple
 
       for (mp, dtype) in mapFieldToOnto(p):
-         if dtype == XSD.date: # check format for date fields
-            datetime.strptime(o, "%Y-%m-%d")
+         mo = o
+
+         if 'catalog_id' in p:
+            mo = self.catURI(o)
+
+         if 'dataset_id' in p:
+            mo = self.datURI(o)
+
+         if 'distribution_id' in p:
+            mo = self.distURI(o)
 
          if dtype == XSD.anyURI:
-            if 'catalog_id' in p:
-               o = self.catURI(o)
+            mo = URIRef(mo)
 
-            if 'dataset_id' in p:
-               o = self.datURI(o)
+         elif dtype == XSD.date:
+            datetime.strptime(o, "%Y-%m-%d") # check if valid date format
+            mo = Literal(mo, datatype=dtype)
 
-            if 'distribution_id' in p:
-               o = self.distURI(o)
-
-            o = URIRef(o)
          else:
-            o = Literal(o, datatype=dtype)
+            mo = Literal(mo, datatype=dtype)
 
-         return (s, mp, o)
+         yield (s, mp, mo)
 
