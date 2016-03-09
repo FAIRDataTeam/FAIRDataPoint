@@ -1,3 +1,4 @@
+from os import path
 from rdflib import ConjunctiveGraph, URIRef, Literal
 from rdflib.namespace import Namespace, RDF, RDFS, DCTERMS, XSD
 from rdflib.plugin import register, Serializer
@@ -8,6 +9,9 @@ from urllib2 import urlparse
 
 # rdflib-jsonld module required
 register('application/ld+json', Serializer, 'rdflib_jsonld.serializer', 'JsonLDSerializer')
+
+# default metadata config file
+_CONFIG_FILE = path.join(path.dirname(__file__), 'metadata.ini')
 
 # define additional namespaces
 DCAT = Namespace('http://www.w3.org/ns/dcat#')
@@ -86,34 +90,38 @@ def FDPath(resource, var=None):
    assert(resource in _RESOURCE_PATH), _errorResourceNotFound(resource)
 
    path = _RESOURCE_PATH[resource]
-   var = '' if var is None else '/%s' % str(var)
 
-   if resource != 'fdp':
+   if var is None:
+      var = ''
+   else:
+      var = '/%s' % str(var)
+
+   if resource not in ('fdp', 'doc'):
        path = _RESOURCE_PATH[resource] + var
 
    return path
 
 
 class FAIRConfigReader(object):
-   def __init__(self, file_name):
+   def __init__(self, fname=_CONFIG_FILE):
       parser = SafeConfigParser()
       self._parser = parser
       self._metadata = dict()
-      self._read(file_name)
+      self._readFile(fname)
 
 
-   def _read(self, file_name):
-      self._parser.read(file_name)
+   def _readFile(self, fname):
+      self._parser.read(fname)
 
       for section in self._parser.sections():
          self._metadata[section] = dict()
 
-         for key,value in self._parser.items(section):
-            if '\n' in value: value = value.split('\n')
-            self._metadata[section][key] = value
+         for field,value in self._parser.items(section):
+            if '\n' in value:
+               value = value.split('\n')
+            self._metadata[section][field] = value
 
       self._validate()
-      return file_name
 
 
    def getMetadata(self):
@@ -129,18 +137,21 @@ class FAIRConfigReader(object):
 
 
    def getItems(self, section, field):
-      return self._metadata[section][field]
+      items = self._metadata[section][field]
+
+      if isinstance(items, list):
+         for item in items:
+            yield item
+      else:
+         item = items
+         yield item
 
 
    def getTriples(self):
-      for section in self.getSectionHeaders():
-         for field in self.getFields(section):
-            items = self.getItems(section, field)
-            if isinstance(items, list):
-               for item in items:
-                  yield (section, field, item)
-            else:
-               yield (section, field, items)
+      for section,fields in self.getMetadata().iteritems():
+         for field in fields:
+            for item in self.getItems(section, field):
+               yield (section, field, item)
 
 
    def _validate(self):
@@ -151,13 +162,6 @@ class FAIRConfigReader(object):
       sfx = '_id'
       fdp, cat, dat, dist = 'fdp', 'catalog', 'dataset', 'distribution'
       fdp_id, cat_id, dat_id, dist_id = fdp + sfx, cat + sfx, dat + sfx, dist + sfx
-
-      def _arrfy(item):
-         if isinstance(item, str):
-            return [item]
-
-         if isinstance(item, list):
-            return item
 
       # check mandatory sections
       for sh in section_headers:
@@ -184,22 +188,25 @@ class FAIRConfigReader(object):
                assert(field in fields), _errorFieldInSectionNotFound(field, section)
 
             # resource IDs must be unique
-            if field in [fdp_id, cat_id, dat_id, dist_id]:
-               for resource_id in _arrfy(self.getItems(section, field)):
+            if field in [fdp_id]:#, cat_id, dat_id, dist_id]:
+               for resource_id in self.getItems(section, field):
                   assert(resource_id not in uniq_resource_ids), _errorResourceIdNotUnique(resource_id)
                   uniq_resource_ids[resource_id] = None
 
          if fdp in section:
-            ids1, ids2 = _arrfy(self.getItems(section, cat_id)), sections[cat]
-            assert(ids1 == ids2), _errorSectionNotReferenced(fdp, cat_id, cat)
+            ids_1 = sections[cat]
+            ids_2 = [ id for id in self.getItems(section, cat_id) ]
+            assert(ids_1 == ids_2), _errorSectionNotReferenced(fdp, cat_id, cat)
 
          if cat in section:
-            ids1, ids2 = _arrfy(self.getItems(section, dat_id)), sections[dat]
-            assert(ids1 == ids2), _errorSectionNotReferenced(cat, dat_id, dat)
+            ids_1 = sections[dat]
+            ids_2 = [ id for id in self.getItems(section, dat_id) ]
+            assert(ids_1 == ids_2), _errorSectionNotReferenced(cat, dat_id, dat)
 
          if dat in section:
-            ids1, ids2 = _arrfy(self.getItems(section, dist_id)), sections[dist]
-            assert(ids1 == ids2), _errorSectionNotReferenced(dat, dist_id, dist)
+            ids_1 = sections[dist]
+            ids_2 = [ id for id in self.getItems(section, dist_id) ]
+            assert(ids_1 == ids_2), _errorSectionNotReferenced(dat, dist_id, dist)
 
 
 class FAIRGraph(object):

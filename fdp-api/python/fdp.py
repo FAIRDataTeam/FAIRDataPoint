@@ -30,25 +30,20 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.4.4'
+__version__ = '0.4.5'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
 
-import os
-from os import path
-from bottle import (get, run, static_file, redirect, response, request, opt, install)
+from bottle import get, run, static_file, redirect, response, request, opt, install
 from metadata import FAIRConfigReader, FAIRGraph, FDPath
 from datetime import datetime
 from functools import wraps
 from logging import getLogger, FileHandler, INFO
 
-project_dir = path.dirname(os.path.abspath(__file__))
-doc_dir = path.join(project_dir, 'doc/')               # Swagger UI files
-config_file = path.join(project_dir, 'metadata.ini')   # metadata config file
-log_file = path.join(project_dir, 'access.log')        # HTTP access log file
 
-# log HTTP requests in Common Log Format
+# log HTTP requests into file in Common Log Format
+log_file = 'access.log'
 logger = getLogger(__name__)
 logger.setLevel(INFO)
 fh = FileHandler(log_file)
@@ -70,9 +65,8 @@ def logHttpRequests(fn):
 
 install(logHttpRequests)
 
-
-# populate FAIR metadata from config file
-reader = FAIRConfigReader(config_file)
+# populate FAIR metadata from default config file
+reader = FAIRConfigReader()
 host = opt.bind # pass host:[port] through the command-line -b option
 g = FAIRGraph(host)
 
@@ -113,7 +107,7 @@ def defaultPage():
 
 @get(FDPath('doc', '<fname:path>'))
 def sourceDocFiles(fname):
-   return static_file(fname, root=doc_dir)
+   return static_file(fname, root='doc') # Swagger UI files in doc dir
 
 @get(FDPath('fdp'))
 def getFdpMetadata(graph=g):
