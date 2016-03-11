@@ -30,7 +30,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.4.5'
+__version__ = '0.4.6'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -67,8 +67,10 @@ install(logHttpRequests)
 
 # populate FAIR metadata from default config file
 reader = FAIRConfigReader()
+scheme = 'http'
 host = opt.bind # pass host:[port] through the command-line -b option
-g = FAIRGraph(host)
+base_uri = '%s://%s' % (scheme, host)
+g = FAIRGraph(base_uri)
 
 for triple in reader.getTriples():
    g.setMetadata(triple)

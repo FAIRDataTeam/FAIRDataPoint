@@ -19,7 +19,7 @@ LANG = Namespace('http://id.loc.gov/vocabulary/iso639-1/')
 DBPEDIA = Namespace('http://dbpedia.org/resource/')
 #SPARQLSD = Namespace('http://www.w3.org/ns/sparql-service-description#')
 
-# mandatory sections and fields in the metadata config file
+# define which sections/fields in the metadata config file are mandatory
 _CORE_META   = ['title','publisher','version','issued','modified']
 _REQUIRED_META = dict(fdp          = _CORE_META + ['fdp_id','catalog_id'],
                       catalog      = _CORE_META + ['dataset_id','theme_taxonomy'],
@@ -50,11 +50,13 @@ _ONTO_MAP = dict(fdp_id          = [ ( DCTERMS.identifier, XSD.string ) ],
                  download_url    = [ ( DCAT.downloadURL, XSD.anyURI ) ],
                  media_type      = [ ( DCAT.mediaType, XSD.string ) ] )
 
+# paths (endpoints) available through FDP
 _RESOURCE_PATH = dict(fdp  = '/fdp',
                       doc  = '/doc',
                       cat  = '/catalog',
                       dat  = '/dataset',
                       dist = '/distribution')
+
 
 def _errorSectionNotFound(section):
    return "Section '%s' not found." % section
@@ -111,6 +113,9 @@ class FAIRConfigReader(object):
 
 
    def _readFile(self, fname):
+      if path.isfile(fname) is False:
+         raise IOError('%s config file does not exist.' % fname)
+
       self._parser.read(fname)
 
       for section in self._parser.sections():
@@ -121,7 +126,7 @@ class FAIRConfigReader(object):
                value = value.split('\n')
             self._metadata[section][field] = value
 
-      self._validate()
+      self._validateParsedMetadata()
 
 
    def getMetadata(self):
@@ -154,7 +159,7 @@ class FAIRConfigReader(object):
                yield (section, field, item)
 
 
-   def _validate(self):
+   def _validateParsedMetadata(self):
       section_headers = self.getSectionHeaders()
       sections = dict((section,[]) for section in _REQUIRED_META.keys())
       uniq_resource_ids = dict()
@@ -210,10 +215,10 @@ class FAIRConfigReader(object):
 
 
 class FAIRGraph(object):
-   def __init__(self, host):
+   def __init__(self, base_uri):
       graph = ConjunctiveGraph()
       self._graph = graph
-      self._base_uri = 'http://%s' % host
+      self._base_uri = self._validateURL(base_uri)
       self._uniq_ids = dict()
 
       # bind prefixes to namespaces
@@ -223,7 +228,19 @@ class FAIRGraph(object):
       graph.bind('lang', LANG)
       #graph.bind('sd', SPARQLSD)
 
-   
+
+   def _validateURL(self, url):
+      u = urlparse.urlparse(url)
+
+      if u.scheme not in ('http', 'https'):
+         raise ValueError('Missing/invalid URL scheme in %s [http(s)].' % url)
+      
+      if u.netloc == '':
+         raise ValueError('No host specified.')
+
+      return url
+
+
    def baseURI(self):
       return self._base_uri
 
@@ -253,8 +270,8 @@ class FAIRGraph(object):
 
 
    def serialize(self, uri, mime_type):
-      if len(self._graph_context(uri).all_nodes()) > 0:
-         return self._graph_context(uri).serialize(format=mime_type)
+      if len(self._graphContext(uri).all_nodes()) > 0:
+         return self._graphContext(uri).serialize(format=mime_type)
 
 
    def setMetadata(self, triple):
@@ -268,56 +285,56 @@ class FAIRGraph(object):
       # set FDP metadata
       if resource == 'fdp':
          s = URIRef(self.fdpURI())
-         g = self._graph_context(s)
+         g = self._graphContext(s)
 
          g.add( (s, RDF.type, DCTERMS.Agent) )
          g.add( (s, DCTERMS.language, LANG.en) )
 
-         for triple in self._map_triple( (s, p, o) ):
+         for triple in self._mapTriple( (s, p, o) ):
             g.add(triple)
 
       # set Catalog metadata
       if resource == 'catalog':
          s = URIRef(self.catURI(resource_id))
-         g = self._graph_context(s)
+         g = self._graphContext(s)
 
          g.add( (s, RDF.type, DCAT.Catalog) )
          g.add( (s, DCTERMS.language, LANG.en) )
          g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
 
-         for triple in self._map_triple( (s, p, o) ):
+         for triple in self._mapTriple( (s, p, o) ):
             g.add(triple)
 
       # set Dataset metadata
       if resource == 'dataset':
          s = URIRef(self.datURI(resource_id))
-         g = self._graph_context(s)
+         g = self._graphContext(s)
 
          g.add( (s, RDF.type, DCAT.Dataset) )
          g.add( (s, DCTERMS.language, LANG.en) )
          g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
 
-         for triple in self._map_triple( (s, p, o) ):
+         for triple in self._mapTriple( (s, p, o) ):
             g.add(triple)
 
       # set Distribution metadata
       if resource == 'distribution':
          s = URIRef(self.distURI(resource_id))
-         g = self._graph_context(s)
+         g = self._graphContext(s)
 
          g.add( (s, RDF.type, DCAT.Distribution) )
          g.add( (s, DCTERMS.language, LANG.en) )
          g.add( (s, DCTERMS.identifier, Literal(resource_id, datatype=XSD.string)) )
 
-         for triple in self._map_triple( (s, p, o) ):
+         for triple in self._mapTriple( (s, p, o) ):
             g.add(triple)
 
 
-   def _graph_context(self, uri):
+   def _graphContext(self, uri):
       return self._graph.get_context(uri)
 
 
-   def _map_triple(self, triple):
+   def _mapTriple(self, triple):
       assert(isinstance(triple, tuple) and len(triple) == 3), 'Input must be a triple (s, p, o).'
 
       s, p, o = triple
