@@ -218,7 +218,7 @@ class FAIRGraph(object):
    def __init__(self, base_uri):
       graph = ConjunctiveGraph()
       self._graph = graph
-      self._base_uri = self._validateURL(base_uri)
+      self._base_uri = self._validateURI(base_uri)
       self._uniq_ids = dict()
 
       # bind prefixes to namespaces
@@ -229,16 +229,16 @@ class FAIRGraph(object):
       #graph.bind('sd', SPARQLSD)
 
 
-   def _validateURL(self, url):
-      u = urlparse.urlparse(url)
+   def _validateURI(self, uri):
+      u = urlparse.urlparse(uri)
 
       if u.scheme not in ('http', 'https'):
-         raise ValueError('Missing/invalid URL scheme in %s [http(s)].' % url)
+         raise ValueError("Missing/invalid URI scheme '%s' [http|https]." % uri)
       
       if u.netloc == '':
          raise ValueError('No host specified.')
 
-      return url
+      return uri
 
 
    def baseURI(self):
@@ -352,8 +352,7 @@ class FAIRGraph(object):
             mo = self.distURI(o)
 
          if dtype == XSD.anyURI:
-            res = urlparse.urlparse(mo)
-            assert (res.scheme and res.netloc), "Invalid URL '%s'" % mo # check if valid URL
+            self._validateURI(mo)
             mo = URIRef(mo)
 
          elif dtype == XSD.date:
