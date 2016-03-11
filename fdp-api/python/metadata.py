@@ -232,13 +232,22 @@ class FAIRGraph(object):
    def _validateURI(self, uri):
       u = urlparse.urlparse(uri)
 
-      if u.scheme not in ('http', 'https'):
-         raise ValueError("Missing/invalid URI scheme '%s' [http|https]." % uri)
+      if u.scheme not in ('http', 'https', 'ftp'):
+         raise ValueError("Missing/invalid URI scheme '%s' [http|https|ftp]." % uri)
       
       if u.netloc == '':
          raise ValueError('No host specified.')
 
       return uri
+
+
+   def _validateDate(self, date):
+      try:
+         datetime.strptime(date, "%Y-%m-%d")
+      except ValueError:
+         raise ValueError("Incorrect date format '%s' [YYYY-MM-DD]." % date)
+      else:
+         return date
 
 
    def baseURI(self):
@@ -351,13 +360,12 @@ class FAIRGraph(object):
          if 'distribution_id' in p:
             mo = self.distURI(o)
 
+
          if dtype == XSD.anyURI:
-            self._validateURI(mo)
-            mo = URIRef(mo)
+            mo = URIRef(self._validateURI(mo))
 
          elif dtype == XSD.date:
-            datetime.strptime(o, "%Y-%m-%d") # check if valid date format
-            mo = Literal(mo, datatype=dtype)
+            mo = Literal(self._validateDate(mo), datatype=dtype)
 
          else:
             mo = Literal(mo, datatype=dtype)
