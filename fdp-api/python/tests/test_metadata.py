@@ -6,14 +6,6 @@ from urllib2 import urlparse
 
 reader = FAIRConfigReader()
 
-def test_paths():
-   id = 'abc'
-   for resource in ['fdp', 'doc']:
-      assert_equals(FDPath(resource), FDPath(resource, id))
-
-   for resource in ['cat', 'dat', 'dist']:
-      assert_equals(FDPath(resource, id), '%s/%s' % (FDPath(resource), id))
-
 
 def test_sections():
    set_a = set(['fdp','catalog/catalog-01','dataset/breedb','distribution/breedb-sqldump','distribution/breedb-sparql'])
