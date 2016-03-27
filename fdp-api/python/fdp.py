@@ -30,7 +30,7 @@
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.4.6'
+__version__ = '0.4.7'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
@@ -41,6 +41,8 @@ from datetime import datetime
 from functools import wraps
 from logging import getLogger, FileHandler, INFO
 
+
+doc_dir = 'doc' # Swagger UI files
 
 # log HTTP requests into file in Common Log Format
 log_file = 'access.log'
@@ -109,7 +111,7 @@ def defaultPage():
 
 @get(FDPath('doc', '<fname:path>'))
 def sourceDocFiles(fname):
-   return static_file(fname, root='doc') # Swagger UI files in doc dir
+   return static_file(fname, root=doc_dir)
 
 @get(FDPath('fdp'))
 def getFdpMetadata(graph=g):

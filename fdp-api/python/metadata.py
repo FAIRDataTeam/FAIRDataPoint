@@ -90,18 +90,10 @@ def mapFieldToOnto(field):
 
 def FDPath(resource, var=None):
    assert(resource in _RESOURCE_PATH), _errorResourceNotFound(resource)
-
    path = _RESOURCE_PATH[resource]
-
-   if var is None:
-      var = ''
-   else:
-      var = '/%s' % str(var)
-
-   if resource not in ('fdp', 'doc'):
-       path = _RESOURCE_PATH[resource] + var
-
-   return path
+   var = '' if None else '/%s' % str(var)
+   
+   return path + var
 
 
 class FAIRConfigReader(object):
