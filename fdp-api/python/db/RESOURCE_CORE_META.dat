@@ -1,0 +1,5 @@
+FDP-WUR-PB	1	FAIR Data Point of the Plant Breeding Group, Wageningen UR	http://orcid.org/0000-0002-4368-8058	2015-11-24	2015-11-24	1.0	http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0	This FDP provides metadata on plant-specific genotype/phenotype data sets	en
+catalog-01	2	Plant Breeding Data Catalog	http://orcid.org/0000-0002-4368-8058	2015-11-2	2015-11-24	1.0	http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0	Plant Breeding Data Catalog	en
+breedb	3	BreeDB tomato passport data	http://orcid.org/0000-0002-4368-8058	2015-11-24	2015-11-24	1.0	http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0	BreeDB tomato passport data	en
+breedb-sparql	4	SPARQL endpoint for BreeDB tomato passport data	http://orcid.org/0000-0002-4368-8058	2015-11-24	2015-11-24	1.0	http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0	SPARQL endpoint for BreeDB tomato passport data	en
+breedb-sqldump	4	SQL dump of the BreeDB tomato passport data	http://orcid.org/0000-0002-4368-8058	2015-11-24	2015-11-24	1.0	http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0	SQL dump of the BreeDB tomato passport data	en
