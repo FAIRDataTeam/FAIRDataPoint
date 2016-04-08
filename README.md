@@ -1,29 +1,12 @@
-###SPARQL endpoint for BreeDB germplasm data
+###FAIRDataPoint (FDP) Metadata Service
 
-**Graph IRI: http://www.eu-sol.wur.nl/passport**
+**Example dataset**: [EU-SOL BreeDB database](http://www.eu-sol.wur.nl) (tomato passport data)
 
-http://virtuoso.biotools.nl:8888/sparql/
-
-###LDP server for BreeDB germplasm data
-
-**Access Linked Data Platform Container (LDPC)**
-```
-curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/
-```
-**Access Linked Data Platform Non-RDF Source (LDP-NR)**
-```
-curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/test.txt
-```
-**Access Linked Data Platform RDF Source (LDP-RS)**
-```
-curl -iH 'Accept: text/turtle' -u davuser:davuser http://virtuoso.biotools.nl:8888/passport/test.ttl
-```
-###FAIR Data Point (FDP) Service
-
+**SPARQL endpoint**: [BreeDB](http://virtuoso.biotools.nl:8888/sparql/); *Graph IRI: http://www.eu-sol.wur.nl/passport*
 
 **RESTful API documentation**
 
-http://fdp.biotools.nl:8080/doc
+http://fdp.biotools.nl:8080/
 
 **Access FDP-, catalog-, dataset- and distribution-level metadata**
 
@@ -35,9 +18,8 @@ curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/catalog/catalog-01
 curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/dataset/breedb
 curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/distribution/breedb-sparql
 ```
-Note: Metadata can be serialized in different RDF formats (mime-types):
+Note: FDP supports different RDF serializations (MIME-types):
 + Turtle (text/turtle)
 + N-Triples (application/n-triples)
 + RDF/XML (application/rdf+xml)
 + JSON-LD (application/ld+json)
-
