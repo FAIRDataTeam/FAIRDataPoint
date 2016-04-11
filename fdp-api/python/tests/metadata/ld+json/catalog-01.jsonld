@@ -1,0 +1,75 @@
+[
+  {
+    "@graph": [
+      {
+        "@id": "http://127.0.0.1:8080/catalog/catalog-01",
+        "@type": [
+          "http://www.w3.org/ns/dcat#Catalog"
+        ],
+        "http://purl.org/dc/terms/description": [
+          {
+            "@value": "Plant Breeding Data Catalog"
+          }
+        ],
+        "http://purl.org/dc/terms/identifier": [
+          {
+            "@value": "catalog-01"
+          }
+        ],
+        "http://purl.org/dc/terms/issued": [
+          {
+            "@type": "http://www.w3.org/2001/XMLSchema#date",
+            "@value": "2015-11-24"
+          }
+        ],
+        "http://purl.org/dc/terms/language": [
+          {
+            "@id": "http://id.loc.gov/vocabulary/iso639-1/en"
+          }
+        ],
+        "http://purl.org/dc/terms/modified": [
+          {
+            "@type": "http://www.w3.org/2001/XMLSchema#date",
+            "@value": "2015-11-24"
+          }
+        ],
+        "http://purl.org/dc/terms/publisher": [
+          {
+            "@id": "http://orcid.org/0000-0002-4368-8058"
+          }
+        ],
+        "http://purl.org/dc/terms/title": [
+          {
+            "@value": "Plant Breeding Data Catalog"
+          }
+        ],
+        "http://purl.org/dc/terms/version": [
+          {
+            "@value": "1.0"
+          }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#label": [
+          {
+            "@value": "Plant Breeding Data Catalog"
+          }
+        ],
+        "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
+          {
+            "@id": "http://127.0.0.1:8080/dataset/breedb"
+          }
+        ],
+        "http://www.w3.org/ns/dcat#dataset": [
+          {
+            "@id": "http://127.0.0.1:8080/dataset/breedb"
+          }
+        ],
+        "http://www.w3.org/ns/dcat#themeTaxonomy": [
+          {
+            "@id": "http://dbpedia.org/resource/Breeding"
+          }
+        ]
+      }
+    ],
+    "@id": "http://127.0.0.1:8080/catalog/catalog-01"
+  }
+]

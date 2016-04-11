@@ -26,116 +26,109 @@
 # This services makes extensive use of metadata defined by:
 #   Data Catalog Vocabulary (DCAT, http://www.w3.org/TR/vocab-dcat/)
 #   Dublin Core Metadata Terms (DCMI, http://dublincore.org/documents/dcmi-terms/)
+#   DBpedia (DBPEDIA, http://dbpedia.org/resource/)
 #
 
 __author__  = 'Arnold Kuzniar'
-__version__ = '0.3.5'
+__version__ = '0.4.7'
 __status__  = 'Prototype'
 __license__ = 'Apache Lincense, Version 2.0'
 
-import os
-from bottle import (get, run, static_file, redirect, response, request, opt)
-from metadata import FAIRGraph
-from miniuri import Uri
 
-project_dir = os.path.dirname(os.path.abspath(__file__))
-#metadata_dir = os.path.join(project_dir, 'rdf_metadata/')
-doc_dir = os.path.join(project_dir, 'doc/')
+from bottle import get, run, static_file, redirect, response, request, opt, install
+from metadata import FAIRConfigReader, FAIRGraph, FDPath
+from datetime import datetime
+from functools import wraps
+from logging import getLogger, FileHandler, INFO
 
-# set use case-specific metadata for FDP, data catalog(s) and data set(s)
-host = opt.bind # host:[port] read from the command-line -b option
-u = Uri(host)
-u.scheme = 'http' # add scheme to host
-g = FAIRGraph(u.uri)
 
-g.setFdpMetadata(meta=dict(
-      fdp_id='FDP-WUR-PB',
-      catalog_ids=['catalog-01'],
-      title='FAIR Data Point of the Plant Breeding Group, Wageningen UR',
-      des='This FDP provides metadata on plant-specific genotype/phenotype data sets.'))
+doc_dir = 'doc' # Swagger UI files
 
-g.setCatalogMetadata(meta=dict(
-   catalogs=[
-     dict(catalog_id='catalog-01',
-     title='Plant Breeding Data Catalog',
-     des='Plant Breeding Data Catalog',
-     publisher='http://orcid.org/0000-0002-4368-8058',
-     issued='2015-11-24',
-     modified='2015-11-24',
-     dataset_ids=['breedb'])
-   ]))
+# log HTTP requests into file in Common Log Format
+log_file = 'access.log'
+logger = getLogger(__name__)
+logger.setLevel(INFO)
+fh = FileHandler(log_file)
+fh.setLevel(INFO)
+logger.addHandler(fh)
 
-g.setDatasetAndDistributionMetadata(meta=dict(
-   datasets=[
-      dict(dataset_id='breedb',
-      title='BreeDB tomato passport data',
-      des='BreeDB tomato passport data',
-      publisher='http://orcid.org/0000-0002-4368-8058',
-      issued='2015-11-24',
-      modified='2015-11-24',
-      landing_page='http://www.eu-sol.wur.nl/passport',
-      keywords=['BreeDB', 'Plant breeding', 'germplasm', 'passport data'],
-      distributions=[
-         dict(distribution_id='breedb-sparql',
-            title='SPARQL endpoint for BreeDB tomato passport data',
-            des='SPARQL endpoint for BreeDB tomato passport data',
-            license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
-            access_url='http://virtuoso.biotools.nl:8888/sparql',
-            # graph_uri = 'https://www.eu-sol.wur.nl/passport', # TODO
-            media_types=['text/n3', 'application/rdf+xml']
-         ),
-         dict(distribution_id='breedb-sqldump',
-            title='SQL dump of the BreeDB tomato passport data',
-            des='SQL dump of the BreeDB tomato passport data',
-            license='http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0',
-            download_url='http://virtuoso.biotools.nl:8888/DAV/home/breedb/breedb.sql',
-            media_types=['application/sql']
-         )
-      ])
-   ]))
+def logHttpRequests(fn):
+    @wraps(fn)
+    def _log_to_logger(*args, **kwargs):
+        request_time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
+        logger.info('%s - - [%s] "%s %s %s" %d' % (request.remote_addr,
+                                        request_time,
+                                        request.method,
+                                        request.urlparts.path,
+                                        request.get('SERVER_PROTOCOL'),
+                                        response.status_code))
+        return fn(*args, **kwargs)
+    return _log_to_logger
 
+install(logHttpRequests)
+
+# populate FAIR metadata from default config file
+reader = FAIRConfigReader()
+scheme = 'http'
+host = opt.bind # pass host:[port] through the command-line -b option
+base_uri = '%s://%s' % (scheme, host)
+g = FAIRGraph(base_uri)
+
+for triple in reader.getTriples():
+   g.setMetadata(triple)
+
+
+# HTTP response: FAIR metadata in RDF and JSON-LD formats
 def httpResponse(graph, uri):
-   mime_type = ''
    accept_header = request.headers.get('Accept')
+   fmt = 'text/turtle' # set default format (MIME type)
 
-   if 'n3' in accept_header:
-      mime_type = 'text/n3'
-   elif 'rdf+xml' in accept_header:
-      mime_type = 'application/rdf+xml'
-   elif 'ld+json' in accept_header:
-      mime_type = 'application/ld+json'
-   else:
-      mime_type = 'text/turtle'
+   if 'triples' in accept_header:
+      fmt = 'application/n-triples'
 
-   response.content_type = mime_type
-   response.set_header('Allow', 'GET')  
+   if 'rdf+xml' in accept_header:
+      fmt = 'application/rdf+xml'
 
-   return graph.serialize(uri, mime_type)
+   if 'ld+json' in accept_header:
+      fmt = 'application/ld+json'
 
-# implement request handlers
+   serialized_graph = graph.serialize(uri, fmt)
+
+   if serialized_graph is None:
+      response.status = 404 # web resource not found
+      return
+
+   response.content_type = fmt
+   response.set_header('Allow', 'GET') 
+
+   return serialized_graph
+
+
+# HTTP request handlers
 @get(['/', '/doc', '/doc/'])
 def defaultPage():
    redirect('/doc/index.html')
 
-@get('/doc/<fname:path>')
+@get(FDPath('doc', '<fname:path>'))
 def sourceDocFiles(fname):
    return static_file(fname, root=doc_dir)
 
-@get('/fdp')
+@get(FDPath('fdp'))
 def getFdpMetadata(graph=g):
    return httpResponse(graph, graph.fdpURI())
 
-@get('/catalog/<catalog_id>')
+@get(FDPath('cat', '<catalog_id>'))
 def getCatalogMetadata(catalog_id, graph=g):
    return httpResponse(graph, graph.catURI(catalog_id))
 
-@get('/dataset/<dataset_id>')
+@get(FDPath('dat', '<dataset_id>'))
 def getDatasetMetadata(dataset_id, graph=g):
    return httpResponse(graph, graph.datURI(dataset_id))
 
-@get('/distribution/<distribution_id>')
+@get(FDPath('dist', '<distribution_id>'))
 def getDistributionMetadata(distribution_id, graph=g):
    return httpResponse(graph, graph.distURI(distribution_id))
+
 
 if __name__ == '__main__':
    run(server='wsgiref')

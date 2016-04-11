@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "0.3",
+        "version": "0.3.1",
         "title": "FAIR Data Point Service",
         "description": "Provides metadata about the FAIR Data Point (FDP) itself, catalogs, datasets and their distributions available through the FDP.",
         "contact": {
@@ -20,7 +20,7 @@
     "basePath": "/",
     "produces": [
         "text/turtle",
-        "text/n3",
+        "application/n-triples",
         "application/rdf+xml",
         "application/ld+json"
     ],
