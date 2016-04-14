@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Api(description = "FDP data accessor")
-@RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID:[^.]+}")
+@RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID}")
 public class DataAccessorController {   
     
     private final static Logger LOGGER 

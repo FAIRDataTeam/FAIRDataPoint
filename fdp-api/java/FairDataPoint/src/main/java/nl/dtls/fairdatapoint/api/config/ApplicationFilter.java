@@ -35,11 +35,11 @@ public class ApplicationFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
-    }
+    }    
 
     @Override
     public void doFilter(ServletRequest sr, ServletResponse sr1, 
-                FilterChain fc) throws IOException, ServletException {
+                FilterChain fc) throws IOException, ServletException {        
         HttpServletResponse response = (HttpServletResponse) sr1; 
         HttpServletRequest request = (HttpServletRequest)sr;
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
@@ -51,7 +51,7 @@ public class ApplicationFilter implements Filter {
         ThreadContext.put("responseStatus", String.valueOf(
                 response.getStatus()));         
         fc.doFilter(sr, sr1);            
-        ThreadContext.clearAll();
+        ThreadContext.clearAll();   
     }
 
     @Override
