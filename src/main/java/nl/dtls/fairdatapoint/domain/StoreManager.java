@@ -7,7 +7,6 @@ package nl.dtls.fairdatapoint.domain;
 
 import java.util.List;
 import org.openrdf.model.Statement;
-import org.openrdf.repository.RepositoryResult;
 
 /**
  *

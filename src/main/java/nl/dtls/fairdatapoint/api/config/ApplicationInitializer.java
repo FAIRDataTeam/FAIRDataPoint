@@ -14,7 +14,7 @@ public class ApplicationInitializer extends
         AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{Object.class};
+        return new Class[]{};
     }
 
     @Override

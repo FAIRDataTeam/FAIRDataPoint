@@ -72,7 +72,7 @@ public class MetadataController {
     }
         
     @ApiOperation(value = "Catalog metadata")
-    @RequestMapping(value = "/{catalogID:[^.]+}", method = RequestMethod.GET,
+    @RequestMapping(value = "/{catalogID}", method = RequestMethod.GET,
             produces = { "text/turtle", 
         "application/ld+json", "application/rdf+xml", "text/n3"}
     )
