@@ -5,8 +5,10 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import static com.google.common.io.Files.readLines;
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -47,20 +49,12 @@ public class ExampleTurtleFiles {
     public final static String FDP_URI = "http://semlab1.liacs.nl:8080/fdp";
     
     public static String getTurtleAsString(String fileName)  {        
-        String content = "";        
-        URL fileURL = ExampleTurtleFiles.class.getResource(fileName);
+        String content = "";  
         try {
-            File npFile;
-            npFile = new File(fileURL.toURI());
-            StringBuilder buf = new StringBuilder();
-            for (String fileLine : readLines(npFile, StandardCharsets.UTF_8)) {
-                buf.append(fileLine);
-                buf.append("\n");
-            }
-            content = buf.toString();
-        } catch (IOException | URISyntaxException ex) {
-            LOGGER.error("Error getting turle file",ex);   
-        
+            URL fileURL = ExampleTurtleFiles.class.getResource(fileName);
+            content = Resources.toString(fileURL, Charsets.UTF_8);
+        } catch (IOException ex) {
+            LOGGER.error("Error getting turle file",ex);          
         }        
         return content;
     }
