@@ -20,7 +20,7 @@ public interface FairMetaDataService {
      * @return  String object  
      * @throws FairMetadataServiceException  
      */
-    public String retrieveFDPMetaData(RDFFormat format) 
+    String retrieveFDPMetaData(RDFFormat format) 
             throws FairMetadataServiceException;  
 
     /**
@@ -30,7 +30,7 @@ public interface FairMetaDataService {
      * @return  String object
      * @throws FairMetadataServiceException
      */
-    public String retrieveCatalogMetaData
+    String retrieveCatalogMetaData
         (String catalogID, RDFFormat format) throws FairMetadataServiceException;
 
     /**
@@ -41,7 +41,7 @@ public interface FairMetaDataService {
      * @return  String object
      * @throws FairMetadataServiceException
      */
-    public String retrieveDatasetMetaData
+    String retrieveDatasetMetaData
         (String catalogID, String datasetID, RDFFormat format) 
                 throws FairMetadataServiceException;
         
