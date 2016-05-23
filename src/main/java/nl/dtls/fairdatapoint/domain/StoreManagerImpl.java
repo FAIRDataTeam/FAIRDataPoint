@@ -50,27 +50,14 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         
-        if (prepopulateStore) {                
-// FDP metadata                    
-            storeRDF(ExampleTurtleFiles.getTurtleAsString(
-                    ExampleTurtleFiles.FDP_METADATA), null, rdfBaseURI); 
-// catalogs metadata
-            for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {
-                storeRDF(ExampleTurtleFiles.getTurtleAsString(catalog), null, 
-                        rdfBaseURI);
-            }                
-// datasets metadata 
-            for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {                    
-                storeRDF(ExampleTurtleFiles.getTurtleAsString(dataset), null, 
-                        rdfBaseURI);
-            }     
-// distributions metadata
-            for (String distribution :ExampleTurtleFiles.DATASET_DISTRIBUTIONS) 
-            { 
-                storeRDF(ExampleTurtleFiles.getTurtleAsString(distribution), 
-                        null, rdfBaseURI);
+        if (prepopulateStore) {
+            // Load example ttl files from utils package to the inmemory store
+            for (String fileName:ExampleTurtleFiles.
+                    getExampleTurtleFileNames()) {                
+                storeRDF(ExampleTurtleFiles.getTurtleAsString(fileName), 
+                        null, rdfBaseURI); 
             } 
-        }else { 
+        } else { 
             LOGGER.info("FDP api is not prepopulated");
         }
     }
