@@ -7,13 +7,11 @@ package nl.dtls.fairdatapoint.utils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import static com.google.common.io.Files.readLines;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import org.openrdf.rio.RDFFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
