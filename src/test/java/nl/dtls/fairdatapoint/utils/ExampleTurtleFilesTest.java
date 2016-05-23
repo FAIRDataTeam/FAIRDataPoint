@@ -6,6 +6,7 @@
 package nl.dtls.fairdatapoint.utils;
 
 import java.io.IOException;
+import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -37,6 +38,16 @@ public class ExampleTurtleFilesTest {
         String fileName = ExampleTurtleFiles.FDP_METADATA;
         String result = ExampleTurtleFiles.getTurtleAsString(fileName);
         assertTrue(result.length() > 0);
+    }
+    
+    /**
+     * Test of getExampleTurtleFileNames method, the test is excepted to pass.
+     */
+    @Test
+    public void getExampleTurtleFileNames() {
+        System.out.println("getExampleTurtleFileNames");
+        List<String> result = ExampleTurtleFiles.getExampleTurtleFileNames();
+        assertTrue(result.size() > 0);
     }
     
 }

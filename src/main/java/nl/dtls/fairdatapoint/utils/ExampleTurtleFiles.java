@@ -7,11 +7,17 @@ package nl.dtls.fairdatapoint.utils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.PatternFilenameFilter;
 import com.google.common.io.Resources;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.openrdf.rio.RDFFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,6 +73,23 @@ public class ExampleTurtleFiles {
             LOGGER.error("Error getting turle file",ex);        
         }        
         return npFile;
+    }
+    
+    public static List<String> getExampleTurtleFileNames () { 
+        
+        List<String> fileNames = new ArrayList();    
+        URL fdpFileURL = ExampleTurtleFiles.class.getResource(FDP_METADATA);
+        String sourceFileURI = fdpFileURL.getPath();
+        sourceFileURI = sourceFileURI.replace(FDP_METADATA, "");
+        Pattern pattern = Pattern.compile("^.*.ttl");    
+        FilenameFilter filterByExtension = new PatternFilenameFilter(pattern);
+        File dir = new File(sourceFileURI);
+        File[] files = dir.listFiles(filterByExtension);  
+        for (File file: files) {
+            fileNames.add(file.getName());
+        }
+        LOGGER.info(fileNames.toString());
+        return fileNames;
     }
     
     
