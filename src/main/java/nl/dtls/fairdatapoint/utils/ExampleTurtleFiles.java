@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.openrdf.rio.RDFFormat;
@@ -75,12 +74,18 @@ public class ExampleTurtleFiles {
         return npFile;
     }
     
+    /**
+     * Method to get file names from the util package
+     * 
+     * @return File names as List<>
+     */
     public static List<String> getExampleTurtleFileNames () { 
         
         List<String> fileNames = new ArrayList();    
         URL fdpFileURL = ExampleTurtleFiles.class.getResource(FDP_METADATA);
         String sourceFileURI = fdpFileURL.getPath();
         sourceFileURI = sourceFileURI.replace(FDP_METADATA, "");
+        // Matches only turtle files
         Pattern pattern = Pattern.compile("^.*.ttl");    
         FilenameFilter filterByExtension = new PatternFilenameFilter(pattern);
         File dir = new File(sourceFileURI);
@@ -88,7 +93,7 @@ public class ExampleTurtleFiles {
         for (File file: files) {
             fileNames.add(file.getName());
         }
-        LOGGER.info(fileNames.toString());
+        LOGGER.info("Turtle files in util packaage " + fileNames.toString());
         return fileNames;
     }
     
