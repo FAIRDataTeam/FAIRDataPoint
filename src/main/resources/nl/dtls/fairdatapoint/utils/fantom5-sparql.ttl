@@ -5,10 +5,10 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix fantom5: <http://semlab1.liacs.nl:8080/fdp/transcriptomics/fantom5/> .
 
-fantom5:sparql dct:title "Fantom5 nanopubs SPARQL endpoint"@en ;
+fantom5:sparqlEndpoint dct:title "Fantom5 nanopubs SPARQL endpoint"@en ;
 rdfs:label "Fantom5 nanopubs SPARQL endpoint"@en ;
 	a dcat:Distribution ;
-        dct:identifier "sparql" ;
+        dct:identifier "sparqlEndpoint" ;
         dct:hasVersion "1.0" ;
         dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;
         dct:issued "2016-05-23T11:54:17+00:00"^^xsd:dateTime ;
