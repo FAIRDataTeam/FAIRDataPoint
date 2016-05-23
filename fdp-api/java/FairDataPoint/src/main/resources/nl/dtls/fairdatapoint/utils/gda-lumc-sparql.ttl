@@ -12,5 +12,5 @@ rdfs:label "GDA lumc SPARQL endpoint"@en ;
         dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;
         dct:issued "2016-02-03T13:35:12+00:00"^^xsd:dateTime ;
         dct:modified "2016-02-24T13:36:12+00:00"^^xsd:dateTime ; 
-	dcat:accessURL <http://136.243.4.200:8890/sparql> ;
+	dcat:accessURL <http://triplestore.fair-dtls.vm.surfsara.nl:8890/sparql> ;
         dcat:mediaType "application/json", "text/turtle", "text/html" .
