@@ -18,6 +18,7 @@ import org.apache.logging.log4j.ThreadContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * 
@@ -28,20 +29,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @version 0.1
  */
 @Component
-public class ApplicationFilter implements Filter {
-    
-    private FilterConfig filterConfig;
- 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        this.filterConfig = filterConfig;
-    }    
+public class ApplicationFilter extends OncePerRequestFilter {   
 
     @Override
-    public void doFilter(ServletRequest sr, ServletResponse sr1, 
-                FilterChain fc) throws IOException, ServletException {        
-        HttpServletResponse response = (HttpServletResponse) sr1; 
-        HttpServletRequest request = (HttpServletRequest)sr;
+    public void doFilterInternal(HttpServletRequest request, 
+            HttpServletResponse response , FilterChain fc) 
+            throws IOException, ServletException {
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         response.setHeader(HttpHeaders.ALLOW, (RequestMethod.GET.name()));
@@ -50,11 +43,8 @@ public class ApplicationFilter implements Filter {
         ThreadContext.put("ipAddress", request.getRemoteAddr());
         ThreadContext.put("responseStatus", String.valueOf(
                 response.getStatus()));         
-        fc.doFilter(sr, sr1);            
+        fc.doFilter(request, response);            
         ThreadContext.clearAll();   
     }
-
-    @Override
-    public void destroy() {}
     
 }
