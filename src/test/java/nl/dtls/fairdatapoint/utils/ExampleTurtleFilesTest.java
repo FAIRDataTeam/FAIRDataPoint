@@ -35,7 +35,7 @@ public class ExampleTurtleFilesTest {
     @Test
     public void testGetTurtleAsStringExistingFile() {
         System.out.println("getTurtleAsString");
-        String fileName = ExampleTurtleFiles.FDP_METADATA;
+        String fileName = ExampleTurtleFiles.EXAMPLE_FDP_METADATA_FILE;
         String result = ExampleTurtleFiles.getTurtleAsString(fileName);
         assertTrue(result.length() > 0);
     }
