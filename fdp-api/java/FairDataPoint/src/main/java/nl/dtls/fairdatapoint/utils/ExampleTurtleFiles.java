@@ -42,6 +42,12 @@ public class ExampleTurtleFiles {
             "http://semlab1.liacs.nl:8080/";
     public final static String FDP_URI = "http://semlab1.liacs.nl:8080/fdp";
     
+    /**
+     * Method to read the content of a turtle file
+     * 
+     * @param fileName Turtle file name
+     * @return File content as a string
+     */
     public static String getTurtleAsString(String fileName)  {        
         String content = "";  
         try {
