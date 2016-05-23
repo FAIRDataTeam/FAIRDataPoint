@@ -10,7 +10,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
-import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.BASE_URI;
+import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.EXAMPLE_FILES_BASE_URI;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -133,9 +133,9 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
              * RDF file. In future we should use more elegant code.  
              */
             if(baseURI != null && !baseURI.isEmpty()) {                
-                content = content.replaceAll(BASE_URI, baseURI);
+                content = content.replaceAll(EXAMPLE_FILES_BASE_URI, baseURI);
             } else {
-                baseURI = BASE_URI;
+                baseURI = EXAMPLE_FILES_BASE_URI;
             }
             StringReader reader = new StringReader(content);
             conn = getRepositoryConnection();
