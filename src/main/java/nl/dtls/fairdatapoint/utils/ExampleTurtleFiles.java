@@ -80,8 +80,5 @@ public class ExampleTurtleFiles {
         }
         LOGGER.info("Turtle files in util packaage " + fileNames.toString());
         return fileNames;
-    }
-    
-    
-    
+    }      
 }
