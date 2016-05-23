@@ -15,9 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.openrdf.rio.RDFFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openrdf.rio.RDFFormat;
 
 /**
  * Contains references to the example metadata rdf files which are used in the 

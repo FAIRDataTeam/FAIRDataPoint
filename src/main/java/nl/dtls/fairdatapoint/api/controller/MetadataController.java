@@ -7,7 +7,6 @@ package nl.dtls.fairdatapoint.api.controller;
 
 
 
-import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
@@ -15,15 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import nl.dtls.fairdatapoint.api.controller.utils.HttpHeadersUtils;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
+import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.rio.RDFFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @RestController
