@@ -17,30 +17,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * 
- * Filter to add mandatory headers to all request
- * 
+ * Filter to add mandatory headers to all request.
  * @author Rajaram Kaliyaperumal
  * @since 2015-11-19
  * @version 0.1
  */
 @Component
-public class ApplicationFilter extends OncePerRequestFilter {   
+public class ApplicationFilter extends OncePerRequestFilter {
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, 
-            HttpServletResponse response , FilterChain fc) 
+    public void doFilterInternal(final HttpServletRequest request,
+            final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         response.setHeader(HttpHeaders.ALLOW, (RequestMethod.GET.name()));
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, 
-                (HttpHeaders.ACCEPT));   
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                (HttpHeaders.ACCEPT));
         ThreadContext.put("ipAddress", request.getRemoteAddr());
         ThreadContext.put("responseStatus", String.valueOf(
-                response.getStatus()));         
-        fc.doFilter(request, response);            
-        ThreadContext.clearAll();   
+                response.getStatus()));
+        fc.doFilter(request, response);
+        ThreadContext.clearAll();
     }
-    
 }

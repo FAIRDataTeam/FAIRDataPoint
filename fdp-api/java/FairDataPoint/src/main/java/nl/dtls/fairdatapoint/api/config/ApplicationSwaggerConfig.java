@@ -14,15 +14,14 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Swagger config
- * 
+ * Swagger configuration.
  * @author Rajaram Kaliyaperumal
  * @since 2015-11-19
  * @version 0.1
  */
 @EnableSwagger2
 public class ApplicationSwaggerConfig {
-    
+
     @Bean
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
@@ -36,10 +35,15 @@ public class ApplicationSwaggerConfig {
     private ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
             "FDP API Java based",
-            "<p>This API is a prototype version, If you find bugs in this api please contact the developer.</p>"
+            "<p>This API is a prototype version, If you find bugs in this api "
+                    + "please contact the developer.</p>"
                     + "<p>"
-                    + "<li><a target='_blank' href = 'https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+Software+Specification'>API specs</li>"
-                    + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/ODEX-FAIRDataPoint/tree/master/fdp-api/java'>Source code</a> </li></p>",
+                    + "<li><a target='_blank' href = 'https://dtl-fair."
+                    + "atlassian.net/wiki/display/FDP/FAIR+Data+Point+"
+                    + "Software+Specification'>API specs</li>"
+                    + "<li><a target='_blank' href = 'https://github.com/"
+                    + "DTL-FAIRData/ODEX-FAIRDataPoint/tree/master/fdp-api"
+                    + "/java'>Source code</a> </li></p>",
             "0.1 BETA",
             "ATO",
             "r.kaliyaperumal@lumc.nl",
@@ -48,5 +52,4 @@ public class ApplicationSwaggerConfig {
         );
         return apiInfo;
     }
-    
 }
