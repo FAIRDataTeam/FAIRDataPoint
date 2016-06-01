@@ -25,7 +25,7 @@ public interface DataAccessorService {
      * @return  String object  
      * @throws nl.dtls.fairdatapoint.service.DataAccessorServiceException  
      */
-    public String retrieveDatasetDistribution(String catalogID, 
+    String retrieveDatasetDistribution(String catalogID, 
             String datasetID, String distributionID, RDFFormat format) 
             throws DataAccessorServiceException;  
     

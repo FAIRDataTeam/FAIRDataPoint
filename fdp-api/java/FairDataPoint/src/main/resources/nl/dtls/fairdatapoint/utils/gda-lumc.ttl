@@ -9,7 +9,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_lumc> a dcat:Dataset ;
+<http://www.dtls.nl/fdp/textmining/gene-disease-association_lumc> a dcat:Dataset ;
 	dct:title "Gene disease association (LUMC)"@en ;
         rdfs:label "Gene disease association (LUMC)"@en ;
 	dct:language lang:en ;
@@ -23,5 +23,5 @@
 	dct:publisher <http://orcid.org/0000-0002-1215-167X> ;
 	dcat:theme sio:statistical-association, <http://dbpedia.org/resource/Text_mining>  ;
 	dct:creator <http://orcid.org/0000-0001-8888-635X>, <http://orcid.org/0000-0002-1215-167X>, <http://orcid.org/0000-0003-3473-2325>, <http://orcid.org/0000-0002-4182-7560> ;
-        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_lumc/textfile> ;
-        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_lumc/sparql> .
+        dcat:distribution <http://www.dtls.nl/fdp/textmining/gene-disease-association_lumc/textfile> ;
+        dcat:distribution <http://www.dtls.nl/fdp/textmining/gene-disease-association_lumc/sparql> .

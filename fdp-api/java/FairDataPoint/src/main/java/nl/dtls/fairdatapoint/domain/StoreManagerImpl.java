@@ -10,16 +10,16 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
-import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.BASE_URI;
+import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.EXAMPLE_FILES_BASE_URI;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
+import org.openrdf.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openrdf.rio.RDFParseException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,27 +50,14 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         
-        if (prepopulateStore) {                
-// FDP metadata                    
-            storeRDF(ExampleTurtleFiles.getTurtleAsString(
-                    ExampleTurtleFiles.FDP_METADATA), null, rdfBaseURI); 
-// catalogs metadata
-            for (String catalog : ExampleTurtleFiles.CATALOG_METADATA) {
-                storeRDF(ExampleTurtleFiles.getTurtleAsString(catalog), null, 
-                        rdfBaseURI);
-            }                
-// datasets metadata 
-            for (String dataset : ExampleTurtleFiles.DATASET_METADATA) {                    
-                storeRDF(ExampleTurtleFiles.getTurtleAsString(dataset), null, 
-                        rdfBaseURI);
-            }     
-// distributions metadata
-            for (String distribution :ExampleTurtleFiles.DATASET_DISTRIBUTIONS) 
-            { 
-                storeRDF(ExampleTurtleFiles.getTurtleAsString(distribution), 
-                        null, rdfBaseURI);
+        if (prepopulateStore) {
+            // Load example ttl files from utils package to the inmemory store
+            for (String fileName:ExampleTurtleFiles.
+                    getExampleTurtleFileNames()) {                
+                storeRDF(ExampleTurtleFiles.getTurtleAsString(fileName), 
+                        null, rdfBaseURI); 
             } 
-        }else { 
+        } else { 
             LOGGER.info("FDP api is not prepopulated");
         }
     }
@@ -146,9 +133,9 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
              * RDF file. In future we should use more elegant code.  
              */
             if(baseURI != null && !baseURI.isEmpty()) {                
-                content = content.replaceAll(BASE_URI, baseURI);
+                content = content.replaceAll(EXAMPLE_FILES_BASE_URI, baseURI);
             } else {
-                baseURI = BASE_URI;
+                baseURI = EXAMPLE_FILES_BASE_URI;
             }
             StringReader reader = new StringReader(content);
             conn = getRepositoryConnection();

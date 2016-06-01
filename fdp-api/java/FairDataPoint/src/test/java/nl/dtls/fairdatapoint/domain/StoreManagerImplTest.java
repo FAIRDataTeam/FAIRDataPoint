@@ -80,8 +80,8 @@ public class StoreManagerImplTest {
             Exception {  
            
         testStoreManager.storeRDF(ExampleTurtleFiles.
-                getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null); 
-        String uri = "http://semlab1.liacs.nl:8080/dummy";             
+                getTurtleAsString(ExampleTurtleFiles.EXAMPLE_FDP_METADATA_FILE), null, null); 
+        String uri = "http://www.dtls.nl/dummy";             
         List<Statement> statements = 
                 testStoreManager.retrieveResource(uri); 
         assertTrue(statements.isEmpty());
@@ -99,7 +99,7 @@ public class StoreManagerImplTest {
             Exception {  
         
         this.testStoreManager.storeRDF(ExampleTurtleFiles.
-                getTurtleAsString(ExampleTurtleFiles.FDP_METADATA), null, null);            
+                getTurtleAsString(ExampleTurtleFiles.EXAMPLE_FDP_METADATA_FILE), null, null);            
         List<Statement> statements = 
                 this.testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI); 
         assertTrue(statements.size() > 0);
