@@ -8,8 +8,8 @@
 @prefix sio: <http://semanticscience.org/resource/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix comparativeGenomics: <http://semlab1.liacs.nl:8080/fdp/comparativeGenomics/> .
-@prefix goNlSvR5: <http://semlab1.liacs.nl:8080/fdp/comparativeGenomics/goNlSvR5/> .
+@prefix comparativeGenomics: <http://www.dtls.nl/fdp/comparativeGenomics/> .
+@prefix goNlSvR5: <http://www.dtls.nl/fdp/comparativeGenomics/goNlSvR5/> .
 
 comparativeGenomics:goNlSvR5 a dcat:Dataset ;
 	dct:title "GoNL human variants"@en ;

@@ -81,7 +81,7 @@ public class StoreManagerImplTest {
            
         testStoreManager.storeRDF(ExampleTurtleFiles.
                 getTurtleAsString(ExampleTurtleFiles.EXAMPLE_FDP_METADATA_FILE), null, null); 
-        String uri = "http://semlab1.liacs.nl:8080/dummy";             
+        String uri = "http://www.dtls.nl/dummy";             
         List<Statement> statements = 
                 testStoreManager.retrieveResource(uri); 
         assertTrue(statements.isEmpty());

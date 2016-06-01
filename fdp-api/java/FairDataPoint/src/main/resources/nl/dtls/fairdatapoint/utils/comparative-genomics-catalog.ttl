@@ -3,8 +3,8 @@
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix fdp: <http://semlab1.liacs.nl:8080/fdp/> .
-@prefix comparativeGenomics: <http://semlab1.liacs.nl:8080/fdp/comparativeGenomics/> .
+@prefix fdp: <http://www.dtls.nl/fdp/> .
+@prefix comparativeGenomics: <http://www.dtls.nl/fdp/comparativeGenomics/> .
 
 fdp:comparativeGenomics dct:title "Catalog for comparative genomics datasets"@en ;
     rdfs:label "Catalog for comparative genomics datasets"@en ;

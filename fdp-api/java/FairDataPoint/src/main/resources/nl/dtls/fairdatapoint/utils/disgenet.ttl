@@ -9,7 +9,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet> a dcat:Dataset ;
+<http://www.dtls.nl/fdp/textmining/gene-disease-association_disgenet> a dcat:Dataset ;
 	dct:title "DisGeNET"@en ;
         rdfs:label "DisGeNET"@en ;
 	dct:language lang:en ;
@@ -23,6 +23,6 @@
         dct:modified "2016-02-24T13:13:12+00:00"^^xsd:dateTime ; 
 	dcat:theme sio:statistical-association, <http://dbpedia.org/resource/Text_mining>  ;
 	dct:creator <http://orcid.org/0000-0003-0169-8159> ;
-        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/nanopubs-gzip> ;
-        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/textfile-gzip> ;
-        dcat:distribution <http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/html> .
+        dcat:distribution <http://www.dtls.nl/fdp/textmining/gene-disease-association_disgenet/nanopubs-gzip> ;
+        dcat:distribution <http://www.dtls.nl/fdp/textmining/gene-disease-association_disgenet/textfile-gzip> ;
+        dcat:distribution <http://www.dtls.nl/fdp/textmining/gene-disease-association_disgenet/html> .
