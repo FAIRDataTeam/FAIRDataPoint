@@ -3,7 +3,7 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix fantom5: <http://semlab1.liacs.nl:8080/fdp/transcriptomics/fantom5/> .
+@prefix fantom5: <http://www.dtls.nl/fdp/transcriptomics/fantom5/> .
 
 fantom5:textfile-gzip a dcat:Distribution ;
 dct:title "Fantom5 (human tss) tab separated file, plain text file distribution(gzip)"@en;

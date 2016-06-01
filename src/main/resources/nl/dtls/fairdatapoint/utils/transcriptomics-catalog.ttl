@@ -3,8 +3,8 @@
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix fdp: <http://semlab1.liacs.nl:8080/fdp/> .
-@prefix transcriptomics: <http://semlab1.liacs.nl:8080/fdp/transcriptomics/> .
+@prefix fdp: <http://www.dtls.nl/fdp/> .
+@prefix transcriptomics: <http://www.dtls.nl/fdp/transcriptomics/> .
 
 fdp:transcriptomics dct:title "Catalog for transcriptomics datasets"@en ;
     rdfs:label "Catalog for textmining datasets"@en ;

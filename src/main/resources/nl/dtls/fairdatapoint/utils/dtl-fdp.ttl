@@ -5,9 +5,9 @@
 @prefix ldp: <http://www.w3.org/ns/ldp#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix fdp: <http://semlab1.liacs.nl:8080/fdp/> .
+@prefix fdp: <http://www.dtls.nl/fdp/> .
 
-<http://semlab1.liacs.nl:8080/fdp> dct:title "DTL FAIR data point(beta)"@en ;
+<http://www.dtls.nl/fdp> dct:title "DTL FAIR data point(beta)"@en ;
         a ldp:Container;
         dct:language lang:en;
         ldp:contains fdp:textmining, fdp:transcriptomics, fdp:comparativeGenomics;
@@ -15,7 +15,7 @@
         dct:description "This FDP provides metadata on textmining data sets." ;
         dct:identifier "17d8e030-ca61-11e5-9956-625662870761" ;
         dct:title "DTL FAIR data point(beta)"@en ;
-        rdfs:seeAlso <http://semlab1.liacs.nl:8080/fdp/swagger-ui.html>;
+        rdfs:seeAlso <http://www.dtls.nl/fdp/swagger-ui.html>;
         dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;
         dct:hasVersion "0.1 Beta";
         dct:issued "2016-02-03T11:40:12+00:00"^^xsd:dateTime ;

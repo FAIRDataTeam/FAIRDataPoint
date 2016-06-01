@@ -39,8 +39,8 @@ public class ExampleTurtleFiles {
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
     public final static String EXAMPLE_FILES_BASE_URI = 
-            "http://semlab1.liacs.nl:8080/";
-    public final static String FDP_URI = "http://semlab1.liacs.nl:8080/fdp";
+            "http://www.dtls.nl/";
+    public final static String FDP_URI = "http://www.dtls.nl/fdp";
     
     /**
      * Method to read the content of a turtle file

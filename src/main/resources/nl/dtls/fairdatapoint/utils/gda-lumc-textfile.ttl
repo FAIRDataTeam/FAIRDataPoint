@@ -5,7 +5,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 
-<http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_lumc/textfile> a dcat:Distribution ;
+<http://www.dtls.nl/fdp/textmining/gene-disease-association_lumc/textfile> a dcat:Distribution ;
 dct:title "GDA lumc plain text file distribution"@en;
 rdfs:label "GDA lumc plain text file distribution"@en;
 dct:identifier "textfile" ;

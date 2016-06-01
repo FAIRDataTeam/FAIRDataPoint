@@ -8,8 +8,8 @@
 @prefix sio: <http://semanticscience.org/resource/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix transcriptomics: <http://semlab1.liacs.nl:8080/fdp/transcriptomics/> .
-@prefix fantom5: <http://semlab1.liacs.nl:8080/fdp/transcriptomics/fantom5/> .
+@prefix transcriptomics: <http://www.dtls.nl/fdp/transcriptomics/> .
+@prefix fantom5: <http://www.dtls.nl/fdp/transcriptomics/fantom5/> .
 
 transcriptomics:fantom5 a dcat:Dataset ;
 	dct:title "Fantom5 human transcription start site"@en ;

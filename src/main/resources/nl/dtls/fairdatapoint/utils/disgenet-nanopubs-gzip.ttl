@@ -4,7 +4,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://semlab1.liacs.nl:8080/fdp/textmining/gene-disease-association_disgenet/nanopubs-gzip> a dcat:Distribution ;
+<http://www.dtls.nl/fdp/textmining/gene-disease-association_disgenet/nanopubs-gzip> a dcat:Distribution ;
 dct:title "DisGeNET nanopubs trig distribution(gzip)"@en;
 dct:identifier "nanopubs-gzip" ;
 dct:hasVersion "1.0" ;
