@@ -117,7 +117,9 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
                 inMemorySetRepository = inMemorySetRepository.withSet(setMapping[0], setMapping[1]);
             } for (String item: items){
                 String[] itemMapping = item.split(":");
-                inMemoryItemRepository = inMemoryItemRepository.withItem(new InMemoryItem().withIdentifier(itemMapping[0]).withSet(itemMapping[1]));
+                InMemoryItem inMemoryitem = new InMemoryItem();
+                inMemoryitem = inMemoryitem.withIdentifier(itemMapping[0]).with("Sets",itemMapping[1]);
+                inMemoryItemRepository = inMemoryItemRepository.withItem(inMemoryitem);
             }
         }
         r = r.withItemRepository(inMemoryItemRepository).withSetRepository(inMemorySetRepository);
