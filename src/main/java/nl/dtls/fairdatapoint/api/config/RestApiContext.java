@@ -1,5 +1,6 @@
 package nl.dtls.fairdatapoint.api.config;
 
+import com.lyncode.builder.ListBuilder;
 import com.lyncode.xoai.services.impl.UTCDateProvider;
 import java.util.ArrayList;
 import javax.xml.transform.TransformerConfigurationException;
@@ -20,6 +21,7 @@ import nl.dtls.fairdatapoint.aoipmh.handlers.ListSetsHandler;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.domain.StoreManagerException;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.repository.RepositoryException;
@@ -118,7 +120,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
             } for (String item: items){
                 String[] itemMapping = item.split(":");
                 InMemoryItem inMemoryitem = new InMemoryItem();
-                inMemoryitem = inMemoryitem.withIdentifier(itemMapping[0]).with("Sets",itemMapping[1]);
+                inMemoryitem = inMemoryitem.withIdentifier(itemMapping[0]).with("sets",new ListBuilder<String>().add(itemMapping[1]).build());
                 inMemoryItemRepository = inMemoryItemRepository.withItem(inMemoryitem);
             }
         }
