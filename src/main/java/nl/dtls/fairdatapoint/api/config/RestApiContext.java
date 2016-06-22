@@ -3,6 +3,7 @@ package nl.dtls.fairdatapoint.api.config;
 import com.lyncode.builder.ListBuilder;
 import com.lyncode.xoai.services.impl.UTCDateProvider;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import nl.dtls.fairdatapoint.aoipmh.Context;
@@ -120,7 +121,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
             } for (String item: items){
                 String[] itemMapping = item.split(":");
                 InMemoryItem inMemoryitem = new InMemoryItem();
-                inMemoryitem = inMemoryitem.withIdentifier(itemMapping[0]).with("sets",new ListBuilder<String>().add(itemMapping[1]).build());
+                inMemoryitem = inMemoryitem.withIdentifier(itemMapping[0]).with("sets",new ListBuilder<String>().add(itemMapping[1]).build()).with("deleted", false).with("datestamp", new Date());
                 inMemoryItemRepository = inMemoryItemRepository.withItem(inMemoryitem);
             }
         }
