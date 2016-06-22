@@ -67,7 +67,7 @@ public class AoiPmhController {
         produces = { "text/turtle", "application/xml" } 
     )
 
-    public String oai(@RequestParam(value="verb") String verb, @RequestParam(value="metadataPrefix", required = false) String metadataPrefix, 
+    public String oai(@RequestParam(value="verb") String verb, @RequestParam(value="itemIdentifier", required = false) String itemIdentifier,@RequestParam(value="metadataPrefix", required = false) String metadataPrefix, 
             final HttpServletRequest httpRequest) {
         HashMap map  = new HashMap();
         ArrayList tmp = new ArrayList<>();
@@ -83,6 +83,12 @@ public class AoiPmhController {
             tmp = new ArrayList();
             tmp.add(metadataPrefix);
             map.put("metadataPrefix", tmp);
+        }
+
+        if (itemIdentifier != null){
+            tmp = new ArrayList();
+            tmp.add(itemIdentifier);
+            map.put("identifier", tmp);
         }
         
         OAIPMH response = new OAIPMH().withResponseDate(dateProvider.now());
