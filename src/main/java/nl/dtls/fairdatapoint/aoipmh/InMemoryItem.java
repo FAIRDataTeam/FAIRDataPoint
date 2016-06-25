@@ -59,7 +59,6 @@ public class InMemoryItem implements Item {
 
     @Override
     public Metadata getMetadata() {
-        String tmp = toMetadata().toString();
         return new Metadata(toMetadata().toString());
     }
 

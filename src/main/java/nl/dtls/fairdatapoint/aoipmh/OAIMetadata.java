@@ -11,7 +11,6 @@ import com.lyncode.xml.exceptions.XmlReaderException;
 import com.lyncode.xml.exceptions.XmlWriteException;
 import java.io.InputStream;
 
-
 import static com.lyncode.xml.matchers.QNameMatchers.localPart;
 import static com.lyncode.xml.matchers.XmlEventMatchers.*;
 import com.lyncode.xoai.xml.XSISchema;
@@ -81,15 +80,14 @@ public class OAIMetadata implements Writable {
 
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
-        try {
+        try {            
             writer.setDefaultNamespace(NAMESPACE_URI);
             writer.writeStartElement("metadata");
             writer.writeDefaultNamespace(NAMESPACE_URI);
             writer.writeNamespace(XSISchema.PREFIX, XSISchema.NAMESPACE_URI);
-            writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation",
-                    NAMESPACE_URI + " " + SCHEMA_LOCATION);
+            writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
 
-            for (Element element : getElements()) {
+            for (Element element : this.getElements()) {
                 writer.writeStartElement(NAMESPACE_URI, "element");
                 element.write(writer);
                 writer.writeEndElement();
