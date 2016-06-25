@@ -101,9 +101,9 @@ public class ListRecordsHandler extends VerbHandler<ListRecords> {
         List<Item> results = result.getResults();
         if (results.isEmpty()) throw new NoMatchesException();
         log.debug("Now adding records to the OAI-PMH Output");
-        for (Item i : results)
+        for (Item i : results){
             res.withRecord(this.createRecord(parameters, i));
-
+        }
 
         Value currentResumptionToken = new Value();
         if (parameters.hasResumptionToken()) {
@@ -179,7 +179,7 @@ public class ListRecordsHandler extends VerbHandler<ListRecords> {
     private XSLPipeline toPipeline(Item item) throws XmlWriteException, XMLStreamException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         XmlWriter writer = new XmlWriter(output);
-        Metadata metadata = item.getMetadata();
+        Metadata metadata = item.getMetadata();        
         metadata.write(writer);
         writer.close();
         return new XSLPipeline(new ByteArrayInputStream(output.toByteArray()), true);

@@ -8,14 +8,13 @@ package nl.dtls.fairdatapoint.aoipmh;
 
 import com.google.common.base.Function;
 import com.lyncode.builder.ListBuilder;
-import com.lyncode.xoai.model.xoai.Element;
-import com.lyncode.xoai.model.xoai.XOAIMetadata;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nl.dtls.fairdatapoint.aoipmh.writables.About;
+import nl.dtls.fairdatapoint.aoipmh.writables.Element;
 import nl.dtls.fairdatapoint.aoipmh.writables.Metadata;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
@@ -60,24 +59,25 @@ public class InMemoryItem implements Item {
 
     @Override
     public Metadata getMetadata() {
-        LOGGER.debug(toMetadata().toString());
+        String tmp = toMetadata().toString();
         return new Metadata(toMetadata().toString());
     }
 
-    private XOAIMetadata toMetadata() {
-        XOAIMetadata builder = new XOAIMetadata();
+    private OAIMetadata toMetadata() {
+        OAIMetadata builder = new OAIMetadata();
         for (String key : values.keySet()) {
             Element elementBuilder = new Element(key);
             Object value = values.get(key);
-            if (value instanceof String)
+            if (value instanceof String){
                 elementBuilder.withField(key, (String) value);
-            else if (value instanceof Date)
+            } else if (value instanceof Date){
                 elementBuilder.withField(key, ((Date) value).toString());
-            else if (value instanceof List) {
+            }else if (value instanceof List) {
                 List<String> obj = (List<String>) value;
                 int i = 1;
-                for (String e : obj)
+                for (String e : obj){
                     elementBuilder.withField(key + (i++), e);
+                }
             }
             builder.withElement(elementBuilder);
         }

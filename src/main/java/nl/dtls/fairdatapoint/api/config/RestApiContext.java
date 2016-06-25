@@ -6,11 +6,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import nl.dtls.fairdatapoint.aoipmh.Condition;
 import nl.dtls.fairdatapoint.aoipmh.Context;
+import nl.dtls.fairdatapoint.aoipmh.Filter;
+import nl.dtls.fairdatapoint.aoipmh.FilterResolver;
 import nl.dtls.fairdatapoint.aoipmh.InMemoryItem;
 import nl.dtls.fairdatapoint.aoipmh.InMemoryItemRepository;
 import nl.dtls.fairdatapoint.aoipmh.InMemorySetRepository;
+import nl.dtls.fairdatapoint.aoipmh.ItemIdentifier;
 import nl.dtls.fairdatapoint.aoipmh.RepositoryConfiguration;
+import nl.dtls.fairdatapoint.aoipmh.Set;
 import nl.dtls.fairdatapoint.aoipmh.handlers.ErrorHandler;
 import nl.dtls.fairdatapoint.aoipmh.handlers.GetRecordHandler;
 import nl.dtls.fairdatapoint.aoipmh.handlers.Identify;
@@ -22,7 +27,6 @@ import nl.dtls.fairdatapoint.aoipmh.handlers.ListSetsHandler;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.domain.StoreManagerException;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.repository.RepositoryException;
@@ -79,7 +83,24 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
     
     @Bean(name="context")
     public Context context(Environment env) throws TransformerConfigurationException{
-        return new Context().withMetadataFormat(env.getRequiredProperty("metadataNamespace"), env.getRequiredProperty("metadataPrefix"), TransformerFactory.newInstance().newTransformer());
+        String[] sets = env.getRequiredProperty("sets").trim().split(",");
+        Context context = new Context().withMetadataFormat(env.getRequiredProperty("metadataNamespace"), 
+                env.getRequiredProperty("metadataPrefix"), TransformerFactory.newInstance().newTransformer());
+        for (String x: sets){
+            Set set = new Set(x.split(":")[0]).withName(x.split(":")[1]).withCondition(new Condition() {
+            @Override
+            public Filter getFilter(FilterResolver filterResolver) {
+                return new Filter() {
+                    @Override
+                    public boolean isItemShown(ItemIdentifier item) {
+                        return true;
+                    }
+                };
+            }
+        });
+            context.withSet(set);
+        }
+        return context;
     }
      
     @Bean(name="repositoryConfiguration")
@@ -114,15 +135,35 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
             inMemorySetRepository = inMemorySetRepository.withRandomSets(10);
         } else {
             String[] sets = env.getRequiredProperty("sets").trim().split(",");
-            String[] items = env.getRequiredProperty("items").trim().split(",");
-            for(String set : sets){
-                String[] setMapping = set.split(":");
-                inMemorySetRepository = inMemorySetRepository.withSet(setMapping[0], setMapping[1]);
-            } for (String item: items){
-                String[] itemMapping = item.split(":");
-                InMemoryItem inMemoryitem = new InMemoryItem();
-                inMemoryitem = inMemoryitem.withIdentifier(itemMapping[0]).with("sets",new ListBuilder<String>().add(itemMapping[1]).build()).with("deleted", false).with("datestamp", new Date());
-                inMemoryItemRepository = inMemoryItemRepository.withItem(inMemoryitem);
+            String[] items = env.getRequiredProperty("records").trim().split(",");
+            for (String x: sets){
+                String[] setMapping = x.split(":");
+                inMemorySetRepository.withSet(setMapping[0], setMapping[1]);
+            }
+            for (String x: items){
+                String[] itemMapping = x.split(";");
+                InMemoryItem item = new InMemoryItem().with("deleted",false).with("datestamp",new Date());
+                for (String y: itemMapping){
+                    String[] field = y.split(":");
+                    if (field[0].equals("set")){
+                        item.with("sets",new ListBuilder<String>().add(field[1]).build());      
+                    }if (field[0].equals("item")){
+                        item.withIdentifier(field[1]);
+                    }if (field[0].equals("creators")){
+                        item.with("creator",field[1]);
+                    }if (field[0].equals("title")){
+                        item.with("title",field[1]);
+                    }if (field[0].equals("subject")){
+                        item.with("subject",field[1]);
+                    }if (field[0].equals("description")){
+                        item.with("description",field[1]);
+                    }if (field[0].equals("type")){
+                        item.with("type",field[1]);
+                    }if (field[0].equals("identifier")){
+                        item.with("identifier",field[1]);
+                    }
+                }
+                inMemoryItemRepository.withItem(item);
             }
         }
         r = r.withItemRepository(inMemoryItemRepository).withSetRepository(inMemorySetRepository);
