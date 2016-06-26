@@ -76,9 +76,7 @@ public class OAIMetadata implements Writable {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             this.write(new XmlWriter(out));
-        } catch (XmlWriteException | XMLStreamException e) {
-            String tmp = e.getMessage();
-        }
+        } catch (XmlWriteException | XMLStreamException e) { }
         return out.toString();
     }
 

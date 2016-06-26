@@ -140,9 +140,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
                 InMemoryItem item = new InMemoryItem().with("deleted",false).with("datestamp",new Date());
                 for (String y: itemMapping){
                     String[] field = y.split(":");
-                    if (field[0].equals("set")){
-                        item.with("sets",new ListBuilder<String>().add(field[1]).build());      
-                    }if (field[0].equals("item")){
+                    if (field[0].equals("item")){
                         item.withIdentifier(field[1]);
                     }if (field[0].equals("creators")){
                         item.with("creator",field[1]);
