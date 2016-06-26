@@ -96,7 +96,6 @@ public class Element implements Writable {
                 element.write(writer);
                 writer.writeEndElement();
             }
-
         } catch (XMLStreamException e) {
             throw new XmlWriteException(e);
         }

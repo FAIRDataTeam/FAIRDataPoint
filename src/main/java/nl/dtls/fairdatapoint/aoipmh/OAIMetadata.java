@@ -40,18 +40,18 @@ public class OAIMetadata implements Writable {
     public static OAIMetadata parse (InputStream inputStream) throws XmlReaderException {
         XmlReader reader = new XmlReader(inputStream);
         OAIMetadata OAIMetadata = new OAIMetadata();
-        if (!reader.next(aStartElement()).current(allOf(aStartElement(), elementName(localPart(equalTo("metadata"))))))
+        if (!reader.next(aStartElement()).current(allOf(aStartElement(), elementName(localPart(equalTo("metadata")))))){
             throw new XmlReaderException("Invalid XML. Expecting entity 'metadata'");
-
+        }
         while (reader.next(anElement()).current(aStartElement())) {
             if (reader.current(elementName(localPart(equalTo("element"))))) // Nested element
                 OAIMetadata.withElement(Element.parse(reader));
             else throw new XmlReaderException("Unexpected element");
         }
 
-        if (!reader.current(allOf(anEndElement(), elementName(localPart(equalTo("metadata"))))))
+        if (!reader.current(allOf(anEndElement(), elementName(localPart(equalTo("metadata")))))){
             throw new XmlReaderException("Invalid XML. Expecting end of entity 'metadata'");
-
+        }
         reader.close();
         return OAIMetadata;
     }
@@ -91,7 +91,7 @@ public class OAIMetadata implements Writable {
 
             for (Element element : this.getElements()) {
                 if (element.getName().equals("datestamp")){
-                    writer.writeStartElement(NAMESPACE_URI, "random");
+                    writer.writeStartElement(NAMESPACE_URI,"date");
                     element.write(writer);
                     writer.writeEndElement();
                 } if (element.getName().equals("identifier")){

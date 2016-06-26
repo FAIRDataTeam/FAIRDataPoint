@@ -846,3 +846,83 @@
  - - [26/06/2016:18:46:44 -0173] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
  - - [26/06/2016:18:46:44 -0178] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
  - - [26/06/2016:18:46:44 -0186] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:53:42 -0803] "GET /textmining/gene-disease-association_lumc http" 200 
+ - - [26/06/2016:18:53:42 -0816] "GET /textmining http" 200 
+ - - [26/06/2016:18:53:42 -0819] "GET /textmining http" 200 936
+ - - [26/06/2016:18:53:42 -0821] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:53:42 -0825] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:53:42 -0829] "GET /textmining/dumpy http" 404 
+ - - [26/06/2016:18:53:42 -0832] "GET /textmining http" 200 
+ - - [26/06/2016:18:53:42 -0841] "GET /textmining http" 200 
+ - - [26/06/2016:18:53:42 -0844] "GET /dumpy http" 404 
+ - - [26/06/2016:18:53:43 -0223] "GET /textmining/gene-disease-association_lumc/dummy http" 404 
+ - - [26/06/2016:18:53:43 -0225] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:53:43 -0229] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:53:43 -0231] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:53:43 -0233] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:53:43 -0237] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:53:43 -0246] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:56:25 -0730] "GET /textmining/gene-disease-association_lumc http" 200 
+ - - [26/06/2016:18:56:25 -0749] "GET /textmining http" 200 
+ - - [26/06/2016:18:56:25 -0753] "GET /textmining http" 200 936
+ - - [26/06/2016:18:56:25 -0756] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:56:25 -0765] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:56:25 -0770] "GET /textmining/dumpy http" 404 
+ - - [26/06/2016:18:56:25 -0776] "GET /textmining http" 200 
+ - - [26/06/2016:18:56:25 -0786] "GET /textmining http" 200 
+ - - [26/06/2016:18:56:25 -0796] "GET /dumpy http" 404 
+ - - [26/06/2016:18:56:26 -0114] "GET /textmining/gene-disease-association_lumc/dummy http" 404 
+ - - [26/06/2016:18:56:26 -0117] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:56:26 -0118] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:56:26 -0120] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:56:26 -0121] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:56:26 -0124] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:56:26 -0130] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:57:07 -0408] "GET /textmining/gene-disease-association_lumc http" 200 
+ - - [26/06/2016:18:57:07 -0415] "GET /textmining http" 200 
+ - - [26/06/2016:18:57:07 -0417] "GET /textmining http" 200 936
+ - - [26/06/2016:18:57:07 -0419] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:57:07 -0423] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:57:07 -0427] "GET /textmining/dumpy http" 404 
+ - - [26/06/2016:18:57:07 -0430] "GET /textmining http" 200 
+ - - [26/06/2016:18:57:07 -0436] "GET /textmining http" 200 
+ - - [26/06/2016:18:57:07 -0438] "GET /dumpy http" 404 
+ - - [26/06/2016:18:57:07 -0724] "GET /textmining/gene-disease-association_lumc/dummy http" 404 
+ - - [26/06/2016:18:57:07 -0727] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:57:07 -0729] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:57:07 -0730] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:57:07 -0733] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:57:07 -0735] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:57:07 -0740] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:58:37 -0967] "GET /textmining/gene-disease-association_lumc http" 200 
+ - - [26/06/2016:18:58:37 -0981] "GET /textmining http" 200 
+ - - [26/06/2016:18:58:37 -0984] "GET /textmining http" 200 936
+ - - [26/06/2016:18:58:37 -0987] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:58:37 -0990] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:18:58:37 -0993] "GET /textmining/dumpy http" 404 
+ - - [26/06/2016:18:58:37 -0996] "GET /textmining http" 200 
+ - - [26/06/2016:18:58:38 -0006] "GET /textmining http" 200 
+ - - [26/06/2016:18:58:38 -0011] "GET /dumpy http" 404 
+ - - [26/06/2016:18:58:38 -0297] "GET /textmining/gene-disease-association_lumc/dummy http" 404 
+ - - [26/06/2016:18:58:38 -0300] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:58:38 -0302] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:58:38 -0304] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:58:38 -0306] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:18:58:38 -0309] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:18:58:38 -0313] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:19:00:20 -0248] "GET /textmining/gene-disease-association_lumc http" 200 
+ - - [26/06/2016:19:00:20 -0255] "GET /textmining http" 200 
+ - - [26/06/2016:19:00:20 -0257] "GET /textmining http" 200 936
+ - - [26/06/2016:19:00:20 -0259] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:19:00:20 -0261] "GET /textmining/gene-disease-association_lumc http" 200 936
+ - - [26/06/2016:19:00:20 -0265] "GET /textmining/dumpy http" 404 
+ - - [26/06/2016:19:00:20 -0269] "GET /textmining http" 200 
+ - - [26/06/2016:19:00:20 -0278] "GET /textmining http" 200 
+ - - [26/06/2016:19:00:20 -0281] "GET /dumpy http" 404 
+ - - [26/06/2016:19:00:20 -0651] "GET /textmining/gene-disease-association_lumc/dummy http" 404 
+ - - [26/06/2016:19:00:20 -0655] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:19:00:20 -0657] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:19:00:20 -0660] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:19:00:20 -0662] "GET /textmining/gene-disease-association_lumc/sparql http" 200 882
+ - - [26/06/2016:19:00:20 -0666] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
+ - - [26/06/2016:19:00:20 -0671] "GET /textmining/gene-disease-association_lumc/sparql http" 200 
