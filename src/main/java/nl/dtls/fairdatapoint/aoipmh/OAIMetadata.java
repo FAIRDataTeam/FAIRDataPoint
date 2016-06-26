@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.stream.XMLStreamException;
 import nl.dtls.fairdatapoint.aoipmh.writables.Element;
 import nl.dtls.fairdatapoint.aoipmh.writables.Writable;
@@ -76,7 +77,8 @@ public class OAIMetadata implements Writable {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             this.write(new XmlWriter(out));
-        } catch (XmlWriteException | XMLStreamException e) { }
+        } catch (XmlWriteException | XMLStreamException ex) {
+        }
         return out.toString();
     }
 
@@ -90,31 +92,9 @@ public class OAIMetadata implements Writable {
             writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
 
             for (Element element : this.getElements()) {
-                if (element.getName().equals("datestamp")){
-                    writer.writeStartElement(NAMESPACE_URI,"date");
-                    element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("identifier")){
-                    writer.writeStartElement(NAMESPACE_URI, "identifier");
-                    element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("creator")){
-                    writer.writeStartElement(NAMESPACE_URI, "creator");
-                    element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("description")){
-                   writer.writeStartElement(NAMESPACE_URI, "description");
-                   element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("title")){
-                   writer.writeStartElement(NAMESPACE_URI, "title");
-                   element.write(writer);
-                   writer.writeEndElement();
-                } if (element.getName().equals("type")){
-                   writer.writeStartElement(NAMESPACE_URI, "type");
-                   element.write(writer);
-                   writer.writeEndElement();
-                }
+                writer.writeStartElement(NAMESPACE_URI, "element");
+                element.write(writer);
+                writer.writeEndElement();
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
