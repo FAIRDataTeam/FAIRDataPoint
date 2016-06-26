@@ -48,8 +48,8 @@ public class ApplicationFilter implements Filter {
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, 
                 (HttpHeaders.ACCEPT));   
         ThreadContext.put("ipAddress", request.getRemoteAddr());
-        ThreadContext.put("responseStatus", String.valueOf(
-                response.getStatus()));         
+//        ThreadContext.put("responseStatus", String.valueOf(
+//                response..getStatus()));         
         fc.doFilter(sr, sr1);            
         ThreadContext.clearAll();
     }

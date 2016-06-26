@@ -34,10 +34,10 @@ public class LoggerUtils {
         ThreadContext.put("requestMethod", request.getMethod());
         ThreadContext.put("requestURI", request.getRequestURI());
         ThreadContext.put("requestProtocol", request.getProtocol());
-        ThreadContext.put("responseStatus", String.valueOf(
-                response.getStatus()));
-        String contentLength = response.getHeader(HttpHeaders.CONTENT_LENGTH);
-        ThreadContext.put("contentSize", contentLength);
+//        ThreadContext.put("responseStatus", String.valueOf(
+//                response.getStatus()));
+//        String contentLength = response.getHeader(HttpHeaders.CONTENT_LENGTH);
+//        ThreadContext.put("contentSize", contentLength);
         logger.log(Level.getLevel("API-REQUEST"), "");
     }
     
