@@ -91,7 +91,7 @@ public class OAIMetadata implements Writable {
 
             for (Element element : this.getElements()) {
                 if (element.getName().equals("datestamp")){
-                    writer.writeStartElement(NAMESPACE_URI, "date");
+                    writer.writeStartElement(NAMESPACE_URI, "random");
                     element.write(writer);
                     writer.writeEndElement();
                 } if (element.getName().equals("identifier")){
