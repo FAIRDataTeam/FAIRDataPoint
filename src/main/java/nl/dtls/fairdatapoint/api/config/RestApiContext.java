@@ -93,7 +93,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
                 return new Filter() {
                     @Override
                     public boolean isItemShown(ItemIdentifier item) {
-                        return true;
+                        return false;
                     }
                 };
             }
