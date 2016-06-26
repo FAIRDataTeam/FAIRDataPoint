@@ -22,6 +22,8 @@ import javax.xml.stream.XMLStreamException;
 import nl.dtls.fairdatapoint.aoipmh.writables.Element;
 import nl.dtls.fairdatapoint.aoipmh.writables.Writable;
 import nl.dtls.fairdatapoint.utils.XmlWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
 
@@ -32,7 +34,7 @@ import static org.hamcrest.core.AllOf.allOf;
  */
 
 public class OAIMetadata implements Writable {
-
+    private final static Logger LOGGER = LogManager.getLogger(OAIMetadata.class);    
     private static final String DEFAULT_FIELD = "value";
 
     public static OAIMetadata parse (InputStream inputStream) throws XmlReaderException {
@@ -55,8 +57,8 @@ public class OAIMetadata implements Writable {
     }
 
     //Still needs to be set to configurable
-    public static final String NAMESPACE_URI = "http://purl.org/dc/elements/1.1/";
-    public static final String SCHEMA_LOCATION = "http://purl.org/dc/elements/1.1/";
+    public static final String NAMESPACE_URI = "http://purl.org/dc/terms/";
+    public static final String SCHEMA_LOCATION = "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd";
 
     protected List<Element> elements = new ArrayList<>();
 
@@ -74,7 +76,9 @@ public class OAIMetadata implements Writable {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             this.write(new XmlWriter(out));
-        } catch (XmlWriteException | XMLStreamException e) {}
+        } catch (XmlWriteException | XMLStreamException e) {
+            String tmp = e.getMessage();
+        }
         return out.toString();
     }
 
