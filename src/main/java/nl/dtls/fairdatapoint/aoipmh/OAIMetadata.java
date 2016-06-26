@@ -115,7 +115,6 @@ public class OAIMetadata implements Writable {
                    element.write(writer);
                    writer.writeEndElement();
                 }
- 
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
