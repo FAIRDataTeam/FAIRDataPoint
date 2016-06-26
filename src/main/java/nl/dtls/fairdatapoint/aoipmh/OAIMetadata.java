@@ -90,32 +90,9 @@ public class OAIMetadata implements Writable {
             writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
 
             for (Element element : this.getElements()) {
-                if (element.getName().equals("datestamp")){
-                    writer.writeStartElement(NAMESPACE_URI, "date");
-                    element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("identifier")){
-                    writer.writeStartElement(NAMESPACE_URI, "identifier");
-                    element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("creator")){
-                    writer.writeStartElement(NAMESPACE_URI, "creator");
-                    element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("description")){
-                   writer.writeStartElement(NAMESPACE_URI, "description");
-                   element.write(writer);
-                    writer.writeEndElement();
-                } if (element.getName().equals("title")){
-                   writer.writeStartElement(NAMESPACE_URI, "title");
-                   element.write(writer);
-                   writer.writeEndElement();
-                } if (element.getName().equals("type")){
-                   writer.writeStartElement(NAMESPACE_URI, "type");
-                   element.write(writer);
-                   writer.writeEndElement();
-                }
- 
+                writer.writeStartElement(NAMESPACE_URI, "dc");
+                element.write(writer);
+                writer.writeEndElement();
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
