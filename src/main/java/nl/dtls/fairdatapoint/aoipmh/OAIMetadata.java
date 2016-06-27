@@ -89,7 +89,6 @@ public class OAIMetadata implements Writable {
             writer.writeStartElement("metadata");
             writer.writeDefaultNamespace(NAMESPACE_URI);
             writer.writeNamespace(XSISchema.PREFIX, XSISchema.NAMESPACE_URI);
-            writer.writeNamespace("dc", NAMESPACE_URI);
             writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
 
             for (Element element : this.getElements()) {
