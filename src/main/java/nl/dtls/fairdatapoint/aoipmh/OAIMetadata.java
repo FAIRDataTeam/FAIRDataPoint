@@ -88,13 +88,29 @@ public class OAIMetadata implements Writable {
             writer.setDefaultNamespace(NAMESPACE_URI);
             writer.writeStartElement("metadata");
             writer.writeDefaultNamespace(NAMESPACE_URI);
+            writer.setPrefix("dc", NAMESPACE_URI);
             writer.writeNamespace(XSISchema.PREFIX, XSISchema.NAMESPACE_URI);
+            writer.writeNamespace("dc", NAMESPACE_URI);
             writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
 
             for (Element element : this.getElements()) {
-                writer.writeStartElement(NAMESPACE_URI, "element");
-                element.write(writer);
-                writer.writeEndElement();
+                if (element.getName().equals("creators")){
+                    writer.writeStartElement("dc","creator",NAMESPACE_URI);
+                    element.write(writer);
+                    writer.writeEndElement();
+                } if (element.getName().equals("title")){
+                    writer.writeStartElement("dc","title",NAMESPACE_URI);
+                    element.write(writer);
+                    writer.writeEndElement();
+                } if (element.getName().equals("description")){
+                    writer.writeStartElement("dc","description",NAMESPACE_URI);
+                    element.write(writer);
+                    writer.writeEndElement();
+                } if (element.getName().equals("type")){
+                    writer.writeStartElement("dc","type",NAMESPACE_URI);
+                    element.write(writer);
+                    writer.writeEndElement();
+                }
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {

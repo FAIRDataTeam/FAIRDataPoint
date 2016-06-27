@@ -46,8 +46,7 @@
 	<dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope> provided </scope>
+            <version>4.0.0-b01</version>
 	</dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -117,11 +116,6 @@
         <version>${jackson.version}</version>
     </dependency>
     <dependency>
-	<groupId>com.sun.xml.bind</groupId>
-	<artifactId>jaxb-impl</artifactId>
-	<version>2.2.11</version>
-    </dependency>
-    <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
         <version>${jackson.version}</version>
@@ -142,12 +136,6 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.lyncode</groupId>
-            <artifactId>xml-io</artifactId>
-            <version>1.0.3</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.lyncode</groupId>
@@ -201,13 +189,5 @@
 		</plugins>
             </pluginManagement>            
             <finalName>fdp</finalName>	
-        </build>             
-        <reporting>
-            <plugins>
-              <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-              </plugin>
-            </plugins>         
-        </reporting>  
+        </build> 
 </project>
