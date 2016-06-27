@@ -88,7 +88,7 @@ public class OAIMetadata implements Writable {
     public void write(XmlWriter writer) throws XmlWriteException {
         try {  
             System.setProperty("org.xml.sax.driver",  "org.apache.xerces.parsers.SAXParser");  
-            
+            System.setProperty("javax.xml.parsers.SAXParserFactory","org.apache.xerces.jaxp.SAXParserFactoryImpl");
             writer.setDefaultNamespace(NAMESPACE_URI);
             writer.writeStartElement("metadata");
             writer.writeDefaultNamespace(NAMESPACE_URI);

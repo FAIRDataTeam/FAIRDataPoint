@@ -172,7 +172,13 @@
             <artifactId>jaxp-api</artifactId>
             <version>1.4.5</version>
             <type>jar</type>
-        </dependency>
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+            </exclusions>
+    </dependency>
     </dependencies>
         <build>
             <pluginManagement>
