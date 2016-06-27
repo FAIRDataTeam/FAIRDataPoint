@@ -57,8 +57,8 @@ public class OAIMetadata implements Writable {
     }
 
     //Still needs to be set to configurable
-    public static final String NAMESPACE_URI = "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd";
-    public static final String SCHEMA_LOCATION = "dc.xsd";
+    public static final String NAMESPACE_URI = "http://www.openarchives.org/OAI/2.0/oai_dc/";
+    public static final String SCHEMA_LOCATION = "http://www.openarchives.org/OAI/2.0/oai_dc.xsd";
 
     protected List<Element> elements = new ArrayList<>();
 
@@ -84,32 +84,35 @@ public class OAIMetadata implements Writable {
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
         try {
-
-            writer.setDefaultNamespace(NAMESPACE_URI);
             writer.writeStartElement("metadata");
-            writer.writeDefaultNamespace(NAMESPACE_URI);
-            writer.writeNamespace(XSISchema.PREFIX, XSISchema.NAMESPACE_URI);
-            writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
+            writer.writeNamespace("aoi_dc", NAMESPACE_URI);
+            writer.setPrefix("aoi_dc", NAMESPACE_URI);
+            writer.writeStartElement(NAMESPACE_URI,"oai_dc");
+            
+            writer.writeNamespace("dc", "http://purl.org/dc/elements/1.1/");
+            writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            writer.writeAttribute("xsi:schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
 
             for (Element element : this.getElements()) {
                 if (element.getName().equals("creators")){
-                    writer.writeStartElement("dc","creator",NAMESPACE_URI);
+                    writer.writeStartElement("dc:creator");
                     element.write(writer);
                     writer.writeEndElement();
                 } if (element.getName().equals("title")){
-                    writer.writeStartElement("dc","title",NAMESPACE_URI);
+                    writer.writeStartElement("dc:title");
                     element.write(writer);
                     writer.writeEndElement();
                 } if (element.getName().equals("description")){
-                    writer.writeStartElement("dc","description",NAMESPACE_URI);
+                    writer.writeStartElement("dc:description");
                     element.write(writer);
                     writer.writeEndElement();
                 } if (element.getName().equals("type")){
-                    writer.writeStartElement("dc","type",NAMESPACE_URI);
+                    writer.writeStartElement("dc:type");
                     element.write(writer);
                     writer.writeEndElement();
                 }
             }
+            writer.writeEndElement();
             writer.writeEndElement();
         } 
         catch (XMLStreamException e) {
