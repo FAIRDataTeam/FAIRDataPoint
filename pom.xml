@@ -178,9 +178,9 @@
                     <artifactId>xercesImpl</artifactId>
                 </exclusion>
             </exclusions>
-    </dependency>
-    </dependencies>
-        <build>
+        </dependency>
+        </dependencies>
+            <build>
             <pluginManagement>
                 <plugins>
                     <plugin>
@@ -196,9 +196,9 @@
                             </warName>
                             <failOnMissingWebXml>false</failOnMissingWebXml>
 			</configuration>
-                    </plugin>                                                        
-		</plugins>
-            </pluginManagement>            
-            <finalName>fdp</finalName>	
-        </build> 
+                        </plugin>                                                        
+               	</plugins>
+                </pluginManagement>            
+                <finalName>fdp</finalName>	
+            </build> 
 </project>

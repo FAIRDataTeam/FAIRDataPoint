@@ -18,8 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import nl.dtls.fairdatapoint.aoipmh.writables.Element;
 import nl.dtls.fairdatapoint.aoipmh.writables.Writable;
@@ -28,7 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -86,9 +83,8 @@ public class OAIMetadata implements Writable {
 
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
-        try {  
-            System.setProperty("org.xml.sax.driver",  "org.apache.xerces.parsers.SAXParser");  
-            System.setProperty("javax.xml.parsers.SAXParserFactory","org.apache.xerces.jaxp.SAXParserFactoryImpl");
+        try {
+
             writer.setDefaultNamespace(NAMESPACE_URI);
             writer.writeStartElement("metadata");
             writer.writeDefaultNamespace(NAMESPACE_URI);
