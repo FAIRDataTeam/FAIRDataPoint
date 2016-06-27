@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import nl.dtls.fairdatapoint.aoipmh.writables.Element;
 import nl.dtls.fairdatapoint.aoipmh.writables.Writable;
@@ -27,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -58,8 +60,8 @@ public class OAIMetadata implements Writable {
     }
 
     //Still needs to be set to configurable
-    public static final String NAMESPACE_URI = "http://purl.org/dc/terms/";
-    public static final String SCHEMA_LOCATION = "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd";
+    public static final String NAMESPACE_URI = "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd";
+    public static final String SCHEMA_LOCATION = "dc.xsd";
 
     protected List<Element> elements = new ArrayList<>();
 
@@ -84,11 +86,12 @@ public class OAIMetadata implements Writable {
 
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
-        try {            
+        try {  
+            System.setProperty("org.xml.sax.driver",  "org.apache.xerces.parsers.SAXParser");  
+            
             writer.setDefaultNamespace(NAMESPACE_URI);
             writer.writeStartElement("metadata");
             writer.writeDefaultNamespace(NAMESPACE_URI);
-            writer.setPrefix("dc", NAMESPACE_URI);
             writer.writeNamespace(XSISchema.PREFIX, XSISchema.NAMESPACE_URI);
             writer.writeNamespace("dc", NAMESPACE_URI);
             writer.writeAttribute(XSISchema.PREFIX, XSISchema.NAMESPACE_URI, "schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
@@ -113,7 +116,8 @@ public class OAIMetadata implements Writable {
                 }
             }
             writer.writeEndElement();
-        } catch (XMLStreamException e) {
+        } 
+        catch (XMLStreamException e) {
             throw new XmlWriteException(e);
         }
     }
