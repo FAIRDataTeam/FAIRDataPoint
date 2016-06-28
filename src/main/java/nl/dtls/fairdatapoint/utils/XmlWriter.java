@@ -18,7 +18,6 @@ import java.io.OutputStream;
 import java.util.Date;
 import javax.xml.stream.XMLStreamException;
 import nl.dtls.fairdatapoint.aoipmh.writables.Writable;
-
 /**
  *
  * @author Shamanou van Leeuwen

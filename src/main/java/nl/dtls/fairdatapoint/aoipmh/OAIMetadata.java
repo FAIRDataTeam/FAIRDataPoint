@@ -85,14 +85,14 @@ public class OAIMetadata implements Writable {
     public void write(XmlWriter writer) throws XmlWriteException {
         try {
             writer.writeStartElement("metadata");
-            writer.writeNamespace("aoi_dc", NAMESPACE_URI);
-            writer.setPrefix("aoi_dc", NAMESPACE_URI);
-            writer.writeStartElement(NAMESPACE_URI,"oai_dc");
-            
+            writer.writeNamespace("aoi_dc",NAMESPACE_URI);
+            writer.setPrefix("oai_dc",NAMESPACE_URI);
+            writer.writeStartElement(writer.getPrefix(NAMESPACE_URI),"dc",NAMESPACE_URI);
+//            writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+//            writer.writeAttribute("xsi:schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
+            writer.setPrefix("dc", "http://purl.org/dc/elements/1.1/");            
             writer.writeNamespace("dc", "http://purl.org/dc/elements/1.1/");
-            writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            writer.writeAttribute("xsi:schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
-
+            
             for (Element element : this.getElements()) {
                 if (element.getName().equals("creators")){
                     writer.writeStartElement("dc:creator");
