@@ -67,12 +67,9 @@ public class Field implements Writable {
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
         try {
-            if (this.name != null)
-                writer.writeAttribute("name", this.getName());
-
-            if (this.value != null)
+            if (this.value != null){
                 writer.writeCharacters(value);
-
+            }
         } catch (XMLStreamException e) {
             throw new XmlWriteException(e);
         }

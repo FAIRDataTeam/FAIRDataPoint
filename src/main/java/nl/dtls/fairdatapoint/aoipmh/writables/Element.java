@@ -82,18 +82,10 @@ public class Element implements Writable {
 
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
-        try {
-            if (this.name != null){
-                writer.writeAttribute("name", this.getName());
-            }
-            for (Field field : this.getFields()) {
-                field.write(writer);
-            }
-            for (Element element : this.getElements()) {
-                element.write(writer);
-            }
-        } catch (XMLStreamException e) {
-            throw new XmlWriteException(e);
+        for (Field field : this.getFields()) {
+            field.write(writer);
+        }for (Element element : this.getElements()) {
+            element.write(writer);
         }
     }
 
