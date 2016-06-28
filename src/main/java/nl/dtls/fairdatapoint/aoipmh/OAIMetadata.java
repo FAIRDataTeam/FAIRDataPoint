@@ -13,7 +13,6 @@ import java.io.InputStream;
 
 import static com.lyncode.xml.matchers.QNameMatchers.localPart;
 import static com.lyncode.xml.matchers.XmlEventMatchers.*;
-import com.lyncode.xoai.xml.XSISchema;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
