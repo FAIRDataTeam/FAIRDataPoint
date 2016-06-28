@@ -67,7 +67,6 @@ public class OAIMetadata implements Writable {
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
         try {
-            writer.writeStartElement("metadata");
             writer.setPrefix("oai_dc",NAMESPACE_URI);
             writer.writeStartElement("oai_dc","dc",NAMESPACE_URI);
             writer.writeNamespace("oai_dc", NAMESPACE_URI);
@@ -95,7 +94,6 @@ public class OAIMetadata implements Writable {
                     writer.writeEndElement();
                 }
             }
-            writer.writeEndElement();
             writer.writeEndElement();
         } 
         catch (XMLStreamException e) {
