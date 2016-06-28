@@ -14,13 +14,12 @@ import nl.dtls.fairdatapoint.utils.XmlWriter;
  */
 public class Metadata implements Writable {
     private String string;
-
+    @XmlValue
+    private OAIMetadata value;
+    
     public Metadata(String value) {
         this.string = value;
     }
-    
-    @XmlValue
-    protected OAIMetadata value;
 
     public Metadata(OAIMetadata value) {
         this.value = value;
@@ -32,12 +31,12 @@ public class Metadata implements Writable {
 
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
-        if (this.value != null)
+//        if (this.value != null)
             this.value.write(writer);
-        else {
-            EchoElement elem = new EchoElement(string);
-            elem.write(writer);
-        }
+//        else {
+//            EchoElement elem = new EchoElement(string);
+//            elem.write(writer);
+//        }
     }
 
     @Override

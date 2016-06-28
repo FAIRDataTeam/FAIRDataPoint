@@ -4079,3 +4079,1169 @@
 [INFO ] 2016-06-28 20:48:22.560 [main] DataAccessorController - Request to get dataset's distribution sparql
 [INFO ] 2016-06-28 20:48:22.560 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
 [API-REQUEST] 2016-06-28 20:48:22.561 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:51:17.273 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:51:18.788 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:51:19.130 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:51:19.495 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:51:19.763 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:51:19.764 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:51:19.766 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.777 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:51:19.778 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:51:19.779 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.781 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:51:19.781 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:51:19.782 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.784 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:51:19.784 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:51:19.785 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.787 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:51:19.788 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:51:19.788 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.792 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:51:19.792 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 20:51:19.793 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.796 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:51:19.796 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:51:19.796 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.805 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:51:19.806 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:51:19.806 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.810 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 20:51:19.810 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 20:51:19.810 [main] MetadataController - 
+[INFO ] 2016-06-28 20:51:19.983 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:51:20.201 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 20:51:20.201 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 20:51:20.202 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:51:20.204 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:51:20.204 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:51:20.205 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:51:20.207 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:51:20.207 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:51:20.208 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:51:20.209 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:51:20.209 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:51:20.210 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:51:20.212 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:51:20.212 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:51:20.212 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:51:20.215 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:51:20.215 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:51:20.216 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:51:20.220 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:51:20.221 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:51:20.221 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:52:16.439 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:52:17.791 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:52:18.220 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:52:18.563 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:52:18.729 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:52:18.729 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:52:18.731 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.738 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:52:18.738 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:52:18.738 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.740 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:52:18.740 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:52:18.741 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.742 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:52:18.742 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:52:18.743 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.745 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:52:18.746 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:52:18.746 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.751 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:52:18.752 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 20:52:18.752 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.758 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:52:18.758 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:52:18.759 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.766 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:52:18.766 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:52:18.766 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.769 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 20:52:18.770 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 20:52:18.770 [main] MetadataController - 
+[INFO ] 2016-06-28 20:52:18.895 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:52:19.040 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 20:52:19.040 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 20:52:19.041 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:52:19.044 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:52:19.044 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:52:19.045 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:52:19.047 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:52:19.047 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:52:19.047 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:52:19.049 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:52:19.049 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:52:19.050 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:52:19.051 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:52:19.052 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:52:19.052 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:52:19.056 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:52:19.056 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:52:19.056 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:52:19.062 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:52:19.062 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:52:19.062 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:53:41.287 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:53:42.779 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:53:43.218 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:53:43.588 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:53:43.766 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:53:43.766 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:53:43.767 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.774 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:53:43.774 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:53:43.774 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.776 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:53:43.776 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:53:43.776 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.777 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:53:43.777 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:53:43.778 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.779 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:53:43.779 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 20:53:43.780 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.782 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 20:53:43.782 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 20:53:43.782 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.784 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:53:43.784 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:53:43.784 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.788 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 20:53:43.789 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 20:53:43.789 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.791 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 20:53:43.791 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 20:53:43.791 [main] MetadataController - 
+[INFO ] 2016-06-28 20:53:43.890 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 20:53:44.015 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 20:53:44.015 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 20:53:44.015 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:53:44.017 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:53:44.017 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:53:44.017 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:53:44.019 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:53:44.019 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:53:44.019 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:53:44.020 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:53:44.020 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:53:44.021 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:53:44.022 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:53:44.022 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:53:44.022 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:53:44.024 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:53:44.025 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:53:44.025 [main] DataAccessorController - 
+[INFO ] 2016-06-28 20:53:44.028 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 20:53:44.029 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 20:53:44.029 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:15:49.657 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:15:51.242 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:15:51.683 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:15:52.057 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:15:52.256 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:15:52.256 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:15:52.258 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.269 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:15:52.269 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:15:52.270 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.273 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:15:52.273 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:15:52.273 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.275 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:15:52.275 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:15:52.276 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.279 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:15:52.279 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:15:52.280 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.287 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:15:52.287 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:15:52.288 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.291 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:15:52.291 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:15:52.291 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.299 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:15:52.299 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:15:52.299 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.304 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:15:52.305 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:15:52.305 [main] MetadataController - 
+[INFO ] 2016-06-28 21:15:52.479 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:15:52.701 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:15:52.701 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:15:52.701 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:15:52.705 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:15:52.705 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:15:52.705 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:15:52.707 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:15:52.708 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:15:52.709 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:15:52.711 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:15:52.711 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:15:52.712 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:15:52.715 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:15:52.716 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:15:52.716 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:15:52.719 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:15:52.719 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:15:52.720 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:15:52.724 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:15:52.724 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:15:52.724 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:19:04.387 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:19:06.166 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:19:06.596 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:19:06.954 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:19:07.164 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:19:07.164 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:19:07.166 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.178 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:19:07.178 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:19:07.179 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.182 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:19:07.183 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:19:07.185 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.187 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:19:07.188 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:19:07.188 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.190 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:19:07.191 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:19:07.191 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.194 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:19:07.194 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:19:07.195 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.197 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:19:07.197 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:19:07.198 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.204 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:19:07.205 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:19:07.205 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.208 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:19:07.208 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:19:07.208 [main] MetadataController - 
+[INFO ] 2016-06-28 21:19:07.330 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:19:07.535 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:19:07.535 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:19:07.536 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:19:07.537 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:19:07.537 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:19:07.538 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:19:07.539 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:19:07.539 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:19:07.539 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:19:07.540 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:19:07.540 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:19:07.541 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:19:07.542 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:19:07.542 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:19:07.542 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:19:07.544 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:19:07.544 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:19:07.544 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:19:07.547 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:19:07.547 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:19:07.547 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:21:14.321 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:21:16.150 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:21:16.529 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:21:17.013 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:21:17.267 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:21:17.267 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:21:17.269 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.281 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:21:17.281 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:21:17.282 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.285 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:21:17.285 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:21:17.286 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.288 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:21:17.288 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:21:17.288 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.291 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:21:17.291 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:21:17.292 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.295 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:21:17.295 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:21:17.296 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.299 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:21:17.299 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:21:17.299 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.306 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:21:17.306 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:21:17.307 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.310 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:21:17.310 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:21:17.311 [main] MetadataController - 
+[INFO ] 2016-06-28 21:21:17.485 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:21:17.694 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:21:17.694 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:21:17.695 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:21:17.699 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:21:17.699 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:21:17.700 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:21:17.702 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:21:17.702 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:21:17.703 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:21:17.705 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:21:17.705 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:21:17.706 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:21:17.707 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:21:17.708 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:21:17.708 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:21:17.712 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:21:17.712 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:21:17.713 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:21:17.719 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:21:17.719 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:21:17.719 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:23:18.959 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:23:20.465 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:23:20.845 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:23:21.298 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:23:21.482 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:23:21.482 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:23:21.484 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.492 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:23:21.492 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:23:21.492 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.494 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:23:21.494 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:23:21.494 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.496 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:23:21.496 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:23:21.496 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.498 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:23:21.498 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:23:21.498 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.502 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:23:21.502 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:23:21.503 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.505 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:23:21.505 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:23:21.505 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.512 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:23:21.512 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:23:21.512 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.515 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:23:21.515 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:23:21.515 [main] MetadataController - 
+[INFO ] 2016-06-28 21:23:21.633 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:23:21.796 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:23:21.796 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:23:21.796 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:23:21.798 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:23:21.798 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:23:21.799 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:23:21.800 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:23:21.801 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:23:21.801 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:23:21.802 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:23:21.802 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:23:21.803 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:23:21.805 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:23:21.805 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:23:21.806 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:23:21.809 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:23:21.809 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:23:21.810 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:23:21.814 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:23:21.814 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:23:21.814 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:24:58.951 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:25:00.618 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:25:01.050 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:25:01.508 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:25:01.683 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:25:01.683 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:25:01.685 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.694 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:25:01.694 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:25:01.695 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.697 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:25:01.697 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:25:01.697 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.699 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:25:01.699 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:25:01.700 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.702 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:25:01.702 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:25:01.703 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.706 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:25:01.706 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:25:01.707 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.709 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:25:01.709 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:25:01.710 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.717 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:25:01.717 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:25:01.717 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.720 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:25:01.720 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:25:01.721 [main] MetadataController - 
+[INFO ] 2016-06-28 21:25:01.883 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:25:02.069 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:25:02.069 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:25:02.069 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:25:02.072 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:25:02.072 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:25:02.073 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:25:02.075 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:25:02.075 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:25:02.075 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:25:02.077 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:25:02.078 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:25:02.078 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:25:02.080 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:25:02.080 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:25:02.080 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:25:02.083 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:25:02.083 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:25:02.083 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:25:02.088 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:25:02.088 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:25:02.089 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:26:12.734 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:26:14.442 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:26:14.877 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:26:15.199 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:26:15.383 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:26:15.383 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:26:15.385 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.393 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:26:15.393 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:26:15.393 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.395 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:26:15.395 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:26:15.396 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.397 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:26:15.397 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:26:15.398 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.399 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:26:15.399 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:26:15.400 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.403 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:26:15.403 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:26:15.403 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.405 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:26:15.405 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:26:15.405 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.411 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:26:15.411 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:26:15.411 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.414 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:26:15.414 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:26:15.415 [main] MetadataController - 
+[INFO ] 2016-06-28 21:26:15.532 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:26:15.705 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:26:15.706 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:26:15.706 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:26:15.708 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:26:15.708 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:26:15.709 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:26:15.710 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:26:15.710 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:26:15.711 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:26:15.712 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:26:15.712 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:26:15.712 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:26:15.714 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:26:15.714 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:26:15.714 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:26:15.718 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:26:15.718 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:26:15.718 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:26:15.722 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:26:15.722 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:26:15.723 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:27:04.483 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:27:06.262 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:27:06.682 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:27:07.040 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:27:07.300 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:27:07.300 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:27:07.302 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.310 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:27:07.311 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:27:07.311 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.313 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:27:07.313 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:27:07.313 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.315 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:27:07.315 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:27:07.315 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.317 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:27:07.317 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:27:07.318 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.322 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:27:07.322 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:27:07.322 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.326 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:27:07.326 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:27:07.328 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.340 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:27:07.341 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:27:07.341 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.345 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:27:07.345 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:27:07.345 [main] MetadataController - 
+[INFO ] 2016-06-28 21:27:07.497 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:27:07.679 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:27:07.680 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:27:07.681 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:27:07.683 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:27:07.684 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:27:07.684 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:27:07.687 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:27:07.687 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:27:07.687 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:27:07.689 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:27:07.689 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:27:07.690 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:27:07.692 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:27:07.692 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:27:07.692 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:27:07.696 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:27:07.696 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:27:07.697 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:27:07.703 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:27:07.703 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:27:07.704 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:29:03.541 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:29:05.120 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:29:05.529 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:29:05.944 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:29:06.172 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:29:06.172 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:29:06.173 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.183 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:29:06.183 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:29:06.184 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.187 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:29:06.187 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:29:06.187 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.189 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:29:06.189 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:29:06.190 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.191 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:29:06.191 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:29:06.192 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.195 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:29:06.195 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:29:06.195 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.197 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:29:06.197 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:29:06.198 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.203 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:29:06.203 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:29:06.203 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.206 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:29:06.206 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:29:06.206 [main] MetadataController - 
+[INFO ] 2016-06-28 21:29:06.345 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:29:06.547 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:29:06.547 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:29:06.548 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:29:06.550 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:29:06.551 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:29:06.551 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:29:06.554 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:29:06.554 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:29:06.555 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:29:06.557 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:29:06.557 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:29:06.558 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:29:06.560 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:29:06.560 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:29:06.560 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:29:06.563 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:29:06.563 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:29:06.564 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:29:06.569 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:29:06.569 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:29:06.570 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:30:36.430 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:30:38.133 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:30:38.573 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:30:38.968 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:30:39.242 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:30:39.242 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:30:39.244 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.254 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:30:39.254 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:30:39.255 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.257 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:30:39.257 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:30:39.258 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.260 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:30:39.260 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:30:39.261 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.263 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:30:39.264 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:30:39.264 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.268 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:30:39.268 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:30:39.268 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.271 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:30:39.272 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:30:39.272 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.279 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:30:39.280 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:30:39.280 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.284 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:30:39.284 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:30:39.284 [main] MetadataController - 
+[INFO ] 2016-06-28 21:30:39.466 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:30:39.691 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:30:39.692 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:30:39.692 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:30:39.695 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:30:39.696 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:30:39.697 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:30:39.699 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:30:39.699 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:30:39.700 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:30:39.701 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:30:39.702 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:30:39.702 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:30:39.704 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:30:39.705 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:30:39.706 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:30:39.710 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:30:39.710 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:30:39.710 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:30:39.715 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:30:39.715 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:30:39.716 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:00.251 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:01.878 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:02.268 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:02.674 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:02.881 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:02.881 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:33:02.883 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.894 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:02.894 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:02.895 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.898 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:02.898 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:02.898 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.901 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:02.901 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:33:02.901 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.903 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:02.904 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:33:02.904 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.908 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:02.908 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:33:02.908 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.911 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:02.911 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:02.912 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.920 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:02.920 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:02.921 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:02.924 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:33:02.924 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:33:02.924 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:03.107 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:03.310 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:33:03.310 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:33:03.310 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:03.314 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:03.314 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:03.315 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:03.316 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:03.317 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:03.317 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:03.319 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:03.319 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:03.320 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:03.321 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:03.321 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:03.322 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:03.325 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:03.325 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:03.325 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:03.330 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:03.330 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:03.331 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:33.102 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:34.717 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:35.152 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:35.562 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:35.775 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:35.775 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:33:35.777 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.789 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:35.789 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:35.790 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.793 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:35.793 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:35.793 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.797 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:35.797 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:33:35.798 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.800 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:35.800 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:33:35.801 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.806 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:33:35.806 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:33:35.806 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.810 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:35.811 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:35.811 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.821 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:33:35.821 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:33:35.822 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:35.826 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:33:35.826 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:33:35.827 [main] MetadataController - 
+[INFO ] 2016-06-28 21:33:36.001 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:33:36.193 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:33:36.193 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:33:36.193 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:36.195 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:36.196 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:36.197 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:36.199 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:36.199 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:36.200 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:36.202 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:36.202 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:36.203 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:36.204 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:36.205 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:36.205 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:36.208 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:36.208 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:36.209 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:33:36.213 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:33:36.213 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:33:36.214 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:34:55.695 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:34:57.268 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:34:57.707 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:34:58.128 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:34:58.350 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:34:58.350 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:34:58.352 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.364 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:34:58.364 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:34:58.364 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.366 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:34:58.366 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:34:58.367 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.368 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:34:58.369 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:34:58.369 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.371 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:34:58.372 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:34:58.373 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.377 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:34:58.377 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:34:58.378 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.380 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:34:58.380 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:34:58.381 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.386 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:34:58.386 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:34:58.388 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.391 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:34:58.392 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:34:58.392 [main] MetadataController - 
+[INFO ] 2016-06-28 21:34:58.563 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:34:58.812 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:34:58.812 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:34:58.812 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:34:58.815 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:34:58.815 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:34:58.816 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:34:58.818 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:34:58.818 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:34:58.819 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:34:58.820 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:34:58.821 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:34:58.821 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:34:58.823 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:34:58.823 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:34:58.824 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:34:58.828 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:34:58.828 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:34:58.829 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:34:58.835 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:34:58.835 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:34:58.836 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:35:51.050 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:35:52.652 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:35:53.004 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:35:53.447 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:35:53.733 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:35:53.733 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:35:53.736 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.746 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:35:53.747 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:35:53.748 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.750 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:35:53.750 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:35:53.751 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.753 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:35:53.753 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:35:53.754 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.758 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:35:53.758 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:35:53.759 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.763 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:35:53.763 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:35:53.764 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.767 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:35:53.767 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:35:53.768 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.775 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:35:53.776 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:35:53.776 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.779 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:35:53.780 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:35:53.780 [main] MetadataController - 
+[INFO ] 2016-06-28 21:35:53.915 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:35:54.090 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:35:54.090 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:35:54.090 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:35:54.092 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:35:54.092 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:35:54.093 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:35:54.094 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:35:54.094 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:35:54.095 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:35:54.097 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:35:54.097 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:35:54.098 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:35:54.099 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:35:54.099 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:35:54.100 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:35:54.102 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:35:54.102 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:35:54.103 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:35:54.108 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:35:54.108 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:35:54.108 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:42:38.582 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:42:40.237 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:42:40.690 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:42:41.135 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:42:41.374 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:42:41.375 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:42:41.377 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.388 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:42:41.389 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:42:41.390 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.392 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:42:41.392 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:42:41.393 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.394 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:42:41.395 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:42:41.395 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.397 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:42:41.397 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:42:41.398 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.401 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:42:41.401 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:42:41.402 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.404 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:42:41.405 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:42:41.405 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.412 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:42:41.412 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:42:41.413 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.415 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:42:41.416 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:42:41.416 [main] MetadataController - 
+[INFO ] 2016-06-28 21:42:41.532 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:42:41.724 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:42:41.724 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:42:41.725 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:42:41.728 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:42:41.728 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:42:41.729 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:42:41.731 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:42:41.731 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:42:41.732 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:42:41.733 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:42:41.733 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:42:41.734 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:42:41.736 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:42:41.736 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:42:41.736 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:42:41.739 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:42:41.739 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:42:41.740 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:42:41.748 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:42:41.749 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:42:41.749 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:05.679 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:07.318 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:07.769 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:08.247 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:08.482 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:08.482 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:45:08.483 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.493 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:08.493 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:08.493 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.495 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:08.495 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:08.496 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.497 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:08.497 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:45:08.498 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.499 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:08.499 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:45:08.501 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.505 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:08.505 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:45:08.505 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.507 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:08.507 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:08.508 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.513 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:08.513 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:08.514 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.517 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:45:08.518 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:45:08.518 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:08.633 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:08.813 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:45:08.813 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:45:08.814 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:08.816 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:08.816 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:08.817 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:08.819 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:08.819 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:08.820 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:08.821 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:08.821 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:08.822 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:08.823 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:08.823 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:08.824 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:08.826 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:08.826 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:08.826 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:08.830 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:08.830 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:08.830 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:52.225 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:53.966 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:54.429 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:54.841 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:55.056 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:55.056 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:45:55.058 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.068 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:55.070 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:55.071 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.073 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:55.073 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:55.074 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.076 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:55.076 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:45:55.077 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.079 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:55.079 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:45:55.080 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.084 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:45:55.084 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:45:55.085 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.088 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:55.088 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:55.089 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.096 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:45:55.096 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:45:55.096 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.099 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:45:55.099 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:45:55.100 [main] MetadataController - 
+[INFO ] 2016-06-28 21:45:55.221 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:45:55.456 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:45:55.456 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:45:55.456 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:55.459 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:55.460 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:55.461 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:55.463 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:55.464 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:55.464 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:55.466 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:55.467 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:55.467 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:55.469 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:55.469 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:55.470 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:55.473 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:55.473 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:55.474 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:45:55.480 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:45:55.480 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:45:55.480 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:46:40.230 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:46:41.838 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:46:42.218 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:46:42.627 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:46:42.881 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:46:42.881 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:46:42.883 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.891 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:46:42.891 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:46:42.891 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.893 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:46:42.893 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:46:42.894 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.895 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:46:42.895 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:46:42.896 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.897 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:46:42.897 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 21:46:42.898 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.900 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 21:46:42.901 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 21:46:42.901 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.903 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:46:42.903 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:46:42.903 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.908 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 21:46:42.908 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 21:46:42.909 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:42.911 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 21:46:42.911 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 21:46:42.912 [main] MetadataController - 
+[INFO ] 2016-06-28 21:46:43.035 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 21:46:43.211 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 21:46:43.211 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 21:46:43.212 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:46:43.215 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:46:43.215 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:46:43.215 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:46:43.217 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:46:43.217 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:46:43.218 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:46:43.220 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:46:43.220 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:46:43.221 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:46:43.222 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:46:43.222 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:46:43.223 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:46:43.226 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:46:43.226 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:46:43.227 [main] DataAccessorController - 
+[INFO ] 2016-06-28 21:46:43.232 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 21:46:43.232 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 21:46:43.233 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:11:29.640 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:11:31.119 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:11:31.465 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:11:31.751 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:11:31.914 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:11:31.914 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 22:11:31.915 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.923 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:11:31.923 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:11:31.923 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.925 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:11:31.925 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:11:31.926 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.927 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:11:31.927 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 22:11:31.927 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.929 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:11:31.929 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 22:11:31.930 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.932 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:11:31.932 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 22:11:31.933 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.935 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:11:31.935 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:11:31.935 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.941 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:11:31.941 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:11:31.942 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:31.944 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 22:11:31.945 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 22:11:31.945 [main] MetadataController - 
+[INFO ] 2016-06-28 22:11:32.052 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:11:32.189 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 22:11:32.189 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 22:11:32.190 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:11:32.192 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:11:32.192 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:11:32.193 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:11:32.194 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:11:32.194 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:11:32.195 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:11:32.196 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:11:32.196 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:11:32.197 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:11:32.198 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:11:32.198 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:11:32.198 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:11:32.200 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:11:32.201 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:11:32.201 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:11:32.204 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:11:32.204 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:11:32.205 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:41:57.483 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:41:59.091 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:41:59.422 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:41:59.809 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:41:59.986 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:41:59.986 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 22:41:59.987 [main] MetadataController - 
+[INFO ] 2016-06-28 22:41:59.995 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:41:59.995 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:41:59.995 [main] MetadataController - 
+[INFO ] 2016-06-28 22:41:59.997 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:41:59.997 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:41:59.997 [main] MetadataController - 
+[INFO ] 2016-06-28 22:41:59.999 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:41:59.999 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 22:42:00.000 [main] MetadataController - 
+[INFO ] 2016-06-28 22:42:00.001 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:42:00.001 [main] MetadataController - GET : http://localhost/textmining/gene-disease-association_lumc
+[API-REQUEST] 2016-06-28 22:42:00.002 [main] MetadataController - 
+[INFO ] 2016-06-28 22:42:00.004 [main] MetadataController - Request to get DATASET metadata textmining
+[INFO ] 2016-06-28 22:42:00.004 [main] MetadataController - GET : http://localhost/textmining/dumpy
+[API-REQUEST] 2016-06-28 22:42:00.005 [main] MetadataController - 
+[INFO ] 2016-06-28 22:42:00.007 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:42:00.007 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:42:00.007 [main] MetadataController - 
+[INFO ] 2016-06-28 22:42:00.012 [main] MetadataController - Request to get CATALOG metadata textmining
+[INFO ] 2016-06-28 22:42:00.012 [main] MetadataController - GET : http://localhost/textmining
+[API-REQUEST] 2016-06-28 22:42:00.013 [main] MetadataController - 
+[INFO ] 2016-06-28 22:42:00.015 [main] MetadataController - Request to get CATALOG metadata dumpy
+[INFO ] 2016-06-28 22:42:00.016 [main] MetadataController - GET : http://localhost/dumpy
+[API-REQUEST] 2016-06-28 22:42:00.016 [main] MetadataController - 
+[INFO ] 2016-06-28 22:42:00.115 [main] RestApiTestContext - Inmemory triple store initialize for test
+[INFO ] 2016-06-28 22:42:00.224 [main] DataAccessorController - Request to get dataset's distribution dummy
+[INFO ] 2016-06-28 22:42:00.225 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/dummy
+[API-REQUEST] 2016-06-28 22:42:00.225 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:42:00.226 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:42:00.227 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:42:00.227 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:42:00.228 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:42:00.228 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:42:00.229 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:42:00.230 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:42:00.230 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:42:00.230 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:42:00.231 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:42:00.231 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:42:00.232 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:42:00.233 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:42:00.233 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:42:00.234 [main] DataAccessorController - 
+[INFO ] 2016-06-28 22:42:00.237 [main] DataAccessorController - Request to get dataset's distribution sparql
+[INFO ] 2016-06-28 22:42:00.237 [main] DataAccessorController - GET : http://localhost/textmining/gene-disease-association_lumc/sparql
+[API-REQUEST] 2016-06-28 22:42:00.237 [main] DataAccessorController - 
