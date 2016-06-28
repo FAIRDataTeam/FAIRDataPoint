@@ -31,21 +31,21 @@ public class Metadata implements Writable {
 
     @Override
     public void write(XmlWriter writer) throws XmlWriteException {
-//        if (this.value != null)
+        if (this.value != null)
             this.value.write(writer);
-//        else {
-//            EchoElement elem = new EchoElement(string);
-//            elem.write(writer);
-//        }
+        else {
+            EchoElement elem = new EchoElement(string);
+            elem.write(writer);
+        }
     }
 
     @Override
     public void write(StringWriter writer, String format) {
-        EchoElement elem = new EchoElement(string);
+        EchoElement elem = new EchoElement(this.string);
         elem.write(writer, format);
     }
     
     public OAIMetadata getValue () {
-        return value;
+        return this.value;
     }
 }

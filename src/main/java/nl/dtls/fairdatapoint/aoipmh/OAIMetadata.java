@@ -13,7 +13,6 @@ import java.io.InputStream;
 
 import static com.lyncode.xml.matchers.QNameMatchers.localPart;
 import static com.lyncode.xml.matchers.XmlEventMatchers.*;
-import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ import javax.xml.stream.XMLStreamException;
 import nl.dtls.fairdatapoint.aoipmh.writables.Element;
 import nl.dtls.fairdatapoint.aoipmh.writables.Writable;
 import nl.dtls.fairdatapoint.utils.XmlWriter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
 
@@ -33,9 +30,6 @@ import static org.hamcrest.core.AllOf.allOf;
  */
 
 public class OAIMetadata implements Writable {
-    private final static Logger LOGGER = LogManager.getLogger(OAIMetadata.class);    
-    private static final String DEFAULT_FIELD = "value";
-
     public static OAIMetadata parse (InputStream inputStream) throws XmlReaderException {
         XmlReader reader = new XmlReader(inputStream);
         OAIMetadata OAIMetadata = new OAIMetadata();
@@ -71,26 +65,16 @@ public class OAIMetadata implements Writable {
     }
 
     @Override
-    public String toString() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            this.write(new XmlWriter(out));
-        } catch (XmlWriteException | XMLStreamException ex) {
-        }
-        return out.toString();
-    }
-
-    @Override
     public void write(XmlWriter writer) throws XmlWriteException {
         try {
             writer.writeStartElement("metadata");
             writer.setPrefix("oai_dc",NAMESPACE_URI);
             writer.writeStartElement("oai_dc","dc",NAMESPACE_URI);
             writer.writeNamespace("oai_dc", NAMESPACE_URI);
-            writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            writer.writeAttribute("xsi:schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
             writer.writeNamespace("dc", "http://purl.org/dc/elements/1.1/");
             writer.setPrefix("dc", "http://purl.org/dc/elements/1.1/");
+            writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            writer.writeAttribute("xsi:schemaLocation", NAMESPACE_URI + " " + SCHEMA_LOCATION);
 
             for (Element element : this.getElements()) {
                 if (element.getName().equals("creators")){

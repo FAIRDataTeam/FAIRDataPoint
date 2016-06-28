@@ -59,7 +59,7 @@ public class InMemoryItem implements Item {
 
     @Override
     public Metadata getMetadata() {
-        return new Metadata(toMetadata());
+        return new Metadata(this.toMetadata());
     }
 
     private OAIMetadata toMetadata() {

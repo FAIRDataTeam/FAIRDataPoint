@@ -1,6 +1,5 @@
 package nl.dtls.fairdatapoint.aoipmh.handlers;
 
-import com.lyncode.xml.exceptions.XmlWriteException;
 import com.lyncode.xoai.dataprovider.exceptions.BadArgumentException;
 import com.lyncode.xoai.dataprovider.exceptions.CannotDisseminateFormatException;
 import com.lyncode.xoai.dataprovider.exceptions.CannotDisseminateRecordException;
@@ -10,28 +9,18 @@ import com.lyncode.xoai.dataprovider.exceptions.NoMatchesException;
 import com.lyncode.xoai.dataprovider.exceptions.NoMetadataFormatsException;
 import com.lyncode.xoai.dataprovider.exceptions.OAIException;
 import com.lyncode.xoai.model.oaipmh.ResumptionToken.Value;
-import com.lyncode.xoai.xml.XSLPipeline;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.TransformerException;
 import nl.dtls.fairdatapoint.aoipmh.Context;
 import nl.dtls.fairdatapoint.aoipmh.Item;
 import nl.dtls.fairdatapoint.aoipmh.ListItemsResults;
 import nl.dtls.fairdatapoint.aoipmh.ListRecords;
-import nl.dtls.fairdatapoint.aoipmh.MetadataFormat;
 import nl.dtls.fairdatapoint.aoipmh.Repository;
 import nl.dtls.fairdatapoint.aoipmh.Set;
 import nl.dtls.fairdatapoint.aoipmh.parameters.OAICompiledRequest;
 import nl.dtls.fairdatapoint.aoipmh.writables.About;
 import nl.dtls.fairdatapoint.aoipmh.writables.Header;
-import nl.dtls.fairdatapoint.aoipmh.writables.Metadata;
 import nl.dtls.fairdatapoint.aoipmh.writables.Record;
 import nl.dtls.fairdatapoint.aoipmh.writables.VerbHandler;
-import nl.dtls.fairdatapoint.utils.XmlWriter;
 import org.apache.log4j.Logger;
 
 /**
@@ -131,7 +120,6 @@ public class ListRecordsHandler extends VerbHandler<ListRecords> {
     private Record createRecord(OAICompiledRequest parameters, Item item)
             throws BadArgumentException, CannotDisseminateRecordException,
             OAIException, NoMetadataFormatsException, CannotDisseminateFormatException {
-        MetadataFormat format = getContext().formatForPrefix(parameters.getMetadataPrefix());
         Header header = new Header();
         Record record = new Record().withHeader(header);
         header.withIdentifier(item.getIdentifier());
@@ -145,26 +133,7 @@ public class ListRecordsHandler extends VerbHandler<ListRecords> {
             header.withStatus(Header.Status.DELETED);
 
         if (!item.isDeleted()) {
-            Metadata metadata = null;
-            try {
-                if (getContext().hasTransformer()) {
-                    metadata = new Metadata(toPipeline(item)
-                            .apply(getContext().getTransformer())
-                            .apply(format.getTransformer())
-                            .process());
-                } else {
-                    metadata = new Metadata(toPipeline(item)
-                            .apply(format.getTransformer())
-                            .process());
-                }
-            } catch (    XMLStreamException | XmlWriteException e) {
-                throw new OAIException(e);
-            } catch (    TransformerException | IOException ex) {
-                java.util.logging.Logger.getLogger(ListRecordsHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            record.withMetadata(metadata);
-
+            record.withMetadata(item.getMetadata());
             log.debug("Outputting ItemAbout");
             if (item.getAbout() != null) {
                 for (About about : item.getAbout()) {
@@ -173,16 +142,6 @@ public class ListRecordsHandler extends VerbHandler<ListRecords> {
             }
         }
         return record;
-    }
-
-
-    private XSLPipeline toPipeline(Item item) throws XmlWriteException, XMLStreamException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        XmlWriter writer = new XmlWriter(output);
-        Metadata metadata = item.getMetadata();        
-        metadata.write(writer);
-        writer.close();
-        return new XSLPipeline(new ByteArrayInputStream(output.toByteArray()), true);
     }
 }
 

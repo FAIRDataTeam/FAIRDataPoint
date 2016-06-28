@@ -87,14 +87,10 @@ public class Element implements Writable {
                 writer.writeAttribute("name", this.getName());
             }
             for (Field field : this.getFields()) {
-                writer.writeStartElement("field");
                 field.write(writer);
-                writer.writeEndElement();
             }
             for (Element element : this.getElements()) {
-                writer.writeStartElement("element");
                 element.write(writer);
-                writer.writeEndElement();
             }
         } catch (XMLStreamException e) {
             throw new XmlWriteException(e);
