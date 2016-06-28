@@ -141,7 +141,7 @@ public class AoiPmhController {
                 java.util.logging.Logger.getLogger(AoiPmhController.class.getName()).log(Level.SEVERE, null, ex);
                 return ex.getMessage();
             }
-        } catch (Exception ex) {
+        } catch (OAIException ex) {
             java.util.logging.Logger.getLogger(AoiPmhController.class.getName()).log(Level.SEVERE, null, ex);
             return ex.getMessage();
         }
