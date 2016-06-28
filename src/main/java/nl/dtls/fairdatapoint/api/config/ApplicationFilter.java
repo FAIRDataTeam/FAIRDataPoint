@@ -49,7 +49,7 @@ public class ApplicationFilter implements Filter {
                 (HttpHeaders.ACCEPT));   
         ThreadContext.put("ipAddress", request.getRemoteAddr());
 //        ThreadContext.put("responseStatus", String.valueOf(
-//                response..getStatus()));         
+//                response.getStatus()));         
         fc.doFilter(sr, sr1);            
         ThreadContext.clearAll();
     }
