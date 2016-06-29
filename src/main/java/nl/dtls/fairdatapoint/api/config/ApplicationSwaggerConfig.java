@@ -39,10 +39,11 @@ public class ApplicationSwaggerConfig {
             "<p>This API is a prototype version, If you find bugs in this api please contact the developer.</p>"
                     + "<p>"
                     + "<li><a target='_blank' href = 'https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+Software+Specification'>API specs</li>"
-                    + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/ODEX-FAIRDataPoint/tree/master/fdp-api/java'>Source code</a> </li></p>",
-            "0.1 BETA",
+                    + "<li><a target='_blank' href = 'https://www.openarchives.org/pmh/'>OAI-PMH</li>"
+                    + "<li><a target='_blank' href = 'https://github.com/Shamanou/FairDataPoint'>Source code</a> </li></p>",
+            "0.2 BETA",
             "ATO",
-            "r.kaliyaperumal@lumc.nl",
+            "shamanou.van.leeuwen@dtls.nl",
             "CC BY-NC-ND 3.0",
             "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0"
         );
