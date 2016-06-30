@@ -84,8 +84,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
     @Bean(name="context")
     public Context context(Environment env) throws TransformerConfigurationException{
         String[] sets = env.getRequiredProperty("sets").trim().split(",");
-        Context context = new Context().withMetadataFormat(env.getRequiredProperty("metadataNamespace"),
-                env.getRequiredProperty("metadataPrefix"), TransformerFactory.newInstance().newTransformer());
+        Context context = new Context().withMetadataFormat("http://www.openarchives.org/OAI/2.0/oai_dc/",
+                "aoi_dc", TransformerFactory.newInstance().newTransformer());
         for (String x: sets){
             Set set = new Set(x.split(":")[0]).withName(x.split(":")[1]).withCondition(new Condition() {
             @Override
@@ -161,12 +161,6 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
         }
         r = r.withItemRepository(inMemoryItemRepository).withSetRepository(inMemorySetRepository);
         return r;
-    }
-    
-    @Bean(name="description")
-    public String description(Environment env){
-        String description = env.getRequiredProperty("description").trim();
-        return description;
     }
     
     @Bean(name="protocolVersion")

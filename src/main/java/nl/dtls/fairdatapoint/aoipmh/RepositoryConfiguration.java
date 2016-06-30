@@ -24,7 +24,6 @@ public class RepositoryConfiguration {
     private int maxListRecords = 100;
     private Granularity granularity = Granularity.Second;
     private DeletedRecord deleteMethod = DeletedRecord.NO;
-    @Autowired
     private String description;
     private ArrayList<String> compressions;
     
