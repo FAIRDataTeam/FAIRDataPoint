@@ -92,7 +92,15 @@ public class OAIMetadata implements Writable {
                     writer.writeStartElement("dc:type");
                     element.write(writer);
                     writer.writeEndElement();
-                }
+                } if (element.getName().equals("identifer")){
+                    writer.writeStartElement("dc:identifier");
+                    element.write(writer);
+                    writer.writeEndElement();
+                } if (element.getName().equals("datestamp")){
+                    writer.writeStartElement("dc:date");
+                    element.write(writer);
+                    writer.writeEndElement();
+                } 
             }
             writer.writeEndElement();
         } 
