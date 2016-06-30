@@ -84,7 +84,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
     @Bean(name="context")
     public Context context(Environment env) throws TransformerConfigurationException{
         String[] sets = env.getRequiredProperty("sets").trim().split(",");
-        Context context = new Context().withMetadataFormat(env.getRequiredProperty("metadataNamespace"), 
+        Context context = new Context().withMetadataFormat(env.getRequiredProperty("metadataNamespace"),
                 env.getRequiredProperty("metadataPrefix"), TransformerFactory.newInstance().newTransformer());
         for (String x: sets){
             Set set = new Set(x.split(":")[0]).withName(x.split(":")[1]).withCondition(new Condition() {
