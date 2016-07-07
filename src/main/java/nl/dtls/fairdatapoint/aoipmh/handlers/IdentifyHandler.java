@@ -62,12 +62,12 @@ public class IdentifyHandler extends VerbHandler<Identify> {
                 identify.getCompressions().add(com);
             }
         }
-        String description = configuration.getDescription();
-        if (description == null) {
-            identify.withDescription(new Description());
-        } else {
-            identify.withDescription(new Description().withMetadata(description));
-        }
+//        String description = configuration.getDescription();
+//        if (description == null) {
+//            identify.withDescription(new Description());
+//        } else {
+//            identify.withDescription(new Description().withMetadata(description));
+//        }
         return identify;
     }
 }

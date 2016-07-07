@@ -95,8 +95,8 @@ public class Context {
         return isStaticSet(set);
     }
 
-    public Context withMetadataFormat(String namespace ,String prefix, Transformer transformer) {
-        withMetadataFormat(new MetadataFormat().withNamespace(namespace).withPrefix(prefix).withSchemaLocation(prefix).withTransformer(transformer));
+    public Context withMetadataFormat(String namespace, String schema ,String prefix, Transformer transformer) {
+        withMetadataFormat(new MetadataFormat().withNamespace(namespace).withPrefix(prefix).withSchemaLocation(schema).withTransformer(transformer));
         return this;
     }
 

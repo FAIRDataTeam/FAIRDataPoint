@@ -85,7 +85,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter{
     public Context context(Environment env) throws TransformerConfigurationException{
         String[] sets = env.getRequiredProperty("sets").trim().split(",");
         Context context = new Context().withMetadataFormat("http://www.openarchives.org/OAI/2.0/oai_dc/",
-                "aoi_dc", TransformerFactory.newInstance().newTransformer());
+                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd","aoi_dc", TransformerFactory.newInstance().newTransformer());
         for (String x: sets){
             Set set = new Set(x.split(":")[0]).withName(x.split(":")[1]).withCondition(new Condition() {
             @Override
