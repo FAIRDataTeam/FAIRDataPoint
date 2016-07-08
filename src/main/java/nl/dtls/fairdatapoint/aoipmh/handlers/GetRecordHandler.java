@@ -64,27 +64,7 @@ public class GetRecordHandler extends VerbHandler<GetRecord> {
             header.withStatus(Header.Status.DELETED);
 
         if (!item.isDeleted()) {
-            Metadata metadata = null;
-            try {
-                if (getContext().hasTransformer()) {
-                    metadata = new Metadata(toPipeline(item)
-                            .apply(getContext().getTransformer())
-                            .apply(format.getTransformer())
-                            .process());
-                } else {
-                    metadata = new Metadata(toPipeline(item)
-                            .apply(format.getTransformer())
-                            .process());
-                }
-            } catch (    XMLStreamException | XmlWriteException e) {
-                throw new OAIException(e);
-            } catch (IOException ex) {
-                Logger.getLogger(GetRecordHandler.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (TransformerException ex) {
-                Logger.getLogger(GetRecordHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            record.withMetadata(metadata);
+            record.withMetadata(item.getMetadata());
 
             if (item.getAbout() != null) {
                 for (About about : item.getAbout())
