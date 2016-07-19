@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ###FAIRDataPoint (FDP) Metadata Service
 
 **Example dataset**: [EU-SOL BreeDB database](http://www.eu-sol.wur.nl) (tomato passport data)
@@ -23,3 +24,9 @@ Note: FDP supports different RDF serializations (MIME-types):
 + N-Triples (application/n-triples)
 + RDF/XML (application/rdf+xml)
 + JSON-LD (application/ld+json)
+=======
+# FairDataPoint
+FairDataPoint developed for DTL
+
+This is the fairdatapoint with AOI-PMH implemented
+>>>>>>> FairDataPoint/tmp
