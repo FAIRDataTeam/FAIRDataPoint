@@ -41,6 +41,7 @@ public class ExampleTurtleFiles {
     public final static String EXAMPLE_FILES_BASE_URI = 
             "http://www.dtls.nl/";
     public final static String FDP_URI = "http://www.dtls.nl/fdp";
+    public static String FDP_METADATA;
     
     /**
      * Method to read the content of a turtle file

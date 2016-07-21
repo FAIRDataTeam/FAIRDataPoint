@@ -62,7 +62,7 @@ public class RestApiTestContext {
 
     @Bean(name = "baseURI")
     public String baseURI(final Environment env)  {
-        String rdfBaseURI = env.getRequiredProperty("base-uri");
+        String rdfBaseURI = env.getRequiredProperty("baseUri");
         return rdfBaseURI;
     }
 
