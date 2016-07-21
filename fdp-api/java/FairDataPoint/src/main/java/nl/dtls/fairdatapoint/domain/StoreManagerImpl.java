@@ -41,7 +41,7 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
     @Qualifier("repository")
     private org.openrdf.repository.Repository repository;  
     @Autowired
-    @Qualifier("baseURI")
+    @Qualifier("baseUri")
     private String rdfBaseURI;
     @Autowired 
     @Qualifier("prepopulateStore")               

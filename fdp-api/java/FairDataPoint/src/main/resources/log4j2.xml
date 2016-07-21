@@ -7,7 +7,7 @@ and open the template in the editor.
 
 <Configuration status="WARN">
     <Properties>
-        <Property name="log-path">/opt/fdp-java/log/</Property>  <!--use ${env:VAR_NAME} for env variables --> 
+        <Property name="log-path">/opt/fdp-java/log</Property>  <!--use ${env:VAR_NAME} for env variables --> 
     </Properties>
      <!-- Define custom levels before using them for filtering below. -->
     <CustomLevels>
