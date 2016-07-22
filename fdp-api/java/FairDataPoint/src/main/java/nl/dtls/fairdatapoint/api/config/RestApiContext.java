@@ -5,6 +5,7 @@ import com.lyncode.builder.ListBuilder;
 import com.lyncode.xoai.services.impl.UTCDateProvider;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import nl.dtls.fairdatapoint.aoipmh.Condition;
@@ -30,6 +31,7 @@ import nl.dtls.fairdatapoint.domain.StoreManagerException;
 import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
@@ -91,8 +93,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
 
     @Bean(name = "properties")
-    public static PropertySourcesPlaceholderConfigurer
-        propertySourcesPlaceholderConfigurer() {
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
@@ -109,16 +110,27 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         return rdfBaseURI;
     }
 
-        @Bean(name="repositoryName")
+    @Bean(name="repositoryName")
     public String repositoryName(Environment env){
-        String name = env.getRequiredProperty("repositoryName");
-        return name;
+        String fdpURI = baseUri(env).concat("fdp");
+        String title = "Nameless FairDataPoint";
+        try {
+            List<Statement> statements = storeManager().retrieveResource(fdpURI);
+            for(Statement s: statements){
+                if(s.getPredicate().stringValue().equals("http://purl.org/dc/terms/title")){
+                    return s.getObject().stringValue();
+                }
+            }
+        } catch (RepositoryException | StoreManagerException ex) {
+            return title;
+        }
+        return title;
     }
     
     @Bean(name="adminEmails")
     public ArrayList<String> adminEmails(Environment env)  {
         ArrayList<String> out = new ArrayList<>();
-        String[] emails = env.getRequiredProperty("adminEmails").split(",");
+        String[] emails = env.getRequiredProperty("aoiAdminEmails").split(",");
         for(String email: emails){
             out.add(email.trim());
         }
@@ -167,21 +179,21 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     
     @Bean(name="identifyHandler")
     public IdentifyHandler identifyhandler(Environment env) throws TransformerConfigurationException{
-        return new IdentifyHandler(this.context(env), this.aoirepository(env));
+        return new IdentifyHandler(this.context(env), this.aoiRepository(env));
     }
     
     @Bean(name="listSetsHandler")
     public ListSetsHandler listSetsHandler(Environment env) throws TransformerConfigurationException{
-        return new ListSetsHandler(this.context(env), this.aoirepository(env));
+        return new ListSetsHandler(this.context(env), this.aoiRepository(env));
     }
 
     @Bean(name="listMetadataFormatsHandler")
     public ListMetadataFormatsHandler listMetaDataFormatsHandler(Environment env) throws TransformerConfigurationException{
-        return new ListMetadataFormatsHandler(this.context(env), this.aoirepository(env));        
+        return new ListMetadataFormatsHandler(this.context(env), this.aoiRepository(env));        
     }
     
-    @Bean(name="aoirepository")
-    public nl.dtls.fairdatapoint.aoipmh.Repository aoirepository(Environment env){
+    @Bean(name="aoiRepository")
+    public nl.dtls.fairdatapoint.aoipmh.Repository aoiRepository(Environment env){
         nl.dtls.fairdatapoint.aoipmh.Repository r = new nl.dtls.fairdatapoint.aoipmh.Repository();
         InMemoryItemRepository inMemoryItemRepository = new InMemoryItemRepository();
         InMemorySetRepository inMemorySetRepository = new InMemorySetRepository();
@@ -221,18 +233,17 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     
     @Bean(name="protocolVersion")
     public String protocolVersion(Environment env){
-        String protocolVersion = env.getRequiredProperty("protocolVersion");
-        return protocolVersion;
+        return env.getRequiredProperty("protocolVersion");
     }
     
     @Bean(name="listIdentifiersHandler")
     public ListIdentifiersHandler listIdentifiersHandler(Environment env) throws TransformerConfigurationException{
-      return new ListIdentifiersHandler(this.context(env), this.aoirepository(env));  
+      return new ListIdentifiersHandler(this.context(env), this.aoiRepository(env));  
     }
   
     @Bean(name="getRecordHandler")
     public GetRecordHandler getRecordHandler(Environment env) throws TransformerConfigurationException{
-        return new GetRecordHandler(this.context(env), this.aoirepository(env));
+        return new GetRecordHandler(this.context(env), this.aoiRepository(env));
     }
     
     @Bean(name="errorHandler")
@@ -247,7 +258,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     
     @Bean(name="listRecordsHandler")
     public ListRecordsHandler listRecordsHandler(Environment env) throws TransformerConfigurationException{
-        return new ListRecordsHandler(this.context(env), this.aoirepository(env));
+        return new ListRecordsHandler(this.context(env), this.aoiRepository(env));
     }
     
     @Override

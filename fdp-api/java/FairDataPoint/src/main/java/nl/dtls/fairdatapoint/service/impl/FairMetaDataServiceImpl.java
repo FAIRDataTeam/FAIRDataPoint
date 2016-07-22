@@ -31,7 +31,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Autowired
     private StoreManager storeManager;
     @Autowired
-    @Qualifier("baseURI")
+    @Qualifier("baseUri")
     private String baseURI;
 
     @Override
