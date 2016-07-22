@@ -56,13 +56,13 @@ public class MetadataController {
         LOGGER.info("Request to get FDP metadata");
         LOGGER.info("GET : " + request.getRequestURL()); 
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.
+        RDFFormat requestedContentType = HttpHeadersUtils.
                 getRequestedAcceptHeader(contentType);        
         try { 
             responseBody = fairMetaDataService.retrieveFDPMetaData(
-                    requesetedContentType);
+                    requestedContentType);
             HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
-                    requesetedContentType);        
+                    requestedContentType);        
             } catch (FairMetadataServiceException ex) {            
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
