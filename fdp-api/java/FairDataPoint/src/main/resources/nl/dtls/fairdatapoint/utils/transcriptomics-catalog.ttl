@@ -1,0 +1,18 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix fdp: <http://www.dtls.nl/fdp/> .
+@prefix transcriptomics: <http://www.dtls.nl/fdp/transcriptomics/> .
+
+fdp:transcriptomics dct:title "Catalog for transcriptomics datasets"@en ;
+    rdfs:label "Catalog for textmining datasets"@en ;
+    dct:identifier "transcriptomics" ;
+    a dcat:Catalog ; 
+    dct:language lang:en  ;
+    dct:hasVersion "1.0" ;
+    dcat:themeTaxonomy <http://dbpedia.org/resource/Transcriptomics>, <http://edamontology.org/topic_3308> ;
+    dct:issued "2016-05-23T10:14:12+00:00"^^xsd:dateTime ;
+    dct:modified "2016-05-23T10:21:02+00:00"^^xsd:dateTime ;   
+    dcat:dataset transcriptomics:fantom5 . 
