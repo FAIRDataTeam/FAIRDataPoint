@@ -5,8 +5,6 @@ In the current implementation we only support `GET` requests and only `FAIR Meta
 * JRE 1.7 or higher
 * Tomcat 7 or higher 
 
-#### How to Install
-Make sure your deployment machine meets the requirements listed above. Deploy the `fdp.war` file (download link can be found in this page) in your  deployment machine's tomcat server. The instructions for deploying `.war` in the tomcat server can be found in this [link](https://tomcat.apache.org/tomcat-7.0-doc/deployer-howto.html).
 
 #### Configurations
 ###### Triple store (triple-store.properties)
