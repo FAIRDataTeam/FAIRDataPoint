@@ -12,7 +12,7 @@ import org.openrdf.model.Statement;
  *
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
- * @version 0.1
+ * @version 0.1.1
  */
 public interface StoreManager {
     
@@ -28,4 +28,11 @@ public interface StoreManager {
      */
     void storeRDF (String content, String contextURI, String baseURI) 
             throws StoreManagerException; 
+    /**
+     * Store RDF from openRDF model to the repository
+     * 
+     * @param model OpenRDF model
+     * @throws StoreManagerException 
+     */
+    void storeRDF (org.openrdf.model.Model model) throws StoreManagerException; 
 }

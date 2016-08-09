@@ -44,5 +44,13 @@ public interface FairMetaDataService {
     String retrieveDatasetMetaData
         (String catalogID, String datasetID, RDFFormat format) 
                 throws FairMetadataServiceException;
+    /**
+     * Store catalog metadata
+     * 
+     * @param catalogMetadata
+     * @throws FairMetadataServiceException 
+     */
+    void storeCatalogMetaData(CatalogMetadata catalogMetadata) 
+            throws FairMetadataServiceException;    
         
 }

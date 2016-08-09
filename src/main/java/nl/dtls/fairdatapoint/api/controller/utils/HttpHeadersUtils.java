@@ -51,6 +51,28 @@ public class HttpHeadersUtils {
     }
     
     /**
+     * Set response header for the bad request
+     * 
+     * @param response  Http response
+     * @param ex    Server exception
+     * @return returns null (as a response body)
+     */
+    public static String set400ResponseHeaders(HttpServletResponse 
+            response, Exception ex) {
+        String errorMessage = ("Bad request: " + ex.getMessage());              
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
+//        try {
+//            response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+//                    ex.getMessage());
+//        } catch (IOException ex1) {
+//            LOGGER.warn("Error setting error message for internal server "
+//                    + "error; The error : " + ex1.getMessage());
+//        }
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+        return errorMessage;
+    }
+    
+    /**
      * Set response header for the successful call
      * 
      * @param responseBody ResponseBody
@@ -68,6 +90,17 @@ public class HttpHeadersUtils {
             response.setContentType(requesetedContentType.
                     getDefaultMIMEType()); 
         }
+    }
+    
+    /**
+     * Set response header for the successful POST call
+     * 
+     * @param response  Http response
+     */
+    public static String set201ResponseHeaders(HttpServletResponse response) {            
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);  
+        return "Metadata is stored";
     }
     
     public static RDFFormat getRequestedAcceptHeader(String contentType) {        
@@ -91,6 +124,19 @@ public class HttpHeadersUtils {
         else if (contentType.contentEquals(
                 RDFFormat.RDFXML.getDefaultMIMEType())) {
             requesetedContentType = RDFFormat.RDFXML;
+        }
+        return requesetedContentType;
+    }
+    
+    public static RDFFormat getContentType(String contentType) {        
+        RDFFormat requesetedContentType = null; 
+        if (contentType == null || contentType.isEmpty()) {
+            requesetedContentType = RDFFormat.TURTLE;
+        }
+        else if (contentType.contentEquals(
+                RDFFormat.TURTLE.getDefaultMIMEType()) ||         
+                contentType.contains(MediaType.ALL_VALUE)) {
+            requesetedContentType = RDFFormat.TURTLE;
         }
         return requesetedContentType;
     }

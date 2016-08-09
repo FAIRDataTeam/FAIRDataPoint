@@ -8,6 +8,7 @@ package nl.dtls.fairdatapoint.domain;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
 import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.EXAMPLE_FILES_BASE_URI;
@@ -159,6 +160,36 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
             LOGGER.info("Content \n" + content);
             throw (new StoreManagerException(ex.getMessage()));
         }
+        finally {
+            try {
+                closeRepositoryConnection(conn);
+            } catch (StoreManagerException e) {                
+                LOGGER.error("Error closing connection",e); 
+                throw (new StoreManagerException(e.getMessage()));
+                
+            }
+        }
+    }
+    
+    /**
+     * Store string RDF to the repository
+     * 
+     * @throws StoreManagerException 
+     */
+    @Override
+    public void storeRDF (org.openrdf.model.Model model) throws 
+            StoreManagerException {
+        RepositoryConnection conn = null;
+        try {
+            conn = getRepositoryConnection();
+            Iterator<Statement> statemts = model.iterator();
+            while(statemts.hasNext()) {
+                conn.add(statemts.next());
+            }              
+        } catch (RepositoryException ex) {
+            LOGGER.error("Error storing RDF",ex);
+            throw (new StoreManagerException(ex.getMessage()));
+        }  
         finally {
             try {
                 closeRepositoryConnection(conn);

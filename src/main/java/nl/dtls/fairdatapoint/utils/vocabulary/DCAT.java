@@ -8,6 +8,8 @@ package nl.dtls.fairdatapoint.utils.vocabulary;
 
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 
 /**
  *
@@ -15,6 +17,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
  */
 public class DCAT {
     public static final String uri = "<http://www.w3.org/ns/dcat#>";
+    public static final String BASE_URI = "http://www.w3.org/ns/dcat#";
     /** returns the URI for this schema
      * @return the URI for this schema
      */
@@ -23,4 +26,6 @@ public class DCAT {
     }
     public static final Property downloadURL = ResourceFactory.createProperty(uri + "downloadURL" );
     public static final Property mediaType = ResourceFactory.createProperty(uri + "mediaType" );
+    public static final URI THEME_TAXONOMY = new URIImpl(BASE_URI + "themeTaxonomy");
+    public static final URI CATALOG = new URIImpl(BASE_URI + "Catalog");
 }
