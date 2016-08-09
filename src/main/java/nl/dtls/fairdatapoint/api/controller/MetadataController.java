@@ -42,7 +42,7 @@ public class MetadataController {
     @Autowired
     private FairMetaDataService fairMetaDataService;
     
-    private boolean isFDPMetaDataAvailable = false;
+    private boolean isFDPMetaDataAvailable = true;
 
     /**
      * To hander GET fdp metadata request.
@@ -94,7 +94,7 @@ public class MetadataController {
      * @return  On success return FDP metadata
      */
     @ApiOperation(value = "POST catalog metadata")
-    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"})
+    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"})    
     public String storeCatalogMetaData(final HttpServletRequest request,
                     HttpServletResponse response, 
                     @RequestBody(required = true) String catalogMetaData,
@@ -179,6 +179,40 @@ public class MetadataController {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
+        LoggerUtils.logRequest(LOGGER, request, response);
+        return responseBody;
+    }    
+    
+    @ApiOperation(value = "Dataset distribution metadata")
+    @RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID}",
+            produces = { "text/turtle", 
+        "application/ld+json", "application/rdf+xml", "text/n3"}, 
+            method = RequestMethod.GET)
+    public String getDatasetDistribution(@PathVariable final String catalogID,
+            @PathVariable final String datasetID, 
+            @PathVariable final String distributionID, 
+            HttpServletRequest request,
+                    HttpServletResponse response) {
+        
+        LOGGER.info("Request to get dataset's distribution {}", distributionID);
+        LOGGER.info("GET : " + request.getRequestURL());
+        String responseBody = null;
+        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
+        RDFFormat requesetedContentType = HttpHeadersUtils.
+                getRequestedAcceptHeader(acceptHeader);        
+        try {
+            if(!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
+            responseBody = fairMetaDataService.retrieveDatasetDistribution(                       
+                    catalogID, datasetID, distributionID, 
+                    requesetedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                    requesetedContentType);            
+        } catch (FairMetadataServiceException | MalformedURLException | 
+                    DatatypeConfigurationException ex) {                
+                HttpHeadersUtils.set500ResponseHeaders(response, ex);            
+        }
         LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }

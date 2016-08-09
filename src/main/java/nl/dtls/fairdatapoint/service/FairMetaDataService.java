@@ -16,6 +16,7 @@ import org.openrdf.rio.RDFFormat;
 public interface FairMetaDataService {   
     /**
      * Get FDP server metadata
+     * 
      * @param format RDFFormat serialization formats
      * @return  String object  
      * @throws FairMetadataServiceException  
@@ -25,6 +26,7 @@ public interface FairMetaDataService {
 
     /**
      * Get catalog metadata
+     * 
      * @param catalogID Unique catalog ID
      * @param format RDFFormat serialization formats
      * @return  String object
@@ -35,7 +37,8 @@ public interface FairMetaDataService {
 
     /**
      * Get dataset metadata
-     * @param catalogID
+     * 
+     * @param catalogID Unique catalog ID
      * @param datasetID Unique dataset ID
      * @param format RDFFormat serialization formats
      * @return  String object
@@ -44,6 +47,19 @@ public interface FairMetaDataService {
     String retrieveDatasetMetaData
         (String catalogID, String datasetID, RDFFormat format) 
                 throws FairMetadataServiceException;
+    /**
+     * Get distribution metadata
+     * 
+     * @param catalogID Unique catalog ID
+     * @param datasetID Unique dataset ID
+     * @param distributionID Unique distribution ID
+     * @param format RDFFormat serialization formats
+     * @return  String object
+     * @throws FairMetadataServiceException
+     */
+    String retrieveDatasetDistribution(String catalogID, 
+            String datasetID, String distributionID, RDFFormat format) 
+            throws FairMetadataServiceException;      
     /**
      * Store catalog metadata
      * 

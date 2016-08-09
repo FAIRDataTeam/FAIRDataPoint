@@ -149,7 +149,52 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
         return datasetMetadata;        
-    }     	
+    }
+    
+    @Override
+    public String retrieveDatasetDistribution(String catalogID, 
+            String datasetID, String distributionID, RDFFormat format) 
+            throws FairMetadataServiceException {  
+        
+        if(format == null) {
+            String errorMsg = "The RDFFormat can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(catalogID == null || catalogID.isEmpty()) {
+            String errorMsg = "The catalogID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(datasetID == null || datasetID.isEmpty()) {
+            String errorMsg = "The datasetID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(distributionID == null || distributionID.isEmpty()) {
+            String errorMsg = "The distributionID can't be NULL or empty";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        String datasetDistributionURI = this.baseURI.concat("fdp").concat("/").
+                concat(catalogID).concat("/").concat(datasetID).
+                concat("/").concat(distributionID);
+        String datasetDistribution = null;
+        try {
+            List<Statement> statements = 
+                    this.storeManager.retrieveResource(
+                            datasetDistributionURI);
+            if(!statements.isEmpty()) {
+                datasetDistribution = 
+                        RDFUtils.writeToString(statements, format);
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Error retrieving dataset metadata of <" + 
+                    datasetDistributionURI + ">");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }
+        return datasetDistribution;        
+    }
 
     @Override
     public void storeFDPMetaData(FDPMetaData fdpMetaData) 

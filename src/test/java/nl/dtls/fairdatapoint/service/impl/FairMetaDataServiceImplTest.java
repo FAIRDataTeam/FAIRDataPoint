@@ -260,4 +260,144 @@ public class FairMetaDataServiceImplTest {
         }
     }
     
+    /**
+     * The RDFFormat can't be NULL, this test is excepted to throw 
+     * IllegalArgumentException exception 
+     */
+    @Test(expected = IllegalArgumentException.class) 
+    public void nullRDFFormatToRetrieveDistributionMetaData(){
+        try {
+            this.fairMetaDataService.retrieveDatasetDistribution( 
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID, 
+                    ExampleTurtleFiles.EXAMPLE_DATASET_ID,
+                    ExampleTurtleFiles.EXAMPLE_DISTRIBUTION_ID,
+                    null);
+        } catch (FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "DataAccessorServiceException";
+            fail(errorMsg);
+        }
+    }
+    
+    /**
+     * To test NULL IDs parameters, this test is excepted to 
+     * IllegalArgumentException
+     * 
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     */
+    @Test
+    public void checkNullIDsForRetrieveDatasetDistribution() throws 
+            FairMetadataServiceException{ 
+        String errorMsg = "The test is excepted to throw "
+                + "IllegalArgumentException";
+        try {
+            this.fairMetaDataService.retrieveDatasetDistribution(null,
+                    ExampleTurtleFiles.EXAMPLE_DATASET_ID, 
+                    ExampleTurtleFiles.EXAMPLE_DISTRIBUTION_ID, 
+                    RDFFormat.TURTLE);
+            fail(errorMsg);
+        }
+        catch (IllegalArgumentException e) {            
+        }
+        try {
+            this.fairMetaDataService.retrieveDatasetDistribution(
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID,
+                    null, ExampleTurtleFiles.EXAMPLE_DISTRIBUTION_ID, 
+                    RDFFormat.TURTLE);
+            fail(errorMsg);
+        }
+        catch (IllegalArgumentException e) {            
+        }
+        try {
+            this.fairMetaDataService.retrieveDatasetDistribution(
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID,
+                    ExampleTurtleFiles.EXAMPLE_DATASET_ID, null, 
+                    RDFFormat.TURTLE);
+            fail(errorMsg);
+        }
+        catch (IllegalArgumentException e) {            
+        }    
+    }
+    
+    /**
+     * To test empty IDs parameters, this test is excepted to 
+     * IllegalArgumentException
+     * 
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     */
+    @Test
+    public void checkEmptyIDsForRetrieveDatasetDistribution() throws 
+            FairMetadataServiceException{ 
+        String errorMsg = "The test is excepted to throw "
+                + "IllegalArgumentException";
+        try {
+            this.fairMetaDataService.retrieveDatasetDistribution("",
+                    ExampleTurtleFiles.EXAMPLE_DATASET_ID, 
+                    ExampleTurtleFiles.EXAMPLE_DISTRIBUTION_ID, 
+                    RDFFormat.TURTLE);
+            fail(errorMsg);
+        }
+        catch (IllegalArgumentException e) {            
+        }
+        try {
+            this.fairMetaDataService.retrieveDatasetDistribution(
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID,
+                    "", ExampleTurtleFiles.EXAMPLE_DISTRIBUTION_ID, 
+                    RDFFormat.TURTLE);
+            fail(errorMsg);
+        }
+        catch (IllegalArgumentException e) {            
+        }
+        try {
+            this.fairMetaDataService.retrieveDatasetDistribution(
+                    ExampleTurtleFiles.EXAMPLE_CATALOG_ID,
+                    ExampleTurtleFiles.EXAMPLE_DATASET_ID, "", 
+                    RDFFormat.TURTLE);
+            fail(errorMsg);
+        }
+        catch (IllegalArgumentException e) {            
+        }    
+    }
+    
+    /**
+     * Test to retrieve non exiting distribution metadata, this test is 
+     * excepted to pass
+     */
+    @Test
+    public void retrieveNonExitingDatasetDistribution(){
+        try {
+            String actual = this.fairMetaDataService.
+                    retrieveDatasetDistribution(
+                            ExampleTurtleFiles.EXAMPLE_CATALOG_ID,                    
+                            ExampleTurtleFiles.EXAMPLE_DATASET_ID,                   
+                            "dummpyID5645",                     
+                            RDFFormat.TURTLE);
+            assertNull(actual);
+        } catch (FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "FairMetadataServiceException";
+            fail(errorMsg);
+        }
+    }
+
+    /**
+     * Test to retrieve distribution metadata, this test is excepted to pass
+     */
+    @Test
+    public void retrieveDatasetDistribution(){
+        try {
+            String actual = this.fairMetaDataService.
+                    retrieveDatasetDistribution(
+                            ExampleTurtleFiles.EXAMPLE_CATALOG_ID,                    
+                            ExampleTurtleFiles.EXAMPLE_DATASET_ID,                   
+                            ExampleTurtleFiles.EXAMPLE_DISTRIBUTION_ID,                     
+                            RDFFormat.TURTLE);
+            assertNotNull(actual);
+        } catch (FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "FairMetadataServiceException";
+            fail(errorMsg);
+        }
+    }
+    
 }
