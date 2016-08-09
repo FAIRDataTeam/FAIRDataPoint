@@ -34,5 +34,12 @@ public interface StoreManager {
      * @param model OpenRDF model
      * @throws StoreManagerException 
      */
-    void storeRDF (org.openrdf.model.Model model) throws StoreManagerException; 
+    void storeRDF (org.openrdf.model.Model model) throws StoreManagerException;
+    /**
+     * Remove a statement from the repository
+     * 
+     * @param statement
+     * @throws StoreManagerException 
+     */
+    void removeStatement (Statement statement) throws StoreManagerException;
 }

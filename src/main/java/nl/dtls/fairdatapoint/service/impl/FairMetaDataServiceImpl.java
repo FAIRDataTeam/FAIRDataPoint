@@ -15,6 +15,8 @@ import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -101,6 +103,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw(new IllegalArgumentException(errorMsg));
         }
         try {
+            Statement stmt = new StatementImpl(catalogMetadata.getFdpUri(), 
+                    DCTERMS.MODIFIED, null);
+            storeManager.removeStatement(stmt);
             storeManager.storeRDF(catalogMetadata.getCatalogMetadataModel());
             
         } catch (Exception ex) {

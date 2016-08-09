@@ -202,6 +202,33 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
     }
     
     /**
+     * Remove a statement from the repository
+     * 
+     * @param statement
+     * @throws StoreManagerException 
+     */
+    public void removeStatement (Statement statement) throws 
+            StoreManagerException {
+        RepositoryConnection conn = null;
+        try {
+            conn = getRepositoryConnection();
+            conn.remove(statement);
+        } catch (RepositoryException ex) {
+            LOGGER.error("Error storing RDF",ex);
+            throw (new StoreManagerException(ex.getMessage()));
+        }  
+        finally {
+            try {
+                closeRepositoryConnection(conn);
+            } catch (StoreManagerException e) {                
+                LOGGER.error("Error closing connection",e); 
+                throw (new StoreManagerException(e.getMessage()));
+                
+            }
+        }
+    }
+    
+    /**
      * Method to close repository connection
      * 
      * @throws nl.dtls.fairdatapoint.domain.StoreManagerException
