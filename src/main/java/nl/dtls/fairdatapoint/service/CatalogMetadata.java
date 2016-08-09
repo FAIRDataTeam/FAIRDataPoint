@@ -192,9 +192,15 @@ public class CatalogMetadata {
         for(URI themeTax:themeTaxonomy) {
             model.add(getCatalogUri(), DCAT.THEME_TAXONOMY, themeTax);
         }       
-        model.add(fdpUri, LDP.CONTAINS, catalogUri);
-        model.add(fdpUri, DCTERMS.MODIFIED, modified);
+        model.add(getFdpUri(), LDP.CONTAINS, getCatalogUri());
+        model.add(getFdpUri(), DCTERMS.MODIFIED, modified);
         
+    }
+    /**
+     * @return the fdpUri
+     */
+    public URI getFdpUri() {
+        return fdpUri;
     }
 
     /**
