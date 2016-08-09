@@ -8,13 +8,10 @@ package nl.dtls.fairdatapoint.service;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
+import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
 import nl.dtls.fairdatapoint.utils.vocabulary.DCAT;
 import nl.dtls.fairdatapoint.utils.vocabulary.LDP;
 import org.apache.logging.log4j.LogManager;
@@ -72,14 +69,12 @@ public class CatalogMetadata {
         org.openrdf.model.Model modelCatalog;
         try {
             modelCatalog = Rio.parse(reader, baseURL, format);
-            extractCatalogMetadata(catalogUri, modelCatalog);
-            Literal createdDate = new LiteralImpl(getDate().toXMLFormat(),
-                    XMLSchema.DATETIME);
+            extractCatalogMetadata(catalogUri, modelCatalog);            
             this.fdpUri = fdpUri;
             this.catalogUri = catalogUri;
             this.identifier = id;
-            this.issued = createdDate;
-            this.modified = createdDate;
+            this.issued = RDFUtils.getCurrentTime();
+            this.modified = issued;
             buildCatalogMetadataModel();
         } catch (IOException ex) {
             String errMsg = "Error reading catalog metadata content"
@@ -96,17 +91,7 @@ public class CatalogMetadata {
             LOGGER.error(errMsg);
             throw (new CatalogMetadataExeception(errMsg));
         } 
-    }
-
-    private XMLGregorianCalendar getDate() throws 
-            DatatypeConfigurationException {
-        Date date = new Date();
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(date);
-        XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().
-                newXMLGregorianCalendar(c);
-        return xmlDate;
-    }
+    }   
     
     /**
      * @return the model
@@ -206,9 +191,9 @@ public class CatalogMetadata {
         }
         for(URI themeTax:themeTaxonomy) {
             model.add(getCatalogUri(), DCAT.THEME_TAXONOMY, themeTax);
-        }
-        
+        }       
         model.add(fdpUri, LDP.CONTAINS, catalogUri);
+        model.add(fdpUri, DCTERMS.MODIFIED, modified);
         
     }
 
