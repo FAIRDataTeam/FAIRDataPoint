@@ -9,7 +9,7 @@ package nl.dtls.fairdatapoint.api.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.logging.Level;
+import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -17,6 +17,7 @@ import nl.dtls.fairdatapoint.api.controller.utils.HttpHeadersUtils;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.CatalogMetadata;
 import nl.dtls.fairdatapoint.service.CatalogMetadataExeception;
+import nl.dtls.fairdatapoint.service.FDPMetaData;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.http.HttpHeaders;
@@ -40,6 +41,8 @@ public class MetadataController {
             = LogManager.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
+    
+    private boolean isFDPMetaDataAvailable = false;
 
     /**
      * To hander GET fdp metadata request.
@@ -65,11 +68,15 @@ public class MetadataController {
         RDFFormat requestedContentType = HttpHeadersUtils.
                 getRequestedAcceptHeader(contentType);        
         try { 
+            if(!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
             responseBody = fairMetaDataService.retrieveFDPMetaData(
                     requestedContentType);
             HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
                     requestedContentType);        
-            } catch (FairMetadataServiceException ex) {            
+            } catch (FairMetadataServiceException | MalformedURLException | 
+                    DatatypeConfigurationException ex) {            
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
@@ -97,12 +104,15 @@ public class MetadataController {
         String fdpURI = getRequesedURL(request);
         String responseBody;
         try {
+            if(!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
             CatalogMetadata cMetadata = new CatalogMetadata(catalogMetaData,
                     catalogID, fdpURI, format);
             fairMetaDataService.storeCatalogMetaData(cMetadata);
             responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
         } catch (DatatypeConfigurationException | 
-                FairMetadataServiceException ex) {
+                FairMetadataServiceException | MalformedURLException ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
         } catch (CatalogMetadataExeception ex) {
@@ -125,12 +135,16 @@ public class MetadataController {
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.getRequestedAcceptHeader(contentType);   
-        try {                
+        try { 
+            if(!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
             responseBody = fairMetaDataService.                        
                     retrieveCatalogMetaData(catalogID, requesetedContentType);
                 HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
                         requesetedContentType);
-            } catch (FairMetadataServiceException ex) {
+            } catch (FairMetadataServiceException  | MalformedURLException | 
+                    DatatypeConfigurationException ex) {
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
@@ -152,12 +166,16 @@ public class MetadataController {
         String responseBody;
         String contentType = request.getHeader(HttpHeaders.ACCEPT);
         RDFFormat requesetedContentType = HttpHeadersUtils.getRequestedAcceptHeader(contentType);    
-        try {   
+        try {  
+            if(!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
             responseBody = fairMetaDataService.retrieveDatasetMetaData(
                     catalogID, datasetID, requesetedContentType);                
             HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
                     requesetedContentType);
-            } catch (FairMetadataServiceException ex) {                
+            } catch (FairMetadataServiceException | MalformedURLException | 
+                    DatatypeConfigurationException ex) {                
                 responseBody = HttpHeadersUtils.set500ResponseHeaders(
                         response, ex);
             }
@@ -172,5 +190,17 @@ public class MetadataController {
         }
         return url;
     } 
+
+    private void createFDPMetaData(HttpServletRequest request) throws 
+            MalformedURLException, DatatypeConfigurationException,
+            FairMetadataServiceException {          
+        String requestURL = getRequesedURL(request);
+        String fdpUrl = requestURL.split("/fdp")[0];
+        fdpUrl = fdpUrl + "/fdp";
+        FDPMetaData fdpMetaData = new FDPMetaData(fdpUrl);
+        LOGGER.info("Creating simple FDP metadata");
+        fairMetaDataService.storeFDPMetaData(fdpMetaData);
+        isFDPMetaDataAvailable = true;
+    }
     
 }

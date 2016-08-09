@@ -29,5 +29,6 @@ public class LDP {
     }
     public static final Property contains = ResourceFactory.createProperty(uri + "contains" );
     public static final Resource Container = ResourceFactory.createResource(uri + "Container" );    
+    public static final URI CONTAINER = new URIImpl(BASE_URI + "Container" );
     public static final URI CONTAINS = new URIImpl(BASE_URI + "contains" );
 }

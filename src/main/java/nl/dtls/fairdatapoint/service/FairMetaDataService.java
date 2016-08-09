@@ -52,5 +52,14 @@ public interface FairMetaDataService {
      */
     void storeCatalogMetaData(CatalogMetadata catalogMetadata) 
             throws FairMetadataServiceException;    
+    
+    /**
+     * Store fdp metadata
+     * 
+     * @param fdpMetaData
+     * @throws FairMetadataServiceException 
+     */
+    void storeFDPMetaData(FDPMetaData fdpMetaData) 
+            throws FairMetadataServiceException; 
         
 }

@@ -8,6 +8,7 @@ package nl.dtls.fairdatapoint.service.impl;
 import java.util.List;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.service.CatalogMetadata;
+import nl.dtls.fairdatapoint.service.FDPMetaData;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
@@ -103,7 +104,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             storeManager.storeRDF(catalogMetadata.getCatalogMetadataModel());
             
         } catch (Exception ex) {
-            LOGGER.error("Error storing catalog metadata of");
+            LOGGER.error("Error storing catalog metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
     }
@@ -144,4 +145,21 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         }
         return datasetMetadata;        
     }     	
+
+    @Override
+    public void storeFDPMetaData(FDPMetaData fdpMetaData) 
+            throws FairMetadataServiceException {
+        if(fdpMetaData == null) {
+            String errorMsg = "The fdp metadata can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        try {
+            storeManager.storeRDF(fdpMetaData.getFDPMetadataModel());
+            
+        } catch (Exception ex) {
+            LOGGER.error("Error storing fdp metadata");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }
+    }
 }
