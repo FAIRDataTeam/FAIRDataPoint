@@ -29,9 +29,11 @@ public class ApplicationFilter extends OncePerRequestFilter {
     public void doFilterInternal(final HttpServletRequest request,
             final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
+        String allowedMtds = (RequestMethod.GET.name() + "," + 
+                RequestMethod.POST.name());
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        response.setHeader(HttpHeaders.ALLOW, (RequestMethod.GET.name()));
+        response.setHeader(HttpHeaders.ALLOW, allowedMtds);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
                 (HttpHeaders.ACCEPT));
         ThreadContext.put("ipAddress", request.getRemoteAddr());
