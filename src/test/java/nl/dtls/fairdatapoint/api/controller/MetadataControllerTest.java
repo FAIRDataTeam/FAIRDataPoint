@@ -213,4 +213,132 @@ public class MetadataControllerTest {
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
     
+    /**
+     * Check unsupported accept header.
+     * 
+     * @throws Exception 
+     */    
+    @Test(expected = Exception.class)    
+    public void unsupportedAcceptHeaderDistribution() throws Exception{  
+        MockHttpServletRequest request;
+        MockHttpServletResponse response;         
+        Object handler;  
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "application/trig");
+        request.setRequestURI(
+                "/textmining/gene-disease-association_lumc/sparql");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, 
+                response.getStatus());    
+    }    
+    /**
+     * The default content type is text/turtle, when the accept header is not
+     * set the default content type is served. This test is excepted to pass.
+     * 
+     * @throws Exception 
+     */    
+    @Test    
+    public void noAcceptHeaderDistribution() throws Exception{        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response;         
+        Object handler;  
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.setRequestURI(
+                "/textmining/gene-disease-association_lumc/sparql");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    }
+    
+    /**
+     * Check supported accept headers.
+     * 
+     * @throws Exception 
+     */    
+    @Test    
+    public void supportedAcceptHeadersDistribution() throws Exception{
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response;         
+        Object handler;  
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+        request.setRequestURI(
+                "/textmining/gene-disease-association_lumc/sparql");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        
+        request.addHeader(HttpHeaders.ACCEPT, "text/n3");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        
+        request.addHeader(HttpHeaders.ACCEPT, "application/ld+json");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        
+        request.addHeader(HttpHeaders.ACCEPT, "application/rdf+xml");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    }
+    
+    /**
+     * Check non existing Content.
+     * 
+     * @throws Exception 
+     */    
+    @Test    
+    public void nonExistingContentDistribution() throws Exception{
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response;         
+        Object handler;  
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+        request.setRequestURI(
+                "/textmining/gene-disease-association_lumc/dummy");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
+    }
+    
+    /**
+     * Check existing Content.
+     * 
+     * @throws Exception 
+     */    
+    @Test    
+    public void existingContentDistribution() throws Exception{
+        
+        MockHttpServletRequest request;
+        MockHttpServletResponse response;         
+        Object handler;  
+        
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+        request.setRequestURI(
+                "/textmining/gene-disease-association_lumc/sparql");      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    }
+    
 }
