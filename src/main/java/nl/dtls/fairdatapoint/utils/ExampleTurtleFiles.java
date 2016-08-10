@@ -34,14 +34,13 @@ public class ExampleTurtleFiles {
     public static final String EXAMPLE_CATALOG_ID = "textmining";
     public static final String EXAMPLE_DATASET_ID = 
             "gene-disease-association_lumc";
-    public static final String EXAMPLE_DISTRIBUTION_ID = "textfile";
+    public static final String EXAMPLE_DISTRIBUTION_ID = "sparql";
     public static final RDFFormat FILES_RDF_FORMAT = RDFFormat.TURTLE;
     private final static Logger LOGGER = LogManager.getLogger(
             ExampleTurtleFiles.class.getName());
     public final static String EXAMPLE_FILES_BASE_URI = 
             "http://www.dtls.nl/";
     public final static String FDP_URI = "http://www.dtls.nl/fdp";
-    public static String FDP_METADATA;
     
     /**
      * Method to read the content of a turtle file

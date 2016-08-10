@@ -10,7 +10,7 @@
 <http://www.dtls.nl/fdp> dct:title "DTL FAIR data point(beta)"@en ;
         a ldp:Container;
         dct:language lang:en;
-        ldp:contains fdp:textmining ;
+        ldp:contains fdp:textmining, fdp:transcriptomics, fdp:comparativeGenomics;
         rdfs:label "DTL FAIR data point(beta)"@en ;
         dct:description "This FDP provides metadata on textmining data sets." ;
         dct:identifier "17d8e030-ca61-11e5-9956-625662870761" ;
