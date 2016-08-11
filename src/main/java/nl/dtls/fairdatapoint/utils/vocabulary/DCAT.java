@@ -27,5 +27,12 @@ public class DCAT {
     public static final Property downloadURL = ResourceFactory.createProperty(uri + "downloadURL" );
     public static final Property mediaType = ResourceFactory.createProperty(uri + "mediaType" );
     public static final URI THEME_TAXONOMY = new URIImpl(BASE_URI + "themeTaxonomy");
-    public static final URI CATALOG = new URIImpl(BASE_URI + "Catalog");
+    public static final URI LANDING_PAGE = new URIImpl(BASE_URI + "landingPage");
+    public static final URI THEME = new URIImpl(BASE_URI + "theme");
+    public static final URI CONTACT_POINT = new URIImpl(
+            BASE_URI + "contactPoint");
+    public static final URI KEYWORD = new URIImpl(BASE_URI + "keyword");
+    public static final URI TYPE_CATALOG = new URIImpl(BASE_URI + "Catalog");
+    public static final URI TYPE_DATASET = new URIImpl(BASE_URI + "Datset");
+    public static final URI DATASET = new URIImpl(BASE_URI + "datset");
 }

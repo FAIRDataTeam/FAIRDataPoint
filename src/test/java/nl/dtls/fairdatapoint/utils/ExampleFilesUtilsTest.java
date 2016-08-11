@@ -13,9 +13,9 @@ import org.junit.Test;
  *
  * @author rajaram
  */
-public class ExampleTurtleFilesTest {
+public class ExampleFilesUtilsTest {
     
-    public ExampleTurtleFilesTest() {
+    public ExampleFilesUtilsTest() {
     }
     
     /**
@@ -25,7 +25,7 @@ public class ExampleTurtleFilesTest {
     public void testGetTurtleAsStringNonExistingFile() {
         System.out.println("getTurtleAsString");
         String fileName = "blabla.ttl";
-        ExampleTurtleFiles.getTurtleAsString(fileName);
+        ExampleFilesUtils.getFileContentAsString(fileName);
     }
 
     /**
@@ -34,8 +34,8 @@ public class ExampleTurtleFilesTest {
     @Test
     public void testGetTurtleAsStringExistingFile() {
         System.out.println("getTurtleAsString");
-        String fileName = ExampleTurtleFiles.EXAMPLE_FDP_METADATA_FILE;
-        String result = ExampleTurtleFiles.getTurtleAsString(fileName);
+        String fileName = ExampleFilesUtils.FDP_METADATA_FILE;
+        String result = ExampleFilesUtils.getFileContentAsString(fileName);
         assertTrue(result.length() > 0);
     }
     
@@ -45,7 +45,7 @@ public class ExampleTurtleFilesTest {
     @Test
     public void getExampleTurtleFileNames() {
         System.out.println("getExampleTurtleFileNames");
-        List<String> result = ExampleTurtleFiles.getExampleTurtleFileNames();
+        List<String> result = ExampleFilesUtils.getTurtleFileNames();
         assertTrue(result.size() > 0);
     }
     

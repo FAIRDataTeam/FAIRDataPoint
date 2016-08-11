@@ -9,13 +9,13 @@ package nl.dtls.fairdatapoint.service;
  *
  * @author rajaram
  */
-public class CatalogMetadataExeception extends Exception {
+public class MetadataExeception extends Exception {
 
     /**
      * Creates a new instance of <code>CatalogMetadataExeception</code> without
      * detail message.
      */
-    public CatalogMetadataExeception() {
+    public MetadataExeception() {
     }
 
     /**
@@ -24,7 +24,7 @@ public class CatalogMetadataExeception extends Exception {
      *
      * @param msg the detail message.
      */
-    public CatalogMetadataExeception(String msg) {
+    public MetadataExeception(String msg) {
         super(msg);
     }
 }

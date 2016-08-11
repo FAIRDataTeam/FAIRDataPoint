@@ -19,16 +19,6 @@ public interface StoreManager {
     List<Statement> retrieveResource(String uri) 
             throws StoreManagerException;
     /**
-     * Store string RDF to the repository
-     * 
-     * @param content RDF as a string
-     * @param contextURI context URI as a string
-     * @param baseURI   base URI as a string
-     * @throws StoreManagerException 
-     */
-    void storeRDF (String content, String contextURI, String baseURI) 
-            throws StoreManagerException; 
-    /**
      * Store RDF from openRDF model to the repository
      * 
      * @param model OpenRDF model

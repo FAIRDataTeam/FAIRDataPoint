@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
-import nl.dtls.fairdatapoint.service.impl.utils.RDFUtils;
+import nl.dtls.fairdatapoint.utils.RDFUtils;
 import nl.dtls.fairdatapoint.utils.vocabulary.DCAT;
 import nl.dtls.fairdatapoint.utils.vocabulary.LDP;
 import org.apache.logging.log4j.LogManager;
@@ -37,72 +37,54 @@ import org.openrdf.rio.UnsupportedRDFormatException;
  * @since 2016-08-08
  * @version 0.1
  */
-public class CatalogMetadata {
-
-    private Literal title = null;
-    private Literal identifier;
-    private Literal issued;
-    private Literal modified;
-    private Literal version = null;
-    private Literal description;
+public final class CatalogMetadata extends Metadata {
+    
     private URI publisher;
     private URI language;
-    private URI license;
-    private URI rights;
     private URI homepage;
-    private List<URI> datasets;
+    private List<URI> datasets = new ArrayList();
     private List<URI> themeTaxonomy = new ArrayList();
     private URI fdpUri;
-    private URI catalogUri;
-    private final static org.apache.logging.log4j.Logger LOGGER
+    private static final org.apache.logging.log4j.Logger LOGGER
             = LogManager.getLogger(CatalogMetadata.class);
-    private org.openrdf.model.Model model = new LinkedHashModel();
     
     public CatalogMetadata(String catalogMetadata, String catalogID,
-            String fdpURI, RDFFormat format) throws CatalogMetadataExeception, 
+            String fdpURI, RDFFormat format) throws MetadataExeception, 
             DatatypeConfigurationException {
         StringReader reader = new StringReader(catalogMetadata);
         String baseURL = fdpURI + "/" +  catalogID;
-        URI fdpUri = new URIImpl(fdpURI);
         URI catalogUri = new URIImpl(baseURL);
         Literal id = new LiteralImpl(catalogID, XMLSchema.STRING);
         org.openrdf.model.Model modelCatalog;
         try {
             modelCatalog = Rio.parse(reader, baseURL, format);
             extractCatalogMetadata(catalogUri, modelCatalog);            
-            this.fdpUri = fdpUri;
-            this.catalogUri = catalogUri;
-            this.identifier = id;
-            this.issued = RDFUtils.getCurrentTime();
-            this.modified = issued;
+            this.setFdpUri(new URIImpl(fdpURI));
+            this.setUri(catalogUri);
+            this.setIdentifier(id);
+            this.setIssued(RDFUtils.getCurrentTime());
+            this.setModified(this.getIssued());
             buildCatalogMetadataModel();
         } catch (IOException ex) {
             String errMsg = "Error reading catalog metadata content"
                     + ex.getMessage();
             LOGGER.error(errMsg);
-            throw (new CatalogMetadataExeception(errMsg));
+            throw (new MetadataExeception(errMsg));
         } catch (RDFParseException ex) {
             String errMsg = "Error parsing catalog metadata content. "
                     + ex.getMessage();
             LOGGER.error(errMsg);
-            throw (new CatalogMetadataExeception(errMsg));
+            throw (new MetadataExeception(errMsg));
         } catch (UnsupportedRDFormatException ex) {
             String errMsg = "Unsuppoerted RDF format. " + ex.getMessage();
             LOGGER.error(errMsg);
-            throw (new CatalogMetadataExeception(errMsg));
+            throw (new MetadataExeception(errMsg));
         } 
-    }   
-    
-    /**
-     * @return the model
-     */
-    public org.openrdf.model.Model getCatalogMetadataModel() {        
-        return model;
     }
-
+    
     private void extractCatalogMetadata(URI catalogUri,
             org.openrdf.model.Model modelCatalog) 
-            throws CatalogMetadataExeception {
+            throws MetadataExeception {
         Iterator<Statement> statements = modelCatalog.iterator();
         while (statements.hasNext()) {
             Statement st = statements.next();
@@ -110,104 +92,154 @@ public class CatalogMetadata {
                     && st.getPredicate().equals(DCTERMS.HAS_VERSION)) {
                 Literal version = new LiteralImpl(st.getObject().stringValue(),
                         XMLSchema.FLOAT);
-                this.version = version;
+                this.setVersion(version);
             } else if (st.getSubject().equals(catalogUri)
                     && (st.getPredicate().equals(RDFS.LABEL)
                     || st.getPredicate().equals(DCTERMS.TITLE))) {
                 Literal title = new LiteralImpl(st.getObject().stringValue(),
                         XMLSchema.STRING);
-                this.title = title;
+                this.setTitle(title);
             } else if (st.getSubject().equals(catalogUri)
                     && st.getPredicate().equals(DCTERMS.DESCRIPTION)) {
                 Literal description = new LiteralImpl(st.getObject().
                         stringValue(), XMLSchema.STRING);
-                this.description = description;
+                this.setDescription(description);
             } else if (st.getSubject().equals(catalogUri)
                     && st.getPredicate().equals(DCTERMS.PUBLISHER)) {
                 URI publisher = (URI) st.getObject();
-                this.publisher = publisher;
+                this.setPublisher(publisher);
             } else if (st.getSubject().equals(catalogUri)
                     && st.getPredicate().equals(DCTERMS.LANGUAGE)) {
                 URI language = (URI) st.getObject();
-                this.language = language;
+                this.setLanguage(language);
             } else if (st.getSubject().equals(catalogUri)
                     && st.getPredicate().equals(DCTERMS.LICENSE)) {
                 URI license = (URI) st.getObject();
-                this.license = license;
+                this.setLicense(license);
             } else if (st.getSubject().equals(catalogUri)
                     && st.getPredicate().equals(DCTERMS.RIGHTS)) {
                 URI rights = (URI) st.getObject();
-                this.rights = rights;
+                this.setRights(rights);
             } else if (st.getSubject().equals(catalogUri)
                     && st.getPredicate().equals(FOAF.HOMEPAGE)) {
                 URI homePage = (URI) st.getObject();
-                this.homepage = homePage;
+                this.setHomepage(homePage);
             } else if ( st.getPredicate().equals(DCAT.THEME_TAXONOMY)) {
                 URI themeTax = (URI) st.getObject();
-                this.themeTaxonomy.add(themeTax);
+                this.getThemeTaxonomy().add(themeTax);
             }
-        }
-        
-        if (this.version == null) {
-            String errMsg = "No version number provided";
-            LOGGER.error(errMsg);
-            throw (new CatalogMetadataExeception(errMsg));
-        } else if (this.title == null) {
-            String errMsg = "No title or label provided";
-            LOGGER.error(errMsg);
-            throw (new CatalogMetadataExeception(errMsg));
-        } else if (this.themeTaxonomy.isEmpty()) {
+        }  
+        checkMandatoryMetadata(LOGGER);
+        if (this.getThemeTaxonomy().isEmpty()) {
             String errMsg = "No dcat:themeTaxonomy provided";
             LOGGER.error(errMsg);
-            throw (new CatalogMetadataExeception(errMsg));
+            throw (new MetadataExeception(errMsg));
         }
     }
     
     private void buildCatalogMetadataModel() {
-        model.add(getCatalogUri(), RDF.TYPE, DCAT.CATALOG);
-        model.add(getCatalogUri(), DCTERMS.TITLE, title);
-        model.add(getCatalogUri(), RDFS.LABEL, title);
-        model.add(getCatalogUri(), DCTERMS.IDENTIFIER, identifier);
-        model.add(getCatalogUri(), DCTERMS.ISSUED, issued);
-        model.add(getCatalogUri(), DCTERMS.MODIFIED, modified);
-        model.add(getCatalogUri(), DCTERMS.HAS_VERSION, version);
-        if (description != null) {
-            model.add(getCatalogUri(), DCTERMS.DESCRIPTION, description);
+        org.openrdf.model.Model model = new LinkedHashModel();
+        model.add(this.getUri(), RDF.TYPE, DCAT.TYPE_CATALOG);        
+        if (this.getPublisher() != null) {
+           model.add(this.getUri(), DCTERMS.PUBLISHER, this.getPublisher()); 
         }
-        if (publisher != null) {
-           model.add(getCatalogUri(), DCTERMS.PUBLISHER, publisher); 
+        if (this.getLanguage() != null) {
+            model.add(this.getUri(), DCTERMS.LANGUAGE, this.getLanguage());
         }
-        if (language != null) {
-            model.add(getCatalogUri(), DCTERMS.LANGUAGE, language);
+        if (this.getHomepage() != null) {
+           model.add(this.getUri(), FOAF.HOMEPAGE, this.getHomepage()); 
         }
-        if (license != null) {
-            model.add(getCatalogUri(), DCTERMS.LICENSE, license);
-        }
-        if (rights != null) {
-            model.add(getCatalogUri(), DCTERMS.RIGHTS, rights);
-        }
-        if (homepage != null) {
-           model.add(getCatalogUri(), FOAF.HOMEPAGE, homepage); 
-        }
-        for(URI themeTax:themeTaxonomy) {
-            model.add(getCatalogUri(), DCAT.THEME_TAXONOMY, themeTax);
+        for(URI themeTax:this.getThemeTaxonomy()) {
+            model.add(this.getUri(), DCAT.THEME_TAXONOMY, themeTax);
         }       
-        model.add(getFdpUri(), LDP.CONTAINS, getCatalogUri());
-        model.add(getFdpUri(), DCTERMS.MODIFIED, modified);
+        model.add(this.getFdpUri(), LDP.CONTAINS, this.getUri());
+        model.add(this.getFdpUri(), DCTERMS.MODIFIED, this.getModified());
+        this.setModel(model);
         
     }
+
+    /**
+     * @param publisher the publisher to set
+     */
+    protected void setPublisher(URI publisher) {
+        this.publisher = publisher;
+    }
+
+    /**
+     * @param language the language to set
+     */
+    protected void setLanguage(URI language) {
+        this.language = language;
+    }
+
+    /**
+     * @param homepage the homepage to set
+     */
+    protected void setHomepage(URI homepage) {
+        this.homepage = homepage;
+    }
+
+    /**
+     * @param datasets the datasets to set
+     */
+    protected void setDatasets(List<URI> datasets) {
+        this.datasets = datasets;
+    }
+
+    /**
+     * @param themeTaxonomy the themeTaxonomy to set
+     */
+    protected void setThemeTaxonomy(List<URI> themeTaxonomy) {
+        this.themeTaxonomy = themeTaxonomy;
+    }
+
+    /**
+     * @param fdpUri the fdpUri to set
+     */
+    protected void setFdpUri(URI fdpUri) {
+        this.fdpUri = fdpUri;
+    }
+
+    /**
+     * @return the publisher
+     */
+    public URI getPublisher() {
+        return publisher;
+    }
+
+    /**
+     * @return the language
+     */
+    public URI getLanguage() {
+        return language;
+    }
+
+    /**
+     * @return the homepage
+     */
+    public URI getHomepage() {
+        return homepage;
+    }
+
+    /**
+     * @return the datasets
+     */
+    public List<URI> getDatasets() {
+        return datasets;
+    }
+
+    /**
+     * @return the themeTaxonomy
+     */
+    public List<URI> getThemeTaxonomy() {
+        return themeTaxonomy;
+    }
+
     /**
      * @return the fdpUri
      */
     public URI getFdpUri() {
         return fdpUri;
-    }
-
-    /**
-     * @return the catalogUri
-     */
-    public URI getCatalogUri() {
-        return catalogUri;
     }
 
 }

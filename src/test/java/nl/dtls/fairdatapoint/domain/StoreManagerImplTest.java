@@ -7,7 +7,7 @@ package nl.dtls.fairdatapoint.domain;
 
 import java.util.List;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
-import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
+import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
@@ -77,11 +77,8 @@ public class StoreManagerImplTest {
     @Test
     public void retrieveNonExitingResource() throws RepositoryException, 
             StoreManagerException,  
-            Exception {  
-           
-        testStoreManager.storeRDF(ExampleTurtleFiles.
-                getTurtleAsString(ExampleTurtleFiles.EXAMPLE_FDP_METADATA_FILE), null, null); 
-        String uri = "http://www.dtls.nl/dummy";             
+            Exception {
+        String uri = "http://localhost/dummy";             
         List<Statement> statements = 
                 testStoreManager.retrieveResource(uri); 
         assertTrue(statements.isEmpty());
@@ -97,11 +94,8 @@ public class StoreManagerImplTest {
     public void retrieveExitingResource() throws RepositoryException, 
             StoreManagerException,  
             Exception {  
-        
-        this.testStoreManager.storeRDF(ExampleTurtleFiles.
-                getTurtleAsString(ExampleTurtleFiles.EXAMPLE_FDP_METADATA_FILE), null, null);            
         List<Statement> statements = 
-                this.testStoreManager.retrieveResource(ExampleTurtleFiles.FDP_URI); 
+                this.testStoreManager.retrieveResource(ExampleFilesUtils.FDP_URI); 
         assertTrue(statements.size() > 0);
     }    
 }

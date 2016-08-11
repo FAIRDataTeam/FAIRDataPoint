@@ -5,23 +5,17 @@
  */
 package nl.dtls.fairdatapoint.domain;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import nl.dtls.fairdatapoint.utils.ExampleTurtleFiles;
-import static nl.dtls.fairdatapoint.utils.ExampleTurtleFiles.EXAMPLE_FILES_BASE_URI;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
-import org.openrdf.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -34,34 +28,13 @@ import org.springframework.stereotype.Repository;
  * @version 0.2
  */
 @Repository("storeManager")
-public class StoreManagerImpl implements StoreManager, InitializingBean {
+public class StoreManagerImpl implements StoreManager {
     
     private static final Logger LOGGER = 
             LoggerFactory.getLogger(StoreManagerImpl.class);
     @Autowired
     @Qualifier("repository")
     private org.openrdf.repository.Repository repository;  
-    @Autowired
-    @Qualifier("baseUri")
-    private String rdfBaseURI;
-    @Autowired 
-    @Qualifier("prepopulateStore")               
-    private boolean prepopulateStore;
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        
-        if (prepopulateStore) {
-            // Load example ttl files from utils package to the inmemory store
-            for (String fileName:ExampleTurtleFiles.
-                    getExampleTurtleFileNames()) {                
-                storeRDF(ExampleTurtleFiles.getTurtleAsString(fileName), 
-                        null, rdfBaseURI); 
-            } 
-        } else { 
-            LOGGER.info("FDP api is not prepopulated");
-        }
-    }
     
     
     
@@ -114,62 +87,7 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
             }
         }
         return statements;
-    }
-    
-    /**
-     * Store string RDF to the repository
-     * 
-     * @param content RDF as a string
-     * @param contextURI context URI as a string
-     * @param baseURI   base URI as a string
-     * @throws StoreManagerException 
-     */
-    @Override
-    public void storeRDF (String content, String contextURI, String baseURI) 
-            throws StoreManagerException {
-        RepositoryConnection conn = null;        
-        try {
-            /**
-             * we are using simple string replacement to replace the base uri of 
-             * RDF file. In future we should use more elegant code.  
-             */
-            if(baseURI != null && !baseURI.isEmpty()) {                
-                content = content.replaceAll(EXAMPLE_FILES_BASE_URI, baseURI);
-            } else {
-                baseURI = EXAMPLE_FILES_BASE_URI;
-            }
-            StringReader reader = new StringReader(content);
-            conn = getRepositoryConnection();
-            if (contextURI == null || !contextURI.isEmpty()) {
-                conn.add(reader, baseURI, 
-                        ExampleTurtleFiles.FILES_RDF_FORMAT);       
-            } else {
-                URI context = new URIImpl(contextURI);
-                conn.add(reader, baseURI, 
-                        ExampleTurtleFiles.FILES_RDF_FORMAT, context); 
-            }
-        } catch (RepositoryException ex) {
-            LOGGER.error("Error storing RDF",ex);
-            LOGGER.info("Content \n" + content);
-            throw (new StoreManagerException(ex.getMessage()));
-        }  catch (IOException ex) {
-            LOGGER.error("Error reading RDF",ex);
-            throw (new StoreManagerException(ex.getMessage()));
-        } catch (RDFParseException ex) {
-            LOGGER.error("Error parsing RDF",ex);
-            LOGGER.info("Content \n" + content);
-            throw (new StoreManagerException(ex.getMessage()));
-        }
-        finally {
-            try {
-                closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {                
-                LOGGER.error("Error closing connection",e); 
-                throw (new StoreManagerException(e.getMessage()));
-                
-            }
-        }
-    }
+    }   
     
     /**
      * Store string RDF to the repository
@@ -265,6 +183,6 @@ public class StoreManagerImpl implements StoreManager, InitializingBean {
             LOGGER.error("Error creating repository connection!");
             throw (new StoreManagerException(ex.getMessage()));
         }
-    }   
+    }
 
 }

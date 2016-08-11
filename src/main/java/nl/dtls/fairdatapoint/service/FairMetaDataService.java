@@ -15,51 +15,15 @@ import org.openrdf.rio.RDFFormat;
  */
 public interface FairMetaDataService {   
     /**
-     * Get FDP server metadata
+     * Get metadata of given URI
      * 
+     * @param uri
      * @param format RDFFormat serialization formats
      * @return  String object  
      * @throws FairMetadataServiceException  
      */
-    String retrieveFDPMetaData(RDFFormat format) 
+    String retrieveMetaData(String uri, RDFFormat format) 
             throws FairMetadataServiceException;  
-
-    /**
-     * Get catalog metadata
-     * 
-     * @param catalogID Unique catalog ID
-     * @param format RDFFormat serialization formats
-     * @return  String object
-     * @throws FairMetadataServiceException
-     */
-    String retrieveCatalogMetaData
-        (String catalogID, RDFFormat format) throws FairMetadataServiceException;
-
-    /**
-     * Get dataset metadata
-     * 
-     * @param catalogID Unique catalog ID
-     * @param datasetID Unique dataset ID
-     * @param format RDFFormat serialization formats
-     * @return  String object
-     * @throws FairMetadataServiceException
-     */
-    String retrieveDatasetMetaData
-        (String catalogID, String datasetID, RDFFormat format) 
-                throws FairMetadataServiceException;
-    /**
-     * Get distribution metadata
-     * 
-     * @param catalogID Unique catalog ID
-     * @param datasetID Unique dataset ID
-     * @param distributionID Unique distribution ID
-     * @param format RDFFormat serialization formats
-     * @return  String object
-     * @throws FairMetadataServiceException
-     */
-    String retrieveDatasetDistribution(String catalogID, 
-            String datasetID, String distributionID, RDFFormat format) 
-            throws FairMetadataServiceException;      
     /**
      * Store catalog metadata
      * 
@@ -67,7 +31,15 @@ public interface FairMetaDataService {
      * @throws FairMetadataServiceException 
      */
     void storeCatalogMetaData(CatalogMetadata catalogMetadata) 
-            throws FairMetadataServiceException;    
+            throws FairMetadataServiceException;
+    /**
+     * Store dataset metadata
+     * 
+     * @param datasetMetadata
+     * @throws FairMetadataServiceException 
+     */
+    void storeDatasetMetaData(DatasetMetadata datasetMetadata) 
+            throws FairMetadataServiceException;
     
     /**
      * Store fdp metadata
@@ -75,7 +47,7 @@ public interface FairMetaDataService {
      * @param fdpMetaData
      * @throws FairMetadataServiceException 
      */
-    void storeFDPMetaData(FDPMetaData fdpMetaData) 
+    void storeFDPMetaData(FDPMetadata fdpMetaData) 
             throws FairMetadataServiceException; 
         
 }
