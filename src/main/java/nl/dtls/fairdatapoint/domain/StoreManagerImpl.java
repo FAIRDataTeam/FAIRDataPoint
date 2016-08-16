@@ -125,6 +125,7 @@ public class StoreManagerImpl implements StoreManager {
      * @param statement
      * @throws StoreManagerException 
      */
+    @Override
     public void removeStatement (Statement statement) throws 
             StoreManagerException {
         RepositoryConnection conn = null;
