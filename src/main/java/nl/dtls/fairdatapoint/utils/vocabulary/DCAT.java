@@ -33,10 +33,10 @@ public class DCAT {
             BASE_URI + "contactPoint");
     public static final URI KEYWORD = new URIImpl(BASE_URI + "keyword");
     public static final URI TYPE_CATALOG = new URIImpl(BASE_URI + "Catalog");
-    public static final URI TYPE_DATASET = new URIImpl(BASE_URI + "Datset");
+    public static final URI TYPE_DATASET = new URIImpl(BASE_URI + "Dataset");
     public static final URI TYPE_DISTRIBUTION = new URIImpl(
             BASE_URI + "Distribution");
-    public static final URI DATASET = new URIImpl(BASE_URI + "datset");
+    public static final URI DATASET = new URIImpl(BASE_URI + "dataset");
     public static final URI ACCESS_URL = new URIImpl(BASE_URI + "accessURL");
     public static final URI DISTRIBUTION = new URIImpl(
             BASE_URI + "distribution");
