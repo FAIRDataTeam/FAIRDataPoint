@@ -5,6 +5,7 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -55,14 +56,14 @@ public final class DatasetMetadata extends Metadata {
         Literal id = new LiteralImpl(datasetID, XMLSchema.STRING);
         org.openrdf.model.Model modelDatasetMetaData;
         try {
-            modelDatasetMetaData = Rio.parse(reader, baseURL, format);
-            extractMetadata(datasetURI, modelDatasetMetaData);
-            extractDatasetMetadata(datasetURI, modelDatasetMetaData);            
-            this.setCatalogURI(new URIImpl(catalogURI));
-            this.setUri(datasetURI);
+            modelDatasetMetaData = Rio.parse(reader, baseURL, format);  
+            Iterator<Statement> it = modelDatasetMetaData.iterator();
+            List<Statement> statements = ImmutableList.copyOf(it);             
             this.setIdentifier(id);
             this.setIssued(RDFUtils.getCurrentTime());
             this.setModified(this.getIssued());
+            this.setCatalogURI(new URIImpl(catalogURI));            
+            extractDatasetMetadata(datasetURI, statements); 
             buildDatasetMetadataModel();
         } catch (IOException ex) {
             String errMsg = "Error reading dataset metadata content"
@@ -81,10 +82,25 @@ public final class DatasetMetadata extends Metadata {
         } 
         
     }
-    private void extractDatasetMetadata(URI datasetURI,
-            org.openrdf.model.Model modelDataset) 
+    
+    public DatasetMetadata(String datasetURI, List<Statement> metadata) 
+            throws MetadataExeception, 
+            DatatypeConfigurationException {
+        try {
+            this.setUri(new URIImpl(datasetURI));
+            extractDatasetMetadata(this.getUri(), metadata);
+            this.setStatements(metadata);
+        } catch (UnsupportedRDFormatException ex) {
+            String errMsg = "Unsuppoerted RDF format. " + ex.getMessage();
+            LOGGER.error(errMsg);
+            throw (new MetadataExeception(errMsg));
+        } 
+    }
+    private void extractDatasetMetadata(URI datasetURI, List<Statement> metadata) 
             throws MetadataExeception {
-        Iterator<Statement> statements = modelDataset.iterator();
+        Iterator<Statement> statements = metadata.iterator();
+        this.setUri(datasetURI);
+        extractMetadata(datasetURI, metadata);        
         while (statements.hasNext()) {
             Statement st = statements.next();
             if (st.getSubject().equals(datasetURI)
@@ -132,9 +148,12 @@ public final class DatasetMetadata extends Metadata {
         for(Literal keyword:this.getKeywords()) {
             model.add(this.getUri(), DCAT.KEYWORD, keyword);
         }
-        model.add(this.getCatalogURI(), DCAT.DATASET, this.getUri());
-        model.add(this.getCatalogURI(), DCTERMS.MODIFIED, this.getModified());
-        this.setModel(model);
+        if (this.getCatalogURI() != null) {
+         model.add(this.getCatalogURI(), DCAT.DATASET, this.getUri());
+         model.add(this.getCatalogURI(), DCTERMS.MODIFIED, this.getModified());   
+        }
+        
+        this.setStatements(model);
         
     }
 

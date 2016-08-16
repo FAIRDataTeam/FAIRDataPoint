@@ -21,10 +21,10 @@ public interface StoreManager {
     /**
      * Store RDF from openRDF model to the repository
      * 
-     * @param model OpenRDF model
+     * @param statements
      * @throws StoreManagerException 
      */
-    void storeRDF (org.openrdf.model.Model model) throws StoreManagerException;
+    void storeRDF (List<Statement> statements) throws StoreManagerException;
     /**
      * Remove a statement from the repository
      * 

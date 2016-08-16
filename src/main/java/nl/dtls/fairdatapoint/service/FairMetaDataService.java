@@ -24,6 +24,36 @@ public interface FairMetaDataService {
      */
     String retrieveMetaData(String uri, RDFFormat format) 
             throws FairMetadataServiceException;  
+    
+    /**
+     * Get metadata of given catalog URI 
+     * 
+     * @param uri catalog URI
+     * @return CatalogMetadata object
+     * @throws FairMetadataServiceException 
+     */
+    CatalogMetadata retrieveCatalogMetaData(String uri) 
+            throws FairMetadataServiceException; 
+    
+    /**
+     * Get metadata of given dataset URI 
+     * 
+     * @param uri dataset URI
+     * @return DatasetMetadata object
+     * @throws FairMetadataServiceException 
+     */
+    DatasetMetadata retrieveDatasetMetaData(String uri) 
+            throws FairMetadataServiceException;  
+    
+    /**
+     * Get metadata of given distribution URI 
+     * 
+     * @param uri distribution URI
+     * @return DistributionMetadata object
+     * @throws FairMetadataServiceException 
+     */
+    DistributionMetadata retrieveDistributionMetaData(String uri) 
+            throws FairMetadataServiceException;  
     /**
      * Store catalog metadata
      * 

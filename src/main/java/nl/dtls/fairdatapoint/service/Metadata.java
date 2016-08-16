@@ -5,7 +5,12 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
@@ -14,6 +19,7 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.XMLSchema;
+import org.openrdf.rio.RDFFormat;
 
 /**
  *
@@ -34,7 +40,7 @@ public class Metadata {
     private URI uri;
     private URI publisher;
     private URI language;
-    private org.openrdf.model.Model model;
+    private List<Statement> statements ;
     private static final org.apache.logging.log4j.Logger LOGGER
             = LogManager.getLogger(Metadata.class);
 
@@ -104,16 +110,21 @@ public class Metadata {
     /**
      * @param model the model to set
      */
-    protected void setModel(org.openrdf.model.Model model) {
-        this.model = model;
-        this.model.add(this.getUri(), DCTERMS.TITLE, this.getTitle());
-        this.model.add(this.getUri(), RDFS.LABEL, this.getTitle());
-        this.model.add(this.getUri(), DCTERMS.IDENTIFIER, this.getIdentifier());
-        this.model.add(this.getUri(), DCTERMS.ISSUED, this.getIssued());
-        this.model.add(this.getUri(), DCTERMS.MODIFIED, this.getModified());
-        this.model.add(this.getUri(), DCTERMS.HAS_VERSION, this.getVersion());
+    protected void setStatements(org.openrdf.model.Model model) {       
+        model.add(this.getUri(), DCTERMS.TITLE, this.getTitle());
+        model.add(this.getUri(), RDFS.LABEL, this.getTitle());
+        model.add(this.getUri(), DCTERMS.IDENTIFIER, this.getIdentifier());
+        model.add(this.getUri(), DCTERMS.ISSUED, this.getIssued());
+        model.add(this.getUri(), DCTERMS.MODIFIED, this.getModified());
+        model.add(this.getUri(), DCTERMS.HAS_VERSION, this.getVersion());
+        if (this.getPublisher() != null) {
+           model.add(this.getUri(), DCTERMS.PUBLISHER, this.getPublisher()); 
+        }
+        if (this.getLanguage() != null) {
+            model.add(this.getUri(), DCTERMS.LANGUAGE, this.getLanguage());
+        }
         if (this.getDescription() != null) {
-            this.model.add(this.getUri(), DCTERMS.DESCRIPTION, 
+            model.add(this.getUri(), DCTERMS.DESCRIPTION, 
                     this.getDescription());
         }
         if (this.getLicense() != null) {
@@ -122,12 +133,19 @@ public class Metadata {
         if (this.getRights() != null) {
             model.add(this.getUri(), DCTERMS.RIGHTS, this.getRights());
         }
+        Iterator<Statement> it = model.iterator();
+        List<Statement> statements = ImmutableList.copyOf(it);
+        this.statements = statements;
     }
     
+    public void setStatements(List<Statement> statements) {
+        this.statements = statements;
+    }
+
     protected void extractMetadata(URI resourceURI,
-            org.openrdf.model.Model modelDataset) 
+            List<Statement> metadata)
             throws MetadataExeception {
-        Iterator<Statement> statements = modelDataset.iterator();
+        Iterator<Statement> statements = metadata.iterator();
         while (statements.hasNext()) {
             Statement st = statements.next();
             if (st.getSubject().equals(resourceURI)
@@ -162,11 +180,23 @@ public class Metadata {
                     && st.getPredicate().equals(DCTERMS.LANGUAGE)) {
                 URI language = (URI) st.getObject();
                 this.setLanguage(language);
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.IDENTIFIER)
+                    && this.getIdentifier() == null) {
+                this.setIdentifier((Literal) st.getObject());
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.ISSUED)
+                    && this.getIssued() == null) {
+                this.setIssued((Literal) st.getObject());
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.MODIFIED)
+                    && this.getModified() == null) {
+                this.setModified((Literal) st.getObject());
             }
-        }  
+        }
         checkMetadata();
-    }    
-    
+    }
+
     protected void checkMetadata() throws MetadataExeception {
         if (this.getVersion() == null) {
             String errMsg = "No version number provided";
@@ -177,6 +207,22 @@ public class Metadata {
             LOGGER.error(errMsg);
             throw (new MetadataExeception(errMsg));
         }
+    }
+
+    public String getMetadataAsRDFString(RDFFormat format) throws 
+            MetadataExeception {
+        String metadata = null;
+        if (!this.getStatements().isEmpty()) {
+            try {        
+                metadata = RDFUtils.writeToString(this.getStatements(), format);
+            } catch (Exception ex) {
+                String errMsg = "Error getting metadata as RDF string, Message " 
+                        +ex.getMessage();
+                LOGGER.error(errMsg);
+                throw(new MetadataExeception(errMsg));
+            }
+        }
+        return metadata;
     }
 
     /**
@@ -243,11 +289,12 @@ public class Metadata {
     }
 
     /**
-     * @return the model
+     * @return the List<Statement>
      */
-    public org.openrdf.model.Model getModel() {
-        return model;
+    public List<Statement> getStatements() {
+        return statements;
     }
+
     /**
      * @return the publisher
      */

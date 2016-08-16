@@ -6,13 +6,16 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.util.List;
+import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtls.fairdatapoint.domain.StoreManager;
+import nl.dtls.fairdatapoint.domain.StoreManagerException;
 import nl.dtls.fairdatapoint.service.CatalogMetadata;
 import nl.dtls.fairdatapoint.service.DatasetMetadata;
 import nl.dtls.fairdatapoint.service.DistributionMetadata;
 import nl.dtls.fairdatapoint.service.FDPMetadata;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
+import nl.dtls.fairdatapoint.service.MetadataExeception;
 import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,6 +61,65 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         }
         return fdpMetadata;
     }
+    
+    
+
+    @Override
+    public CatalogMetadata retrieveCatalogMetaData(String uri) 
+            throws FairMetadataServiceException {
+        CatalogMetadata cMetadata = null;
+        try {
+            List<Statement> statements = 
+                    storeManager.retrieveResource(uri);
+            cMetadata = new CatalogMetadata(uri, statements);
+        } catch (StoreManagerException  ex) {
+            LOGGER.error("Error retrieving catalog metadata from the store");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        } catch (MetadataExeception | DatatypeConfigurationException ex) {
+            LOGGER.error("Error pharsing catalog metadata");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }
+        
+        return cMetadata;
+    }
+    
+    @Override
+    public DatasetMetadata retrieveDatasetMetaData(String uri) 
+            throws FairMetadataServiceException {
+        DatasetMetadata dMetadata = null;
+        try {
+            List<Statement> statements = 
+                    storeManager.retrieveResource(uri);
+            dMetadata = new DatasetMetadata(uri, statements);
+        } catch (StoreManagerException  ex) {
+            LOGGER.error("Error retrieving dataset metadata from the store");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        } catch (MetadataExeception | DatatypeConfigurationException ex) {
+            LOGGER.error("Error pharsing dataset metadata");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }        
+        return dMetadata;
+    }
+
+    @Override
+    public DistributionMetadata retrieveDistributionMetaData(String uri) 
+            throws FairMetadataServiceException {
+        DistributionMetadata distMetadata = null;
+        try {
+            List<Statement> statements = 
+                    storeManager.retrieveResource(uri);
+            distMetadata = new DistributionMetadata(uri, statements);
+        } catch (StoreManagerException  ex) {
+            LOGGER.error(
+                    "Error retrieving distribution metadata from the store");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        } catch (MetadataExeception | DatatypeConfigurationException ex) {
+            LOGGER.error("Error pharsing distribution metadata");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }        
+        return distMetadata;
+    }
+    
     @Override
     public void storeFDPMetaData(FDPMetadata fdpMetaData) 
             throws FairMetadataServiceException {
@@ -67,7 +129,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw(new IllegalArgumentException(errorMsg));
         }
         try {
-            storeManager.storeRDF(fdpMetaData.getModel());
+            storeManager.storeRDF(fdpMetaData.getStatements());
             
         } catch (Exception ex) {
             LOGGER.error("Error storing fdp metadata");
@@ -88,7 +150,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             Statement stmt = new StatementImpl(catalogMetadata.getFdpUri(), 
                     DCTERMS.MODIFIED, null);
             storeManager.removeStatement(stmt);
-            storeManager.storeRDF(catalogMetadata.getModel());
+            storeManager.storeRDF(catalogMetadata.getStatements());
             
         } catch (Exception ex) {
             LOGGER.error("Error storing catalog metadata");
@@ -109,7 +171,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             Statement stmt = new StatementImpl(datasetMetadata.getCatalogURI(), 
                     DCTERMS.MODIFIED, null);
             storeManager.removeStatement(stmt);
-            storeManager.storeRDF(datasetMetadata.getModel());
+            storeManager.storeRDF(datasetMetadata.getStatements());
             
         } catch (Exception ex) {
             LOGGER.error("Error storing dataset metadata");
@@ -129,11 +191,12 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             Statement stmt = new StatementImpl(distributionMetadata.
                     getDatasetURI(), DCTERMS.MODIFIED, null);
             storeManager.removeStatement(stmt);
-            storeManager.storeRDF(distributionMetadata.getModel());
+            storeManager.storeRDF(distributionMetadata.getStatements());
             
         } catch (Exception ex) {
             LOGGER.error("Error storing distribution metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
     }
+    
 }

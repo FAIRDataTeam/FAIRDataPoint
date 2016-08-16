@@ -5,9 +5,11 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
+import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtls.fairdatapoint.utils.RDFUtils;
 import nl.dtls.fairdatapoint.utils.vocabulary.DCAT;
@@ -51,17 +53,18 @@ public class DistributionMetadata extends Metadata {
         String baseURL = datasetURI + "/" +  distributionID;
         URI distributionURI = new URIImpl(baseURL);
         Literal id = new LiteralImpl(distributionID, XMLSchema.STRING);
-        org.openrdf.model.Model modelDatasetMetaData;
+        org.openrdf.model.Model metadata;
         try {
-            modelDatasetMetaData = Rio.parse(reader, baseURL, format);
-            extractMetadata(distributionURI, modelDatasetMetaData);
-            extractDatasetMetadata(distributionURI, modelDatasetMetaData);            
+            metadata = Rio.parse(reader, baseURL, format);
+            Iterator<Statement> it = metadata.iterator();
+            List<Statement> statements = ImmutableList.copyOf(it);
+            extractDistributionMetadata(distributionURI, statements);            
             this.setDatasetURI(new URIImpl(datasetURI));
             this.setUri(distributionURI);
             this.setIdentifier(id);
             this.setIssued(RDFUtils.getCurrentTime());
             this.setModified(this.getIssued());
-            buildDatasetMetadataModel();
+            buildDistributionMetadataModel();
         } catch (IOException ex) {
             String errMsg = "Error reading distribution metadata content"
                     + ex.getMessage();
@@ -79,10 +82,26 @@ public class DistributionMetadata extends Metadata {
         } 
     }
     
-    private void extractDatasetMetadata(URI distributionURI,
-            org.openrdf.model.Model modelDataset) 
+    public DistributionMetadata(String distributionURI, 
+            List<Statement> metadata) 
+            throws MetadataExeception, 
+            DatatypeConfigurationException {
+        try {
+            this.setUri(new URIImpl(distributionURI));
+            extractDistributionMetadata(this.getUri(), metadata);
+            this.setStatements(metadata);
+        } catch (UnsupportedRDFormatException ex) {
+            String errMsg = "Unsuppoerted RDF format. " + ex.getMessage();
+            LOGGER.error(errMsg);
+            throw (new MetadataExeception(errMsg));
+        } 
+    }
+    
+    private void extractDistributionMetadata(URI distributionURI,
+            List<Statement> metadata) 
             throws MetadataExeception {
-        Iterator<Statement> statements = modelDataset.iterator();
+        Iterator<Statement> statements = metadata.iterator();        
+        extractMetadata(distributionURI, metadata);
         while (statements.hasNext()) {
             Statement st = statements.next();
             if (st.getSubject().equals(distributionURI)
@@ -113,7 +132,7 @@ public class DistributionMetadata extends Metadata {
         }
     }
     
-    private void buildDatasetMetadataModel() {
+    private void buildDistributionMetadataModel() {
         org.openrdf.model.Model model = new LinkedHashModel();
         model.add(this.getUri(), RDF.TYPE, DCAT.TYPE_DISTRIBUTION);        
         if (this.getAccessURL() != null) {
@@ -127,10 +146,13 @@ public class DistributionMetadata extends Metadata {
         if (this.getFormat() != null) {
             model.add(this.getUri(), DCAT.FORMAT, this.getFormat());
         }
+        if(this.getDatasetURI() != null) {
+           model.add(this.getDatasetURI(), DCAT.DISTRIBUTION, this.getUri());            
+           model.add(this.getDatasetURI(), DCTERMS.MODIFIED, 
+                   this.getModified()); 
+        }
         
-        model.add(this.getDatasetURI(), DCAT.DISTRIBUTION, this.getUri());
-        model.add(this.getDatasetURI(), DCTERMS.MODIFIED, this.getModified());
-        this.setModel(model);
+        this.setStatements(model);
         
     }
 

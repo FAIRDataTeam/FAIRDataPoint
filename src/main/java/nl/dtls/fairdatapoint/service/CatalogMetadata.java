@@ -5,6 +5,7 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -55,8 +56,9 @@ public final class CatalogMetadata extends Metadata {
         org.openrdf.model.Model modelCatalog;
         try {
             modelCatalog = Rio.parse(reader, baseURL, format);
-            extractMetadata(catalogUri, modelCatalog);
-            extractCatalogMetadata(catalogUri, modelCatalog);            
+            Iterator<Statement> it = modelCatalog.iterator();
+            List<Statement> statements = ImmutableList.copyOf(it);
+            extractCatalogMetadata(catalogUri, statements);            
             this.setFdpUri(new URIImpl(fdpURI));
             this.setUri(catalogUri);
             this.setIdentifier(id);
@@ -80,10 +82,25 @@ public final class CatalogMetadata extends Metadata {
         } 
     }
     
+    public CatalogMetadata(String catalogURI, List<Statement> metadata) 
+            throws MetadataExeception, 
+            DatatypeConfigurationException {
+        try {
+            this.setUri(new URIImpl(catalogURI));
+            extractCatalogMetadata(this.getUri(), metadata);
+            this.setStatements(metadata);
+        } catch (UnsupportedRDFormatException ex) {
+            String errMsg = "Unsuppoerted RDF format. " + ex.getMessage();
+            LOGGER.error(errMsg);
+            throw (new MetadataExeception(errMsg));
+        } 
+    }
+    
     private void extractCatalogMetadata(URI catalogUri,
-            org.openrdf.model.Model modelCatalog) 
+            List<Statement> metadata) 
             throws MetadataExeception {
-        Iterator<Statement> statements = modelCatalog.iterator();
+        Iterator<Statement> statements = metadata.iterator();        
+        extractMetadata(catalogUri, metadata);
         while (statements.hasNext()) {
             Statement st = statements.next();
             if (st.getSubject().equals(catalogUri)
@@ -116,10 +133,12 @@ public final class CatalogMetadata extends Metadata {
         }
         for(URI themeTax:this.getThemeTaxonomy()) {
             model.add(this.getUri(), DCAT.THEME_TAXONOMY, themeTax);
-        }       
-        model.add(this.getFdpUri(), LDP.CONTAINS, this.getUri());
-        model.add(this.getFdpUri(), DCTERMS.MODIFIED, this.getModified());
-        this.setModel(model);
+        } 
+        if(this.getFdpUri() != null) {
+           model.add(this.getFdpUri(), LDP.CONTAINS, this.getUri());            
+           model.add(this.getFdpUri(), DCTERMS.MODIFIED, this.getModified()); 
+        }        
+        this.setStatements(model);
         
     }
     

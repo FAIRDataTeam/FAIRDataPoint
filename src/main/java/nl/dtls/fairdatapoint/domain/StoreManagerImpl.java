@@ -95,14 +95,14 @@ public class StoreManagerImpl implements StoreManager {
      * @throws StoreManagerException 
      */
     @Override
-    public void storeRDF (org.openrdf.model.Model model) throws 
+    public void storeRDF (List<Statement> statements) throws 
             StoreManagerException {
         RepositoryConnection conn = null;
         try {
             conn = getRepositoryConnection();
-            Iterator<Statement> statemts = model.iterator();
-            while(statemts.hasNext()) {
-                conn.add(statemts.next());
+            Iterator<Statement> st = statements.iterator();
+            while(st.hasNext()) {
+                conn.add(st.next());
             }              
         } catch (RepositoryException ex) {
             LOGGER.error("Error storing RDF",ex);
