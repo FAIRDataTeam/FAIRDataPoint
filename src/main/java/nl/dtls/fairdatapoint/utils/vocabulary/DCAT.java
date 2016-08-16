@@ -34,5 +34,19 @@ public class DCAT {
     public static final URI KEYWORD = new URIImpl(BASE_URI + "keyword");
     public static final URI TYPE_CATALOG = new URIImpl(BASE_URI + "Catalog");
     public static final URI TYPE_DATASET = new URIImpl(BASE_URI + "Datset");
+    public static final URI TYPE_DISTRIBUTION = new URIImpl(
+            BASE_URI + "Distribution");
     public static final URI DATASET = new URIImpl(BASE_URI + "datset");
+    public static final URI ACCESS_URL = new URIImpl(BASE_URI + "accessURL");
+    public static final URI DISTRIBUTION = new URIImpl(
+            BASE_URI + "distribution");
+    public static final URI DOWNLOAD_URL = new URIImpl(
+            BASE_URI + "downloadURL");
+    public static final URI MEDIA_TYPE = new URIImpl(
+            BASE_URI + "mediaType");
+    public static final URI FORMAT = new URIImpl(
+            BASE_URI + "format");
+    public static final URI BYTE_SIZE = new URIImpl(
+            BASE_URI + "byteSize");
+    
 }

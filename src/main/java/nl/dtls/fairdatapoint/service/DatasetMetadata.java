@@ -13,7 +13,6 @@ import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtls.fairdatapoint.utils.RDFUtils;
 import nl.dtls.fairdatapoint.utils.vocabulary.DCAT;
-import nl.dtls.fairdatapoint.utils.vocabulary.LDP;
 import org.apache.logging.log4j.LogManager;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
@@ -22,7 +21,6 @@ import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.DCTERMS;
-import org.openrdf.model.vocabulary.FOAF;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.XMLSchema;
@@ -140,7 +138,7 @@ public final class DatasetMetadata extends Metadata {
                 this.getKeywords().add(keyword);
             }
         }  
-        checkMandatoryMetadata(LOGGER);
+        checkMetadata();
         if (this.getThemes().isEmpty()) {
             String errMsg = "No dcat:theme provided";
             LOGGER.error(errMsg);

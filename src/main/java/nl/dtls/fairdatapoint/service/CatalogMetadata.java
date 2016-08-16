@@ -129,7 +129,7 @@ public final class CatalogMetadata extends Metadata {
                 this.getThemeTaxonomy().add(themeTax);
             }
         }  
-        checkMandatoryMetadata(LOGGER);
+        checkMetadata();
         if (this.getThemeTaxonomy().isEmpty()) {
             String errMsg = "No dcat:themeTaxonomy provided";
             LOGGER.error(errMsg);

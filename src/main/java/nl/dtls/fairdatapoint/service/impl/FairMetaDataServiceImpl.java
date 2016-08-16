@@ -9,6 +9,7 @@ import java.util.List;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.service.CatalogMetadata;
 import nl.dtls.fairdatapoint.service.DatasetMetadata;
+import nl.dtls.fairdatapoint.service.DistributionMetadata;
 import nl.dtls.fairdatapoint.service.FDPMetadata;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
@@ -112,6 +113,26 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             
         } catch (Exception ex) {
             LOGGER.error("Error storing dataset metadata");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }
+    }
+
+    @Override
+    public void storeDistributionMetaData(DistributionMetadata 
+            distributionMetadata) throws FairMetadataServiceException {
+        if(distributionMetadata == null) {
+            String errorMsg = "The distributionMetadata can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        try {
+            Statement stmt = new StatementImpl(distributionMetadata.
+                    getDatasetURI(), DCTERMS.MODIFIED, null);
+            storeManager.removeStatement(stmt);
+            storeManager.storeRDF(distributionMetadata.getModel());
+            
+        } catch (Exception ex) {
+            LOGGER.error("Error storing distribution metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
     }

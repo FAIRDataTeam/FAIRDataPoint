@@ -5,10 +5,15 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import java.util.Iterator;
+import org.apache.logging.log4j.LogManager;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.model.vocabulary.RDFS;
+import org.openrdf.model.vocabulary.XMLSchema;
 
 /**
  *
@@ -28,6 +33,8 @@ public class Metadata {
     private URI rights;
     private URI uri;
     private org.openrdf.model.Model model;
+    private static final org.apache.logging.log4j.Logger LOGGER
+            = LogManager.getLogger(Metadata.class);
 
     /**
      * @param title the title to set
@@ -115,15 +122,49 @@ public class Metadata {
         }
     }
     
-    protected void checkMandatoryMetadata(
-            org.apache.logging.log4j.Logger logger) throws MetadataExeception {
+    protected void extractMetadata(URI resourceURI,
+            org.openrdf.model.Model modelDataset) 
+            throws MetadataExeception {
+        Iterator<Statement> statements = modelDataset.iterator();
+        while (statements.hasNext()) {
+            Statement st = statements.next();
+            if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.HAS_VERSION)) {
+                Literal version = new LiteralImpl(st.getObject().stringValue(),
+                        XMLSchema.FLOAT);
+                this.setVersion(version);
+            } else if (st.getSubject().equals(resourceURI)
+                    && (st.getPredicate().equals(RDFS.LABEL)
+                    || st.getPredicate().equals(DCTERMS.TITLE))) {
+                Literal title = new LiteralImpl(st.getObject().stringValue(),
+                        XMLSchema.STRING);
+                this.setTitle(title);
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.DESCRIPTION)) {
+                Literal description = new LiteralImpl(st.getObject().
+                        stringValue(), XMLSchema.STRING);
+                this.setDescription(description);
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.LICENSE)) {
+                URI license = (URI) st.getObject();
+                this.setLicense(license);
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.RIGHTS)) {
+                URI rights = (URI) st.getObject();
+                this.setRights(rights);
+            } 
+        }  
+        checkMetadata();
+    }    
+    
+    protected void checkMetadata() throws MetadataExeception {
         if (this.getVersion() == null) {
             String errMsg = "No version number provided";
-            logger.error(errMsg);
+            LOGGER.error(errMsg);
             throw (new MetadataExeception(errMsg));
         } else if (this.getTitle() == null) {
             String errMsg = "No title or label provided";
-            logger.error(errMsg);
+            LOGGER.error(errMsg);
             throw (new MetadataExeception(errMsg));
         }
     }

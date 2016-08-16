@@ -7,6 +7,7 @@ package nl.dtls.fairdatapoint.api.controller;
 
 
 
+import nl.dtls.fairdatapoint.service.DistributionMetadata;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.net.MalformedURLException;
@@ -17,11 +18,11 @@ import nl.dtls.fairdatapoint.api.utils.controller.HttpHeadersUtils;
 import nl.dtls.fairdatapoint.api.utils.controller.LoggerUtils;
 import nl.dtls.fairdatapoint.service.CatalogMetadata;
 import nl.dtls.fairdatapoint.service.DatasetMetadata;
+import nl.dtls.fairdatapoint.service.DistributionMetadata;
 import nl.dtls.fairdatapoint.service.MetadataExeception;
 import nl.dtls.fairdatapoint.service.FDPMetadata;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.service.Metadata;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -230,6 +231,51 @@ public class MetadataController {
         LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }    
+    
+    
+    /**
+     * To hander POST distribution metadata request.
+     * 
+     * @param request   Http request
+     * @param response  Http response 
+     * @param catalogID Unique catalog ID  
+     * @param datasetID Unique dataset ID  
+     * @param distributionMetaData  
+     * @param distributionID  Unique distribution ID
+     * @return  On success return FDP metadata
+     */
+    @ApiOperation(value = "POST distribution metadata")
+    @RequestMapping(value = "/{catalogID}/{datasetID}",
+            method = RequestMethod.POST, consumes = {"text/turtle"})    
+    public String storeDatasetDistribution(final HttpServletRequest request,
+                    HttpServletResponse response, 
+                    @PathVariable final String catalogID,
+                    @PathVariable final String datasetID,  
+                    @RequestBody(required = true) String distributionMetaData,
+                    @RequestParam("distributionID") String distributionID) {
+        String contentType = request.getHeader(HttpHeaders.CONTENT_TYPE);
+        RDFFormat format = HttpHeadersUtils.getContentType(contentType);
+        String datasetURI = getRequesedURL(request);
+        String responseBody = null;
+        try {
+            if(!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
+            DistributionMetadata distributionMetadata = 
+                    new DistributionMetadata(distributionMetaData, 
+                            distributionID, datasetURI, format);
+            fairMetaDataService.storeDistributionMetaData(distributionMetadata);
+            responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
+        } catch (DatatypeConfigurationException | 
+                FairMetadataServiceException | MalformedURLException ex) {
+            responseBody = HttpHeadersUtils.set500ResponseHeaders(
+                        response, ex);
+        } catch (MetadataExeception ex) {
+            responseBody = HttpHeadersUtils.set400ResponseHeaders(
+                        response, ex);
+        }
+        return responseBody;
+    }
     
     @ApiOperation(value = "Dataset distribution metadata")
     @RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID}",

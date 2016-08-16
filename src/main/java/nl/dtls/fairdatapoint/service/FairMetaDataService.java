@@ -49,5 +49,14 @@ public interface FairMetaDataService {
      */
     void storeFDPMetaData(FDPMetadata fdpMetaData) 
             throws FairMetadataServiceException; 
+    
+    /**
+     * Store distribution metadata
+     * 
+     * @param distributionMetadata
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     */
+    void storeDistributionMetaData(DistributionMetadata distributionMetadata)
+            throws FairMetadataServiceException;
         
 }
