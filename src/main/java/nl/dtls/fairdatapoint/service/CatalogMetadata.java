@@ -21,7 +21,6 @@ import org.openrdf.model.URI;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.model.vocabulary.FOAF;
 import org.openrdf.model.vocabulary.RDF;
@@ -37,10 +36,8 @@ import org.openrdf.rio.UnsupportedRDFormatException;
  * @since 2016-08-08
  * @version 0.1
  */
-public final class CatalogMetadata extends Metadata {
+public final class CatalogMetadata extends Metadata {    
     
-    private URI publisher;
-    private URI language;
     private URI homepage;
     private List<URI> datasets = new ArrayList();
     private List<URI> themeTaxonomy = new ArrayList();
@@ -58,6 +55,7 @@ public final class CatalogMetadata extends Metadata {
         org.openrdf.model.Model modelCatalog;
         try {
             modelCatalog = Rio.parse(reader, baseURL, format);
+            extractMetadata(catalogUri, modelCatalog);
             extractCatalogMetadata(catalogUri, modelCatalog);            
             this.setFdpUri(new URIImpl(fdpURI));
             this.setUri(catalogUri);
@@ -89,38 +87,6 @@ public final class CatalogMetadata extends Metadata {
         while (statements.hasNext()) {
             Statement st = statements.next();
             if (st.getSubject().equals(catalogUri)
-                    && st.getPredicate().equals(DCTERMS.HAS_VERSION)) {
-                Literal version = new LiteralImpl(st.getObject().stringValue(),
-                        XMLSchema.FLOAT);
-                this.setVersion(version);
-            } else if (st.getSubject().equals(catalogUri)
-                    && (st.getPredicate().equals(RDFS.LABEL)
-                    || st.getPredicate().equals(DCTERMS.TITLE))) {
-                Literal title = new LiteralImpl(st.getObject().stringValue(),
-                        XMLSchema.STRING);
-                this.setTitle(title);
-            } else if (st.getSubject().equals(catalogUri)
-                    && st.getPredicate().equals(DCTERMS.DESCRIPTION)) {
-                Literal description = new LiteralImpl(st.getObject().
-                        stringValue(), XMLSchema.STRING);
-                this.setDescription(description);
-            } else if (st.getSubject().equals(catalogUri)
-                    && st.getPredicate().equals(DCTERMS.PUBLISHER)) {
-                URI publisher = (URI) st.getObject();
-                this.setPublisher(publisher);
-            } else if (st.getSubject().equals(catalogUri)
-                    && st.getPredicate().equals(DCTERMS.LANGUAGE)) {
-                URI language = (URI) st.getObject();
-                this.setLanguage(language);
-            } else if (st.getSubject().equals(catalogUri)
-                    && st.getPredicate().equals(DCTERMS.LICENSE)) {
-                URI license = (URI) st.getObject();
-                this.setLicense(license);
-            } else if (st.getSubject().equals(catalogUri)
-                    && st.getPredicate().equals(DCTERMS.RIGHTS)) {
-                URI rights = (URI) st.getObject();
-                this.setRights(rights);
-            } else if (st.getSubject().equals(catalogUri)
                     && st.getPredicate().equals(FOAF.HOMEPAGE)) {
                 URI homePage = (URI) st.getObject();
                 this.setHomepage(homePage);
@@ -128,8 +94,7 @@ public final class CatalogMetadata extends Metadata {
                 URI themeTax = (URI) st.getObject();
                 this.getThemeTaxonomy().add(themeTax);
             }
-        }  
-        checkMetadata();
+        }
         if (this.getThemeTaxonomy().isEmpty()) {
             String errMsg = "No dcat:themeTaxonomy provided";
             LOGGER.error(errMsg);
@@ -157,20 +122,7 @@ public final class CatalogMetadata extends Metadata {
         this.setModel(model);
         
     }
-
-    /**
-     * @param publisher the publisher to set
-     */
-    protected void setPublisher(URI publisher) {
-        this.publisher = publisher;
-    }
-
-    /**
-     * @param language the language to set
-     */
-    protected void setLanguage(URI language) {
-        this.language = language;
-    }
+    
 
     /**
      * @param homepage the homepage to set
@@ -199,20 +151,7 @@ public final class CatalogMetadata extends Metadata {
     protected void setFdpUri(URI fdpUri) {
         this.fdpUri = fdpUri;
     }
-
-    /**
-     * @return the publisher
-     */
-    public URI getPublisher() {
-        return publisher;
-    }
-
-    /**
-     * @return the language
-     */
-    public URI getLanguage() {
-        return language;
-    }
+    
 
     /**
      * @return the homepage

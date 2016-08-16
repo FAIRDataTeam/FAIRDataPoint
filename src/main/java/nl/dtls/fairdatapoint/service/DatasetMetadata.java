@@ -22,7 +22,6 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
@@ -36,9 +35,7 @@ import org.openrdf.rio.UnsupportedRDFormatException;
  * @version 0.1
  */
 public final class DatasetMetadata extends Metadata {
-
-    private URI publisher;
-    private URI language;
+    
     private List<URI> distribution = new ArrayList();
     private List<URI> themes = new ArrayList();
     private URI contactPoint;
@@ -59,6 +56,7 @@ public final class DatasetMetadata extends Metadata {
         org.openrdf.model.Model modelDatasetMetaData;
         try {
             modelDatasetMetaData = Rio.parse(reader, baseURL, format);
+            extractMetadata(datasetURI, modelDatasetMetaData);
             extractDatasetMetadata(datasetURI, modelDatasetMetaData);            
             this.setCatalogURI(new URIImpl(catalogURI));
             this.setUri(datasetURI);
@@ -90,38 +88,6 @@ public final class DatasetMetadata extends Metadata {
         while (statements.hasNext()) {
             Statement st = statements.next();
             if (st.getSubject().equals(datasetURI)
-                    && st.getPredicate().equals(DCTERMS.HAS_VERSION)) {
-                Literal version = new LiteralImpl(st.getObject().stringValue(),
-                        XMLSchema.FLOAT);
-                this.setVersion(version);
-            } else if (st.getSubject().equals(datasetURI)
-                    && (st.getPredicate().equals(RDFS.LABEL)
-                    || st.getPredicate().equals(DCTERMS.TITLE))) {
-                Literal title = new LiteralImpl(st.getObject().stringValue(),
-                        XMLSchema.STRING);
-                this.setTitle(title);
-            } else if (st.getSubject().equals(datasetURI)
-                    && st.getPredicate().equals(DCTERMS.DESCRIPTION)) {
-                Literal description = new LiteralImpl(st.getObject().
-                        stringValue(), XMLSchema.STRING);
-                this.setDescription(description);
-            } else if (st.getSubject().equals(datasetURI)
-                    && st.getPredicate().equals(DCTERMS.PUBLISHER)) {
-                URI publisher = (URI) st.getObject();
-                this.setPublisher(publisher);
-            } else if (st.getSubject().equals(datasetURI)
-                    && st.getPredicate().equals(DCTERMS.LANGUAGE)) {
-                URI language = (URI) st.getObject();
-                this.setLanguage(language);
-            } else if (st.getSubject().equals(datasetURI)
-                    && st.getPredicate().equals(DCTERMS.LICENSE)) {
-                URI license = (URI) st.getObject();
-                this.setLicense(license);
-            } else if (st.getSubject().equals(datasetURI)
-                    && st.getPredicate().equals(DCTERMS.RIGHTS)) {
-                URI rights = (URI) st.getObject();
-                this.setRights(rights);
-            } else if (st.getSubject().equals(datasetURI)
                     && st.getPredicate().equals(DCAT.LANDING_PAGE)) {
                 URI landingPage = (URI) st.getObject();
                 this.setLandingPage(landingPage);
@@ -137,8 +103,7 @@ public final class DatasetMetadata extends Metadata {
                         stringValue(), XMLSchema.STRING);
                 this.getKeywords().add(keyword);
             }
-        }  
-        checkMetadata();
+        }
         if (this.getThemes().isEmpty()) {
             String errMsg = "No dcat:theme provided";
             LOGGER.error(errMsg);
@@ -171,20 +136,6 @@ public final class DatasetMetadata extends Metadata {
         model.add(this.getCatalogURI(), DCTERMS.MODIFIED, this.getModified());
         this.setModel(model);
         
-    }
-
-    /**
-     * @param publisher the publisher to set
-     */
-    protected void setPublisher(URI publisher) {
-        this.publisher = publisher;
-    }
-
-    /**
-     * @param language the language to set
-     */
-    protected void setLanguage(URI language) {
-        this.language = language;
     }
 
     /**
@@ -221,21 +172,7 @@ public final class DatasetMetadata extends Metadata {
     protected void setLandingPage(URI landingPage) {
         this.landingPage = landingPage;
     }
-
-    /**
-     * @return the publisher
-     */
-    public URI getPublisher() {
-        return publisher;
-    }
-
-    /**
-     * @return the language
-     */
-    public URI getLanguage() {
-        return language;
-    }
-
+    
     /**
      * @return the distribution
      */

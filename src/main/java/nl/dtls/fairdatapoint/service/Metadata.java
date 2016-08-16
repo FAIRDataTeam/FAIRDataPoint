@@ -32,6 +32,8 @@ public class Metadata {
     private URI license;
     private URI rights;
     private URI uri;
+    private URI publisher;
+    private URI language;
     private org.openrdf.model.Model model;
     private static final org.apache.logging.log4j.Logger LOGGER
             = LogManager.getLogger(Metadata.class);
@@ -152,7 +154,15 @@ public class Metadata {
                     && st.getPredicate().equals(DCTERMS.RIGHTS)) {
                 URI rights = (URI) st.getObject();
                 this.setRights(rights);
-            } 
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.PUBLISHER)) {
+                URI publisher = (URI) st.getObject();
+                this.setPublisher(publisher);
+            } else if (st.getSubject().equals(resourceURI)
+                    && st.getPredicate().equals(DCTERMS.LANGUAGE)) {
+                URI language = (URI) st.getObject();
+                this.setLanguage(language);
+            }
         }  
         checkMetadata();
     }    
@@ -237,5 +247,32 @@ public class Metadata {
      */
     public org.openrdf.model.Model getModel() {
         return model;
+    }
+    /**
+     * @return the publisher
+     */
+    public URI getPublisher() {
+        return publisher;
+    }
+
+    /**
+     * @return the language
+     */
+    public URI getLanguage() {
+        return language;
+    }
+
+    /**
+     * @param publisher the publisher to set
+     */
+    protected void setPublisher(URI publisher) {
+        this.publisher = publisher;
+    }
+
+    /**
+     * @param language the language to set
+     */
+    protected void setLanguage(URI language) {
+        this.language = language;
     }
 }
