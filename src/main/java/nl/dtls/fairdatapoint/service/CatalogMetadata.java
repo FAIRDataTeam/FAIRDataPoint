@@ -121,10 +121,7 @@ public final class CatalogMetadata extends Metadata {
     
     private void buildCatalogMetadataModel() {
         org.openrdf.model.Model model = new LinkedHashModel();
-        model.add(this.getUri(), RDF.TYPE, DCAT.TYPE_CATALOG);        
-        if (this.getPublisher() != null) {
-           model.add(this.getUri(), DCTERMS.PUBLISHER, this.getPublisher()); 
-        }
+        model.add(this.getUri(), RDF.TYPE, DCAT.TYPE_CATALOG);
         if (this.getLanguage() != null) {
             model.add(this.getUri(), DCTERMS.LANGUAGE, this.getLanguage());
         }

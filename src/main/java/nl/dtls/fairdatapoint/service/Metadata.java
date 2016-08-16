@@ -6,10 +6,9 @@
 package nl.dtls.fairdatapoint.service;
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.openrdf.model.Literal;
@@ -38,7 +37,7 @@ public class Metadata {
     private URI license;
     private URI rights;
     private URI uri;
-    private URI publisher;
+    private List<URI> publisher = new ArrayList();
     private URI language;
     private List<Statement> statements ;
     private static final org.apache.logging.log4j.Logger LOGGER
@@ -117,8 +116,10 @@ public class Metadata {
         model.add(this.getUri(), DCTERMS.ISSUED, this.getIssued());
         model.add(this.getUri(), DCTERMS.MODIFIED, this.getModified());
         model.add(this.getUri(), DCTERMS.HAS_VERSION, this.getVersion());
-        if (this.getPublisher() != null) {
-           model.add(this.getUri(), DCTERMS.PUBLISHER, this.getPublisher()); 
+        if (!this.getPublisher().isEmpty()) {
+            for(URI publisher:this.getPublisher()) {
+               model.add(this.getUri(), DCTERMS.PUBLISHER, publisher);  
+            }           
         }
         if (this.getLanguage() != null) {
             model.add(this.getUri(), DCTERMS.LANGUAGE, this.getLanguage());
@@ -175,7 +176,7 @@ public class Metadata {
             } else if (st.getSubject().equals(resourceURI)
                     && st.getPredicate().equals(DCTERMS.PUBLISHER)) {
                 URI publisher = (URI) st.getObject();
-                this.setPublisher(publisher);
+                this.getPublisher().add(publisher);
             } else if (st.getSubject().equals(resourceURI)
                     && st.getPredicate().equals(DCTERMS.LANGUAGE)) {
                 URI language = (URI) st.getObject();
@@ -298,7 +299,7 @@ public class Metadata {
     /**
      * @return the publisher
      */
-    public URI getPublisher() {
+    public List<URI> getPublisher() {
         return publisher;
     }
 
@@ -307,14 +308,7 @@ public class Metadata {
      */
     public URI getLanguage() {
         return language;
-    }
-
-    /**
-     * @param publisher the publisher to set
-     */
-    protected void setPublisher(URI publisher) {
-        this.publisher = publisher;
-    }
+    }   
 
     /**
      * @param language the language to set

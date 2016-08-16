@@ -129,10 +129,7 @@ public final class DatasetMetadata extends Metadata {
     
     private void buildDatasetMetadataModel() {
         org.openrdf.model.Model model = new LinkedHashModel();
-        model.add(this.getUri(), RDF.TYPE, DCAT.TYPE_DATASET);        
-        if (this.getPublisher() != null) {
-           model.add(this.getUri(), DCTERMS.PUBLISHER, this.getPublisher()); 
-        }
+        model.add(this.getUri(), RDF.TYPE, DCAT.TYPE_DATASET);
         if (this.getLanguage() != null) {
             model.add(this.getUri(), DCTERMS.LANGUAGE, this.getLanguage());
         }

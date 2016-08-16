@@ -122,6 +122,11 @@ public class DistributionMetadata extends Metadata {
                  Literal byteSize = new LiteralImpl(st.getObject().
                         stringValue(), XMLSchema.STRING);
                 this.setByteSize(byteSize);
+            } else if (st.getSubject().equals(distributionURI)
+                    && st.getPredicate().equals(DCAT.MEDIA_TYPE)) {
+                 Literal mediaType = new LiteralImpl(st.getObject().
+                        stringValue(), XMLSchema.STRING);
+                this.setMediaType(mediaType);
             }
         }
         if (this.getAccessURL() == null && this.getDownloadURL() == null ) {
@@ -145,6 +150,9 @@ public class DistributionMetadata extends Metadata {
         }
         if (this.getFormat() != null) {
             model.add(this.getUri(), DCAT.FORMAT, this.getFormat());
+        }
+        if (this.getMediaType() != null) {
+            model.add(this.getUri(), DCAT.MEDIA_TYPE, this.getMediaType());
         }
         if(this.getDatasetURI() != null) {
            model.add(this.getDatasetURI(), DCAT.DISTRIBUTION, this.getUri());            
