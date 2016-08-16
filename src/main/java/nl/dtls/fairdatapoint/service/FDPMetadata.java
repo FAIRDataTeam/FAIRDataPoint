@@ -59,10 +59,11 @@ public final class FDPMetadata extends Metadata {
         buildFDPMetadataModel();
     }  
     
-    public FDPMetadata(URI fdpURI, List<Statement> metadata) 
+    public FDPMetadata(String fdpURI, List<Statement> metadata) 
             throws MetadataExeception {
-        extractMetadata(fdpURI, metadata);
-        extractFDPMetadata(fdpURI, metadata);
+        this.setUri(new URIImpl(fdpURI));
+        extractMetadata(this.getUri(), metadata);
+        extractFDPMetadata(this.getUri(), metadata);
         this.setStatements(metadata);
     } 
     

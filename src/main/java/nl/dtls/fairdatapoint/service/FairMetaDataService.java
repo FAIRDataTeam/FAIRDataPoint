@@ -26,6 +26,17 @@ public interface FairMetaDataService {
             throws FairMetadataServiceException;  
     
     /**
+     * Get metadata of given fdp URI 
+     * 
+     * @param uri fdp URI
+     * @return FDPMetadata object
+     * @throws FairMetadataServiceException 
+     */
+    FDPMetadata retrieveFDPMetaData(String uri) 
+            throws FairMetadataServiceException; 
+    
+    
+    /**
      * Get metadata of given catalog URI 
      * 
      * @param uri catalog URI

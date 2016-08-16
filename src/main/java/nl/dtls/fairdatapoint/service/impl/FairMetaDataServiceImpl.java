@@ -6,6 +6,7 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtls.fairdatapoint.domain.StoreManager;
 import nl.dtls.fairdatapoint.domain.StoreManagerException;
@@ -40,29 +41,22 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private StoreManager storeManager;
     
     @Override
-    public String retrieveMetaData(String uri, RDFFormat format) 
-            throws FairMetadataServiceException {
-        
-        if(format == null) {
-            String errorMsg = "The RDFFormat can't be NULL";
-            LOGGER.error(errorMsg);
-            throw(new IllegalArgumentException(errorMsg));
-        }
-        String fdpMetadata = null;
+    public FDPMetadata retrieveFDPMetaData(String uri) throws FairMetadataServiceException {
+        FDPMetadata fdpMetadata = null;
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(uri);
-            if(!statements.isEmpty()) {
-                fdpMetadata = RDFUtils.writeToString(statements, format);
-            }
-        } catch (Exception ex) {
-            LOGGER.error("Error retrieving fdp's metadata");
+            fdpMetadata = new FDPMetadata(uri, statements);
+        } catch (StoreManagerException  ex) {
+            LOGGER.error("Error retrieving fdp metadata from the store");
             throw(new FairMetadataServiceException(ex.getMessage()));
-        }
+        } catch (MetadataExeception ex) {
+            LOGGER.error("Error pharsing fdp metadata");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        } 
+        
         return fdpMetadata;
     }
-    
-    
 
     @Override
     public CatalogMetadata retrieveCatalogMetaData(String uri) 
@@ -197,6 +191,29 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error("Error storing distribution metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
+    }    
+    
+    @Override
+    public String retrieveMetaData(String uri, RDFFormat format) 
+            throws FairMetadataServiceException {
+        
+        if(format == null) {
+            String errorMsg = "The RDFFormat can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        String fdpMetadata = null;
+        try {
+            List<Statement> statements = 
+                    storeManager.retrieveResource(uri);
+            if(!statements.isEmpty()) {
+                fdpMetadata = RDFUtils.writeToString(statements, format);
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Error retrieving fdp's metadata");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }
+        return fdpMetadata;
     }
     
 }

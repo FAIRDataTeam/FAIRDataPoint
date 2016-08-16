@@ -74,12 +74,14 @@ public class MetadataController {
             if (!isFDPMetaDataAvailable) {
                 createFDPMetaData(request);
             }
-            responseBody = fairMetaDataService.retrieveMetaData(fdpURI,
+            FDPMetadata fdpMetadata = fairMetaDataService.
+                    retrieveFDPMetaData(fdpURI);
+            responseBody = fdpMetadata.getMetadataAsRDFString(
                     requestedContentType);
             HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
                     requestedContentType);
         } catch (FairMetadataServiceException | MalformedURLException |
-                DatatypeConfigurationException ex) {
+                DatatypeConfigurationException | MetadataExeception ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
         }
