@@ -73,6 +73,18 @@ public class HttpHeadersUtils {
     }
     
     /**
+     * Set response header for the resource not found request
+     * 
+     * @param response  Http response
+     * @return Simple not found message
+     */
+    public static String set404ResponseHeaders(HttpServletResponse response) {              
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+        return "Required resource not found";
+    }
+    
+    /**
      * Set response header for the successful call
      * 
      * @param responseBody ResponseBody

@@ -76,10 +76,16 @@ public class MetadataController {
             }
             FDPMetadata fdpMetadata = fairMetaDataService.
                     retrieveFDPMetaData(fdpURI);
-            responseBody = fdpMetadata.getMetadataAsRDFString(
+            if(fdpMetadata == null) {
+                responseBody = HttpHeadersUtils.set404ResponseHeaders(
+                        response);
+            }
+            else {
+               responseBody = fdpMetadata.getMetadataAsRDFString(
                     requestedContentType);
-            HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
-                    requestedContentType);
+                HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
+                    requestedContentType); 
+            }           
         } catch (FairMetadataServiceException | MalformedURLException |
                 DatatypeConfigurationException | MetadataExeception ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
@@ -147,11 +153,15 @@ public class MetadataController {
                 createFDPMetaData(request);
             }
             CatalogMetadata cMetadata = fairMetaDataService.
-                    retrieveCatalogMetaData(catalogURI);
-            responseBody = cMetadata.
-                    getMetadataAsRDFString(requesetedContentType);
-            HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
-                    requesetedContentType);
+                    retrieveCatalogMetaData(catalogURI);            
+            if(cMetadata == null) {
+                responseBody = HttpHeadersUtils.set404ResponseHeaders(
+                        response);
+            }
+            else {
+               responseBody = cMetadata.getMetadataAsRDFString(requesetedContentType);
+                HttpHeadersUtils.set200ResponseHeaders(responseBody, response, requesetedContentType); 
+            }
         } catch (FairMetadataServiceException | MalformedURLException |
                 DatatypeConfigurationException | MetadataExeception ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
@@ -224,10 +234,16 @@ public class MetadataController {
             }
             DatasetMetadata dMetadata = fairMetaDataService.
                     retrieveDatasetMetaData(datasetURI);
-            responseBody = dMetadata.
-                    getMetadataAsRDFString(requesetedContentType);
-            HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
-                    requesetedContentType);
+            if(dMetadata == null) {
+                responseBody = HttpHeadersUtils.set404ResponseHeaders(
+                        response);
+            }
+            else {
+               responseBody = dMetadata.getMetadataAsRDFString(
+                       requesetedContentType);
+                HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                        requesetedContentType); 
+            }
         } catch (FairMetadataServiceException | MalformedURLException |
                 DatatypeConfigurationException |  MetadataExeception ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
@@ -305,10 +321,16 @@ public class MetadataController {
             }
             DistributionMetadata distMetadata = fairMetaDataService.
                     retrieveDistributionMetaData(distributionURI);
-            responseBody = distMetadata.
-                    getMetadataAsRDFString(requesetedContentType);
-            HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
-                    requesetedContentType);
+            if(distMetadata == null) {
+                responseBody = HttpHeadersUtils.set404ResponseHeaders(
+                        response);
+            }
+            else {
+               responseBody = distMetadata.getMetadataAsRDFString(
+                       requesetedContentType);
+                HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                        requesetedContentType); 
+            }
         } catch (FairMetadataServiceException | MalformedURLException |
                 DatatypeConfigurationException | MetadataExeception ex) {
             HttpHeadersUtils.set500ResponseHeaders(response, ex);

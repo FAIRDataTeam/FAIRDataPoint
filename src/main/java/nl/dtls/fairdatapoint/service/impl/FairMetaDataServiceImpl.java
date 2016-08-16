@@ -42,10 +42,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     
     @Override
     public FDPMetadata retrieveFDPMetaData(String uri) throws FairMetadataServiceException {
-        FDPMetadata fdpMetadata = null;
+        FDPMetadata fdpMetadata;
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(uri);
+            if(statements.isEmpty()) {
+                return null;
+            }
             fdpMetadata = new FDPMetadata(uri, statements);
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving fdp metadata from the store");
@@ -61,10 +64,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public CatalogMetadata retrieveCatalogMetaData(String uri) 
             throws FairMetadataServiceException {
-        CatalogMetadata cMetadata = null;
+        CatalogMetadata cMetadata;
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(uri);
+            if(statements.isEmpty()) {
+                return null;
+            }
             cMetadata = new CatalogMetadata(uri, statements);
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving catalog metadata from the store");
@@ -80,10 +86,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public DatasetMetadata retrieveDatasetMetaData(String uri) 
             throws FairMetadataServiceException {
-        DatasetMetadata dMetadata = null;
+        DatasetMetadata dMetadata;
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(uri);
+            if(statements.isEmpty()) {
+                return null;
+            }
             dMetadata = new DatasetMetadata(uri, statements);
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving dataset metadata from the store");
@@ -98,10 +107,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public DistributionMetadata retrieveDistributionMetaData(String uri) 
             throws FairMetadataServiceException {
-        DistributionMetadata distMetadata = null;
+        DistributionMetadata distMetadata;
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(uri);
+            if(statements.isEmpty()) {
+                return null;
+            }
             distMetadata = new DistributionMetadata(uri, statements);
         } catch (StoreManagerException  ex) {
             LOGGER.error(
