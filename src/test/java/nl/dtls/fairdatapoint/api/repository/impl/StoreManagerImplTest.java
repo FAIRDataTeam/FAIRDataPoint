@@ -5,8 +5,7 @@
  */
 package nl.dtls.fairdatapoint.api.repository.impl;
 
-import nl.dtls.fairdatapoint.api.repository.StoreManager;
-import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
+import java.util.ArrayList;
 import java.util.List;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
@@ -17,6 +16,11 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.vocabulary.DCTERMS;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -99,7 +103,38 @@ public class StoreManagerImplTest {
             StoreManagerException,  
             Exception {  
         List<Statement> statements = 
-                this.testStoreManager.retrieveResource(ExampleFilesUtils.FDP_URI); 
+                testStoreManager.retrieveResource(ExampleFilesUtils.FDP_URI); 
         assertTrue(statements.size() > 0);
-    }    
+    }     
+    /**
+     * The test is excepted to pass 
+     */
+    @Test 
+    public void storeResource() {  
+        List<Statement> statements = ExampleFilesUtils.
+                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE);
+        try {
+            testStoreManager.storeRDF(statements);
+        } catch (StoreManagerException ex) {
+            fail("The test is not excepted to throw StoreManagerException"); 
+        }
+    }
+    
+    /**
+     * The test is excepted to pass 
+     */
+    @Test 
+    public void deleteRource() {
+        try {
+            URI sub = new URIImpl("<http://www.dtls.nl/testSub>");
+            URI obj = new URIImpl("<http://www.dtls.nl/testObj>");
+            Statement stmt = new StatementImpl(sub, RDF.TYPE, obj);
+            List<Statement> sts = new ArrayList();
+            sts.add(stmt);
+            testStoreManager.storeRDF(sts);
+            testStoreManager.removeStatement(stmt);
+        } catch (StoreManagerException ex) {
+            fail("The test is not excepted to throw StoreManagerException"); 
+        }
+    }
 }

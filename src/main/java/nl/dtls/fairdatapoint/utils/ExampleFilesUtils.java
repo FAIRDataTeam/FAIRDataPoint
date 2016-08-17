@@ -6,6 +6,7 @@
 package nl.dtls.fairdatapoint.utils;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.PatternFilenameFilter;
 import com.google.common.io.Resources;
 import java.io.File;
@@ -14,11 +15,13 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openrdf.model.Statement;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -42,6 +45,7 @@ public class ExampleFilesUtils {
     private final static Logger LOGGER = 
             LogManager.getLogger(ExampleFilesUtils.class.getName());
     public static final String FDP_METADATA_FILE = "dtl-fdp.ttl";
+    public static final String VALID_TEST_FILE = "valid-test-file.ttl";
     public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;
     public final static String FDP_URI = "http://localhost/fdp";
     public final static String CATALOG_URI = "http://localhost/fdp/textmining";
@@ -74,17 +78,20 @@ public class ExampleFilesUtils {
      * @param fileName Turtle file name
      * @return File content as a string
      */
-    public static org.openrdf.model.Model getFileContentAsModel(String fileName)  {        
-        org.openrdf.model.Model model = null;  
+    public static List<Statement>  getFileContentAsStatements(String fileName)  {        
+        List<Statement> statements = null;  
         try {
             String content = getFileContentAsString(fileName);
             StringReader reader = new StringReader(content);
+            org.openrdf.model.Model model;
             model = Rio.parse(reader, BASE_URI, FILE_FORMAT);
+            Iterator<Statement> it = model.iterator();
+            statements = ImmutableList.copyOf(it);
         } catch (IOException | RDFParseException | 
                 UnsupportedRDFormatException ex) {
             LOGGER.error("Error getting turle file",ex);          
         }         
-        return model;
+        return statements;
     } 
     
     
