@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.repository;
+package nl.dtls.fairdatapoint.api.repository.impl;
 
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import java.util.List;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
+import nl.dtls.fairdatapoint.api.repository.StoreManager;
+import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

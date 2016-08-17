@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.repository;
+package nl.dtls.fairdatapoint.api.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import nl.dtls.fairdatapoint.api.repository.StoreManager;
+import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
