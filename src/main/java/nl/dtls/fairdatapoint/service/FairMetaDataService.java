@@ -18,17 +18,7 @@ import org.openrdf.rio.RDFFormat;
  * @version 0.2
  */
 public interface FairMetaDataService {   
-    /**
-     * Get metadata of given URI
-     * 
-     * @param uri
-     * @param format RDFFormat serialization formats
-     * @return  String object  
-     * @throws FairMetadataServiceException  
-     */
-    String retrieveMetaData(String uri, RDFFormat format) 
-            throws FairMetadataServiceException;  
-    
+        
     /**
      * Get metadata of given fdp URI 
      * 

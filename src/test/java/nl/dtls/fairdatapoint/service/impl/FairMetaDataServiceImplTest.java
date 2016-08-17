@@ -6,6 +6,10 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
+import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
+import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
+import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
+import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -37,31 +41,15 @@ public class FairMetaDataServiceImplTest {
     @Autowired
     private FairMetaDataService fairMetaDataService;
     
-    /**
-     * The RDFFormat can't be NULL, this test is excepted to throw 
-     * IllegalArgumentException exception 
-     */
-    @Test(expected = IllegalArgumentException.class) 
-    public void nullRDFFormat(){
-        try {
-            this.fairMetaDataService.retrieveMetaData(
-                    ExampleFilesUtils.FDP_URI, null);
-        } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
-        }
-    }
-    
+      
     /**
      * Test to retrieve FDP metadata, this test is excepted to pass
      */
     @Test
-    public void retrieveMetaData(){
+    public void retrieveFDPMetaData(){
         try {
-            String actual = this.fairMetaDataService.retrieveMetaData(
-                    ExampleFilesUtils.FDP_URI, RDFFormat.TURTLE);
-            assertNotNull(actual);
+            FDPMetadata metadata = fairMetaDataService.
+                    retrieveFDPMetaData(ExampleFilesUtils.FDP_URI);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
@@ -77,9 +65,9 @@ public class FairMetaDataServiceImplTest {
     public void retrieveNonExitingCatalogMetaData(){
         try {
             String catalogURI = ExampleFilesUtils.FDP_URI + "/dummpID676";
-            String actual = this.fairMetaDataService.retrieveMetaData(
-                    catalogURI, RDFFormat.TURTLE);
-            assertNull(actual);
+            CatalogMetadata metadata = fairMetaDataService.
+                    retrieveCatalogMetaData(catalogURI);
+            assertNull(metadata);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
@@ -93,9 +81,9 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveCatalogMetaData(){
         try {
-            String actual = this.fairMetaDataService.retrieveMetaData(
-                    ExampleFilesUtils.CATALOG_URI, RDFFormat.TURTLE);
-            assertNotNull(actual);
+            CatalogMetadata metadata = fairMetaDataService.
+                    retrieveCatalogMetaData(ExampleFilesUtils.CATALOG_URI);
+            assertNotNull(metadata);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
@@ -111,9 +99,9 @@ public class FairMetaDataServiceImplTest {
     public void retrieveNonExitingdDatasetMetaData(){
         try {
             String datasetURI = ExampleFilesUtils.CATALOG_URI + "/dummpID676";
-            String actual = this.fairMetaDataService.retrieveMetaData(
-                    datasetURI, RDFFormat.TURTLE);
-            assertNull(actual);
+            DatasetMetadata metadata = fairMetaDataService.
+                    retrieveDatasetMetaData(datasetURI);
+            assertNull(metadata);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
@@ -127,9 +115,9 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveDatasetMetaData(){
         try {
-            String actual = this.fairMetaDataService.retrieveMetaData(
-                    ExampleFilesUtils.DATASET_URI, RDFFormat.TURTLE);
-            assertNotNull(actual);
+            DatasetMetadata metadata = fairMetaDataService.
+                    retrieveDatasetMetaData(ExampleFilesUtils.DATASET_URI);
+            assertNotNull(metadata);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
@@ -144,9 +132,9 @@ public class FairMetaDataServiceImplTest {
     public void retrieveNonExitingDatasetDistribution(){
         try {
             String distributionURI = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-            String actual = this.fairMetaDataService.
-                    retrieveMetaData(distributionURI, RDFFormat.TURTLE);
-            assertNull(actual);
+            DistributionMetadata metadata = fairMetaDataService.
+                    retrieveDistributionMetaData(distributionURI);
+            assertNull(metadata);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
@@ -160,10 +148,10 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveDatasetDistribution(){
         try {
-            String actual = this.fairMetaDataService.
-                    retrieveMetaData(ExampleFilesUtils.DISTRIBUTION_URI, 
-                            RDFFormat.TURTLE);
-            assertNotNull(actual);
+            DistributionMetadata metadata = fairMetaDataService.
+                    retrieveDistributionMetaData(
+                            ExampleFilesUtils.DISTRIBUTION_URI);
+            assertNotNull(metadata);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
