@@ -1,10 +1,13 @@
+package nl.dtls.fairdatapoint.api.domain;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service;
 
+
+import nl.dtls.fairdatapoint.api.domain.Metadata;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.StringReader;

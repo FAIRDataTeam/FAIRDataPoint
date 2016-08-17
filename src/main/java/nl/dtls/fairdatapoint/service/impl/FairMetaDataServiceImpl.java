@@ -6,17 +6,16 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.util.List;
-import java.util.logging.Level;
 import javax.xml.datatype.DatatypeConfigurationException;
-import nl.dtls.fairdatapoint.domain.StoreManager;
-import nl.dtls.fairdatapoint.domain.StoreManagerException;
-import nl.dtls.fairdatapoint.service.CatalogMetadata;
-import nl.dtls.fairdatapoint.service.DatasetMetadata;
-import nl.dtls.fairdatapoint.service.DistributionMetadata;
-import nl.dtls.fairdatapoint.service.FDPMetadata;
+import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
+import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
+import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
+import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
+import nl.dtls.fairdatapoint.api.repository.StoreManager;
+import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.service.MetadataExeception;
+import nl.dtls.fairdatapoint.api.domain.MetadataExeception;
 import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

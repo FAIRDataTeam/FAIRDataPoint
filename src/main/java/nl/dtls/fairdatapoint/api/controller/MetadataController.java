@@ -5,21 +5,19 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
-import nl.dtls.fairdatapoint.service.DistributionMetadata;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.net.MalformedURLException;
-import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
+import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
+import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
+import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
+import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
 import nl.dtls.fairdatapoint.api.utils.controller.HttpHeadersUtils;
 import nl.dtls.fairdatapoint.api.utils.controller.LoggerUtils;
-import nl.dtls.fairdatapoint.service.CatalogMetadata;
-import nl.dtls.fairdatapoint.service.DatasetMetadata;
-import nl.dtls.fairdatapoint.service.DistributionMetadata;
-import nl.dtls.fairdatapoint.service.MetadataExeception;
-import nl.dtls.fairdatapoint.service.FDPMetadata;
+import nl.dtls.fairdatapoint.api.domain.MetadataExeception;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.http.HttpHeaders;

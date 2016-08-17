@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import nl.dtls.fairdatapoint.domain.StoreManagerException;
+import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.repository.Repository;

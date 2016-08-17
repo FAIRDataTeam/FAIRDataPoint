@@ -5,6 +5,10 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
+import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
+import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
+import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
 import org.openrdf.rio.RDFFormat;
 
 /**

@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.domain;
+package nl.dtls.fairdatapoint.api.repository;
 
+import nl.dtls.fairdatapoint.api.repository.StoreManager;
+import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import java.util.List;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;

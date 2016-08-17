@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.domain;
+package nl.dtls.fairdatapoint.api.repository;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -150,7 +150,7 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * Method to close repository connection
      * 
-     * @throws nl.dtls.fairdatapoint.domain.StoreManagerException
+     * @throws nl.dtls.fairdatapoint.api.repository.StoreManagerException
      */
     private void closeRepositoryConnection(RepositoryConnection conn) throws 
             StoreManagerException {

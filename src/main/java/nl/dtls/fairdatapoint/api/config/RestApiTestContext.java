@@ -6,9 +6,9 @@
 package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
-import nl.dtls.fairdatapoint.domain.StoreManager;
-import nl.dtls.fairdatapoint.domain.StoreManagerException;
-import nl.dtls.fairdatapoint.domain.StoreManagerImpl;
+import nl.dtls.fairdatapoint.api.repository.StoreManager;
+import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
+import nl.dtls.fairdatapoint.api.repository.StoreManagerImpl;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
