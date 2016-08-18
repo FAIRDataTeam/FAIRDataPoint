@@ -36,5 +36,17 @@ public interface StoreManager {
      * @param value
      * @throws StoreManagerException 
      */
-    void removeStatement (Resource rsrc, URI uri, Value value) throws StoreManagerException;
+    void removeStatement (Resource rsrc, URI uri, Value value) 
+            throws StoreManagerException;
+    /**
+     * Check if a statement exist in a triple store
+     * 
+     * @param rsrc
+     * @param pred
+     * @param value
+     * @return
+     * @throws StoreManagerException 
+     */
+    boolean isStatementExist(Resource rsrc, URI pred, Value value) 
+            throws StoreManagerException;
 }

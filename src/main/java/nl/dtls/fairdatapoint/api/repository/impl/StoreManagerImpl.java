@@ -91,7 +91,43 @@ public class StoreManagerImpl implements StoreManager {
             }
         }
         return statements;
-    }   
+    } 
+    
+    /**
+     * Check if a statement exist in a triple store
+     * 
+     * @param rsrc
+     * @param pred
+     * @param value
+     * @return
+     * @throws StoreManagerException 
+     */
+    @Override
+    public boolean isStatementExist(Resource rsrc, URI pred, Value value) 
+            throws StoreManagerException { 
+        
+        boolean isStatementExist = false;       
+        RepositoryConnection conn = null; 
+        try {
+            conn = getRepositoryConnection();  
+            LOGGER.info("Check if statements exists");
+           isStatementExist = conn.hasStatement(rsrc, pred, value, false);
+            
+        } catch (RepositoryException ex) {            
+            LOGGER.error("Error checking statement's existence");
+            throw (new StoreManagerException(ex.getMessage()));
+        }
+        finally {
+            try {
+                closeRepositoryConnection(conn);
+            } catch (StoreManagerException e) {                
+                LOGGER.error("Error closing connection",e); 
+                throw (new StoreManagerException(e.getMessage()));
+                
+            }
+        }
+        return isStatementExist;
+    } 
     
     /**
      * Store string RDF to the repository
@@ -126,15 +162,16 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * Remove a statement from the repository
      * 
+     * @param pred
      * @throws StoreManagerException 
      */
     @Override
-    public void removeStatement (Resource rsrc, URI uri, Value value) throws 
+    public void removeStatement (Resource rsrc, URI pred, Value value) throws 
             StoreManagerException {
         RepositoryConnection conn = null;
         try {
             conn = getRepositoryConnection();
-            conn.remove(rsrc, uri, value);
+            conn.remove(rsrc, pred, value);
             //conn.remove(statement);
         } catch (RepositoryException ex) {
             LOGGER.error("Error storing RDF",ex);

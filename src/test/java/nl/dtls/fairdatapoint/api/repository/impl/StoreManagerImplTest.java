@@ -11,6 +11,7 @@ import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
@@ -20,7 +21,6 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,4 +138,40 @@ public class StoreManagerImplTest {
             fail("The test is not excepted to throw StoreManagerException"); 
         }
     }
+    
+    /**
+      * The test is excepted to retrieve return false
+      * 
+      * @throws RepositoryException
+      * @throws StoreManagerException
+      * @throws Exception 
+      */
+    @Test
+    public void checkNonExitingResource() throws RepositoryException, 
+            StoreManagerException,  
+            Exception {
+        String uri = "http://localhost/dummy";             
+        boolean isStatementExist = 
+                testStoreManager.isStatementExist(new URIImpl(uri), null, null);
+        assertFalse(isStatementExist);
+    }
+    
+    /**
+      * The test is excepted to retrieve return true
+      * 
+      * @throws RepositoryException
+      * @throws StoreManagerException
+      * @throws Exception 
+      */
+    @Test
+    public void checkExitingResource() throws RepositoryException, 
+            StoreManagerException,  
+            Exception {            
+        boolean isStatementExist = 
+                testStoreManager.isStatementExist(new URIImpl(
+                        ExampleFilesUtils.FDP_URI), null, null);
+        assertTrue(isStatementExist);
+    }
+    
+    
 }
