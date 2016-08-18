@@ -14,6 +14,7 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openrdf.model.Resource;
@@ -44,6 +45,14 @@ public class StoreManagerImplTest {
     
     @Autowired
     StoreManager testStoreManager;
+    
+    @Before
+    public void storeExampleFile() throws StoreManagerException {
+        List<Statement> sts = ExampleFilesUtils.
+                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE);
+        testStoreManager.storeRDF(sts);           
+    }
+
      
      /**
       * The URI of a RDF resource can't be NULL, this test is excepted 
@@ -102,9 +111,9 @@ public class StoreManagerImplTest {
     @Test 
     public void retrieveExitingResource() throws RepositoryException, 
             StoreManagerException,  
-            Exception {  
+            Exception {
         List<Statement> statements = 
-                testStoreManager.retrieveResource(ExampleFilesUtils.FDP_URI); 
+                testStoreManager.retrieveResource(ExampleFilesUtils.TEST_SUB_URI); 
         assertTrue(statements.size() > 0);
     }     
     /**
@@ -169,7 +178,7 @@ public class StoreManagerImplTest {
             Exception {            
         boolean isStatementExist = 
                 testStoreManager.isStatementExist(new URIImpl(
-                        ExampleFilesUtils.FDP_URI), null, null);
+                        ExampleFilesUtils.TEST_SUB_URI), null, null);
         assertTrue(isStatementExist);
     }
     

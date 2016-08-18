@@ -58,7 +58,8 @@ public class ExampleFilesUtils {
             "http://localhost/fdp/textmining/gene-disease-association_lumc";
     public final static String DISTRIBUTION_URI = 
             "http://localhost/fdp/textmining/gene-disease-association_lumc/sparql";
-    public final static String BASE_URI = "http://localhost/";    
+    public final static String BASE_URI = "http://localhost/";   
+    public final static String TEST_SUB_URI = "http://www.dtls.nl/test";  
     public static final String VALID_TEST_FILE = "valid-test-file.ttl";
     public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;
     
@@ -135,14 +136,14 @@ public class ExampleFilesUtils {
             IOException, RDFParseException{ 
         Sail store = new MemoryStore(); 
         Repository repository = new SailRepository(store);
-        repository.initialize();
-        RepositoryConnection conn = repository.getConnection();
-        for (String fileName:ExampleFilesUtils.getTurtleFileNames()) {
-            String content = ExampleFilesUtils.getFileContentAsString(fileName);
-            StringReader reader = new StringReader(content);
-            conn.add(reader, BASE_URI, FILE_FORMAT); 
-        }
-        conn.close();
+//        repository.initialize();
+//        RepositoryConnection conn = repository.getConnection();
+//        for (String fileName:ExampleFilesUtils.getTurtleFileNames()) {
+//            String content = ExampleFilesUtils.getFileContentAsString(fileName);
+//            StringReader reader = new StringReader(content);
+//            conn.add(reader, BASE_URI, FILE_FORMAT); 
+//        }
+//        conn.close();
         return repository;
     }
     
