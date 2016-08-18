@@ -32,7 +32,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * StoreManagerImpl class unit tests
- * 
+ *
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
  * @version 0.2
@@ -41,99 +41,106 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @ContextConfiguration(classes = {RestApiTestContext.class})
 @DirtiesContext
-public class StoreManagerImplTest {  
-    
+public class StoreManagerImplTest {
+
     @Autowired
     StoreManager testStoreManager;
-    
+
     @Before
     public void storeExampleFile() throws StoreManagerException {
         List<Statement> sts = ExampleFilesUtils.
                 getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE);
-        testStoreManager.storeRDF(sts);           
+        testStoreManager.storeRDF(sts);
     }
 
-     
-     /**
-      * The URI of a RDF resource can't be NULL, this test is excepted 
-      * to throw IllegalArgumentException
-      */
-     @Test(expected = IllegalArgumentException.class)      
-     public void nullURI() {           
-             
+    /**
+     * The URI of a RDF resource can't be NULL, this test is excepted to throw
+     * IllegalArgumentException
+     */
+    @DirtiesContext
+    @Test(expected = IllegalArgumentException.class)
+    public void nullURI() {
+
         try {
-            testStoreManager.retrieveResource(null); 
+            testStoreManager.retrieveResource(null);
             fail("No RDF statements excepted for NULL URI");
         } catch (StoreManagerException ex) {
-            fail("This test is not excepted to throw StoreManagerException"); 
+            fail("This test is not excepted to throw StoreManagerException");
         }
-     }  
-     
-     /**
-      * The URI of a RDF resource can't be EMPTY, this test is excepted 
-      * to throw IllegalArgumentException
-      */
-     @Test(expected = IllegalArgumentException.class)
-     public void emptyURI(){
-         String uri = "";  
-         try {
-             testStoreManager.retrieveResource(uri);  
-             fail("No RDF statements excepted for NULL URI");       
-         } catch (StoreManagerException ex) {             
-             fail("The test is not excepted to throw RepositoryException or "
-                    + "StoreManagerException");        
-         }
-     }
-     
-     /**
-      * The test is excepted to retrieve ZERO statements
-      * 
-      * @throws RepositoryException
-      * @throws StoreManagerException
-      * @throws Exception 
-      */
-    @Test
-    public void retrieveNonExitingResource() throws RepositoryException, 
-            StoreManagerException,  
-            Exception {
-        String uri = "http://localhost/dummy";             
-        List<Statement> statements = 
-                testStoreManager.retrieveResource(uri); 
-        assertTrue(statements.isEmpty());
-    }   
-    
+    }
+
     /**
-     * The test is excepted retrieve to retrieve one or more statements
+     * The URI of a RDF resource can't be EMPTY, this test is excepted to throw
+     * IllegalArgumentException
+     */
+    @DirtiesContext
+    @Test(expected = IllegalArgumentException.class)
+    public void emptyURI() {
+        String uri = "";
+        try {
+            testStoreManager.retrieveResource(uri);
+            fail("No RDF statements excepted for NULL URI");
+        } catch (StoreManagerException ex) {
+            fail("The test is not excepted to throw RepositoryException or "
+                    + "StoreManagerException");
+        }
+    }
+
+    /**
+     * The test is excepted to retrieve ZERO statements
+     *
      * @throws RepositoryException
      * @throws StoreManagerException
-     * @throws Exception 
+     * @throws Exception
      */
-    @Test 
-    public void retrieveExitingResource() throws RepositoryException, 
-            StoreManagerException,  
+    @DirtiesContext
+    @Test
+    public void retrieveNonExitingResource() throws RepositoryException,
+            StoreManagerException,
             Exception {
-        List<Statement> statements = 
-                testStoreManager.retrieveResource(ExampleFilesUtils.TEST_SUB_URI); 
-        assertTrue(statements.size() > 0);
-    }     
+        String uri = "http://localhost/dummy";
+        List<Statement> statements
+                = testStoreManager.retrieveResource(uri);
+        assertTrue(statements.isEmpty());
+    }
+
     /**
-     * The test is excepted to pass 
+     * The test is excepted retrieve to retrieve one or more statements
+     *
+     * @throws RepositoryException
+     * @throws StoreManagerException
+     * @throws Exception
      */
-    @Test 
-    public void storeResource() {  
+    @DirtiesContext
+    @Test
+    public void retrieveExitingResource() throws RepositoryException,
+            StoreManagerException,
+            Exception {
+        List<Statement> statements
+                = testStoreManager.retrieveResource(ExampleFilesUtils.TEST_SUB_URI);
+        assertTrue(statements.size() > 0);
+    }
+
+    /**
+     * The test is excepted to pass
+     */
+    @DirtiesContext
+    @Test
+    public void storeResource() {
         List<Statement> statements = ExampleFilesUtils.
                 getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE);
         try {
             testStoreManager.storeRDF(statements);
         } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw StoreManagerException"); 
+            fail("The test is not excepted to throw StoreManagerException");
         }
     }
-    
+
     /**
-     * The test is excepted to pass 
+     * The test is excepted to pass
      */
-    @Test 
+    @DirtiesContext
+    @Test
     public void deleteRource() {
         try {
             Resource sub = new URIImpl("<http://www.dtls.nl/testSub>");
@@ -144,43 +151,44 @@ public class StoreManagerImplTest {
             testStoreManager.storeRDF(sts);
             testStoreManager.removeStatement(sub, RDF.TYPE, null);
         } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw StoreManagerException"); 
+            fail("The test is not excepted to throw StoreManagerException");
         }
     }
-    
+
     /**
-      * The test is excepted to retrieve return false
-      * 
-      * @throws RepositoryException
-      * @throws StoreManagerException
-      * @throws Exception 
-      */
+     * The test is excepted to retrieve return false
+     *
+     * @throws RepositoryException
+     * @throws StoreManagerException
+     * @throws Exception
+     */
+    @DirtiesContext
     @Test
-    public void checkNonExitingResource() throws RepositoryException, 
-            StoreManagerException,  
+    public void checkNonExitingResource() throws RepositoryException,
+            StoreManagerException,
             Exception {
-        String uri = "http://localhost/dummy";             
-        boolean isStatementExist = 
-                testStoreManager.isStatementExist(new URIImpl(uri), null, null);
+        String uri = "http://localhost/dummy";
+        boolean isStatementExist
+                = testStoreManager.isStatementExist(new URIImpl(uri), null, null);
         assertFalse(isStatementExist);
     }
-    
+
     /**
-      * The test is excepted to retrieve return true
-      * 
-      * @throws RepositoryException
-      * @throws StoreManagerException
-      * @throws Exception 
-      */
+     * The test is excepted to retrieve return true
+     *
+     * @throws RepositoryException
+     * @throws StoreManagerException
+     * @throws Exception
+     */
+    @DirtiesContext
     @Test
-    public void checkExitingResource() throws RepositoryException, 
-            StoreManagerException,  
-            Exception {            
-        boolean isStatementExist = 
-                testStoreManager.isStatementExist(new URIImpl(
-                        ExampleFilesUtils.TEST_SUB_URI), null, null);
+    public void checkExitingResource() throws RepositoryException,
+            StoreManagerException,
+            Exception {
+        boolean isStatementExist
+                = testStoreManager.isStatementExist(new URIImpl(
+                                ExampleFilesUtils.TEST_SUB_URI), null, null);
         assertTrue(isStatementExist);
     }
-    
-    
+
 }
