@@ -9,19 +9,14 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://localhost/fdp/textmining/gene-disease-association_lumc> a dcat:Dataset ;
-	dct:title "Gene disease association (LUMC)"@en ;
-        rdfs:label "Gene disease association (LUMC)"@en ;
+<> a dcat:Dataset ;
+	dct:title "Gene disease association (LUMC)" ;
+        rdfs:label "Gene disease association (LUMC)";
 	dct:language lang:en ;
         dct:hasVersion "1.0" ;
 	dct:description "Gene disease association dataset from LUMC" ;
-	dct:identifier "gene-disease-association_lumc" ;
-	dcat:keyword "GDA lumc" , "text mining", "gene-disease association" ;
-        dct:issued "2016-02-03T13:24:12+00:00"^^xsd:dateTime ;
-        dct:modified "2016-02-24T13:25:12+00:00"^^xsd:dateTime ; 
+	dcat:keyword "GDA lumc" , "text mining", "gene-disease association" ; 
 	dcat:landingPage <http://rdf.biosemantics.org/> ;        
 	dct:publisher <http://orcid.org/0000-0002-1215-167X> ;
 	dcat:theme sio:statistical-association, <http://dbpedia.org/resource/Text_mining>  ;
-	dct:creator <http://orcid.org/0000-0001-8888-635X>, <http://orcid.org/0000-0002-1215-167X>, <http://orcid.org/0000-0003-3473-2325>, <http://orcid.org/0000-0002-4182-7560> ;
-        dcat:distribution <http://localhost/fdp/textmining/gene-disease-association_lumc/textfile> ;
-        dcat:distribution <http://localhost/fdp/textmining/gene-disease-association_lumc/sparql> .
+	dct:creator <http://orcid.org/0000-0001-8888-635X> .

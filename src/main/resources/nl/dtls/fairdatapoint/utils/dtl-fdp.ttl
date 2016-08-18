@@ -7,19 +7,14 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix fdp: <http://localhost/fdp/> .
 
-<http://localhost/fdp> dct:title "RD connect FAIR data point(beta)"@en ;
-        a ldp:Container;
+<> dct:title "RD connect FAIR data point(beta)" ;
         dct:language lang:en;
         ldp:contains fdp:textmining ;
-        rdfs:label "RD connect FAIR data point(beta)"@en ;
+        rdfs:label "RD connect FAIR data point(beta)" ;
         dct:description "This FDP provides metadata on textmining data sets." ;
-        dct:identifier "17d8e030-ca61-11e5-9956-625662870761" ;
-        dct:title "DTL FAIR data point(beta)"@en ;
-        rdfs:seeAlso <http://localhost/fdp/swagger-ui.html>;
+        dct:title "DTL FAIR data point(beta)";
         dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0>;
-        dct:hasVersion "0.1 Beta";
-        dct:issued "2016-02-03T11:40:12+00:00"^^xsd:dateTime ;
-        dct:modified "2016-05-23T10:11:12+00:00"^^xsd:dateTime ;
+        dct:hasVersion "0.1";
         dct:publisher <http://orcid.org/0000-0002-1215-167X>;
         fdpo:contact <http://orcid.org/0000-0002-1215-167X>;
         fdpo:APIVersion "0.1 Beta" .
