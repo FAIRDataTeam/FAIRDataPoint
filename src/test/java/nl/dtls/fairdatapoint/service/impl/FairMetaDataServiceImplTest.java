@@ -5,11 +5,13 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
 import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
 import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
 import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
+import nl.dtls.fairdatapoint.api.domain.MetadataExeception;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -18,7 +20,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,6 +42,21 @@ public class FairMetaDataServiceImplTest {
     @Autowired
     private FairMetaDataService fairMetaDataService;
     
+    /**
+     * Test to store FDP metadata, this test is excepted to pass
+     */
+    @Test
+    public void storeFDPMetaData(){
+        try {
+            String exampleFDPURL = "http://example.com/fdp";
+            FDPMetadata fdpMetaData = new FDPMetadata(exampleFDPURL);
+            fairMetaDataService.storeFDPMetaData(fdpMetaData);
+        } catch (Exception ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "any exception";
+            fail(errorMsg);
+        }
+    }
       
     /**
      * Test to retrieve FDP metadata, this test is excepted to pass
@@ -50,6 +66,7 @@ public class FairMetaDataServiceImplTest {
         try {
             FDPMetadata metadata = fairMetaDataService.
                     retrieveFDPMetaData(ExampleFilesUtils.FDP_URI);
+            assertNotNull(metadata);
         } catch (FairMetadataServiceException ex) {
             String errorMsg = "The test is excepted to throw "
                     + "FairMetadataServiceException";
@@ -58,7 +75,27 @@ public class FairMetaDataServiceImplTest {
     }
     
     /**
-     * Test to retrieve NonExiting catalog metadata, this test is excepted \
+     * Test to store catalog metadata, this test is excepted to pass
+     */
+    @Test
+    public void storeCatalogMetaData(){
+        try {
+            String cMetadata = ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.CATALOG_METADATA_FILE);
+            CatalogMetadata metadata = new CatalogMetadata(cMetadata, 
+                    ExampleFilesUtils.CATALOG_ID, ExampleFilesUtils.FDP_URI, 
+                    ExampleFilesUtils.FILE_FORMAT);
+            fairMetaDataService.storeCatalogMetaData(metadata);
+        } catch (MetadataExeception | DatatypeConfigurationException | 
+                FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "any exception";
+            fail(errorMsg);
+        }
+    }
+    
+    /**
+     * Test to retrieve NonExiting catalog metadata, this test is excepted
      * to pass
      */
     @Test
@@ -89,7 +126,27 @@ public class FairMetaDataServiceImplTest {
                     + "FairMetadataServiceException";
             fail(errorMsg);
         }
-    }   
+    } 
+    
+    /**
+     * Test to store dataset metadata, this test is excepted to pass
+     */
+    @Test
+    public void storeDatasetMetaData(){
+        try {
+            String dMetadata = ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DATASET_METADATA_FILE);
+            DatasetMetadata metadata = new DatasetMetadata(dMetadata, 
+                    ExampleFilesUtils.DATASET_ID, ExampleFilesUtils.CATALOG_URI, 
+                    ExampleFilesUtils.FILE_FORMAT);
+            fairMetaDataService.storeDatasetMetaData(metadata);
+        } catch (MetadataExeception | DatatypeConfigurationException | 
+                FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "any exception";
+            fail(errorMsg);
+        }
+    }
     
     /**
      * Test to retrieve NonExiting dataset metadata, this test is excepted 
@@ -124,6 +181,28 @@ public class FairMetaDataServiceImplTest {
             fail(errorMsg);
         }
     }  
+    
+    /**
+     * Test to store dataset distribution, this test is excepted to pass
+     */
+    @Test
+    public void storeDistributionMetaData(){
+        try {
+            String distMetadata = ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
+            DistributionMetadata metadata = new DistributionMetadata(
+                    distMetadata, ExampleFilesUtils.DISTRIBUTION_ID, 
+                    ExampleFilesUtils.DATASET_URI, 
+                    ExampleFilesUtils.FILE_FORMAT);
+            fairMetaDataService.storeDistributionMetaData(metadata);
+        } catch (MetadataExeception | DatatypeConfigurationException | 
+                FairMetadataServiceException ex) {
+            String errorMsg = "The test is excepted to throw "
+                    + "any exception";
+            fail(errorMsg);
+        }
+    }    
+    
     /**
      * Test to retrieve non exiting distribution metadata, this test is 
      * excepted to pass
@@ -131,7 +210,8 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveNonExitingDatasetDistribution(){
         try {
-            String distributionURI = ExampleFilesUtils.DATASET_URI + "/dummpID676";
+            String distributionURI = ExampleFilesUtils.DATASET_URI + 
+                    "/dummpID676";
             DistributionMetadata metadata = fairMetaDataService.
                     retrieveDistributionMetaData(distributionURI);
             assertNull(metadata);

@@ -45,15 +45,22 @@ public class ExampleFilesUtils {
     private final static Logger LOGGER = 
             LogManager.getLogger(ExampleFilesUtils.class.getName());
     public static final String FDP_METADATA_FILE = "dtl-fdp.ttl";
-    public static final String VALID_TEST_FILE = "valid-test-file.ttl";
-    public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;
+    public static final String CATALOG_METADATA_FILE = "textmining-catalog.ttl";
+    public static final String CATALOG_ID = "textmining";
+    public static final String DATASET_METADATA_FILE = "gda-lumc.ttl";
+    public static final String DATASET_ID = "gene-disease-association_lumc";
+    public static final String DISTRIBUTION_METADATA_FILE = 
+            "gda-lumc-sparql.ttl";
+    public static final String DISTRIBUTION_ID = "sparql";
     public final static String FDP_URI = "http://localhost/fdp";
     public final static String CATALOG_URI = "http://localhost/fdp/textmining";
     public final static String DATASET_URI = 
             "http://localhost/fdp/textmining/gene-disease-association_lumc";
     public final static String DISTRIBUTION_URI = 
             "http://localhost/fdp/textmining/gene-disease-association_lumc/sparql";
-    public final static String BASE_URI = "http://localhost/";
+    public final static String BASE_URI = "http://localhost/";    
+    public static final String VALID_TEST_FILE = "valid-test-file.ttl";
+    public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;
     
     /**
      * Method to read the content of a turtle file
