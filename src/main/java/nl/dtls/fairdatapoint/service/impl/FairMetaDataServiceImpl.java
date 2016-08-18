@@ -6,6 +6,7 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
 import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
@@ -151,16 +152,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
-        try {
-            Statement stmt = new StatementImpl(catalogMetadata.getFdpUri(), 
+        try {            
+            storeManager.removeStatement(catalogMetadata.getFdpUri(), 
                     DCTERMS.MODIFIED, null);
-            storeManager.removeStatement(stmt);
             storeManager.storeRDF(catalogMetadata.getStatements());
             
-        } catch (Exception ex) {
+        } catch (StoreManagerException ex) {
             LOGGER.error("Error storing catalog metadata");
-            throw(new FairMetadataServiceException(ex.getMessage()));
-        }
+            throw(new FairMetadataServiceException(ex.getMessage()));        
+        } 
     }
     
     @Override
@@ -173,9 +173,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw(new IllegalArgumentException(errorMsg));
         }
         try {
-            Statement stmt = new StatementImpl(datasetMetadata.getCatalogURI(), 
+            storeManager.removeStatement(datasetMetadata.getCatalogURI(), 
                     DCTERMS.MODIFIED, null);
-            storeManager.removeStatement(stmt);
             storeManager.storeRDF(datasetMetadata.getStatements());
             
         } catch (Exception ex) {
@@ -193,9 +192,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw(new IllegalArgumentException(errorMsg));
         }
         try {
-            Statement stmt = new StatementImpl(distributionMetadata.
+            storeManager.removeStatement(distributionMetadata.
                     getDatasetURI(), DCTERMS.MODIFIED, null);
-            storeManager.removeStatement(stmt);
             storeManager.storeRDF(distributionMetadata.getStatements());
             
         } catch (Exception ex) {

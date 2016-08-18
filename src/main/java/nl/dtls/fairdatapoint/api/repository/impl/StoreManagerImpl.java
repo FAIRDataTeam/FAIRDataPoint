@@ -10,8 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -124,16 +126,16 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * Remove a statement from the repository
      * 
-     * @param statement
      * @throws StoreManagerException 
      */
     @Override
-    public void removeStatement (Statement statement) throws 
+    public void removeStatement (Resource rsrc, URI uri, Value value) throws 
             StoreManagerException {
         RepositoryConnection conn = null;
         try {
             conn = getRepositoryConnection();
-            conn.remove(statement);
+            conn.remove(rsrc, uri, value);
+            //conn.remove(statement);
         } catch (RepositoryException ex) {
             LOGGER.error("Error storing RDF",ex);
             throw (new StoreManagerException(ex.getMessage()));

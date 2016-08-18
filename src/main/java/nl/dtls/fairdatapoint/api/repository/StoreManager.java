@@ -6,7 +6,10 @@
 package nl.dtls.fairdatapoint.api.repository;
 
 import java.util.List;
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 
 /**
  *
@@ -28,8 +31,10 @@ public interface StoreManager {
     /**
      * Remove a statement from the repository
      * 
-     * @param statement
+     * @param rsrc
+     * @param uri
+     * @param value
      * @throws StoreManagerException 
      */
-    void removeStatement (Statement statement) throws StoreManagerException;
+    void removeStatement (Resource rsrc, URI uri, Value value) throws StoreManagerException;
 }

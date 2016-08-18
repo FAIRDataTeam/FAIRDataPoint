@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.StatementImpl;
@@ -126,13 +127,13 @@ public class StoreManagerImplTest {
     @Test 
     public void deleteRource() {
         try {
-            URI sub = new URIImpl("<http://www.dtls.nl/testSub>");
+            Resource sub = new URIImpl("<http://www.dtls.nl/testSub>");
             URI obj = new URIImpl("<http://www.dtls.nl/testObj>");
             Statement stmt = new StatementImpl(sub, RDF.TYPE, obj);
             List<Statement> sts = new ArrayList();
             sts.add(stmt);
             testStoreManager.storeRDF(sts);
-            testStoreManager.removeStatement(stmt);
+            testStoreManager.removeStatement(sub, RDF.TYPE, null);
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw StoreManagerException"); 
         }
