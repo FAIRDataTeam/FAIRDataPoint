@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Api(description = "FDP metadata")
-@RequestMapping(value = "/")
+@RequestMapping(value = "/fdp")
 public class MetadataController {
 
     private final static Logger LOGGER
