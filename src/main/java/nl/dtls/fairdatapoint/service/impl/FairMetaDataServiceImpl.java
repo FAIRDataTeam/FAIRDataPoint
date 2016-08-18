@@ -21,6 +21,7 @@ import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.rio.RDFFormat;
@@ -152,6 +153,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
+        if(isSubjectURIExist(catalogMetadata.getUri())) {
+            String errorMsg = "The catalog metadata URI already "
+                    + "exist in the repository. Please try with "
+                    + "different catalog ID";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
         try {            
             storeManager.removeStatement(catalogMetadata.getFdpUri(), 
                     DCTERMS.MODIFIED, null);
@@ -172,6 +180,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
+        if(isSubjectURIExist(datasetMetadata.getUri())) {
+            String errorMsg = "The dataset metadata URI already "
+                    + "exist in the repository. Please try with "
+                    + "different dataset ID";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
         try {
             storeManager.removeStatement(datasetMetadata.getCatalogURI(), 
                     DCTERMS.MODIFIED, null);
@@ -188,6 +203,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             distributionMetadata) throws FairMetadataServiceException {
         if(distributionMetadata == null) {
             String errorMsg = "The distributionMetadata can't be NULL";
+            LOGGER.error(errorMsg);
+            throw(new IllegalArgumentException(errorMsg));
+        }
+        if(isSubjectURIExist(distributionMetadata.getUri())) {
+            String errorMsg = "The distribution metadata URI already "
+                    + "exist in the repository. Please try with "
+                    + "different distribution ID";
             LOGGER.error(errorMsg);
             throw(new IllegalArgumentException(errorMsg));
         }
@@ -223,6 +245,26 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
         return fdpMetadata;
+    }
+    
+     /**
+     * Check if URI exist in a repository 
+     * 
+     * @param uri
+     * @return
+     * @throws FairMetadataServiceException 
+     */
+    private boolean isSubjectURIExist(URI uri) throws 
+            FairMetadataServiceException {
+        boolean isURIExist = false;
+        
+        try {
+            isURIExist = storeManager.isStatementExist(uri, null, null);
+        } catch (StoreManagerException ex) {
+            LOGGER.error("Error checking existence of subject URI");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }        
+        return isURIExist;
     }
     
 }
