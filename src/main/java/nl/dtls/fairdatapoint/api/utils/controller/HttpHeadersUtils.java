@@ -73,6 +73,21 @@ public class HttpHeadersUtils {
     }
     
     /**
+     * Set response header for the bad request
+     * 
+     * @param response  Http response
+     * @param ex    Server exception
+     * @return returns null (as a response body)
+     */
+    public static String set409ResponseHeaders(HttpServletResponse 
+            response, Exception ex) {
+        String errorMessage = ("Conflicting request: " + ex.getMessage());              
+        response.setStatus(HttpServletResponse.SC_CONFLICT); 
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+        return errorMessage;
+    }
+    
+    /**
      * Set response header for the resource not found request
      * 
      * @param response  Http response

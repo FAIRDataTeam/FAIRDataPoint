@@ -20,6 +20,7 @@ import nl.dtls.fairdatapoint.api.utils.controller.LoggerUtils;
 import nl.dtls.fairdatapoint.api.domain.MetadataExeception;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
+import nl.dtls.fairdatapoint.service.FairMetadataServiceExceptionErrorCode;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,11 +108,12 @@ public class MetadataController {
     public String storeCatalogMetaData(final HttpServletRequest request,
             HttpServletResponse response,
             @RequestBody(required = true) String catalogMetaData,
-            @RequestParam("catalogID") String catalogID) {
+            @RequestParam("catalogID") String catalogID) {        
         String contentType = request.getHeader(HttpHeaders.CONTENT_TYPE);
         RDFFormat format = HttpHeadersUtils.getContentType(contentType);
         String fdpURI = getRequesedURL(request);
         String responseBody;
+        LOGGER.info("Request to store catalog metatdata with ID = ", catalogID);
         try {
             if (!isFDPMetaDataAvailable) {
                 createFDPMetaData(request);
@@ -120,8 +122,17 @@ public class MetadataController {
                     catalogID, fdpURI, format);
             fairMetaDataService.storeCatalogMetaData(cMetadata);
             responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
-        } catch (DatatypeConfigurationException |
-                FairMetadataServiceException | MalformedURLException ex) {
+        } catch(FairMetadataServiceException ex) {
+            if(ex.getErrorCode() == 
+                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST) {
+                responseBody = HttpHeadersUtils.set409ResponseHeaders(
+                    response, ex);            
+            } else {
+                responseBody = HttpHeadersUtils.set500ResponseHeaders(
+                    response, ex);
+            }
+        
+        } catch (DatatypeConfigurationException | MalformedURLException ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
         } catch (MetadataExeception ex) {
@@ -190,7 +201,8 @@ public class MetadataController {
         String contentType = request.getHeader(HttpHeaders.CONTENT_TYPE);
         RDFFormat format = HttpHeadersUtils.getContentType(contentType);
         String catalogURI = getRequesedURL(request);
-        String responseBody = null;
+        String responseBody = null;        
+        LOGGER.info("Request to store dataset metatdata with ID = ", datasetID);
         try {
             if (!isFDPMetaDataAvailable) {
                 createFDPMetaData(request);
@@ -199,8 +211,17 @@ public class MetadataController {
                     datasetID, catalogURI, format);
             fairMetaDataService.storeDatasetMetaData(dMetadata);
             responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
-        } catch (DatatypeConfigurationException |
-                FairMetadataServiceException | MalformedURLException ex) {
+        } catch(FairMetadataServiceException ex) {
+            if(ex.getErrorCode() == 
+                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST) {
+                responseBody = HttpHeadersUtils.set409ResponseHeaders(
+                    response, ex);            
+            } else {
+                responseBody = HttpHeadersUtils.set500ResponseHeaders(
+                    response, ex);
+            }
+        
+        } catch (DatatypeConfigurationException | MalformedURLException ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
         } catch (MetadataExeception ex) {
@@ -274,7 +295,9 @@ public class MetadataController {
         String contentType = request.getHeader(HttpHeaders.CONTENT_TYPE);
         RDFFormat format = HttpHeadersUtils.getContentType(contentType);
         String datasetURI = getRequesedURL(request);
-        String responseBody = null;
+        String responseBody = null;        
+        LOGGER.info("Request to store distribution metatdata with ID = ", 
+                distributionID);
         try {
             if (!isFDPMetaDataAvailable) {
                 createFDPMetaData(request);
@@ -284,8 +307,17 @@ public class MetadataController {
                             distributionID, datasetURI, format);
             fairMetaDataService.storeDistributionMetaData(distributionMetadata);
             responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
-        } catch (DatatypeConfigurationException |
-                FairMetadataServiceException | MalformedURLException ex) {
+        } catch(FairMetadataServiceException ex) {
+            if(ex.getErrorCode() == 
+                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST) {
+                responseBody = HttpHeadersUtils.set409ResponseHeaders(
+                    response, ex);            
+            } else {
+                responseBody = HttpHeadersUtils.set500ResponseHeaders(
+                    response, ex);
+            }
+        
+        } catch (DatatypeConfigurationException | MalformedURLException ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
         } catch (MetadataExeception ex) {
