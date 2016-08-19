@@ -40,7 +40,7 @@ public final class FDPMetadata extends Metadata {
     private URI homepage;
     private URI swaggerDoc;
     private static org.apache.logging.log4j.Logger LOGGER
-            = LogManager.getLogger(CatalogMetadata.class);
+            = LogManager.getLogger(FDPMetadata.class);
     
     public FDPMetadata(String fdpURI) throws MalformedURLException, 
             DatatypeConfigurationException {
