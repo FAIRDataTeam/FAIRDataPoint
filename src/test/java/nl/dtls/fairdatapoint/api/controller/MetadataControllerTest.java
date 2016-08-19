@@ -24,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,6 +216,66 @@ public class MetadataControllerTest {
     }
     
     /**
+     * Store catalog.
+     * 
+     * @throws Exception 
+     */  
+    @DirtiesContext
+    @Test
+    public void storeCatalog() throws Exception{
+        MockHttpServletResponse response;         
+        Object handler;  
+        String metadata =  ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.CATALOG_METADATA_FILE);
+        response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("catalogID", "cat1");
+        request.setRequestURI(TEST_FDP_PATH);      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+    }
+    
+    
+    /**
+     * Store catalog twice.
+     * 
+     * @throws Exception 
+     */  
+    @DirtiesContext
+    @Test
+    public void storeCatalogTwice() throws Exception{
+        MockHttpServletResponse response;         
+        Object handler;  
+        String metadata =  ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.CATALOG_METADATA_FILE);
+        response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("catalogID", "cat1");
+        request.setRequestURI(TEST_FDP_PATH);      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+        
+        response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        request.setServerName("localhost");
+        request.setContextPath("fdp");        
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("catalogID", "cat1");
+        request.setRequestURI(TEST_FDP_PATH);      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CONFLICT, response.getStatus());
+    }
+    
+    /**
      * Check non existing catalog.
      * 
      * @throws Exception 
@@ -254,6 +313,66 @@ public class MetadataControllerTest {
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);          
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    }
+    
+    /**
+     * Store dataset.
+     * 
+     * @throws Exception 
+     */  
+    @DirtiesContext
+    @Test
+    public void storeDataset() throws Exception{
+        MockHttpServletResponse response;         
+        Object handler;  
+        String metadata =  ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DATASET_METADATA_FILE);
+        response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("datasetID", "dat1");
+        request.setRequestURI(TEST_CATALOG_PATH);        
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+    }
+    
+    
+    /**
+     * Store dataset twice.
+     * 
+     * @throws Exception 
+     */  
+    @DirtiesContext
+    @Test
+    public void storeDatasetTwice() throws Exception{
+        MockHttpServletResponse response;         
+        Object handler;  
+        String metadata =  ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DATASET_METADATA_FILE);
+        response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("datasetID", "dat1");
+        request.setRequestURI(TEST_CATALOG_PATH);      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+        
+        response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        request.setServerName("localhost");
+        request.setContextPath("fdp");        
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("datasetID", "dat1");
+        request.setRequestURI(TEST_CATALOG_PATH);       
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CONFLICT, response.getStatus());
     }
     
     /**
@@ -295,7 +414,68 @@ public class MetadataControllerTest {
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);          
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-    }     
+    }
+    
+    /**
+     * Store distribution.
+     * 
+     * @throws Exception 
+     */  
+    @DirtiesContext
+    @Test
+    public void storeDistribution() throws Exception{
+        MockHttpServletResponse response;         
+        Object handler;  
+        String metadata =  ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
+        response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("distributionID", "dis1");
+        request.setRequestURI(TEST_DATASET_PATH);       
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+    }
+    
+    
+    /**
+     * Store distribution twice.
+     * 
+     * @throws Exception 
+     */  
+    @DirtiesContext
+    @Test
+    public void storeDistributionTwice() throws Exception{
+        MockHttpServletResponse response;         
+        Object handler;  
+        String metadata =  ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
+        response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("distributionID", "dis1");
+        request.setRequestURI(TEST_DATASET_PATH);      
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+        
+        response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        request.setServerName("localhost");
+        request.setContextPath("fdp");        
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("distributionID", "dis1");
+        request.setRequestURI(TEST_DATASET_PATH);       
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);          
+        assertEquals(HttpServletResponse.SC_CONFLICT, response.getStatus());
+    }
+    
     /**
      * Check non existing Content.
      * 
