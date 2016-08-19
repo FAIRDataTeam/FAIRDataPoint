@@ -17,6 +17,7 @@ import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.api.domain.MetadataExeception;
+import nl.dtls.fairdatapoint.service.FairMetadataServiceExceptionErrorCode;
 import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -158,7 +159,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                     + "exist in the repository. Please try with "
                     + "different catalog ID";
             LOGGER.error(errorMsg);
-            throw(new IllegalArgumentException(errorMsg));
+            throw(new FairMetadataServiceException(errorMsg, 
+                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST));
         }
         try {            
             storeManager.removeStatement(catalogMetadata.getFdpUri(), 
@@ -185,7 +187,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                     + "exist in the repository. Please try with "
                     + "different dataset ID";
             LOGGER.error(errorMsg);
-            throw(new IllegalArgumentException(errorMsg));
+            throw(new FairMetadataServiceException(errorMsg, 
+                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST));
         }
         try {
             storeManager.removeStatement(datasetMetadata.getCatalogURI(), 
@@ -211,7 +214,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                     + "exist in the repository. Please try with "
                     + "different distribution ID";
             LOGGER.error(errorMsg);
-            throw(new IllegalArgumentException(errorMsg));
+            throw(new FairMetadataServiceException(errorMsg, 
+                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST));
         }
         try {
             storeManager.removeStatement(distributionMetadata.
