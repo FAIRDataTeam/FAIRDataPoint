@@ -15,6 +15,11 @@ import nl.dtls.fairdatapoint.aoipmh.ListItemsResults;
 import nl.dtls.fairdatapoint.aoipmh.MetadataFormat;
 import nl.dtls.fairdatapoint.aoipmh.ScopedFilter;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ItemRepositoryHelper {
     private final ItemRepository itemRepository;
 

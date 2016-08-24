@@ -20,7 +20,11 @@ import nl.dtls.fairdatapoint.aoipmh.writables.Header;
 import nl.dtls.fairdatapoint.aoipmh.writables.ListIdentifiers;
 import nl.dtls.fairdatapoint.aoipmh.writables.VerbHandler;
 
-
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ListIdentifiersHandler extends VerbHandler<ListIdentifiers> {
     private final ItemRepositoryHelper itemRepositoryHelper;
 

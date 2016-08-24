@@ -13,7 +13,11 @@ import nl.dtls.fairdatapoint.aoipmh.Repository;
 import nl.dtls.fairdatapoint.aoipmh.parameters.OAICompiledRequest;
 import nl.dtls.fairdatapoint.aoipmh.writables.VerbHandler;
 
-
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ListMetadataFormatsHandler extends VerbHandler<ListMetadataFormats> {
     private final ItemRepositoryHelper itemRepositoryHelper;
 

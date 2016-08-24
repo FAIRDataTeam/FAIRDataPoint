@@ -24,6 +24,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class EchoElement implements Writable {
     private static final XMLInputFactory factory = XMLInputFactory2.newFactory();

@@ -13,6 +13,7 @@ import org.apache.jena.vocabulary.DCTerms;
 /**
  * 
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class Request implements Writable {
 

@@ -12,6 +12,11 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import nl.dtls.fairdatapoint.aoipmh.writables.Verb;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class OAIRequestParametersBuilder implements Builder<OAIRequest> {
     private final UTCDateProvider utcDateProvider = new UTCDateProvider();
     private final Map<String, List<String>> params = new HashMap<>();

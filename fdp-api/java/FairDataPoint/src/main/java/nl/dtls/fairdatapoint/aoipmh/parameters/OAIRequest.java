@@ -17,6 +17,7 @@ import nl.dtls.fairdatapoint.aoipmh.writables.Verb.Type;
 
 /**
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class OAIRequest {
     

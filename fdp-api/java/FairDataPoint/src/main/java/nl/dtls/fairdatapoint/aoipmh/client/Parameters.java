@@ -24,6 +24,7 @@ import static com.lyncode.xoai.util.URLEncoder.encode;
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class Parameters {
     private static final DateProvider formatter = new UTCDateProvider();

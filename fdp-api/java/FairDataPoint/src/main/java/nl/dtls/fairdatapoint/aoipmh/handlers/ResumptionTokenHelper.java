@@ -5,6 +5,11 @@ import com.lyncode.xoai.model.oaipmh.ResumptionToken.Value;
 import static java.lang.Math.round;
 import nl.dtls.fairdatapoint.aoipmh.writables.ResumptionToken;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ResumptionTokenHelper {
     private final Value current;
     private final long maxPerPage;

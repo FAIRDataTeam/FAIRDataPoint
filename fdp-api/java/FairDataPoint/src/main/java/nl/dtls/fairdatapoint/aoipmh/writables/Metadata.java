@@ -11,6 +11,7 @@ import nl.dtls.fairdatapoint.utils.XmlWriter;
 /**
  * 
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class Metadata implements Writable {
     private String string;

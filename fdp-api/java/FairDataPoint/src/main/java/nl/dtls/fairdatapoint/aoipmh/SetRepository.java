@@ -5,7 +5,7 @@ package nl.dtls.fairdatapoint.aoipmh;
  * It is possible to have a data provider without sets.
  *
  * @author Development @ Lyncode
- * @version 3.1.0
+ * @author Shamanou van Leeuwen
  */
 public interface SetRepository {
 

@@ -11,7 +11,11 @@ import org.apache.jena.rdf.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-
+/**
+ * 
+ * @author Shamanou van Leeuwe
+ * @Since 2016-07-02
+ */
 public class Error implements Writable {
     private final String value;
     private Code code;

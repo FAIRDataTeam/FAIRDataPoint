@@ -11,6 +11,7 @@ import java.io.StringWriter;
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public interface RDFWritable {
         public void write(StringWriter writer, String format);

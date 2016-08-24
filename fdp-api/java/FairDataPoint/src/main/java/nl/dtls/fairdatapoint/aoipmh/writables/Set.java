@@ -15,6 +15,7 @@ import nl.dtls.fairdatapoint.utils.XmlWriter;
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class Set implements Writable {
     private String spec;

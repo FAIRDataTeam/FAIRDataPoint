@@ -5,6 +5,11 @@ import com.lyncode.xoai.dataprovider.exceptions.OAIException;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public interface ItemRepository {
     /**
      * Gets an item from the data source.

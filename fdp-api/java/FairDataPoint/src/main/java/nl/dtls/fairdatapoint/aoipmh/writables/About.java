@@ -7,6 +7,11 @@ import org.apache.jena.rdf.model.ModelFactory;
 import com.lyncode.xoai.xml.EchoElement;
 import java.io.StringWriter;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class About implements Writable {
     private final String value;
 

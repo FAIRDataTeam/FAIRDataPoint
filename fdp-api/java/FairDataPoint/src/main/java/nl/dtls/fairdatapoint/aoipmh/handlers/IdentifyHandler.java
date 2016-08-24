@@ -13,6 +13,11 @@ import nl.dtls.fairdatapoint.aoipmh.parameters.OAICompiledRequest;
 import nl.dtls.fairdatapoint.aoipmh.writables.VerbHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class IdentifyHandler extends VerbHandler<Identify> {
     @Autowired
     private Identify identify;

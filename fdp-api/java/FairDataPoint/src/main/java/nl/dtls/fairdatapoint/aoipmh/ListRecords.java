@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import nl.dtls.fairdatapoint.utils.XmlWriter;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ListRecords implements Verb {
 
     protected List<Record> records = new ArrayList<>();

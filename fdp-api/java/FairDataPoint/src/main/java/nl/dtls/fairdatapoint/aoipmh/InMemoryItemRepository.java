@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package nl.dtls.fairdatapoint.aoipmh;
 
 import com.lyncode.xoai.dataprovider.exceptions.IdDoesNotExistException;
@@ -17,6 +11,7 @@ import java.util.List;
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class InMemoryItemRepository implements ItemRepository {
     private final List<InMemoryItem> list = new ArrayList<>();

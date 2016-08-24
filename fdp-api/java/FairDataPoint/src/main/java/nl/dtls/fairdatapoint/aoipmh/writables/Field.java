@@ -13,7 +13,11 @@ import java.io.StringWriter;
 import nl.dtls.fairdatapoint.utils.XmlWriter;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
-
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class Field implements Writable {
     public static Field parse (XmlReader reader) throws XmlReaderException {
         if (!reader.current(allOf(aStartElement(), elementName(localPart(equalTo("field"))))))

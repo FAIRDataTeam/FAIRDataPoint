@@ -2,6 +2,11 @@ package nl.dtls.fairdatapoint.aoipmh;
 
 import java.util.List;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ListItemsResults {
     private final boolean hasMore;
     private final List<Item> results;

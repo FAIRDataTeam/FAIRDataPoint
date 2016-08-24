@@ -15,7 +15,11 @@ import com.lyncode.xoai.dataprovider.exceptions.OAIException;
 import com.lyncode.xoai.dataprovider.exceptions.UnknownParameterException;
 import nl.dtls.fairdatapoint.aoipmh.Error;
 
-
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ErrorHandler {
 
     public Error handle(HandlerException ex) throws OAIException {

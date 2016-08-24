@@ -14,6 +14,11 @@ import static com.lyncode.xml.matchers.XmlEventMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class MetadataParser {
 
     private Element parseElement(XmlReader reader) throws XmlReaderException {

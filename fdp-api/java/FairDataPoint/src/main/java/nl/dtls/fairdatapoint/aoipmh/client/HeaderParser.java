@@ -15,6 +15,11 @@ import static nl.dtls.fairdatapoint.aoipmh.writables.Header.Status.DELETED;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class HeaderParser {
     public Header parse (XmlReader reader) throws XmlReaderException {
         Header header = new Header();

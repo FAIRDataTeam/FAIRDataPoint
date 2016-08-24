@@ -10,6 +10,11 @@ import java.io.StringWriter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ResumptionToken implements Writable {
     
     public final Value value;

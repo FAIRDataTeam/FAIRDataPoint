@@ -11,6 +11,7 @@ import com.lyncode.xml.exceptions.XmlWriteException;
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public interface XmlWritable {
     public void write(XmlWriter writer) throws XmlWriteException;  

@@ -9,6 +9,11 @@ import nl.dtls.fairdatapoint.aoipmh.ListSetsResult;
 import nl.dtls.fairdatapoint.aoipmh.Set;
 import nl.dtls.fairdatapoint.aoipmh.SetRepository;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class SetRepositoryHelper {
     private static final Logger log = LogManager.getLogger(SetRepositoryHelper.class);
     private final SetRepository setRepository;

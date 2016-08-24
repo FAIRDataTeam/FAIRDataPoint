@@ -23,15 +23,19 @@ import nl.dtls.fairdatapoint.aoipmh.writables.OAIPMH;
 import com.lyncode.xoai.dataprovider.exceptions.*;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import nl.dtls.fairdatapoint.aoipmh.handlers.ErrorHandler;
 import nl.dtls.fairdatapoint.aoipmh.parameters.OAICompiledRequest;
 import nl.dtls.fairdatapoint.aoipmh.parameters.OAIRequest;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 @RestController
 @Api(description = "FDP oai-pmh access point")
@@ -54,25 +58,33 @@ public class AoiPmhController {
     @Autowired
     private ErrorHandler errorsHandler;
     @Autowired
-    @Qualifier("baseUri")
+    @Qualifier("AOIBaseUri")
     private String baseURI;
     @Autowired
     private String identifier;
     private final String[] verbs  = new String[]{"Identify","ListSets","ListMetadataFormats","GetRecord","ListIdentifiers","ListRecords"};
    
-    @ApiOperation(value = "aoi-pmh protocol implementation", response = String.class)
-    @RequestMapping(method = RequestMethod.GET, produces = {"application/xml" } )
-    public String oai(@RequestParam(value="verb") String verb, @RequestParam(value="itemIdentifier", required = false) String itemIdentifier,@RequestParam(value="metadataPrefix", required = false) String metadataPrefix, 
+    @ApiOperation(value = "aoi-pmh protocol implementation")
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    public String oai(@RequestParam(value="verb", required = false) String verb, @RequestParam(value="itemIdentifier", required = false) String itemIdentifier,@RequestParam(value="metadataPrefix", required = false) String metadataPrefix, 
             final HttpServletRequest httpRequest) {
         HashMap map  = new HashMap();
         ArrayList tmp = new ArrayList<>();
         int z = 0; 
         for (String x : verbs ){
-            if (!verb.equals(x)){
-                z++;
+            if (verb != null){
+                if (!verb.equals(x)){
+                    z++;
+                }
+            }else{
+                z = 0;
             }
         }
-        tmp.add(verb);
+        if ((verb == null)  || verb.isEmpty()){
+            tmp.add("Identify");
+        }else{
+            tmp.add(verb);
+        }
         map.put("verb", tmp);
         if (metadataPrefix != null){
             tmp = new ArrayList();
@@ -140,7 +152,7 @@ public class AoiPmhController {
             java.util.logging.Logger.getLogger(AoiPmhController.class.getName()).log(Level.SEVERE, null, ex);
             return ex.getMessage();
         }
-        return response.toString();
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + response.toString();
     }
     
     private OAICompiledRequest compileParameters(OAIRequest requestParameters) throws 

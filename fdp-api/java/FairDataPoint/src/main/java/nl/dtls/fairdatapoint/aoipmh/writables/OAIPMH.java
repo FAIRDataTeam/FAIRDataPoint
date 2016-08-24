@@ -16,6 +16,7 @@ import nl.dtls.fairdatapoint.aoipmh.Error;
 /**
  *
  * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
  */
 public class OAIPMH implements Writable {
     public static final String NAMESPACE_URI = "http://www.openarchives.org/OAI/2.0/";
@@ -105,26 +106,26 @@ public class OAIPMH implements Writable {
     @Override
     public String toString(){
         String out = null;
-        try {
+        try {;
             XmlWriter xmlwriter = new XmlWriter(new ByteArrayOutputStream());
-            StringWriter rdfWriter = new StringWriter();
-            switch (this.contentType){ 
-                case "text/xml":
+//            StringWriter rdfWriter = new StringWriter();
+//            switch (this.contentType){ 
+//                case "text/xml":
                     this.write(xmlwriter);
                     xmlwriter.flush();
                     out = xmlwriter.getOutputStream().toString();
-                    break;
-                case "application/xml":
-                    this.write(xmlwriter);
-                    xmlwriter.flush();
-                    out = xmlwriter.getOutputStream().toString();
-                    break;
-                case "text/turtle":
-                    this.write(rdfWriter, "TTL");
-                    rdfWriter.flush();
-                    out = rdfWriter.getBuffer().toString();
-                    break;
-            }
+//                    break;
+//                case "application/xml":
+//                    this.write(xmlwriter);
+//                    xmlwriter.flush();
+//                    out = xmlwriter.getOutputStream().toString();
+//                    break;
+//                case "text/turtle":
+//                    this.write(rdfWriter, "TTL");
+//                    rdfWriter.flush();
+//                    out = rdfWriter.getBuffer().toString();
+//                    break;
+//            }
         } catch (XMLStreamException | XmlWriteException ex) {
             Logger.getLogger(OAIPMH.class.getName()).log(Level.SEVERE, null, ex);
             return ex.getMessage();

@@ -18,11 +18,16 @@ import org.apache.jena.vocabulary.VCARD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class Identify implements Verb {
     @Autowired
     protected String repositoryName;
     @Autowired
-    @Qualifier("baseURI")
+    @Qualifier("AOIBaseUri")
     protected String baseURL;
     @Autowired
     protected String protocolVersion;

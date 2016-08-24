@@ -7,11 +7,7 @@ import com.lyncode.xoai.dataprovider.exceptions.IdDoesNotExistException;
 import com.lyncode.xoai.dataprovider.exceptions.OAIException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.TransformerException;
 import nl.dtls.fairdatapoint.aoipmh.Item;
 import nl.dtls.fairdatapoint.aoipmh.MetadataFormat;
 import nl.dtls.fairdatapoint.aoipmh.Repository;
@@ -27,6 +23,11 @@ import nl.dtls.fairdatapoint.utils.XmlWriter;
 import com.lyncode.xoai.xml.XSLPipeline;
 import nl.dtls.fairdatapoint.aoipmh.parameters.OAICompiledRequest;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class GetRecordHandler extends VerbHandler<GetRecord> {
     public GetRecordHandler(Context context, Repository repository) {
         super(context, repository);

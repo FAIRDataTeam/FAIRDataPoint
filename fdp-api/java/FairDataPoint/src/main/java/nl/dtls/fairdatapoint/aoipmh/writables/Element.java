@@ -4,7 +4,6 @@ import com.lyncode.xml.XmlReader;
 import com.lyncode.xml.exceptions.XmlReaderException;
 import com.lyncode.xml.exceptions.XmlWriteException;
 
-import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +15,11 @@ import nl.dtls.fairdatapoint.utils.XmlWriter;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class Element implements Writable {
     public static Element parse(XmlReader reader) throws XmlReaderException {
         if (!reader.current(allOf(aStartElement(), elementName(localPart(equalTo("element"))))))

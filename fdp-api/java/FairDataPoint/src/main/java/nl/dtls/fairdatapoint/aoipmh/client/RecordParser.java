@@ -14,6 +14,11 @@ import nl.dtls.fairdatapoint.aoipmh.writables.Record;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class RecordParser {
     private final Context context;
     private final String metadataPrefix;

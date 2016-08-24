@@ -3,6 +3,11 @@ package nl.dtls.fairdatapoint.aoipmh;
 import com.lyncode.xoai.services.api.ResumptionTokenFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class Repository {
     private FilterResolver filterResolver;
 

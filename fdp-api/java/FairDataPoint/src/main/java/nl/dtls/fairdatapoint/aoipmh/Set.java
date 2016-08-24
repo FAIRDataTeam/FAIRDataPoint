@@ -1,5 +1,10 @@
 package nl.dtls.fairdatapoint.aoipmh;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class Set {
     public static Set set (String spec) {
         return new Set(spec);

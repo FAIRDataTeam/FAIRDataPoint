@@ -6,7 +6,11 @@ import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.List;
 import nl.dtls.fairdatapoint.utils.XmlWriter;
-
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ListIdentifiers implements Verb {
 
     protected List<Header> headers = new ArrayList<>();

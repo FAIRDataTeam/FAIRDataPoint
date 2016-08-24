@@ -5,6 +5,11 @@ import javax.xml.transform.Transformer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class Context {
     public static Context context () {
         return new Context();

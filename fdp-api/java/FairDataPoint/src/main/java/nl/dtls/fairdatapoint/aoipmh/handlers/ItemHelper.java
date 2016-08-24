@@ -13,6 +13,11 @@ import nl.dtls.fairdatapoint.aoipmh.Item;
 import nl.dtls.fairdatapoint.aoipmh.Set;
 import nl.dtls.fairdatapoint.utils.XmlWriter;
 
+/**
+ * 
+ * @author Shamanou van Leeuwen
+ * @Since 2016-07-02
+ */
 public class ItemHelper extends ItemIdentifyHelper {
     private final Item item;
 
