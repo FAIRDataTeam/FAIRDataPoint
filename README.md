@@ -2,7 +2,7 @@
 In the current implementation we only support `GET` requests and only `FAIR MetaData` are stored and served. The metadata contents should be generated `manually` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document.
 
 #### Deployment machine's requirement
-* JRE 1.7 or higher
+* JRE 1.8
 * Tomcat 7 or higher 
 
 

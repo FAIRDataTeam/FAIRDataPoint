@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @WebAppConfiguration
 @ContextConfiguration(classes = {RestApiTestContext.class})
 @DirtiesContext
-//@Ignore
+@Ignore
 public class MetadataControllerTest {
     
     @Autowired
