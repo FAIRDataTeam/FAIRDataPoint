@@ -49,7 +49,8 @@ public class StoreManagerImplTest {
     @Before
     public void storeExampleFile() throws StoreManagerException {
         List<Statement> sts = ExampleFilesUtils.
-                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE);
+                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE, 
+                        "http://www.dtls.nl/test");
         testStoreManager.storeRDF(sts);
     }
 
@@ -128,7 +129,8 @@ public class StoreManagerImplTest {
     @Test
     public void storeResource() {
         List<Statement> statements = ExampleFilesUtils.
-                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE);
+                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE, 
+                        "http://www.dtls.nl/test");
         try {
             testStoreManager.storeRDF(statements);
         } catch (StoreManagerException ex) {

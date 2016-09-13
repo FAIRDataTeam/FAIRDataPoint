@@ -13,6 +13,7 @@
 	dct:title "Gene disease association (LUMC)" ;
         rdfs:label "Gene disease association (LUMC)";
 	dct:language lang:en ;
+        dct:identifier "gene-disease-association_lumc" ;
         dct:hasVersion "1.0" ;
 	dct:description "Gene disease association dataset from LUMC" ;
 	dcat:keyword "GDA lumc" , "text mining", "gene-disease association" ; 

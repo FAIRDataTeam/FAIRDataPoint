@@ -9,4 +9,5 @@
     a dcat:Catalog ; 
     dct:language lang:en  ;
     dct:hasVersion "1.0" ;
+    dct:identifier "textmining" ;
     dcat:themeTaxonomy <http://dbpedia.org/resource/Text_mining>, <http://edamontology.org/topic_0218> .

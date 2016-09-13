@@ -7,12 +7,11 @@ package nl.dtls.fairdatapoint.service.impl;
 
 import java.net.MalformedURLException;
 import javax.xml.datatype.DatatypeConfigurationException;
+import nl.dtl.fairmetadata.model.CatalogMetadata;
+import nl.dtl.fairmetadata.model.DatasetMetadata;
+import nl.dtl.fairmetadata.model.DistributionMetadata;
+import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
-import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
-import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
-import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
-import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
-import nl.dtls.fairdatapoint.api.domain.MetadataExeception;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
@@ -23,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,57 +42,46 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @ContextConfiguration(classes = {RestApiTestContext.class})
 @DirtiesContext
+//@Ignore
 public class FairMetaDataServiceImplTest { 
     
     private final static Logger LOGGER = 
-            LogManager.getLogger(FairMetaDataServiceImplTest.class.getName());
+            LogManager.getLogger(FairMetaDataServiceImplTest.class.getName());    
+    @Autowired
+    private FairMetaDataService fairMetaDataService;
+    
     private final String TEST_FDP_URI = "http://example.com/fdp";
     private final String TEST_CATALOG_URI = "http://example.com/fdp/catalog";
     private final String TEST_CATALOG_ID = "catalog";
-    private final String TEST_DATASET_URI = "http://example.com/fdp/catalog/dataset";
+    private final String TEST_DATASET_URI = 
+            "http://example.com/fdp/catalog/dataset";
     private final String TEST_DATASET_ID = "dataset";
     private final String TEST_DISTRIBUTION_ID = "distribution";
-    
-    @Autowired
-    private FairMetaDataService fairMetaDataService;
+    private final String TEST_DISTRIBUTION_URI = 
+            "http://example.com/fdp/catalog/dataset/distrubtion";
     
     @Before
     public void storeExampleMetadata() throws StoreManagerException, 
             MalformedURLException, DatatypeConfigurationException, 
-            FairMetadataServiceException, MetadataExeception {
-        LOGGER.info("Generating example FDP metadata for service layer tests");
-        FDPMetadata fdpMetaData = new FDPMetadata(ExampleFilesUtils.FDP_URI);
+            FairMetadataServiceException {        
         LOGGER.info("Storing example FDP metadata for service layer tests");
-        fairMetaDataService.storeFDPMetaData(fdpMetaData);           
-        String cMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.CATALOG_METADATA_FILE);
-        LOGGER.info("Generating example catalog metadata "
-                + "for service layer tests");
-        CatalogMetadata metadata = new CatalogMetadata(cMetadata, 
-                    ExampleFilesUtils.CATALOG_ID, ExampleFilesUtils.FDP_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-        fairMetaDataService.storeCatalogMetaData(metadata);
+        fairMetaDataService.storeFDPMetaData(
+                ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
         LOGGER.info("Storing example catalog metadata for service layer tests");
-        String dMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.DATASET_METADATA_FILE);
-        LOGGER.info("Generating example dataset metadata "
-                + "for service layer tests");
-        DatasetMetadata daMetadata = new DatasetMetadata(dMetadata, 
-                    ExampleFilesUtils.DATASET_ID, ExampleFilesUtils.CATALOG_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-        fairMetaDataService.storeDatasetMetaData(daMetadata);
+        fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.
+                getCatalogMetadata(ExampleFilesUtils.CATALOG_URI, 
+                        ExampleFilesUtils.FDP_URI));
         LOGGER.info("Storing example dataset metadata for service layer tests");
-        String disMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
-        LOGGER.info("Generating example distribution metadata "
-                + "for service layer tests");
-        DistributionMetadata distMetadata = new DistributionMetadata(
-                disMetadata, ExampleFilesUtils.DISTRIBUTION_ID, 
-                ExampleFilesUtils.DATASET_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-        fairMetaDataService.storeDistributionMetaData(distMetadata);
+        fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
+                getDatasetMetadata(ExampleFilesUtils.DATASET_URI, 
+                        ExampleFilesUtils.CATALOG_URI)); 
         LOGGER.info("Storing example distribution "
                 + "metadata for service layer tests");
+        fairMetaDataService.storeDistributionMetaData(
+                ExampleFilesUtils.getDistributionMetadata(
+                        ExampleFilesUtils.DISTRIBUTION_URI, 
+                        ExampleFilesUtils.DATASET_URI));
+        
     }
     
     /**
@@ -101,9 +90,9 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void storeFDPMetaData(){
-        try {            
-            FDPMetadata fdpMetaData = new FDPMetadata(TEST_FDP_URI);
-            fairMetaDataService.storeFDPMetaData(fdpMetaData);
+        try {
+            fairMetaDataService.storeFDPMetaData(
+                    ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI));
         } catch (Exception ex) {
             String errorMsg = "The test is not excepted to throw "
                     + "any exception";
@@ -135,14 +124,10 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeCatalogMetaData(){
         try {
-            String cMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.CATALOG_METADATA_FILE);
-            CatalogMetadata metadata = new CatalogMetadata(cMetadata, 
-                    TEST_CATALOG_ID, TEST_FDP_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-            fairMetaDataService.storeCatalogMetaData(metadata);
-        } catch (MetadataExeception | DatatypeConfigurationException | 
-                FairMetadataServiceException ex) {
+            fairMetaDataService.storeCatalogMetaData(
+                    ExampleFilesUtils.getCatalogMetadata(TEST_CATALOG_URI, 
+                            TEST_FDP_URI));
+        } catch (Exception ex) {
             String errorMsg = "The test is not excepted to throw "
                     + "any exception";
             fail(errorMsg);
@@ -192,14 +177,10 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeDatasetMetaData(){
         try {
-            String dMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.DATASET_METADATA_FILE);
-            DatasetMetadata metadata = new DatasetMetadata(dMetadata, 
-                    TEST_DATASET_ID, TEST_CATALOG_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-            fairMetaDataService.storeDatasetMetaData(metadata);
-        } catch (MetadataExeception | DatatypeConfigurationException | 
-                FairMetadataServiceException ex) {
+            fairMetaDataService.storeDatasetMetaData(
+                    ExampleFilesUtils.getDatasetMetadata(TEST_DATASET_URI, 
+                            TEST_CATALOG_URI));
+        } catch (Exception ex) {
             String errorMsg = "The test is not excepted to throw "
                     + "any exception";
             fail(errorMsg);
@@ -249,14 +230,9 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeDistributionMetaData(){
         try {
-            String distMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
-            DistributionMetadata metadata = new DistributionMetadata(
-                    distMetadata, TEST_DISTRIBUTION_ID, 
-                    TEST_DATASET_URI, ExampleFilesUtils.FILE_FORMAT);
-            fairMetaDataService.storeDistributionMetaData(metadata);
-        } catch (MetadataExeception | DatatypeConfigurationException | 
-                FairMetadataServiceException ex) {
+            fairMetaDataService.storeDistributionMetaData(
+                    ExampleFilesUtils.getDistributionMetadata(TEST_DISTRIBUTION_URI, TEST_DATASET_URI));
+        } catch (Exception ex) {
             String errorMsg = "The test is not excepted to throw "
                     + "any exception";
             fail(errorMsg);

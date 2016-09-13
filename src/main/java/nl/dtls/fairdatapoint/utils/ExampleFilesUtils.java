@@ -7,6 +7,7 @@ package nl.dtls.fairdatapoint.utils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.io.PatternFilenameFilter;
 import com.google.common.io.Resources;
 import java.io.File;
@@ -18,12 +19,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
-import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
+import nl.dtl.fairmetadata.io.CatalogMetadataParser;
+import nl.dtl.fairmetadata.io.DatasetMetadataParser;
+import nl.dtl.fairmetadata.io.DistributionMetadataParser;
+import nl.dtl.fairmetadata.io.FDPMetadataParser;
+import nl.dtl.fairmetadata.model.CatalogMetadata;
+import nl.dtl.fairmetadata.model.DatasetMetadata;
+import nl.dtl.fairmetadata.model.DistributionMetadata;
+import nl.dtl.fairmetadata.model.FDPMetadata;
+import static nl.dtl.fairmetadata.utils.ExampleFilesUtils.FILE_FORMAT;
+import static nl.dtl.fairmetadata.utils.ExampleFilesUtils.getFileContentAsString;
+import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
@@ -86,21 +97,62 @@ public class ExampleFilesUtils {
      * @param fileName Turtle file name
      * @return File content as a string
      */
-    public static List<Statement>  getFileContentAsStatements(String fileName)  {        
+    public static List<Statement> getFileContentAsStatements(String fileName, 
+            String baseURI)  {        
         List<Statement> statements = null;  
         try {
             String content = getFileContentAsString(fileName);
             StringReader reader = new StringReader(content);
             org.openrdf.model.Model model;
-            model = Rio.parse(reader, BASE_URI, FILE_FORMAT);
+            model = Rio.parse(reader, baseURI, FILE_FORMAT);
             Iterator<Statement> it = model.iterator();
-            statements = ImmutableList.copyOf(it);
+            statements =  Lists.newArrayList(it);
         } catch (IOException | RDFParseException | 
                 UnsupportedRDFormatException ex) {
             LOGGER.error("Error getting turle file",ex);          
         }         
         return statements;
-    } 
+    }
+    
+    public static FDPMetadata getFDPMetadata(String uri) {        
+        LOGGER.info("Generating example FDP metadata object");
+        FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
+        FDPMetadata metadata = parser.parse(getFileContentAsStatements(
+                FDP_METADATA_FILE, uri), new URIImpl(uri));
+        return metadata;
+    }
+    
+    public static CatalogMetadata getCatalogMetadata(String uri, 
+            String parentURI) {        
+        LOGGER.info("Generating example catalog metadata object");
+        CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
+        CatalogMetadata metadata = parser.parse(getFileContentAsStatements(
+                CATALOG_METADATA_FILE, uri), new URIImpl(uri));
+        metadata.setParentURI(new URIImpl(parentURI));
+        return metadata;
+    }
+    
+    public static DatasetMetadata getDatasetMetadata(String uri, 
+            String parentURI) {        
+        LOGGER.info("Generating example dataset metadata object");
+        DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
+        DatasetMetadata metadata = parser.parse(getFileContentAsStatements(
+                DATASET_METADATA_FILE, uri), new URIImpl(uri));
+        metadata.setParentURI(new URIImpl(parentURI));
+        return metadata;
+    }
+    
+    public static DistributionMetadata getDistributionMetadata(String uri, 
+            String parentURI) {        
+        LOGGER.info("Generating example distribution metadata object");
+        DistributionMetadataParser parser = MetadataParserUtils.
+                getDistributionParser();
+        DistributionMetadata metadata = parser.parse(getFileContentAsStatements(
+                DISTRIBUTION_METADATA_FILE, uri), 
+                new URIImpl(uri));
+        metadata.setParentURI(new URIImpl(parentURI));
+        return metadata;
+    }
     
     
     /**

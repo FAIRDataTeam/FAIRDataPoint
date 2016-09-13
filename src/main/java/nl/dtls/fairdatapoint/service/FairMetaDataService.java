@@ -5,10 +5,11 @@
  */
 package nl.dtls.fairdatapoint.service;
 
-import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
-import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
-import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
-import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
+import nl.dtl.fairmetadata.model.CatalogMetadata;
+import nl.dtl.fairmetadata.model.DatasetMetadata;
+import nl.dtl.fairmetadata.model.DistributionMetadata;
+import nl.dtl.fairmetadata.model.FDPMetadata;
+
 
 /**
  *

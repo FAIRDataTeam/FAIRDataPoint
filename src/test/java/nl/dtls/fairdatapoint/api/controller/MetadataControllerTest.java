@@ -9,11 +9,6 @@ import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
-import nl.dtls.fairdatapoint.api.domain.CatalogMetadata;
-import nl.dtls.fairdatapoint.api.domain.DatasetMetadata;
-import nl.dtls.fairdatapoint.api.domain.DistributionMetadata;
-import nl.dtls.fairdatapoint.api.domain.FDPMetadata;
-import nl.dtls.fairdatapoint.api.domain.MetadataExeception;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
@@ -71,44 +66,25 @@ public class MetadataControllerTest {
     @Before
     public void storeExampleMetadata() throws StoreManagerException, 
             MalformedURLException, DatatypeConfigurationException, 
-            FairMetadataServiceException, MetadataExeception {
-        request = new MockHttpServletRequest();
-        request.setServerName("localhost");
-        request.setContextPath("fdp");
-        
-        LOGGER.info("Generating example FDP metadata for service layer tests");
-        FDPMetadata fdpMetaData = new FDPMetadata(ExampleFilesUtils.FDP_URI);
+            FairMetadataServiceException {        
         LOGGER.info("Storing example FDP metadata for service layer tests");
-        fairMetaDataService.storeFDPMetaData(fdpMetaData);           
-        String cMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.CATALOG_METADATA_FILE);
-        LOGGER.info("Generating example catalog metadata "
-                + "for service layer tests");
-        CatalogMetadata metadata = new CatalogMetadata(cMetadata, 
-                    ExampleFilesUtils.CATALOG_ID, ExampleFilesUtils.FDP_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-        fairMetaDataService.storeCatalogMetaData(metadata);
+        fairMetaDataService.storeFDPMetaData(
+                ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
         LOGGER.info("Storing example catalog metadata for service layer tests");
-        String dMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.DATASET_METADATA_FILE);
-        LOGGER.info("Generating example dataset metadata "
-                + "for service layer tests");
-        DatasetMetadata daMetadata = new DatasetMetadata(dMetadata, 
-                    ExampleFilesUtils.DATASET_ID, ExampleFilesUtils.CATALOG_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-        fairMetaDataService.storeDatasetMetaData(daMetadata);
+        fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.
+                getCatalogMetadata(ExampleFilesUtils.CATALOG_URI, 
+                        ExampleFilesUtils.FDP_URI));
         LOGGER.info("Storing example dataset metadata for service layer tests");
-        String disMetadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
-        LOGGER.info("Generating example distribution metadata "
-                + "for service layer tests");
-        DistributionMetadata distMetadata = new DistributionMetadata(
-                disMetadata, ExampleFilesUtils.DISTRIBUTION_ID, 
-                ExampleFilesUtils.DATASET_URI, 
-                    ExampleFilesUtils.FILE_FORMAT);
-        fairMetaDataService.storeDistributionMetaData(distMetadata);
+        fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
+                getDatasetMetadata(ExampleFilesUtils.DATASET_URI, 
+                        ExampleFilesUtils.CATALOG_URI)); 
         LOGGER.info("Storing example distribution "
                 + "metadata for service layer tests");
+        fairMetaDataService.storeDistributionMetaData(
+                ExampleFilesUtils.getDistributionMetadata(
+                        ExampleFilesUtils.DISTRIBUTION_URI, 
+                        ExampleFilesUtils.DATASET_URI));
+        
     }
     
     /**
