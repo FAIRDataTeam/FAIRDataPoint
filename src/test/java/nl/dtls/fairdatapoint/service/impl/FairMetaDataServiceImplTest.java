@@ -42,7 +42,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @ContextConfiguration(classes = {RestApiTestContext.class})
 @DirtiesContext
-//@Ignore
 public class FairMetaDataServiceImplTest { 
     
     private final static Logger LOGGER = 
@@ -88,12 +87,10 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeFDPMetaData(){
         try {
-            fairMetaDataService.storeFDPMetaData(
-                    ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI));
-        } catch (Exception ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "any exception";
-            fail(errorMsg);
+            fairMetaDataService.storeFDPMetaData(ExampleFilesUtils.
+                    getFDPMetadata(TEST_FDP_URI));
+        } catch (Exception ex) {                           
+            fail("The test is not excepted to throw any exception");
         }
     }
       
@@ -104,13 +101,11 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveFDPMetaData(){
         try {
-            FDPMetadata metadata = fairMetaDataService.
-                    retrieveFDPMetaData(ExampleFilesUtils.FDP_URI);
+            FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
+                    ExampleFilesUtils.FDP_URI);
             assertNotNull(metadata);
-        } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
+        } catch (FairMetadataServiceException ex) {             
+            fail("The test is not excepted to throw any exception");
         }
     }
     
@@ -121,19 +116,17 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeCatalogMetaData(){
         try {
-            fairMetaDataService.storeCatalogMetaData(
-                    ExampleFilesUtils.getCatalogMetadata(TEST_CATALOG_URI, 
+            fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.
+                    getCatalogMetadata(TEST_CATALOG_URI, 
                             ExampleFilesUtils.FDP_URI));
         } catch (Exception ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "any exception";
-            fail(errorMsg);
+            fail("The test is not excepted to throw any exception");
         }
     }
     
     /**
      * Test to retrieve NonExiting catalog metadata, this test is excepted
-     * to pass
+     * to throw an exception
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
@@ -156,9 +149,7 @@ public class FairMetaDataServiceImplTest {
                     retrieveCatalogMetaData(ExampleFilesUtils.CATALOG_URI);
             assertNotNull(metadata);
         } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
+            fail("The test is not excepted to throw any exception");
         }
     } 
     
@@ -169,19 +160,17 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeDatasetMetaData(){
         try {
-            fairMetaDataService.storeDatasetMetaData(
-                    ExampleFilesUtils.getDatasetMetadata(TEST_DATASET_URI, 
+            fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
+                    getDatasetMetadata(TEST_DATASET_URI, 
                             ExampleFilesUtils.CATALOG_URI));
-        } catch (Exception ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "any exception";
-            fail(errorMsg);
+        } catch (Exception ex) {            
+            fail("The test is not excepted to throw any exception");
         }
     }
     
     /**
      * Test to retrieve NonExiting dataset metadata, this test is excepted 
-     * to pass
+     * to throw an exception
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
@@ -204,9 +193,7 @@ public class FairMetaDataServiceImplTest {
                     retrieveDatasetMetaData(ExampleFilesUtils.DATASET_URI);
             assertNotNull(metadata);
         } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
+            fail("The test is not excepted to throw any exception");
         }
     }  
     
@@ -217,20 +204,17 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeDistributionMetaData(){
         try {
-            fairMetaDataService.storeDistributionMetaData(
-                    ExampleFilesUtils.getDistributionMetadata(
-                            TEST_DISTRIBUTION_URI, 
+            fairMetaDataService.storeDistributionMetaData(ExampleFilesUtils.
+                    getDistributionMetadata(TEST_DISTRIBUTION_URI, 
                             ExampleFilesUtils.DATASET_URI));
         } catch (Exception ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "any exception";
-            fail(errorMsg);
+            fail("The test is not excepted to throw any exception");
         }
     }    
     
     /**
      * Test to retrieve non exiting distribution metadata, this test is 
-     * excepted to pass
+     * to throw an exception
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
@@ -250,13 +234,11 @@ public class FairMetaDataServiceImplTest {
     public void retrieveDatasetDistribution(){
         try {
             DistributionMetadata metadata = fairMetaDataService.
-                    retrieveDistributionMetaData(
-                            ExampleFilesUtils.DISTRIBUTION_URI);
+                    retrieveDistributionMetaData(ExampleFilesUtils.
+                            DISTRIBUTION_URI);
             assertNotNull(metadata);
-        } catch (FairMetadataServiceException ex) {
-            String errorMsg = "The test is not excepted to throw "
-                    + "FairMetadataServiceException";
-            fail(errorMsg);
+        } catch (FairMetadataServiceException ex) {            
+            fail("The test is not excepted to throw any exception");
         }
     }
     
