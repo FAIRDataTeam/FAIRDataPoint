@@ -54,7 +54,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private StoreManager storeManager;
     
     @Override
-    public FDPMetadata retrieveFDPMetaData(String uri) throws FairMetadataServiceException {
+    public FDPMetadata retrieveFDPMetaData(String uri) throws 
+            FairMetadataServiceException {
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(uri);

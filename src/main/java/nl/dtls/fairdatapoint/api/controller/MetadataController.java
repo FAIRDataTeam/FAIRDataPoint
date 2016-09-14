@@ -28,7 +28,6 @@ import nl.dtls.fairdatapoint.api.utils.controller.HttpHeadersUtils;
 import nl.dtls.fairdatapoint.api.utils.controller.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.service.FairMetadataServiceExceptionErrorCode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
@@ -139,17 +138,11 @@ public class MetadataController {
             metadata.setIssued(RDFUtils.getCurrentTime());
             fairMetaDataService.storeCatalogMetaData(metadata);
             responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
-        } catch(FairMetadataServiceException ex) {
-            if(ex.getErrorCode() == 
-                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST) {
-                responseBody = HttpHeadersUtils.set409ResponseHeaders(
-                    response, ex);            
-            } else {
-                responseBody = HttpHeadersUtils.set500ResponseHeaders(
-                    response, ex);
-            }
-        
-        } catch (DatatypeConfigurationException | MalformedURLException ex) {
+        } catch(IllegalStateException ex) {
+             responseBody = HttpHeadersUtils.set409ResponseHeaders(response, 
+                     ex);
+        } catch (DatatypeConfigurationException | MalformedURLException | 
+                FairMetadataServiceException ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
         } catch (MetadataParserException ex) {
@@ -234,16 +227,11 @@ public class MetadataController {
             metadata.setIssued(RDFUtils.getCurrentTime());
             fairMetaDataService.storeDatasetMetaData(metadata);
             responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
-        } catch(FairMetadataServiceException ex) {
-            if(ex.getErrorCode() == 
-                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST) {
-                responseBody = HttpHeadersUtils.set409ResponseHeaders(
-                    response, ex);            
-            } else {
-                responseBody = HttpHeadersUtils.set500ResponseHeaders(
-                    response, ex);
-            }        
-        } catch (DatatypeConfigurationException | MalformedURLException ex) {
+        } catch(IllegalStateException ex) {
+             responseBody = HttpHeadersUtils.set409ResponseHeaders(response, 
+                     ex);
+        } catch (DatatypeConfigurationException | MalformedURLException |
+                FairMetadataServiceException ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
         } catch (MetadataParserException ex) {
@@ -307,7 +295,7 @@ public class MetadataController {
     @ApiOperation(value = "POST distribution metadata")
     @RequestMapping(value = "/{catalogID}/{datasetID}",
             method = RequestMethod.POST, consumes = {"text/turtle"})
-    public String storeDatasetDistribution(final HttpServletRequest request,
+    public String storeDistribution(final HttpServletRequest request,
             HttpServletResponse response,
             @PathVariable final String catalogID,
             @PathVariable final String datasetID,
@@ -332,17 +320,11 @@ public class MetadataController {
             metadata.setIssued(RDFUtils.getCurrentTime());
             fairMetaDataService.storeDistributionMetaData(metadata);
             responseBody = HttpHeadersUtils.set201ResponseHeaders(response);
-        } catch(FairMetadataServiceException ex) {
-            if(ex.getErrorCode() == 
-                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST) {
-                responseBody = HttpHeadersUtils.set409ResponseHeaders(
-                    response, ex);            
-            } else {
-                responseBody = HttpHeadersUtils.set500ResponseHeaders(
-                    response, ex);
-            }
-        
-        } catch (DatatypeConfigurationException | MalformedURLException ex) {
+        } catch(IllegalStateException ex) {
+             responseBody = HttpHeadersUtils.set409ResponseHeaders(response, 
+                     ex);
+        } catch (DatatypeConfigurationException | MalformedURLException | 
+                FairMetadataServiceException ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
         } catch (MetadataParserException ex) {
@@ -357,7 +339,7 @@ public class MetadataController {
             produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"},
             method = RequestMethod.GET)
-    public String getDatasetDistribution(@PathVariable final String catalogID,
+    public String getDistribution(@PathVariable final String catalogID,
             @PathVariable final String datasetID,
             @PathVariable final String distributionID,
             HttpServletRequest request,
