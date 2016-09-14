@@ -36,7 +36,6 @@ import org.openrdf.model.URI;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.DCTERMS;
-import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,25 +56,16 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public FDPMetadata retrieveFDPMetaData(String uri) throws 
             FairMetadataServiceException {
         try {
-            List<Statement> statements = 
-                    storeManager.retrieveResource(uri);
-            if(statements.isEmpty()) {
-                return null;
-            }
-            FDPMetadataParser parser = 
-                    MetadataParserUtils.getFdpParser();
-            FDPMetadata metadata = parser.parse(statements, 
-                    new URIImpl(uri));
+            List<Statement> statements = storeManager.retrieveResource(uri);
+            Preconditions.checkState(!statements.isEmpty(), 
+                "The FDP URI doesn't exist in the repository"); 
+            FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
+            FDPMetadata metadata = parser.parse(statements, new URIImpl(uri));
             return metadata;
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving fdp metadata from the store");
             throw(new FairMetadataServiceException(ex.getMessage()));
-        } catch (Exception ex) {
-            LOGGER.error("Error pharsing fdp metadata");
-            throw(new FairMetadataServiceException(ex.getMessage()));
-        } 
-        
-        
+        }       
     }
 
     @Override
@@ -84,60 +74,46 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = 
                     storeManager.retrieveResource(uri);
-            if(statements.isEmpty()) {
-                return null;
-            }
-            CatalogMetadataParser parser = 
-                    MetadataParserUtils.getCatalogParser();
+            Preconditions.checkState(!statements.isEmpty(), 
+                "The catalog URI doesn't exist in the repository"); 
+            CatalogMetadataParser parser = MetadataParserUtils.
+                    getCatalogParser();
             CatalogMetadata metadata = parser.parse(statements, 
                     new URIImpl(uri));
             return metadata;
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving catalog metadata from the store");
             throw(new FairMetadataServiceException(ex.getMessage()));
-        } catch (Exception ex) {
-            LOGGER.error("Error pharsing catalog metadata");
-            throw(new FairMetadataServiceException(ex.getMessage()));
-        }
-        
-        
+        }        
     }
     
     @Override
     public DatasetMetadata retrieveDatasetMetaData(String uri) 
             throws FairMetadataServiceException {
         try {
-            List<Statement> statements = 
-                    storeManager.retrieveResource(uri);
-            if(statements.isEmpty()) {
-                return null;
-            }
-            DatasetMetadataParser parser = 
-                    MetadataParserUtils.getDatasetParser();
+            List<Statement> statements = storeManager.retrieveResource(uri);
+            Preconditions.checkState(!statements.isEmpty(), 
+                "The dataset URI doesn't exist in the repository"); 
+            DatasetMetadataParser parser = MetadataParserUtils.
+                    getDatasetParser();
             DatasetMetadata metadata = parser.parse(statements, 
                     new URIImpl(uri));
             return metadata;
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving dataset metadata from the store");
             throw(new FairMetadataServiceException(ex.getMessage()));
-        } catch (Exception ex) {
-            LOGGER.error("Error pharsing dataset metadata");
-            throw(new FairMetadataServiceException(ex.getMessage()));
         }        
-        
     }
 
     @Override
     public DistributionMetadata retrieveDistributionMetaData(String uri) 
             throws FairMetadataServiceException {
         try {
-            List<Statement> statements = 
-                    storeManager.retrieveResource(uri);
-            if(statements.isEmpty()) {
-                return null;
-            }            
-            DistributionMetadataParser parser = 
-                    MetadataParserUtils.getDistributionParser();
+            List<Statement> statements = storeManager.retrieveResource(uri);
+            Preconditions.checkState(!statements.isEmpty(), 
+                "The distribution URI doesn't exist in the repository");           
+            DistributionMetadataParser parser = MetadataParserUtils.
+                    getDistributionParser();
             DistributionMetadata metadata = parser.parse(statements, 
                     new URIImpl(uri));
             return metadata;
@@ -145,11 +121,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error(
                     "Error retrieving distribution metadata from the store");
             throw(new FairMetadataServiceException(ex.getMessage()));
-        } catch (Exception ex) {
-            LOGGER.error("Error pharsing distribution metadata");
-            throw(new FairMetadataServiceException(ex.getMessage()));
         }        
-        
     }
     
     @Override
@@ -157,8 +129,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throws FairMetadataServiceException {        
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
         try {
-            storeManager.storeRDF(MetadataUtils.getStatements(metadata));
-            
+            storeManager.storeRDF(MetadataUtils.getStatements(metadata));            
         } catch (MetadataException | StoreManagerException ex) {
             LOGGER.error("Error storing fdp metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
@@ -220,36 +191,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error("Error storing distribution metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
-    }    
+    }  
     
-    
-    public String retrieveMetaData(String uri, RDFFormat format) 
-            throws FairMetadataServiceException {
-        
-        if(format == null) {
-            String errorMsg = "The RDFFormat can't be NULL";
-            LOGGER.error(errorMsg);
-            throw(new IllegalArgumentException(errorMsg));
-        }
-        String fdpMetadata = null;
-        try {
-            List<Statement> statements = 
-                    storeManager.retrieveResource(uri);
-            if(!statements.isEmpty()) {
-                fdpMetadata = RDFUtils.writeToString(statements, format);
-            }
-        } catch (Exception ex) {
-            LOGGER.error("Error retrieving fdp's metadata");
-            throw(new FairMetadataServiceException(ex.getMessage()));
-        }
-        return fdpMetadata;
-    }
-    
+    /**
+     * Update properties of parent class. (E.g) dcat:Modified
+     * 
+     * @param <T>
+     * @param metadata Subtype of Metadata object  
+     */
     private <T extends Metadata> void updateParentResource(@Nonnull 
             T metadata) {
         Preconditions.checkNotNull(metadata, 
-                "Metadata object must not be null.");
-        
+                "Metadata object must not be null.");        
         try {
             List<Statement> stmts = new ArrayList();
             if (metadata instanceof CatalogMetadata) {            
@@ -273,7 +226,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     }
     
      /**
-     * Check if URI exist in a repository 
+     * Check if URI exist in a repository as a subject
      * 
      * @param uri
      * @return
