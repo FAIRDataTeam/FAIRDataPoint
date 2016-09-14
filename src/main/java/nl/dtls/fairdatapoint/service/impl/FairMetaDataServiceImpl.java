@@ -19,13 +19,15 @@ import nl.dtl.fairmetadata.model.CatalogMetadata;
 import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
 import nl.dtl.fairmetadata.model.FDPMetadata;
+import nl.dtl.fairmetadata.model.Metadata;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata.utils.MetadataUtils;
+import nl.dtl.fairmetadata.utils.vocabulary.DCAT;
+import nl.dtl.fairmetadata.utils.vocabulary.LDP;
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.service.FairMetadataServiceExceptionErrorCode;
 import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -165,25 +167,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public void storeCatalogMetaData(CatalogMetadata metadata) 
             throws FairMetadataServiceException {
-        Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
-        if(isSubjectURIExist(metadata.getUri())) {
-            String errorMsg = "The catalog metadata URI already "
-                    + "exist in the repository. Please try with "
-                    + "different catalog ID";
-            LOGGER.error(errorMsg);
-            throw(new FairMetadataServiceException(errorMsg, 
-                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST));
-        }
-        try {            
-            storeManager.removeStatement(metadata.getParentURI(), 
-                    DCTERMS.MODIFIED, null);            
+        Preconditions.checkNotNull(metadata, 
+                "Catalog metadata must not be null.");
+        Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
+                "The catalog URI already exist in the repository. "
+                        + "Please try with different dataset ID");
+        try {           
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));
-            List<Statement> stmts = new ArrayList();
-            stmts.add(new StatementImpl(metadata.getParentURI(), 
-                    DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
-            storeManager.storeRDF(stmts);
-        } catch (DatatypeConfigurationException | MetadataException | 
-                StoreManagerException ex) {
+            updateParentResource(metadata);
+        } catch (MetadataException | StoreManagerException ex) {
             LOGGER.error("Error storing catalog metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));        
         } 
@@ -192,26 +184,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public void storeDatasetMetaData(DatasetMetadata metadata) 
             throws FairMetadataServiceException {
-        Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
-        if(isSubjectURIExist(metadata.getUri())) {
-            String errorMsg = "The dataset metadata URI already "
-                    + "exist in the repository. Please try with "
-                    + "different dataset ID";
-            LOGGER.error(errorMsg);
-            throw(new FairMetadataServiceException(errorMsg, 
-                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST));
-        }
-        try {
-            storeManager.removeStatement(metadata.getParentURI(), 
-                    DCTERMS.MODIFIED, null);            
-            storeManager.storeRDF(MetadataUtils.getStatements(metadata));
-            List<Statement> stmts = new ArrayList();
-            stmts.add(new StatementImpl(metadata.getParentURI(), 
-                    DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
-            storeManager.storeRDF(stmts);
-            
-        } catch (StoreManagerException | MetadataException | 
-                DatatypeConfigurationException ex) {
+        Preconditions.checkNotNull(metadata, 
+                "Dataset metadata must not be null.");
+        Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
+                "The dataset URI already exist in the repository. "
+                        + "Please try with different dataset ID");
+        Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
+                "The catalogy URI doesn't exist in the repository. "
+                        + "Please try with valid catalogy ID");
+        try {           
+            storeManager.storeRDF(MetadataUtils.getStatements(metadata));  
+            updateParentResource(metadata);            
+        } catch (StoreManagerException | MetadataException ex) {
             LOGGER.error("Error storing dataset metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
@@ -220,26 +204,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public void storeDistributionMetaData(DistributionMetadata 
             metadata) throws FairMetadataServiceException {
-        Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
-        if(isSubjectURIExist(metadata.getUri())) {
-            String errorMsg = "The distribution metadata URI already "
-                    + "exist in the repository. Please try with "
-                    + "different distribution ID";
-            LOGGER.error(errorMsg);
-            throw(new FairMetadataServiceException(errorMsg, 
-                    FairMetadataServiceExceptionErrorCode.RESOURCE_EXIST));
-        }
-        try {
-            storeManager.removeStatement(metadata.getParentURI(), 
-                    DCTERMS.MODIFIED, null);            
-            storeManager.storeRDF(MetadataUtils.getStatements(metadata));
-            List<Statement> stmts = new ArrayList();
-            stmts.add(new StatementImpl(metadata.getParentURI(), 
-                    DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
-            storeManager.storeRDF(stmts);
-            
-        } catch (StoreManagerException | MetadataException | 
-                DatatypeConfigurationException ex) {
+        Preconditions.checkNotNull(metadata, 
+                "Distribution metadata must not be null.");
+        Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
+                "The distribution URI already exist in the repository. "
+                        + "Please try with different distribution ID");
+        Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
+                "The dataset URI doesn't exist in the repository. "
+                        + "Please try with valid dataset ID");
+        try {         
+            storeManager.storeRDF(MetadataUtils.getStatements(metadata)); 
+            updateParentResource(metadata);
+        } catch (StoreManagerException | MetadataException ex) {
             LOGGER.error("Error storing distribution metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
@@ -266,6 +242,33 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
         return fdpMetadata;
+    }
+    
+    private <T extends Metadata> void updateParentResource(@Nonnull 
+            T metadata) {
+        Preconditions.checkNotNull(metadata, 
+                "Metadata object must not be null.");
+        
+        try {
+            List<Statement> stmts = new ArrayList();
+            if (metadata instanceof CatalogMetadata) {            
+                stmts.add(new StatementImpl(metadata.getParentURI(),                   
+                        LDP.CONTAINS, metadata.getUri()));                
+            } else if (metadata instanceof DatasetMetadata) {              
+            stmts.add(new StatementImpl(metadata.getParentURI(), 
+                    DCAT.DATASET, metadata.getUri()));  
+            } else if (metadata instanceof DistributionMetadata) {
+                stmts.add(new StatementImpl(metadata.getParentURI(), 
+                    DCAT.DISTRIBUTION, metadata.getUri()));                
+            }            
+            storeManager.removeStatement(metadata.getParentURI(),            
+                    DCTERMS.MODIFIED, null);             
+            stmts.add(new StatementImpl(metadata.getParentURI(), 
+                    DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
+            storeManager.storeRDF(stmts);
+        } catch (StoreManagerException | DatatypeConfigurationException ex) {
+            LOGGER.error("Error updating parent resource :" + ex.getMessage());
+        }
     }
     
      /**
