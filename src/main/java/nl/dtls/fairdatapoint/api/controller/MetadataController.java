@@ -9,7 +9,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -87,16 +86,132 @@ public class MetadataController {
             }
             FDPMetadata metadata = fairMetaDataService.
                     retrieveFDPMetaData(fdpURI);
-            if(metadata == null) {
-                responseBody = HttpHeadersUtils.set404ResponseHeaders(
+            responseBody = MetadataUtils.getString(metadata, 
+                    requestedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
+                    requestedContentType);                        
+        } catch (IllegalStateException ex){
+            responseBody = HttpHeadersUtils.set404ResponseHeaders(
                         response);
+        } catch (Exception ex) {
+            responseBody = HttpHeadersUtils.set500ResponseHeaders(
+                    response, ex);
+        }
+        LoggerUtils.logRequest(LOGGER, request, response);
+        return responseBody;
+    }
+    
+    
+
+    @ApiOperation(value = "Catalog metadata")
+    @RequestMapping(value = "/{catalogID}", method = RequestMethod.GET,
+            produces = {"text/turtle",
+                "application/ld+json", "application/rdf+xml", "text/n3"}
+    )
+    public String getCatalogMetaData(
+            @PathVariable final String catalogID, HttpServletRequest request,
+            HttpServletResponse response) {
+        LOGGER.info("Request to get CATALOG metadata {}", catalogID);
+        LOGGER.info("GET : " + request.getRequestURL());
+        String responseBody;
+        String contentType = request.getHeader(HttpHeaders.ACCEPT);
+        RDFFormat requesetedContentType = HttpHeadersUtils.
+                getRequestedAcceptHeader(contentType);
+        String catalogURI = getRequesedURL(request);
+        try {
+            if (!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
             }
-            else {
-               responseBody = MetadataUtils.getString(metadata, 
-                       requestedContentType);
-                HttpHeadersUtils.set200ResponseHeaders(responseBody, response,
-                    requestedContentType); 
-            }           
+            CatalogMetadata metadata = fairMetaDataService.
+                    retrieveCatalogMetaData(catalogURI);            
+            responseBody = MetadataUtils.getString(metadata, 
+                       requesetedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response,                        
+                    requesetedContentType);            
+        } catch (IllegalStateException ex){
+            responseBody = HttpHeadersUtils.set404ResponseHeaders(
+                        response);
+        } catch (Exception ex) {
+            responseBody = HttpHeadersUtils.set500ResponseHeaders(
+                    response, ex);
+        }
+        LoggerUtils.logRequest(LOGGER, request, response);
+        return responseBody;
+    }
+    
+    
+
+    @ApiOperation(value = "Dataset metadata")
+    @RequestMapping(value = "/{catalogID}/{datasetID}",
+            method = RequestMethod.GET,
+            produces = {"text/turtle",
+                "application/ld+json", "application/rdf+xml", "text/n3"}
+    )
+    public String getDatasetMetaData(@PathVariable final String catalogID,
+            @PathVariable final String datasetID, HttpServletRequest request,
+            HttpServletResponse response) {
+        LOGGER.info("Request to get DATASET metadata {}", catalogID);
+        LOGGER.info("GET : " + request.getRequestURL());
+        String responseBody;
+        String contentType = request.getHeader(HttpHeaders.ACCEPT);
+        RDFFormat requesetedContentType = HttpHeadersUtils.
+                getRequestedAcceptHeader(contentType);
+        String datasetURI = getRequesedURL(request);
+        try {
+            if (!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
+            DatasetMetadata metadata = fairMetaDataService.
+                    retrieveDatasetMetaData(datasetURI);               
+            responseBody = MetadataUtils.getString(metadata, 
+                       requesetedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                        requesetedContentType);            
+        } catch (IllegalStateException ex){
+            responseBody = HttpHeadersUtils.set404ResponseHeaders(
+                        response);
+        } catch (Exception ex) {
+            responseBody = HttpHeadersUtils.set500ResponseHeaders(
+                    response, ex);
+        }
+        LoggerUtils.logRequest(LOGGER, request, response);
+        return responseBody;
+    }
+    
+    
+
+    @ApiOperation(value = "Dataset distribution metadata")
+    @RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID}",
+            produces = {"text/turtle",
+                "application/ld+json", "application/rdf+xml", "text/n3"},
+            method = RequestMethod.GET)
+    public String getDistribution(@PathVariable final String catalogID,
+            @PathVariable final String datasetID,
+            @PathVariable final String distributionID,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        LOGGER.info("Request to get dataset's distribution {}", distributionID);
+        LOGGER.info("GET : " + request.getRequestURL());
+        String responseBody = null;
+        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
+        RDFFormat requesetedContentType = HttpHeadersUtils.
+                getRequestedAcceptHeader(acceptHeader);
+        String distributionURI = getRequesedURL(request);
+        try {
+            if (!isFDPMetaDataAvailable) {
+                createFDPMetaData(request);
+            }
+            DistributionMetadata metadata = fairMetaDataService.
+                    retrieveDistributionMetaData(distributionURI);           
+               
+            responseBody = MetadataUtils.getString(metadata, 
+                    requesetedContentType);                
+            HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
+                        requesetedContentType); 
+        } catch (IllegalStateException ex){
+            responseBody = HttpHeadersUtils.set404ResponseHeaders(
+                        response);
         } catch (Exception ex) {
             responseBody = HttpHeadersUtils.set500ResponseHeaders(
                     response, ex);
@@ -152,45 +267,6 @@ public class MetadataController {
         return responseBody;
     }
 
-    @ApiOperation(value = "Catalog metadata")
-    @RequestMapping(value = "/{catalogID}", method = RequestMethod.GET,
-            produces = {"text/turtle",
-                "application/ld+json", "application/rdf+xml", "text/n3"}
-    )
-    public String getCatalogMetaData(
-            @PathVariable final String catalogID, HttpServletRequest request,
-            HttpServletResponse response) {
-        LOGGER.info("Request to get CATALOG metadata {}", catalogID);
-        LOGGER.info("GET : " + request.getRequestURL());
-        String responseBody;
-        String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.
-                getRequestedAcceptHeader(contentType);
-        String catalogURI = getRequesedURL(request);
-        try {
-            if (!isFDPMetaDataAvailable) {
-                createFDPMetaData(request);
-            }
-            CatalogMetadata metadata = fairMetaDataService.
-                    retrieveCatalogMetaData(catalogURI);            
-            if(metadata == null) {
-                responseBody = HttpHeadersUtils.set404ResponseHeaders(
-                        response);
-            }
-            else {
-               responseBody = MetadataUtils.getString(metadata, 
-                       requesetedContentType);
-                HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
-                        requesetedContentType); 
-            }
-        } catch (Exception ex) {
-            responseBody = HttpHeadersUtils.set500ResponseHeaders(
-                    response, ex);
-        }
-        LoggerUtils.logRequest(LOGGER, request, response);
-        return responseBody;
-    }
-
     /**
      * To hander POST dataset metadata request.
      *
@@ -238,46 +314,6 @@ public class MetadataController {
             responseBody = HttpHeadersUtils.set400ResponseHeaders(
                     response, ex);
         }
-        return responseBody;
-    }
-
-    @ApiOperation(value = "Dataset metadata")
-    @RequestMapping(value = "/{catalogID}/{datasetID}",
-            method = RequestMethod.GET,
-            produces = {"text/turtle",
-                "application/ld+json", "application/rdf+xml", "text/n3"}
-    )
-    public String getDatasetMetaData(@PathVariable final String catalogID,
-            @PathVariable final String datasetID, HttpServletRequest request,
-            HttpServletResponse response) {
-        LOGGER.info("Request to get DATASET metadata {}", catalogID);
-        LOGGER.info("GET : " + request.getRequestURL());
-        String responseBody;
-        String contentType = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.
-                getRequestedAcceptHeader(contentType);
-        String datasetURI = getRequesedURL(request);
-        try {
-            if (!isFDPMetaDataAvailable) {
-                createFDPMetaData(request);
-            }
-            DatasetMetadata metadata = fairMetaDataService.
-                    retrieveDatasetMetaData(datasetURI);
-            if(metadata == null) {
-                responseBody = HttpHeadersUtils.set404ResponseHeaders(
-                        response);
-            }
-            else {
-               responseBody = MetadataUtils.getString(metadata, 
-                       requesetedContentType);
-                HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
-                        requesetedContentType); 
-            }
-        } catch (Exception ex) {
-            responseBody = HttpHeadersUtils.set500ResponseHeaders(
-                    response, ex);
-        }
-        LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }
 
@@ -331,47 +367,6 @@ public class MetadataController {
             responseBody = HttpHeadersUtils.set400ResponseHeaders(
                     response, ex);
         }
-        return responseBody;
-    }
-
-    @ApiOperation(value = "Dataset distribution metadata")
-    @RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID}",
-            produces = {"text/turtle",
-                "application/ld+json", "application/rdf+xml", "text/n3"},
-            method = RequestMethod.GET)
-    public String getDistribution(@PathVariable final String catalogID,
-            @PathVariable final String datasetID,
-            @PathVariable final String distributionID,
-            HttpServletRequest request,
-            HttpServletResponse response) {
-
-        LOGGER.info("Request to get dataset's distribution {}", distributionID);
-        LOGGER.info("GET : " + request.getRequestURL());
-        String responseBody = null;
-        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
-        RDFFormat requesetedContentType = HttpHeadersUtils.
-                getRequestedAcceptHeader(acceptHeader);
-        String distributionURI = getRequesedURL(request);
-        try {
-            if (!isFDPMetaDataAvailable) {
-                createFDPMetaData(request);
-            }
-            DistributionMetadata metadata = fairMetaDataService.
-                    retrieveDistributionMetaData(distributionURI);
-            if(metadata == null) {
-                responseBody = HttpHeadersUtils.set404ResponseHeaders(
-                        response);
-            }
-            else {
-               responseBody = MetadataUtils.getString(metadata, 
-                       requesetedContentType);
-                HttpHeadersUtils.set200ResponseHeaders(responseBody, response, 
-                        requesetedContentType); 
-            }
-        } catch (Exception ex) {
-            HttpHeadersUtils.set500ResponseHeaders(response, ex);
-        }
-        LoggerUtils.logRequest(LOGGER, request, response);
         return responseBody;
     }
 
