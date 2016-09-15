@@ -32,6 +32,7 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
@@ -115,7 +116,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         String fdpURI = baseUri(env).concat("fdp");
         String title = "Nameless FairDataPoint";
         try {
-            List<Statement> statements = storeManager().retrieveResource(fdpURI);
+            List<Statement> statements = storeManager().retrieveResource(
+                    new URIImpl(fdpURI));
             for(Statement s: statements){
                 if(s.getPredicate().stringValue().equals("http://purl.org/dc/terms/title")){
                     return s.getObject().stringValue();

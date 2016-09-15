@@ -56,7 +56,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public FDPMetadata retrieveFDPMetaData(String uri) throws 
             FairMetadataServiceException {
         try {
-            List<Statement> statements = storeManager.retrieveResource(uri);
+            List<Statement> statements = storeManager.retrieveResource(
+                    new URIImpl(uri));
             Preconditions.checkState(!statements.isEmpty(), 
                 "The FDP URI doesn't exist in the repository"); 
             FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
@@ -73,7 +74,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throws FairMetadataServiceException {
         try {
             List<Statement> statements = 
-                    storeManager.retrieveResource(uri);
+                    storeManager.retrieveResource(new URIImpl(uri));
             Preconditions.checkState(!statements.isEmpty(), 
                 "The catalog URI doesn't exist in the repository"); 
             CatalogMetadataParser parser = MetadataParserUtils.
@@ -91,7 +92,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public DatasetMetadata retrieveDatasetMetaData(String uri) 
             throws FairMetadataServiceException {
         try {
-            List<Statement> statements = storeManager.retrieveResource(uri);
+            List<Statement> statements = storeManager.retrieveResource(
+                    new URIImpl(uri));
             Preconditions.checkState(!statements.isEmpty(), 
                 "The dataset URI doesn't exist in the repository"); 
             DatasetMetadataParser parser = MetadataParserUtils.
@@ -109,7 +111,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public DistributionMetadata retrieveDistributionMetaData(String uri) 
             throws FairMetadataServiceException {
         try {
-            List<Statement> statements = storeManager.retrieveResource(uri);
+            List<Statement> statements = storeManager.retrieveResource(
+                    new URIImpl(uri));
             Preconditions.checkState(!statements.isEmpty(), 
                 "The distribution URI doesn't exist in the repository");           
             DistributionMetadataParser parser = MetadataParserUtils.
@@ -131,7 +134,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(metadata.getIssued());
-            storeManager.storeRDF(MetadataUtils.getStatements(metadata));            
+            storeManager.storeStatements(MetadataUtils.getStatements(metadata));            
         } catch ( StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing fdp metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
@@ -149,7 +152,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(metadata.getIssued());
-            storeManager.storeRDF(MetadataUtils.getStatements(metadata));
+            storeManager.storeStatements(MetadataUtils.getStatements(metadata));
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing catalog metadata");
@@ -171,7 +174,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {       
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(metadata.getIssued());
-            storeManager.storeRDF(MetadataUtils.getStatements(metadata));  
+            storeManager.storeStatements(MetadataUtils.getStatements(metadata));  
             updateParentResource(metadata);            
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing dataset metadata");
@@ -193,7 +196,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {  
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(metadata.getIssued());
-            storeManager.storeRDF(MetadataUtils.getStatements(metadata)); 
+            storeManager.storeStatements(MetadataUtils.getStatements(metadata)); 
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing distribution metadata");
@@ -227,7 +230,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                     DCTERMS.MODIFIED, null);             
             stmts.add(new StatementImpl(metadata.getParentURI(), 
                     DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
-            storeManager.storeRDF(stmts);
+            storeManager.storeStatements(stmts);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error updating parent resource :" + ex.getMessage());
         }

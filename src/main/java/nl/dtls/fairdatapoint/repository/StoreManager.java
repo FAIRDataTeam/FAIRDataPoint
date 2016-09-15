@@ -19,7 +19,7 @@ import org.openrdf.model.Value;
  */
 public interface StoreManager {
     
-    List<Statement> retrieveResource(String uri) 
+    List<Statement> retrieveResource(URI uri) 
             throws StoreManagerException;
     /**
      * Store RDF from openRDF model to the repository
@@ -27,7 +27,7 @@ public interface StoreManager {
      * @param statements
      * @throws StoreManagerException 
      */
-    void storeRDF (List<Statement> statements) throws StoreManagerException;
+    void storeStatements (List<Statement> statements) throws StoreManagerException;
     /**
      * Remove a statement from the repository
      * 

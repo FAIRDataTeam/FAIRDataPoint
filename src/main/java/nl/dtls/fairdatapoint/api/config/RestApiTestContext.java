@@ -6,7 +6,6 @@
 package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
-import nl.dtl.fairmetadata.utils.ExampleFilesUtils;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;

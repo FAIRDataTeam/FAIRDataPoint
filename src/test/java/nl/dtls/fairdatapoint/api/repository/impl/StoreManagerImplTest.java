@@ -51,7 +51,7 @@ public class StoreManagerImplTest {
         List<Statement> sts = ExampleFilesUtils.
                 getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE, 
                         "http://www.dtls.nl/test");
-        testStoreManager.storeRDF(sts);
+        testStoreManager.storeStatements(sts);
     }
 
     /**
@@ -59,7 +59,7 @@ public class StoreManagerImplTest {
      * IllegalArgumentException
      */
     @DirtiesContext
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void nullURI() {
 
         try {
@@ -79,7 +79,7 @@ public class StoreManagerImplTest {
     public void emptyURI() {
         String uri = "";
         try {
-            testStoreManager.retrieveResource(uri);
+            testStoreManager.retrieveResource(new URIImpl(uri));
             fail("No RDF statements excepted for NULL URI");
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw RepositoryException or "
@@ -101,7 +101,7 @@ public class StoreManagerImplTest {
             Exception {
         String uri = "http://localhost/dummy";
         List<Statement> statements
-                = testStoreManager.retrieveResource(uri);
+                = testStoreManager.retrieveResource(new URIImpl(uri));
         assertTrue(statements.isEmpty());
     }
 
@@ -118,7 +118,8 @@ public class StoreManagerImplTest {
             StoreManagerException,
             Exception {
         List<Statement> statements
-                = testStoreManager.retrieveResource(ExampleFilesUtils.TEST_SUB_URI);
+                = testStoreManager.retrieveResource(new URIImpl(
+                        ExampleFilesUtils.TEST_SUB_URI));
         assertTrue(statements.size() > 0);
     }
 
@@ -132,7 +133,7 @@ public class StoreManagerImplTest {
                 getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE, 
                         "http://www.dtls.nl/test");
         try {
-            testStoreManager.storeRDF(statements);
+            testStoreManager.storeStatements(statements);
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw StoreManagerException");
         }
@@ -150,7 +151,7 @@ public class StoreManagerImplTest {
             Statement stmt = new StatementImpl(sub, RDF.TYPE, obj);
             List<Statement> sts = new ArrayList();
             sts.add(stmt);
-            testStoreManager.storeRDF(sts);
+            testStoreManager.storeStatements(sts);
             testStoreManager.removeStatement(sub, RDF.TYPE, null);
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw StoreManagerException");

@@ -5,16 +5,16 @@
  */
 package nl.dtls.fairdatapoint.repository.impl;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import javax.annotation.Nonnull;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -26,147 +26,118 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Contain methods to store and access the triple store
- * 
+ *
  * @author Rajaram Kaliyaperumal
  * @since 2016-01-05
  * @version 0.2
  */
 @Repository("storeManager")
 public class StoreManagerImpl implements StoreManager {
-    
-    private static final Logger LOGGER = 
-            LoggerFactory.getLogger(StoreManagerImpl.class);
+
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(StoreManagerImpl.class);
     @Autowired
     @Qualifier("repository")
-    private org.openrdf.repository.Repository repository;  
-    
-    
-    
+    private org.openrdf.repository.Repository repository;
+
     /**
      * Retrieve all statements for an given URI
-     * 
+     *
      * @param uri Valid RDF URI as a string
-     * @return  List of RDF statements
-     * @throws StoreManagerException 
+     * @return List of RDF statements
+     * @throws StoreManagerException
      */
-    
     @Override
-    public List<Statement> retrieveResource(String uri) 
+    public List<Statement> retrieveResource(@Nonnull URI uri)
             throws StoreManagerException {
-        
-        if (uri == null || uri.isEmpty()) {
-            String errorMsg = "The resource URI can't be NULL or EMPTY";
-            LOGGER.error(errorMsg);
-            throw (new IllegalArgumentException(errorMsg));
-        }        
-        RepositoryConnection conn = null;
-        List<Statement> statements = new ArrayList();
-        try {
-            conn = getRepositoryConnection();   
-            URI resourceSubj = new URIImpl(uri);
-            LOGGER.info("Get statements for the URI <" + 
-                    resourceSubj.toString() + ">");
-            if (conn.hasStatement(resourceSubj, null, null,false)) {
-               RepositoryResult<Statement> queryResult = conn.getStatements(
-                       resourceSubj, null, null, false); 
-               while(queryResult.hasNext()) {
-                   statements.add(queryResult.next());                  
-               }
-               
-            } else {
-                LOGGER.info("No statements for the URI <" + 
-                        resourceSubj.toString() + ">");
-            }
-        } catch (RepositoryException ex) {            
-            LOGGER.error("Error retrieving resource <" + uri + ">");
+        Preconditions.checkNotNull(uri, "URI must not be null.");
+        LOGGER.info("Get statements for the URI <"+ uri.toString() + ">"); 
+        RepositoryConnection conn = null;        
+        try {            
+            conn = getRepositoryConnection();
+            RepositoryResult<Statement> queryResult = conn.getStatements(uri, 
+                    null, null, false);                
+            List<Statement> statements = new ArrayList();
+            while (queryResult.hasNext()) {                    
+                statements.add(queryResult.next());                
+            }            
+            return statements;
+        } catch (RepositoryException ex) {
+            LOGGER.error("Error retrieving resource <" + uri.toString() + ">");
             throw (new StoreManagerException(ex.getMessage()));
-        }
-        finally {
+        } finally {
             try {
                 closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {                
-                LOGGER.error("Error closing connection",e); 
+            } catch (StoreManagerException e) {
+                LOGGER.error("Error closing connection", e);
                 throw (new StoreManagerException(e.getMessage()));
-                
             }
         }
-        return statements;
-    } 
-    
+    }
+
     /**
      * Check if a statement exist in a triple store
-     * 
+     *
      * @param rsrc
      * @param pred
      * @param value
      * @return
-     * @throws StoreManagerException 
+     * @throws StoreManagerException
      */
     @Override
-    public boolean isStatementExist(Resource rsrc, URI pred, Value value) 
-            throws StoreManagerException { 
-        
-        boolean isStatementExist = false;       
-        RepositoryConnection conn = null; 
+    public boolean isStatementExist(Resource rsrc, URI pred, Value value)
+            throws StoreManagerException {
+        RepositoryConnection conn = null;
         try {
-            conn = getRepositoryConnection();  
+            conn = getRepositoryConnection();
             LOGGER.info("Check if statements exists");
-           isStatementExist = conn.hasStatement(rsrc, pred, value, false);
-            
-        } catch (RepositoryException ex) {            
+            return conn.hasStatement(rsrc, pred, value, false);
+        } catch (RepositoryException ex) {
             LOGGER.error("Error checking statement's existence");
             throw (new StoreManagerException(ex.getMessage()));
-        }
-        finally {
+        } finally {
             try {
                 closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {                
-                LOGGER.error("Error closing connection",e); 
+            } catch (StoreManagerException e) {
+                LOGGER.error("Error closing connection", e);
                 throw (new StoreManagerException(e.getMessage()));
-                
             }
         }
-        return isStatementExist;
-    } 
-    
+    }
+
     /**
      * Store string RDF to the repository
-     * 
-     * @throws StoreManagerException 
+     *
+     * @throws StoreManagerException
      */
     @Override
-    public void storeRDF (List<Statement> statements) throws 
+    public void storeStatements(List<Statement> statements) throws
             StoreManagerException {
         RepositoryConnection conn = null;
         try {
             conn = getRepositoryConnection();
-            Iterator<Statement> st = statements.iterator();
-            while(st.hasNext()) {
-                conn.add(st.next());
-            }              
+            conn.add(statements);
         } catch (RepositoryException ex) {
-            LOGGER.error("Error storing RDF",ex);
+            LOGGER.error("Error storing RDF", ex);
             throw (new StoreManagerException(ex.getMessage()));
-        }  
-        finally {
+        } finally {
             try {
                 closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {                
-                LOGGER.error("Error closing connection",e); 
+            } catch (StoreManagerException e) {
+                LOGGER.error("Error closing connection", e);
                 throw (new StoreManagerException(e.getMessage()));
-                
             }
         }
     }
-    
+
     /**
      * Remove a statement from the repository
-     * 
+     *
      * @param pred
-     * @throws StoreManagerException 
+     * @throws StoreManagerException
      */
     @Override
-    public void removeStatement (Resource rsrc, URI pred, Value value) throws 
+    public void removeStatement(Resource rsrc, URI pred, Value value) throws
             StoreManagerException {
         RepositoryConnection conn = null;
         try {
@@ -174,50 +145,49 @@ public class StoreManagerImpl implements StoreManager {
             conn.remove(rsrc, pred, value);
             //conn.remove(statement);
         } catch (RepositoryException ex) {
-            LOGGER.error("Error storing RDF",ex);
+            LOGGER.error("Error storing RDF", ex);
             throw (new StoreManagerException(ex.getMessage()));
-        }  
-        finally {
+        } finally {
             try {
                 closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {                
-                LOGGER.error("Error closing connection",e); 
+            } catch (StoreManagerException e) {
+                LOGGER.error("Error closing connection", e);
                 throw (new StoreManagerException(e.getMessage()));
-                
+
             }
         }
     }
-    
+
     /**
      * Method to close repository connection
-     * 
+     *
      * @throws nl.dtls.fairdatapoint.repository.StoreManagerException
      */
-    private void closeRepositoryConnection(RepositoryConnection conn) throws 
+    private void closeRepositoryConnection(RepositoryConnection conn) throws
             StoreManagerException {
-        
-        try {            
+
+        try {
             if ((conn != null) && conn.isOpen()) {
-                conn.close();            
+                conn.close();
             } else {
                 String errorMsg = "The connection is either NULL or already "
                         + "CLOSED";
-                LOGGER.error(errorMsg);            
+                LOGGER.error(errorMsg);
                 throw (new StoreManagerException(errorMsg));
             }
         } catch (RepositoryException ex) {
             LOGGER.error("Error closing repository connection!");
             throw (new StoreManagerException(ex.getMessage()));
         }
-    } 
-    
+    }
+
     /**
      * Repository connection to interact with the triple store
-     * 
+     *
      * @return RepositoryConnection
-     * @throws Exception 
+     * @throws Exception
      */
-    private RepositoryConnection getRepositoryConnection() 
+    private RepositoryConnection getRepositoryConnection()
             throws StoreManagerException {
         try {
             return this.repository.getConnection();
