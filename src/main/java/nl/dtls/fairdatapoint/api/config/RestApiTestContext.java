@@ -6,13 +6,16 @@
 package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
+import nl.dtl.fairmetadata.utils.ExampleFilesUtils;
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.api.repository.impl.StoreManagerImpl;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFParseException;
+import org.openrdf.sail.Sail;
+import org.openrdf.sail.memory.MemoryStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -36,8 +39,8 @@ public class RestApiTestContext {
     public Repository repository(final Environment env)
             throws RepositoryException, IOException, RDFParseException {
         // For tets we use only in memory
-        Repository repository = ExampleFilesUtils.getRepository();
-        return repository;
+        Sail store = new MemoryStore();
+        return new SailRepository(store);
     }
 
     @Bean(name = "storeManager")
@@ -62,9 +65,5 @@ public class RestApiTestContext {
     @Bean(name = "prepopulateStore")
     public boolean prepopulateStore(final Environment env)  {
         return true;
-    }
-    @Bean(name = "placeHolderFile")
-    public String placeHolderFile()  {        
-        return ExampleFilesUtils.FDP_METADATA_FILE;
     }
 }

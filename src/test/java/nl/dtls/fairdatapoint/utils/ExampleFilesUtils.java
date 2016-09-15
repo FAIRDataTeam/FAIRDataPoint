@@ -6,7 +6,6 @@
 package nl.dtls.fairdatapoint.utils;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.PatternFilenameFilter;
 import com.google.common.io.Resources;
@@ -27,8 +26,6 @@ import nl.dtl.fairmetadata.model.CatalogMetadata;
 import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
 import nl.dtl.fairmetadata.model.FDPMetadata;
-import static nl.dtl.fairmetadata.utils.ExampleFilesUtils.FILE_FORMAT;
-import static nl.dtl.fairmetadata.utils.ExampleFilesUtils.getFileContentAsString;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,6 +92,7 @@ public class ExampleFilesUtils {
      * Method to read the content of a turtle file
      * 
      * @param fileName Turtle file name
+     * @param baseURI
      * @return File content as a string
      */
     public static List<Statement> getFileContentAsStatements(String fileName, 
@@ -152,51 +150,5 @@ public class ExampleFilesUtils {
                 new URIImpl(uri));
         metadata.setParentURI(new URIImpl(parentURI));
         return metadata;
-    }
-    
-    
-    /**
-     * Method to get turtle file names from a dir
-     * 
-     * @return File names as List<>
-     */
-    
-    /**
-     * Method to get turtle file names from a dir
-     * @return File names as List<>
-     */
-    public static List<String> getTurtleFileNames() {
-        List<String> fileNames = new ArrayList();   
-        URL placeHolderFile = ExampleFilesUtils.class.
-                getResource(FDP_METADATA_FILE);
-        
-        String sourceFileURI = placeHolderFile.getPath();
-        sourceFileURI = sourceFileURI.replace(FDP_METADATA_FILE, "");
-        // Matches only turtle files
-        Pattern pattern = Pattern.compile("^.*.ttl");    
-        FilenameFilter filterByExtension = new PatternFilenameFilter(pattern);
-        File dir = new File(sourceFileURI);
-        File[] files = dir.listFiles(filterByExtension);  
-        for (File file: files) {
-            fileNames.add(file.getName());
-        }
-        LOGGER.info("Turtle files in util packaage " + fileNames.toString());
-        return fileNames;
-    }
-    
-    public static Repository getRepository() throws RepositoryException, 
-            IOException, RDFParseException{ 
-        Sail store = new MemoryStore(); 
-        Repository repository = new SailRepository(store);
-//        repository.initialize();
-//        RepositoryConnection conn = repository.getConnection();
-//        for (String fileName:ExampleFilesUtils.getTurtleFileNames()) {
-//            String content = ExampleFilesUtils.getFileContentAsString(fileName);
-//            StringReader reader = new StringReader(content);
-//            conn.add(reader, BASE_URI, FILE_FORMAT); 
-//        }
-//        conn.close();
-        return repository;
-    }
-    
+    }    
 }

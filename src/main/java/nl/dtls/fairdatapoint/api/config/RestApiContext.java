@@ -29,7 +29,6 @@ import nl.dtls.fairdatapoint.aoipmh.handlers.ListSetsHandler;
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.api.repository.impl.StoreManagerImpl;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
