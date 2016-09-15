@@ -7,9 +7,9 @@ package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
 import nl.dtl.fairmetadata.utils.ExampleFilesUtils;
-import nl.dtls.fairdatapoint.api.repository.StoreManager;
-import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
-import nl.dtls.fairdatapoint.api.repository.impl.StoreManagerImpl;
+import nl.dtls.fairdatapoint.repository.StoreManager;
+import nl.dtls.fairdatapoint.repository.StoreManagerException;
+import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.repository.impl;
+package nl.dtls.fairdatapoint.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import nl.dtls.fairdatapoint.api.repository.StoreManager;
-import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
+import nl.dtls.fairdatapoint.repository.StoreManager;
+import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -191,7 +191,7 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * Method to close repository connection
      * 
-     * @throws nl.dtls.fairdatapoint.api.repository.StoreManagerException
+     * @throws nl.dtls.fairdatapoint.repository.StoreManagerException
      */
     private void closeRepositoryConnection(RepositoryConnection conn) throws 
             StoreManagerException {
