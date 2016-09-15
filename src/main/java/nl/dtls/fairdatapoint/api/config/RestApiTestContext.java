@@ -43,7 +43,7 @@ public class RestApiTestContext {
     }
 
     @Bean(name = "storeManager")
-    @DependsOn({"repository", "prepopulateStore", "baseURI"})
+    @DependsOn({"repository"})
     public StoreManager storeManager() throws RepositoryException,
             StoreManagerException {
         return new StoreManagerImpl();
@@ -59,10 +59,5 @@ public class RestApiTestContext {
     public String baseURI(final Environment env)  {
         String rdfBaseURI = env.getRequiredProperty("baseUri");
         return rdfBaseURI;
-    }
-
-    @Bean(name = "prepopulateStore")
-    public boolean prepopulateStore(final Environment env)  {
-        return true;
     }
 }

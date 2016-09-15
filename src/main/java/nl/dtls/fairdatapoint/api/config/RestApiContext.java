@@ -87,7 +87,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
 
     @Bean(name = "storeManager")
-    @DependsOn({"repository", "prepopulateStore", "baseUri"})
+    @DependsOn({"repository", "baseUri"})
     public StoreManager storeManager() throws RepositoryException,
             StoreManagerException {
         return new StoreManagerImpl();
@@ -103,14 +103,6 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         String rdfBaseURI = env.getRequiredProperty("baseUri");
         return rdfBaseURI;
     }
-
-    @Bean(name = "prepopulateStore")
-    public boolean prepopulateStore(final Environment env)  {
-        boolean rdfBaseURI = Boolean.valueOf(
-                env.getProperty("store-prepopulate", "false"));
-        return rdfBaseURI;
-    }
-
     @Bean(name="repositoryName")
     public String repositoryName(Environment env){
         String fdpURI = baseUri(env).concat("fdp");
