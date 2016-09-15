@@ -130,6 +130,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
+            metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));            
         } catch (MetadataException | StoreManagerException | 
                 DatatypeConfigurationException ex) {
@@ -148,6 +149,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         + "Please try with different dataset ID");
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
+            metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));
             updateParentResource(metadata);
         } catch (MetadataException | StoreManagerException | 
@@ -170,6 +172,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         + "Please try with valid catalogy ID");
         try {       
             metadata.setIssued(RDFUtils.getCurrentTime());
+            metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));  
             updateParentResource(metadata);            
         } catch (StoreManagerException | MetadataException | 
@@ -192,6 +195,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         + "Please try with valid dataset ID");
         try {  
             metadata.setIssued(RDFUtils.getCurrentTime());
+            metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata)); 
             updateParentResource(metadata);
         } catch (StoreManagerException | MetadataException |
