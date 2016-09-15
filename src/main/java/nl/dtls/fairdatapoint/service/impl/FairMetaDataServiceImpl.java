@@ -22,13 +22,13 @@ import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtl.fairmetadata.model.Metadata;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata.utils.MetadataUtils;
+import nl.dtl.fairmetadata.utils.RDFUtils;
 import nl.dtl.fairmetadata.utils.vocabulary.DCAT;
 import nl.dtl.fairmetadata.utils.vocabulary.LDP;
 import nl.dtls.fairdatapoint.api.repository.StoreManager;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.utils.RDFUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.Statement;
@@ -129,8 +129,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throws FairMetadataServiceException {        
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
         try {
+            metadata.setIssued(RDFUtils.getCurrentTime());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));            
-        } catch (MetadataException | StoreManagerException ex) {
+        } catch (MetadataException | StoreManagerException | 
+                DatatypeConfigurationException ex) {
             LOGGER.error("Error storing fdp metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
@@ -144,10 +146,12 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
                 "The catalog URI already exist in the repository. "
                         + "Please try with different dataset ID");
-        try {           
+        try {
+            metadata.setIssued(RDFUtils.getCurrentTime());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));
             updateParentResource(metadata);
-        } catch (MetadataException | StoreManagerException ex) {
+        } catch (MetadataException | StoreManagerException | 
+                DatatypeConfigurationException ex) {
             LOGGER.error("Error storing catalog metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));        
         } 
@@ -164,10 +168,12 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
                 "The catalogy URI doesn't exist in the repository. "
                         + "Please try with valid catalogy ID");
-        try {           
+        try {       
+            metadata.setIssued(RDFUtils.getCurrentTime());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));  
             updateParentResource(metadata);            
-        } catch (StoreManagerException | MetadataException ex) {
+        } catch (StoreManagerException | MetadataException | 
+                DatatypeConfigurationException ex) {
             LOGGER.error("Error storing dataset metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
@@ -184,10 +190,12 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
                 "The dataset URI doesn't exist in the repository. "
                         + "Please try with valid dataset ID");
-        try {         
+        try {  
+            metadata.setIssued(RDFUtils.getCurrentTime());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata)); 
             updateParentResource(metadata);
-        } catch (StoreManagerException | MetadataException ex) {
+        } catch (StoreManagerException | MetadataException |
+                DatatypeConfigurationException ex) {
             LOGGER.error("Error storing distribution metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
