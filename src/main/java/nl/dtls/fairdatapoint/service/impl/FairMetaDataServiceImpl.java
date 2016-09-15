@@ -126,14 +126,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     
     @Override
     public void storeFDPMetaData(@Nonnull FDPMetadata metadata) 
-            throws FairMetadataServiceException {        
+            throws FairMetadataServiceException, MetadataException {        
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));            
-        } catch (MetadataException | StoreManagerException | 
-                DatatypeConfigurationException ex) {
+        } catch ( StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing fdp metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
@@ -141,7 +140,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     
     @Override
     public void storeCatalogMetaData(CatalogMetadata metadata) 
-            throws FairMetadataServiceException {
+            throws FairMetadataServiceException, MetadataException {
         Preconditions.checkNotNull(metadata, 
                 "Catalog metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
@@ -152,8 +151,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));
             updateParentResource(metadata);
-        } catch (MetadataException | StoreManagerException | 
-                DatatypeConfigurationException ex) {
+        } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing catalog metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));        
         } 
@@ -161,7 +159,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     
     @Override
     public void storeDatasetMetaData(DatasetMetadata metadata) 
-            throws FairMetadataServiceException {
+            throws FairMetadataServiceException, MetadataException {
         Preconditions.checkNotNull(metadata, 
                 "Dataset metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
@@ -175,8 +173,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata));  
             updateParentResource(metadata);            
-        } catch (StoreManagerException | MetadataException | 
-                DatatypeConfigurationException ex) {
+        } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing dataset metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }
@@ -184,7 +181,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     @Override
     public void storeDistributionMetaData(DistributionMetadata 
-            metadata) throws FairMetadataServiceException {
+            metadata) throws FairMetadataServiceException, MetadataException {
         Preconditions.checkNotNull(metadata, 
                 "Distribution metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
@@ -198,8 +195,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             metadata.setModified(metadata.getIssued());
             storeManager.storeRDF(MetadataUtils.getStatements(metadata)); 
             updateParentResource(metadata);
-        } catch (StoreManagerException | MetadataException |
-                DatatypeConfigurationException ex) {
+        } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing distribution metadata");
             throw(new FairMetadataServiceException(ex.getMessage()));
         }

@@ -5,6 +5,7 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.model.CatalogMetadata;
 import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
@@ -64,34 +65,38 @@ public interface FairMetaDataService {
      * 
      * @param catalogMetadata
      * @throws FairMetadataServiceException 
+     * @throws nl.dtl.fairmetadata.io.MetadataException 
      */
     void storeCatalogMetaData(CatalogMetadata catalogMetadata) 
-            throws FairMetadataServiceException;
+            throws FairMetadataServiceException, MetadataException;
     /**
      * Store dataset metadata
      * 
      * @param datasetMetadata
      * @throws FairMetadataServiceException 
+     * @throws nl.dtl.fairmetadata.io.MetadataException 
      */
     void storeDatasetMetaData(DatasetMetadata datasetMetadata) 
-            throws FairMetadataServiceException;
+            throws FairMetadataServiceException, MetadataException;
     
     /**
      * Store fdp metadata
      * 
      * @param fdpMetaData
      * @throws FairMetadataServiceException 
+     * @throws nl.dtl.fairmetadata.io.MetadataException 
      */
     void storeFDPMetaData(FDPMetadata fdpMetaData) 
-            throws FairMetadataServiceException; 
+            throws FairMetadataServiceException, MetadataException; 
     
     /**
      * Store distribution metadata
      * 
      * @param distributionMetadata
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata.io.MetadataException
      */
     void storeDistributionMetaData(DistributionMetadata distributionMetadata)
-            throws FairMetadataServiceException;
+            throws FairMetadataServiceException, MetadataException;
         
 }

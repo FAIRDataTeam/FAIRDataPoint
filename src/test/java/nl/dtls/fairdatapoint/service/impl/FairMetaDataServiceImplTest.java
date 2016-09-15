@@ -7,6 +7,7 @@ package nl.dtls.fairdatapoint.service.impl;
 
 import java.net.MalformedURLException;
 import javax.xml.datatype.DatatypeConfigurationException;
+import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.model.CatalogMetadata;
 import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
@@ -19,10 +20,8 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +58,7 @@ public class FairMetaDataServiceImplTest {
     @Before
     public void storeExampleMetadata() throws StoreManagerException, 
             MalformedURLException, DatatypeConfigurationException, 
-            FairMetadataServiceException {        
+            FairMetadataServiceException, MetadataException {        
         LOGGER.info("Storing example FDP metadata for service layer tests");
         fairMetaDataService.storeFDPMetaData(
                 ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));

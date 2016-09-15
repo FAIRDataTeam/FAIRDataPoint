@@ -8,6 +8,7 @@ package nl.dtls.fairdatapoint.api.controller;
 import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
+import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.api.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
@@ -66,7 +67,7 @@ public class MetadataControllerTest {
     @Before
     public void storeExampleMetadata() throws StoreManagerException, 
             MalformedURLException, DatatypeConfigurationException, 
-            FairMetadataServiceException {        
+            FairMetadataServiceException, MetadataException {        
         LOGGER.info("Storing example FDP metadata for service layer tests");
         fairMetaDataService.storeFDPMetaData(
                 ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
