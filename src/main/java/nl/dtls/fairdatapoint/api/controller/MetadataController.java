@@ -77,23 +77,21 @@ public class MetadataController {
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     @ResponseStatus(HttpStatus.OK)
-    public String getFDAMetaData(final HttpServletRequest request,
+    public FDPMetadata getFDPMetaData(final HttpServletRequest request,
             HttpServletResponse response) throws IllegalStateException,
             MetadataControllerException,
             FairMetadataServiceException, MetadataException {
 
         LOGGER.info("Request to get FDP metadata");
         LOGGER.info("GET : " + request.getRequestURL());
-        RDFFormat format = getRequestedAcceptHeader(request.getHeader(
-                HttpHeaders.ACCEPT));
+        
         String uri = getRequesedURL(request);
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
         }
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(uri);
-        String responseBody = MetadataUtils.getString(metadata, format);
         LoggerUtils.logRequest(LOGGER, request, response);
-        return responseBody;
+        return metadata;
     }
 
     /**

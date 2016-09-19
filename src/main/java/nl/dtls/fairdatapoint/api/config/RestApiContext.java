@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.aoipmh.handlers.ListIdentifiersHandler;
 import nl.dtls.fairdatapoint.aoipmh.handlers.ListMetadataFormatsHandler;
 import nl.dtls.fairdatapoint.aoipmh.handlers.ListRecordsHandler;
 import nl.dtls.fairdatapoint.aoipmh.handlers.ListSetsHandler;
+import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
@@ -39,6 +40,7 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.memory.MemoryStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +49,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -67,7 +71,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class RestApiContext extends WebMvcConfigurerAdapter {
     private final static Logger LOGGER
             = LogManager.getLogger(RestApiContext.class);
-
+    
+    @Autowired
+    private List<AbstractMetadataMessageConverter<?>> metadataConverters;
+    
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.addAll(metadataConverters);
+    }
+    
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
+            converter.configureContentNegotiation(configurer);
+        }
+    }
+    
     @Bean(name="repository", initMethod = "initialize",
             destroyMethod = "shutDown")
     public Repository repository( Environment env)
