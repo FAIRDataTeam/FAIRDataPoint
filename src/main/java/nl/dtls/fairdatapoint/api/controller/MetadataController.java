@@ -11,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import nl.dtl.fairmetadata.io.CatalogMetadataParser;
 import nl.dtl.fairmetadata.io.DatasetMetadataParser;
 import nl.dtl.fairmetadata.io.DistributionMetadataParser;
 import nl.dtl.fairmetadata.io.MetadataException;
@@ -21,7 +20,6 @@ import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
 import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
-import nl.dtl.fairmetadata.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.api.controller.exception.MetadataControllerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
@@ -210,7 +208,7 @@ public class MetadataController {
      *
      * @param request Http request
      * @param response Http response
-     * @param catalogMetaData catalog metadata RDF as a string
+     * @param metadata catalog metadata
      * @param catalogID Unique catalog ID
      * @return created message
      *
@@ -223,25 +221,22 @@ public class MetadataController {
     @ResponseStatus(HttpStatus.CREATED)
     public String storeCatalogMetaData(final HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody(required = true) String catalogMetaData,
+            @RequestBody(required = true) CatalogMetadata metadata,
             @RequestParam("catalogID") String catalogID) throws
             IllegalStateException, MetadataControllerException,
             MetadataParserException, FairMetadataServiceException, 
             MetadataException {
 
         LOGGER.info("Request to store catalog metatdata with ID ", catalogID);
-        RDFFormat format = getContentType(request.getHeader(
-                HttpHeaders.CONTENT_TYPE));
-        String requestedURL = getRequesedURL(request);
-        URI fdpURI = new URIImpl(requestedURL);
-        URI catalogURI = new URIImpl(requestedURL + "/" + catalogID);
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
-        }
-        CatalogMetadataParser parser
-                = MetadataParserUtils.getCatalogParser();
-        CatalogMetadata metadata = parser.parse(catalogMetaData, catalogID,
-                catalogURI, fdpURI, format);
+        }        
+        String requestedURL = getRequesedURL(request);
+        URI fdpURI = new URIImpl(requestedURL);
+        URI uri = new URIImpl(requestedURL + "/" + catalogID);
+        metadata.setUri(uri);
+        metadata.setParentURI(fdpURI);
+        metadata.setIdentifier(new LiteralImpl(catalogID, XMLSchema.STRING));
         fairMetaDataService.storeCatalogMetaData(metadata);
         return "Metadata is stored";
     }
@@ -251,7 +246,7 @@ public class MetadataController {
      *
      * @param request Http request
      * @param response Http response
-     * @param datasetMetaData dataset metadata RDF as a string
+     * @param metadata  Dataset metadata
      * @param catalogID Unique catalog ID
      * @param datasetID Unique dataset ID
      * @return created message
@@ -266,21 +261,18 @@ public class MetadataController {
     public String storeDatasetMetaData(final HttpServletRequest request,
             HttpServletResponse response,
             @PathVariable final String catalogID,
-            @RequestBody(required = true) String datasetMetaData,
+            @RequestBody(required = true) DatasetMetadata metadata,
             @RequestParam("datasetID") String datasetID)
             throws IllegalStateException, MetadataParserException,
             FairMetadataServiceException, MetadataException {
-
+        
         LOGGER.info("Request to store dataset metatdata with ID ", datasetID);
-        RDFFormat format = getContentType(request.getHeader(
-                HttpHeaders.CONTENT_TYPE));
         String requestedURL = getRequesedURL(request);
         URI catalogURI = new URIImpl(requestedURL);
-        URI datasetURI = new URIImpl(requestedURL + "/" + datasetID);
-        DatasetMetadataParser parser
-                = MetadataParserUtils.getDatasetParser();
-        DatasetMetadata metadata = parser.parse(datasetMetaData, datasetID,
-                datasetURI, catalogURI, format);
+        URI uri = new URIImpl(requestedURL + "/" + datasetID);
+        metadata.setUri(uri);
+        metadata.setParentURI(catalogURI);
+        metadata.setIdentifier(new LiteralImpl(datasetID, XMLSchema.STRING));
         fairMetaDataService.storeDatasetMetaData(metadata);
         return "Metadata is stored";
     }
@@ -292,7 +284,7 @@ public class MetadataController {
      * @param response Http response
      * @param catalogID Unique catalog ID
      * @param datasetID Unique dataset ID
-     * @param distributionMetaData distribution metadata RDF as a string
+     * @param metadata distribution metadata
      * @param distributionID Unique distribution ID
      * @return created message
      *
@@ -306,22 +298,19 @@ public class MetadataController {
     public String storeDistribution(final HttpServletRequest request,
             HttpServletResponse response, @PathVariable final String catalogID,
             @PathVariable final String datasetID,
-            @RequestBody(required = true) String distributionMetaData,
+            @RequestBody(required = true) DistributionMetadata metadata,
             @RequestParam("distributionID") String distributionID)
             throws IllegalStateException, MetadataParserException,
             FairMetadataServiceException, MetadataException {
 
         LOGGER.info("Request to store distribution metatdata with ID ",
                 distributionID);
-        RDFFormat format = getContentType(request.getHeader(
-                HttpHeaders.CONTENT_TYPE));
         String requestedURL = getRequesedURL(request);
         URI datasetURI = new URIImpl(requestedURL);
-        URI distributionURI = new URIImpl(requestedURL + "/" + distributionID);
-        DistributionMetadataParser parser = MetadataParserUtils.
-                getDistributionParser();
-        DistributionMetadata metadata = parser.parse(distributionMetaData,
-                distributionID, distributionURI, datasetURI, format);
+        URI uri = new URIImpl(requestedURL + "/" + distributionID);
+        metadata.setUri(uri);
+        metadata.setParentURI(datasetURI);
+        metadata.setIdentifier(new LiteralImpl(datasetID, XMLSchema.STRING));
         fairMetaDataService.storeDistributionMetaData(metadata);
         return "Metadata is stored";
     }
@@ -375,24 +364,4 @@ public class MetadataController {
         }
 
     }
-
-    private RDFFormat getRequestedAcceptHeader(String accept) {
-        if (accept.contentEquals(
-                RDFFormat.JSONLD.getDefaultMIMEType())) {
-            return RDFFormat.JSONLD;
-        } else if (accept.contentEquals(RDFFormat.N3.getDefaultMIMEType())) {
-            return RDFFormat.N3;
-        } else if (accept.contentEquals(RDFFormat.RDFXML.getDefaultMIMEType())) {
-            return RDFFormat.RDFXML;
-        }
-        return RDFFormat.TURTLE;
-    }
-
-    private RDFFormat getContentType(String contentType) {
-        if (contentType.contentEquals(RDFFormat.TURTLE.getDefaultMIMEType())) {
-            return RDFFormat.TURTLE;
-        }
-        return null;
-    }
-
 }

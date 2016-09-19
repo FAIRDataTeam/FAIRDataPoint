@@ -5,11 +5,17 @@
  */
 package nl.dtls.fairdatapoint.api.converter;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import nl.dtl.fairmetadata.io.CatalogMetadataParser;
 import nl.dtl.fairmetadata.io.MetadataException;
+import nl.dtl.fairmetadata.io.MetadataParserException;
 import nl.dtl.fairmetadata.model.CatalogMetadata;
+import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata.utils.MetadataUtils;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.http.HttpInputMessage;
@@ -37,8 +43,17 @@ public class CatalogMetadataConverter extends AbstractMetadataMessageConverter
     }
 
     @Override
-    protected CatalogMetadata readInternal(Class<? extends CatalogMetadata> type, HttpInputMessage him) throws IOException, HttpMessageNotReadableException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected CatalogMetadata readInternal(Class<? extends CatalogMetadata> 
+            type, HttpInputMessage inputMessage) throws IOException, 
+            HttpMessageNotReadableException {
+        CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
+        try {
+            String body = CharStreams.toString(new InputStreamReader(
+                    inputMessage.getBody(), Charsets.UTF_8 ));
+            return parser.parse(body, null, format);
+        } catch (MetadataParserException ex) {
+           throw new HttpMessageNotReadableException("", ex);
+        }
     }
 
     @Override

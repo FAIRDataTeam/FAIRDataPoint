@@ -25,11 +25,6 @@ public abstract class AbstractMetadataMessageConverter<T extends Metadata> exten
         super(getMediaTypes(format));
         this.format = format;
     }
-
-    @Override
-    public boolean canRead(Class<?> clazz, MediaType mediaType) {
-        return false;
-    }
     
     /**
      * Visitor method to configure content negotiation for this converter. 
