@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import nl.dtl.fairmetadata.model.Metadata;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Abstract base class for {@link Metadata} based {@link HttpMessageConverter
@@ -17,8 +18,17 @@ import nl.dtl.fairmetadata.model.Metadata;
 public abstract class AbstractMetadataMessageConverter<T extends Metadata> extends AbstractHttpMessageConverter<T> {
     protected RDFFormat format;
     
+     private static final org.apache.logging.log4j.Logger LOGGER
+            = LogManager.getLogger(AbstractMetadataMessageConverter.class);
+    
     public AbstractMetadataMessageConverter(RDFFormat format) {
         super(getMediaTypes(format));
+        this.format = format;
+    }
+
+    @Override
+    public boolean canRead(Class<?> clazz, MediaType mediaType) {
+        return false;
     }
     
     /**
@@ -29,6 +39,9 @@ public abstract class AbstractMetadataMessageConverter<T extends Metadata> exten
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.mediaType(format.getDefaultFileExtension(),
                 MediaType.parseMediaType(format.getDefaultMIMEType()));
+        
+        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(),
+                format.getDefaultMIMEType());
     }
     
     /**

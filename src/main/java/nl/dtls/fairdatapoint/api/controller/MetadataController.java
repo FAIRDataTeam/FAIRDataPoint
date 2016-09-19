@@ -113,7 +113,7 @@ public class MetadataController {
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     @ResponseStatus(HttpStatus.OK)
-    public String getCatalogMetaData(
+    public CatalogMetadata getCatalogMetaData(
             @PathVariable final String catalogID, HttpServletRequest request,
             HttpServletResponse response) throws IllegalStateException,
             MetadataControllerException, FairMetadataServiceException,
@@ -121,15 +121,11 @@ public class MetadataController {
 
         LOGGER.info("Request to get CATALOG metadata with ID ", catalogID);
         LOGGER.info("GET : " + request.getRequestURL());
-        RDFFormat format = getRequestedAcceptHeader(request.getHeader(
-                HttpHeaders.ACCEPT));
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.
                 retrieveCatalogMetaData(uri);
-        String responseBody = MetadataUtils.getString(metadata,
-                format);
         LoggerUtils.logRequest(LOGGER, request, response);
-        return responseBody;
+        return metadata;
     }
 
     /**
@@ -153,7 +149,8 @@ public class MetadataController {
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     @ResponseStatus(HttpStatus.OK)
-    public String getDatasetMetaData(@PathVariable final String catalogID,
+    public DatasetMetadata getDatasetMetaData(
+            @PathVariable final String catalogID,
             @PathVariable final String datasetID, HttpServletRequest request,
             HttpServletResponse response) throws IllegalStateException,
             MetadataControllerException, FairMetadataServiceException,
@@ -161,15 +158,11 @@ public class MetadataController {
 
         LOGGER.info("Request to get DATASET metadata with ID ", datasetID);
         LOGGER.info("GET : " + request.getRequestURL());
-        RDFFormat format = getRequestedAcceptHeader(request.getHeader(
-                HttpHeaders.ACCEPT));
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService.
                 retrieveDatasetMetaData(uri);
-        String responseBody = MetadataUtils.getString(metadata,
-                format);
         LoggerUtils.logRequest(LOGGER, request, response);
-        return responseBody;
+        return metadata;
     }
 
     /**
@@ -193,7 +186,8 @@ public class MetadataController {
                 "application/ld+json", "application/rdf+xml", "text/n3"},
             method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public String getDistribution(@PathVariable final String catalogID,
+    public DistributionMetadata getDistribution(
+            @PathVariable final String catalogID,
             @PathVariable final String datasetID,
             @PathVariable final String distributionID,
             HttpServletRequest request,
@@ -204,16 +198,11 @@ public class MetadataController {
         LOGGER.info("Request to get dataset's distribution wih ID ",
                 distributionID);
         LOGGER.info("GET : " + request.getRequestURL());
-        RDFFormat format = getRequestedAcceptHeader(request.getHeader(
-                HttpHeaders.ACCEPT));
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService.
                 retrieveDistributionMetaData(uri);
-
-        String responseBody = MetadataUtils.getString(metadata,
-                format);
         LoggerUtils.logRequest(LOGGER, request, response);
-        return responseBody;
+        return metadata;
     }
 
     /**

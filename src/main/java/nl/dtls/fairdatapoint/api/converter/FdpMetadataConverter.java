@@ -13,7 +13,6 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
@@ -23,10 +22,9 @@ import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata.utils.MetadataUtils;
 
-@Component
 public class FdpMetadataConverter extends AbstractMetadataMessageConverter<FDPMetadata> {
-    public FdpMetadataConverter() {
-        super(RDFFormat.TURTLE);
+    public FdpMetadataConverter(RDFFormat format) {
+        super(format);
     }
     
     @Override
@@ -48,7 +46,9 @@ public class FdpMetadataConverter extends AbstractMetadataMessageConverter<FDPMe
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
         return parser.parse(Lists.newArrayList(model), new URIImpl(null));
     }
-
+    
+    
+    
     @Override
     protected void writeInternal(FDPMetadata metadata, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
