@@ -1,6 +1,5 @@
 package nl.dtls.fairdatapoint.api.config;
 
-
 import com.lyncode.builder.ListBuilder;
 import com.lyncode.xoai.services.impl.UTCDateProvider;
 import java.util.ArrayList;
@@ -58,6 +57,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 /**
  * Spring context file.
+ *
  * @author Rajaram Kaliyaperumal
  * @since 2015-11-19
  * @version 0.2
@@ -69,27 +69,28 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @PropertySource({"${fdp.server.conf:classpath:/conf/fdp-server.properties}",
     "${fdp.tripleStore.conf:classpath:/conf/triple-store.properties}"})
 public class RestApiContext extends WebMvcConfigurerAdapter {
+
     private final static Logger LOGGER
             = LogManager.getLogger(RestApiContext.class);
-    
+
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
-    
+
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
     }
-    
+
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
     }
-    
-    @Bean(name="repository", initMethod = "initialize",
+
+    @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
-    public Repository repository( Environment env)
+    public Repository repository(Environment env)
             throws RepositoryException {
         String storeURL = env.getProperty("store-url");
         int storeType = env.getProperty("store-type", Integer.class);
@@ -116,21 +117,21 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
     @Bean(name = "baseUri")
-    public String baseUri(final Environment env)  {
+    public String baseUri(final Environment env) {
         String rdfBaseURI = env.getRequiredProperty("baseUri");
         return rdfBaseURI;
     }
-    @Bean(name="repositoryName")
-    public String repositoryName(Environment env){
+
+    @Bean(name = "repositoryName")
+    public String repositoryName(Environment env) {
         String fdpURI = baseUri(env).concat("fdp");
         String title = "Nameless FairDataPoint";
         try {
             List<Statement> statements = storeManager().retrieveResource(
                     new URIImpl(fdpURI));
-            for(Statement s: statements){
-                if(s.getPredicate().stringValue().equals("http://purl.org/dc/terms/title")){
+            for (Statement s : statements) {
+                if (s.getPredicate().stringValue().equals("http://purl.org/dc/terms/title")) {
                     return s.getObject().stringValue();
                 }
             }
@@ -139,34 +140,34 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         }
         return title;
     }
-    
-    @Bean(name="adminEmails")
-    public ArrayList<String> adminEmails(Environment env)  {
+
+    @Bean(name = "adminEmails")
+    public ArrayList<String> adminEmails(Environment env) {
         ArrayList<String> out = new ArrayList<>();
         String[] emails = env.getRequiredProperty("aoiAdminEmails").split(",");
-        for(String email: emails){
+        for (String email : emails) {
             out.add(email.trim());
         }
         return out;
     }
 
-    @Bean(name = "identifier")    
-    public String identifier(Environment env)  {     
+    @Bean(name = "identifier")
+    public String identifier(Environment env) {
         String identifier = env.getRequiredProperty("identifier");
         return identifier;
-    } 
-    
-    @Bean(name="identify")
-    public Identify identify(){
+    }
+
+    @Bean(name = "identify")
+    public Identify identify() {
         return new Identify();
     }
-    
-        @Bean(name="context")
-    public Context context(Environment env) throws TransformerConfigurationException{
+
+    @Bean(name = "context")
+    public Context context(Environment env) throws TransformerConfigurationException {
         String[] sets = env.getRequiredProperty("sets").trim().split(",");
         Context context = new Context().withMetadataFormat("http://www.openarchives.org/OAI/2.0/oai_dc/",
-                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd","aoi_dc", TransformerFactory.newInstance().newTransformer());
-        for (String x: sets){
+                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd", "aoi_dc", TransformerFactory.newInstance().newTransformer());
+        for (String x : sets) {
             Set set;
             set = new Set(x.split(":")[0]).withName(x.split(":")[1]).withCondition(new Condition() {
                 @Override
@@ -183,58 +184,64 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         }
         return context;
     }
-     
-    @Bean(name="repositoryConfiguration")
-    public RepositoryConfiguration repositoryConfiguration(){
+
+    @Bean(name = "repositoryConfiguration")
+    public RepositoryConfiguration repositoryConfiguration() {
         RepositoryConfiguration repositoryConfiguration = new RepositoryConfiguration();
         return repositoryConfiguration;
     }
-    
-    @Bean(name="identifyHandler")
-    public IdentifyHandler identifyhandler(Environment env) throws TransformerConfigurationException{
+
+    @Bean(name = "identifyHandler")
+    public IdentifyHandler identifyhandler(Environment env) throws TransformerConfigurationException {
         return new IdentifyHandler(this.context(env), this.aoiRepository(env));
     }
-    
-    @Bean(name="listSetsHandler")
-    public ListSetsHandler listSetsHandler(Environment env) throws TransformerConfigurationException{
+
+    @Bean(name = "listSetsHandler")
+    public ListSetsHandler listSetsHandler(Environment env) throws TransformerConfigurationException {
         return new ListSetsHandler(this.context(env), this.aoiRepository(env));
     }
 
-    @Bean(name="listMetadataFormatsHandler")
-    public ListMetadataFormatsHandler listMetaDataFormatsHandler(Environment env) throws TransformerConfigurationException{
-        return new ListMetadataFormatsHandler(this.context(env), this.aoiRepository(env));        
+    @Bean(name = "listMetadataFormatsHandler")
+    public ListMetadataFormatsHandler listMetaDataFormatsHandler(Environment env) throws TransformerConfigurationException {
+        return new ListMetadataFormatsHandler(this.context(env), this.aoiRepository(env));
     }
-    
-    @Bean(name="aoiRepository")
-    public nl.dtls.fairdatapoint.aoipmh.Repository aoiRepository(Environment env){
+
+    @Bean(name = "aoiRepository")
+    public nl.dtls.fairdatapoint.aoipmh.Repository aoiRepository(Environment env) {
         nl.dtls.fairdatapoint.aoipmh.Repository r = new nl.dtls.fairdatapoint.aoipmh.Repository();
         InMemoryItemRepository inMemoryItemRepository = new InMemoryItemRepository();
         InMemorySetRepository inMemorySetRepository = new InMemorySetRepository();
-            
-        if (env.getRequiredProperty("randomRepository").equals("True")){
+
+        if (env.getRequiredProperty("randomRepository").equals("True")) {
             inMemoryItemRepository = inMemoryItemRepository.withRandomItems(10);
             inMemorySetRepository = inMemorySetRepository.withRandomSets(10);
         } else {
             String[] items = env.getRequiredProperty("records").trim().split(",");
-            for (String x: items){
+            for (String x : items) {
                 String[] itemMapping = x.split(";");
-                InMemoryItem item = new InMemoryItem().with("deleted",false).with("datestamp",new Date());
-                for (String y: itemMapping){
+                InMemoryItem item = new InMemoryItem().with("deleted", false).with("datestamp", new Date());
+                for (String y : itemMapping) {
                     String[] field = y.split(":");
-                    if (field[0].equals("set")){
-                        item.with("sets",new ListBuilder<String>().add(field[1]).build());      
-                    }if (field[0].equals("creators")){
-                        item.with("creator",field[1]);
-                    }if (field[0].equals("title")){
-                        item.with("title",field[1]);
-                    }if (field[0].equals("subject")){
-                        item.with("subject",field[1]);
-                    }if (field[0].equals("description")){
-                        item.with("description",field[1]);
-                    }if (field[0].equals("type")){
-                        item.with("type",field[1]);
-                    }if (field[0].equals("identifier")){
-                        item.with("identifier",field[1]);
+                    if (field[0].equals("set")) {
+                        item.with("sets", new ListBuilder<String>().add(field[1]).build());
+                    }
+                    if (field[0].equals("creators")) {
+                        item.with("creator", field[1]);
+                    }
+                    if (field[0].equals("title")) {
+                        item.with("title", field[1]);
+                    }
+                    if (field[0].equals("subject")) {
+                        item.with("subject", field[1]);
+                    }
+                    if (field[0].equals("description")) {
+                        item.with("description", field[1]);
+                    }
+                    if (field[0].equals("type")) {
+                        item.with("type", field[1]);
+                    }
+                    if (field[0].equals("identifier")) {
+                        item.with("identifier", field[1]);
                     }
                 }
                 inMemoryItemRepository.withItem(item);
@@ -243,40 +250,39 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         r = r.withItemRepository(inMemoryItemRepository).withSetRepository(inMemorySetRepository);
         return r;
     }
-    
-    @Bean(name="protocolVersion")
-    public String protocolVersion(Environment env){
+
+    @Bean(name = "protocolVersion")
+    public String protocolVersion(Environment env) {
         return env.getRequiredProperty("protocolVersion");
     }
-    
-    @Bean(name="listIdentifiersHandler")
-    public ListIdentifiersHandler listIdentifiersHandler(Environment env) throws TransformerConfigurationException{
-      return new ListIdentifiersHandler(this.context(env), this.aoiRepository(env));  
+
+    @Bean(name = "listIdentifiersHandler")
+    public ListIdentifiersHandler listIdentifiersHandler(Environment env) throws TransformerConfigurationException {
+        return new ListIdentifiersHandler(this.context(env), this.aoiRepository(env));
     }
-  
-    @Bean(name="getRecordHandler")
-    public GetRecordHandler getRecordHandler(Environment env) throws TransformerConfigurationException{
+
+    @Bean(name = "getRecordHandler")
+    public GetRecordHandler getRecordHandler(Environment env) throws TransformerConfigurationException {
         return new GetRecordHandler(this.context(env), this.aoiRepository(env));
     }
-    
-    @Bean(name="errorHandler")
-    public ErrorHandler errorHandler(){
+
+    @Bean(name = "errorHandler")
+    public ErrorHandler errorHandler() {
         return new ErrorHandler();
     }
-    
-    @Bean(name="utcDateProvider")
-    public UTCDateProvider utcDateProvider(){
+
+    @Bean(name = "utcDateProvider")
+    public UTCDateProvider utcDateProvider() {
         return new UTCDateProvider();
     }
-    
-    @Bean(name="listRecordsHandler")
-    public ListRecordsHandler listRecordsHandler(Environment env) throws TransformerConfigurationException{
+
+    @Bean(name = "listRecordsHandler")
+    public ListRecordsHandler listRecordsHandler(Environment env) throws TransformerConfigurationException {
         return new ListRecordsHandler(this.context(env), this.aoiRepository(env));
     }
-    
+
     @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry
-            registry) {
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.setOrder(Integer.MIN_VALUE + 1).
                 addResourceHandler("/swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
