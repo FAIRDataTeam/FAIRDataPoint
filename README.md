@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/DTL-FAIRData/FAIRDataPoint.svg?branch=develop)](https://travis-ci.org/DTL-FAIRData/FAIRDataPoint)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f201d68cb6ca4bd192abda93d5d320da)](https://www.codacy.com/app/burger-github/FAIRDataPoint?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DTL-FAIRData/FAIRDataPoint&amp;utm_campaign=Badge_Grade)
+[![Dependency Status](https://www.versioneye.com/user/projects/57ea451779806f003983556f/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57ea451779806f003983556f)
+
 ### Summary 
 In the current implementation we only support `GET` requests and only `FAIR MetaData` are stored and served. The metadata contents should be generated `manually` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document.
 
