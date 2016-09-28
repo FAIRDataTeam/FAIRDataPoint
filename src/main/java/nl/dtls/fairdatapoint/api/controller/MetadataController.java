@@ -56,14 +56,14 @@ public class MetadataController {
     private boolean isFDPMetaDataAvailable = false;
 
     /**
-     * To hander GET fdp metadata request. (Note:) The first value in the
+     * To handle GET FDP metadata request. (Note:) The first value in the
      * produces annotation is used as a fallback value, for the request with the
      * accept header value (* / *), manually setting the contentType of the
      * response is not working.
      *
      * @param request Http request
      * @param response Http response
-     * @return Metadata as a RDF string
+     * @return Metadata about the FDP in one of the acceptable formats (RDF Turtle, JSON-LD, RDF XML and RDF N3
      *
      * @throws MetadataControllerException
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
@@ -98,7 +98,7 @@ public class MetadataController {
      * @param catalogID
      * @param request
      * @param response
-     * @return Metadata as a RDF string
+     * @return Metadata about the catalog in one of the acceptable formats (RDF Turtle, JSON-LD, RDF XML and RDF N3
      *
      * @throws IllegalStateException
      * @throws MetadataControllerException
@@ -133,7 +133,7 @@ public class MetadataController {
      * @param datasetID
      * @param request
      * @param response
-     * @return Metadata as a RDF string
+     * @return Metadata about the dataset in one of the acceptable formats (RDF Turtle, JSON-LD, RDF XML and RDF N3
      *
      * @throws IllegalStateException
      * @throws MetadataControllerException
@@ -171,7 +171,7 @@ public class MetadataController {
      * @param distributionID
      * @param request
      * @param response
-     * @return Metadata as a RDF string
+     * @return Metadata about the dataset distribution in one of the acceptable formats (RDF Turtle, JSON-LD, RDF XML and RDF N3
      *
      * @throws IllegalStateException
      * @throws MetadataControllerException
@@ -204,7 +204,7 @@ public class MetadataController {
     }
 
     /**
-     * To hander POST catalog metadata request.
+     * To handle POST catalog metadata request.
      *
      * @param request Http request
      * @param response Http response
@@ -242,7 +242,7 @@ public class MetadataController {
     }
 
     /**
-     * To hander POST dataset metadata request.
+     * To handle POST dataset metadata request.
      *
      * @param request Http request
      * @param response Http response
@@ -278,7 +278,7 @@ public class MetadataController {
     }
 
     /**
-     * To hander POST distribution metadata request.
+     * To handle POST distribution metadata request.
      *
      * @param request Http request
      * @param response Http response
