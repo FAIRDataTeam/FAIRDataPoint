@@ -75,9 +75,9 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
-
+    
     @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
     }
 
