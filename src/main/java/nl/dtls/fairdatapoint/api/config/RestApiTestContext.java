@@ -54,10 +54,4 @@ public class RestApiTestContext {
         propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-    @Bean(name = "baseURI")
-    public String baseURI(final Environment env)  {
-        String rdfBaseURI = env.getRequiredProperty("baseUri");
-        return rdfBaseURI;
-    }
 }
