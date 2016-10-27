@@ -24,7 +24,7 @@ import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata.utils.MetadataUtils;
 import nl.dtl.fairmetadata.utils.RDFUtils;
 import nl.dtl.fairmetadata.utils.vocabulary.DCAT;
-import nl.dtl.fairmetadata.utils.vocabulary.LDP;
+import nl.dtl.fairmetadata.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
@@ -218,7 +218,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             List<Statement> stmts = new ArrayList();
             if (metadata instanceof CatalogMetadata) {            
                 stmts.add(new StatementImpl(metadata.getParentURI(),                   
-                        LDP.CONTAINS, metadata.getUri()));                
+                        R3D.DATA_CATALOG, metadata.getUri()));                
             } else if (metadata instanceof DatasetMetadata) {              
             stmts.add(new StatementImpl(metadata.getParentURI(), 
                     DCAT.DATASET, metadata.getUri()));  
