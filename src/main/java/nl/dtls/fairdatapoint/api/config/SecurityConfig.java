@@ -19,8 +19,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * @since 2016-09-20
  * @version 0.1
  */
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
 @PropertySource({"${fdp.server.conf:classpath:/conf/fdp-server.properties}"})
 public class SecurityConfig extends WebSecurityConfigurerAdapter {    
     
