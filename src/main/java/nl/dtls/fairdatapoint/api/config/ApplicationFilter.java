@@ -33,6 +33,8 @@ public class ApplicationFilter extends OncePerRequestFilter {
                 RequestMethod.POST.name());
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, 
+                HttpHeaders.CONTENT_TYPE);
         response.setHeader(HttpHeaders.ALLOW, allowedMtds);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
                 (HttpHeaders.ACCEPT));
