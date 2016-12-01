@@ -15,8 +15,7 @@
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued> "2016-10-27"^^xsd:date ;
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified> "2016-10-27"^^xsd:date ;
 	<http://www.re3data.org/schema/3-0#repositoryIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/fdp-repositoryID> ;
-	<http://www.re3data.org/schema/3-0#dataCatalog> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/biobank> , <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/comparativeGenomics> , <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/patient-registry> , <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining> , <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/transcriptomics> ;
-	<http://www.re3data.org/schema/3-0#institution> <http://dtls.nl> ;
+        <http://www.re3data.org/schema/3-0#institution> <http://dtls.nl> ;
 	<http://www.re3data.org/schema/3-0#institutionCountry> <http://lexvo.org/id/iso3166/NL> ;
 	<http://www.re3data.org/schema/3-0#lastUpdate> "2016-10-27"^^xsd:date ;
 	<http://www.re3data.org/schema/3-0#startDate> "2016-10-27"^^xsd:date ;
