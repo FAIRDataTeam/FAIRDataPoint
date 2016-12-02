@@ -11,28 +11,26 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import nl.dtl.fairmetadata.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata.io.DistributionMetadataParser;
 import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.io.MetadataParserException;
+import nl.dtl.fairmetadata.model.Agent;
 import nl.dtl.fairmetadata.model.CatalogMetadata;
 import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
 import nl.dtl.fairmetadata.model.FDPMetadata;
-import nl.dtl.fairmetadata.utils.MetadataParserUtils;
+import nl.dtl.fairmetadata.model.Identifier;
+import nl.dtl.fairmetadata.utils.vocabulary.DataCite;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.api.controller.exception.MetadataControllerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.vocabulary.FOAF;
 import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -236,7 +234,6 @@ public class MetadataController {
         URI uri = new URIImpl(requestedURL + "/" + catalogID);
         metadata.setUri(uri);
         metadata.setParentURI(fdpURI);
-        metadata.setIdentifier(new LiteralImpl(catalogID, XMLSchema.STRING));
         fairMetaDataService.storeCatalogMetaData(metadata);
         return "Metadata is stored";
     }
@@ -272,7 +269,6 @@ public class MetadataController {
         URI uri = new URIImpl(requestedURL + "/" + datasetID);
         metadata.setUri(uri);
         metadata.setParentURI(catalogURI);
-        metadata.setIdentifier(new LiteralImpl(datasetID, XMLSchema.STRING));
         fairMetaDataService.storeDatasetMetaData(metadata);
         return "Metadata is stored";
     }
@@ -310,7 +306,6 @@ public class MetadataController {
         URI uri = new URIImpl(requestedURL + "/" + distributionID);
         metadata.setUri(uri);
         metadata.setParentURI(datasetURI);
-        metadata.setIdentifier(new LiteralImpl(datasetID, XMLSchema.STRING));
         fairMetaDataService.storeDistributionMetaData(metadata);
         return "Metadata is stored";
     }
@@ -343,8 +338,6 @@ public class MetadataController {
             String host = new URL(fdpUrl).getAuthority();
             FDPMetadata metadata = new FDPMetadata();
             metadata.setUri(new URIImpl(fdpUrl));
-            metadata.setIdentifier(new LiteralImpl(DigestUtils.md5Hex(fdpUrl),
-                    XMLSchema.STRING));
             metadata.setTitle(new LiteralImpl(("FDP of " + host),
                     XMLSchema.STRING));
             metadata.setDescription(new LiteralImpl(("FDP of " + host),
@@ -354,7 +347,26 @@ public class MetadataController {
             metadata.setLicense(new URIImpl(
                     "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0"));
             metadata.setVersion(new LiteralImpl("1.0", XMLSchema.FLOAT));
-            metadata.setSwaggerDoc(new URIImpl(fdpUrl + "/swagger-ui.html"));
+            metadata.setSwaggerDoc(new URIImpl(fdpUrl + "/swagger-ui.html"));            
+            metadata.setInstitutionCountry(new URIImpl(
+                    "http://lexvo.org/id/iso3166/NL"));
+            Identifier id = new Identifier();
+            id.setUri(new URIImpl(fdpUrl + "/metadataID"));
+            id.setIdentifier(new LiteralImpl("fdp-metadataID", 
+                    XMLSchema.STRING)); 
+            id.setType(DataCite.RESOURCE_IDENTIFIER);
+            metadata.setIdentifier(id);
+            //Agent publisher = new Agent();
+           // publisher.setUri(new URIImpl("http://dtls.nl"));
+            //publisher.setType(FOAF.ORGANIZATION);
+            //publisher.setName(new LiteralImpl("DTLS", XMLSchema.STRING));
+            //metadata.setPublisher(publisher);
+            //metadata.setInstitution(publisher);
+            //Identifier repoId = new Identifier();
+            //repoId.setUri(new URIImpl(fdpUrl + "/repoID"));
+            //repoId.setIdentifier(new LiteralImpl("fdp-repoID", XMLSchema.STRING)); 
+            //repoId.setType(DataCite.RESOURCE_IDENTIFIER);
+            //metadata.setRepostoryIdentifier(repoId);
             fairMetaDataService.storeFDPMetaData(metadata);
             isFDPMetaDataAvailable = true;
         } catch (MalformedURLException | MetadataException | 

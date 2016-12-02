@@ -22,7 +22,9 @@ import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata.utils.MetadataUtils;
 
-public class FdpMetadataConverter extends AbstractMetadataMessageConverter<FDPMetadata> {
+public class FdpMetadataConverter extends AbstractMetadataMessageConverter
+        <FDPMetadata> {
+    
     public FdpMetadataConverter(RDFFormat format) {
         super(format);
     }

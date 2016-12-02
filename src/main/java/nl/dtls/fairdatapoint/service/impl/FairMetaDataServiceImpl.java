@@ -60,7 +60,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = storeManager.retrieveResource(
                     new URIImpl(uri));
-            addMetadataIDResource(statements);
+            addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The FDP URI doesn't exist in the repository"); 
             FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
@@ -78,8 +78,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = storeManager.retrieveResource(
                     new URIImpl(uri));
-            addMetadataIDResource(statements);
-            addAddtionalFDPResource(statements);
+            addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The catalog URI doesn't exist in the repository"); 
             CatalogMetadataParser parser = MetadataParserUtils.
@@ -99,7 +98,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = storeManager.retrieveResource(
                     new URIImpl(uri));
-            addMetadataIDResource(statements);
+            addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The dataset URI doesn't exist in the repository"); 
             DatasetMetadataParser parser = MetadataParserUtils.
@@ -119,7 +118,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             List<Statement> statements = storeManager.retrieveResource(
                     new URIImpl(uri));
-            addMetadataIDResource(statements);
+            addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The distribution URI doesn't exist in the repository");           
             DistributionMetadataParser parser = MetadataParserUtils.
@@ -263,27 +262,17 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         return isURIExist;
     }
     
-    private void addMetadataIDResource(List<Statement> statements) throws 
-            StoreManagerException {   
-        List<Statement> metaDataIDstmts = new ArrayList();
-        for (Statement st : statements) {            
-            URI predicate = st.getPredicate();
-            Value object = st.getObject();
-            if (predicate.equals(FDP.METADATA_IDENTIFIER)) {                  
-                metaDataIDstmts = storeManager.retrieveResource((URI) object);                  
-                break;
-            }
-        }        
-        statements.addAll(metaDataIDstmts);
-    }
-    
-    private void addAddtionalFDPResource(List<Statement> statements) throws 
+    private void addAddtionalResource(List<Statement> statements) throws 
             StoreManagerException {   
         List<Statement> otherResources = new ArrayList();
         for (Statement st : statements) {            
             URI predicate = st.getPredicate();
             Value object = st.getObject();
-            if (predicate.equals(R3D.INSTITUTION)) { 
+            if (predicate.equals(FDP.METADATA_IDENTIFIER)) {                  
+                otherResources.addAll(storeManager.retrieveResource(
+                        (URI) object));                  
+            }
+            else if (predicate.equals(R3D.INSTITUTION)) { 
                   otherResources.addAll(storeManager.retrieveResource(
                           (URI) object));
             } else if (predicate.equals(DCTERMS.PUBLISHER)) { 
