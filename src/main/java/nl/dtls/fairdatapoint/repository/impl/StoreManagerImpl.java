@@ -11,13 +11,13 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class StoreManagerImpl implements StoreManager {
             = LoggerFactory.getLogger(StoreManagerImpl.class);
     @Autowired
     @Qualifier("repository")
-    private org.openrdf.repository.Repository repository;
+    private org.eclipse.rdf4j.repository.Repository repository;
 
     /**
      * Retrieve all statements for an given URI
@@ -48,7 +48,7 @@ public class StoreManagerImpl implements StoreManager {
      * @throws StoreManagerException
      */
     @Override
-    public List<Statement> retrieveResource(@Nonnull URI uri)
+    public List<Statement> retrieveResource(@Nonnull IRI uri)
             throws StoreManagerException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
         LOGGER.info("Get statements for the URI <"+ uri.toString() + ">"); 
@@ -85,7 +85,7 @@ public class StoreManagerImpl implements StoreManager {
      * @throws StoreManagerException
      */
     @Override
-    public boolean isStatementExist(Resource rsrc, URI pred, Value value)
+    public boolean isStatementExist(Resource rsrc, IRI pred, Value value)
             throws StoreManagerException {
         RepositoryConnection conn = null;
         try {
@@ -137,7 +137,7 @@ public class StoreManagerImpl implements StoreManager {
      * @throws StoreManagerException
      */
     @Override
-    public void removeStatement(Resource rsrc, URI pred, Value value) throws
+    public void removeStatement(Resource rsrc, IRI pred, Value value) throws
             StoreManagerException {
         RepositoryConnection conn = null;
         try {

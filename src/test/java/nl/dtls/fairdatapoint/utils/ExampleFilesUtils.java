@@ -29,17 +29,14 @@ import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openrdf.model.Statement;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.Rio;
-import org.openrdf.rio.UnsupportedRDFormatException;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 
 /** 
  * Contains references to the example metadata rdf files which are used in the 
@@ -101,7 +98,7 @@ public class ExampleFilesUtils {
         try {
             String content = getFileContentAsString(fileName);
             StringReader reader = new StringReader(content);
-            org.openrdf.model.Model model;
+            Model model;
             model = Rio.parse(reader, baseURI, FILE_FORMAT);
             Iterator<Statement> it = model.iterator();
             statements =  Lists.newArrayList(it);
@@ -115,8 +112,9 @@ public class ExampleFilesUtils {
     public static FDPMetadata getFDPMetadata(String uri) {        
         LOGGER.info("Generating example FDP metadata object");
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         FDPMetadata metadata = parser.parse(getFileContentAsStatements(
-                FDP_METADATA_FILE, uri), new URIImpl(uri));
+                FDP_METADATA_FILE, uri), f.createIRI(uri));
         return metadata;
     }
     
@@ -124,9 +122,10 @@ public class ExampleFilesUtils {
             String parentURI) {        
         LOGGER.info("Generating example catalog metadata object");
         CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         CatalogMetadata metadata = parser.parse(getFileContentAsStatements(
-                CATALOG_METADATA_FILE, uri), new URIImpl(uri));
-        metadata.setParentURI(new URIImpl(parentURI));
+                CATALOG_METADATA_FILE, uri), f.createIRI(uri));
+        metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }
     
@@ -134,9 +133,10 @@ public class ExampleFilesUtils {
             String parentURI) {        
         LOGGER.info("Generating example dataset metadata object");
         DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         DatasetMetadata metadata = parser.parse(getFileContentAsStatements(
-                DATASET_METADATA_FILE, uri), new URIImpl(uri));
-        metadata.setParentURI(new URIImpl(parentURI));
+                DATASET_METADATA_FILE, uri), f.createIRI(uri));
+        metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }
     
@@ -145,10 +145,10 @@ public class ExampleFilesUtils {
         LOGGER.info("Generating example distribution metadata object");
         DistributionMetadataParser parser = MetadataParserUtils.
                 getDistributionParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         DistributionMetadata metadata = parser.parse(getFileContentAsStatements(
-                DISTRIBUTION_METADATA_FILE, uri), 
-                new URIImpl(uri));
-        metadata.setParentURI(new URIImpl(parentURI));
+                DISTRIBUTION_METADATA_FILE, uri), f.createIRI(uri));
+        metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }    
 }

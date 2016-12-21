@@ -11,20 +11,19 @@ import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.StatementImpl;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -80,7 +79,8 @@ public class StoreManagerImplTest {
     public void emptyURI() {
         String uri = "";
         try {
-            testStoreManager.retrieveResource(new URIImpl(uri));
+            ValueFactory f = SimpleValueFactory.getInstance();
+            testStoreManager.retrieveResource(f.createIRI(uri));
             fail("No RDF statements excepted for NULL URI");
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw RepositoryException or "
@@ -101,8 +101,9 @@ public class StoreManagerImplTest {
             StoreManagerException,
             Exception {
         String uri = "http://localhost/dummy";
+        ValueFactory f = SimpleValueFactory.getInstance();
         List<Statement> statements
-                = testStoreManager.retrieveResource(new URIImpl(uri));
+                = testStoreManager.retrieveResource(f.createIRI(uri));
         assertTrue(statements.isEmpty());
     }
 
@@ -116,10 +117,10 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void retrieveExitingResource() throws RepositoryException,
-            StoreManagerException,
-            Exception {
+            StoreManagerException, Exception {
+        ValueFactory f = SimpleValueFactory.getInstance();
         List<Statement> statements
-                = testStoreManager.retrieveResource(new URIImpl(
+                = testStoreManager.retrieveResource(f.createIRI(
                         ExampleFilesUtils.TEST_SUB_URI));
         assertTrue(statements.size() > 0);
     }
@@ -147,9 +148,10 @@ public class StoreManagerImplTest {
     @Test
     public void deleteRource() {
         try {
-            Resource sub = new URIImpl("<http://www.dtls.nl/testSub>");
-            URI obj = new URIImpl("<http://www.dtls.nl/testObj>");
-            Statement stmt = new StatementImpl(sub, RDF.TYPE, obj);
+            ValueFactory f = SimpleValueFactory.getInstance();
+            Resource sub = f.createBNode("<http://www.dtls.nl/testSub>");
+            IRI obj = f.createIRI("<http://www.dtls.nl/testObj>");
+            Statement stmt = f.createStatement(sub, RDF.TYPE, obj);
             List<Statement> sts = new ArrayList();
             sts.add(stmt);
             testStoreManager.storeStatements(sts);
@@ -172,8 +174,9 @@ public class StoreManagerImplTest {
             StoreManagerException,
             Exception {
         String uri = "http://localhost/dummy";
-        boolean isStatementExist
-                = testStoreManager.isStatementExist(new URIImpl(uri), null, null);
+        ValueFactory f = SimpleValueFactory.getInstance();
+        boolean isStatementExist = testStoreManager.isStatementExist
+        (f.createIRI(uri), null, null);
         assertFalse(isStatementExist);
     }
 
@@ -187,11 +190,10 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void checkExitingResource() throws RepositoryException,
-            StoreManagerException,
-            Exception {
-        boolean isStatementExist
-                = testStoreManager.isStatementExist(new URIImpl(
-                                ExampleFilesUtils.TEST_SUB_URI), null, null);
+            StoreManagerException,  Exception {
+        ValueFactory f = SimpleValueFactory.getInstance();
+        boolean isStatementExist = testStoreManager.isStatementExist
+        (f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
         assertTrue(isStatementExist);
     }
 

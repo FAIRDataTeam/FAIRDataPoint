@@ -6,10 +6,10 @@
 package nl.dtls.fairdatapoint.repository;
 
 import java.util.List;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  *
@@ -19,7 +19,7 @@ import org.openrdf.model.Value;
  */
 public interface StoreManager {
     
-    List<Statement> retrieveResource(URI uri) 
+    List<Statement> retrieveResource(IRI uri) 
             throws StoreManagerException;
     /**
      * Store RDF from openRDF model to the repository
@@ -36,7 +36,7 @@ public interface StoreManager {
      * @param value
      * @throws StoreManagerException 
      */
-    void removeStatement (Resource rsrc, URI uri, Value value) 
+    void removeStatement (Resource rsrc, IRI uri, Value value) 
             throws StoreManagerException;
     /**
      * Check if a statement exist in a triple store
@@ -47,6 +47,6 @@ public interface StoreManager {
      * @return
      * @throws StoreManagerException 
      */
-    boolean isStatementExist(Resource rsrc, URI pred, Value value) 
+    boolean isStatementExist(Resource rsrc, IRI pred, Value value) 
             throws StoreManagerException;
 }

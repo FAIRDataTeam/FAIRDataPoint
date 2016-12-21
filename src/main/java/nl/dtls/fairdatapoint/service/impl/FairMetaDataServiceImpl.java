@@ -32,12 +32,13 @@ import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.impl.StatementImpl;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.impl.StatementImpl;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,13 +59,14 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public FDPMetadata retrieveFDPMetaData(String uri) throws 
             FairMetadataServiceException {
         try {
+            ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> statements = storeManager.retrieveResource(
-                    new URIImpl(uri));
+                    f.createIRI(uri));
             addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The FDP URI doesn't exist in the repository"); 
             FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
-            FDPMetadata metadata = parser.parse(statements, new URIImpl(uri));
+            FDPMetadata metadata = parser.parse(statements, f.createIRI(uri));
             return metadata;
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving fdp metadata from the store");
@@ -76,15 +78,16 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public CatalogMetadata retrieveCatalogMetaData(String uri) 
             throws FairMetadataServiceException {
         try {
+            ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> statements = storeManager.retrieveResource(
-                    new URIImpl(uri));
+                    f.createIRI(uri));
             addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The catalog URI doesn't exist in the repository"); 
             CatalogMetadataParser parser = MetadataParserUtils.
                     getCatalogParser();
             CatalogMetadata metadata = parser.parse(statements, 
-                    new URIImpl(uri));
+                    f.createIRI(uri));
             return metadata;
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving catalog metadata from the store");
@@ -96,15 +99,16 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public DatasetMetadata retrieveDatasetMetaData(String uri) 
             throws FairMetadataServiceException {
         try {
+            ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> statements = storeManager.retrieveResource(
-                    new URIImpl(uri));
+                    f.createIRI(uri));
             addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The dataset URI doesn't exist in the repository"); 
             DatasetMetadataParser parser = MetadataParserUtils.
                     getDatasetParser();
             DatasetMetadata metadata = parser.parse(statements, 
-                    new URIImpl(uri));
+                    f.createIRI(uri));
             return metadata;
         } catch (StoreManagerException  ex) {
             LOGGER.error("Error retrieving dataset metadata from the store");
@@ -116,15 +120,16 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public DistributionMetadata retrieveDistributionMetaData(String uri) 
             throws FairMetadataServiceException {
         try {
+            ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> statements = storeManager.retrieveResource(
-                    new URIImpl(uri));
+                    f.createIRI(uri));
             addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The distribution URI doesn't exist in the repository");           
             DistributionMetadataParser parser = MetadataParserUtils.
                     getDistributionParser();
             DistributionMetadata metadata = parser.parse(statements, 
-                    new URIImpl(uri));
+                    f.createIRI(uri));
             return metadata;
         } catch (StoreManagerException  ex) {
             LOGGER.error(
@@ -221,20 +226,21 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkNotNull(metadata, 
                 "Metadata object must not be null.");        
         try {
+            ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> stmts = new ArrayList();
             if (metadata instanceof CatalogMetadata) {            
-                stmts.add(new StatementImpl(metadata.getParentURI(),                   
+                stmts.add(f.createStatement(metadata.getParentURI(),                   
                         R3D.DATA_CATALOG, metadata.getUri()));                
             } else if (metadata instanceof DatasetMetadata) {              
-            stmts.add(new StatementImpl(metadata.getParentURI(), 
+            stmts.add(f.createStatement(metadata.getParentURI(), 
                     DCAT.DATASET, metadata.getUri()));  
             } else if (metadata instanceof DistributionMetadata) {
-                stmts.add(new StatementImpl(metadata.getParentURI(), 
+                stmts.add(f.createStatement(metadata.getParentURI(), 
                     DCAT.DISTRIBUTION, metadata.getUri()));                
             }            
             storeManager.removeStatement(metadata.getParentURI(),            
                     DCTERMS.MODIFIED, null);             
-            stmts.add(new StatementImpl(metadata.getParentURI(), 
+            stmts.add(f.createStatement(metadata.getParentURI(), 
                     DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
             storeManager.storeStatements(stmts);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
@@ -249,7 +255,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      * @return
      * @throws FairMetadataServiceException 
      */
-    private boolean isSubjectURIExist(URI uri) throws 
+    private boolean isSubjectURIExist(IRI uri) throws 
             FairMetadataServiceException {
         boolean isURIExist = false;
         
@@ -266,21 +272,21 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             StoreManagerException {   
         List<Statement> otherResources = new ArrayList();
         for (Statement st : statements) {            
-            URI predicate = st.getPredicate();
+            IRI predicate = st.getPredicate();
             Value object = st.getObject();
             if (predicate.equals(FDP.METADATA_IDENTIFIER)) {                  
                 otherResources.addAll(storeManager.retrieveResource(
-                        (URI) object));                  
+                        (IRI) object));                  
             }
             else if (predicate.equals(R3D.INSTITUTION)) { 
                   otherResources.addAll(storeManager.retrieveResource(
-                          (URI) object));
+                          (IRI) object));
             } else if (predicate.equals(DCTERMS.PUBLISHER)) { 
                   otherResources.addAll(storeManager.retrieveResource(
-                          (URI) object));
+                          (IRI) object));
             } else if (predicate.equals(R3D.REPO_IDENTIFIER)) { 
                   otherResources.addAll(storeManager.retrieveResource(
-                          (URI) object));
+                          (IRI) object));
             }
         }              
         statements.addAll(otherResources);

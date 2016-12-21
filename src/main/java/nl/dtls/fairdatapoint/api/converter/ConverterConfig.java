@@ -5,7 +5,7 @@
  */
 package nl.dtls.fairdatapoint.api.converter;
 
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

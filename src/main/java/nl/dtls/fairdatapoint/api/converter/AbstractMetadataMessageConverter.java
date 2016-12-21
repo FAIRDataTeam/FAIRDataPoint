@@ -1,6 +1,5 @@
 package nl.dtls.fairdatapoint.api.converter;
 
-import org.openrdf.rio.RDFFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -9,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import nl.dtl.fairmetadata.model.Metadata;
 import org.apache.logging.log4j.LogManager;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 /**
  * Abstract base class for {@link Metadata} based {@link HttpMessageConverter
