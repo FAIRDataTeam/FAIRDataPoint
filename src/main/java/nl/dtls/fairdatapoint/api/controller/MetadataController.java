@@ -26,11 +26,11 @@ import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.LiteralImpl;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.FOAF;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -230,8 +230,9 @@ public class MetadataController {
             storeDefaultFDPMetadata(request);
         }        
         String requestedURL = getRequesedURL(request);
-        URI fdpURI = new URIImpl(requestedURL);
-        URI uri = new URIImpl(requestedURL + "/" + catalogID);
+        ValueFactory f = SimpleValueFactory.getInstance();
+        IRI fdpURI = f.createIRI(requestedURL);
+        IRI uri = f.createIRI(requestedURL + "/" + catalogID);
         metadata.setUri(uri);
         metadata.setParentURI(fdpURI);
         fairMetaDataService.storeCatalogMetaData(metadata);
@@ -265,8 +266,9 @@ public class MetadataController {
         
         LOGGER.info("Request to store dataset metatdata with ID ", datasetID);
         String requestedURL = getRequesedURL(request);
-        URI catalogURI = new URIImpl(requestedURL);
-        URI uri = new URIImpl(requestedURL + "/" + datasetID);
+        ValueFactory f = SimpleValueFactory.getInstance();
+        IRI catalogURI = f.createIRI(requestedURL);
+        IRI uri = f.createIRI(requestedURL + "/" + datasetID);
         metadata.setUri(uri);
         metadata.setParentURI(catalogURI);
         fairMetaDataService.storeDatasetMetaData(metadata);
@@ -302,8 +304,9 @@ public class MetadataController {
         LOGGER.info("Request to store distribution metatdata with ID ",
                 distributionID);
         String requestedURL = getRequesedURL(request);
-        URI datasetURI = new URIImpl(requestedURL);
-        URI uri = new URIImpl(requestedURL + "/" + distributionID);
+        ValueFactory f = SimpleValueFactory.getInstance();
+        IRI datasetURI = f.createIRI(requestedURL);
+        IRI uri = f.createIRI(requestedURL + "/" + distributionID);
         metadata.setUri(uri);
         metadata.setParentURI(datasetURI);
         fairMetaDataService.storeDistributionMetaData(metadata);
@@ -337,36 +340,38 @@ public class MetadataController {
             String fdpUrl = getRequesedURL(request);
             String host = new URL(fdpUrl).getAuthority();
             FDPMetadata metadata = new FDPMetadata();
-            metadata.setUri(new URIImpl(fdpUrl));
-            metadata.setTitle(new LiteralImpl(("FDP of " + host),
+            ValueFactory f = SimpleValueFactory.getInstance();
+            metadata.setUri(f.createIRI(fdpUrl));
+            metadata.setTitle(f.createLiteral(("FDP of " + host),
                     XMLSchema.STRING));
-            metadata.setDescription(new LiteralImpl(("FDP of " + host),
+            metadata.setDescription(f.createLiteral(("FDP of " + host),
                     XMLSchema.STRING));
-            metadata.setLanguage(new URIImpl(
+            metadata.setLanguage(f.createIRI(
                     "http://id.loc.gov/vocabulary/iso639-1/en"));
-            metadata.setLicense(new URIImpl(
+            metadata.setLicense(f.createIRI(
                     "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0"));
-            metadata.setVersion(new LiteralImpl("1.0", XMLSchema.FLOAT));
-            metadata.setSwaggerDoc(new URIImpl(fdpUrl + "/swagger-ui.html"));            
-            metadata.setInstitutionCountry(new URIImpl(
+            metadata.setVersion(f.createLiteral("1.0", XMLSchema.FLOAT));
+            metadata.setSwaggerDoc(f.createIRI(fdpUrl + "/swagger-ui.html"));            
+            metadata.setInstitutionCountry(f.createIRI(
                     "http://lexvo.org/id/iso3166/NL"));
             Identifier id = new Identifier();
-            id.setUri(new URIImpl(fdpUrl + "/metadataID"));
-            id.setIdentifier(new LiteralImpl("fdp-metadataID", 
+            id.setUri(f.createIRI(fdpUrl + "/metadataID"));
+            id.setIdentifier(f.createLiteral("fdp-metadataID", 
                     XMLSchema.STRING)); 
             id.setType(DataCite.RESOURCE_IDENTIFIER);
             metadata.setIdentifier(id);
-            //Agent publisher = new Agent();
-           // publisher.setUri(new URIImpl("http://dtls.nl"));
-            //publisher.setType(FOAF.ORGANIZATION);
-            //publisher.setName(new LiteralImpl("DTLS", XMLSchema.STRING));
-            //metadata.setPublisher(publisher);
-            //metadata.setInstitution(publisher);
-            //Identifier repoId = new Identifier();
-            //repoId.setUri(new URIImpl(fdpUrl + "/repoID"));
-            //repoId.setIdentifier(new LiteralImpl("fdp-repoID", XMLSchema.STRING)); 
-            //repoId.setType(DataCite.RESOURCE_IDENTIFIER);
-            //metadata.setRepostoryIdentifier(repoId);
+            Agent publisher = new Agent();
+            publisher.setUri(f.createIRI("http://dtls.nl"));
+            publisher.setType(FOAF.ORGANIZATION);
+            publisher.setName(f.createLiteral("DTLS", XMLSchema.STRING));
+            metadata.setPublisher(publisher);
+            metadata.setInstitution(publisher);
+            Identifier repoId = new Identifier();
+            repoId.setUri(f.createIRI(fdpUrl + "/repoID"));
+            repoId.setIdentifier(f.createLiteral("fdp-repoID", 
+                    XMLSchema.STRING)); 
+            repoId.setType(DataCite.RESOURCE_IDENTIFIER);
+            metadata.setRepostoryIdentifier(repoId);
             fairMetaDataService.storeFDPMetaData(metadata);
             isFDPMetaDataAvailable = true;
         } catch (MalformedURLException | MetadataException | 
