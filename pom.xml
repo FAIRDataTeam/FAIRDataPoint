@@ -216,6 +216,32 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
+                    <properties>
+                        <owner>DTL</owner>
+                    </properties>
+                    <excludes>
+                        <exclude>pom.xml</exclude>
+                        <exclude>**/*.ttl</exclude>
+                        <exclude>**/*.sparql</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
 	</build>
 	<reporting>
 		<plugins>
