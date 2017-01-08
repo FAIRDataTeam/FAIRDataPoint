@@ -230,6 +230,10 @@
                         <exclude>pom.xml</exclude>
                         <exclude>**/*.ttl</exclude>
                         <exclude>**/*.sparql</exclude>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/log4j2.xml</exclude>
+                        <!-- exclude oai-pmh code until origin is known -->
+                        <exclude>**/aoipmh/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
