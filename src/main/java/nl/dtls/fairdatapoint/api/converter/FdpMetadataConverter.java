@@ -51,8 +51,7 @@ public class FdpMetadataConverter extends AbstractMetadataMessageConverter
     
     public FdpMetadataConverter(RDFFormat format) {
         super(format);
-    }
-    
+    }    
     @Override
     protected boolean supports(Class<?> clazz) {
         return FDPMetadata.class.isAssignableFrom(clazz);
@@ -79,9 +78,9 @@ public class FdpMetadataConverter extends AbstractMetadataMessageConverter
     @Override
     protected void writeInternal(FDPMetadata metadata, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        String result;
-        try {
-            result = MetadataUtils.getString(metadata, format);
+        String result = null;
+        try {                
+            result = MetadataUtils.getString(metadata, format);            
         } catch (MetadataException e) {
             throw new HttpMessageNotWritableException("", e);
         }

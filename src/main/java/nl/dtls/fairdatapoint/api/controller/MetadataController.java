@@ -91,7 +91,7 @@ public class MetadataController {
      */
     @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET,
-            produces = {"text/turtle",
+            produces = {"text/turtle", 
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     @ResponseStatus(HttpStatus.OK)
@@ -126,7 +126,7 @@ public class MetadataController {
      * @throws MetadataException
      */
     @ApiOperation(value = "Catalog metadata")
-    @RequestMapping(value = "/{catalogID}", method = RequestMethod.GET,
+    @RequestMapping(value = "/catalog/{catalogID}", method = RequestMethod.GET,
             produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
@@ -161,7 +161,7 @@ public class MetadataController {
      * @throws MetadataException
      */
     @ApiOperation(value = "Dataset metadata")
-    @RequestMapping(value = "/{catalogID}/{datasetID}",
+    @RequestMapping(value = "/dataset/{datasetID}",
             method = RequestMethod.GET,
             produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"}
@@ -199,7 +199,7 @@ public class MetadataController {
      * @throws MetadataException
      */
     @ApiOperation(value = "Dataset distribution metadata")
-    @RequestMapping(value = "/{catalogID}/{datasetID}/{distributionID}",
+    @RequestMapping(value = "/distribution/{distributionID}",
             produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"},
             method = RequestMethod.GET)
@@ -222,6 +222,36 @@ public class MetadataController {
         LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
     }
+    
+    /**
+     * To handle POST catalog metadata request.
+     *
+     * @param request Http request
+     * @param response Http response
+     * @param metadata catalog metadata
+     * @return created message
+     *
+     * @throws MetadataControllerException
+     * @throws nl.dtl.fairmetadata.io.MetadataParserException
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     */
+    @ApiOperation(value = "Update fdp metadata")
+    @RequestMapping(method = RequestMethod.PATCH, consumes = {"text/turtle"})
+    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+    public String updateFDPMetaData(final HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestBody(required = true) FDPMetadata metadata) throws
+            IllegalStateException, MetadataControllerException,
+            MetadataParserException, FairMetadataServiceException, 
+            MetadataException {
+        if (!isFDPMetaDataAvailable) {
+            storeDefaultFDPMetadata(request);
+        }
+        String requestedURL = getRequesedURL(request);
+        FDPMetadata cMetadata = fairMetaDataService.
+                retrieveFDPMetaData(requestedURL);
+        return "Metadata is updated";
+    }
 
     /**
      * To handle POST catalog metadata request.
@@ -237,7 +267,8 @@ public class MetadataController {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST catalog metadata")
-    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"})
+    @RequestMapping(value = "/catalog/{catalogID}", 
+            method = RequestMethod.POST, consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeCatalogMetaData(final HttpServletRequest request,
             HttpServletResponse response,
@@ -275,7 +306,7 @@ public class MetadataController {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST dataset metadata")
-    @RequestMapping(value = "/{catalogID}", method = RequestMethod.POST,
+    @RequestMapping(value = "/dataset/{datasetID}", method = RequestMethod.POST,
             consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeDatasetMetaData(final HttpServletRequest request,
@@ -312,7 +343,7 @@ public class MetadataController {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST distribution metadata")
-    @RequestMapping(value = "/{catalogID}/{datasetID}",
+    @RequestMapping(value = "/distribution/{distributionID}",
             method = RequestMethod.POST, consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeDistribution(final HttpServletRequest request,

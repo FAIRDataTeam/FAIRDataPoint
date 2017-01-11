@@ -53,12 +53,12 @@ public abstract class AbstractMetadataMessageConverter<T extends Metadata> exten
      * @param configurer {@link WebMvcConfigurerAdapter#configureContentNegotiation(ContentNegotiationConfigurer)
      *        WebMvcConfigurerAdapter} configurer instance.
      */
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.mediaType(format.getDefaultFileExtension(),
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {           
+        configurer.mediaType(format.getDefaultFileExtension(), 
                 MediaType.parseMediaType(format.getDefaultMIMEType()));
-        
-        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(),
-                format.getDefaultMIMEType());
+           
+        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(), 
+                format.getDefaultMIMEType());          
     }
     
     /**
