@@ -120,5 +120,16 @@ public interface FairMetaDataService {
      */
     void storeDistributionMetaData(DistributionMetadata distributionMetadata)
             throws FairMetadataServiceException, MetadataException;
+    
+    /**
+     * Update fdp metadata
+     * 
+     * @param uri
+     * @param fdpMetaData
+     * @throws FairMetadataServiceException 
+     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     */
+    void updateFDPMetaData(String uri, FDPMetadata fdpMetaData) 
+            throws FairMetadataServiceException, MetadataException; 
         
 }

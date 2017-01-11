@@ -30,6 +30,7 @@ package nl.dtls.fairdatapoint.service.impl;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata.io.CatalogMetadataParser;
@@ -59,7 +60,6 @@ import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.eclipse.rdf4j.model.impl.StatementImpl;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -165,8 +165,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throws FairMetadataServiceException, MetadataException {        
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
         try {
-            metadata.setIssued(RDFUtils.getCurrentTime());
-            metadata.setModified(metadata.getIssued());
+            if(metadata.getIssued() == null) {
+              metadata.setIssued(RDFUtils.getCurrentTime());  
+            }            
+            metadata.setModified(RDFUtils.getCurrentTime());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata));            
         } catch ( StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing fdp metadata");
@@ -184,7 +186,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         + "Please try with different dataset ID");
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
-            metadata.setModified(metadata.getIssued());
+            metadata.setModified(RDFUtils.getCurrentTime());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata));
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
@@ -206,7 +208,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         + "Please try with valid catalogy ID");
         try {       
             metadata.setIssued(RDFUtils.getCurrentTime());
-            metadata.setModified(metadata.getIssued());
+            metadata.setModified(RDFUtils.getCurrentTime());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata));  
             updateParentResource(metadata);            
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
@@ -228,7 +230,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         + "Please try with valid dataset ID");
         try {  
             metadata.setIssued(RDFUtils.getCurrentTime());
-            metadata.setModified(metadata.getIssued());
+            metadata.setModified(RDFUtils.getCurrentTime());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata)); 
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
@@ -312,6 +314,65 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             }
         }              
         statements.addAll(otherResources);
+    }
+
+    @Override
+    public void updateFDPMetaData(String uri, FDPMetadata metaDataUpdate) 
+            throws FairMetadataServiceException, MetadataException {
+        FDPMetadata metadata = retrieveFDPMetaData(uri);
+        
+        if(metaDataUpdate.getDescription() != null) {
+            metadata.setDescription(metaDataUpdate.getDescription());
+        }
+        if(metaDataUpdate.getHomepage() != null) {
+            metadata.setHomepage(metaDataUpdate.getHomepage());
+        }
+        if(metaDataUpdate.getIdentifier() != null) {
+            metadata.setIdentifier(metaDataUpdate.getIdentifier());
+        }
+        if(metaDataUpdate.getInstitution() != null) {
+            metadata.setInstitution(metaDataUpdate.getInstitution());
+        }
+        if(metaDataUpdate.getInstitutionCountry() != null) {
+            metadata.setInstitutionCountry(metaDataUpdate.
+                    getInstitutionCountry());
+        }
+        if(metaDataUpdate.getLanguage() != null) {
+            metadata.setLanguage(metaDataUpdate.getLanguage());
+        }
+        if(metaDataUpdate.getLicense() != null) {
+            metadata.setLicense(metaDataUpdate.getLicense());
+        }
+        if(metaDataUpdate.getPublisher() != null) {
+            metadata.setPublisher(metaDataUpdate.getPublisher());
+        }
+        if(metaDataUpdate.getRepostoryIdentifier() != null) {
+            metadata.setRepostoryIdentifier(metaDataUpdate.
+                    getRepostoryIdentifier());
+        }
+        if(metaDataUpdate.getRights() != null) {
+            metadata.setRights(metaDataUpdate.getRights());
+        }
+        if(metaDataUpdate.getStartDate() != null) {
+            metadata.setStartDate(metaDataUpdate.getStartDate());
+        }
+        if(metaDataUpdate.getSwaggerDoc() != null) {
+            metadata.setSwaggerDoc(metaDataUpdate.getSwaggerDoc());
+        }
+        if(metaDataUpdate.getTitle() != null) {
+            metadata.setTitle(metaDataUpdate.getTitle());
+        }
+        if(metaDataUpdate.getVersion() != null) {
+            metadata.setVersion(metaDataUpdate.getVersion());
+        }
+        ValueFactory f = SimpleValueFactory.getInstance();
+        try {
+            storeManager.removeResource(f.createIRI(uri));      
+            storeFDPMetaData(metadata);
+        } catch (StoreManagerException ex) {
+            LOGGER.error("Error deleting existence fdp resource");
+            throw(new FairMetadataServiceException(ex.getMessage()));
+        }
     }
     
 }

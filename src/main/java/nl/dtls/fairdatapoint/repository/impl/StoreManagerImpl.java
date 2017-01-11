@@ -219,4 +219,9 @@ public class StoreManagerImpl implements StoreManager {
         }
     }
 
+    @Override
+    public void removeResource(IRI uri) throws StoreManagerException {
+        removeStatement(uri, null, null);
+    }
+
 }

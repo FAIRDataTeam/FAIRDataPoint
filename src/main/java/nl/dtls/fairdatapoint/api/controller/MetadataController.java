@@ -237,7 +237,7 @@ public class MetadataController {
      */
     @ApiOperation(value = "Update fdp metadata")
     @RequestMapping(method = RequestMethod.PATCH, consumes = {"text/turtle"})
-    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+    @ResponseStatus(HttpStatus.OK)
     public String updateFDPMetaData(final HttpServletRequest request,
             HttpServletResponse response,
             @RequestBody(required = true) FDPMetadata metadata) throws
@@ -248,8 +248,7 @@ public class MetadataController {
             storeDefaultFDPMetadata(request);
         }
         String requestedURL = getRequesedURL(request);
-        FDPMetadata cMetadata = fairMetaDataService.
-                retrieveFDPMetaData(requestedURL);
+        fairMetaDataService.updateFDPMetaData(requestedURL, metadata);
         return "Metadata is updated";
     }
 

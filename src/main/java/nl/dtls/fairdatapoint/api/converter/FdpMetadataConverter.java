@@ -32,19 +32,17 @@ import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import com.google.common.collect.Lists;
 
 import nl.dtl.fairmetadata.io.FDPMetadataParser;
 import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtl.fairmetadata.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata.utils.MetadataUtils;
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import java.io.InputStreamReader;
+import nl.dtl.fairmetadata.io.MetadataParserException;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFParseException;
-import org.eclipse.rdf4j.rio.Rio;
 
 public class FdpMetadataConverter extends AbstractMetadataMessageConverter
         <FDPMetadata> {
@@ -58,19 +56,18 @@ public class FdpMetadataConverter extends AbstractMetadataMessageConverter
     }
 
     @Override
-    protected FDPMetadata readInternal(Class<? extends FDPMetadata> clazz,
-            HttpInputMessage inputMessage)
-            throws IOException, HttpMessageNotReadableException {
-        Model model;
-        try {
-            model = Rio.parse(inputMessage.getBody(), "", format);
-        } catch (RDFParseException e) {
-            throw new HttpMessageNotReadableException("", e);
-        }
-        
+    protected FDPMetadata readInternal(Class<? extends 
+            FDPMetadata> type, HttpInputMessage inputMessage) 
+            throws IOException, 
+            HttpMessageNotReadableException {
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
-        ValueFactory f = SimpleValueFactory.getInstance();
-        return parser.parse(Lists.newArrayList(model), f.createIRI(null));
+        try {
+            String body = CharStreams.toString(new InputStreamReader(
+                    inputMessage.getBody(), Charsets.UTF_8 ));
+            return parser.parse(body, null, format);
+        } catch (MetadataParserException ex) {
+           throw new HttpMessageNotReadableException("", ex);
+        }
     }
     
     

@@ -71,4 +71,13 @@ public interface StoreManager {
      */
     boolean isStatementExist(Resource rsrc, IRI pred, Value value) 
             throws StoreManagerException;
+    
+    /**
+     * Remove a RDF resource from the store
+     * 
+     * @param uri
+     * @throws StoreManagerException
+     */
+    void removeResource(IRI uri) 
+            throws StoreManagerException;
 }
