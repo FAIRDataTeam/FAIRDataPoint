@@ -55,6 +55,7 @@ import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
@@ -98,14 +99,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     @Override
     public CatalogMetadata retrieveCatalogMetaData(String uri) 
-            throws FairMetadataServiceException {
+            throws FairMetadataServiceException, ResourceNotFoundException {
         try {
             ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> statements = storeManager.retrieveResource(
                     f.createIRI(uri));
+            if(statements.isEmpty()) {
+                return null;
+            }            
             addAddtionalResource(statements);
-            Preconditions.checkState(!statements.isEmpty(), 
-                "The catalog URI doesn't exist in the repository"); 
             CatalogMetadataParser parser = MetadataParserUtils.
                     getCatalogParser();
             CatalogMetadata metadata = parser.parse(statements, 
@@ -124,9 +126,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> statements = storeManager.retrieveResource(
                     f.createIRI(uri));
+            if(statements.isEmpty()) {
+                return null;
+            }
             addAddtionalResource(statements);
-            Preconditions.checkState(!statements.isEmpty(), 
-                "The dataset URI doesn't exist in the repository"); 
             DatasetMetadataParser parser = MetadataParserUtils.
                     getDatasetParser();
             DatasetMetadata metadata = parser.parse(statements, 
@@ -145,6 +148,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> statements = storeManager.retrieveResource(
                     f.createIRI(uri));
+            if(statements.isEmpty()) {
+                return null;
+            }
             addAddtionalResource(statements);
             Preconditions.checkState(!statements.isEmpty(), 
                 "The distribution URI doesn't exist in the repository");           
@@ -183,7 +189,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 "Catalog metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
                 "The catalog URI already exist in the repository. "
-                        + "Please try with different dataset ID");
+                        + "Please try with different catalog ID");
+        Preconditions.checkState(metadata.getParentURI() != null,
+                "No fdp URI is provied. Include dcterms:isPartOf statement "
+                        + "in the post body rdf");
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(RDFUtils.getCurrentTime());
@@ -202,10 +211,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 "Dataset metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
                 "The dataset URI already exist in the repository. "
-                        + "Please try with different dataset ID");
+                        + "Please try with different dataset ID");        
+        Preconditions.checkNotNull(metadata.getParentURI(),
+                "No catalog URI is provied. Include dcterms:isPartOf statement "
+                        + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
                 "The catalogy URI doesn't exist in the repository. "
-                        + "Please try with valid catalogy ID");
+                        + "Please try with valid catalogy URI");
         try {       
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(RDFUtils.getCurrentTime());
@@ -224,10 +236,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 "Distribution metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
                 "The distribution URI already exist in the repository. "
-                        + "Please try with different distribution ID");
+                        + "Please try with different distribution ID");        
+        Preconditions.checkNotNull(metadata.getParentURI(),
+                "No dataset URI is provied. Include dcterms:isPartOf statement "
+                        + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
                 "The dataset URI doesn't exist in the repository. "
-                        + "Please try with valid dataset ID");
+                        + "Please try with valid dataset URI");
         try {  
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(RDFUtils.getCurrentTime());

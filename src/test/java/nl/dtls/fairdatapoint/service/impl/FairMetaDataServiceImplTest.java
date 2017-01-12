@@ -42,6 +42,7 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
@@ -122,9 +123,8 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveFDPMetaData(){
         try {
-            FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
-                    ExampleFilesUtils.FDP_URI);
-            assertNotNull(metadata);
+            assertNotNull(fairMetaDataService.retrieveFDPMetaData(
+                    ExampleFilesUtils.FDP_URI));
         } catch (FairMetadataServiceException ex) {             
             fail("The test is not excepted to throw any exception");
         }
@@ -151,12 +151,11 @@ public class FairMetaDataServiceImplTest {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void retrieveNonExitingCatalogMetaData() throws 
             FairMetadataServiceException {            
-        String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
-        fairMetaDataService.retrieveCatalogMetaData(uri);            
-        fail("This test is execpeted to throw IllegalStateException");
+        String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";           
+        assertNull(fairMetaDataService.retrieveCatalogMetaData(uri));
     }
     
     /**
@@ -166,9 +165,8 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveCatalogMetaData(){
         try {
-            CatalogMetadata metadata = fairMetaDataService.
-                    retrieveCatalogMetaData(ExampleFilesUtils.CATALOG_URI);
-            assertNotNull(metadata);
+            assertNotNull(fairMetaDataService.
+                    retrieveCatalogMetaData(ExampleFilesUtils.CATALOG_URI));
         } catch (FairMetadataServiceException ex) {
             fail("The test is not excepted to throw any exception");
         }
@@ -195,12 +193,11 @@ public class FairMetaDataServiceImplTest {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void retrieveNonExitingdDatasetMetaData() throws 
             FairMetadataServiceException{ 
         String uri = ExampleFilesUtils.CATALOG_URI + "/dummpID676";            
-        fairMetaDataService.retrieveDatasetMetaData(uri);            
-        fail("This test is execpeted to throw IllegalStateException");        
+        assertNull(fairMetaDataService.retrieveDatasetMetaData(uri));       
     }
     
     /**
@@ -210,9 +207,8 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveDatasetMetaData(){
         try {
-            DatasetMetadata metadata = fairMetaDataService.
-                    retrieveDatasetMetaData(ExampleFilesUtils.DATASET_URI);
-            assertNotNull(metadata);
+            assertNotNull(fairMetaDataService.
+                    retrieveDatasetMetaData(ExampleFilesUtils.DATASET_URI));
         } catch (FairMetadataServiceException ex) {
             fail("The test is not excepted to throw any exception");
         }
@@ -239,12 +235,11 @@ public class FairMetaDataServiceImplTest {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void retrieveNonExitingDatasetDistribution() throws 
             FairMetadataServiceException{        
         String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-        fairMetaDataService.retrieveDistributionMetaData(uri);
-        fail("This test is execpeted to throw IllegalStateException");        
+        assertNull(fairMetaDataService.retrieveDistributionMetaData(uri));    
     }
 
     /**
@@ -254,10 +249,9 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveDatasetDistribution(){
         try {
-            DistributionMetadata metadata = fairMetaDataService.
+            assertNotNull(fairMetaDataService.
                     retrieveDistributionMetaData(ExampleFilesUtils.
-                            DISTRIBUTION_URI);
-            assertNotNull(metadata);
+                            DISTRIBUTION_URI));
         } catch (FairMetadataServiceException ex) {            
             fail("The test is not excepted to throw any exception");
         }

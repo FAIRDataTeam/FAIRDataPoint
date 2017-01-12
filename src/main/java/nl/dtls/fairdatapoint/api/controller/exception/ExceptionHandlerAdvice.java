@@ -49,12 +49,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionHandlerAdvice {
     
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<String> handleResourceNotFound(
+    public ResponseEntity<String> handleResourceInvalidPost(
             IllegalStateException ex, HttpServletResponse response) { 
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg =  "Required resource not found, ErrorMsg : " + 
-                ex.getMessage();
+        String msg =  "ErrorMsg : " + ex.getMessage();
+        return new ResponseEntity<>(msg, headers, 
+                HttpStatus.PRECONDITION_FAILED);
+    }
+    
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<String> handleResourceNotFound(
+            NullPointerException ex, HttpServletResponse response) { 
+        HttpHeaders headers = new HttpHeaders();    
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        String msg =  "ErrorMsg : " + ex.getMessage();
         return new ResponseEntity<>(msg, headers, HttpStatus.NOT_FOUND);
     }
     

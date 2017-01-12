@@ -27,6 +27,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
+import com.google.common.base.Preconditions;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.net.MalformedURLException;
@@ -48,6 +49,7 @@ import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -98,7 +100,8 @@ public class MetadataController {
     public FDPMetadata getFDPMetaData(final HttpServletRequest request,
             HttpServletResponse response) throws IllegalStateException,
             MetadataControllerException,
-            FairMetadataServiceException, MetadataException {
+            FairMetadataServiceException, MetadataException, 
+            NullPointerException {
 
         LOGGER.info("Request to get FDP metadata");
         LOGGER.info("GET : " + request.getRequestURL());
@@ -108,7 +111,9 @@ public class MetadataController {
             storeDefaultFDPMetadata(request);
         }
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(uri);
-        LoggerUtils.logRequest(LOGGER, request, response);
+        LoggerUtils.logRequest(LOGGER, request, response);        
+        Preconditions.checkNotNull(metadata, 
+                "No fdp metadata found for the uri <%s>", uri);
         return metadata;
     }
 
@@ -121,7 +126,6 @@ public class MetadataController {
      * @return Metadata about the catalog in one of the acceptable formats (RDF Turtle, JSON-LD, RDF XML and RDF N3
      *
      * @throws IllegalStateException
-     * @throws MetadataControllerException
      * @throws FairMetadataServiceException
      * @throws MetadataException
      */
@@ -134,14 +138,16 @@ public class MetadataController {
     public CatalogMetadata getCatalogMetaData(
             @PathVariable final String catalogID, HttpServletRequest request,
             HttpServletResponse response) throws IllegalStateException,
-            MetadataControllerException, FairMetadataServiceException,
-            MetadataException {
+            FairMetadataServiceException,
+            MetadataException, NullPointerException {
 
         LOGGER.info("Request to get CATALOG metadata with ID ", catalogID);
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.
                 retrieveCatalogMetaData(uri);
+        Preconditions.checkNotNull(metadata, 
+                "No catalog metadata found for the uri <%s>", uri); 
         LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
     }
@@ -149,7 +155,6 @@ public class MetadataController {
     /**
      * Get dataset metadata
      *
-     * @param catalogID
      * @param datasetID
      * @param request
      * @param response
@@ -168,11 +173,10 @@ public class MetadataController {
     )
     @ResponseStatus(HttpStatus.OK)
     public DatasetMetadata getDatasetMetaData(
-            @PathVariable final String catalogID,
             @PathVariable final String datasetID, HttpServletRequest request,
             HttpServletResponse response) throws IllegalStateException,
-            MetadataControllerException, FairMetadataServiceException,
-            MetadataException {
+            FairMetadataServiceException,
+            MetadataException, NullPointerException {
 
         LOGGER.info("Request to get DATASET metadata with ID ", datasetID);
         LOGGER.info("GET : " + request.getRequestURL());
@@ -180,14 +184,14 @@ public class MetadataController {
         DatasetMetadata metadata = fairMetaDataService.
                 retrieveDatasetMetaData(uri);
         LoggerUtils.logRequest(LOGGER, request, response);
+        Preconditions.checkNotNull(metadata, 
+                "No dataset metadata found for the uri <%s>", uri);
         return metadata;
     }
 
     /**
      * Get distribution metadata
      *
-     * @param catalogID
-     * @param datasetID
      * @param distributionID
      * @param request
      * @param response
@@ -205,13 +209,11 @@ public class MetadataController {
             method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public DistributionMetadata getDistribution(
-            @PathVariable final String catalogID,
-            @PathVariable final String datasetID,
             @PathVariable final String distributionID,
             HttpServletRequest request,
             HttpServletResponse response) throws IllegalStateException,
-            MetadataControllerException, FairMetadataServiceException,
-            MetadataException {
+            FairMetadataServiceException,
+            MetadataException, NullPointerException {
 
         LOGGER.info("Request to get dataset's distribution wih ID ",
                 distributionID);
@@ -220,6 +222,8 @@ public class MetadataController {
         DistributionMetadata metadata = fairMetaDataService.
                 retrieveDistributionMetaData(uri);
         LoggerUtils.logRequest(LOGGER, request, response);
+        Preconditions.checkNotNull(metadata, 
+                "No distribution metadata found for the uri <%s>", uri);
         return metadata;
     }
     
@@ -266,7 +270,7 @@ public class MetadataController {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST catalog metadata")
-    @RequestMapping(value = "/catalog/{catalogID}", 
+    @RequestMapping(value = "/catalog", 
             method = RequestMethod.POST, consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeCatalogMetaData(final HttpServletRequest request,
@@ -283,10 +287,15 @@ public class MetadataController {
         }        
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI fdpURI = f.createIRI(requestedURL);
         IRI uri = f.createIRI(requestedURL + "/" + catalogID);
         metadata.setUri(uri);
-        metadata.setParentURI(fdpURI);
+        if(metadata.getParentURI() == null){
+            String fURI = requestedURL.replace("/catalog", "");            
+            LOGGER.info("No fdp uri is provied in the post body. "
+                    + "Default fdp uri is used <%s>", fURI);
+            IRI fdpURI = f.createIRI(fURI);
+            metadata.setParentURI(fdpURI);
+        }
         fairMetaDataService.storeCatalogMetaData(metadata);
         return "Metadata is stored";
     }
@@ -297,7 +306,6 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata  Dataset metadata
-     * @param catalogID Unique catalog ID
      * @param datasetID Unique dataset ID
      * @return created message
      *
@@ -305,12 +313,11 @@ public class MetadataController {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST dataset metadata")
-    @RequestMapping(value = "/dataset/{datasetID}", method = RequestMethod.POST,
+    @RequestMapping(value = "/dataset", method = RequestMethod.POST,
             consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeDatasetMetaData(final HttpServletRequest request,
             HttpServletResponse response,
-            @PathVariable final String catalogID,
             @RequestBody(required = true) DatasetMetadata metadata,
             @RequestParam("datasetID") String datasetID)
             throws IllegalStateException, MetadataParserException,
@@ -319,10 +326,8 @@ public class MetadataController {
         LOGGER.info("Request to store dataset metatdata with ID ", datasetID);
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI catalogURI = f.createIRI(requestedURL);
         IRI uri = f.createIRI(requestedURL + "/" + datasetID);
         metadata.setUri(uri);
-        metadata.setParentURI(catalogURI);
         fairMetaDataService.storeDatasetMetaData(metadata);
         return "Metadata is stored";
     }
@@ -332,8 +337,6 @@ public class MetadataController {
      *
      * @param request Http request
      * @param response Http response
-     * @param catalogID Unique catalog ID
-     * @param datasetID Unique dataset ID
      * @param metadata distribution metadata
      * @param distributionID Unique distribution ID
      * @return created message
@@ -342,12 +345,11 @@ public class MetadataController {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST distribution metadata")
-    @RequestMapping(value = "/distribution/{distributionID}",
+    @RequestMapping(value = "/distribution",
             method = RequestMethod.POST, consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeDistribution(final HttpServletRequest request,
-            HttpServletResponse response, @PathVariable final String catalogID,
-            @PathVariable final String datasetID,
+            HttpServletResponse response, 
             @RequestBody(required = true) DistributionMetadata metadata,
             @RequestParam("distributionID") String distributionID)
             throws IllegalStateException, MetadataParserException,
@@ -357,10 +359,8 @@ public class MetadataController {
                 distributionID);
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI datasetURI = f.createIRI(requestedURL);
         IRI uri = f.createIRI(requestedURL + "/" + distributionID);
         metadata.setUri(uri);
-        metadata.setParentURI(datasetURI);
         fairMetaDataService.storeDistributionMetaData(metadata);
         return "Metadata is stored";
     }
