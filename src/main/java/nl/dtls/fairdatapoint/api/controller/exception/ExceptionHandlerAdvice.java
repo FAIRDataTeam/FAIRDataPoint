@@ -55,7 +55,7 @@ public class ExceptionHandlerAdvice {
         headers.setContentType(MediaType.TEXT_PLAIN);
         String msg =  "ErrorMsg : " + ex.getMessage();
         return new ResponseEntity<>(msg, headers, 
-                HttpStatus.PRECONDITION_FAILED);
+                HttpStatus.BAD_REQUEST);
     }
     
     @ExceptionHandler(NullPointerException.class)

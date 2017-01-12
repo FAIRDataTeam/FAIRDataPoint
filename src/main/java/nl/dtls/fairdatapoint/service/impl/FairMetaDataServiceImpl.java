@@ -212,7 +212,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
                 "The dataset URI already exist in the repository. "
                         + "Please try with different dataset ID");        
-        Preconditions.checkNotNull(metadata.getParentURI(),
+        Preconditions.checkState(metadata.getParentURI() != null,
                 "No catalog URI is provied. Include dcterms:isPartOf statement "
                         + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
@@ -237,7 +237,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()), 
                 "The distribution URI already exist in the repository. "
                         + "Please try with different distribution ID");        
-        Preconditions.checkNotNull(metadata.getParentURI(),
+        Preconditions.checkState(metadata.getParentURI() != null,
                 "No dataset URI is provied. Include dcterms:isPartOf statement "
                         + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()), 
