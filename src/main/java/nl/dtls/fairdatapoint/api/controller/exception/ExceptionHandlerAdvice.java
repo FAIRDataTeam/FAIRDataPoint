@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.io.MetadataParserException;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,12 +50,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
     
+    private final static Logger LOGGER
+            = LogManager.getLogger(ExceptionHandlerAdvice.class.getName());
+    
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleResourceInvalidPost(
             IllegalStateException ex, HttpServletResponse response) { 
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
         String msg =  "ErrorMsg : " + ex.getMessage();
+        LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, 
                 HttpStatus.BAD_REQUEST);
     }
@@ -64,6 +70,7 @@ public class ExceptionHandlerAdvice {
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
         String msg =  "ErrorMsg : " + ex.getMessage();
+        LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, HttpStatus.NOT_FOUND);
     }
     
@@ -73,6 +80,7 @@ public class ExceptionHandlerAdvice {
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
         String msg =  "ErrorMsg : " + ex.getMessage();
+        LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, 
                 HttpStatus.BAD_REQUEST);
     } 
@@ -84,6 +92,7 @@ public class ExceptionHandlerAdvice {
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
         String msg =  "ErrorMsg : " + ex.getMessage();
+        LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, 
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }    
