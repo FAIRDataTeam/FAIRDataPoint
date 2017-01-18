@@ -17,7 +17,8 @@
 	a dcat:Distribution ;
 	dcat:accessURL <http://triplestore.fair-dtls.vm.surfsara.nl:8890/sparql> ;
 	dcat:mediaType "application/json" , "text/turtle" , "text/html" ;
-        dct:identifier "gda-lumc-sparql-metadataID" .
+        dct:identifier "gda-lumc-sparql-metadataID" ;
+        dct:isPartOf <http://localhost/dataset/gene-disease-association_lumc> .
 
 <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gda-lumc-sparql/gda-lumc-sparql-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
 	dct:identifier "gda-lumc-sparql-metadataID" .

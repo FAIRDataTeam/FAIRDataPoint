@@ -22,7 +22,8 @@
 	dcat:keyword "GDA lumc" , "text mining" , "gene-disease association" ;
 	dcat:landingPage <http://rdf.biosemantics.org/> ;
 	dcat:theme <http://semanticscience.org/resource/statistical-association> , <http://dbpedia.org/resource/Text_mining> ;
-        dct:identifier "gene-disease-association-lumc-metadataID" .
+        dct:identifier "gene-disease-association-lumc-metadataID" ;
+        dct:isPartOf <http://localhost/catalog/textmining> . 
 
 <http://biosemantics.humgen.nl> a <http://xmlns.com/foaf/0.1/Organization> ;
 	<http://xmlns.com/foaf/0.1/name> "Biosemantics LUMC"@en .
