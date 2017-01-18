@@ -196,6 +196,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(RDFUtils.getCurrentTime());
+            metadata.setDatasets(new ArrayList());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata));
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
@@ -221,6 +222,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {       
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(RDFUtils.getCurrentTime());
+            metadata.setDistribution(new ArrayList());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata));  
             updateParentResource(metadata);            
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
