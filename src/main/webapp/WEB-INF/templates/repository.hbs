@@ -1,0 +1,13 @@
+{{#partial "content"}}
+<h2>Title</h2>
+<span>{{literal metadata.title}}</span>
+
+<h2>Catalogs</h2>
+<ul>
+    {{#metadata.catalogs}}
+    <li><a href="{{.}}">{{.}}</a>
+    {{/metadata.catalogs}}
+</ul>
+{{/partial}}
+
+{{> base}}

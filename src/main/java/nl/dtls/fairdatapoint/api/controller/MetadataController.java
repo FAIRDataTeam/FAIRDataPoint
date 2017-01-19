@@ -28,12 +28,34 @@
 package nl.dtls.fairdatapoint.api.controller;
 
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.io.MetadataParserException;
 import nl.dtl.fairmetadata.model.Agent;
@@ -46,23 +68,7 @@ import nl.dtl.fairmetadata.utils.vocabulary.DataCite;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.eclipse.rdf4j.model.vocabulary.FOAF;
-import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Api(description = "FDP metadata")
@@ -114,6 +120,25 @@ public class MetadataController {
         return metadata;
     }
 
+    @ApiIgnore
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getHtmlFdpMetadata(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("repository");
+        
+        try {
+            String uri = getRequesedURL(request);
+            if (!isFDPMetaDataAvailable) {
+                storeDefaultFDPMetadata(request);
+            }
+            FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(uri);
+            mav.addObject("metadata", metadata);
+        } catch (FairMetadataServiceException | MetadataParserException e) {
+            mav.addObject("error", e.getMessage());
+        }
+        
+        return mav;
+    }
+    
     /**
      * Get catalog metadata
      *
@@ -149,6 +174,23 @@ public class MetadataController {
         return metadata;
     }
 
+    @ApiIgnore
+    @RequestMapping(value = "/catalog/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getHtmlCatalogMetadata(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("catalog");
+        
+        try {
+            String uri = getRequesedURL(request);
+            CatalogMetadata metadata = fairMetaDataService.
+                    retrieveCatalogMetaData(uri);
+            mav.addObject("metadata", metadata);
+        } catch (FairMetadataServiceException e) {
+            mav.addObject("error", e.getMessage());
+        }
+        
+        return mav;
+    }
+    
     /**
      * Get dataset metadata
      *

@@ -1,0 +1,13 @@
+{{#partial "content"}}
+<h2>Title</h2>
+<span>{{literal metadata.title}}</span>
+
+<h2>Datasets</h2>
+<ul>
+    {{#metadata.datasets}}
+    <li><a href="{{.}}">{{.}}</a>
+    {{/metadata.datasets}}
+</ul>
+{{/partial}}
+
+{{> base}}
