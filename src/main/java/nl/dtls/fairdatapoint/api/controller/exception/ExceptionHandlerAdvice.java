@@ -39,6 +39,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Handle controller exception
@@ -65,13 +67,11 @@ public class ExceptionHandlerAdvice {
     }
     
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<String> handleResourceNotFound(
-            NullPointerException ex, HttpServletResponse response) { 
-        HttpHeaders headers = new HttpHeaders();    
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg =  "ErrorMsg : " + ex.getMessage();
-        LOGGER.error(msg);
-        return new ResponseEntity<>(msg, headers, HttpStatus.NOT_FOUND);
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public @ResponseBody String handleResourceNotFound(
+            NullPointerException ex, HttpServletResponse response) {
+        LOGGER.error(ex.getMessage());
+        return ex.getMessage();
     }
     
     @ExceptionHandler(MetadataException.class)
