@@ -13,6 +13,7 @@
 
 	<properties>
 		<springframework.version>4.3.1.RELEASE</springframework.version>
+                <springdata.version>2.5.6.RELEASE</springdata.version>
 		<jackson.version>2.8.0</jackson.version>
 		<rdf4j.version>2.1.4</rdf4j.version>
 		<springfox-swagger.version>2.1.1</springfox-swagger.version>
@@ -63,6 +64,13 @@
 			<artifactId>spring-web</artifactId>
 			<version>${springframework.version}</version>
 		</dependency>
+                
+                <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-rest-webmvc -->
+                <dependency>
+                    <groupId>org.springframework.data</groupId>
+                    <artifactId>spring-data-rest-webmvc</artifactId>
+                    <version>${springdata.version}</version>
+                </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>

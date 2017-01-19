@@ -33,14 +33,13 @@ import nl.dtl.fairmetadata.io.MetadataParserException;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Handle controller exception
@@ -55,23 +54,15 @@ public class ExceptionHandlerAdvice {
     private final static Logger LOGGER
             = LogManager.getLogger(ExceptionHandlerAdvice.class.getName());
     
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<String> handleResourceInvalidPost(
-            IllegalStateException ex, HttpServletResponse response) { 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFound(
+            ResourceNotFoundException ex, HttpServletResponse response) {
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg =  "ErrorMsg : " + ex.getMessage();
+        String msg = ex.getMessage();
         LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, 
-                HttpStatus.BAD_REQUEST);
-    }
-    
-    @ExceptionHandler(NullPointerException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public @ResponseBody String handleResourceNotFound(
-            NullPointerException ex, HttpServletResponse response) {
-        LOGGER.error(ex.getMessage());
-        return ex.getMessage();
+                HttpStatus.NOT_FOUND);
     }
     
     @ExceptionHandler(MetadataException.class)
@@ -79,19 +70,19 @@ public class ExceptionHandlerAdvice {
             HttpServletResponse response) {  
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg =  "ErrorMsg : " + ex.getMessage();
+        String msg = ex.getMessage();
         LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, 
                 HttpStatus.BAD_REQUEST);
     } 
         
-    @ExceptionHandler({MetadataControllerException.class, 
-        FairMetadataServiceException.class, MetadataParserException.class})
+    @ExceptionHandler({FairMetadataServiceException.class, 
+        MetadataParserException.class})
     public ResponseEntity<String> handelInternalServerError(Exception ex, 
             HttpServletResponse response) {
         HttpHeaders headers = new HttpHeaders();    
         headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg =  "ErrorMsg : " + ex.getMessage();
+        String msg =  ex.getMessage();
         LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, 
                 HttpStatus.INTERNAL_SERVER_ERROR);
