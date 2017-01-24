@@ -222,7 +222,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {       
             metadata.setIssued(RDFUtils.getCurrentTime());
             metadata.setModified(RDFUtils.getCurrentTime());
-            metadata.setDistribution(new ArrayList());
+            metadata.setDistributions(new ArrayList());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata));  
             updateParentResource(metadata);            
         } catch (StoreManagerException | DatatypeConfigurationException ex) {

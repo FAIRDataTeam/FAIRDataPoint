@@ -225,6 +225,23 @@ public class MetadataController {
         }
         return metadata;
     }
+    
+    @ApiIgnore
+    @RequestMapping(value = "/dataset/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getHtmlDatsetMetadata(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("dataset");
+        
+        try {
+            String uri = getRequesedURL(request);
+            DatasetMetadata metadata = fairMetaDataService.
+                    retrieveDatasetMetaData(uri);
+            mav.addObject("metadata", metadata);
+        } catch (FairMetadataServiceException e) {
+            mav.addObject("error", e.getMessage());
+        }
+        
+        return mav;
+    }
 
     /**
      * Get distribution metadata
@@ -260,6 +277,23 @@ public class MetadataController {
             throw(new ResourceNotFoundException(msg));
         }
         return metadata;
+    }
+    
+    @ApiIgnore
+    @RequestMapping(value = "/distribution/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getHtmlDistributionMetadata(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("distribution");
+        
+        try {
+            String uri = getRequesedURL(request);
+            DistributionMetadata metadata = fairMetaDataService.
+                    retrieveDistributionMetaData(uri);
+            mav.addObject("metadata", metadata);
+        } catch (FairMetadataServiceException e) {
+            mav.addObject("error", e.getMessage());
+        }
+        
+        return mav;
     }
     
     /**

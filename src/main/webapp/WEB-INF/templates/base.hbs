@@ -10,19 +10,26 @@
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
         </script>
+        <title> 
+            {{#if metadata.title}}
+                {{literal metadata.title}}
+            {{/if}}
+        </title>
     </head>
     <body>
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">FAIR metadata</h3>
             </div>
-            <div class="panel-body">  
+            <div class="panel-body"> 
+                {{#if metadata.title}}
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Title</span></div>
                         <div class="col-sm-7"><span>{{literal metadata.title}}</span></div>
                     </h4>    
-                </div>    
+                </div>  
+                {{/if}}
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Metadata ID</span></div> 
@@ -49,12 +56,14 @@
                         <div class="col-sm-7"><span>{{literal metadata.modified}}</span></div>
                     </h4>
                 </div>    
+                {{#if metadata.license}}
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">License</span></div>
                         <div class="col-sm-7"><a target="_blank" href="{{metadata.license}}">license</a></div>
                     </h4>
-                </div>      
+                </div>    
+                {{/if}}
                 {{#block "content"}}
                 {{/block}}
         </div>        
