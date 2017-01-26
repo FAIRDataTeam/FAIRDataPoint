@@ -68,6 +68,7 @@ import nl.dtl.fairmetadata.utils.vocabulary.DataCite;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
+import org.springframework.http.HttpHeaders;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -358,6 +359,7 @@ public class MetadataController {
             metadata.setParentURI(fdpURI);
         }
         fairMetaDataService.storeCatalogMetaData(metadata);
+        response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return "Metadata is stored";
     }
 
@@ -389,6 +391,7 @@ public class MetadataController {
         IRI uri = f.createIRI(requestedURL + "/" + id);
         metadata.setUri(uri);
         fairMetaDataService.storeDatasetMetaData(metadata);
+        response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return "Metadata is stored";
     }
 
@@ -421,6 +424,7 @@ public class MetadataController {
         IRI uri = f.createIRI(requestedURL + "/" + id);
         metadata.setUri(uri);
         fairMetaDataService.storeDistributionMetaData(metadata);
+        response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return "Metadata is stored";
     }
 
