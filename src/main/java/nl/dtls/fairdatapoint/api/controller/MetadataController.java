@@ -142,7 +142,7 @@ public class MetadataController {
     /**
      * Get catalog metadata
      *
-     * @param catalogID
+     * @param id
      * @param request
      * @param response
      * @return Metadata about the catalog in one of the acceptable 
@@ -152,16 +152,16 @@ public class MetadataController {
      * @throws FairMetadataServiceException
      */
     @ApiOperation(value = "Catalog metadata")
-    @RequestMapping(value = "/catalog/{catalogID}", method = RequestMethod.GET,
+    @RequestMapping(value = "/catalog/{id}", method = RequestMethod.GET,
             produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     @ResponseStatus(HttpStatus.OK)
     public CatalogMetadata getCatalogMetaData(
-            @PathVariable final String catalogID, HttpServletRequest request,
+            @PathVariable final String id, HttpServletRequest request,
             HttpServletResponse response) throws FairMetadataServiceException, 
             ResourceNotFoundException {
-        LOGGER.info("Request to get CATALOG metadata with ID ", catalogID);
+        LOGGER.info("Request to get CATALOG metadata with ID ", id);
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.
@@ -194,7 +194,7 @@ public class MetadataController {
     /**
      * Get dataset metadata
      *
-     * @param datasetID
+     * @param id
      * @param request
      * @param response
      * @return Metadata about the dataset in one of the acceptable formats 
@@ -203,17 +203,17 @@ public class MetadataController {
      * @throws FairMetadataServiceException
      */
     @ApiOperation(value = "Dataset metadata")
-    @RequestMapping(value = "/dataset/{datasetID}",
+    @RequestMapping(value = "/dataset/{id}",
             method = RequestMethod.GET,
             produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     @ResponseStatus(HttpStatus.OK)
     public DatasetMetadata getDatasetMetaData(
-            @PathVariable final String datasetID, HttpServletRequest request,
+            @PathVariable final String id, HttpServletRequest request,
             HttpServletResponse response) throws FairMetadataServiceException, 
             ResourceNotFoundException {
-        LOGGER.info("Request to get DATASET metadata with ID ", datasetID);
+        LOGGER.info("Request to get DATASET metadata with ID ", id);
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService.
@@ -246,7 +246,7 @@ public class MetadataController {
     /**
      * Get distribution metadata
      *
-     * @param distributionID
+     * @param id
      * @param request
      * @param response
      * @return Metadata about the dataset distribution in one of the acceptable formats 
@@ -255,18 +255,18 @@ public class MetadataController {
      * @throws FairMetadataServiceException
      */
     @ApiOperation(value = "Dataset distribution metadata")
-    @RequestMapping(value = "/distribution/{distributionID}",
+    @RequestMapping(value = "/distribution/{id}",
             produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"},
             method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public DistributionMetadata getDistribution(
-            @PathVariable final String distributionID,
+            @PathVariable final String id,
             HttpServletRequest request,
             HttpServletResponse response) throws FairMetadataServiceException, 
             ResourceNotFoundException {
         LOGGER.info("Request to get dataset's distribution wih ID ",
-                distributionID);
+                id);
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService.
@@ -327,7 +327,7 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata catalog metadata
-     * @param catalogID Unique catalog ID
+     * @param id Unique catalog ID
      * @return created message
      * @throws nl.dtl.fairmetadata.io.MetadataParserException
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
@@ -339,16 +339,16 @@ public class MetadataController {
     public String storeCatalogMetaData(final HttpServletRequest request,
             HttpServletResponse response,
             @RequestBody(required = true) CatalogMetadata metadata,
-            @RequestParam("catalogID") String catalogID) throws
+            @RequestParam("id") String id) throws
             FairMetadataServiceException, MetadataException {
-        catalogID = trimmer(catalogID);
-        LOGGER.info("Request to store catalog metatdata with ID ", catalogID);
+        id = trimmer(id);
+        LOGGER.info("Request to store catalog metatdata with ID ", id);
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
         }        
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + catalogID);
+        IRI uri = f.createIRI(requestedURL + "/" + id);
         metadata.setUri(uri);
         if(metadata.getParentURI() == null){
             String fURI = requestedURL.replace("/catalog", "");            
@@ -367,7 +367,7 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata  Dataset metadata
-     * @param datasetID Unique dataset ID
+     * @param id Unique dataset ID
      * @return created message
      *
      * @throws nl.dtl.fairmetadata.io.MetadataParserException
@@ -380,13 +380,13 @@ public class MetadataController {
     public String storeDatasetMetaData(final HttpServletRequest request,
             HttpServletResponse response,
             @RequestBody(required = true) DatasetMetadata metadata,
-            @RequestParam("datasetID") String datasetID)
+            @RequestParam("id") String id)
             throws FairMetadataServiceException, MetadataException {
-        datasetID = trimmer(datasetID);
-        LOGGER.info("Request to store dataset metatdata with ID ", datasetID);
+        id = trimmer(id);
+        LOGGER.info("Request to store dataset metatdata with ID ", id);
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + datasetID);
+        IRI uri = f.createIRI(requestedURL + "/" + id);
         metadata.setUri(uri);
         fairMetaDataService.storeDatasetMetaData(metadata);
         return "Metadata is stored";
@@ -398,7 +398,7 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata distribution metadata
-     * @param distributionID Unique distribution ID
+     * @param id Unique distribution ID
      * @return created message
      *
      * @throws nl.dtl.fairmetadata.io.MetadataParserException
@@ -411,14 +411,14 @@ public class MetadataController {
     public String storeDistribution(final HttpServletRequest request,
             HttpServletResponse response, 
             @RequestBody(required = true) DistributionMetadata metadata,
-            @RequestParam("distributionID") String distributionID)
+            @RequestParam("id") String id)
             throws FairMetadataServiceException, MetadataException {
-        distributionID = trimmer(distributionID);
+        id = trimmer(id);
         LOGGER.info("Request to store distribution metatdata with ID ",
-                distributionID);
+                id);
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + distributionID);
+        IRI uri = f.createIRI(requestedURL + "/" + id);
         metadata.setUri(uri);
         fairMetaDataService.storeDistributionMetaData(metadata);
         return "Metadata is stored";

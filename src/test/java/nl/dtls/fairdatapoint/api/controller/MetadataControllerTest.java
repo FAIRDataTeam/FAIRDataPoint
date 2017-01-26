@@ -272,7 +272,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("catalogID", "cat1");
+        request.addParameter("id", "cat1");
         request.setRequestURI("/catalog");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -295,7 +295,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("catalogID", "cat1");
+        request.addParameter("id", "cat1");
         request.setRequestURI("/catalog");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -308,7 +308,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("catalogID", "cat1");
+        request.addParameter("id", "cat1");
         request.setRequestURI("/catalog");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -365,7 +365,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("datasetID", "dat1");
+        request.addParameter("id", "dat1");
         request.setRequestURI("/dataset");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -388,7 +388,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("datasetID", "dat1");
+        request.addParameter("id", "dat1");
         request.setRequestURI("/dataset");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -401,7 +401,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("datasetID", "dat1");
+        request.addParameter("id", "dat1");
         request.setRequestURI("/dataset");
         handler = handlerMapping.getHandler(request).getHandler();        
         handlerAdapter.handle(request, response, handler);
@@ -459,7 +459,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("distributionID", "dis1");
+        request.addParameter("id", "dis1");
         request.setRequestURI("/distribution");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -482,7 +482,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("distributionID", "dis1");
+        request.addParameter("id", "dis1");
         request.setRequestURI("/distribution");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -495,7 +495,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("distributionID", "dis1");
+        request.addParameter("id", "dis1");
         request.setRequestURI("/distribution");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
