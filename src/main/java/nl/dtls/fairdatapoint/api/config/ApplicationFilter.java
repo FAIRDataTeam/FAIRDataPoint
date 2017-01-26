@@ -52,7 +52,7 @@ public class ApplicationFilter extends OncePerRequestFilter {
             final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
         String allowedMtds = (RequestMethod.GET.name() + "," + 
-                RequestMethod.POST.name());
+                RequestMethod.POST.name() + "," + RequestMethod.PATCH.name());
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, 
