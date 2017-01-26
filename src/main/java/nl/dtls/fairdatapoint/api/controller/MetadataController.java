@@ -341,6 +341,7 @@ public class MetadataController {
             @RequestBody(required = true) CatalogMetadata metadata,
             @RequestParam("catalogID") String catalogID) throws
             FairMetadataServiceException, MetadataException {
+        catalogID = trimmer(catalogID);
         LOGGER.info("Request to store catalog metatdata with ID ", catalogID);
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
@@ -380,7 +381,8 @@ public class MetadataController {
             HttpServletResponse response,
             @RequestBody(required = true) DatasetMetadata metadata,
             @RequestParam("datasetID") String datasetID)
-            throws FairMetadataServiceException, MetadataException {        
+            throws FairMetadataServiceException, MetadataException {
+        datasetID = trimmer(datasetID);
         LOGGER.info("Request to store dataset metatdata with ID ", datasetID);
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
@@ -411,7 +413,7 @@ public class MetadataController {
             @RequestBody(required = true) DistributionMetadata metadata,
             @RequestParam("distributionID") String distributionID)
             throws FairMetadataServiceException, MetadataException {
-
+        distributionID = trimmer(distributionID);
         LOGGER.info("Request to store distribution metatdata with ID ",
                 distributionID);
         String requestedURL = getRequesedURL(request);
@@ -489,5 +491,17 @@ public class MetadataController {
                     "Error creating generic FDP meatdata " + ex.getMessage());
         }
 
+    }
+    
+    /**
+     * Trim white space at start, end and between strings
+     * 
+     * @param str Input string
+     * @return  Trimmed string      
+     */
+    private String trimmer(String str) {
+        str = str.trim();
+        str = str.replace(" ", "-");
+        return str;
     }
 }
