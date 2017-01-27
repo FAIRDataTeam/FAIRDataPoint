@@ -15,6 +15,11 @@
                 {{literal metadata.title}}
             {{/if}}
         </title>
+        {{#if jsonLd}}
+        <script type="application/ld+json">
+            {{jsonLd}}
+        </script>
+        {{/if}}
     </head>
     <body>
         <div class="panel panel-default">

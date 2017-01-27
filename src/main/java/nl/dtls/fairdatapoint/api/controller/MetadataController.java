@@ -56,6 +56,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.logging.Level;
 import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.io.MetadataParserException;
 import nl.dtl.fairmetadata.model.Agent;
@@ -64,10 +65,12 @@ import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
 import nl.dtl.fairmetadata.model.FDPMetadata;
 import nl.dtl.fairmetadata.model.Identifier;
+import nl.dtl.fairmetadata.utils.MetadataUtils;
 import nl.dtl.fairmetadata.utils.vocabulary.DataCite;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpHeaders;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -133,7 +136,9 @@ public class MetadataController {
             }
             FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(uri);
             mav.addObject("metadata", metadata);
-        } catch (FairMetadataServiceException | MetadataParserException e) {
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+                    RDFFormat.JSONLD));
+        } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
         
@@ -185,7 +190,9 @@ public class MetadataController {
             CatalogMetadata metadata = fairMetaDataService.
                     retrieveCatalogMetaData(uri);
             mav.addObject("metadata", metadata);
-        } catch (FairMetadataServiceException e) {
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+                    RDFFormat.JSONLD));
+        } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
         
@@ -237,7 +244,9 @@ public class MetadataController {
             DatasetMetadata metadata = fairMetaDataService.
                     retrieveDatasetMetaData(uri);
             mav.addObject("metadata", metadata);
-        } catch (FairMetadataServiceException e) {
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+                    RDFFormat.JSONLD));
+        } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
         
@@ -290,7 +299,9 @@ public class MetadataController {
             DistributionMetadata metadata = fairMetaDataService.
                     retrieveDistributionMetaData(uri);
             mav.addObject("metadata", metadata);
-        } catch (FairMetadataServiceException e) {
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+                    RDFFormat.JSONLD));
+        } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
         
