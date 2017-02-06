@@ -5,3 +5,5 @@ before_install:
   - git clone --branch=develop https://github.com/DTL-FAIRData/FairMetadata.git
   - cd FairMetadata
   - mvn install
+after_success:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report coveralls:report
