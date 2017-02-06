@@ -1,3 +1,7 @@
 language: java
 jdk:
   - oraclejdk8
+before_install:
+  - git clone --branch=develop https://github.com/DTL-FAIRData/FairMetadata.git
+  - cd FairMetadata
+  - mvn install
