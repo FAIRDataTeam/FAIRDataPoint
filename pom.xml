@@ -28,6 +28,10 @@
         <velocity.version>1.7</velocity.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.6.2</mockito.version>
+        <plugin.mavenwar.version>3.0.0</plugin.mavenwar.version>
+        <plugin.mavenlic.version>3.0</plugin.mavenlic.version>
+        <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
+        <plugin.cobertura.version>2.7</plugin.cobertura.version>
     </properties>
 
     <dependencies>
@@ -170,14 +174,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.6</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>xml-apis</groupId>
-                            <artifactId>xml-apis</artifactId>
-                            <version>1.0.b2</version>
-                        </dependency>
-                    </dependencies>
+                    <version>${plugin.mavenwar.version}</version>
                     <configuration>
                         <warSourceDirectory>src/main/webapp</warSourceDirectory>
                         <warName>fdp</warName>
@@ -190,7 +187,7 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
+                <version>${plugin.mavenlic.version}</version>
                 <configuration>
                     <header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
                     <properties>
@@ -218,7 +215,7 @@
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
+                <version>${plugin.coveralls.version}</version>
             </plugin>
         </plugins>
     </build>
@@ -227,7 +224,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
+                <version>${plugin.cobertura.version}</version>
             </plugin>
         </plugins>
     </reporting>
