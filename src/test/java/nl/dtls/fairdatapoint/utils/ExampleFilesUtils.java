@@ -29,17 +29,12 @@ package nl.dtls.fairdatapoint.utils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.io.PatternFilenameFilter;
 import com.google.common.io.Resources;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 import nl.dtl.fairmetadata.io.CatalogMetadataParser;
 import nl.dtl.fairmetadata.io.DatasetMetadataParser;
 import nl.dtl.fairmetadata.io.DistributionMetadataParser;

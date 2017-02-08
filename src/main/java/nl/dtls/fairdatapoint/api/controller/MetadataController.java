@@ -352,14 +352,14 @@ public class MetadataController {
             @RequestBody(required = true) CatalogMetadata metadata,
             @RequestParam("id") String id) throws
             FairMetadataServiceException, MetadataException {
-        id = trimmer(id);
-        LOGGER.info("Request to store catalog metatdata with ID ", id);
+        String trimmedId = trimmer(id);
+        LOGGER.info("Request to store catalog metatdata with ID ", trimmedId);
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
         }        
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + id);
+        IRI uri = f.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
         if(metadata.getParentURI() == null){
             String fURI = requestedURL.replace("/catalog", "");            
@@ -394,11 +394,11 @@ public class MetadataController {
             @RequestBody(required = true) DatasetMetadata metadata,
             @RequestParam("id") String id)
             throws FairMetadataServiceException, MetadataException {
-        id = trimmer(id);
-        LOGGER.info("Request to store dataset metatdata with ID ", id);
+        String trimmedId = trimmer(id);
+        LOGGER.info("Request to store dataset metatdata with ID ", trimmedId);
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + id);
+        IRI uri = f.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
         fairMetaDataService.storeDatasetMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -426,12 +426,12 @@ public class MetadataController {
             @RequestBody(required = true) DistributionMetadata metadata,
             @RequestParam("id") String id)
             throws FairMetadataServiceException, MetadataException {
-        id = trimmer(id);
+        String trimmedId = trimmer(id);
         LOGGER.info("Request to store distribution metatdata with ID ",
-                id);
+                trimmedId);
         String requestedURL = getRequesedURL(request);
         ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + id);
+        IRI uri = f.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
         fairMetaDataService.storeDistributionMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -514,8 +514,9 @@ public class MetadataController {
      * @return  Trimmed string      
      */
     private String trimmer(String str) {
-        str = str.trim();
-        str = str.replace(" ", "-");
-        return str;
+        String trimmedStr = str;
+        trimmedStr = trimmedStr.trim();
+        trimmedStr = trimmedStr.replace(" ", "-");
+        return trimmedStr;
     }
 }

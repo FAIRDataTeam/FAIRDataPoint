@@ -66,7 +66,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class StoreManagerImplTest {
 
     @Autowired
-    StoreManager testStoreManager;
+    private StoreManager testStoreManager;
 
     @Before
     public void storeExampleFile() throws StoreManagerException {
