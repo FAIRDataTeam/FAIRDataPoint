@@ -28,6 +28,7 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.net.MalformedURLException;
+import java.util.logging.Level;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.model.CatalogMetadata;
@@ -43,6 +44,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -147,15 +149,33 @@ public class FairMetaDataServiceImplTest {
     
     /**
      * Test to store FDP metadata, this test is excepted to pass
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
      */
     @DirtiesContext
     @Test
-    public void storeFDPMetaData() throws FairMetadataServiceException, 
-            MetadataException {            
-        fairMetaDataService.storeFDPMetaData(ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI));
+    public void storeFDPMetaData() {            
+        try {
+            fairMetaDataService.storeFDPMetaData(ExampleFilesUtils.getFDPMetadata(
+                    TEST_FDP_URI));
+        } catch (FairMetadataServiceException | MetadataException ex) {
+            fail("This test is not expected to throw an errors");
+        } 
+    }
+    
+    
+    /**
+     * Test to update FDP metadata, this test is excepted to pass
+     */
+    @DirtiesContext
+    @Test
+    public void updateFDPMetaData() {            
+        try {
+            FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
+                    TEST_FDP_URI);
+            fairMetaDataService.storeFDPMetaData(metadata);
+            fairMetaDataService.updateFDPMetaData(TEST_FDP_URI, metadata);
+        } catch (FairMetadataServiceException | MetadataException ex) {
+            fail("This test is not expected to throw an errors");
+        } 
     }
       
     /**
@@ -187,16 +207,17 @@ public class FairMetaDataServiceImplTest {
     
     /**
      * Test to store catalog metadata, this test is excepted to pass
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
      */
     @DirtiesContext
     @Test
-    public void storeCatalogMetaData() throws FairMetadataServiceException, 
-            MetadataException {            
-        fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.
-                getCatalogMetadata(TEST_CATALOG_URI, 
-                        ExampleFilesUtils.FDP_URI));
+    public void storeCatalogMetaData() {            
+        try {
+            fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.
+                    getCatalogMetadata(TEST_CATALOG_URI,
+                            ExampleFilesUtils.FDP_URI));
+        } catch (FairMetadataServiceException | MetadataException ex) {
+            fail("This test is not expected to throw an errors");
+        } 
     }
     
     /**
@@ -242,16 +263,17 @@ public class FairMetaDataServiceImplTest {
     
     /**
      * Test to store dataset metadata, this test is excepted to pass
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
      */
     @DirtiesContext
     @Test
-    public void storeDatasetMetaData() throws FairMetadataServiceException, 
-            MetadataException {            
-        fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
-                getDatasetMetadata(TEST_DATASET_URI, 
-                        ExampleFilesUtils.CATALOG_URI));
+    public void storeDatasetMetaData() {            
+        try {
+            fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
+                    getDatasetMetadata(TEST_DATASET_URI,
+                            ExampleFilesUtils.CATALOG_URI));
+        } catch (FairMetadataServiceException | MetadataException ex) {
+            fail("This test is not expected to throw an errors");
+        }
     }
     
     /**
@@ -297,16 +319,17 @@ public class FairMetaDataServiceImplTest {
     
     /**
      * Test to store dataset distribution, this test is excepted to pass
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
      */
     @DirtiesContext
     @Test
-    public void storeDistributionMetaData() throws FairMetadataServiceException, 
-            MetadataException {            
-        fairMetaDataService.storeDistributionMetaData(ExampleFilesUtils.
-                getDistributionMetadata(TEST_DISTRIBUTION_URI, 
-                        ExampleFilesUtils.DATASET_URI));
+    public void storeDistributionMetaData() {            
+        try {
+            fairMetaDataService.storeDistributionMetaData(ExampleFilesUtils.
+                    getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                            ExampleFilesUtils.DATASET_URI));
+        } catch (FairMetadataServiceException | MetadataException ex) {
+            fail("This test is not expected to throw an errors");
+        }
     }  
     
     /**
