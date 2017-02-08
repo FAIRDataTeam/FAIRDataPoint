@@ -30,7 +30,6 @@ package nl.dtls.fairdatapoint.service.impl;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata.io.CatalogMetadataParser;

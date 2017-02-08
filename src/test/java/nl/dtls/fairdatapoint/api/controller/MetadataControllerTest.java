@@ -35,14 +35,13 @@ import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.service.impl.FairMetaDataServiceImplTest;
+import nl.dtls.fairdatapoint.service.impl.FairMetaDataServiceImpl;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +83,7 @@ public class MetadataControllerTest {
     private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH
             + "distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
     private final static Logger LOGGER
-            = LogManager.getLogger(FairMetaDataServiceImplTest.class.getName());
+            = LogManager.getLogger(FairMetaDataServiceImpl.class.getName());
 
     @Before
     public void storeExampleMetadata() throws StoreManagerException,

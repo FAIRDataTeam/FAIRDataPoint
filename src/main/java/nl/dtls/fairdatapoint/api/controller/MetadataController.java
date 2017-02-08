@@ -56,7 +56,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.logging.Level;
 import nl.dtl.fairmetadata.io.MetadataException;
 import nl.dtl.fairmetadata.io.MetadataParserException;
 import nl.dtl.fairmetadata.model.Agent;
