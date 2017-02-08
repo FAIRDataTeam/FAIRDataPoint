@@ -341,9 +341,6 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         if(metaDataUpdate.getDescription() != null) {
             metadata.setDescription(metaDataUpdate.getDescription());
         }
-        if(metaDataUpdate.getHomepage() != null) {
-            metadata.setHomepage(metaDataUpdate.getHomepage());
-        }
         if(metaDataUpdate.getIdentifier() != null) {
             metadata.setIdentifier(metaDataUpdate.getIdentifier());
         }
