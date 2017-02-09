@@ -207,7 +207,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 "Metadata object must not be null.");
         try {
             ValueFactory f = SimpleValueFactory.getInstance();
-            List<Statement> stmts = new ArrayList();
+            List<Statement> stmts = new ArrayList<>();
             if (metadata instanceof FDPMetadata) {
                 return;
             } else if (metadata instanceof CatalogMetadata) {
@@ -265,7 +265,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     private void addAddtionalResource(List<Statement> statements) throws
             StoreManagerException {
-        List<Statement> otherResources = new ArrayList();
+        List<Statement> otherResources = new ArrayList<>();
         for (Statement st : statements) {
             IRI predicate = st.getPredicate();
             Value object = st.getObject();
@@ -290,49 +290,33 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public void updateFDPMetaData(IRI uri, FDPMetadata metaDataUpdate)
             throws FairMetadataServiceException, MetadataException {
         FDPMetadata metadata = retrieveFDPMetaData(uri);
-
-        if (metaDataUpdate.getDescription() != null) {
-            metadata.setDescription(metaDataUpdate.getDescription());
-        }
-        if (metaDataUpdate.getIdentifier() != null) {
-            metadata.setIdentifier(metaDataUpdate.getIdentifier());
-        }
-        if (metaDataUpdate.getInstitution() != null) {
-            metadata.setInstitution(metaDataUpdate.getInstitution());
-        }
-        if (metaDataUpdate.getInstitutionCountry() != null) {
-            metadata.setInstitutionCountry(metaDataUpdate.
-                    getInstitutionCountry());
-        }
-        if (metaDataUpdate.getLanguage() != null) {
-            metadata.setLanguage(metaDataUpdate.getLanguage());
-        }
-        if (metaDataUpdate.getLicense() != null) {
-            metadata.setLicense(metaDataUpdate.getLicense());
-        }
-        if (metaDataUpdate.getPublisher() != null) {
-            metadata.setPublisher(metaDataUpdate.getPublisher());
-        }
-        if (metaDataUpdate.getRepostoryIdentifier() != null) {
-            metadata.setRepostoryIdentifier(metaDataUpdate.
-                    getRepostoryIdentifier());
-        }
-        if (metaDataUpdate.getRights() != null) {
-            metadata.setRights(metaDataUpdate.getRights());
-        }
-        if (metaDataUpdate.getStartDate() != null) {
-            metadata.setStartDate(metaDataUpdate.getStartDate());
-        }
-        if (metaDataUpdate.getSwaggerDoc() != null) {
-            metadata.setSwaggerDoc(metaDataUpdate.getSwaggerDoc());
-        }
-        if (metaDataUpdate.getTitle() != null) {
-            metadata.setTitle(metaDataUpdate.getTitle());
-        }
-        if (metaDataUpdate.getVersion() != null) {
-            metadata.setVersion(metaDataUpdate.getVersion());
-        }
-        ValueFactory f = SimpleValueFactory.getInstance();
+        
+        // This is an unconventional way of copying values from a source to a
+        // target object, and the original developers are aware of that fact.
+        // The original approach used a numer of repeated if-blocks to check for
+        // null values before settings, like the following example:
+        // if (x.getY() != null) {
+        //    z.setY(x.getY());
+        // }
+        // This resulted in an NPath complexity of over 16000. In order to
+        // work around the repeated if-blocks, the null check and getter/setter
+        // logic is extracted into the setMetadataProperty method.
+        setMetadataProperty(metaDataUpdate::getDescription, metadata::setDescription);
+        setMetadataProperty(metaDataUpdate::getIdentifier, metadata::setIdentifier);
+        setMetadataProperty(metaDataUpdate::getInstitution, metadata::setInstitution);
+        setMetadataProperty(metaDataUpdate::getInstitutionCountry,
+                metadata::setInstitutionCountry);
+        setMetadataProperty(metaDataUpdate::getLanguage, metadata::setLanguage);
+        setMetadataProperty(metaDataUpdate::getLicense, metadata::setLicense);
+        setMetadataProperty(metaDataUpdate::getPublisher, metadata::setPublisher);
+        setMetadataProperty(metaDataUpdate::getRepostoryIdentifier,
+                metadata::setRepostoryIdentifier);
+        setMetadataProperty(metaDataUpdate::getRights, metadata::setRights);
+        setMetadataProperty(metaDataUpdate::getStartDate, metadata::setStartDate);
+        setMetadataProperty(metaDataUpdate::getSwaggerDoc, metadata::setSwaggerDoc);
+        setMetadataProperty(metaDataUpdate::getTitle, metadata::setTitle);
+        setMetadataProperty(metaDataUpdate::getVersion, metadata::setVersion);
+        
         try {
             storeManager.removeResource(uri);
             storeFDPMetaData(metadata);
@@ -341,5 +325,36 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw (new FairMetadataServiceException(ex.getMessage()));
         }
     }
-
+    
+    /**
+     * Convenience method to reduce the NPath complexity measure of the {@link
+     * #updateFDPMetaData(IRI, FDPMetadata)} method.
+     * @param getter the getter method of the source object.
+     * @param setter the setter method of the target object.
+     */
+    private <T> void setMetadataProperty(Getter<T> getter, Setter<T> setter) {
+        if (getter.get() != null) {
+            setter.set(getter.get());
+        }
+    }
+    
+    /**
+     * Convenience interface to facilitate referring to a getter method as a
+     * function pointer.
+     * @param <T> datatype of the getter return value.
+     */
+    @FunctionalInterface
+    private interface Getter<T> {
+        T get();
+    }
+    
+    /**
+     * Convenience interface to facilitate referring to a setter method as a
+     * function pointer.
+     * @param <T> datatype of the setter parameter.
+     */
+    @FunctionalInterface
+    private interface Setter<T> {
+        void set(T value);
+    }
 }
