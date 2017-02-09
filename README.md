@@ -11,7 +11,7 @@
 * Tomcat 7 or higher 
 
 #### API documentation
-`FAIRDataPoint` api comes with a embedded [swagger document] (http://swagger.io/) the details of api calls can be found on this swagger doc. To access the swagger doc please visit the following url via web browser
+`FAIRDataPoint` api comes with an embedded [swagger document] (http://swagger.io/) the details of api calls can be found on this swagger doc. To access the swagger doc please visit the following url via web browser
  
  `<TOMCAT_BASE_URL>/fdp/swagger-ui.html`
  
