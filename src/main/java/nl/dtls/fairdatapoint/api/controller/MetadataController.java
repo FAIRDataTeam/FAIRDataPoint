@@ -27,7 +27,6 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -82,8 +81,8 @@ public class MetadataController {
             = LogManager.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
-
     private boolean isFDPMetaDataAvailable = false;
+    private ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     /**
      * To handle GET FDP metadata request. (Note:) The first value in the
@@ -93,32 +92,33 @@ public class MetadataController {
      *
      * @param request Http request
      * @param response Http response
-     * @return Metadata about the FDP in one of the acceptable 
-     * formats (RDF Turtle, JSON-LD, RDF XML and RDF N3)
+     * @return Metadata about the FDP in one of the acceptable formats (RDF
+     * Turtle, JSON-LD, RDF XML and RDF N3)
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      * @throws nl.dtl.fairmetadata.io.MetadataException
      */
     @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET,
-            produces = {"text/turtle", 
+            produces = {"text/turtle",
                 "application/ld+json", "application/rdf+xml", "text/n3"}
     )
     @ResponseStatus(HttpStatus.OK)
     public FDPMetadata getFDPMetaData(final HttpServletRequest request,
-            HttpServletResponse response) throws FairMetadataServiceException, 
+            HttpServletResponse response) throws FairMetadataServiceException,
             ResourceNotFoundException,
             MetadataException {
         LOGGER.info("Request to get FDP metadata");
-        LOGGER.info("GET : " + request.getRequestURL());        
+        LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
         }
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(uri);
-        LoggerUtils.logRequest(LOGGER, request, response);  
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(uri));
+        LoggerUtils.logRequest(LOGGER, request, response);
         if (metadata == null) {
-            String msg = ("No fdp metadata found for the uri : "+ uri);
-            throw(new ResourceNotFoundException(msg));
+            String msg = ("No fdp metadata found for the uri : " + uri);
+            throw (new ResourceNotFoundException(msg));
         }
         return metadata;
     }
@@ -127,31 +127,32 @@ public class MetadataController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlFdpMetadata(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("repository");
-        
+
         try {
             String uri = getRequesedURL(request);
             if (!isFDPMetaDataAvailable) {
                 storeDefaultFDPMetadata(request);
             }
-            FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(uri);
+            FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
+                    valueFactory.createIRI(uri));
             mav.addObject("metadata", metadata);
-            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata,
                     RDFFormat.JSONLD));
         } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
-        
+
         return mav;
     }
-    
+
     /**
      * Get catalog metadata
      *
      * @param id
      * @param request
      * @param response
-     * @return Metadata about the catalog in one of the acceptable 
-     * formats (RDF Turtle, JSON-LD, RDF XML and RDF N3)
+     * @return Metadata about the catalog in one of the acceptable formats (RDF
+     * Turtle, JSON-LD, RDF XML and RDF N3)
      *
      * @throws IllegalStateException
      * @throws FairMetadataServiceException
@@ -164,48 +165,49 @@ public class MetadataController {
     @ResponseStatus(HttpStatus.OK)
     public CatalogMetadata getCatalogMetaData(
             @PathVariable final String id, HttpServletRequest request,
-            HttpServletResponse response) throws FairMetadataServiceException, 
+            HttpServletResponse response) throws FairMetadataServiceException,
             ResourceNotFoundException {
         LOGGER.info("Request to get CATALOG metadata with ID ", id);
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.
-                retrieveCatalogMetaData(uri);
+                retrieveCatalogMetaData(valueFactory.createIRI(uri));
         LoggerUtils.logRequest(LOGGER, request, response);
         if (metadata == null) {
-            String msg = ("No catalog metadata found for the uri : "+ uri);
-            throw(new ResourceNotFoundException(msg));
+            String msg = ("No catalog metadata found for the uri : " + uri);
+            throw (new ResourceNotFoundException(msg));
         }
         return metadata;
     }
 
     @ApiIgnore
-    @RequestMapping(value = "/catalog/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/catalog/{id}", method = RequestMethod.GET, 
+            produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlCatalogMetadata(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("catalog");
-        
+
         try {
             String uri = getRequesedURL(request);
             CatalogMetadata metadata = fairMetaDataService.
-                    retrieveCatalogMetaData(uri);
+                    retrieveCatalogMetaData(valueFactory.createIRI(uri));
             mav.addObject("metadata", metadata);
-            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata,
                     RDFFormat.JSONLD));
         } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
-        
+
         return mav;
     }
-    
+
     /**
      * Get dataset metadata
      *
      * @param id
      * @param request
      * @param response
-     * @return Metadata about the dataset in one of the acceptable formats 
-     * (RDF Turtle, JSON-LD, RDF XML and RDF N3)
+     * @return Metadata about the dataset in one of the acceptable formats (RDF
+     * Turtle, JSON-LD, RDF XML and RDF N3)
      *
      * @throws FairMetadataServiceException
      */
@@ -218,37 +220,38 @@ public class MetadataController {
     @ResponseStatus(HttpStatus.OK)
     public DatasetMetadata getDatasetMetaData(
             @PathVariable final String id, HttpServletRequest request,
-            HttpServletResponse response) throws FairMetadataServiceException, 
+            HttpServletResponse response) throws FairMetadataServiceException,
             ResourceNotFoundException {
         LOGGER.info("Request to get DATASET metadata with ID ", id);
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService.
-                retrieveDatasetMetaData(uri);
+                retrieveDatasetMetaData(valueFactory.createIRI(uri));
         LoggerUtils.logRequest(LOGGER, request, response);
         if (metadata == null) {
-            String msg = ("No dataset metadata found for the uri : "+ uri);
-            throw(new ResourceNotFoundException(msg));
+            String msg = ("No dataset metadata found for the uri : " + uri);
+            throw (new ResourceNotFoundException(msg));
         }
         return metadata;
     }
-    
+
     @ApiIgnore
-    @RequestMapping(value = "/dataset/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/dataset/{id}", method = RequestMethod.GET, 
+            produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlDatsetMetadata(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("dataset");
-        
+
         try {
             String uri = getRequesedURL(request);
             DatasetMetadata metadata = fairMetaDataService.
-                    retrieveDatasetMetaData(uri);
+                    retrieveDatasetMetaData(valueFactory.createIRI(uri));
             mav.addObject("metadata", metadata);
-            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata,
                     RDFFormat.JSONLD));
         } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
-        
+
         return mav;
     }
 
@@ -258,8 +261,8 @@ public class MetadataController {
      * @param id
      * @param request
      * @param response
-     * @return Metadata about the dataset distribution in one of the acceptable formats 
-     * (RDF Turtle, JSON-LD, RDF XML and RDF N3)
+     * @return Metadata about the dataset distribution in one of the acceptable
+     * formats (RDF Turtle, JSON-LD, RDF XML and RDF N3)
      *
      * @throws FairMetadataServiceException
      */
@@ -272,41 +275,43 @@ public class MetadataController {
     public DistributionMetadata getDistribution(
             @PathVariable final String id,
             HttpServletRequest request,
-            HttpServletResponse response) throws FairMetadataServiceException, 
+            HttpServletResponse response) throws FairMetadataServiceException,
             ResourceNotFoundException {
         LOGGER.info("Request to get dataset's distribution wih ID ",
                 id);
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService.
-                retrieveDistributionMetaData(uri);
+                retrieveDistributionMetaData(valueFactory.createIRI(uri));
         LoggerUtils.logRequest(LOGGER, request, response);
         if (metadata == null) {
-            String msg = ("No distribution metadata found for the uri : "+ uri);
-            throw(new ResourceNotFoundException(msg));
+            String msg = ("No distribution metadata found for the uri : " 
+                    + uri);
+            throw (new ResourceNotFoundException(msg));
         }
         return metadata;
     }
-    
+
     @ApiIgnore
-    @RequestMapping(value = "/distribution/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/distribution/{id}", method = RequestMethod.GET, 
+            produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlDistributionMetadata(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("distribution");
-        
+
         try {
             String uri = getRequesedURL(request);
             DistributionMetadata metadata = fairMetaDataService.
-                    retrieveDistributionMetaData(uri);
+                    retrieveDistributionMetaData(valueFactory.createIRI(uri));
             mav.addObject("metadata", metadata);
-            mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+            mav.addObject("jsonLd", MetadataUtils.getString(metadata,
                     RDFFormat.JSONLD));
         } catch (FairMetadataServiceException | MetadataException e) {
             mav.addObject("error", e.getMessage());
         }
-        
+
         return mav;
     }
-    
+
     /**
      * To handle POST catalog metadata request.
      *
@@ -327,8 +332,9 @@ public class MetadataController {
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
         }
-        String requestedURL = getRequesedURL(request);
-        fairMetaDataService.updateFDPMetaData(requestedURL, metadata);
+        String uri = getRequesedURL(request);
+        fairMetaDataService.updateFDPMetaData(valueFactory.createIRI(uri), 
+                metadata);
         return "Metadata is updated";
     }
 
@@ -344,7 +350,7 @@ public class MetadataController {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST catalog metadata")
-    @RequestMapping(value = "/catalog", 
+    @RequestMapping(value = "/catalog",
             method = RequestMethod.POST, consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeCatalogMetaData(final HttpServletRequest request,
@@ -356,16 +362,15 @@ public class MetadataController {
         LOGGER.info("Request to store catalog metatdata with ID ", trimmedId);
         if (!isFDPMetaDataAvailable) {
             storeDefaultFDPMetadata(request);
-        }        
+        }
         String requestedURL = getRequesedURL(request);
-        ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + trimmedId);
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
-        if(metadata.getParentURI() == null){
-            String fURI = requestedURL.replace("/catalog", "");            
+        if (metadata.getParentURI() == null) {
+            String fURI = requestedURL.replace("/catalog", "");
             LOGGER.info("No fdp uri is provied in the post body. "
                     + "Default fdp uri is used <%s>", fURI);
-            IRI fdpURI = f.createIRI(fURI);
+            IRI fdpURI = valueFactory.createIRI(fURI);
             metadata.setParentURI(fdpURI);
         }
         fairMetaDataService.storeCatalogMetaData(metadata);
@@ -378,7 +383,7 @@ public class MetadataController {
      *
      * @param request Http request
      * @param response Http response
-     * @param metadata  Dataset metadata
+     * @param metadata Dataset metadata
      * @param id Unique dataset ID
      * @return created message
      *
@@ -397,8 +402,7 @@ public class MetadataController {
         String trimmedId = trimmer(id);
         LOGGER.info("Request to store dataset metatdata with ID ", trimmedId);
         String requestedURL = getRequesedURL(request);
-        ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + trimmedId);
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
         fairMetaDataService.storeDatasetMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -422,7 +426,7 @@ public class MetadataController {
             method = RequestMethod.POST, consumes = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public String storeDistribution(final HttpServletRequest request,
-            HttpServletResponse response, 
+            HttpServletResponse response,
             @RequestBody(required = true) DistributionMetadata metadata,
             @RequestParam("id") String id)
             throws FairMetadataServiceException, MetadataException {
@@ -430,8 +434,7 @@ public class MetadataController {
         LOGGER.info("Request to store distribution metatdata with ID ",
                 trimmedId);
         String requestedURL = getRequesedURL(request);
-        ValueFactory f = SimpleValueFactory.getInstance();
-        IRI uri = f.createIRI(requestedURL + "/" + trimmedId);
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
         fairMetaDataService.storeDistributionMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -458,60 +461,62 @@ public class MetadataController {
      * @param request HttpServletRequest
      * @throws MetadataParserException
      */
-    private void storeDefaultFDPMetadata(HttpServletRequest request) 
+    private void storeDefaultFDPMetadata(HttpServletRequest request)
             throws MetadataParserException {
         LOGGER.info("Creating generic FDP metadata");
         try {
             String fdpUrl = getRequesedURL(request);
             String host = new URL(fdpUrl).getAuthority();
             FDPMetadata metadata = new FDPMetadata();
-            ValueFactory f = SimpleValueFactory.getInstance();
-            metadata.setUri(f.createIRI(fdpUrl));
-            metadata.setTitle(f.createLiteral(("FDP of " + host),
+            metadata.setUri(valueFactory.createIRI(fdpUrl));
+            metadata.setTitle(valueFactory.createLiteral(("FDP of " + host),
                     XMLSchema.STRING));
-            metadata.setDescription(f.createLiteral(("FDP of " + host),
-                    XMLSchema.STRING));
-            metadata.setLanguage(f.createIRI(
+            metadata.setDescription(valueFactory.createLiteral(
+                    ("FDP of " + host), XMLSchema.STRING));
+            metadata.setLanguage(valueFactory.createIRI(
                     "http://id.loc.gov/vocabulary/iso639-1/en"));
-            metadata.setLicense(f.createIRI(
+            metadata.setLicense(valueFactory.createIRI(
                     "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0"));
-            metadata.setVersion(f.createLiteral("1.0", XMLSchema.FLOAT));
-            metadata.setSwaggerDoc(f.createIRI(fdpUrl + "/swagger-ui.html"));            
-            metadata.setInstitutionCountry(f.createIRI(
+            metadata.setVersion(valueFactory.createLiteral(
+                    "1.0", XMLSchema.FLOAT));
+            metadata.setSwaggerDoc(valueFactory.createIRI(
+                    fdpUrl + "/swagger-ui.html"));
+            metadata.setInstitutionCountry(valueFactory.createIRI(
                     "http://lexvo.org/id/iso3166/NL"));
             Identifier id = new Identifier();
-            id.setUri(f.createIRI(fdpUrl + "/metadataID"));
-            id.setIdentifier(f.createLiteral("fdp-metadataID", 
-                    XMLSchema.STRING)); 
+            id.setUri(valueFactory.createIRI(fdpUrl + "/metadataID"));
+            id.setIdentifier(valueFactory.createLiteral("fdp-metadataID",
+                    XMLSchema.STRING));
             id.setType(DataCite.RESOURCE_IDENTIFIER);
             metadata.setIdentifier(id);
             Agent publisher = new Agent();
-            publisher.setUri(f.createIRI("http://dtls.nl"));
+            publisher.setUri(valueFactory.createIRI("http://dtls.nl"));
             publisher.setType(FOAF.ORGANIZATION);
-            publisher.setName(f.createLiteral("DTLS", XMLSchema.STRING));
+            publisher.setName(valueFactory.createLiteral("DTLS", 
+                    XMLSchema.STRING));
             metadata.setPublisher(publisher);
             metadata.setInstitution(publisher);
             Identifier repoId = new Identifier();
-            repoId.setUri(f.createIRI(fdpUrl + "/repoID"));
-            repoId.setIdentifier(f.createLiteral("fdp-repoID", 
-                    XMLSchema.STRING)); 
+            repoId.setUri(valueFactory.createIRI(fdpUrl + "/repoID"));
+            repoId.setIdentifier(valueFactory.createLiteral("fdp-repoID",
+                    XMLSchema.STRING));
             repoId.setType(DataCite.RESOURCE_IDENTIFIER);
             metadata.setRepostoryIdentifier(repoId);
             fairMetaDataService.storeFDPMetaData(metadata);
             isFDPMetaDataAvailable = true;
-        } catch (MalformedURLException | MetadataException | 
+        } catch (MalformedURLException | MetadataException |
                 FairMetadataServiceException ex) {
-            throw new MetadataParserException (
+            throw new MetadataParserException(
                     "Error creating generic FDP meatdata " + ex.getMessage());
         }
 
     }
-    
+
     /**
      * Trim white space at start, end and between strings
-     * 
+     *
      * @param str Input string
-     * @return  Trimmed string      
+     * @return Trimmed string
      */
     private String trimmer(String str) {
         String trimmedStr = str;

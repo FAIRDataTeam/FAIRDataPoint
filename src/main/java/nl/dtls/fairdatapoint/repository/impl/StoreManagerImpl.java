@@ -73,27 +73,18 @@ public class StoreManagerImpl implements StoreManager {
     public List<Statement> retrieveResource(@Nonnull IRI uri)
             throws StoreManagerException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
-        LOGGER.info("Get statements for the URI <"+ uri.toString() + ">"); 
-        RepositoryConnection conn = null;        
-        try {            
-            conn = getRepositoryConnection();
-            RepositoryResult<Statement> queryResult = conn.getStatements(uri, 
-                    null, null, false);                
+        LOGGER.info("Get statements for the URI <" + uri.toString() + ">");
+        try (RepositoryConnection conn = getRepositoryConnection()) {
+            RepositoryResult<Statement> queryResult = conn.getStatements(uri,
+                    null, null, false);
             List<Statement> statements = new ArrayList();
-            while (queryResult.hasNext()) {                    
-                statements.add(queryResult.next());                
-            }            
-            return statements;
-        } catch (RepositoryException ex) {
-            LOGGER.error("Error retrieving resource <" + uri.toString() + ">");
-            throw (new StoreManagerException(ex.getMessage()));
-        } finally {
-            try {
-                closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {
-                LOGGER.error("Error closing connection", e);
-                throw (new StoreManagerException(e.getMessage()));
+            while (queryResult.hasNext()) {
+                statements.add(queryResult.next());
             }
+            return statements;
+        } catch (RepositoryException e) {
+            throw (new StoreManagerException("Error retrieve resource :"
+                    + e.getMessage()));
         }
     }
 
@@ -109,46 +100,27 @@ public class StoreManagerImpl implements StoreManager {
     @Override
     public boolean isStatementExist(Resource rsrc, IRI pred, Value value)
             throws StoreManagerException {
-        RepositoryConnection conn = null;
-        try {
-            conn = getRepositoryConnection();
+        try (RepositoryConnection conn = getRepositoryConnection()) {
             LOGGER.info("Check if statements exists");
             return conn.hasStatement(rsrc, pred, value, false);
-        } catch (RepositoryException ex) {
-            LOGGER.error("Error checking statement's existence");
-            throw (new StoreManagerException(ex.getMessage()));
-        } finally {
-            try {
-                closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {
-                LOGGER.error("Error closing connection", e);
-                throw (new StoreManagerException(e.getMessage()));
-            }
+        } catch (RepositoryException e) {
+            throw (new StoreManagerException("Error check statement existence :"
+                    + e.getMessage()));
         }
     }
 
     /**
      * Store string RDF to the repository
      *
-     * @throws StoreManagerException
      */
     @Override
     public void storeStatements(List<Statement> statements) throws
             StoreManagerException {
-        RepositoryConnection conn = null;
-        try {
-            conn = getRepositoryConnection();
+        try (RepositoryConnection conn = getRepositoryConnection()) {
             conn.add(statements);
-        } catch (RepositoryException ex) {
-            LOGGER.error("Error storing RDF", ex);
-            throw (new StoreManagerException(ex.getMessage()));
-        } finally {
-            try {
-                closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {
-                LOGGER.error("Error closing connection", e);
-                throw (new StoreManagerException(e.getMessage()));
-            }
+        } catch (RepositoryException e) {
+            throw (new StoreManagerException("Error storing statements :"
+                    + e.getMessage()));
         }
     }
 
@@ -156,50 +128,14 @@ public class StoreManagerImpl implements StoreManager {
      * Remove a statement from the repository
      *
      * @param pred
-     * @throws StoreManagerException
      */
     @Override
-    public void removeStatement(Resource rsrc, IRI pred, Value value) throws
+    public void removeStatement(Resource rsrc, IRI pred, Value value) throws 
             StoreManagerException {
-        RepositoryConnection conn = null;
-        try {
-            conn = getRepositoryConnection();
+        try (RepositoryConnection conn = getRepositoryConnection()) {
             conn.remove(rsrc, pred, value);
-            //conn.remove(statement);
-        } catch (RepositoryException ex) {
-            LOGGER.error("Error storing RDF", ex);
-            throw (new StoreManagerException(ex.getMessage()));
-        } finally {
-            try {
-                closeRepositoryConnection(conn);
-            } catch (StoreManagerException e) {
-                LOGGER.error("Error closing connection", e);
-                throw (new StoreManagerException(e.getMessage()));
-
-            }
-        }
-    }
-
-    /**
-     * Method to close repository connection
-     *
-     * @throws nl.dtls.fairdatapoint.repository.StoreManagerException
-     */
-    private void closeRepositoryConnection(RepositoryConnection conn) throws
-            StoreManagerException {
-
-        try {
-            if ((conn != null) && conn.isOpen()) {
-                conn.close();
-            } else {
-                String errorMsg = "The connection is either NULL or already "
-                        + "CLOSED";
-                LOGGER.error(errorMsg);
-                throw (new StoreManagerException(errorMsg));
-            }
-        } catch (RepositoryException ex) {
-            LOGGER.error("Error closing repository connection!");
-            throw (new StoreManagerException(ex.getMessage()));
+        } catch (RepositoryException e) {
+            throw (new StoreManagerException("Error removing statement"));
         }
     }
 
@@ -210,13 +146,8 @@ public class StoreManagerImpl implements StoreManager {
      * @throws Exception
      */
     private RepositoryConnection getRepositoryConnection()
-            throws StoreManagerException {
-        try {
-            return this.repository.getConnection();
-        } catch (RepositoryException ex) {
-            LOGGER.error("Error creating repository connection!");
-            throw (new StoreManagerException(ex.getMessage()));
-        }
+            throws RepositoryException {
+        return this.repository.getConnection();
     }
 
     @Override

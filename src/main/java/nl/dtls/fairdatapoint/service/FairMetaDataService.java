@@ -32,6 +32,7 @@ import nl.dtl.fairmetadata.model.CatalogMetadata;
 import nl.dtl.fairmetadata.model.DatasetMetadata;
 import nl.dtl.fairmetadata.model.DistributionMetadata;
 import nl.dtl.fairmetadata.model.FDPMetadata;
+import org.eclipse.rdf4j.model.IRI;
 
 
 /**
@@ -49,7 +50,7 @@ public interface FairMetaDataService {
      * @return FDPMetadata object
      * @throws FairMetadataServiceException 
      */
-    FDPMetadata retrieveFDPMetaData(String uri) 
+    FDPMetadata retrieveFDPMetaData(IRI uri) 
             throws FairMetadataServiceException; 
     
     
@@ -60,7 +61,7 @@ public interface FairMetaDataService {
      * @return CatalogMetadata object
      * @throws FairMetadataServiceException 
      */
-    CatalogMetadata retrieveCatalogMetaData(String uri) 
+    CatalogMetadata retrieveCatalogMetaData(IRI uri) 
             throws FairMetadataServiceException; 
     
     /**
@@ -70,7 +71,7 @@ public interface FairMetaDataService {
      * @return DatasetMetadata object
      * @throws FairMetadataServiceException 
      */
-    DatasetMetadata retrieveDatasetMetaData(String uri) 
+    DatasetMetadata retrieveDatasetMetaData(IRI uri) 
             throws FairMetadataServiceException;  
     
     /**
@@ -80,7 +81,7 @@ public interface FairMetaDataService {
      * @return DistributionMetadata object
      * @throws FairMetadataServiceException 
      */
-    DistributionMetadata retrieveDistributionMetaData(String uri) 
+    DistributionMetadata retrieveDistributionMetaData(IRI uri) 
             throws FairMetadataServiceException;  
     /**
      * Store catalog metadata
@@ -129,7 +130,7 @@ public interface FairMetaDataService {
      * @throws FairMetadataServiceException 
      * @throws nl.dtl.fairmetadata.io.MetadataException 
      */
-    void updateFDPMetaData(String uri, FDPMetadata fdpMetaData) 
+    void updateFDPMetaData(IRI uri, FDPMetadata fdpMetaData) 
             throws FairMetadataServiceException, MetadataException; 
         
 }

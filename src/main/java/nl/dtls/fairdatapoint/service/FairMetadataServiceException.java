@@ -34,16 +34,6 @@ package nl.dtls.fairdatapoint.service;
  * @version 0.1
  */
 public class FairMetadataServiceException extends Exception {
-    
-    private int errorCode;
-
-    /**
-     * Creates a new instance of <code>LDPServerResponseBodyException</code>
-     * without detail message.
-     */
-    public FairMetadataServiceException() {
-    }
-
     /**
      * Constructs an instance of <code>LDPServerResponseBodyException</code>
      * with the specified detail message.
@@ -52,24 +42,5 @@ public class FairMetadataServiceException extends Exception {
      */
     public FairMetadataServiceException(String msg) {
         super(msg);
-    }
-    
-    public FairMetadataServiceException(String msg, int errorCode) {        
-        super(msg);
-        this.setErrorCode(errorCode);
-    }
-
-    /**
-     * @return the errorCode
-     */
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-    /**
-     * @param errorCode the errorCode to set
-     */
-    private void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
     }
 }
