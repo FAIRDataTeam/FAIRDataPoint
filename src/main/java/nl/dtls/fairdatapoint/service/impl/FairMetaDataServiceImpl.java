@@ -61,6 +61,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -79,11 +80,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     @Override
     public FDPMetadata retrieveFDPMetaData(@Nonnull IRI uri) throws
-            FairMetadataServiceException {
+            FairMetadataServiceException, ResourceNotFoundException {
         List<Statement> statements = retrieveStatements(uri);
-        if (statements.isEmpty()) {
-            return null;
-        }
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
         FDPMetadata metadata = parser.parse(statements, uri);
         return metadata;
@@ -91,11 +89,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     @Override
     public CatalogMetadata retrieveCatalogMetaData(@Nonnull IRI uri)
-            throws FairMetadataServiceException {
+            throws FairMetadataServiceException, ResourceNotFoundException {
         List<Statement> statements = retrieveStatements(uri);
-        if (statements.isEmpty()) {
-            return null;
-        }
         CatalogMetadataParser parser = MetadataParserUtils.
                 getCatalogParser();
         CatalogMetadata metadata = parser.parse(statements, uri);
@@ -104,11 +99,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     @Override
     public DatasetMetadata retrieveDatasetMetaData(@Nonnull IRI uri)
-            throws FairMetadataServiceException {
+            throws FairMetadataServiceException, ResourceNotFoundException {
         List<Statement> statements = retrieveStatements(uri);
-        if (statements.isEmpty()) {
-            return null;
-        }
         DatasetMetadataParser parser = MetadataParserUtils.
                 getDatasetParser();
         DatasetMetadata metadata = parser.parse(statements, uri);
@@ -117,11 +109,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     @Override
     public DistributionMetadata retrieveDistributionMetaData(@Nonnull IRI uri)
-            throws FairMetadataServiceException {
+            throws FairMetadataServiceException, ResourceNotFoundException {
         List<Statement> statements = retrieveStatements(uri);
-        if (statements.isEmpty()) {
-            return null;
-        }
         DistributionMetadataParser parser = MetadataParserUtils.
                 getDistributionParser();
         DistributionMetadata metadata = parser.parse(statements, uri);
@@ -160,7 +149,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     }
 
     @Override
-    public void storeDistributionMetaData(@Nonnull DistributionMetadata metadata)
+    public void storeDistributionMetaData(@Nonnull DistributionMetadata 
+            metadata)
             throws FairMetadataServiceException, MetadataException {
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No dataset URI is provied. Include dcterms:isPartOf statement "
@@ -231,10 +221,14 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     }
 
     private List<Statement> retrieveStatements(@Nonnull IRI uri) throws
-            FairMetadataServiceException {
+            FairMetadataServiceException, ResourceNotFoundException {
         try {
             Preconditions.checkNotNull(uri, "Resource uri not be null.");
             List<Statement> statements = storeManager.retrieveResource(uri);
+            if (statements.isEmpty()) {
+                String msg = ("No metadata found for the uri : " + uri);
+                throw (new ResourceNotFoundException(msg));
+            }
             addAddtionalResource(statements);
             return statements;
         } catch (StoreManagerException ex) {
@@ -290,7 +284,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public void updateFDPMetaData(IRI uri, FDPMetadata metaDataUpdate)
             throws FairMetadataServiceException, MetadataException {
         FDPMetadata metadata = retrieveFDPMetaData(uri);
-        
+
         // This is an unconventional way of copying values from a source to a
         // target object, and the original developers are aware of that fact.
         // The original approach used a numer of repeated if-blocks to check for
@@ -316,7 +310,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         setMetadataProperty(metaDataUpdate::getSwaggerDoc, metadata::setSwaggerDoc);
         setMetadataProperty(metaDataUpdate::getTitle, metadata::setTitle);
         setMetadataProperty(metaDataUpdate::getVersion, metadata::setVersion);
-        
+
         try {
             storeManager.removeResource(uri);
             storeFDPMetaData(metadata);
@@ -325,10 +319,11 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw (new FairMetadataServiceException(ex.getMessage()));
         }
     }
-    
+
     /**
      * Convenience method to reduce the NPath complexity measure of the {@link
      * #updateFDPMetaData(IRI, FDPMetadata)} method.
+     *
      * @param getter the getter method of the source object.
      * @param setter the setter method of the target object.
      */
@@ -337,24 +332,28 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             setter.set(getter.get());
         }
     }
-    
+
     /**
      * Convenience interface to facilitate referring to a getter method as a
      * function pointer.
+     *
      * @param <T> datatype of the getter return value.
      */
     @FunctionalInterface
     private interface Getter<T> {
+
         T get();
     }
-    
+
     /**
      * Convenience interface to facilitate referring to a setter method as a
      * function pointer.
+     *
      * @param <T> datatype of the setter parameter.
      */
     @FunctionalInterface
     private interface Setter<T> {
+
         void set(T value);
     }
 }

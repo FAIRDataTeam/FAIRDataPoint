@@ -50,6 +50,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -111,8 +112,8 @@ public class FairMetaDataServiceImplTest {
      */
     @DirtiesContext
     @Test(expected = MetadataException.class)
-    public void storeFDPMetaDataWithNoTitle() throws FairMetadataServiceException,
-            MetadataException {
+    public void storeFDPMetaDataWithNoTitle() throws 
+            FairMetadataServiceException, MetadataException {
         FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
                 TEST_FDP_URI);
         metadata.setTitle(null);
@@ -143,8 +144,8 @@ public class FairMetaDataServiceImplTest {
      */
     @DirtiesContext
     @Test(expected = MetadataException.class)
-    public void storeFDPMetaDataWithNoRepoID() throws FairMetadataServiceException,
-            MetadataException {
+    public void storeFDPMetaDataWithNoRepoID() throws 
+            FairMetadataServiceException, MetadataException {
         FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
                 TEST_FDP_URI);
         metadata.setRepostoryIdentifier(null);
@@ -158,8 +159,8 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void storeFDPMetaData() {
         try {
-            fairMetaDataService.storeFDPMetaData(ExampleFilesUtils.getFDPMetadata(
-                    TEST_FDP_URI));
+            fairMetaDataService.storeFDPMetaData(
+                    ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI));
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
         }
@@ -175,8 +176,8 @@ public class FairMetaDataServiceImplTest {
             FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
                     TEST_FDP_URI);
             fairMetaDataService.storeFDPMetaData(metadata);
-            fairMetaDataService.updateFDPMetaData(valueFactory.createIRI(TEST_FDP_URI), 
-                    metadata);
+            fairMetaDataService.updateFDPMetaData(valueFactory.
+                    createIRI(TEST_FDP_URI), metadata);
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
         }
@@ -202,11 +203,12 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void retrieveFDPMetaData() throws FairMetadataServiceException {
-        assertNotNull(fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(ExampleFilesUtils.FDP_URI)));
+        assertNotNull(fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.FDP_URI)));
     }
 
     /**
-     * Test to store catalog metadata, this test is excepted to throw erro
+     * Test to store catalog metadata, this test is excepted to throw error
      *
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      * @throws nl.dtl.fairmetadata.io.MetadataException
@@ -244,11 +246,12 @@ public class FairMetaDataServiceImplTest {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
-    @Test
+    @Test(expected = ResourceNotFoundException.class)
     public void retrieveNonExitingCatalogMetaData() throws
             FairMetadataServiceException {
         String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
-        assertNull(fairMetaDataService.retrieveCatalogMetaData(valueFactory.createIRI(uri)));
+        fairMetaDataService.retrieveCatalogMetaData(
+                valueFactory.createIRI(uri));
     }
 
     /**
@@ -259,7 +262,8 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void retrieveCatalogMetaData() throws FairMetadataServiceException {
-        assertNotNull(fairMetaDataService.retrieveCatalogMetaData(valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI)));
+        assertNotNull(fairMetaDataService.retrieveCatalogMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI)));
     }
 
     /**
@@ -302,11 +306,12 @@ public class FairMetaDataServiceImplTest {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
-    @Test
+    @Test(expected = ResourceNotFoundException.class)
     public void retrieveNonExitingdDatasetMetaData() throws
             FairMetadataServiceException {
         String uri = ExampleFilesUtils.CATALOG_URI + "/dummpID676";
-        assertNull(fairMetaDataService.retrieveDatasetMetaData(valueFactory.createIRI(uri)));
+        fairMetaDataService.retrieveDatasetMetaData(
+                valueFactory.createIRI(uri));
     }
 
     /**
@@ -317,7 +322,8 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void retrieveDatasetMetaData() throws FairMetadataServiceException {
-        assertNotNull(fairMetaDataService.retrieveDatasetMetaData(valueFactory.createIRI(ExampleFilesUtils.DATASET_URI)));
+        assertNotNull(fairMetaDataService.retrieveDatasetMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI)));
     }
 
     /**
@@ -360,12 +366,12 @@ public class FairMetaDataServiceImplTest {
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @DirtiesContext
-    @Test
+    @Test(expected = ResourceNotFoundException.class)
     public void retrieveNonExitingDatasetDistribution() throws
             FairMetadataServiceException {
         String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-        assertNull(fairMetaDataService.retrieveDistributionMetaData(
-                valueFactory.createIRI(uri)));
+       fairMetaDataService.retrieveDistributionMetaData(
+                valueFactory.createIRI(uri));
     }
 
     /**
