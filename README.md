@@ -11,10 +11,19 @@
 * Tomcat 7 or higher 
 
 #### API documentation
-`FAIRDataPoint` api comes with an embedded [swagger document] (http://swagger.io/) the details of api calls can be found on this swagger doc. To access the swagger doc please visit the following url via web browser
+`FAIRDataPoint` (fdp) api comes with an embedded [swagger document] (http://swagger.io/) the details of api calls can be found on the fdp swagger document. To access the fdp swagger document please visit the following url via web browser
  
- `<TOMCAT_BASE_URL>/fdp/swagger-ui.html`
+ `<TOMCAT_BASE_URL>/fdp/swagger-ui.html` 
  
  `An example swagger doc uri :` http://localhost:8084/fdp/swagger-ui.html
+ 
+In the current implementation the `REPOSITORY` layer metadata is automatically created however this metadata can be updated through PATCH calls. The metadata of `other` layers can be stored in the `FAIRDataPoint` through POST calls. The table below gives an overview of api calls allowed on different `FAIR metadata` layers. 
+ 
+|Metadata layer|GET|POST|PATCH|
+| :---: | :---: | :---: | :---: |
+| Repository | Yes | No | Yes <br/>([Example request body](https://github.com/DTL-FAIRData/FAIRDataPoint/blob/fdp-spec-1_0/src/main/resources/nl/dtls/fairdatapoint/utils/dtl-fdp.ttl)) |
+| Catalog | Yes | Yes <br/>([Example request body](https://github.com/DTL-FAIRData/FAIRDataPoint/blob/fdp-spec-1_0/src/main/resources/nl/dtls/fairdatapoint/utils/textmining-catalog.ttl)) | No |
+| Dataset | Yes | Yes <br/>([Example request body](https://github.com/DTL-FAIRData/FAIRDataPoint/blob/fdp-spec-1_0/src/main/resources/nl/dtls/fairdatapoint/utils/gda-lumc.ttl)) | No |
+| Distribution | Yes | Yes <br/>([Example request body](https://github.com/DTL-FAIRData/FAIRDataPoint/blob/fdp-spec-1_0/src/main/resources/nl/dtls/fairdatapoint/utils/gda-lumc-sparql.ttl)) | No |
 
 
