@@ -10,6 +10,10 @@
 * JRE 1.8
 * Tomcat 7 or higher 
 
+#### How to Install
+
+Make sure your deployment machine meets the requirements listed above. Deploy the `fdp.war` file (download link can be found in the release page of this projcet) in your  deployment machine's tomcat server. The instructions for deploying `.war` in the tomcat server can be found in this [link](https://tomcat.apache.org/tomcat-7.0-doc/deployer-howto.html).
+
 #### API documentation
 `FAIRDataPoint` (fdp) api comes with an embedded [swagger document] (http://swagger.io/), the details of api calls can be found here. To access the fdp swagger document please visit the following url via web browser
  
