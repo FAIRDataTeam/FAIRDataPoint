@@ -29,3 +29,7 @@ In the current implementation the `REPOSITORY` layer metadata is automatically c
 
 #### List of active FAIRDataPoints
 
+|Short name (dct:title)|Description|Location|
+| :---: | :---: | :---: |
+|ID card FAIR Data Point (beta) |	FDP containing dummified data from Biobanks and Registries | [Link](http://semlab1.liacs.nl:8080/fdp/swagger-ui.html)	
+|DTL FAIR Data Point (beta)	| FDP for the fairification doc (VCF); fantom5; GeneDisease/DisGeNet |	[Link](http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/swagger-ui.html)
