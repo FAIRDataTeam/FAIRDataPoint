@@ -6,10 +6,13 @@
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
     <packaging>war</packaging>
-    <version>0.1 BETA</version>
+    <version>0.1-beta</version>
 	
     <name>FairDataPoint</name>
-    <inceptionYear>2016</inceptionYear>
+    <inceptionYear>2017</inceptionYear>
+    <description>
+        A reference implementation of FAIRDataPoint api
+    </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -199,8 +202,6 @@
                         <exclude>**/*.sparql</exclude>
                         <exclude>**/*.properties</exclude>
                         <exclude>**/log4j2.xml</exclude>
-                        <!-- exclude oai-pmh code until origin is known -->
-                        <exclude>**/aoipmh/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
