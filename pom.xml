@@ -13,6 +13,28 @@
     <description>
         A reference implementation of FAIRDataPoint api
     </description>
+    
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <name>Rajaram Kaliyaperumal</name>
+            <email>rr.kaliyaperumal@gmail.com</email>
+            <organization>LUMC</organization>
+            <organizationUrl>https://www.lumc.nl/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Kees Burger</name>
+            <email>kees.burger@dtls.nl</email>
+            <organization>DTLS</organization>
+            <organizationUrl>http://www.dtls.nl/</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
