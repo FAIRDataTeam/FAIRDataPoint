@@ -10,6 +10,10 @@
 * JRE 1.8
 * Tomcat 7 or higher 
 
+#### How to Install
+
+Make sure your deployment machine meets the requirements listed above. Deploy the `fdp.war` file (download link can be found [here](https://github.com/DTL-FAIRData/FAIRDataPoint/releases)) in your  deployment machine's tomcat server. The instructions for deploying `.war` in the tomcat server can be found in this [link](https://tomcat.apache.org/tomcat-7.0-doc/deployer-howto.html).
+
 #### API documentation
 `FAIRDataPoint` (fdp) api comes with an embedded [swagger document] (http://swagger.io/), the details of api calls can be found here. To access the fdp swagger document please visit the following url via web browser
  
@@ -29,3 +33,7 @@ In the current implementation the `REPOSITORY` layer metadata is automatically c
 
 #### List of active FAIRDataPoints
 
+|Short name (dct:title)|Description|Location|
+| :---: | :---: | :---: |
+|ID card FAIR Data Point (beta) |	FDP containing dummified data from Biobanks and Registries | [Link](http://semlab1.liacs.nl:8080/fdp/swagger-ui.html)	
+|DTL FAIR Data Point (beta)	| FDP for the fairification doc (VCF); fantom5; GeneDisease/DisGeNet |	[Link](http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/swagger-ui.html)
