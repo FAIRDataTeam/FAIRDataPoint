@@ -29,11 +29,11 @@ package nl.dtls.fairdatapoint.service.impl;
 
 import java.net.MalformedURLException;
 import javax.xml.datatype.DatatypeConfigurationException;
-import nl.dtl.fairmetadata.io.MetadataException;
-import nl.dtl.fairmetadata.model.CatalogMetadata;
-import nl.dtl.fairmetadata.model.DatasetMetadata;
-import nl.dtl.fairmetadata.model.DistributionMetadata;
-import nl.dtl.fairmetadata.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
@@ -107,7 +107,7 @@ public class FairMetaDataServiceImplTest {
      * Test to store FDP metadata, this test is excepted to throw error
      *
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @DirtiesContext
     @Test(expected = MetadataException.class)
@@ -123,7 +123,7 @@ public class FairMetaDataServiceImplTest {
      * Test to store FDP metadata, this test is excepted to throw error
      *
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @DirtiesContext
     @Test(expected = MetadataException.class)
@@ -139,7 +139,7 @@ public class FairMetaDataServiceImplTest {
      * Test to store FDP metadata, this test is excepted to throw error
      *
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @DirtiesContext
     @Test(expected = MetadataException.class)
@@ -210,7 +210,7 @@ public class FairMetaDataServiceImplTest {
      * Test to store catalog metadata, this test is excepted to throw error
      *
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @DirtiesContext
     @Test(expected = IllegalStateException.class)
@@ -269,7 +269,7 @@ public class FairMetaDataServiceImplTest {
      * Test to store dataset metadata, this test is excepted to throw error
      *
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @DirtiesContext
     @Test(expected = IllegalStateException.class)
@@ -329,7 +329,7 @@ public class FairMetaDataServiceImplTest {
      * Test to store dataset distribution, this test is excepted to throw error
      *
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @DirtiesContext
     @Test(expected = IllegalStateException.class)

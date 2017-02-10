@@ -33,15 +33,15 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 
-import nl.dtl.fairmetadata.io.FDPMetadataParser;
-import nl.dtl.fairmetadata.io.MetadataException;
-import nl.dtl.fairmetadata.model.FDPMetadata;
-import nl.dtl.fairmetadata.utils.MetadataParserUtils;
-import nl.dtl.fairmetadata.utils.MetadataUtils;
+import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import java.io.InputStreamReader;
-import nl.dtl.fairmetadata.io.MetadataParserException;
+import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 
 public class FdpMetadataConverter extends AbstractMetadataMessageConverter

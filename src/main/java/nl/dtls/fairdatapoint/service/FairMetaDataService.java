@@ -27,11 +27,11 @@
  */
 package nl.dtls.fairdatapoint.service;
 
-import nl.dtl.fairmetadata.io.MetadataException;
-import nl.dtl.fairmetadata.model.CatalogMetadata;
-import nl.dtl.fairmetadata.model.DatasetMetadata;
-import nl.dtl.fairmetadata.model.DistributionMetadata;
-import nl.dtl.fairmetadata.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import org.eclipse.rdf4j.model.IRI;
 
 
@@ -88,7 +88,7 @@ public interface FairMetaDataService {
      * 
      * @param catalogMetadata
      * @throws FairMetadataServiceException 
-     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
      */
     void storeCatalogMetaData(CatalogMetadata catalogMetadata) 
             throws FairMetadataServiceException, MetadataException;
@@ -97,7 +97,7 @@ public interface FairMetaDataService {
      * 
      * @param datasetMetadata
      * @throws FairMetadataServiceException 
-     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
      */
     void storeDatasetMetaData(DatasetMetadata datasetMetadata) 
             throws FairMetadataServiceException, MetadataException;
@@ -107,7 +107,7 @@ public interface FairMetaDataService {
      * 
      * @param fdpMetaData
      * @throws FairMetadataServiceException 
-     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
      */
     void storeFDPMetaData(FDPMetadata fdpMetaData) 
             throws FairMetadataServiceException, MetadataException; 
@@ -117,7 +117,7 @@ public interface FairMetaDataService {
      * 
      * @param distributionMetadata
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     void storeDistributionMetaData(DistributionMetadata distributionMetadata)
             throws FairMetadataServiceException, MetadataException;
@@ -128,7 +128,7 @@ public interface FairMetaDataService {
      * @param uri
      * @param fdpMetaData
      * @throws FairMetadataServiceException 
-     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
      */
     void updateFDPMetaData(IRI uri, FDPMetadata fdpMetaData) 
             throws FairMetadataServiceException, MetadataException; 

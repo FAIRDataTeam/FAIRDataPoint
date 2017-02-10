@@ -30,7 +30,7 @@ package nl.dtls.fairdatapoint.api.controller;
 import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
-import nl.dtl.fairmetadata.io.MetadataException;
+import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;

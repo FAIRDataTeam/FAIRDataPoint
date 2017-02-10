@@ -28,8 +28,8 @@
 package nl.dtls.fairdatapoint.api.controller.exception;
 
 import javax.servlet.http.HttpServletResponse;
-import nl.dtl.fairmetadata.io.MetadataException;
-import nl.dtl.fairmetadata.io.MetadataParserException;
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

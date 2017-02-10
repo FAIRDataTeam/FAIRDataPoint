@@ -24,7 +24,7 @@
         <rdf4j.version>2.1.4</rdf4j.version>
         <log4j.version>2.7</log4j.version>
         <handlebars.version>4.0.6</handlebars.version>
-        <fairmetadata.version>1.0-SNAPSHOT</fairmetadata.version>
+        <fairmetadata.version>0.1-beta</fairmetadata.version>
         <velocity.version>1.7</velocity.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.6.2</mockito.version>
@@ -135,11 +135,6 @@
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars-springmvc</artifactId>
             <version>${handlebars.version}</version>
-        </dependency>        
-        <dependency>
-            <groupId>nl.dtl</groupId>
-            <artifactId>FairMetadata</artifactId>
-            <version>${fairmetadata.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -158,6 +153,11 @@
             <artifactId>spring-test</artifactId>
             <version>${springframework.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.dtl</groupId>
+            <artifactId>fairmetadata4j</artifactId>
+            <version>${fairmetadata.version}</version>
         </dependency>
     </dependencies>
     <repositories>

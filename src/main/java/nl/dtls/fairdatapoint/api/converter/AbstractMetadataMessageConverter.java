@@ -28,7 +28,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import nl.dtl.fairmetadata.model.Metadata;
+import nl.dtl.fairmetadata4j.model.Metadata;
 import org.apache.logging.log4j.LogManager;
 import org.eclipse.rdf4j.rio.RDFFormat;
 
