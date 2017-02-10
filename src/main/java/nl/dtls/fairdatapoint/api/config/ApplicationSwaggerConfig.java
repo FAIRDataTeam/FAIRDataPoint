@@ -66,11 +66,11 @@ public class ApplicationSwaggerConfig {
                     + "<li><a target='_blank' href = 'https://github.com/"
                     + "DTL-FAIRData/ODEX-FAIRDataPoint/tree/master/fdp-api"
                     + "/java'>Source code</a> </li></p>",
-            "0.1 BETA",
+            "0.1-beta",
             "ATO",
-            "r.kaliyaperumal@lumc.nl",
-            "CC BY-NC-ND 3.0",
-            "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0"
+            "rr.kaliyaperumal@gmail.com",
+            "The MIT License",
+            "https://opensource.org/licenses/MIT"
         );
         return apiInfo;
     }
