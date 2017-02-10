@@ -1,13 +1,28 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<> dct:title "Catalog for textmining datasets" ;
-    rdfs:label "Catalog for textmining datasets" ;
-    a dcat:Catalog ; 
-    dct:language lang:en  ;
-    dct:hasVersion "1.0" ;
-    dct:identifier "textmining" ;
-    dcat:themeTaxonomy <http://dbpedia.org/resource/Text_mining>, <http://edamontology.org/topic_0218> .
+<> dct:hasVersion "1.0" ;
+	dct:publisher <http://dtls.nl> ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/textmining-metadataID> ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued> "2016-10-27"^^xsd:date ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified> "2016-10-27"^^xsd:date ;
+	dct:issued "2016-10-27"^^xsd:date ;
+	dct:modified "2016-10-27"^^xsd:date ;
+	dct:language lang:en ;
+	dct:title "Catalog for textmining datasets"@en ;
+	a dcat:Catalog ;
+	rdfs:label "Catalog for textmining datasets"@en ;
+	dcat:dataset <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc> ;
+	dcat:themeTaxonomy <http://dbpedia.org/resource/Text_mining> , <http://edamontology.org/topic_0218> ;
+        dct:identifier "textmining-metadataID" .
+
+<http://dtls.nl> a <http://xmlns.com/foaf/0.1/Organization> ;
+	<http://xmlns.com/foaf/0.1/name> "DTLS"@en .
+
+<http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/textmining-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
+	dct:identifier "textmining-metadataID" .

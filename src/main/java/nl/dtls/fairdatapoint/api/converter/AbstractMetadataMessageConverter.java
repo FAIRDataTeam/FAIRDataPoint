@@ -1,14 +1,36 @@
+/**
+ * The MIT License
+ * Copyright © 2016 DTL
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package nl.dtls.fairdatapoint.api.converter;
 
-import org.openrdf.rio.RDFFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import nl.dtl.fairmetadata.model.Metadata;
+import nl.dtl.fairmetadata4j.model.Metadata;
 import org.apache.logging.log4j.LogManager;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 /**
  * Abstract base class for {@link Metadata} based {@link HttpMessageConverter
@@ -31,12 +53,12 @@ public abstract class AbstractMetadataMessageConverter<T extends Metadata> exten
      * @param configurer {@link WebMvcConfigurerAdapter#configureContentNegotiation(ContentNegotiationConfigurer)
      *        WebMvcConfigurerAdapter} configurer instance.
      */
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.mediaType(format.getDefaultFileExtension(),
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {           
+        configurer.mediaType(format.getDefaultFileExtension(), 
                 MediaType.parseMediaType(format.getDefaultMIMEType()));
-        
-        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(),
-                format.getDefaultMIMEType());
+           
+        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(), 
+                format.getDefaultMIMEType());          
     }
     
     /**

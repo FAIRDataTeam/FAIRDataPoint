@@ -1,0 +1,15 @@
+{{#partial "content"}}
+
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Catalogs</span></div>
+        <div class="col-sm-7">
+            {{#metadata.catalogs}}
+                <p><a target="_blank" href="{{.}}">{{.}}</a></p>
+            {{/metadata.catalogs}}
+        </div>
+    </h4>
+</div>
+{{/partial}}
+
+{{> base}}

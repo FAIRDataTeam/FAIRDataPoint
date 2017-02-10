@@ -1,3 +1,25 @@
+/**
+ * The MIT License
+ * Copyright © 2016 DTL
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -5,11 +27,12 @@
  */
 package nl.dtls.fairdatapoint.service;
 
-import nl.dtl.fairmetadata.io.MetadataException;
-import nl.dtl.fairmetadata.model.CatalogMetadata;
-import nl.dtl.fairmetadata.model.DatasetMetadata;
-import nl.dtl.fairmetadata.model.DistributionMetadata;
-import nl.dtl.fairmetadata.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import org.eclipse.rdf4j.model.IRI;
 
 
 /**
@@ -27,7 +50,7 @@ public interface FairMetaDataService {
      * @return FDPMetadata object
      * @throws FairMetadataServiceException 
      */
-    FDPMetadata retrieveFDPMetaData(String uri) 
+    FDPMetadata retrieveFDPMetaData(IRI uri) 
             throws FairMetadataServiceException; 
     
     
@@ -38,7 +61,7 @@ public interface FairMetaDataService {
      * @return CatalogMetadata object
      * @throws FairMetadataServiceException 
      */
-    CatalogMetadata retrieveCatalogMetaData(String uri) 
+    CatalogMetadata retrieveCatalogMetaData(IRI uri) 
             throws FairMetadataServiceException; 
     
     /**
@@ -48,7 +71,7 @@ public interface FairMetaDataService {
      * @return DatasetMetadata object
      * @throws FairMetadataServiceException 
      */
-    DatasetMetadata retrieveDatasetMetaData(String uri) 
+    DatasetMetadata retrieveDatasetMetaData(IRI uri) 
             throws FairMetadataServiceException;  
     
     /**
@@ -58,14 +81,14 @@ public interface FairMetaDataService {
      * @return DistributionMetadata object
      * @throws FairMetadataServiceException 
      */
-    DistributionMetadata retrieveDistributionMetaData(String uri) 
+    DistributionMetadata retrieveDistributionMetaData(IRI uri) 
             throws FairMetadataServiceException;  
     /**
      * Store catalog metadata
      * 
      * @param catalogMetadata
      * @throws FairMetadataServiceException 
-     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
      */
     void storeCatalogMetaData(CatalogMetadata catalogMetadata) 
             throws FairMetadataServiceException, MetadataException;
@@ -74,7 +97,7 @@ public interface FairMetaDataService {
      * 
      * @param datasetMetadata
      * @throws FairMetadataServiceException 
-     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
      */
     void storeDatasetMetaData(DatasetMetadata datasetMetadata) 
             throws FairMetadataServiceException, MetadataException;
@@ -84,7 +107,7 @@ public interface FairMetaDataService {
      * 
      * @param fdpMetaData
      * @throws FairMetadataServiceException 
-     * @throws nl.dtl.fairmetadata.io.MetadataException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
      */
     void storeFDPMetaData(FDPMetadata fdpMetaData) 
             throws FairMetadataServiceException, MetadataException; 
@@ -94,9 +117,20 @@ public interface FairMetaDataService {
      * 
      * @param distributionMetadata
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     void storeDistributionMetaData(DistributionMetadata distributionMetadata)
             throws FairMetadataServiceException, MetadataException;
+    
+    /**
+     * Update fdp metadata
+     * 
+     * @param uri
+     * @param fdpMetaData
+     * @throws FairMetadataServiceException 
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException 
+     */
+    void updateFDPMetaData(IRI uri, FDPMetadata fdpMetaData) 
+            throws FairMetadataServiceException, MetadataException; 
         
 }

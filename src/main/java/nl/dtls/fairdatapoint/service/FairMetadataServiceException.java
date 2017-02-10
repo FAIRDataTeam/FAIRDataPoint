@@ -1,3 +1,25 @@
+/**
+ * The MIT License
+ * Copyright © 2016 DTL
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -12,16 +34,6 @@ package nl.dtls.fairdatapoint.service;
  * @version 0.1
  */
 public class FairMetadataServiceException extends Exception {
-    
-    private int errorCode;
-
-    /**
-     * Creates a new instance of <code>LDPServerResponseBodyException</code>
-     * without detail message.
-     */
-    public FairMetadataServiceException() {
-    }
-
     /**
      * Constructs an instance of <code>LDPServerResponseBodyException</code>
      * with the specified detail message.
@@ -30,24 +42,5 @@ public class FairMetadataServiceException extends Exception {
      */
     public FairMetadataServiceException(String msg) {
         super(msg);
-    }
-    
-    public FairMetadataServiceException(String msg, int errorCode) {        
-        super(msg);
-        this.setErrorCode(errorCode);
-    }
-
-    /**
-     * @return the errorCode
-     */
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-    /**
-     * @param errorCode the errorCode to set
-     */
-    private void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
     }
 }

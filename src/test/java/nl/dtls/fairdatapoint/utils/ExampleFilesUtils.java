@@ -1,3 +1,25 @@
+/**
+ * The MIT License
+ * Copyright © 2016 DTL
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -7,39 +29,31 @@ package nl.dtls.fairdatapoint.utils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.io.PatternFilenameFilter;
 import com.google.common.io.Resources;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
-import nl.dtl.fairmetadata.io.CatalogMetadataParser;
-import nl.dtl.fairmetadata.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata.io.DistributionMetadataParser;
-import nl.dtl.fairmetadata.io.FDPMetadataParser;
-import nl.dtl.fairmetadata.model.CatalogMetadata;
-import nl.dtl.fairmetadata.model.DatasetMetadata;
-import nl.dtl.fairmetadata.model.DistributionMetadata;
-import nl.dtl.fairmetadata.model.FDPMetadata;
-import nl.dtl.fairmetadata.utils.MetadataParserUtils;
+import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
+import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
+import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
+import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openrdf.model.Statement;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.Rio;
-import org.openrdf.rio.UnsupportedRDFormatException;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 
 /** 
  * Contains references to the example metadata rdf files which are used in the 
@@ -101,7 +115,7 @@ public class ExampleFilesUtils {
         try {
             String content = getFileContentAsString(fileName);
             StringReader reader = new StringReader(content);
-            org.openrdf.model.Model model;
+            Model model;
             model = Rio.parse(reader, baseURI, FILE_FORMAT);
             Iterator<Statement> it = model.iterator();
             statements =  Lists.newArrayList(it);
@@ -115,8 +129,9 @@ public class ExampleFilesUtils {
     public static FDPMetadata getFDPMetadata(String uri) {        
         LOGGER.info("Generating example FDP metadata object");
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         FDPMetadata metadata = parser.parse(getFileContentAsStatements(
-                FDP_METADATA_FILE, uri), new URIImpl(uri));
+                FDP_METADATA_FILE, uri), f.createIRI(uri));
         return metadata;
     }
     
@@ -124,9 +139,10 @@ public class ExampleFilesUtils {
             String parentURI) {        
         LOGGER.info("Generating example catalog metadata object");
         CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         CatalogMetadata metadata = parser.parse(getFileContentAsStatements(
-                CATALOG_METADATA_FILE, uri), new URIImpl(uri));
-        metadata.setParentURI(new URIImpl(parentURI));
+                CATALOG_METADATA_FILE, uri), f.createIRI(uri));
+        metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }
     
@@ -134,9 +150,10 @@ public class ExampleFilesUtils {
             String parentURI) {        
         LOGGER.info("Generating example dataset metadata object");
         DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         DatasetMetadata metadata = parser.parse(getFileContentAsStatements(
-                DATASET_METADATA_FILE, uri), new URIImpl(uri));
-        metadata.setParentURI(new URIImpl(parentURI));
+                DATASET_METADATA_FILE, uri), f.createIRI(uri));
+        metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }
     
@@ -145,10 +162,10 @@ public class ExampleFilesUtils {
         LOGGER.info("Generating example distribution metadata object");
         DistributionMetadataParser parser = MetadataParserUtils.
                 getDistributionParser();
+        ValueFactory f = SimpleValueFactory.getInstance();
         DistributionMetadata metadata = parser.parse(getFileContentAsStatements(
-                DISTRIBUTION_METADATA_FILE, uri), 
-                new URIImpl(uri));
-        metadata.setParentURI(new URIImpl(parentURI));
+                DISTRIBUTION_METADATA_FILE, uri), f.createIRI(uri));
+        metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }    
 }
