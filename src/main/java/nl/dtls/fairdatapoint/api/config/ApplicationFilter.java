@@ -40,7 +40,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * Filter to add mandatory headers to all request.
- * @author Rajaram Kaliyaperumal
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
  * @version 0.1
  */

@@ -29,7 +29,8 @@ package nl.dtls.fairdatapoint.service;
 
 /**
  *
- * @author Rajaram Kaliyaperumal
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-25
  * @version 0.1
  */

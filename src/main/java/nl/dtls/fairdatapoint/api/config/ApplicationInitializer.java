@@ -26,8 +26,10 @@ import javax.servlet.Filter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
- * Application config (Similar to web.xml). * 
- * @author Rajaram Kaliyaperumal
+ * Application config (Similar to web.xml)
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
  * @version 0.1
  */

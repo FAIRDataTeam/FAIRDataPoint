@@ -72,6 +72,15 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpHeaders;
 import springfox.documentation.annotations.ApiIgnore;
 
+/**
+ * Handle fair metadata api calls
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @since 2015-11-19
+ * @version 0.1
+ */
+
 @RestController
 @Api(description = "FDP metadata")
 @RequestMapping(value = "/")

@@ -48,7 +48,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 /**
  * Distribution metadata message converter
  * 
- * @author Rajaram Kaliyaperumal, Kees Burger
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-09-19
  * @version 0.1
  */

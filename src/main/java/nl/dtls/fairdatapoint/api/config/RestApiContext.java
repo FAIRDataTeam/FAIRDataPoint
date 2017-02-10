@@ -64,7 +64,8 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 /**
  * Spring context file.
  *
- * @author Rajaram Kaliyaperumal
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
  * @version 0.2
  */

@@ -65,8 +65,10 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- *
- * @author Rajaram Kaliyaperumal
+ * Service layer for manipulating fair metadata
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-12-17
  * @version 0.2
  */

@@ -36,8 +36,10 @@ import org.eclipse.rdf4j.model.IRI;
 
 
 /**
- *
- * @author Rajaram Kaliyaperumal
+ * Fair metadata service interface
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-23
  * @version 0.2
  */

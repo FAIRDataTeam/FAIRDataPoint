@@ -37,7 +37,8 @@ import org.springframework.http.HttpHeaders;
 /**
  * Handles loggers
  * 
- * @author Rajaram Kaliyaperumal
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-02-22
  * @version 0.1
  */

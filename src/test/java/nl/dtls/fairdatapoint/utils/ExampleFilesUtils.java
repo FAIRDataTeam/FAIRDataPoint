@@ -59,7 +59,8 @@ import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
  * Contains references to the example metadata rdf files which are used in the 
  * Junit tests.
  * 
- * @author Rajaram Kaliyaperumal
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-08-10
  * @version 0.1
  */

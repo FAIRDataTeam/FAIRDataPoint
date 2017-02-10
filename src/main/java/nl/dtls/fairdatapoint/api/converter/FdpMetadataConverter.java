@@ -44,6 +44,15 @@ import java.io.InputStreamReader;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 
+/**
+ * Repository metadata message converter
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @since 2016-09-19
+ * @version 0.1
+ */
+
 public class FdpMetadataConverter extends AbstractMetadataMessageConverter
         <FDPMetadata> {
     

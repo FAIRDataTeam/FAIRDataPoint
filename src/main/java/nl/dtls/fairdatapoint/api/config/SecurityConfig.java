@@ -35,7 +35,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 /**
  * SecurityConfig to limit POST calls to localhost
  * 
- * @author Kees Burger
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-09-20
  * @version 0.1
  */

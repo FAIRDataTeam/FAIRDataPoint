@@ -36,6 +36,9 @@ import org.eclipse.rdf4j.rio.RDFFormat;
  * Abstract base class for {@link Metadata} based {@link HttpMessageConverter
  * HttpMessageConverters}.
  * @param <T> {@link Metadata} instance this converter provides conversion for 
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  */
 public abstract class AbstractMetadataMessageConverter<T extends Metadata> extends AbstractHttpMessageConverter<T> {
     protected RDFFormat format;

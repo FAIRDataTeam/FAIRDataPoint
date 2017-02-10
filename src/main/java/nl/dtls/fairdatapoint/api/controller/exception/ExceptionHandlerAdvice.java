@@ -44,7 +44,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 /**
  * Handle controller exception
  * 
- * @author Rajaram Kaliyaperumal
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-09-13
  * @version 0.1
  */

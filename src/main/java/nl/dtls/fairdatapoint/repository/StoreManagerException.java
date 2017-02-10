@@ -29,7 +29,10 @@ package nl.dtls.fairdatapoint.repository;
 
 /**
  *
- * @author rajaram
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @since 2016-01-05
+ * @version 0.1
  */
 public class StoreManagerException extends Exception {
     /**

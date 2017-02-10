@@ -55,7 +55,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 /**
  * StoreManagerImpl class unit tests
  *
- * @author Rajaram Kaliyaperumal
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-01-05
  * @version 0.2
  */
