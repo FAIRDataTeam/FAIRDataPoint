@@ -1,3 +1,0 @@
-bottle==0.12.9
-rdflib==4.2.1
-rdflib-jsonld==0.3
