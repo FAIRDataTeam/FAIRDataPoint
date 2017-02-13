@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+        </script>
+        <title> 
+            {{#if metadata.title}}
+                {{literal metadata.title}}
+            {{/if}}
+        </title>
+        {{#if jsonLd}}
+        <script type="application/ld+json">
+            {{{jsonLd}}}
+        </script>
+        {{/if}}
+    </head>
+    <body>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">FAIR metadata</h3>
+            </div>
+            <div class="panel-body"> 
+                {{#if metadata.title}}
+                <div class="row">
+                    <h4>
+                        <div class="col-sm-1"><span class="label label-default">Title</span></div>
+                        <div class="col-sm-7"><span>{{literal metadata.title}}</span></div>
+                    </h4>    
+                </div>  
+                {{/if}}
+                <div class="row">
+                    <h4>
+                        <div class="col-sm-1"><span class="label label-default">Metadata ID</span></div> 
+                        <div class="col-sm-7"><span>{{literal metadata.identifier.identifier}}</span></div>
+                    </h4>    
+                </div>  
+                {{#if metadata.description}}
+                <div class="row">
+                    <h4>
+                        <div class="col-sm-1"><span class="label label-default">Description</span></div> 
+                        <div class="col-sm-7"><span>{{literal metadata.description}}</span></div>    
+                    </h4>    
+                </div>
+                {{/if}}
+                <div class="row">
+                    <h4>
+                        <div class="col-sm-1"><span class="label label-default">Issued</span></div> 
+                        <div class="col-sm-7"><span>{{literal metadata.issued}}</span></div> 
+                    </h4>
+                </div>        
+                <div class="row">
+                    <h4>
+                        <div class="col-sm-1"><span class="label label-default">Modified</span></div> 
+                        <div class="col-sm-7"><span>{{literal metadata.modified}}</span></div>
+                    </h4>
+                </div>    
+                {{#if metadata.license}}
+                <div class="row">
+                    <h4>
+                        <div class="col-sm-1"><span class="label label-default">License</span></div>
+                        <div class="col-sm-7"><a target="_blank" href="{{metadata.license}}">license</a></div>
+                    </h4>
+                </div>    
+                {{/if}}
+                {{#block "content"}}
+                {{/block}}
+        </div>        
+    </body>
+</html>

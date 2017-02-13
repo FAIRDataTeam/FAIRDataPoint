@@ -1,0 +1,29 @@
+{{#partial "content"}}
+{{#if metadata.accessURL}}
+<div class="row">    
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Access url</span></div>
+        <div class="col-sm-7"><span><a target="_blank" href="{{metadata.accessURL}}">{{metadata.accessURL}}</a></span></div>
+    </h4>
+</div>
+{{/if}}
+
+ {{#if metadata.downloadURL}}
+<div class="row"> 
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Download url</span></div>
+        <div class="col-sm-7"><span><a target="_blank" href="{{metadata.downloadURL}}">{{metadata.downloadURL}}</a></span></div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.mediaType}}
+<div class="row">  
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">MediaType</span></div>
+        <div class="col-sm-7"><span>{{literal metadata.mediaType}}</span></div>
+    </h4>
+</div>
+{{/if}}
+{{/partial}}
+{{> base}}

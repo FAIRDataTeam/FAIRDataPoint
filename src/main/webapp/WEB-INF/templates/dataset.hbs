@@ -1,0 +1,57 @@
+{{#partial "content"}}
+{{#if metadata.themes}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Themes</span></div>
+        <div class="col-sm-7">
+            {{#metadata.themes}}
+                <p><a target="_blank" href="{{.}}">{{.}}</a></p>
+            {{/metadata.themes}}
+        </div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.keywords}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Keywords</span></div>
+        <div class="col-sm-7">
+            {{#metadata.keywords}}
+                <p><span>{{literal .}}</span></p>
+            {{/metadata.keywords}}
+        </div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.contactPoint}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Contact point</span></div>
+         <div class="col-sm-7"><span><a target="_blank" href="{{metadata.contactPoint}}">{{metadata.contactPoint}}</a></span></div>
+    </h4>    
+</div>  
+{{/if}}
+
+{{#if metadata.landingPage}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Landing page</span></div>
+        <div class="col-sm-7"><span><a target="_blank" href="{{metadata.landingPage}}">{{metadata.landingPage}}</a></span></div>
+    </h4>    
+</div>  
+{{/if}}
+
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Distributions</span></div>
+        <div class="col-sm-7">
+            {{#metadata.distributions}}
+                <p><a target="_blank" href="{{.}}">{{.}}</a></p>
+            {{/metadata.distributions}}
+        </div>
+    </h4>
+</div>
+{{/partial}}
+{{> base}}

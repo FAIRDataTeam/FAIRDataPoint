@@ -1,0 +1,33 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
+
+<> dct:alternative "DTL FDP"@en ;
+	dct:description "The DTL FAIR Data Point hosts the FAIR Data versions of datasets that have been made FAIR during BYODs as well as other relevant life sciences datasets"@en ;
+	dct:title "DTL FAIR Data Point"@en ;
+	dct:hasVersion "1.0" ;
+	dct:publisher <http://dtls.nl> ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/fdp-metadataID> ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued> "2016-10-27"^^xsd:date ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified> "2016-10-27"^^xsd:date ;
+	<http://www.re3data.org/schema/3-0#repositoryIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/fdp-repositoryID> ;
+        <http://www.re3data.org/schema/3-0#institution> <http://dtls.nl> ;
+	<http://www.re3data.org/schema/3-0#institutionCountry> <http://lexvo.org/id/iso3166/NL> ;
+	<http://www.re3data.org/schema/3-0#lastUpdate> "2016-10-27"^^xsd:date ;
+	<http://www.re3data.org/schema/3-0#startDate> "2016-10-27"^^xsd:date ;
+	a <http://www.re3data.org/schema/3-0#Repository> ;
+	rdfs:label "DTL FAIR Data Point"@en ;
+        dct:identifier "fdp-metadataID" .
+
+<http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/fdp-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
+	dct:identifier "fdp-metadataID" .
+
+<http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/fdp-repositoryID> a <http://purl.org/spar/datacite/Identifier> ;
+	dct:identifier "fdp-repositoryID" .
+
+<http://dtls.nl> a <http://xmlns.com/foaf/0.1/Organization> ;
+	<http://xmlns.com/foaf/0.1/name> "DTLS"@en .
