@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -72,6 +72,15 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpHeaders;
 import springfox.documentation.annotations.ApiIgnore;
 
+/**
+ * Handle fair metadata api calls
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @since 2015-11-19
+ * @version 0.1
+ */
+
 @RestController
 @Api(description = "FDP metadata")
 @RequestMapping(value = "/")
@@ -95,7 +104,7 @@ public class MetadataController {
      * @return Metadata about the FDP in one of the acceptable formats (RDF
      * Turtle, JSON-LD, RDF XML and RDF N3)
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata.io.MetadataException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET,
@@ -289,7 +298,7 @@ public class MetadataController {
      * @param response Http response
      * @param metadata catalog metadata
      * @return created message
-     * @throws nl.dtl.fairmetadata.io.MetadataParserException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "Update fdp metadata")
@@ -316,7 +325,7 @@ public class MetadataController {
      * @param metadata catalog metadata
      * @param id Unique catalog ID
      * @return created message
-     * @throws nl.dtl.fairmetadata.io.MetadataParserException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST catalog metadata")
@@ -357,7 +366,7 @@ public class MetadataController {
      * @param id Unique dataset ID
      * @return created message
      *
-     * @throws nl.dtl.fairmetadata.io.MetadataParserException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST dataset metadata")
@@ -388,7 +397,7 @@ public class MetadataController {
      * @param id Unique distribution ID
      * @return created message
      *
-     * @throws nl.dtl.fairmetadata.io.MetadataParserException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
      */
     @ApiOperation(value = "POST distribution metadata")

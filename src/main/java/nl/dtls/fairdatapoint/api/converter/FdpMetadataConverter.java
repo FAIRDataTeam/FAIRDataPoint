@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,15 @@ import com.google.common.io.CharStreams;
 import java.io.InputStreamReader;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import org.eclipse.rdf4j.rio.RDFFormat;
+
+/**
+ * Repository metadata message converter
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @since 2016-09-19
+ * @version 0.1
+ */
 
 public class FdpMetadataConverter extends AbstractMetadataMessageConverter
         <FDPMetadata> {

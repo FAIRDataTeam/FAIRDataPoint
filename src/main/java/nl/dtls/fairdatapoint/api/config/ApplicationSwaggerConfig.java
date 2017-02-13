@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Swagger configuration.
- * @author Rajaram Kaliyaperumal
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
  * @version 0.1
  */
@@ -66,11 +68,11 @@ public class ApplicationSwaggerConfig {
                     + "<li><a target='_blank' href = 'https://github.com/"
                     + "DTL-FAIRData/ODEX-FAIRDataPoint/tree/master/fdp-api"
                     + "/java'>Source code</a> </li></p>",
-            "0.1 BETA",
+            "0.1-beta",
             "ATO",
-            "r.kaliyaperumal@lumc.nl",
-            "CC BY-NC-ND 3.0",
-            "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0"
+            "rr.kaliyaperumal@gmail.com",
+            "The MIT License",
+            "https://opensource.org/licenses/MIT"
         );
         return apiInfo;
     }

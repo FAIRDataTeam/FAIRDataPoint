@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,10 @@ package nl.dtls.fairdatapoint.repository;
 
 /**
  *
- * @author rajaram
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @since 2016-01-05
+ * @version 0.1
  */
 public class StoreManagerException extends Exception {
     /**

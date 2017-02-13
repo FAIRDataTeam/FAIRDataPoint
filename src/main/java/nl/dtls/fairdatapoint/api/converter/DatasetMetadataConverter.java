@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 /**
  * Dataset metadata message converter
  * 
- * @author Rajaram Kaliyaperumal, Kees Burger
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-09-19
  * @version 0.1
  */
