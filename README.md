@@ -1,32 +1,5 @@
-<<<<<<< HEAD
-###FAIRDataPoint (FDP) Metadata Service
+# FAIRDataPoint
 
-**Example dataset**: [EU-SOL BreeDB database](http://www.eu-sol.wur.nl) (tomato passport data)
+FDP is a software that, from one side, allows data owners to expose datasets in a FAIR manner and, for another side, allows data users to discover properties about offered datasets through their metadata and, if license conditions allow, the actual data can be accessed.
 
-**SPARQL endpoint**: [BreeDB](http://virtuoso.biotools.nl:8888/sparql/); *Graph IRI: http://www.eu-sol.wur.nl/passport*
-
-**RESTful API documentation**
-
-http://fdp.biotools.nl:8080/
-
-**Access FDP-, catalog-, dataset- and distribution-level metadata**
-
-http://virtuoso.biotools.nl:8888/describe/?url=http://fdp.biotools.nl:8080/fdp
-
-```
-curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/fdp
-curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/catalog/catalog-01
-curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/dataset/breedb
-curl -iH 'Accept: text/turtle' http://fdp.biotools.nl:8080/distribution/breedb-sparql
-```
-Note: FDP supports different RDF serializations (MIME-types):
-+ Turtle (text/turtle)
-+ N-Triples (application/n-triples)
-+ RDF/XML (application/rdf+xml)
-+ JSON-LD (application/ld+json)
-=======
-# FairDataPoint
-FairDataPoint developed for DTL
-
-This is the fairdatapoint with AOI-PMH implemented
->>>>>>> FairDataPoint/tmp
+The FDP software is being initially developed as a stand-alone web application. However, the functionality/behaviour of the FDP can be also embedded in other applications to provide FAIR data accessibility to the application’s datasets. For instance, an existing data repository may choose to implement FDP's API and metadata content, behaving this way also as a FDP.
