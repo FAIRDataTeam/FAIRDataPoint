@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,10 @@ import org.eclipse.rdf4j.model.IRI;
 
 
 /**
- *
- * @author Rajaram Kaliyaperumal
+ * Fair metadata service interface
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-23
  * @version 0.2
  */

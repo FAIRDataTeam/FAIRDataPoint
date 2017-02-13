@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Spring test context file. 
- * @author Rajaram Kaliyaperumal
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-02-11
  * @version 0.1
  */

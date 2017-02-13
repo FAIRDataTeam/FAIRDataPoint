@@ -2,8 +2,9 @@ language: java
 jdk:
   - oraclejdk8
 before_install:
-  - git clone --branch=develop https://github.com/DTL-FAIRData/FairMetadata.git ~/FairMetadata
-  - cd ~/FairMetadata
+  - git clone https://github.com/DTL-FAIRData/fairmetadata4j ~/fairmetadata4j
+  - cd ~/fairmetadata4j
+  - git checkout 0.1-beta 	
   - mvn install
   - cd $TRAVIS_BUILD_DIR
 after_success:

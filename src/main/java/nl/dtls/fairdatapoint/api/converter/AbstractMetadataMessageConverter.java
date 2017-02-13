@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2016 DTL
+ * Copyright © 2017 DTL
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,9 @@ import org.eclipse.rdf4j.rio.RDFFormat;
  * Abstract base class for {@link Metadata} based {@link HttpMessageConverter
  * HttpMessageConverters}.
  * @param <T> {@link Metadata} instance this converter provides conversion for 
+ * 
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
  */
 public abstract class AbstractMetadataMessageConverter<T extends Metadata> extends AbstractHttpMessageConverter<T> {
     protected RDFFormat format;
