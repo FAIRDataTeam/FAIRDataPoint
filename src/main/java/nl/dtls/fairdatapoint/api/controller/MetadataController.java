@@ -64,7 +64,7 @@ import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.model.Identifier;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtl.fairmetadata4j.utils.vocabulary.DataCite;
+import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
@@ -466,7 +466,7 @@ public class MetadataController {
             id.setUri(valueFactory.createIRI(fdpUrl + "/metadataID"));
             id.setIdentifier(valueFactory.createLiteral("fdp-metadataID",
                     XMLSchema.STRING));
-            id.setType(DataCite.RESOURCE_IDENTIFIER);
+            id.setType(DATACITE.RESOURCEIDENTIFIER);
             metadata.setIdentifier(id);
             Agent publisher = new Agent();
             publisher.setUri(valueFactory.createIRI("http://dtls.nl"));
@@ -479,7 +479,7 @@ public class MetadataController {
             repoId.setUri(valueFactory.createIRI(fdpUrl + "/repoID"));
             repoId.setIdentifier(valueFactory.createLiteral("fdp-repoID",
                     XMLSchema.STRING));
-            repoId.setType(DataCite.RESOURCE_IDENTIFIER);
+            repoId.setType(DATACITE.RESOURCEIDENTIFIER);
             metadata.setRepostoryIdentifier(repoId);
             fairMetaDataService.storeFDPMetaData(metadata);
             isFDPMetaDataAvailable = true;
