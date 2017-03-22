@@ -27,6 +27,8 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import static nl.dtl.fairmetadata4j.utils.MetadataUtils.FDP_METADATAIDENTIFIER;
+
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,6 @@ import nl.dtl.fairmetadata4j.model.Metadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtl.fairmetadata4j.utils.RDFUtils;
-import nl.dtl.fairmetadata4j.utils.vocabulary.DCAT;
 import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.repository.StoreManager;
@@ -59,6 +60,7 @@ import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -204,7 +206,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 return;
             } else if (metadata instanceof CatalogMetadata) {
                 stmts.add(f.createStatement(metadata.getParentURI(),
-                        R3D.DATA_CATALOG, metadata.getUri()));
+                        R3D.DATACATALOG, metadata.getUri()));
             } else if (metadata instanceof DatasetMetadata) {
                 stmts.add(f.createStatement(metadata.getParentURI(),
                         DCAT.DATASET, metadata.getUri()));
@@ -265,7 +267,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         for (Statement st : statements) {
             IRI predicate = st.getPredicate();
             Value object = st.getObject();
-            if (predicate.equals(FDP.METADATA_IDENTIFIER)) {
+            if (predicate.equals(FDP_METADATAIDENTIFIER)) {
                 otherResources.addAll(storeManager.retrieveResource(
                         (IRI) object));
             } else if (predicate.equals(R3D.INSTITUTION)) {
@@ -274,7 +276,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             } else if (predicate.equals(DCTERMS.PUBLISHER)) {
                 otherResources.addAll(storeManager.retrieveResource(
                         (IRI) object));
-            } else if (predicate.equals(R3D.REPO_IDENTIFIER)) {
+            } else if (predicate.equals(R3D.REPOSITORYIDENTIFIER)) {
                 otherResources.addAll(storeManager.retrieveResource(
                         (IRI) object));
             }
