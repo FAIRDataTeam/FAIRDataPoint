@@ -42,7 +42,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -61,10 +60,6 @@ import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 /**
  * Spring context file.
@@ -78,8 +73,6 @@ import org.springframework.core.io.Resource;
 @Configuration
 @Import(ApplicationSwaggerConfig.class)
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-@PropertySource({"${fdp.server.conf:classpath:/conf/fdp-server.properties}",
-    "${fdp.tripleStore.conf:classpath:/conf/triple-store.properties}"})
 public class RestApiContext extends WebMvcConfigurerAdapter {
 
     private final static Logger LOGGER
@@ -87,26 +80,6 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
-    
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer props(Environment env) {
-        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-        
-        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
-        
-        Resource resource;
-        if (env.containsProperty("my.prop.thing")) {
-            resource = new FileSystemResource(env.getRequiredProperty("my.prop.thing"));
-        } else {
-            resource = new ClassPathResource("conf/default.yml");
-        }
-        
-        yaml.setResources(resource);
-        
-        configurer.setProperties(yaml.getObject());
-        
-        return configurer;
-    }
     
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -122,13 +95,12 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
-    public Repository repository(Environment env)
+    public Repository repository(@Value("${store.type:1}") int storeType,
+            @Value("${store.url}") String storeUrl)
             throws RepositoryException {
-        String storeURL = env.getProperty("store-url");
-        int storeType = env.getProperty("store-type", Integer.class);
         Repository repository;
         if (storeType == 2) {
-            repository = new SPARQLRepository(storeURL);
+            repository = new SPARQLRepository(storeUrl);
             LOGGER.info("HTTP triple store initialize");
         } else { // In memory is the default store
             Sail store = new MemoryStore();
@@ -140,16 +112,10 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "storeManager")
     @DependsOn({"repository"})
-    public StoreManager storeManager(@Value("${section1.key1:dummy}") String key1) throws RepositoryException,
+    public StoreManager storeManager() throws RepositoryException,
             StoreManagerException {
         return new StoreManagerImpl();
     }
-
-    @Bean(name = "properties")
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.setOrder(Integer.MIN_VALUE + 1).
