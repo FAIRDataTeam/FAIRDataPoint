@@ -60,6 +60,11 @@ import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 /**
  * Spring context file.
@@ -83,11 +88,31 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
     
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer props(Environment env) {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+        
+        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+        
+        Resource resource;
+        if (env.containsProperty("my.prop.thing")) {
+            resource = new FileSystemResource(env.getRequiredProperty("my.prop.thing"));
+        } else {
+            resource = new ClassPathResource("conf/default.yml");
+        }
+        
+        yaml.setResources(resource);
+        
+        configurer.setProperties(yaml.getObject());
+        
+        return configurer;
+    }
+    
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
     }
-
+    
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
@@ -115,7 +140,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "storeManager")
     @DependsOn({"repository"})
-    public StoreManager storeManager() throws RepositoryException,
+    public StoreManager storeManager(@Value("${section1.key1:dummy}") String key1) throws RepositoryException,
             StoreManagerException {
         return new StoreManagerImpl();
     }
