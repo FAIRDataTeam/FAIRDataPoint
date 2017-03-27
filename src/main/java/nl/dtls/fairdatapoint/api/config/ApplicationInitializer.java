@@ -37,12 +37,12 @@ public class ApplicationInitializer extends
         AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{};
+        return new Class[]{ RootConfig.class, RestApiContext.class };
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{RestApiContext.class};
+        return new Class[]{};
     }
 
     @Override

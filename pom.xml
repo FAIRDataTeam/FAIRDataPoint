@@ -51,6 +51,7 @@
         <handlebars.version>4.0.6</handlebars.version>
         <fairmetadata.version>0.1-beta</fairmetadata.version>
         <velocity.version>1.7</velocity.version>
+        <snakeyaml.version>1.18</snakeyaml.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.7.17</mockito.version>
         <plugin.mavenwar.version>3.0.0</plugin.mavenwar.version>
@@ -184,6 +185,12 @@
             <artifactId>fairmetadata4j</artifactId>
             <version>${fairmetadata.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
@@ -221,6 +228,7 @@
                     <excludes>
                         <exclude>pom.xml</exclude>
                         <exclude>**/*.ttl</exclude>
+                        <exclude>**/*.yml</exclude>
                         <exclude>**/*.sparql</exclude>
                         <exclude>**/*.properties</exclude>
                         <exclude>**/log4j2.xml</exclude>
