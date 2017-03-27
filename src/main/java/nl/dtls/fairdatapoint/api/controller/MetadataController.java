@@ -83,7 +83,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Api(description = "FDP metadata")
-@RequestMapping(value = "/")
+@RequestMapping("${fdp.root.path:/fdp}")
 public class MetadataController {
 
     private final static Logger LOGGER
