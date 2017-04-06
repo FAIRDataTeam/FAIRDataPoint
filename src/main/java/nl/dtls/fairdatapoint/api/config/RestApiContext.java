@@ -42,7 +42,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -60,6 +59,7 @@ import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Spring context file.
@@ -73,8 +73,6 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 @Configuration
 @Import(ApplicationSwaggerConfig.class)
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-@PropertySource({"${fdp.server.conf:classpath:/conf/fdp-server.properties}",
-    "${fdp.tripleStore.conf:classpath:/conf/triple-store.properties}"})
 public class RestApiContext extends WebMvcConfigurerAdapter {
 
     private final static Logger LOGGER
@@ -87,7 +85,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
     }
-
+    
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
@@ -97,13 +95,12 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
-    public Repository repository(Environment env)
+    public Repository repository(@Value("${store.type:1}") int storeType,
+            @Value("${store.url}") String storeUrl)
             throws RepositoryException {
-        String storeURL = env.getProperty("store-url");
-        int storeType = env.getProperty("store-type", Integer.class);
         Repository repository;
         if (storeType == 2) {
-            repository = new SPARQLRepository(storeURL);
+            repository = new SPARQLRepository(storeUrl);
             LOGGER.info("HTTP triple store initialize");
         } else { // In memory is the default store
             Sail store = new MemoryStore();
@@ -119,12 +116,6 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             StoreManagerException {
         return new StoreManagerImpl();
     }
-
-    @Bean(name = "properties")
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.setOrder(Integer.MIN_VALUE + 1).

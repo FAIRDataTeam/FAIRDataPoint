@@ -76,7 +76,7 @@ public class MetadataControllerTest {
     private RequestMappingHandlerMapping handlerMapping;
     @Autowired
     private FairMetaDataService fairMetaDataService;
-    private final String TEST_FDP_PATH = "/";
+    private final String TEST_FDP_PATH = "/fdp/";
     private final String TEST_CATALOG_PATH = TEST_FDP_PATH + "catalog/"
             + ExampleFilesUtils.CATALOG_ID;
     private final String TEST_DATASET_PATH = TEST_FDP_PATH + "dataset/"
@@ -308,7 +308,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
-        request.setRequestURI("/catalog");
+        request.setRequestURI("/fdp/catalog");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
@@ -331,7 +331,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
-        request.setRequestURI("/catalog");
+        request.setRequestURI("/fdp/catalog");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
@@ -344,7 +344,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
-        request.setRequestURI("/catalog");
+        request.setRequestURI("/fdp/catalog");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -361,7 +361,7 @@ public class MetadataControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/catalog/dumpy");
+        request.setRequestURI("/fdp/catalog/dumpy");
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -401,7 +401,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dat1");
-        request.setRequestURI("/dataset");
+        request.setRequestURI("/fdp/dataset");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
@@ -424,7 +424,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dat1");
-        request.setRequestURI("/dataset");
+        request.setRequestURI("/fdp/dataset");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
@@ -437,7 +437,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dat1");
-        request.setRequestURI("/dataset");
+        request.setRequestURI("/fdp/dataset");
         handler = handlerMapping.getHandler(request).getHandler();        
         handlerAdapter.handle(request, response, handler);
     }
@@ -454,7 +454,7 @@ public class MetadataControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/dataset/dumpy");
+        request.setRequestURI("/fdp/dataset/dumpy");
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -495,7 +495,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dis1");
-        request.setRequestURI("/distribution");
+        request.setRequestURI("/fdp/distribution");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
@@ -518,7 +518,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dis1");
-        request.setRequestURI("/distribution");
+        request.setRequestURI("/fdp/distribution");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
@@ -531,7 +531,7 @@ public class MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dis1");
-        request.setRequestURI("/distribution");
+        request.setRequestURI("/fdp/distribution");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -548,7 +548,7 @@ public class MetadataControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/distribution/dummy");
+        request.setRequestURI("/fdp/distribution/dummy");
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
