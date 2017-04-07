@@ -40,8 +40,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -96,12 +94,18 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
     public Repository repository(@Value("${store.type:1}") int storeType,
-            @Value("${store.url}") String storeUrl)
+            @Value("${store.url}") String storeUrl, 
+            @Value("${store.username:nil}") String storeUsername,
+            @Value("${store.password:nil}") String storeUserPassword)
             throws RepositoryException {
         Repository repository;
-        if (storeType == 2) {
-            repository = new SPARQLRepository(storeUrl);
+        if (storeType == 1 && !storeUsername.isEmpty() && 
+                !storeUsername.contains("nil")) { // HTTP endpoint
+            SPARQLRepository sRepository = new SPARQLRepository(storeUrl);
             LOGGER.info("HTTP triple store initialize");
+            sRepository.setUsernameAndPassword(storeUsername, 
+                    storeUserPassword); 
+            return sRepository;
         } else { // In memory is the default store
             Sail store = new MemoryStore();
             repository = new SailRepository(store);
