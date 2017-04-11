@@ -356,16 +356,15 @@ public class MetadataController {
             @RequestParam("id") String id) throws
             FairMetadataServiceException, MetadataException {
         String trimmedId = trimmer(id);
-        LOGGER.info("Request to store catalog metatdata with ID ", trimmedId);
-        String fdpUri = getRequesedURL(request).replace("/catalog", "");
-        if (!isFDPMetaDataAvailable(fdpUri)) {
+        LOGGER.info("Request to store catalog metatdata with ID ", trimmedId);         
+        String requestedURL = getRequesedURL(request);
+        String fURI = requestedURL.replace("/catalog", "");
+        if (!isFDPMetaDataAvailable(fURI)) {
             storeDefaultFDPMetadata(request);
         }
-        String requestedURL = getRequesedURL(request);
         IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
         if (metadata.getParentURI() == null) {
-            String fURI = requestedURL.replace("/catalog", "");
             LOGGER.info("No fdp uri is provied in the post body. "
                     + "Default fdp uri is used <%s>", fURI);
             IRI fdpURI = valueFactory.createIRI(fURI);
