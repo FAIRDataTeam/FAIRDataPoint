@@ -209,10 +209,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         R3D.DATACATALOG, metadata.getUri()));
             } else if (metadata instanceof DatasetMetadata) {
                 stmts.add(f.createStatement(metadata.getParentURI(),
-                        DCAT.DATASET, metadata.getUri()));
+                        DCAT.HAS_DATASET, metadata.getUri()));
             } else if (metadata instanceof DistributionMetadata) {
                 stmts.add(f.createStatement(metadata.getParentURI(),
-                        DCAT.DISTRIBUTION, metadata.getUri()));
+                        DCAT.HAS_DISTRIBUTION, metadata.getUri()));
             }
             storeManager.removeStatement(metadata.getParentURI(),
                     DCTERMS.MODIFIED, null);
