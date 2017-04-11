@@ -55,6 +55,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
@@ -370,6 +371,8 @@ public class MetadataController {
             IRI fdpURI = valueFactory.createIRI(fURI);
             metadata.setParentURI(fdpURI);
         }
+        // Ignore children links
+        metadata.setDatasets(new ArrayList());
         fairMetaDataService.storeCatalogMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return "Metadata is stored";
@@ -401,6 +404,8 @@ public class MetadataController {
         String requestedURL = getRequesedURL(request);
         IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
+        // Ignore children links 
+        metadata.setDistributions(new ArrayList());
         fairMetaDataService.storeDatasetMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return "Metadata is stored";
