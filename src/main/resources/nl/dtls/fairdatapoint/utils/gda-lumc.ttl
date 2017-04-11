@@ -16,7 +16,6 @@
 	dct:title "Gene disease association (LUMC)"@en ;
 	a dcat:Dataset ;
 	rdfs:label "Gene disease association (LUMC)"@en ;
-	dcat:distribution <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gda-lumc-sparql> ;
 	dcat:keyword "GDA lumc" , "text mining" , "gene-disease association" ;
 	dcat:landingPage <http://rdf.biosemantics.org/> ;
 	dcat:theme <http://semanticscience.org/resource/statistical-association> , <http://dbpedia.org/resource/Text_mining> ;
