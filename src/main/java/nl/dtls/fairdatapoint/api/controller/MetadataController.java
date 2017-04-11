@@ -55,6 +55,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.logging.Level;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtl.fairmetadata4j.model.Agent;
@@ -74,13 +75,12 @@ import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * Handle fair metadata api calls
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
  * @version 0.1
  */
-
 @RestController
 @Api(description = "FDP metadata")
 @RequestMapping("${urlPath.root:/fdp}")
@@ -90,7 +90,6 @@ public class MetadataController {
             = LogManager.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
-    private boolean isFDPMetaDataAvailable = false;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     /**
@@ -119,13 +118,31 @@ public class MetadataController {
         LOGGER.info("Request to get FDP metadata");
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
-        if (!isFDPMetaDataAvailable) {
+        if (!isFDPMetaDataAvailable(uri)) {
             storeDefaultFDPMetadata(request);
         }
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
                 valueFactory.createIRI(uri));
         LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
+    }
+
+    private boolean isFDPMetaDataAvailable(String uri) {
+        FDPMetadata metadata;
+        try {
+            metadata = fairMetaDataService.retrieveFDPMetaData(
+                    valueFactory.createIRI(uri));
+            if (metadata.getUri() == null) {
+                return false;
+            }
+        } catch (ResourceNotFoundException ex) {
+            return false;
+        }catch (FairMetadataServiceException ex) {
+            LOGGER.error("Error retrieving FDP metadata. Msg:" + 
+                    ex.getMessage());
+
+        } 
+        return true;
     }
 
     @ApiIgnore
@@ -138,7 +155,7 @@ public class MetadataController {
         LOGGER.info("Request to get FDP metadata");
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
-        if (!isFDPMetaDataAvailable) {
+        if (!isFDPMetaDataAvailable(uri)) {
             storeDefaultFDPMetadata(request);
         }
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
@@ -308,7 +325,7 @@ public class MetadataController {
             HttpServletResponse response,
             @RequestBody(required = true) FDPMetadata metadata) throws
             FairMetadataServiceException, MetadataException {
-        if (!isFDPMetaDataAvailable) {
+        if (!isFDPMetaDataAvailable(getRequesedURL(request))) {
             storeDefaultFDPMetadata(request);
         }
         String uri = getRequesedURL(request);
@@ -339,7 +356,8 @@ public class MetadataController {
             FairMetadataServiceException, MetadataException {
         String trimmedId = trimmer(id);
         LOGGER.info("Request to store catalog metatdata with ID ", trimmedId);
-        if (!isFDPMetaDataAvailable) {
+        String fdpUri = getRequesedURL(request).replace("/catalog", "");
+        if (!isFDPMetaDataAvailable(fdpUri)) {
             storeDefaultFDPMetadata(request);
         }
         String requestedURL = getRequesedURL(request);
@@ -482,9 +500,8 @@ public class MetadataController {
             repoId.setType(DATACITE.RESOURCEIDENTIFIER);
             metadata.setRepostoryIdentifier(repoId);
             fairMetaDataService.storeFDPMetaData(metadata);
-            isFDPMetaDataAvailable = true;
-        } catch (MalformedURLException | MetadataException |
-                FairMetadataServiceException ex) {
+        } catch (MalformedURLException | MetadataException
+                | FairMetadataServiceException ex) {
             throw new MetadataParserException(
                     "Error creating generic FDP meatdata " + ex.getMessage());
         }
