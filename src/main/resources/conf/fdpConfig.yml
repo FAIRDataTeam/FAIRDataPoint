@@ -1,8 +1,9 @@
-# valid store type options { 1 = http SPARQLRepository, 2 = NativeStore, 3 = inMemoryStore ,  }
+# valid store type options { 1 = http SPARQLRepository, 2 = NativeStore, 3 = inMemoryStore}
 store:
     type: 1
     url: http://136.243.4.200:8892/repositories/test
     username: test
     password: tester
+    dir: /tmp/fdp-store/
 urlPath:
     root: /fdp
