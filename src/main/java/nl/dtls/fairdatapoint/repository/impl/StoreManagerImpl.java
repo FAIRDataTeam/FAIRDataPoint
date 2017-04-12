@@ -115,10 +115,15 @@ public class StoreManagerImpl implements StoreManager {
      *
      */
     @Override
-    public void storeStatements(List<Statement> statements) throws
+    public void storeStatements(List<Statement> statements, IRI... cntx) throws
             StoreManagerException {
         try (RepositoryConnection conn = getRepositoryConnection()) {
-            conn.add(statements);
+            if(cntx != null) {
+              conn.add(statements, cntx);  
+            } else {
+                conn.add(statements); 
+            }
+            
         } catch (RepositoryException e) {
             throw (new StoreManagerException("Error storing statements :"
                     + e.getMessage()));

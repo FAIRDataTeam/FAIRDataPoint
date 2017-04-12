@@ -49,9 +49,11 @@ public interface StoreManager {
      * Store RDF from openRDF model to the repository
      * 
      * @param statements
+     * @param iri context uri
      * @throws StoreManagerException 
      */
-    void storeStatements (List<Statement> statements) throws StoreManagerException;
+    void storeStatements (List<Statement> statements, IRI... iri) 
+            throws StoreManagerException;
     /**
      * Remove a statement from the repository
      * 
