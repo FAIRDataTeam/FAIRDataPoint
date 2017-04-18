@@ -1,6 +1,9 @@
-# valid store type options { 1 = inMemoryStore , 2 = http SPARQLRepository }
+# valid store type options { 1 = http SPARQLRepository, 2 = NativeStore, 3 = inMemoryStore}
 store:
     type: 1
-    url: http://agraph.biosemantics.org/catalogs/rajatest/repositories/fdp
+    url: http://136.243.4.200:8892/repositories/test
+    username: test
+    password: tester
+    dir: /tmp/fdp-store/
 urlPath:
     root: /fdp

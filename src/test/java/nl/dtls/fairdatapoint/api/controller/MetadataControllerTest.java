@@ -76,13 +76,13 @@ public class MetadataControllerTest {
     private RequestMappingHandlerMapping handlerMapping;
     @Autowired
     private FairMetaDataService fairMetaDataService;
-    private final String TEST_FDP_PATH = "/fdp/";
-    private final String TEST_CATALOG_PATH = TEST_FDP_PATH + "catalog/"
+    private final String TEST_FDP_PATH = "/fdp";
+    private final String TEST_CATALOG_PATH = TEST_FDP_PATH + "/catalog/"
             + ExampleFilesUtils.CATALOG_ID;
-    private final String TEST_DATASET_PATH = TEST_FDP_PATH + "dataset/"
+    private final String TEST_DATASET_PATH = TEST_FDP_PATH + "/dataset/"
             + ExampleFilesUtils.DATASET_ID;
     private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH
-            + "distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
+            + "/distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
     private final static Logger LOGGER
             = LogManager.getLogger(FairMetaDataServiceImpl.class.getName());
 

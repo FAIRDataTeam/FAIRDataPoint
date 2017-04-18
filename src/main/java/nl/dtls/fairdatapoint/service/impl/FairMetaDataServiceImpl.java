@@ -181,7 +181,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 metadata.setIssued(RDFUtils.getCurrentTime());
             }
             metadata.setModified(RDFUtils.getCurrentTime());
-            storeManager.storeStatements(MetadataUtils.getStatements(metadata));
+            storeManager.storeStatements(MetadataUtils.getStatements(metadata), 
+                    metadata.getUri());
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing distribution metadata");
@@ -209,10 +210,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         R3D.DATACATALOG, metadata.getUri()));
             } else if (metadata instanceof DatasetMetadata) {
                 stmts.add(f.createStatement(metadata.getParentURI(),
-                        DCAT.DATASET, metadata.getUri()));
+                        DCAT.HAS_DATASET, metadata.getUri()));
             } else if (metadata instanceof DistributionMetadata) {
                 stmts.add(f.createStatement(metadata.getParentURI(),
-                        DCAT.DISTRIBUTION, metadata.getUri()));
+                        DCAT.HAS_DISTRIBUTION, metadata.getUri()));
             }
             storeManager.removeStatement(metadata.getParentURI(),
                     DCTERMS.MODIFIED, null);

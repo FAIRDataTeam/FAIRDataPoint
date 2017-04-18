@@ -10,15 +10,12 @@
 	dct:description "Gene disease association dataset from LUMC"@en ;
 	dct:hasVersion "1.0" ;
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> ;
-	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued> "2016-10-27"^^xsd:date ;
-	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified> "2016-10-27"^^xsd:date ;
-	dct:issued "2016-10-27"^^xsd:date ;
+	dct:issued "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
 	dct:language lang:en ;
-	dct:modified "2016-10-27"^^xsd:date ;
+	dct:modified "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
 	dct:title "Gene disease association (LUMC)"@en ;
 	a dcat:Dataset ;
 	rdfs:label "Gene disease association (LUMC)"@en ;
-	dcat:distribution <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gda-lumc-sparql> ;
 	dcat:keyword "GDA lumc" , "text mining" , "gene-disease association" ;
 	dcat:landingPage <http://rdf.biosemantics.org/> ;
 	dcat:theme <http://semanticscience.org/resource/statistical-association> , <http://dbpedia.org/resource/Text_mining> ;

@@ -40,8 +40,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -54,11 +52,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
+import java.io.File;
 
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
+import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -96,16 +96,28 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
     public Repository repository(@Value("${store.type:1}") int storeType,
-            @Value("${store.url}") String storeUrl)
+            @Value("${store.url}") String storeUrl, 
+            @Value("${store.username:nil}") String storeUsername,
+            @Value("${store.password:nil}") String storeUserPassword,
+            @Value("${store.dir:}") String storeDir)
             throws RepositoryException {
         Repository repository;
-        if (storeType == 2) {
-            repository = new SPARQLRepository(storeUrl);
-            LOGGER.info("HTTP triple store initialize");
-        } else { // In memory is the default store
+        if (storeType == 1 && !storeUsername.isEmpty() && 
+                !storeUsername.contains("nil")) { // HTTP endpoint
+            SPARQLRepository sRepository = new SPARQLRepository(storeUrl);
+            LOGGER.info("Initializing HTTP triple store ");
+            sRepository.setUsernameAndPassword(storeUsername, 
+                    storeUserPassword); 
+            return sRepository;
+        } else if (storeType == 2 && !storeDir.isEmpty()){
+            File dataDir = new File(storeDir);
+            LOGGER.info("Initializing native store");
+            repository = new SailRepository(new NativeStore(dataDir));
+        }
+        else { // In memory is the default store
             Sail store = new MemoryStore();
             repository = new SailRepository(store);
-            LOGGER.info("Inmemory triple store initialize");
+            LOGGER.info("Initializing inmemory store");
         }
         return repository;
     }
