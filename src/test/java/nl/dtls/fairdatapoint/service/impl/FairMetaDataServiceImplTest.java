@@ -123,7 +123,7 @@ public class FairMetaDataServiceImplTest {
     }
 
     /**
-     * Test to store FDP metadata without ID
+     * Test to store FDP metadata without metadata ID
      */
     @DirtiesContext
     public void storeFDPMetaDataWithNoID() {
@@ -138,19 +138,18 @@ public class FairMetaDataServiceImplTest {
     }
 
     /**
-     * Test to store FDP metadata, this test is excepted to throw error
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     * Test to store FDP metadata without repo ID
      */
     @DirtiesContext
-    @Test(expected = MetadataException.class)
-    public void storeFDPMetaDataWithNoRepoID() throws 
-            FairMetadataServiceException, MetadataException {
+    public void storeFDPMetaDataWithNoRepoID() {
         FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
                 TEST_FDP_URI);
         metadata.setRepostoryIdentifier(null);
-        fairMetaDataService.storeFDPMetaData(metadata);
+        try {
+            fairMetaDataService.storeFDPMetaData(metadata);
+        } catch (Exception ex) {
+            fail("This test is excepted to throw any error");
+        }
     }
 
     /**
