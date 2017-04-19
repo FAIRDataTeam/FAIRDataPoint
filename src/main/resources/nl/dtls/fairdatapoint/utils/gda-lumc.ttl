@@ -11,6 +11,7 @@
 	dct:hasVersion "1.0" ;
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> ;
 	dct:issued "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
+        dct:conformsTo <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
 	dct:language lang:en ;
 	dct:modified "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
 	dct:title "Gene disease association (LUMC)"@en ;
