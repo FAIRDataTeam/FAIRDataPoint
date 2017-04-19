@@ -32,6 +32,7 @@ import static nl.dtl.fairmetadata4j.utils.MetadataUtils.FDP_METADATAIDENTIFIER;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
@@ -43,10 +44,12 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.model.Identifier;
 import nl.dtl.fairmetadata4j.model.Metadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtl.fairmetadata4j.utils.RDFUtils;
+import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
@@ -61,6 +64,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -191,6 +195,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()),
                 "The metadata URI already exist in the repository. "
                 + "Please try with different ID");
+        if (metadata.getIdentifier() == null) {
+            LOGGER.info("Metadata ID is null or empty, this feild value will "
+                    + "be generated automatically");
+            Identifier id = new Identifier();
+            id.setUri(valueFactory.createIRI(metadata.getUri().stringValue() + 
+                    "/metadataID"));
+            UUID uid = UUID.randomUUID(); 
+            id.setIdentifier(valueFactory.createLiteral(uid.toString(), 
+                    XMLSchema.STRING));
+            id.setType(DATACITE.RESOURCEIDENTIFIER);
+            metadata.setIdentifier(id);
+        }
         try {
             if (metadata instanceof FDPMetadata) {
                 if (metadata.getIssued() == null) {
