@@ -205,6 +205,20 @@ public class FairMetaDataServiceImplTest {
     public void retrieveFDPMetaData() throws FairMetadataServiceException {
         assertNotNull(fairMetaDataService.retrieveFDPMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.FDP_URI)));
+    }     
+    
+    /**
+     * Test existence of FDP metadata specs link
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    public void existenceFDPMetaDataSpecsLink() throws 
+            FairMetadataServiceException, MetadataException {
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+        assertNotNull(metadata.getSpecification());
     }
 
     /**
@@ -264,6 +278,20 @@ public class FairMetaDataServiceImplTest {
     public void retrieveCatalogMetaData() throws FairMetadataServiceException {
         assertNotNull(fairMetaDataService.retrieveCatalogMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI)));
+    }
+    
+    /**
+     * Test existence of catalog metadata specs link
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    public void existenceCatalogMetaDataSpecsLink() throws 
+            FairMetadataServiceException, MetadataException {
+        CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+        assertNotNull(metadata.getSpecification());
     }
 
     /**
@@ -325,6 +353,20 @@ public class FairMetaDataServiceImplTest {
         assertNotNull(fairMetaDataService.retrieveDatasetMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.DATASET_URI)));
     }
+    
+    /**
+     * Test existence of dataset metadata specs link
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    public void existenceDatasetMetaDataSpecsLink() throws 
+            FairMetadataServiceException, MetadataException {
+        DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+        assertNotNull(metadata.getSpecification());
+    }
 
     /**
      * Test to store dataset distribution, this test is excepted to throw error
@@ -385,6 +427,21 @@ public class FairMetaDataServiceImplTest {
             FairMetadataServiceException {
         assertNotNull(fairMetaDataService.retrieveDistributionMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.DISTRIBUTION_URI)));
+    }
+    
+    /**
+     * Test existence of distribution metadata specs link
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    public void existenceDistributionMetaDataSpecsLink() throws 
+            FairMetadataServiceException, MetadataException {
+        DistributionMetadata metadata = fairMetaDataService.
+                retrieveDistributionMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.DISTRIBUTION_URI));
+        assertNotNull(metadata.getSpecification());
     }
 
 }
