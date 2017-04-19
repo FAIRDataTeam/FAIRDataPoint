@@ -199,10 +199,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.info("Metadata ID is null or empty, this feild value will "
                     + "be generated automatically");
             Identifier id = new Identifier();
-            id.setUri(valueFactory.createIRI(metadata.getUri().stringValue() + 
-                    "/metadataID"));
-            UUID uid = UUID.randomUUID(); 
-            id.setIdentifier(valueFactory.createLiteral(uid.toString(), 
+            id.setUri(valueFactory.createIRI(metadata.getUri().stringValue()
+                    + "/metadataID"));
+            UUID uid = UUID.randomUUID();
+            id.setIdentifier(valueFactory.createLiteral(uid.toString(),
                     XMLSchema.STRING));
             id.setType(DATACITE.RESOURCEIDENTIFIER);
             metadata.setIdentifier(id);
@@ -211,6 +211,19 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             if (metadata instanceof FDPMetadata) {
                 if (metadata.getIssued() == null) {
                     metadata.setIssued(RDFUtils.getCurrentTime());
+                    if (((FDPMetadata) metadata).getRepostoryIdentifier() == 
+                            null) {
+                        LOGGER.info("Repository ID is null or empty, this feild"
+                                + " value will be generated automatically");
+                        Identifier id = new Identifier();
+                        id.setUri(valueFactory.createIRI(metadata.getUri().
+                                stringValue() + "/repositoryID"));
+                        UUID uid = UUID.randomUUID();
+                        id.setIdentifier(valueFactory.createLiteral(
+                                uid.toString(), XMLSchema.STRING));
+                        id.setType(DATACITE.IDENTIFIER);
+                        metadata.setIdentifier(id);
+                    }
                 }
             } else {
                 metadata.setIssued(RDFUtils.getCurrentTime());
