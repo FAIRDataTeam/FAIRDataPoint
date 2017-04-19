@@ -10,6 +10,7 @@
 	dct:description "The DTL FAIR Data Point hosts the FAIR Data versions of datasets that have been made FAIR during BYODs as well as other relevant life sciences datasets"@en ;
 	dct:title "DTL FAIR Data Point"@en ;
 	dct:hasVersion "1.0" ;
+        dct:conformsTo <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
 	dct:publisher <http://dtls.nl> ;
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/fdp-metadataID> ;
 	<http://www.re3data.org/schema/3-0#repositoryIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/fdp-repositoryID> ;

@@ -10,6 +10,7 @@
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gda-lumc-sparql/gda-lumc-sparql-metadataID> ;
 	dct:issued "2016-05-27T10:16:21+00:00"^^xsd:dateTime ;
 	dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> ;
+        dct:conformsTo <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
 	dct:modified "2016-05-27T10:16:21+00:00"^^xsd:dateTime ;
 	dct:title "GDA lumc SPARQL endpoint"@en ;
 	a dcat:Distribution ;
