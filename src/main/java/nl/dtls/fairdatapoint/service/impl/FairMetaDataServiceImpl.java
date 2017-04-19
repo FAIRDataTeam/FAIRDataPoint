@@ -47,7 +47,6 @@ import nl.dtl.fairmetadata4j.model.Metadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtl.fairmetadata4j.utils.RDFUtils;
-import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
@@ -68,7 +67,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service layer for manipulating fair metadata
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-12-17
@@ -81,6 +80,16 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             = LogManager.getLogger(FairMetaDataServiceImpl.class);
     @Autowired
     private StoreManager storeManager;
+
+    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.root:nil}")
+    private String fdpSpecs;
+    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.catalog:nil}")
+    private String catalogSpecs;
+    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.dataset:nil}")
+    private String datasetSpecs;
+    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.distribution:nil}")
+    private String distributionSpecs;
+    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     @Override
     public FDPMetadata retrieveFDPMetaData(@Nonnull IRI uri) throws
@@ -125,6 +134,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public void storeFDPMetaData(@Nonnull FDPMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
+        if (!fdpSpecs.isEmpty() && !fdpSpecs.contains("nil")) {
+            metadata.setSpecification(valueFactory.createIRI(fdpSpecs));
+        }
         storeMetadata(metadata);
     }
 
@@ -136,7 +148,11 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 + "in the post body rdf");
 //        Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
 //                "The fdp URI doesn't exist in the repository. "
-//                + "Please try with valid fdp URI");
+//                + "Please try with valid fdp URI");        
+        if (!catalogSpecs.isEmpty()
+                && !catalogSpecs.contains("nil")) {
+            metadata.setSpecification(valueFactory.createIRI(catalogSpecs));
+        }
         storeMetadata(metadata);
     }
 
@@ -149,12 +165,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The catalogy URI doesn't exist in the repository. "
                 + "Please try with valid catalogy URI");
+        if (!datasetSpecs.isEmpty()
+                && !datasetSpecs.contains("nil")) {
+            metadata.setSpecification(valueFactory.createIRI(datasetSpecs));
+        }
         storeMetadata(metadata);
     }
 
     @Override
-    public void storeDistributionMetaData(@Nonnull DistributionMetadata 
-            metadata)
+    public void storeDistributionMetaData(@Nonnull DistributionMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No dataset URI is provied. Include dcterms:isPartOf statement "
@@ -181,7 +200,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 metadata.setIssued(RDFUtils.getCurrentTime());
             }
             metadata.setModified(RDFUtils.getCurrentTime());
-            storeManager.storeStatements(MetadataUtils.getStatements(metadata), 
+            storeManager.storeStatements(MetadataUtils.getStatements(metadata),
                     metadata.getUri());
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
@@ -196,8 +215,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      * @param <T>
      * @param metadata Subtype of Metadata object
      */
-    private <T extends Metadata> void updateParentResource(@Nonnull T metadata) 
-    {
+    private <T extends Metadata> void updateParentResource(@Nonnull T metadata) {
         Preconditions.checkNotNull(metadata,
                 "Metadata object must not be null.");
         try {

@@ -1,9 +1,14 @@
 # valid store type options { 1 = http SPARQLRepository, 2 = NativeStore, 3 = inMemoryStore}
 store:
-    type: 1
+    type: 3
     url: http://136.243.4.200:8892/repositories/test
     username: test
     password: tester
     dir: /tmp/fdp-store/
 urlPath:
     root: /fdp
+metadataSpecs:
+    root: http://rdf.biosemantics.org/fdp/shex/fdpMetadata
+    catalog: http://rdf.biosemantics.org/fdp/shex/catalogMetadata
+    dataset: http://rdf.biosemantics.org/fdp/shex/datasetMetadata
+    distribution: http://rdf.biosemantics.org/fdp/shex/distributionMetadata    
