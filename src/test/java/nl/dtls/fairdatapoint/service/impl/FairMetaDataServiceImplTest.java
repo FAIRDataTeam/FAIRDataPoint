@@ -133,7 +133,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
         } catch (Exception ex) {
-            fail("This test is excepted to throw any error");
+            fail("This test is not excepted to throw any error");
         } 
     }
 
@@ -148,7 +148,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
         } catch (Exception ex) {
-            fail("This test is excepted to throw any error");
+            fail("This test is not excepted to throw any error");
         }
     }
 
@@ -252,6 +252,22 @@ public class FairMetaDataServiceImplTest {
             fail("This test is not expected to throw an errors");
         }
     }
+    
+    /**
+     * Test to store catalog metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeCatalogMetaDataWithNoID() {
+        CatalogMetadata metadata = ExampleFilesUtils.
+                    getCatalogMetadata(TEST_CATALOG_URI,
+                            ExampleFilesUtils.FDP_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeCatalogMetaData(metadata);
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
+    }
 
     /**
      * Test to retrieve NonExiting catalog metadata, this test is excepted to
@@ -326,6 +342,22 @@ public class FairMetaDataServiceImplTest {
             fail("This test is not expected to throw an errors");
         }
     }
+    
+    /**
+     * Test to store dataset metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeDatsetMetaDataWithNoID() {
+        DatasetMetadata metadata = ExampleFilesUtils.
+                    getDatasetMetadata(TEST_DATASET_URI,
+                            ExampleFilesUtils.CATALOG_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeDatasetMetaData(metadata);
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
+    }
 
     /**
      * Test to retrieve NonExiting dataset metadata, this test is excepted to
@@ -399,6 +431,22 @@ public class FairMetaDataServiceImplTest {
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
         }
+    }
+    
+    /**
+     * Test to store distribution metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeDistributionMetaDataWithNoID() {
+        DistributionMetadata metadata = ExampleFilesUtils.
+                    getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                            ExampleFilesUtils.DATASET_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeDistributionMetaData(metadata);
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
     }
 
     /**
