@@ -483,13 +483,7 @@ public class MetadataController {
             metadata.setSwaggerDoc(valueFactory.createIRI(
                     fdpUrl + "/swagger-ui.html"));
             metadata.setInstitutionCountry(valueFactory.createIRI(
-                    "http://lexvo.org/id/iso3166/NL"));
-            Identifier id = new Identifier();
-            id.setUri(valueFactory.createIRI(fdpUrl + "/metadataID"));
-            id.setIdentifier(valueFactory.createLiteral("fdp-metadataID",
-                    XMLSchema.STRING));
-            id.setType(DATACITE.RESOURCEIDENTIFIER);
-            metadata.setIdentifier(id);
+                    "http://lexvo.org/id/iso3166/NL"));   
             Agent publisher = new Agent();
             publisher.setUri(valueFactory.createIRI("http://dtls.nl"));
             publisher.setType(FOAF.ORGANIZATION);
@@ -497,12 +491,6 @@ public class MetadataController {
                     XMLSchema.STRING));
             metadata.setPublisher(publisher);
             metadata.setInstitution(publisher);
-            Identifier repoId = new Identifier();
-            repoId.setUri(valueFactory.createIRI(fdpUrl + "/repoID"));
-            repoId.setIdentifier(valueFactory.createLiteral("fdp-repoID",
-                    XMLSchema.STRING));
-            repoId.setType(DATACITE.RESOURCEIDENTIFIER);
-            metadata.setRepostoryIdentifier(repoId);
             fairMetaDataService.storeFDPMetaData(metadata);
         } catch (MalformedURLException | MetadataException
                 | FairMetadataServiceException ex) {
