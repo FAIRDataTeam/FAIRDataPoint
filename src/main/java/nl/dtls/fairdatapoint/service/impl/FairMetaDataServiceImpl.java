@@ -200,7 +200,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                     + "be generated automatically");
             Identifier id = new Identifier();
             id.setUri(valueFactory.createIRI(metadata.getUri().stringValue()
-                    + "/metadataID"));
+                    + "#metadataID"));
             UUID uid = UUID.randomUUID();
             id.setIdentifier(valueFactory.createLiteral(uid.toString(),
                     XMLSchema.STRING));
@@ -217,7 +217,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                                 + " value will be generated automatically");
                         Identifier id = new Identifier();
                         id.setUri(valueFactory.createIRI(metadata.getUri().
-                                stringValue() + "/repositoryID"));
+                                stringValue() + "#repositoryID"));
                         UUID uid = UUID.randomUUID();
                         id.setIdentifier(valueFactory.createLiteral(
                                 uid.toString(), XMLSchema.STRING));
