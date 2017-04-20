@@ -222,7 +222,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         id.setIdentifier(valueFactory.createLiteral(
                                 uid.toString(), XMLSchema.STRING));
                         id.setType(DATACITE.IDENTIFIER);
-                        metadata.setIdentifier(id);
+                        ((FDPMetadata) metadata).setRepostoryIdentifier(id);
                     }
                 }
             } else {
