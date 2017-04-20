@@ -121,38 +121,6 @@ public class FairMetaDataServiceImplTest {
     }
 
     /**
-     * Test to store FDP metadata, this test is excepted to throw error
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test(expected = MetadataException.class)
-    public void storeFDPMetaDataWithNoID() throws FairMetadataServiceException,
-            MetadataException {
-        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI);
-        metadata.setIdentifier(null);
-        fairMetaDataService.storeFDPMetaData(metadata);
-    }
-
-    /**
-     * Test to store FDP metadata, this test is excepted to throw error
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test(expected = MetadataException.class)
-    public void storeFDPMetaDataWithNoRepoID() throws 
-            FairMetadataServiceException, MetadataException {
-        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI);
-        metadata.setRepostoryIdentifier(null);
-        fairMetaDataService.storeFDPMetaData(metadata);
-    }
-
-    /**
      * Test to store FDP metadata, this test is excepted to pass
      */
     @DirtiesContext
@@ -163,6 +131,44 @@ public class FairMetaDataServiceImplTest {
                     ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI));
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
+        }
+    }
+    
+    
+
+    /**
+     * Test to store FDP metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeFDPMetaDataWithNoID() {
+        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
+                TEST_FDP_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeFDPMetaData(metadata);
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            assertNotNull(mdata.getIdentifier());
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
+    }
+
+    /**
+     * Test to store FDP metadata without repo ID
+     */
+    @DirtiesContext
+    public void storeFDPMetaDataWithNoRepoID() {
+        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
+                TEST_FDP_URI);
+        metadata.setRepostoryIdentifier(null);
+        try {
+            fairMetaDataService.storeFDPMetaData(metadata);
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            assertNotNull(mdata.getRepostoryIdentifier());
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
         }
     }
 
@@ -252,6 +258,25 @@ public class FairMetaDataServiceImplTest {
             fail("This test is not expected to throw an errors");
         }
     }
+    
+    /**
+     * Test to store catalog metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeCatalogMetaDataWithNoID() {
+        CatalogMetadata metadata = ExampleFilesUtils.
+                    getCatalogMetadata(TEST_CATALOG_URI,
+                            ExampleFilesUtils.FDP_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeCatalogMetaData(metadata);
+            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            assertNotNull(mdata.getIdentifier());
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
+    }
 
     /**
      * Test to retrieve NonExiting catalog metadata, this test is excepted to
@@ -326,6 +351,25 @@ public class FairMetaDataServiceImplTest {
             fail("This test is not expected to throw an errors");
         }
     }
+    
+    /**
+     * Test to store dataset metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeDatsetMetaDataWithNoID() {
+        DatasetMetadata metadata = ExampleFilesUtils.
+                    getDatasetMetadata(TEST_DATASET_URI,
+                            ExampleFilesUtils.CATALOG_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeDatasetMetaData(metadata);
+            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            assertNotNull(mdata.getIdentifier());
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
+    }
 
     /**
      * Test to retrieve NonExiting dataset metadata, this test is excepted to
@@ -399,6 +443,26 @@ public class FairMetaDataServiceImplTest {
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
         }
+    }
+    
+    /**
+     * Test to store distribution metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeDistributionMetaDataWithNoID() {
+        DistributionMetadata metadata = ExampleFilesUtils.
+                    getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                            ExampleFilesUtils.DATASET_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeDistributionMetaData(metadata);
+            DistributionMetadata mdata = fairMetaDataService.
+                    retrieveDistributionMetaData(valueFactory.createIRI(
+                            ExampleFilesUtils.DISTRIBUTION_URI));
+            assertNotNull(mdata.getIdentifier());
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
     }
 
     /**
