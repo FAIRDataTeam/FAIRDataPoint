@@ -28,7 +28,6 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.net.MalformedURLException;
-import java.util.logging.Level;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
@@ -47,7 +46,6 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +121,22 @@ public class FairMetaDataServiceImplTest {
     }
 
     /**
+     * Test to store FDP metadata, this test is excepted to pass
+     */
+    @DirtiesContext
+    @Test
+    public void storeFDPMetaData() {
+        try {
+            fairMetaDataService.storeFDPMetaData(
+                    ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI));
+        } catch (FairMetadataServiceException | MetadataException ex) {
+            fail("This test is not expected to throw an errors");
+        }
+    }
+    
+    
+
+    /**
      * Test to store FDP metadata without metadata ID
      */
     @DirtiesContext
@@ -132,6 +146,9 @@ public class FairMetaDataServiceImplTest {
         metadata.setIdentifier(null);
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
         } 
@@ -147,22 +164,11 @@ public class FairMetaDataServiceImplTest {
         metadata.setRepostoryIdentifier(null);
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            assertNotNull(mdata.getRepostoryIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
-        }
-    }
-
-    /**
-     * Test to store FDP metadata, this test is excepted to pass
-     */
-    @DirtiesContext
-    @Test
-    public void storeFDPMetaData() {
-        try {
-            fairMetaDataService.storeFDPMetaData(
-                    ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI));
-        } catch (FairMetadataServiceException | MetadataException ex) {
-            fail("This test is not expected to throw an errors");
         }
     }
 
@@ -264,6 +270,9 @@ public class FairMetaDataServiceImplTest {
         metadata.setIdentifier(null);
         try {
             fairMetaDataService.storeCatalogMetaData(metadata);
+            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
         } 
@@ -354,6 +363,9 @@ public class FairMetaDataServiceImplTest {
         metadata.setIdentifier(null);
         try {
             fairMetaDataService.storeDatasetMetaData(metadata);
+            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
         } 
@@ -444,6 +456,10 @@ public class FairMetaDataServiceImplTest {
         metadata.setIdentifier(null);
         try {
             fairMetaDataService.storeDistributionMetaData(metadata);
+            DistributionMetadata mdata = fairMetaDataService.
+                    retrieveDistributionMetaData(valueFactory.createIRI(
+                            ExampleFilesUtils.DISTRIBUTION_URI));
+            assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
         } 
