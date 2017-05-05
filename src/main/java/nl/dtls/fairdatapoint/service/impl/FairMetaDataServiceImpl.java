@@ -27,8 +27,6 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
-import static nl.dtl.fairmetadata4j.utils.MetadataUtils.FDP_METADATAIDENTIFIER;
-
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +48,7 @@ import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtl.fairmetadata4j.utils.RDFUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
+import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
@@ -315,7 +314,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         for (Statement st : statements) {
             IRI predicate = st.getPredicate();
             Value object = st.getObject();
-            if (predicate.equals(FDP_METADATAIDENTIFIER)) {
+            if (predicate.equals(FDP.METADATAIDENTIFIER)) {
                 otherResources.addAll(storeManager.retrieveResource(
                         (IRI) object));
             } else if (predicate.equals(R3D.INSTITUTION)) {
