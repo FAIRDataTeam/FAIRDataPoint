@@ -457,15 +457,15 @@ public class MetadataController {
             URL requestedURL = new URL(url);            
             String host = request.getHeader("x-forwarded-host");
             String proto = request.getHeader("x-forwarded-proto");
-            if(host != null && !host.isEmpty()){
+            if(host != null && !host.isEmpty()){                
                 url = url.replace(requestedURL.getHost(), host);
             }
             if(proto != null && !proto.isEmpty()){
                 url = url.replace(requestedURL.getProtocol(), proto);
             }
-        } catch (MalformedURLException ex) {
-             LOGGER.error("Error creating url  ", ex.getMessage());
-             return null;
+        } catch (MalformedURLException ex) {             
+            LOGGER.error("Error creating url  ", ex.getMessage());             
+            return null;
         }
         return url;
     }
