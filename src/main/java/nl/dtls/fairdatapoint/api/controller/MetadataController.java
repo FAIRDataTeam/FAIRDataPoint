@@ -450,6 +450,8 @@ public class MetadataController {
      */
     private String getRequesedURL(HttpServletRequest request) {
         String url = request.getRequestURL().toString();
+        LOGGER.debug("Original requesed url" + url);
+        LOGGER.info("Original requesed url" + url);
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
         }        
@@ -457,16 +459,32 @@ public class MetadataController {
             URL requestedURL = new URL(url);            
             String host = request.getHeader("x-forwarded-host");
             String proto = request.getHeader("x-forwarded-proto");
+            String port = request.getHeader("x-forwarded-port");
             if(host != null && !host.isEmpty()){                
                 url = url.replace(requestedURL.getHost(), host);
             }
             if(proto != null && !proto.isEmpty()){
                 url = url.replace(requestedURL.getProtocol(), proto);
             }
+            switch (port != null ? port : "null"){                    
+                case "443":
+                    url = url.replace(String.valueOf(
+                            requestedURL.getPort()), "");
+                    break;
+                case "80":
+                    url = url.replace(String.valueOf(
+                            requestedURL.getPort()), "");
+                    break;
+                case "null":
+                    break;
+            }           
+           
         } catch (MalformedURLException ex) {             
             LOGGER.error("Error creating url  ", ex.getMessage());             
             return null;
         }
+        LOGGER.debug("Modified requesed url" + url);
+        LOGGER.info("Modified requesed url" + url);
         return url;
     }
 
