@@ -476,6 +476,8 @@ public class MetadataController {
                     break;
                 case "null":
                     break;
+                default:
+                    break;
             }           
            
         } catch (MalformedURLException ex) {             
