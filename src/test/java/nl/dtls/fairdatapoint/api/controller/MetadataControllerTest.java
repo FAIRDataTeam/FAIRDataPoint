@@ -571,5 +571,35 @@ public class MetadataControllerTest {
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
+    
+    /**
+     * Test url reretouring option for catalog.
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void storeCatalogByURLReretouring() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        String metadata = ExampleFilesUtils.getFileContentAsString(
+                ExampleFilesUtils.CATALOG_METADATA_FILE);
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.addHeader("x-forwarded-host", 
+                "lorentz.fair-dtls.surf-hosted.nl");
+        request.addHeader("x-forwarded-proto", "https");
+        request.setContent(metadata.getBytes());
+        request.addParameter("id", "cat1");
+        request.setRequestURI("/fdp/catalog");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        String exceptedUrl = 
+                "https://lorentz.fair-dtls.surf-hosted.nl/fdp/catalog/cat1";
+        String actualUrl = response.getHeader(
+                org.springframework.http.HttpHeaders.LOCATION);
+        assertEquals(exceptedUrl, actualUrl);
+    }
 
 }

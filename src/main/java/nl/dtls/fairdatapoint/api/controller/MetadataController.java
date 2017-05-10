@@ -452,6 +452,20 @@ public class MetadataController {
         String url = request.getRequestURL().toString();
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
+        }        
+        try {
+            URL requestedURL = new URL(url);            
+            String host = request.getHeader("x-forwarded-host");
+            String proto = request.getHeader("x-forwarded-proto");
+            if(host != null && !host.isEmpty()){
+                url = url.replace(requestedURL.getHost(), host);
+            }
+            if(proto != null && !proto.isEmpty()){
+                url = url.replace(requestedURL.getProtocol(), proto);
+            }
+        } catch (MalformedURLException ex) {
+             LOGGER.error("Error creating url  ", ex.getMessage());
+             return null;
         }
         return url;
     }
