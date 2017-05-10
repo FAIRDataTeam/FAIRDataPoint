@@ -450,8 +450,7 @@ public class MetadataController {
      */
     private String getRequesedURL(HttpServletRequest request) {
         String url = request.getRequestURL().toString();
-        LOGGER.debug("Original requesed url" + url);
-        LOGGER.info("Original requesed url" + url);
+        LOGGER.info("Original requesed url " + url);
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
         }        
@@ -483,8 +482,7 @@ public class MetadataController {
             LOGGER.error("Error creating url  ", ex.getMessage());             
             return null;
         }
-        LOGGER.debug("Modified requesed url" + url);
-        LOGGER.info("Modified requesed url" + url);
+        LOGGER.info("Modified requesed url " + url);
         return url;
     }
 
