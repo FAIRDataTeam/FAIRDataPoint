@@ -42,6 +42,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -590,6 +591,7 @@ public class MetadataControllerTest {
         request.addHeader("x-forwarded-host", 
                 "lorentz.fair-dtls.surf-hosted.nl");
         request.addHeader("x-forwarded-proto", "https");
+        request.addHeader("x-forwarded-port", "443");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
         request.setRequestURI("/fdp/catalog");
@@ -597,6 +599,39 @@ public class MetadataControllerTest {
         handlerAdapter.handle(request, response, handler);
         String exceptedUrl = 
                 "https://lorentz.fair-dtls.surf-hosted.nl/fdp/catalog/cat1";
+        String actualUrl = response.getHeader(
+                org.springframework.http.HttpHeaders.LOCATION);
+        assertEquals(exceptedUrl, actualUrl);
+    }
+    
+    /**
+     * Test url reretouring with ports
+     *
+     * @throws Exception
+     */
+    @Ignore
+    @DirtiesContext
+    @Test
+    public void storeCatalogByURLReretouringWithPort() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        String metadata = ExampleFilesUtils.getFileContentAsString(
+                ExampleFilesUtils.CATALOG_METADATA_FILE);
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.addHeader("x-forwarded-host", 
+                "lorentz.fair-dtls.surf-hosted.nl");
+        request.addHeader("x-forwarded-proto", "https");
+        request.addHeader("x-forwarded-port", "8006");
+        request.setContent(metadata.getBytes());
+        request.addParameter("id", "cat1");
+        request.setRequestURI("/fdp/catalog");        
+        request.setLocalPort(8080);
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        String exceptedUrl = 
+                "https://lorentz.fair-dtls.surf-hosted.nl:8806/fdp/catalog/cat1";
         String actualUrl = response.getHeader(
                 org.springframework.http.HttpHeaders.LOCATION);
         assertEquals(exceptedUrl, actualUrl);
