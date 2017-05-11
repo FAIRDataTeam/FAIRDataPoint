@@ -465,20 +465,21 @@ public class MetadataController {
             if(proto != null && !proto.isEmpty()){
                 url = url.replace(requestedURL.getProtocol(), proto);
             }
-            switch (port != null ? port : "null"){                    
-                case "443":
-                    url = url.replace(String.valueOf(
-                            requestedURL.getPort()), "");
-                    break;
-                case "80":
-                    url = url.replace(String.valueOf(
-                            requestedURL.getPort()), "");
-                    break;
-                case "null":
-                    break;
-                default:
-                    break;
-            }           
+            
+            if(port != null){                
+                String val = String.valueOf(requestedURL.getPort() + ":");
+                switch (port){ 
+                    case "443":                    
+                        url = url.replace(val, "");                    
+                        break;
+                    case "80":
+                        url = url.replace(val, "");
+                        break;
+                    default:
+                        break;            
+                }
+            }
+                       
            
         } catch (MalformedURLException ex) {             
             LOGGER.error("Error creating url  ", ex.getMessage());             
