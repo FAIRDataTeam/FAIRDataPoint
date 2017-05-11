@@ -464,10 +464,10 @@ public class MetadataController {
             }
             if(proto != null && !proto.isEmpty()){
                 url = url.replace(requestedURL.getProtocol(), proto);
-            }
-            
-            if(port != null){                
-                String val = String.valueOf(requestedURL.getPort() + ":");
+            }            
+            if(port != null && requestedURL.getPort() != -1){                
+                String val = (":" + String.valueOf(requestedURL.getPort()));
+                LOGGER.info("x-forwarded-port" + port);
                 switch (port){ 
                     case "443":                    
                         url = url.replace(val, "");                    
@@ -479,8 +479,6 @@ public class MetadataController {
                         break;            
                 }
             }
-                       
-           
         } catch (MalformedURLException ex) {             
             LOGGER.error("Error creating url  ", ex.getMessage());             
             return null;
