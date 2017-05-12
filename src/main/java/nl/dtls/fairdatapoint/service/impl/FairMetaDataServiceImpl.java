@@ -265,7 +265,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                     DCTERMS.MODIFIED, null);
             stmts.add(f.createStatement(metadata.getParentURI(),
                     DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
-            storeManager.storeStatements(stmts);
+            storeManager.storeStatements(stmts, metadata.getParentURI());
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error updating parent resource :" + ex.getMessage());
         }

@@ -467,7 +467,7 @@ public class MetadataController {
             }            
             if(port != null && requestedURL.getPort() != -1){                
                 String val = (":" + String.valueOf(requestedURL.getPort()));
-                LOGGER.info("x-forwarded-port" + port);
+                LOGGER.info("x-forwarded-port " + port);
                 switch (port){ 
                     case "443":                    
                         url = url.replace(val, "");                    
