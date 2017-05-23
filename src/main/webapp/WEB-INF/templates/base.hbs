@@ -20,6 +20,27 @@
             {{{jsonLd}}}
         </script>
         {{/if}}
+
+        <style>
+            /* Sticky footer styles
+            -------------------------------------------------- */
+            html {
+              position: relative;
+              min-height: 100%;
+            }
+            body {
+              /* Margin bottom by footer height */
+              margin-bottom: 60px;
+            }
+            .footer {
+              position: absolute;
+              bottom: 0;
+              width: 100%;
+              /* Set the fixed height of the footer here */
+              height: 60px;
+              background-color: #f5f5f5;
+            }
+        </style>
     </head>
     <body>
         <div class="panel panel-default">
@@ -71,6 +92,13 @@
                 {{/if}}
                 {{#block "content"}}
                 {{/block}}
-        </div>        
+            </div>  
+        </div> 
+        <footer class="footer">
+            <div class="container">
+                <a href="https://www.dtls.nl/" target="_blank"><img class="pull-left" src="https://bioit.fair-dtls.surf-hosted.nl/dtllogo.png" width="135" height="45"></a>
+                <a href="https://www.dtls.nl/go-fair/" target="_blank"><img class="pull-right" src="https://bioit.fair-dtls.surf-hosted.nl/gofairlogo.png" width="210" height="40"></a>
+            </div>
+        </footer>
     </body>
 </html>
