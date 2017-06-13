@@ -291,6 +291,86 @@ public class MetadataControllerTest {
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
+    
+    /**
+     * Check file extension for repostory layer
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getContentWithFileExtRepo() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        request.setMethod("GET");
+
+        request.setRequestURI(TEST_FDP_PATH + ".ttl");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals("text/turtle", response.getContentType());
+    }
+    
+    /**
+     * Check file extension for catalog layer
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getContentWithFileExtCatlog() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        request.setMethod("GET");
+
+        request.setRequestURI(TEST_CATALOG_PATH + ".rdf");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals("application/rdf+xml", response.getContentType());
+    }
+    
+    /**
+     * Check file extension for dataset layer
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getContentWithFileExtDataset() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        request.setMethod("GET");
+
+        request.setRequestURI(TEST_DATASET_PATH + ".ttl");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals("text/turtle", response.getContentType());
+    }
+    
+    /**
+     * Check file extension for repostory layer
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getContentWithFileExtDistribution() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        request.setMethod("GET");
+
+        request.setRequestURI(TEST_DISTRIBUTION_PATH + ".ttl");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals("text/turtle", response.getContentType());
+    }
 
     /**
      * Store catalog.
