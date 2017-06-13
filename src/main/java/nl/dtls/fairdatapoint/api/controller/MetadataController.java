@@ -56,7 +56,8 @@ import org.springframework.web.servlet.ModelAndView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
-import java.util.logging.Level;
+import java.util.List;
+import java.util.stream.Collectors;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtl.fairmetadata4j.model.Agent;
@@ -64,13 +65,12 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.model.Identifier;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFWriterRegistry;
 import org.springframework.http.HttpHeaders;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -453,7 +453,20 @@ public class MetadataController {
         LOGGER.info("Original requesed url " + url);
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
-        }        
+        }      
+        List<String> rdfExt =  RDFWriterRegistry.getInstance()
+                .getKeys().stream()
+                    .map(RDFFormat::getDefaultFileExtension)
+                    .collect(Collectors.toList());
+        
+        for (String ext : rdfExt) {
+            ext = "." + ext;
+            if(url.contains(ext)) {
+                LOGGER.info("Found RDF extension in url : " + ext);
+                url = url.replace(ext, "");
+                break;
+            }            
+        }
         try {
             URL requestedURL = new URL(url);            
             String host = request.getHeader("x-forwarded-host");
