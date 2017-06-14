@@ -120,7 +120,7 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         if (!isFDPMetaDataAvailable(uri)) {
-            storeDefaultFDPMetadata(request);
+            storeDefaultFDPMetadata(uri);
         }
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
                 valueFactory.createIRI(uri));
@@ -157,7 +157,7 @@ public class MetadataController {
         LOGGER.info("GET : " + request.getRequestURL());
         String uri = getRequesedURL(request);
         if (!isFDPMetaDataAvailable(uri)) {
-            storeDefaultFDPMetadata(request);
+            storeDefaultFDPMetadata(uri);
         }
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
                 valueFactory.createIRI(uri));
@@ -326,10 +326,10 @@ public class MetadataController {
             HttpServletResponse response,
             @RequestBody(required = true) FDPMetadata metadata) throws
             FairMetadataServiceException, MetadataException {
-        if (!isFDPMetaDataAvailable(getRequesedURL(request))) {
-            storeDefaultFDPMetadata(request);
-        }
         String uri = getRequesedURL(request);
+        if (!isFDPMetaDataAvailable(uri)) {
+            storeDefaultFDPMetadata(uri);
+        }
         fairMetaDataService.updateFDPMetaData(valueFactory.createIRI(uri),
                 metadata);
         return "Metadata is updated";
@@ -360,7 +360,7 @@ public class MetadataController {
         String requestedURL = getRequesedURL(request);
         String fURI = requestedURL.replace("/catalog", "");
         if (!isFDPMetaDataAvailable(fURI)) {
-            storeDefaultFDPMetadata(request);
+            storeDefaultFDPMetadata(fURI);
         }
         IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
@@ -506,11 +506,10 @@ public class MetadataController {
      * @param request HttpServletRequest
      * @throws MetadataParserException
      */
-    private void storeDefaultFDPMetadata(HttpServletRequest request)
+    private void storeDefaultFDPMetadata(String fdpUrl)
             throws MetadataParserException {
         LOGGER.info("Creating generic FDP metadata");
         try {
-            String fdpUrl = getRequesedURL(request);
             String host = new URL(fdpUrl).getAuthority();
             FDPMetadata metadata = new FDPMetadata();
             metadata.setUri(valueFactory.createIRI(fdpUrl));
