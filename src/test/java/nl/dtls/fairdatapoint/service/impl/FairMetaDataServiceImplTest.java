@@ -336,6 +336,20 @@ public class FairMetaDataServiceImplTest {
         metadata.setParentURI(null);
         fairMetaDataService.storeDatasetMetaData(metadata);
     }
+    
+    /**
+     * Test to store dataset metadata with wrong parent uri
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test(expected = IllegalStateException.class)
+    public void storeDatasetMetaDataWrongParentUri() throws
+            FairMetadataServiceException, MetadataException {
+        fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
+                getDatasetMetadata(TEST_DATASET_URI,
+                        ExampleFilesUtils.FDP_URI));
+    }
 
     /**
      * Test to store dataset metadata, this test is excepted to pass
@@ -429,9 +443,22 @@ public class FairMetaDataServiceImplTest {
         metadata.setParentURI(null);
         fairMetaDataService.storeDistributionMetaData(metadata);
     }
-
+    
     /**
-     * Test to store dataset distribution, this test is excepted to pass
+     * Test to store distribution, this test is excepted to pass
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test(expected = IllegalStateException.class)
+    public void storeDistributionMetaDataWrongParentURI() 
+            throws FairMetadataServiceException, MetadataException {
+        fairMetaDataService.storeDistributionMetaData(ExampleFilesUtils.
+                getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                        ExampleFilesUtils.CATALOG_URI));
+    }
+    /**
+     * Test to store distribution metadata with wrong parent uri
      */
     @DirtiesContext
     @Test
