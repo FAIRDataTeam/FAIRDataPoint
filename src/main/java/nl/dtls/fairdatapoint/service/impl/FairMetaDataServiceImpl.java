@@ -63,6 +63,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -156,7 +157,13 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 && !catalogSpecs.contains("nil")) {
             metadata.setSpecification(valueFactory.createIRI(catalogSpecs));
         }
-        storeMetadata(metadata);
+        if (doesParentResourceExists(metadata)) {
+            storeMetadata(metadata);
+        } else {
+            String msg = "The fdp URI provided is not of type re3:Repository "
+                + "Please try with valid fdp URI";
+            throw new IllegalStateException(msg);
+        } 
     }
 
     @Override
@@ -166,13 +173,19 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 "No catalog URI is provied. Include dcterms:isPartOf statement "
                 + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
-                "The catalogy URI doesn't exist in the repository. "
-                + "Please try with valid catalogy URI");
+                "The catalog URI doesn't exist in the repository. "
+                + "Please try with valid catalog URI");
         if (!datasetSpecs.isEmpty()
                 && !datasetSpecs.contains("nil")) {
             metadata.setSpecification(valueFactory.createIRI(datasetSpecs));
         }
-        storeMetadata(metadata);
+        if (doesParentResourceExists(metadata)) {
+            storeMetadata(metadata);
+        } else {
+            String msg = "The catalog URI provided is not of type dcat:Catalog "
+                + "Please try with valid catalog URI";
+            throw new IllegalStateException(msg);
+        } 
     }
 
     @Override
@@ -184,7 +197,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
                 + "Please try with valid dataset URI");
-        storeMetadata(metadata);
+        if (!distributionSpecs.isEmpty()
+                && !distributionSpecs.contains("nil")) {
+            metadata.setSpecification(valueFactory.createIRI(
+                    distributionSpecs));
+        }
+        if (doesParentResourceExists(metadata)) {
+            storeMetadata(metadata);
+        } else {
+            String msg = "The dataset URI provided is not of type dcat:Dataset "
+                + "Please try with valid dataset URI";
+            throw new IllegalStateException(msg);
+        }        
     }
 
     private <T extends Metadata> void storeMetadata(@Nonnull T metadata)
@@ -235,6 +259,33 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.error("Error storing distribution metadata");
             throw (new FairMetadataServiceException(ex.getMessage()));
         }
+    }
+    
+    /**
+     * Check if the parent resources exists
+     * 
+     * @param <T>
+     * @param metadata Subtype of Metadata object
+     */
+    private <T extends Metadata> boolean doesParentResourceExists(
+            @Nonnull T metadata) throws FairMetadataServiceException {
+        boolean doesParentResourceExists = false;
+        try {
+            if (metadata instanceof CatalogMetadata) {
+                doesParentResourceExists = storeManager.isStatementExist(
+                        metadata.getParentURI(), RDF.TYPE, R3D.REPOSITORY);
+            } else if (metadata instanceof DatasetMetadata) {
+                doesParentResourceExists = storeManager.isStatementExist(
+                        metadata.getParentURI(), RDF.TYPE, DCAT.CATALOG);
+            } else if (metadata instanceof DistributionMetadata) {
+                doesParentResourceExists = storeManager.isStatementExist(
+                        metadata.getParentURI(), RDF.TYPE, DCAT.DATASET);
+            }
+        } catch (StoreManagerException ex) {
+            LOGGER.error("Error checking existence of subject URI");
+            throw (new FairMetadataServiceException(ex.getMessage()));
+        }
+        return doesParentResourceExists;
     }
 
     /**
