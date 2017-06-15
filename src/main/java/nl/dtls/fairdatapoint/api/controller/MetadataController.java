@@ -364,12 +364,9 @@ public class MetadataController {
         }
         IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
-        if (metadata.getParentURI() == null) {
-            LOGGER.info("No fdp uri is provied in the post body. "
-                    + "Default fdp uri is used <%s>", fURI);
-            IRI fdpURI = valueFactory.createIRI(fURI);
-            metadata.setParentURI(fdpURI);
-        }
+        IRI fdpURI = valueFactory.createIRI(fURI);
+        // Set parent uri
+        metadata.setParentURI(fdpURI);
         // Ignore children links
         metadata.setDatasets(new ArrayList());
         fairMetaDataService.storeCatalogMetaData(metadata);
