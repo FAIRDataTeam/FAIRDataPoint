@@ -407,9 +407,7 @@ public class MetadataControllerTest {
     public void storeCatalogWithParentURI() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        String metadata = ExampleFilesUtils.getFileContentAsString(
-                ExampleFilesUtils.CATALOG_METADATA_FILE);
+        Object handler;        
         String parentURI = "http://localhost:8084/dummy/fdp";
         StringBuilder tripleStr =new StringBuilder();
         tripleStr.append("<> <");
@@ -417,7 +415,8 @@ public class MetadataControllerTest {
         tripleStr.append("> <");
         tripleStr.append(parentURI);
         tripleStr.append("> .");
-        metadata = metadata + tripleStr.toString();
+        String metadata = ExampleFilesUtils.getFileContentAsString(
+                ExampleFilesUtils.CATALOG_METADATA_FILE) + tripleStr.toString();
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
@@ -426,14 +425,14 @@ public class MetadataControllerTest {
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         
-        response = new MockHttpServletResponse();
-        request = new MockHttpServletRequest();
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/fdp/catalog/cat1");
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);     
-        assertFalse(response.getContentAsString().contains(parentURI));
+        MockHttpServletResponse responseGet = new MockHttpServletResponse();
+        MockHttpServletRequest requestGet = new MockHttpServletRequest();
+        requestGet.setMethod("GET");
+        requestGet.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+        requestGet.setRequestURI("/fdp/catalog/cat1");
+        handler = handlerMapping.getHandler(requestGet).getHandler();
+        handlerAdapter.handle(requestGet, responseGet, handler);     
+        assertFalse(responseGet.getContentAsString().contains(parentURI));
     }
 
     /**
