@@ -91,7 +91,21 @@
                 </div>    
                 {{/if}}
                 {{#block "content"}}
-                {{/block}}
+                {{/block}}                
+                {{#if metadata.uri}}
+                <div class="row">
+                    <h4>
+                        <div class="col-sm-1"><span class="label label-default">Download RDF</span></div>
+                        <div class="col-sm-7">
+                            <a target="_blank" href="{{metadata.uri}}.ttl">ttl</a>
+                            &nbsp;
+                            <a target="_blank" href="{{metadata.uri}}.rdf">rdf+xml</a>
+                            &nbsp;
+                            <a target="_blank" href="{{metadata.uri}}.jsonld">jsonld</a>
+                        </div>
+                    </h4>
+                </div>    
+                {{/if}}
             </div>  
         </div> 
         <footer class="footer">
