@@ -84,7 +84,7 @@ public interface FairMetaDataService {
      * @return DataRecordMetadata object
      * @throws FairMetadataServiceException 
      */
-    DataRecordMetadata retrieveDataRecordMetaData(IRI uri) 
+    DataRecordMetadata retrieveDataRecordMetadata(IRI uri) 
             throws FairMetadataServiceException;  
     
     /**

@@ -39,6 +39,7 @@ import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
 import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
@@ -91,6 +92,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private String catalogSpecs;
     @org.springframework.beans.factory.annotation.Value("${metadataSpecs.dataset:nil}")
     private String datasetSpecs;
+    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.datarecord:nil}")
+    private String datarecordSpecs;
     @org.springframework.beans.factory.annotation.Value("${metadataSpecs.distribution:nil}")
     private String distributionSpecs;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
@@ -122,6 +125,12 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 getDatasetParser();
         DatasetMetadata metadata = parser.parse(statements, uri);
         return metadata;
+    }   
+    
+
+    @Override
+    public DataRecordMetadata retrieveDataRecordMetadata(IRI uri) throws FairMetadataServiceException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -210,6 +219,30 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throw new IllegalStateException(msg);
         }        
     }
+    
+    @Override
+    public void storeDataRecordMetaData(DataRecordMetadata metadata) 
+            throws FairMetadataServiceException, MetadataException {
+        Preconditions.checkState(metadata.getParentURI() != null,
+                "No dataset URI is provied. Include dcterms:isPartOf statement "
+                + "in the post body rdf");
+        Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
+                "The dataset URI doesn't exist in the repository. "
+                + "Please try with valid dataset URI");
+        if (!datarecordSpecs.isEmpty()
+                && !datarecordSpecs.contains("nil")) {
+            metadata.setSpecification(valueFactory.createIRI(
+                    datarecordSpecs));
+        }
+        if (doesParentResourceExists(metadata)) {
+            storeMetadata(metadata);
+        } else {
+            String msg = "The dataset URI provided is not of type dcat:Dataset "
+                + "Please try with valid dataset URI";
+            throw new IllegalStateException(msg);
+        }
+        
+    }
 
     private <T extends Metadata> void storeMetadata(@Nonnull T metadata)
             throws FairMetadataServiceException, MetadataException {
@@ -277,6 +310,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             } else if (metadata instanceof DatasetMetadata) {
                 doesParentResourceExists = storeManager.isStatementExist(
                         metadata.getParentURI(), RDF.TYPE, DCAT.CATALOG);
+            } else if (metadata instanceof DataRecordMetadata) {
+                doesParentResourceExists = storeManager.isStatementExist(
+                        metadata.getParentURI(), RDF.TYPE, DCAT.DATASET);
             } else if (metadata instanceof DistributionMetadata) {
                 doesParentResourceExists = storeManager.isStatementExist(
                         metadata.getParentURI(), RDF.TYPE, DCAT.DATASET);
