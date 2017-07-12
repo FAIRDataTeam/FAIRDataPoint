@@ -62,6 +62,7 @@ import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtl.fairmetadata4j.model.Agent;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
@@ -260,6 +261,43 @@ public class MetadataController {
                 RDFFormat.JSONLD));
         return mav;
     }
+    
+    
+    /**
+     * Get datarecord metadata
+     *
+     * @param id
+     * @param request
+     * @param response
+     * @return Metadata about the dataset in one of the acceptable formats (RDF
+     * Turtle, JSON-LD, RDF XML and RDF N3)
+     *
+     * @throws FairMetadataServiceException
+     */
+    @ApiOperation(value = "Dataset metadata")
+    @RequestMapping(value = "/datarecord/{id}",
+            method = RequestMethod.GET,
+            produces = {"text/turtle",
+                "application/ld+json", "application/rdf+xml", "text/n3"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public DataRecordMetadata getDataRecordMetaData(
+            @PathVariable final String id, HttpServletRequest request,
+            HttpServletResponse response) throws FairMetadataServiceException,
+            ResourceNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @ApiIgnore
+    @RequestMapping(value = "/datarecord/{id}", method = RequestMethod.GET,
+            produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getHtmlDataRecordMetadata(HttpServletRequest request)
+            throws FairMetadataServiceException, ResourceNotFoundException,
+            MetadataException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 
     /**
      * Get distribution metadata
@@ -403,6 +441,38 @@ public class MetadataController {
         // Ignore children links 
         metadata.setDistributions(new ArrayList());
         fairMetaDataService.storeDatasetMetaData(metadata);
+        response.addHeader(HttpHeaders.LOCATION, uri.toString());
+        return "Metadata is stored";
+    }
+    
+    /**
+     * To handle POST datarecord metadata request.
+     *
+     * @param request Http request
+     * @param response Http response
+     * @param metadata datarecord metadata
+     * @param id Unique datarecord ID
+     * @return created message
+     *
+     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     */
+    @ApiOperation(value = "POST datarecord metadata")
+    @RequestMapping(value = "/datarecord",
+            method = RequestMethod.POST, consumes = {"text/turtle"})
+    @ResponseStatus(HttpStatus.CREATED)
+    public String storeDataRecord(final HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestBody(required = true) DataRecordMetadata metadata,
+            @RequestParam("id") String id)
+            throws FairMetadataServiceException, MetadataException {
+        String trimmedId = trimmer(id);
+        LOGGER.info("Request to store datarecord metatdata with ID ",
+                trimmedId);
+        String requestedURL = getRequesedURL(request);
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
+        metadata.setUri(uri);
+        fairMetaDataService.storeDataRecordMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return "Metadata is stored";
     }
