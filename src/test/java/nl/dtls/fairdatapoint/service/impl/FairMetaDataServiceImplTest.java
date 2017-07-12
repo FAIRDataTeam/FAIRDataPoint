@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
@@ -77,6 +78,8 @@ public class FairMetaDataServiceImplTest {
     private final String TEST_CATALOG_URI = "http://example.com/fdp/catalog";
     private final String TEST_DATASET_URI
             = "http://example.com/fdp/catalog/dataset";
+    private final String TEST_DATARECORD_URI
+            = "http://example.com/fdp/catalog/dataset/datarecord";
     private final String TEST_DISTRIBUTION_URI
             = "http://example.com/fdp/catalog/dataset/distrubtion";
     private ValueFactory valueFactory = SimpleValueFactory.getInstance();
@@ -487,6 +490,70 @@ public class FairMetaDataServiceImplTest {
                     retrieveDistributionMetaData(valueFactory.createIRI(
                             ExampleFilesUtils.DISTRIBUTION_URI));
             assertNotNull(mdata.getIdentifier());
+        } catch (Exception ex) {
+            fail("This test is not excepted to throw any error");
+        } 
+    }
+    
+    /**
+     * Test to store datarecord metadata, this test is excepted to throw error
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test(expected = IllegalStateException.class)
+    public void storeDataRecordMetaDataNoParentURI() throws
+            FairMetadataServiceException, MetadataException,
+            IllegalStateException {
+        DataRecordMetadata metadata = ExampleFilesUtils.
+                getDataRecordMetadata(TEST_DATARECORD_URI,
+                        ExampleFilesUtils.DATARECORD_URI);
+        metadata.setParentURI(null);
+        fairMetaDataService.storeDataRecordMetaData(metadata);
+    }
+    
+    /**
+     * Test to store datarecord metadata, this test is excepted to pass
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test(expected = IllegalStateException.class)
+    public void storeDataRecordMetaDataWrongParentURI() 
+            throws FairMetadataServiceException, MetadataException {
+        DataRecordMetadata metadata = ExampleFilesUtils.
+                getDataRecordMetadata(TEST_DATARECORD_URI,
+                        ExampleFilesUtils.CATALOG_URI);
+        fairMetaDataService.storeDataRecordMetaData(metadata);
+    }
+    /**
+     * Test to store datarecord metadata
+     */
+    @DirtiesContext
+    @Test
+    public void storeDataRecordMetaData() {
+        try {
+            DataRecordMetadata metadata = ExampleFilesUtils.
+                getDataRecordMetadata(TEST_DATARECORD_URI,
+                        ExampleFilesUtils.DATASET_URI);
+            fairMetaDataService.storeDataRecordMetaData(metadata);
+        } catch (FairMetadataServiceException | MetadataException ex) {
+            fail("This test is not expected to throw an errors");
+        }
+    }
+    
+    /**
+     * Test to store datarecord metadata without metadata ID
+     */
+    @DirtiesContext
+    public void storeDataRecordMetaDataWithNoID() {
+        DataRecordMetadata metadata = ExampleFilesUtils.
+                getDataRecordMetadata(TEST_DATARECORD_URI,
+                        ExampleFilesUtils.DATARECORD_URI);
+        metadata.setIdentifier(null);
+        try {
+            fairMetaDataService.storeDataRecordMetaData(metadata);
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
         } 
