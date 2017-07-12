@@ -29,6 +29,7 @@ package nl.dtls.fairdatapoint.service;
 
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
@@ -77,6 +78,16 @@ public interface FairMetaDataService {
             throws FairMetadataServiceException;  
     
     /**
+     * Get metadata of given dataset URI 
+     * 
+     * @param uri dataset URI
+     * @return DataRecordMetadata object
+     * @throws FairMetadataServiceException 
+     */
+    DataRecordMetadata retrieveDataRecordMetaData(IRI uri) 
+            throws FairMetadataServiceException;  
+    
+    /**
      * Get metadata of given distribution URI 
      * 
      * @param uri distribution URI
@@ -122,6 +133,16 @@ public interface FairMetaDataService {
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     void storeDistributionMetaData(DistributionMetadata distributionMetadata)
+            throws FairMetadataServiceException, MetadataException;
+    
+    /**
+     * Store dataRecordMetadata metadata
+     * 
+     * @param metadata
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    void storeDataRecordMetaData(DataRecordMetadata metadata)
             throws FairMetadataServiceException, MetadataException;
     
     /**
