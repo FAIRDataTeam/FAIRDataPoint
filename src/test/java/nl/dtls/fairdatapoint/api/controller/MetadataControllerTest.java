@@ -598,6 +598,66 @@ public class MetadataControllerTest {
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
+    
+    
+    /**
+     * Store datarecord.
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void storeDataRecord() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        String metadata = ExampleFilesUtils.getFileContentAsString(
+                ExampleFilesUtils.DATARECORD_METADATA_FILE);
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("id", "datarecord");
+        request.setRequestURI("/fdp/datarecord");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+    }
+
+    /**
+     * Store datarecord twice.
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = IllegalStateException.class)
+    public void storeDatarecordTwice() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        String metadata = ExampleFilesUtils.getFileContentAsString(
+                ExampleFilesUtils.DATARECORD_METADATA_FILE);
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("id", "datarecord");
+        request.setRequestURI("/fdp/datarecord");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+
+        response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        request.setServerName("localhost");
+        request.setContextPath("fdp");
+        request.setMethod("POST");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.addParameter("id", "datarecord");
+        request.setRequestURI("/fdp/datarecord");
+        handler = handlerMapping.getHandler(request).getHandler();        
+        handlerAdapter.handle(request, response, handler);
+    }
+    
 
     /**
      * Store distribution.
