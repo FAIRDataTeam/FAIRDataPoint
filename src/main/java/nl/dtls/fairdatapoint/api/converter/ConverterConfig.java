@@ -101,6 +101,26 @@ public class ConverterConfig {
     }
     
     @Bean
+    public DataRecordMetadataConverter turtleDataRecordMetadata() {
+        return new DataRecordMetadataConverter(RDFFormat.TURTLE);
+    }
+    
+    @Bean
+    public DataRecordMetadataConverter jsonldDataRecordMetadata() {
+        return new DataRecordMetadataConverter(RDFFormat.JSONLD);
+    }
+    
+    @Bean
+    public DataRecordMetadataConverter n3DataRecordMetadata() {
+        return new DataRecordMetadataConverter(RDFFormat.N3);
+    }
+    
+    @Bean
+    public DataRecordMetadataConverter rdfxmlDataRecordMetadata() {
+        return new DataRecordMetadataConverter(RDFFormat.RDFXML);
+    }
+    
+    @Bean
     public DistributionMetadataConverter turtleDistributionMetadata() {
         return new DistributionMetadataConverter(RDFFormat.TURTLE);
     }
