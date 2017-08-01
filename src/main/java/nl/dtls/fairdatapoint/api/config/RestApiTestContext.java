@@ -68,16 +68,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class RestApiTestContext extends WebMvcConfigurerAdapter  {
     
     @Autowired
-    private List<AbstractMetadataMessageConverter<?>> metadataConverters;
+    private List<AbstractMetadataMessageConverter<?>> metadataConverters;    
+    
+    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> 
+            converters) {
         converters.addAll(metadataConverters);
     }
     
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
+    public void configureContentNegotiation(ContentNegotiationConfigurer 
+            configurer) {
+        for (AbstractMetadataMessageConverter<?> converter : 
+                metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
     }
@@ -91,8 +96,6 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter  {
         return new SailRepository(store);
     }
     
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-
     @Bean(name = "storeManager")
     @DependsOn({"repository"})
     public StoreManager storeManager() throws RepositoryException,
