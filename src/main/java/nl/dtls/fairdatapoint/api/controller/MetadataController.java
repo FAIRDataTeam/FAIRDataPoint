@@ -285,7 +285,17 @@ public class MetadataController {
             @PathVariable final String id, HttpServletRequest request,
             HttpServletResponse response) throws FairMetadataServiceException,
             ResourceNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	
+    		LOGGER.info("Request to get DATARECORD metadata with ID ", id);
+	        LOGGER.info("GET : " + request.getRequestURL());
+	        String uri = getRequesedURL(request);
+	        DataRecordMetadata metadata = fairMetaDataService.
+	                retrieveDataRecordMetadata(valueFactory.createIRI(uri));
+	        LoggerUtils.logRequest(LOGGER, request, response);
+	       
+	        return metadata;
+    	
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @ApiIgnore
@@ -294,7 +304,16 @@ public class MetadataController {
     public ModelAndView getHtmlDataRecordMetadata(HttpServletRequest request)
             throws FairMetadataServiceException, ResourceNotFoundException,
             MetadataException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	        
+	        ModelAndView mav = new ModelAndView("dataset");
+	        String uri = getRequesedURL(request);
+	        DataRecordMetadata metadata = fairMetaDataService.
+	                retrieveDataRecordMetadata(valueFactory.createIRI(uri));
+	        mav.addObject("metadata", metadata);
+	        mav.addObject("jsonLd", MetadataUtils.getString(metadata,
+	                RDFFormat.JSONLD));
+	        return mav;
+    	//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     

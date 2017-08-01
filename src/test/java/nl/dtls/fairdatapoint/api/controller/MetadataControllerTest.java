@@ -84,6 +84,8 @@ public class MetadataControllerTest {
             + ExampleFilesUtils.CATALOG_ID;
     private final String TEST_DATASET_PATH = TEST_FDP_PATH + "/dataset/"
             + ExampleFilesUtils.DATASET_ID;
+    private final String TEST_DATARECORD_PATH = TEST_FDP_PATH + "/datarecord/"
+            + ExampleFilesUtils.DATARECORD_ID;
     private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH
             + "/distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
     private final static Logger LOGGER
@@ -322,6 +324,27 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void getContentWithFileExtCatlog() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        request.setMethod("GET");
+
+        request.setRequestURI(TEST_CATALOG_PATH + ".rdf");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals("application/rdf+xml", response.getContentType());
+    }
+    
+    /**
+     * Check file extension for DataRecord layer
+     *
+     * @throws Exception
+     */
+    //TODO check in depth **
+    @DirtiesContext
+    @Test
+    public void getContentWithFileExtDataRecord() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
         Object handler;
