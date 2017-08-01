@@ -67,8 +67,6 @@ import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
  * @version 0.1
  */
 public class ExampleFilesUtils {
-    private final static Logger LOGGER = 
-            LogManager.getLogger(ExampleFilesUtils.class.getName());
     public static final String FDP_METADATA_FILE = "dtl-fdp.ttl";
     public static final String CATALOG_METADATA_FILE = "textmining-catalog.ttl";    
     public static final String DATASET_METADATA_FILE = "gda-lumc.ttl";    
@@ -81,19 +79,21 @@ public class ExampleFilesUtils {
     public static final String DATASET_ID = "gene-disease-association_lumc";    
     public static final String DATARECORD_ID = "datarecord";
     public static final String DISTRIBUTION_ID = "sparql";
-    public final static String FDP_URI = "http://localhost/fdp";
-    public final static String CATALOG_URI = "http://localhost/fdp/" + 
+    public static final String FDP_URI = "http://localhost/fdp";
+    public static final String CATALOG_URI = "http://localhost/fdp/" + 
             CATALOG_ID;
-    public final static String DATASET_URI = 
+    public static final String DATASET_URI = 
             "http://localhost/fdp/textmining/" + DATASET_ID;
-    public final static String DATARECORD_URI = "http://dtls.nl/" + 
+    public static final String DATARECORD_URI = "http://dtls.nl/" + 
             DATARECORD_ID;
-    public final static String DISTRIBUTION_URI = 
+    public static final String DISTRIBUTION_URI = 
             "http://localhost/fdp/textmining/gene-disease-association_lumc/" + 
             DISTRIBUTION_ID;
-    public final static String BASE_URI = "http://localhost/";   
-    public final static String TEST_SUB_URI = "http://www.dtls.nl/test"; 
-    public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;
+    public static final String BASE_URI = "http://localhost/";   
+    public static final String TEST_SUB_URI = "http://www.dtls.nl/test"; 
+    public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;    
+    private static final Logger LOGGER = 
+            LogManager.getLogger(ExampleFilesUtils.class.getName());
     
     /**
      * Method to read the content of a turtle file
