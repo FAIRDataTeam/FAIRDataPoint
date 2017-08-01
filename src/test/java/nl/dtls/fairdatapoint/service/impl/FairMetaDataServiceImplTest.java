@@ -798,7 +798,6 @@ public class FairMetaDataServiceImplTest {
      */
     @DirtiesContext
     @Test
-    @Ignore
     public void storeDataRecordMetaDataWithNoID() {
         DataRecordMetadata metadata = ExampleFilesUtils.
                 getDataRecordMetadata(TEST_DATARECORD_URI,
@@ -808,7 +807,7 @@ public class FairMetaDataServiceImplTest {
             fairMetaDataService.storeDataRecordMetaData(metadata);
             DataRecordMetadata mdata = fairMetaDataService.
                     retrieveDataRecordMetadata(valueFactory.createIRI(
-                            ExampleFilesUtils.DATARECORD_URI));
+                            TEST_DATARECORD_URI));
             assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -820,7 +819,6 @@ public class FairMetaDataServiceImplTest {
      */
     @DirtiesContext
     @Test
-    @Ignore
     public void storeDataRecordMetaDataWithNoPublisher() {
         DataRecordMetadata metadata = ExampleFilesUtils.
                 getDataRecordMetadata(TEST_DATARECORD_URI,
@@ -830,7 +828,7 @@ public class FairMetaDataServiceImplTest {
             fairMetaDataService.storeDataRecordMetaData(metadata);
             DataRecordMetadata mdata = fairMetaDataService.
                     retrieveDataRecordMetadata(valueFactory.createIRI(
-                            ExampleFilesUtils.DATARECORD_URI));
+                            TEST_DATARECORD_URI));
             assertNotNull(mdata.getPublisher());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
