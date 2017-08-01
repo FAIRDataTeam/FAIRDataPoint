@@ -81,7 +81,18 @@ public class DataRecordMetadataConverter extends AbstractMetadataMessageConverte
     protected void writeInternal(DataRecordMetadata metadata, HttpOutputMessage
             outputMessage) 
             throws IOException, HttpMessageNotWritableException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String result;
+        try {
+            result = MetadataUtils.getString(metadata, format);
+        } catch (MetadataException e) {
+            throw new HttpMessageNotWritableException("", e);
+        }
+        
+        OutputStreamWriter writer = new OutputStreamWriter(
+                outputMessage.getBody(), StandardCharsets.UTF_8);
+        writer.write(result);
+        writer.close();
+        
     }    
     
 }
