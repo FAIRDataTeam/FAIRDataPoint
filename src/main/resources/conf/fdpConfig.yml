@@ -7,8 +7,8 @@ store:
     dir: /tmp/fdp-store/
 urlPath:
     root: /fdp
-metadataSpecs:
-    root: http://rdf.biosemantics.org/fdp/shex/fdpMetadata
-    catalog: http://rdf.biosemantics.org/fdp/shex/catalogMetadata
-    dataset: http://rdf.biosemantics.org/fdp/shex/datasetMetadata
-    distribution: http://rdf.biosemantics.org/fdp/shex/distributionMetadata    
+metadataProperties:
+    rootSpecs: http://rdf.biosemantics.org/fdp/shex/fdpMetadata
+    catalogSpecs: http://rdf.biosemantics.org/fdp/shex/catalogMetadata
+    datasetSpecs: http://rdf.biosemantics.org/fdp/shex/datasetMetadata
+    distributionSpecs: http://rdf.biosemantics.org/fdp/shex/distributionMetadata    
