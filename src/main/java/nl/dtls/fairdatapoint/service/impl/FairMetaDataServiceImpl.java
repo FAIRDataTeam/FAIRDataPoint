@@ -141,9 +141,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     
     //TODO finish -- check red labels
     @Override
-    public DataRecordMetadata retrieveDataRecordMetadata(IRI uri) throws FairMetadataServiceException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    	List<Statement> statements = retrieveStatements(uri);
+    public DataRecordMetadata retrieveDataRecordMetadata(IRI uri) throws 
+            FairMetadataServiceException {
+        List<Statement> statements = retrieveStatements(uri);
     	DataRecordMetadataParser parser = MetadataParserUtils.
         		getDataRecordParser();
     	DataRecordMetadata metadata = parser.parse(statements, uri);

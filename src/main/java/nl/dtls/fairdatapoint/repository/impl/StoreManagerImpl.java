@@ -113,6 +113,7 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * Store string RDF to the repository
      *
+     * @param cntx context uri
      */
     @Override
     public void storeStatements(List<Statement> statements, IRI... cntx) throws
