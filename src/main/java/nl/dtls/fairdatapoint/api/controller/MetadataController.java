@@ -284,18 +284,15 @@ public class MetadataController {
     public DataRecordMetadata getDataRecordMetaData(
             @PathVariable final String id, HttpServletRequest request,
             HttpServletResponse response) throws FairMetadataServiceException,
-            ResourceNotFoundException {
-	
-    		LOGGER.info("Request to get DATARECORD metadata with ID ", id);
-	        LOGGER.info("GET : " + request.getRequestURL());
-	        String uri = getRequesedURL(request);
-	        DataRecordMetadata metadata = fairMetaDataService.
-	                retrieveDataRecordMetadata(valueFactory.createIRI(uri));
-	        LoggerUtils.logRequest(LOGGER, request, response);
-	       
-	        return metadata;
-    	
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ResourceNotFoundException {	
+    		
+        LOGGER.info("Request to get DATARECORD metadata with ID ", id);
+	LOGGER.info("GET : " + request.getRequestURL());
+	String uri = getRequesedURL(request);
+	DataRecordMetadata metadata = fairMetaDataService.
+                retrieveDataRecordMetadata(valueFactory.createIRI(uri));
+        LoggerUtils.logRequest(LOGGER, request, response); 
+        return metadata;
     }
 
     @ApiIgnore
@@ -303,20 +300,16 @@ public class MetadataController {
             produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlDataRecordMetadata(HttpServletRequest request)
             throws FairMetadataServiceException, ResourceNotFoundException,
-            MetadataException {
-	        
-	        ModelAndView mav = new ModelAndView("dataset");
-	        String uri = getRequesedURL(request);
-	        DataRecordMetadata metadata = fairMetaDataService.
-	                retrieveDataRecordMetadata(valueFactory.createIRI(uri));
-	        mav.addObject("metadata", metadata);
-	        mav.addObject("jsonLd", MetadataUtils.getString(metadata,
-	                RDFFormat.JSONLD));
-	        return mav;
-    	//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    
+            MetadataException { 
+        ModelAndView mav = new ModelAndView("dataset");	        
+        String uri = getRequesedURL(request);	        
+        DataRecordMetadata metadata = fairMetaDataService.	                
+                retrieveDataRecordMetadata(valueFactory.createIRI(uri));	        
+        mav.addObject("metadata", metadata);	        
+        mav.addObject("jsonLd", MetadataUtils.getString(metadata, 
+                RDFFormat.JSONLD));	        
+        return mav;
+    }   
 
     /**
      * Get distribution metadata

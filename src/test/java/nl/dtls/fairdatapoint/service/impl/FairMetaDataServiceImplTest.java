@@ -47,7 +47,6 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,7 @@ public class FairMetaDataServiceImplTest {
             = "http://example.com/fdp/catalog/dataset/datarecord";
     private final String TEST_DISTRIBUTION_URI
             = "http://example.com/fdp/catalog/dataset/distrubtion";
-    private ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     @Before
     public void storeExampleMetadata() throws StoreManagerException,

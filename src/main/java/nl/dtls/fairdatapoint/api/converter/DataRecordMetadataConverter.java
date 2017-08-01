@@ -34,11 +34,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import nl.dtl.fairmetadata4j.io.DataRecordMetadataParser;
-import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -51,8 +49,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
  *
  * @author rajaram
  */
-public class DataRecordMetadataConverter extends AbstractMetadataMessageConverter 
-        <DataRecordMetadata> {
+public class DataRecordMetadataConverter extends 
+        AbstractMetadataMessageConverter <DataRecordMetadata> {
     
     public DataRecordMetadataConverter(RDFFormat format) {
         super(format);
@@ -64,10 +62,12 @@ public class DataRecordMetadataConverter extends AbstractMetadataMessageConverte
     }
 
     @Override
-    protected DataRecordMetadata readInternal(Class<? extends DataRecordMetadata> 
+    protected DataRecordMetadata readInternal(Class<? extends 
+            DataRecordMetadata> 
             type, HttpInputMessage inputMessage) throws IOException, 
             HttpMessageNotReadableException {
-        DataRecordMetadataParser parser = MetadataParserUtils.getDataRecordParser();
+        DataRecordMetadataParser parser = MetadataParserUtils.
+                getDataRecordParser();
         try {
             String body = CharStreams.toString(new InputStreamReader(
                     inputMessage.getBody(), Charsets.UTF_8 ));
