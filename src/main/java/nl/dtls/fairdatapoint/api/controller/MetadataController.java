@@ -539,10 +539,10 @@ public class MetadataController {
                     .collect(Collectors.toList());
         
         for (String ext : rdfExt) {
-            ext = "." + ext;
-            if(url.contains(ext)) {
+            String extension = "." + ext;
+            if(url.contains(extension)) {
                 LOGGER.info("Found RDF extension in url : " + ext);
-                url = url.replace(ext, "");
+                url = url.replace(extension, "");
                 break;
             }            
         }
@@ -558,7 +558,7 @@ public class MetadataController {
                 url = url.replace(requestedURL.getProtocol(), proto);
             }            
             if(port != null && requestedURL.getPort() != -1){                
-                String val = (":" + String.valueOf(requestedURL.getPort()));
+                String val = ":" + String.valueOf(requestedURL.getPort());
                 LOGGER.info("x-forwarded-port " + port);
                 switch (port){ 
                     case "443":                    
@@ -592,10 +592,10 @@ public class MetadataController {
             String host = new URL(fdpUrl).getAuthority();
             FDPMetadata metadata = new FDPMetadata();
             metadata.setUri(valueFactory.createIRI(fdpUrl));
-            metadata.setTitle(valueFactory.createLiteral(("FDP of " + host),
+            metadata.setTitle(valueFactory.createLiteral("FDP of " + host,
                     XMLSchema.STRING));
             metadata.setDescription(valueFactory.createLiteral(
-                    ("FDP of " + host), XMLSchema.STRING));
+                    "FDP of " + host, XMLSchema.STRING));
             metadata.setLanguage(valueFactory.createIRI(
                     "http://id.loc.gov/vocabulary/iso639-1/en"));
             metadata.setLicense(valueFactory.createIRI(

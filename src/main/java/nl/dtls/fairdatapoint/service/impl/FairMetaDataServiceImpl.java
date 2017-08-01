@@ -267,31 +267,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 "Metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()),
                 "The metadata URI already exist in the repository. "
-                + "Please try with different ID");
-        if (metadata.getIdentifier() == null) {
-            LOGGER.info("Metadata ID is null or empty, this feild value will "
-                    + "be generated automatically");
-            Identifier id = new Identifier();
-            id.setUri(valueFactory.createIRI(metadata.getUri().stringValue()
-                    + "#metadataID"));
-            UUID uid = UUID.randomUUID();
-            id.setIdentifier(valueFactory.createLiteral(uid.toString(),
-                    XMLSchema.STRING));
-            id.setType(DATACITE.RESOURCEIDENTIFIER);
-            metadata.setIdentifier(id);
-        }
-        // Add default publisher
-        if (metadata.getPublisher() == null && publisher != null) {
-            metadata.setPublisher(publisher);
-        }
-        // Add default language
-        if (metadata.getLanguage() == null && language != null) {
-            metadata.setLanguage(language);
-        }
-        // Add default license        
-        if (metadata.getLicense() == null && license != null) {
-            metadata.setLicense(license);
-        } 
+                + "Please try with different ID");     
+        addDefaultValues(metadata);
         try {
             if (metadata instanceof FDPMetadata) {
                 if (metadata.getIssued() == null) {
@@ -320,6 +297,37 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing distribution metadata");
             throw (new FairMetadataServiceException(ex.getMessage()));
+        }
+    }
+    
+    /** Add default values for the mandatory metadata properties
+     * 
+     */ 
+    private <T extends Metadata> void addDefaultValues(@Nonnull T metadata) 
+    {
+        if (metadata.getIdentifier() == null) {
+            LOGGER.info("Metadata ID is null or empty, this feild value will "
+                    + "be generated automatically");
+            Identifier id = new Identifier();
+            id.setUri(valueFactory.createIRI(metadata.getUri().stringValue()
+                    + "#metadataID"));
+            UUID uid = UUID.randomUUID();
+            id.setIdentifier(valueFactory.createLiteral(uid.toString(),
+                    XMLSchema.STRING));
+            id.setType(DATACITE.RESOURCEIDENTIFIER);
+            metadata.setIdentifier(id);
+        }
+        // Add default publisher
+        if (metadata.getPublisher() == null && publisher != null) {
+            metadata.setPublisher(publisher);
+        }
+        // Add default language
+        if (metadata.getLanguage() == null && language != null) {
+            metadata.setLanguage(language);
+        }
+        // Add default license        
+        if (metadata.getLicense() == null && license != null) {
+            metadata.setLicense(license);
         }
     }
     
