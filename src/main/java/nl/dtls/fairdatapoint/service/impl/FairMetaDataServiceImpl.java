@@ -86,15 +86,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Autowired
     private StoreManager storeManager;
 
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.root:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
     private String fdpSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.catalog:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.catalogSpecs:nil}")
     private String catalogSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.dataset:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.datasetSpecs:nil}")
     private String datasetSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.datarecord:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.datarecordSpecs:nil}")
     private String datarecordSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.distribution:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.distributionSpecs:nil}")
     private String distributionSpecs;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
