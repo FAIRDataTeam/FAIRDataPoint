@@ -38,6 +38,7 @@ import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
 import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
 import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.model.Agent;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
@@ -67,6 +68,7 @@ import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -85,16 +87,25 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             = LogManager.getLogger(FairMetaDataServiceImpl.class);
     @Autowired
     private StoreManager storeManager;
+    @Autowired
+    private Agent publisher;
+    @Autowired
+    @Qualifier("language")
+    private IRI language;
+    @Autowired
+    @Qualifier("license")
+    private IRI license;
+    
 
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.root:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
     private String fdpSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.catalog:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.catalogSpecs:nil}")
     private String catalogSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.dataset:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.datasetSpecs:nil}")
     private String datasetSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.datarecord:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.datarecordSpecs:nil}")
     private String datarecordSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataSpecs.distribution:nil}")
+    @org.springframework.beans.factory.annotation.Value("${metadataProperties.distributionSpecs:nil}")
     private String distributionSpecs;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
@@ -263,6 +274,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             id.setType(DATACITE.RESOURCEIDENTIFIER);
             metadata.setIdentifier(id);
         }
+        // Add default publisher
+        if (metadata.getPublisher() == null && publisher != null) {
+            metadata.setPublisher(publisher);
+        }
+        // Add default language
+        if (metadata.getLanguage() == null && language != null) {
+            metadata.setLanguage(language);
+        }
+        // Add default license        
+        if (metadata.getLicense() == null && license != null) {
+            metadata.setLicense(license);
+        } 
         try {
             if (metadata instanceof FDPMetadata) {
                 if (metadata.getIssued() == null) {
