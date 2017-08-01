@@ -111,6 +111,12 @@ public class MetadataControllerTest {
         String dUri = request.getRequestURL().toString();
         fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
                 getDatasetMetadata(dUri, cUri));
+        LOGGER.info("Storing example datarecord "
+                + "metadata for service layer tests");
+        request.setRequestURI(TEST_DATARECORD_PATH);
+        String dRecUri = request.getRequestURL().toString();
+        fairMetaDataService.storeDataRecordMetaData(ExampleFilesUtils.
+                getDataRecordMetadata(dRecUri, dUri));
         LOGGER.info("Storing example distribution "
                 + "metadata for service layer tests");
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
@@ -639,7 +645,7 @@ public class MetadataControllerTest {
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.addParameter("id", "datarecord");
+        request.addParameter("id", "datarecord1");
         request.setRequestURI("/fdp/datarecord");
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -679,6 +685,42 @@ public class MetadataControllerTest {
         request.setRequestURI("/fdp/datarecord");
         handler = handlerMapping.getHandler(request).getHandler();        
         handlerAdapter.handle(request, response, handler);
+    }
+    
+    /**
+     * Check non existing Content.
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = ResourceNotFoundException.class)
+    public void nonExistingContentDatarecord() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+        request.setRequestURI("/fdp/datarecord/dummy");
+        Object handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+    }
+
+    /**
+     * Check existing Content.
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void existingContentDatarecord() throws Exception {
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+        request.setRequestURI(TEST_DATARECORD_PATH);
+        Object handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
     
 
