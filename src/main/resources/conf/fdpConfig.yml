@@ -11,4 +11,9 @@ metadataProperties:
     rootSpecs: http://rdf.biosemantics.org/fdp/shex/fdpMetadata
     catalogSpecs: http://rdf.biosemantics.org/fdp/shex/catalogMetadata
     datasetSpecs: http://rdf.biosemantics.org/fdp/shex/datasetMetadata
-    distributionSpecs: http://rdf.biosemantics.org/fdp/shex/distributionMetadata    
+    distributionSpecs: http://rdf.biosemantics.org/fdp/shex/distributionMetadata   
+    publisherURI: http://dtls.nl
+    publisherName: dtls
+    language: http://id.loc.gov/vocabulary/iso639-1/en
+    license: http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0
+
