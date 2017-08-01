@@ -53,11 +53,15 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
 import java.io.File;
+import nl.dtl.fairmetadata4j.model.Agent;
 
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -81,6 +85,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
     
+    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
@@ -92,6 +98,42 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             converter.configureContentNegotiation(configurer);
         }
     }
+    
+    @Bean(name = "publisher")
+    public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") 
+            String publisherURI, 
+            @Value("${metadataProperties.publishername:nil}") 
+                    String publishername) {
+        Agent publisher = null;
+        if (!publisherURI.contentEquals("nil") && 
+                !publishername.contentEquals("nil")) {
+            publisher = new Agent();
+            publisher.setUri(valueFactory.createIRI(publisherURI));
+            publisher.setName(valueFactory.createLiteral(publishername));            
+        }
+        return publisher;
+    } 
+    
+    @Bean(name = "language")
+    public IRI language(@Value("${metadataProperties.language:nil}") 
+            String languageURI) {
+        IRI language = null;
+        if (!languageURI.contentEquals("nil")) {
+            language = valueFactory.createIRI(languageURI);           
+        }
+        return language;
+    }
+    
+    @Bean(name = "license")
+    public IRI license(@Value("${metadataProperties.license:nil}") 
+            String licenseURI) {
+        IRI license = null;
+        if (!licenseURI.contentEquals("nil")) {
+            license = valueFactory.createIRI(licenseURI);           
+        }
+        return license;
+    }
+    
 
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
