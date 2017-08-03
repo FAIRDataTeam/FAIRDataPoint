@@ -102,7 +102,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Bean(name = "publisher")
     public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") 
             String publisherURI, 
-            @Value("${metadataProperties.publishername:nil}") 
+            @Value("${metadataProperties.publisherName:nil}") 
                     String publishername) {
         Agent publisher = null;
         if (!publisherURI.contentEquals("nil") && 
