@@ -164,7 +164,7 @@ public class MetadataController {
                 valueFactory.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata,
-                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG));
+                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG_MODEL));
         return mav;
     }
 
@@ -211,7 +211,7 @@ public class MetadataController {
                 retrieveCatalogMetaData(valueFactory.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata,
-                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG));
+                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG_MODEL));
         return mav;
     }
 
@@ -258,7 +258,7 @@ public class MetadataController {
                 retrieveDatasetMetaData(valueFactory.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata,
-                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG));
+                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG_MODEL));
         return mav;
     }
     
@@ -355,7 +355,7 @@ public class MetadataController {
                 retrieveDistributionMetaData(valueFactory.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata,
-                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG));
+                RDFFormat.JSONLD, MetadataUtils.SCHEMA_DOT_ORG_MODEL));
         return mav;
     }
 
