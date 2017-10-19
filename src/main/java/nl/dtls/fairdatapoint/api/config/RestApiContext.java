@@ -22,6 +22,8 @@
  */
 package nl.dtls.fairdatapoint.api.config;
 
+
+import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import java.io.IOException;
 import java.util.List;
 
@@ -62,7 +64,6 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -86,14 +87,14 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
-    
+
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
     }
-    
+
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.defaultContentType(MediaType.parseMediaType(TURTLE.getDefaultMIMEType()));
@@ -101,65 +102,59 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             converter.configureContentNegotiation(configurer);
         }
     }
-    
+
     @Bean(name = "publisher")
-    public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") 
-            String publisherURI, 
-            @Value("${metadataProperties.publisherName:nil}") 
-                    String publishername) {
+    public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") String publisherURI,
+            @Value("${metadataProperties.publisherName:nil}") String publishername) {
         Agent publisher = null;
-        if (!publisherURI.contentEquals("nil") && 
-                !publishername.contentEquals("nil")) {
+        if (!publisherURI.contentEquals("nil")
+                && !publishername.contentEquals("nil")) {
             publisher = new Agent();
             publisher.setUri(valueFactory.createIRI(publisherURI));
-            publisher.setName(valueFactory.createLiteral(publishername));            
+            publisher.setName(valueFactory.createLiteral(publishername));
         }
         return publisher;
-    } 
-    
+    }
+
     @Bean(name = "language")
-    public IRI language(@Value("${metadataProperties.language:nil}") 
-            String languageURI) {
+    public IRI language(@Value("${metadataProperties.language:nil}") String languageURI) {
         IRI language = null;
         if (!languageURI.contentEquals("nil")) {
-            language = valueFactory.createIRI(languageURI);           
+            language = valueFactory.createIRI(languageURI);
         }
         return language;
     }
-    
+
     @Bean(name = "license")
-    public IRI license(@Value("${metadataProperties.license:nil}") 
-            String licenseURI) {
+    public IRI license(@Value("${metadataProperties.license:nil}") String licenseURI) {
         IRI license = null;
         if (!licenseURI.contentEquals("nil")) {
-            license = valueFactory.createIRI(licenseURI);           
+            license = valueFactory.createIRI(licenseURI);
         }
         return license;
     }
-    
 
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
     public Repository repository(@Value("${store.type:1}") int storeType,
-            @Value("${store.url}") String storeUrl, 
+            @Value("${store.url}") String storeUrl,
             @Value("${store.username:nil}") String storeUsername,
             @Value("${store.password:nil}") String storeUserPassword,
             @Value("${store.dir:}") String storeDir)
             throws RepositoryException {
         Repository repository;
-        if (storeType == 1 && !storeUsername.isEmpty() && 
-                !storeUsername.contains("nil")) { // HTTP endpoint
+        if (storeType == 1 && !storeUsername.isEmpty()
+                && !storeUsername.contains("nil")) { // HTTP endpoint
             SPARQLRepository sRepository = new SPARQLRepository(storeUrl);
             LOGGER.info("Initializing HTTP triple store ");
-            sRepository.setUsernameAndPassword(storeUsername, 
-                    storeUserPassword); 
+            sRepository.setUsernameAndPassword(storeUsername,
+                    storeUserPassword);
             return sRepository;
-        } else if (storeType == 2 && !storeDir.isEmpty()){
+        } else if (storeType == 2 && !storeDir.isEmpty()) {
             File dataDir = new File(storeDir);
             LOGGER.info("Initializing native store");
             repository = new SailRepository(new NativeStore(dataDir));
-        }
-        else { // In memory is the default store
+        } else { // In memory is the default store
             Sail store = new MemoryStore();
             repository = new SailRepository(store);
             LOGGER.info("Initializing inmemory store");
@@ -173,6 +168,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             StoreManagerException {
         return new StoreManagerImpl();
     }
+
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.setOrder(Integer.MIN_VALUE + 1).
@@ -189,16 +185,16 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             final DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
-    
+
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(handlebars());
     }
-    
+
     @Bean
     public ViewResolver handlebars() {
         HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
-        
+
         // add handlebars helper to get a label's literal without datatype
         viewResolver.registerHelper("literal", new Helper<Literal>() {
             @Override
@@ -206,11 +202,11 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
                 return literal.getLabel();
             }
         });
-        
+
         viewResolver.setPrefix("/WEB-INF/templates/");
         viewResolver.setSuffix(".hbs");
         viewResolver.setFailOnMissingFile(false);
-        
+
         return viewResolver;
     }
 }
