@@ -62,8 +62,10 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 
 /**
  * Spring context file.
@@ -94,6 +96,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.defaultContentType(MediaType.parseMediaType(TURTLE.getDefaultMIMEType()));
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
