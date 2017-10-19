@@ -104,8 +104,7 @@ public class MetadataController {
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
      */
     @ApiOperation(value = "FDP metadata")
-    @RequestMapping(method = RequestMethod.GET, produces = {"text/turtle", "application/ld+json",
-        "application/rdf+xml", "text/n3"})
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public FDPMetadata getFDPMetaData(final HttpServletRequest request, 
             HttpServletResponse response) throws FairMetadataServiceException, 
