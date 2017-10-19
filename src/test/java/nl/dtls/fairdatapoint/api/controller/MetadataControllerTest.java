@@ -41,6 +41,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import org.junit.Before;
@@ -214,22 +215,22 @@ public class MetadataControllerTest {
         request.setRequestURI(TEST_FDP_PATH);
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals(TURTLE.getDefaultMIMEType(), response.getContentType());
 
         request.setRequestURI(TEST_CATALOG_PATH);
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals(TURTLE.getDefaultMIMEType(), response.getContentType());
 
         request.setRequestURI(TEST_DATASET_PATH);
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals(TURTLE.getDefaultMIMEType(), response.getContentType());
 
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals(TURTLE.getDefaultMIMEType(), response.getContentType());
     }
 
     /**
