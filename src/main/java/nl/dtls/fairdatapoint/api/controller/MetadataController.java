@@ -495,8 +495,11 @@ public class MetadataController {
             url = url.substring(0, url.length() - 1);
         }
         
-        List<String> rdfExt = RDFWriterRegistry.getInstance().getKeys().stream()
-                .map(RDFFormat::getDefaultFileExtension).collect(Collectors.toList());
+        List<String> rdfExt = RDFWriterRegistry.getInstance()
+                .getKeys()
+                .stream()
+                .map(RDFFormat::getDefaultFileExtension)
+                .collect(Collectors.toList());
 
         for (String ext : rdfExt) {
             String extension = "." + ext;
