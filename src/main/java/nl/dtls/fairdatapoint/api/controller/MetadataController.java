@@ -86,7 +86,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("${urlPath.root:/fdp}")
 public class MetadataController {
 
-    private final static Logger LOGGER = LogManager.getLogger(MetadataController.class);
+    private static final Logger LOGGER = LogManager.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
