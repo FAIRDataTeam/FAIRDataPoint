@@ -65,9 +65,8 @@ public class ApplicationSwaggerConfig {
                     + "<li><a target='_blank' href = 'https://dtl-fair."
                     + "atlassian.net/wiki/display/FDP/FAIR+Data+Point+"
                     + "Software+Specification'>API specs</li>"
-                    + "<li><a target='_blank' href = 'https://github.com/"
-                    + "DTL-FAIRData/ODEX-FAIRDataPoint/tree/master/fdp-api"
-                    + "/java'>Source code</a> </li></p>",
+                    + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
+                    + "FAIRDataPoint'>Source code</a> </li></p>",
             "0.1-beta",
             "ATO",
             "rr.kaliyaperumal@gmail.com",

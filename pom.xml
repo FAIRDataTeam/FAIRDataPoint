@@ -37,22 +37,22 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
                 
-        <springframework.version>4.3.7.RELEASE</springframework.version>
-        <springdata.version>2.6.1.RELEASE</springdata.version>        
+        <springframework.version>5.0.0.RELEASE</springframework.version>
+        <springdata.version>3.0.0.RELEASE</springdata.version>        
         <springfox-swagger.version>2.6.1</springfox-swagger.version>        
-        <springsecurity.version>4.2.2.RELEASE</springsecurity.version>
-        <javaxservlet.version>3.1.0</javaxservlet.version>
-        <jackson.version>2.9.0.pr2</jackson.version>
-        <rdf4j.version>2.2</rdf4j.version>
-        <log4j.version>2.8.1</log4j.version>
+        <springsecurity.version>4.2.3.RELEASE</springsecurity.version>
+        <javaxservlet.version>4.0.0</javaxservlet.version>
+        <jackson.version>2.9.2</jackson.version>
+        <rdf4j.version>2.2.2</rdf4j.version>
+        <log4j.version>2.9.1</log4j.version>
         <handlebars.version>4.0.6</handlebars.version>
         <fairmetadata.version>0.1-beta</fairmetadata.version>
         <velocity.version>1.7</velocity.version>
-        <snakeyaml.version>1.18</snakeyaml.version>
+        <snakeyaml.version>1.19</snakeyaml.version>
         <junit.version>4.12</junit.version>
-        <mockito.version>2.7.19</mockito.version>
+        <mockito.version>2.11.0</mockito.version>
         
-        <plugin.mavenwar.version>3.0.0</plugin.mavenwar.version>
+        <plugin.mavenwar.version>3.2.0</plugin.mavenwar.version>
         <plugin.mavenlic.version>3.0</plugin.mavenlic.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.cobertura.version>2.7</plugin.cobertura.version>
