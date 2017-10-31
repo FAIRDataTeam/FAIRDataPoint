@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
  */
 public class FairSearchClientImplTest {
     
-    private final static Logger LOGGER = LogManager.getLogger(FairSearchClientImplTest
+    private static final Logger LOGGER = LogManager.getLogger(FairSearchClientImplTest
             .class.getName());
     
     private final FairSearchClient FSE;

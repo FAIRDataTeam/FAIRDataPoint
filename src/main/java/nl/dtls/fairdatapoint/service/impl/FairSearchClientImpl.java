@@ -49,7 +49,7 @@ import org.springframework.stereotype.Service;
 @Service("fairSearchClientImpl")
 public class FairSearchClientImpl implements FairSearchClient {
     
-    private final static org.apache.logging.log4j.Logger LOGGER = LogManager.
+    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.
             getLogger(FairSearchClientImpl.class);  
     
     @Value("${fairSearch.fdpSubmitUrl:http://example.com/fse}")
