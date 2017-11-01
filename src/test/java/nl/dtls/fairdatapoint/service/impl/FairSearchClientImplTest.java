@@ -35,6 +35,7 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
@@ -51,11 +52,12 @@ public class FairSearchClientImplTest {
     private static final Logger LOGGER = LogManager.getLogger(FairSearchClientImplTest
             .class.getName());
     
-    private final FairSearchClient FSE;
+    private FairSearchClient FSE;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();    
     private final IRI FDP_URI = valueFactory.createIRI("http://example.com/fdp");
     
-    public FairSearchClientImplTest() {        
+    @Before
+    public void setUp() {        
         FSE = Mockito.mock(FairSearchClient.class);
         when(FSE.submitFdpUri(FDP_URI)).thenReturn(HttpStatus.SC_ACCEPTED);
     }
