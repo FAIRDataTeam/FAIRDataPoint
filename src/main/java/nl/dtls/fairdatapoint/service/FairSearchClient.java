@@ -41,6 +41,7 @@ public interface FairSearchClient {
     /**
      * Submit FDP to the FAIR search engine's crawler.
      * @param uri FDP base URI
+     * @return Http response code
      */
     int submitFdpUri(IRI uri);    
 }

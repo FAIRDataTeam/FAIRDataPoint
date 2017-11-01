@@ -88,7 +88,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private final static Logger LOGGER
             = LogManager.getLogger(FairMetaDataServiceImpl.class);
         
-    private static IRI fdpUri;
+    private IRI fdpUri;
     @Autowired
     private StoreManager storeManager;
     @Autowired
