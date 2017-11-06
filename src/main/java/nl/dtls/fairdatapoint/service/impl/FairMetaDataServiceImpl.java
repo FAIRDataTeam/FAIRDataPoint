@@ -389,24 +389,37 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         try {
             ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> stmts = new ArrayList<>();
+            
+            IRI parent = metadata.getParentURI();
+            final Metadata parentMetadata;
+            
             if (metadata instanceof FDPMetadata) {
                 return;
             } else if (metadata instanceof CatalogMetadata) {
-                stmts.add(f.createStatement(metadata.getParentURI(),
-                        R3D.DATACATALOG, metadata.getUri()));
+                stmts.add(f.createStatement(parent, R3D.DATACATALOG, metadata.getUri()));
+                parentMetadata = retrieveFDPMetaData(parent);
             } else if (metadata instanceof DatasetMetadata) {
-                stmts.add(f.createStatement(metadata.getParentURI(),
-                        DCAT.HAS_DATASET, metadata.getUri()));
+                stmts.add(f.createStatement(parent, DCAT.HAS_DATASET, metadata.getUri()));
+                parentMetadata = retrieveCatalogMetaData(parent);
             } else if (metadata instanceof DistributionMetadata) {
-                stmts.add(f.createStatement(metadata.getParentURI(),
-                        DCAT.HAS_DISTRIBUTION, metadata.getUri()));
+                stmts.add(f.createStatement(parent, DCAT.HAS_DISTRIBUTION, metadata.getUri()));
+                parentMetadata = retrieveDatasetMetaData(parent);
+            } else if (metadata instanceof DataRecordMetadata) {
+                // TODO add link to parent
+                parentMetadata = retrieveDatasetMetaData(parent);
+            } else {
+                throw new IllegalStateException("Unknown type of metadata passed");
             }
-            storeManager.removeStatement(metadata.getParentURI(),
-                    DCTERMS.MODIFIED, null);
-            stmts.add(f.createStatement(metadata.getParentURI(),
-                    DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
-            storeManager.storeStatements(stmts, metadata.getParentURI());
-        } catch (StoreManagerException | DatatypeConfigurationException ex) {
+            
+            storeManager.removeStatement(parent, DCTERMS.MODIFIED, null);
+            stmts.add(f.createStatement(parent, DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
+            storeManager.storeStatements(stmts, parent);
+            
+            // Propagate the update upward the parent hierarchy. Effectively, this will update the
+            // timestamp properties of the parents.
+            updateParentResource(parentMetadata);
+        } catch (StoreManagerException | DatatypeConfigurationException |
+                FairMetadataServiceException ex) {
             LOGGER.error("Error updating parent resource :" + ex.getMessage());
         }
     }
