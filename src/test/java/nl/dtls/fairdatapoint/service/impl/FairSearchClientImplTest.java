@@ -35,7 +35,7 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
@@ -48,30 +48,30 @@ import static org.mockito.Mockito.when;
  * @version 0.1
  */
 public class FairSearchClientImplTest {
-    
-    private static final Logger LOGGER = LogManager.getLogger(FairSearchClientImplTest
-            .class.getName());
-    
-    private FairSearchClient FSE;
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();    
-    private final IRI FDP_URI = valueFactory.createIRI("http://example.com/fdp");
-    
-    @Before
-    public void setUp() {        
+
+    private static final Logger LOGGER = LogManager.getLogger(FairSearchClientImplTest.
+            class.getName());
+
+    private static FairSearchClient FSE;
+    private static final ValueFactory VF = SimpleValueFactory.getInstance();
+    private static final IRI FDP_URI = VF.createIRI("http://example.com/fdp");
+
+    @BeforeClass
+    public static void setUp() {
         FSE = Mockito.mock(FairSearchClient.class);
         when(FSE.submitFdpUri(FDP_URI)).thenReturn(HttpStatus.SC_ACCEPTED);
     }
-    
+
     /**
      * Test NULL fdp uri. This test is expected to thrown an error
      */
     @Test(expected = IllegalStateException.class)
     public void nullFDPUri() {
-        FairSearchClient search = new FairSearchClientImpl(); 
+        FairSearchClient search = new FairSearchClientImpl();
         LOGGER.info("Test for NULL fdp url");
-        search.submitFdpUri(null);                
+        search.submitFdpUri(null);
     }
-    
+
     /**
      * Test VALID fdp uri. This test is expected to pass
      */
@@ -81,5 +81,5 @@ public class FairSearchClientImplTest {
         int status = FSE.submitFdpUri(FDP_URI);
         assertEquals(HttpStatus.SC_ACCEPTED, status);
     }
-    
+
 }
