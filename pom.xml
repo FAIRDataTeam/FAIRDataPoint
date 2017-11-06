@@ -48,7 +48,8 @@
         <handlebars.version>4.0.6</handlebars.version>
         <fairmetadata.version>0.1-beta</fairmetadata.version>
         <velocity.version>1.7</velocity.version>
-        <snakeyaml.version>1.19</snakeyaml.version>
+        <snakeyaml.version>1.19</snakeyaml.version>        
+        <unirest.version>1.4.9</unirest.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.11.0</mockito.version>
         
@@ -143,6 +144,11 @@
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars-springmvc</artifactId>
             <version>${handlebars.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>${unirest.version}</version>
         </dependency>
         
         <!-- provided -->     

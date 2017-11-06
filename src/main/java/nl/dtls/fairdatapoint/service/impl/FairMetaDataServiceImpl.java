@@ -57,6 +57,7 @@ import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
+import nl.dtls.fairdatapoint.service.FairSearchClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
@@ -86,6 +87,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     private final static Logger LOGGER
             = LogManager.getLogger(FairMetaDataServiceImpl.class);
+        
+    private IRI fdpUri;
     @Autowired
     private StoreManager storeManager;
     @Autowired
@@ -95,8 +98,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private IRI language;
     @Autowired
     @Qualifier("license")
-    private IRI license;
-    
+    private IRI license;    
+    @Autowired
+    private FairSearchClient fseService;
 
     @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
     private String fdpSpecs;
@@ -104,9 +108,11 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private String catalogSpecs;
     @org.springframework.beans.factory.annotation.Value("${metadataProperties.datasetSpecs:nil}")
     private String datasetSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.datarecordSpecs:nil}")
+    @org.springframework.beans.factory.annotation.Value(
+            "${metadataProperties.datarecordSpecs:nil}")
     private String datarecordSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.distributionSpecs:nil}")
+    @org.springframework.beans.factory.annotation.Value(
+            "${metadataProperties.distributionSpecs:nil}")
     private String distributionSpecs;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
@@ -168,6 +174,12 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             metadata.setSpecification(valueFactory.createIRI(fdpSpecs));
         }
         storeMetadata(metadata);
+        /*
+        This method is called for the very first time the FDP is accessed. So it is better to assign
+        fdpUri static variable here
+        */
+        this.fdpUri = metadata.getUri();
+        fseService.submitFdpUri(fdpUri);
     }
 
     @Override
@@ -190,6 +202,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 + "Please try with valid fdp URI";
             throw new IllegalStateException(msg);
         } 
+        fseService.submitFdpUri(fdpUri);
     }
 
     @Override
@@ -212,6 +225,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 + "Please try with valid catalog URI";
             throw new IllegalStateException(msg);
         } 
+        fseService.submitFdpUri(fdpUri);
     }
 
     @Override
@@ -234,7 +248,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             String msg = "The dataset URI provided is not of type dcat:Dataset "
                 + "Please try with valid dataset URI";
             throw new IllegalStateException(msg);
-        }        
+        }  
+        fseService.submitFdpUri(fdpUri);
     }
     
     @Override
@@ -258,6 +273,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 + "Please try with valid dataset URI";
             throw new IllegalStateException(msg);
         }
+        fseService.submitFdpUri(fdpUri);
         
     }
 
