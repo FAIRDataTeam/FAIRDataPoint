@@ -384,8 +384,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      * @param metadata Subtype of Metadata object
      */
     private <T extends Metadata> void updateParentResource(@Nonnull T metadata) {
-        Preconditions.checkNotNull(metadata, "Metadata object must not be null.");
-        
+        Preconditions.checkNotNull(metadata,
+                "Metadata object must not be null.");
         try {
             ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> stmts = new ArrayList<>();
@@ -545,6 +545,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      */
     @FunctionalInterface
     private interface Getter<T> {
+
         T get();
     }
 
@@ -556,6 +557,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      */
     @FunctionalInterface
     private interface Setter<T> {
+
         void set(T value);
     }
 }
