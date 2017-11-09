@@ -411,8 +411,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 throw new IllegalStateException("Unknown type of metadata passed");
             }
             
-            storeManager.removeStatement(parent, DCTERMS.MODIFIED, null);
-            stmts.add(f.createStatement(parent, DCTERMS.MODIFIED, RDFUtils.getCurrentTime()));
+            storeManager.removeStatement(parent, FDP.METADATAMODIFIED, null);
+            stmts.add(f.createStatement(parent, FDP.METADATAMODIFIED, RDFUtils.getCurrentTime()));
             storeManager.storeStatements(stmts, parent);
             
             // Propagate the update upward the parent hierarchy. Effectively, this will update the
