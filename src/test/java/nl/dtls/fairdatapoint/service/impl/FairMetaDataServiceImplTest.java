@@ -28,6 +28,8 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.net.MalformedURLException;
+import java.time.ZonedDateTime;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
@@ -45,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
@@ -877,5 +880,50 @@ public class FairMetaDataServiceImplTest {
                 valueFactory.createIRI(ExampleFilesUtils.DISTRIBUTION_URI));
         assertNotNull(metadata.getSpecification());
     }
-
+    
+    @DirtiesContext
+    @Test
+    public void updatePropagationToParents() throws MetadataException, FairMetadataServiceException {
+        // given
+        DistributionMetadata newDistribution = ExampleFilesUtils.getDistributionMetadata(
+                TEST_DISTRIBUTION_URI, ExampleFilesUtils.DATASET_URI);
+        newDistribution.setByteSize(valueFactory.createLiteral(1_000L));
+        
+        // when
+        fairMetaDataService.storeDistributionMetaData(newDistribution);
+        
+        // then
+        newDistribution = fairMetaDataService.retrieveDistributionMetaData(
+                valueFactory.createIRI(TEST_DISTRIBUTION_URI));
+        ZonedDateTime distributionModified = ZonedDateTime.parse(
+                newDistribution.getModified().stringValue());
+        
+        // compare dataset timestamp with distribution timestamp
+        {
+            DatasetMetadata updated = fairMetaDataService.retrieveDatasetMetaData(
+                    valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            ZonedDateTime updatedModified = ZonedDateTime.parse(
+                    updated.getModified().stringValue());
+            assertTrue("Distribution is modified before the dataset is modified",
+                    distributionModified.isBefore(updatedModified));
+        }
+        // compare catalog timestamp with distribution timestamp
+        {
+            CatalogMetadata updated = fairMetaDataService.retrieveCatalogMetaData(
+                    valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            ZonedDateTime updatedModified = ZonedDateTime.parse(
+                    updated.getModified().stringValue());
+            assertTrue("Distribution is modified before the catalog is modified",
+                    distributionModified.isBefore(updatedModified));
+        }
+        // compare repository timestamp with distribution timestamp
+        {
+            FDPMetadata updated = fairMetaDataService.retrieveFDPMetaData(
+                    valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            ZonedDateTime updatedModified = ZonedDateTime.parse(
+                    updated.getModified().stringValue());
+            assertTrue("Distribution is modified before the repository is modified",
+                    distributionModified.isBefore(updatedModified));
+        }
+    }
 }
