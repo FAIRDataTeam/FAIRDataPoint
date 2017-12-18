@@ -49,7 +49,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -63,6 +66,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @version 0.1
  */
 @EnableWebMvc
+@EnableAsync
 @Configuration
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
 public class RestApiTestContext extends WebMvcConfigurerAdapter  {
@@ -85,6 +89,13 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter  {
                 metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
+    }
+    
+    @Bean
+    public TaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setThreadNamePrefix("FDP_API_ASYNC_EXECUTOR_FOR_TESTS");
+        return executor;
     }
     
     @Bean(name="repository", initMethod = "initialize",
