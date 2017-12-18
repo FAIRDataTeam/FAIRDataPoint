@@ -66,7 +66,10 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * Spring context file.
@@ -77,6 +80,7 @@ import org.springframework.http.MediaType;
  * @version 0.2
  */
 @EnableWebMvc
+@EnableAsync
 @Configuration
 @Import(ApplicationSwaggerConfig.class)
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
@@ -101,6 +105,13 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
+    }
+    
+    @Bean
+    public TaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setThreadNamePrefix("FDP_API_ASYNC_EXECUTOR");
+        return executor;
     }
 
     @Bean(name = "publisher")

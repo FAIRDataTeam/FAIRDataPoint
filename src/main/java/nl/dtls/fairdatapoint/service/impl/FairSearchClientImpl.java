@@ -31,12 +31,14 @@ import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nonnull;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -62,17 +64,18 @@ public class FairSearchClientImpl implements FairSearchClient {
      * @param uri   FDP base URI
      * @return Http response code
      */
+    
+    @Async
     @Override
-    public int submitFdpUri(@Nonnull IRI uri) {
+    public CompletableFuture submitFdpUri(@Nonnull IRI uri) {
         Preconditions.checkState(uri != null, "FDP uri can't be null");
         try {
-            HttpResponse<String> response = Unirest.get(fdpSubmitUrl).header("fdp", uri.toString())
-                    .asString();
-            return response.getStatus();
+            return CompletableFuture.completedFuture(Unirest.get(fdpSubmitUrl).queryString("fdp", 
+                    uri.toString()).asString().getStatus());
         } catch (UnirestException ex) {
             String msg = "Error submitting FDP to search. " + ex.getMessage();
             LOGGER.error(msg);
-            return HttpStatus.SC_INTERNAL_SERVER_ERROR;
+            return CompletableFuture.completedFuture(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
     

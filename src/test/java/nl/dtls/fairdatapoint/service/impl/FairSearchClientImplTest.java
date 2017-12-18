@@ -27,6 +27,8 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
@@ -59,7 +61,8 @@ public class FairSearchClientImplTest {
     @BeforeClass
     public static void setUp() {
         FSE = Mockito.mock(FairSearchClient.class);
-        when(FSE.submitFdpUri(FDP_URI)).thenReturn(HttpStatus.SC_ACCEPTED);
+        when(FSE.submitFdpUri(FDP_URI)).thenReturn(CompletableFuture.completedFuture(
+                HttpStatus.SC_ACCEPTED));
     }
 
     /**
@@ -76,10 +79,10 @@ public class FairSearchClientImplTest {
      * Test VALID fdp uri. This test is expected to pass
      */
     @Test
-    public void validFDPUri() {
+    public void validFDPUri() throws InterruptedException, ExecutionException {
         LOGGER.info("Test for valid fdp url");
-        int status = FSE.submitFdpUri(FDP_URI);
-        assertEquals(HttpStatus.SC_ACCEPTED, status);
+        CompletableFuture result = FSE.submitFdpUri(FDP_URI);
+        assertEquals(HttpStatus.SC_ACCEPTED, (int)result.get());
     }
 
 }

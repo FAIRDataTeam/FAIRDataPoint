@@ -27,6 +27,7 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import java.util.concurrent.CompletableFuture;
 import org.eclipse.rdf4j.model.IRI;
 
 /**
@@ -43,5 +44,5 @@ public interface FairSearchClient {
      * @param uri FDP base URI
      * @return Http response code
      */
-    int submitFdpUri(IRI uri);    
+    CompletableFuture submitFdpUri(IRI uri);    
 }
