@@ -28,7 +28,6 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import com.google.common.base.Preconditions;
-import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.concurrent.CompletableFuture;
