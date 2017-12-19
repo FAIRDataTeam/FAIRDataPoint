@@ -55,6 +55,8 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
 import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
 
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
@@ -67,6 +69,7 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Spring context file.
@@ -77,6 +80,7 @@ import org.springframework.http.MediaType;
  * @version 0.2
  */
 @EnableWebMvc
+@EnableAsync
 @Configuration
 @Import(ApplicationSwaggerConfig.class)
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
@@ -101,6 +105,11 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
+    }
+    
+    @Bean( destroyMethod = "shutdownNow")
+    public Executor threadPoolTaskExecutor(@Value("${threadPoolSize:4}") int threadPoolSize) {
+        return Executors.newFixedThreadPool(threadPoolSize);
     }
 
     @Bean(name = "publisher")

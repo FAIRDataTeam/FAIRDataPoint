@@ -29,6 +29,8 @@ package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
@@ -50,6 +52,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -63,6 +66,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @version 0.1
  */
 @EnableWebMvc
+@EnableAsync
 @Configuration
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
 public class RestApiTestContext extends WebMvcConfigurerAdapter  {
@@ -85,6 +89,11 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter  {
                 metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
+    }
+    
+    @Bean
+    public Executor threadPoolTaskExecutor() {
+        return Executors.newCachedThreadPool();
     }
     
     @Bean(name="repository", initMethod = "initialize",
