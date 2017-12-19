@@ -93,7 +93,7 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter  {
     
     @Bean
     public Executor threadPoolTaskExecutor() {
-        return Executors.newFixedThreadPool(2);
+        return Executors.newCachedThreadPool();
     }
     
     @Bean(name="repository", initMethod = "initialize",

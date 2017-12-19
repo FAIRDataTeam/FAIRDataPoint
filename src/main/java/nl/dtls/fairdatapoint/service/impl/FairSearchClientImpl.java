@@ -70,8 +70,10 @@ public class FairSearchClientImpl implements FairSearchClient {
         Preconditions.checkState(uri != null, "FDP uri can't be null");
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return Unirest.get(fdpSubmitUrl).queryString("fdp", uri.toString()).asString()
+                int status = Unirest.get(fdpSubmitUrl).queryString("fdp", uri.toString()).asString()
                         .getStatus();
+                LOGGER.info("FDP URL is successfully submitted to search");
+                return status;
             } catch (UnirestException ex) {
                 String msg = "Error submitting FDP to search. " + ex.getMessage();
                 LOGGER.error(msg);
