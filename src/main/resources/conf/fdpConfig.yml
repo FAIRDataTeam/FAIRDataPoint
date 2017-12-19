@@ -18,4 +18,4 @@ metadataProperties:
     license: http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0
 fairSearch:
     fdpSubmitUrl: http://localhost:8080/fse/submitFdp
-threadPoolSize: 2
+threadPoolSize: 4

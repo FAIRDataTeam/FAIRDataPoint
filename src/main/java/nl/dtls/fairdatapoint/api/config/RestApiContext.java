@@ -108,8 +108,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
     
     @Bean( destroyMethod = "shutdownNow")
-    public Executor threadPoolTaskExecutor(@Value("$threadPoolSize:2") String threadPoolSize) {
-        return Executors.newFixedThreadPool(Integer.getInteger(threadPoolSize));
+    public Executor threadPoolTaskExecutor(@Value("${threadPoolSize:4}") int threadPoolSize) {
+        return Executors.newFixedThreadPool(threadPoolSize);
     }
 
     @Bean(name = "publisher")
