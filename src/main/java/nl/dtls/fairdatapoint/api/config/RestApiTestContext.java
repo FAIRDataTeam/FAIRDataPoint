@@ -29,6 +29,8 @@ package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
@@ -92,10 +94,8 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter  {
     }
     
     @Bean
-    public TaskExecutor threadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setThreadNamePrefix("FDP_API_ASYNC_EXECUTOR_FOR_TESTS");
-        return executor;
+    public Executor threadPoolTaskExecutor() {
+        return Executors.newFixedThreadPool(2);
     }
     
     @Bean(name="repository", initMethod = "initialize",

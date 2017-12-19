@@ -69,14 +69,16 @@ public class FairSearchClientImpl implements FairSearchClient {
     @Override
     public CompletableFuture submitFdpUri(@Nonnull IRI uri) {
         Preconditions.checkState(uri != null, "FDP uri can't be null");
-        try {
-            return CompletableFuture.completedFuture(Unirest.get(fdpSubmitUrl).queryString("fdp", 
-                    uri.toString()).asString().getStatus());
-        } catch (UnirestException ex) {
-            String msg = "Error submitting FDP to search. " + ex.getMessage();
-            LOGGER.error(msg);
-            return CompletableFuture.completedFuture(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        }
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return Unirest.get(fdpSubmitUrl).queryString("fdp", uri.toString()).asString()
+                        .getStatus();
+            } catch (UnirestException ex) {
+                String msg = "Error submitting FDP to search. " + ex.getMessage();
+                LOGGER.error(msg);
+                return HttpStatus.SC_INTERNAL_SERVER_ERROR;
+            }
+        });
     }
     
 }

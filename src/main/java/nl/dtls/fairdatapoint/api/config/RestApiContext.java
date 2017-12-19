@@ -55,6 +55,8 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
 import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
 
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
@@ -66,10 +68,8 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * Spring context file.
@@ -108,10 +108,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    public TaskExecutor threadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setThreadNamePrefix("FDP_API_ASYNC_EXECUTOR");
-        return executor;
+    public Executor threadPoolTaskExecutor() {
+        return Executors.newFixedThreadPool(4);
     }
 
     @Bean(name = "publisher")
