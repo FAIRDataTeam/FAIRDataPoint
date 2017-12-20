@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 # Install nano, git and maven openjdk-8-jdk
@@ -7,18 +6,18 @@ apk upgrade
 apk add --no-cache bash nano git maven
 apk add --no-cache openjdk8
 
-# clone fairmetadata4j  lib repo
+# clone fairmetadata4j repository
 git clone --depth 1 -b develop https://github.com/DTL-FAIRData/fairmetadata4j /fairmetadata4j
 
 # Install fairmetadata4j
 cd  /fairmetadata4j
 mvn --quiet --fail-fast install
 
-# Clone fdp repo
+# Clone FAIRDataPoint repository
 cd /
 git clone --depth 1 -b develop https://github.com/DTL-FAIRData/FAIRDataPoint /FAIRDataPoint
 
-# Build FDP
+# Build FAIRDataPoint
 cd /FAIRDataPoint
 mvn --quiet --fail-fast verify
 
