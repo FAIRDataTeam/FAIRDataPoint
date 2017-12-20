@@ -82,8 +82,7 @@ public class FdpMetadataConverter extends AbstractMetadataMessageConverter
     
     
     @Override
-    protected void writeInternal(FDPMetadata metadata, HttpOutputMessage 
-            outputMessage)
+    protected void writeInternal(FDPMetadata metadata, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         String result = null;
         try {                
@@ -92,8 +91,8 @@ public class FdpMetadataConverter extends AbstractMetadataMessageConverter
             throw new HttpMessageNotWritableException("", e);
         }
         
-        OutputStreamWriter writer = new OutputStreamWriter(
-                outputMessage.getBody(), StandardCharsets.UTF_8);
+        OutputStreamWriter writer = new OutputStreamWriter(outputMessage.getBody(),
+                StandardCharsets.UTF_8);
         writer.write(result);
         writer.close();
     }

@@ -28,12 +28,9 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.net.MalformedURLException;
-import java.time.ZonedDateTime;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
@@ -47,7 +44,6 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,11 +77,9 @@ public class FairMetaDataServiceImplTest {
     private final String TEST_CATALOG_URI = "http://example.com/fdp/catalog";
     private final String TEST_DATASET_URI
             = "http://example.com/fdp/catalog/dataset";
-    private final String TEST_DATARECORD_URI
-            = "http://example.com/fdp/catalog/dataset/datarecord";
     private final String TEST_DISTRIBUTION_URI
             = "http://example.com/fdp/catalog/dataset/distrubtion";
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    private ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     @Before
     public void storeExampleMetadata() throws StoreManagerException,
@@ -127,6 +121,38 @@ public class FairMetaDataServiceImplTest {
     }
 
     /**
+     * Test to store FDP metadata, this test is excepted to throw error
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test(expected = MetadataException.class)
+    public void storeFDPMetaDataWithNoID() throws FairMetadataServiceException,
+            MetadataException {
+        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
+                TEST_FDP_URI);
+        metadata.setIdentifier(null);
+        fairMetaDataService.storeFDPMetaData(metadata);
+    }
+
+    /**
+     * Test to store FDP metadata, this test is excepted to throw error
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test(expected = MetadataException.class)
+    public void storeFDPMetaDataWithNoRepoID() throws 
+            FairMetadataServiceException, MetadataException {
+        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
+                TEST_FDP_URI);
+        metadata.setRepostoryIdentifier(null);
+        fairMetaDataService.storeFDPMetaData(metadata);
+    }
+
+    /**
      * Test to store FDP metadata, this test is excepted to pass
      */
     @DirtiesContext
@@ -137,103 +163,6 @@ public class FairMetaDataServiceImplTest {
                     ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI));
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
-        }
-    }
-    
-    
-
-    /**
-     * Test to store FDP metadata without metadata ID
-     */
-    @DirtiesContext
-    @Test
-    public void storeFDPMetaDataWithNoID() {
-        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI);
-        metadata.setIdentifier(null);
-        try {
-            fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
-            assertNotNull(mdata.getIdentifier());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-
-    /**
-     * Test to store FDP metadata without repo ID
-     */
-    @DirtiesContext
-    @Test
-    public void storeFDPMetaDataWithNoRepoID() {
-        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI);
-        metadata.setRepostoryIdentifier(null);
-        try {
-            fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
-            assertNotNull(mdata.getRepostoryIdentifier());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        }
-    }
-    
-    /**
-     * Test to store FDP metadata without publisher
-     */
-    @DirtiesContext
-    @Test
-    public void storeFDPMetaDataWithNoPublisher() {
-        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI);
-        metadata.setPublisher(null);
-        try {
-            fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
-            assertNotNull(mdata.getPublisher());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        }
-    }
-    
-    /**
-     * Test to store FDP metadata without language
-     */
-    @DirtiesContext
-    @Test
-    public void storeFDPMetaDataWithNoLanguage() {
-        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI);
-        metadata.setLanguage(null);
-        try {
-            fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
-            assertNotNull(mdata.getLanguage());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        }
-    }
-    
-    /**
-     * Test to store FDP metadata without license
-     */
-    @DirtiesContext
-    @Test
-    public void storeFDPMetaDataWithNoLicense() {
-        FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
-                TEST_FDP_URI);
-        metadata.setLicense(null);
-        try {
-            fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
-            assertNotNull(mdata.getLicense());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
         }
     }
 
@@ -276,21 +205,6 @@ public class FairMetaDataServiceImplTest {
     public void retrieveFDPMetaData() throws FairMetadataServiceException {
         assertNotNull(fairMetaDataService.retrieveFDPMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.FDP_URI)));
-    }     
-    
-    /**
-     * Test existence of FDP metadata specs link
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test
-    public void existenceFDPMetaDataSpecsLink() throws 
-            FairMetadataServiceException, MetadataException {
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
-        assertNotNull(metadata.getSpecification());
     }
 
     /**
@@ -324,86 +238,6 @@ public class FairMetaDataServiceImplTest {
             fail("This test is not expected to throw an errors");
         }
     }
-    
-    /**
-     * Test to store catalog metadata without metadata ID
-     */
-    @DirtiesContext
-    @Test
-    public void storeCatalogMetaDataWithNoID() {
-        CatalogMetadata metadata = ExampleFilesUtils.
-                    getCatalogMetadata(TEST_CATALOG_URI,
-                            ExampleFilesUtils.FDP_URI);
-        metadata.setIdentifier(null);
-        try {
-            fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
-            assertNotNull(mdata.getIdentifier());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store catalog metadata without publisher
-     */
-    @DirtiesContext
-    @Test
-    public void storeCatalogMetaDataWithNoPublisher() {
-        CatalogMetadata metadata = ExampleFilesUtils.
-                    getCatalogMetadata(TEST_CATALOG_URI,
-                            ExampleFilesUtils.FDP_URI);
-        metadata.setPublisher(null);
-        try {
-            fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
-            assertNotNull(mdata.getPublisher());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store catalog metadata without language
-     */
-    @DirtiesContext
-    @Test
-    public void storeCatalogMetaDataWithNoLanguage() {
-        CatalogMetadata metadata = ExampleFilesUtils.
-                    getCatalogMetadata(TEST_CATALOG_URI,
-                            ExampleFilesUtils.FDP_URI);
-        metadata.setLanguage(null);
-        try {
-            fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
-            assertNotNull(mdata.getLanguage());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store catalog metadata without license
-     */
-    @DirtiesContext
-    @Test
-    public void storeCatalogMetaDataWithNoLicense() {
-        CatalogMetadata metadata = ExampleFilesUtils.
-                    getCatalogMetadata(TEST_CATALOG_URI,
-                            ExampleFilesUtils.FDP_URI);
-        metadata.setLicense(null);
-        try {
-            fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
-            assertNotNull(mdata.getLicense());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
 
     /**
      * Test to retrieve NonExiting catalog metadata, this test is excepted to
@@ -431,21 +265,6 @@ public class FairMetaDataServiceImplTest {
         assertNotNull(fairMetaDataService.retrieveCatalogMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI)));
     }
-    
-    /**
-     * Test existence of catalog metadata specs link
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test
-    public void existenceCatalogMetaDataSpecsLink() throws 
-            FairMetadataServiceException, MetadataException {
-        CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
-        assertNotNull(metadata.getSpecification());
-    }
 
     /**
      * Test to store dataset metadata, this test is excepted to throw error
@@ -464,20 +283,6 @@ public class FairMetaDataServiceImplTest {
         metadata.setParentURI(null);
         fairMetaDataService.storeDatasetMetaData(metadata);
     }
-    
-    /**
-     * Test to store dataset metadata with wrong parent uri
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test(expected = IllegalStateException.class)
-    public void storeDatasetMetaDataWrongParentUri() throws
-            FairMetadataServiceException, MetadataException {
-        fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
-                getDatasetMetadata(TEST_DATASET_URI,
-                        ExampleFilesUtils.FDP_URI));
-    }
 
     /**
      * Test to store dataset metadata, this test is excepted to pass
@@ -492,86 +297,6 @@ public class FairMetaDataServiceImplTest {
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
         }
-    }
-    
-    /**
-     * Test to store dataset metadata without metadata ID
-     */
-    @DirtiesContext
-    @Test
-    public void storeDatsetMetaDataWithNoID() {
-        DatasetMetadata metadata = ExampleFilesUtils.
-                    getDatasetMetadata(TEST_DATASET_URI,
-                            ExampleFilesUtils.CATALOG_URI);
-        metadata.setIdentifier(null);
-        try {
-            fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
-            assertNotNull(mdata.getIdentifier());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store dataset metadata without publisher
-     */
-    @DirtiesContext
-    @Test
-    public void storeDatsetMetaDataWithNoPublisher() {
-        DatasetMetadata metadata = ExampleFilesUtils.
-                    getDatasetMetadata(TEST_DATASET_URI,
-                            ExampleFilesUtils.CATALOG_URI);
-        metadata.setPublisher(null);
-        try {
-            fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
-            assertNotNull(mdata.getPublisher());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store dataset metadata without language
-     */
-    @DirtiesContext
-    @Test
-    public void storeDatsetMetaDataWithNoLanguage() {
-        DatasetMetadata metadata = ExampleFilesUtils.
-                    getDatasetMetadata(TEST_DATASET_URI,
-                            ExampleFilesUtils.CATALOG_URI);
-        metadata.setLanguage(null);
-        try {
-            fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
-            assertNotNull(mdata.getLanguage());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store dataset metadata without license
-     */
-    @DirtiesContext
-    @Test
-    public void storeDatsetMetaDataWithNoLicense() {
-        DatasetMetadata metadata = ExampleFilesUtils.
-                    getDatasetMetadata(TEST_DATASET_URI,
-                            ExampleFilesUtils.CATALOG_URI);
-        metadata.setLicense(null);
-        try {
-            fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
-            assertNotNull(mdata.getLicense());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
     }
 
     /**
@@ -600,21 +325,6 @@ public class FairMetaDataServiceImplTest {
         assertNotNull(fairMetaDataService.retrieveDatasetMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.DATASET_URI)));
     }
-    
-    /**
-     * Test existence of dataset metadata specs link
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test
-    public void existenceDatasetMetaDataSpecsLink() throws 
-            FairMetadataServiceException, MetadataException {
-        DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
-        assertNotNull(metadata.getSpecification());
-    }
 
     /**
      * Test to store dataset distribution, this test is excepted to throw error
@@ -633,22 +343,9 @@ public class FairMetaDataServiceImplTest {
         metadata.setParentURI(null);
         fairMetaDataService.storeDistributionMetaData(metadata);
     }
-    
+
     /**
-     * Test to store distribution, this test is excepted to pass
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test(expected = IllegalStateException.class)
-    public void storeDistributionMetaDataWrongParentURI() 
-            throws FairMetadataServiceException, MetadataException {
-        fairMetaDataService.storeDistributionMetaData(ExampleFilesUtils.
-                getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                        ExampleFilesUtils.CATALOG_URI));
-    }
-    /**
-     * Test to store distribution metadata with wrong parent uri
+     * Test to store dataset distribution, this test is excepted to pass
      */
     @DirtiesContext
     @Test
@@ -660,181 +357,6 @@ public class FairMetaDataServiceImplTest {
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
         }
-    }
-    
-    /**
-     * Test to store distribution metadata without metadata ID
-     */
-    @DirtiesContext
-    @Test
-    public void storeDistributionMetaDataWithNoID() {
-        DistributionMetadata metadata = ExampleFilesUtils.
-                    getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                            ExampleFilesUtils.DATASET_URI);
-        metadata.setIdentifier(null);
-        try {
-            fairMetaDataService.storeDistributionMetaData(metadata);
-            DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
-                            ExampleFilesUtils.DISTRIBUTION_URI));
-            assertNotNull(mdata.getIdentifier());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store distribution metadata without publisher
-     */
-    @DirtiesContext
-    @Test
-    public void storeDistributionMetaDataWithNoPublisher() {
-        DistributionMetadata metadata = ExampleFilesUtils.
-                    getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                            ExampleFilesUtils.DATASET_URI);
-        metadata.setPublisher(null);
-        try {
-            fairMetaDataService.storeDistributionMetaData(metadata);
-            DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
-                            ExampleFilesUtils.DISTRIBUTION_URI));
-            assertNotNull(mdata.getPublisher());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    
-    /**
-     * Test to store distribution metadata without license
-     */
-    @DirtiesContext
-    @Test
-    public void storeDistributionMetaDataWithNoLicense() {
-        DistributionMetadata metadata = ExampleFilesUtils.
-                    getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                            ExampleFilesUtils.DATASET_URI);
-        metadata.setLicense(null);
-        try {
-            fairMetaDataService.storeDistributionMetaData(metadata);
-            DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
-                            ExampleFilesUtils.DISTRIBUTION_URI));
-            assertNotNull(mdata.getLicense());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store distribution metadata without language
-     */
-    @DirtiesContext
-    @Test
-    public void storeDistributionMetaDataWithNoLanguage() {
-        DistributionMetadata metadata = ExampleFilesUtils.
-                    getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                            ExampleFilesUtils.DATASET_URI);
-        metadata.setLanguage(null);
-        try {
-            fairMetaDataService.storeDistributionMetaData(metadata);
-            DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
-                            ExampleFilesUtils.DISTRIBUTION_URI));
-            assertNotNull(mdata.getLanguage());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store datarecord metadata, this test is excepted to throw error
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test(expected = IllegalStateException.class)
-    public void storeDataRecordMetaDataNoParentURI() throws
-            FairMetadataServiceException, MetadataException,
-            IllegalStateException {
-        DataRecordMetadata metadata = ExampleFilesUtils.
-                getDataRecordMetadata(TEST_DATARECORD_URI,
-                        ExampleFilesUtils.DATASET_URI);
-        metadata.setParentURI(null);
-        fairMetaDataService.storeDataRecordMetaData(metadata);
-    }
-    
-    /**
-     * Test to store datarecord metadata, this test is excepted to pass
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test(expected = IllegalStateException.class)
-    public void storeDataRecordMetaDataWrongParentURI() 
-            throws FairMetadataServiceException, MetadataException {
-        DataRecordMetadata metadata = ExampleFilesUtils.
-                getDataRecordMetadata(TEST_DATARECORD_URI,
-                        ExampleFilesUtils.CATALOG_URI);
-        fairMetaDataService.storeDataRecordMetaData(metadata);
-    }
-    /**
-     * Test to store datarecord metadata
-     */
-    @DirtiesContext
-    @Test
-    public void storeDataRecordMetaData() {
-        try {
-            DataRecordMetadata metadata = ExampleFilesUtils.
-                getDataRecordMetadata(TEST_DATARECORD_URI,
-                        ExampleFilesUtils.DATASET_URI);
-            fairMetaDataService.storeDataRecordMetaData(metadata);
-        } catch (FairMetadataServiceException | MetadataException ex) {
-            fail("This test is not expected to throw an errors");
-        }
-    }
-    
-    /**
-     * Test to store datarecord metadata without metadata ID
-     */
-    @DirtiesContext
-    @Test
-    public void storeDataRecordMetaDataWithNoID() {
-        DataRecordMetadata metadata = ExampleFilesUtils.
-                getDataRecordMetadata(TEST_DATARECORD_URI,
-                        ExampleFilesUtils.DATASET_URI);
-        metadata.setIdentifier(null);
-        try {
-            fairMetaDataService.storeDataRecordMetaData(metadata);
-            DataRecordMetadata mdata = fairMetaDataService.
-                    retrieveDataRecordMetadata(valueFactory.createIRI(
-                            TEST_DATARECORD_URI));
-            assertNotNull(mdata.getIdentifier());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
-    }
-    
-    /**
-     * Test to store datarecord metadata without publisher
-     */
-    @DirtiesContext
-    @Test
-    public void storeDataRecordMetaDataWithNoPublisher() {
-        DataRecordMetadata metadata = ExampleFilesUtils.
-                getDataRecordMetadata(TEST_DATARECORD_URI,
-                        ExampleFilesUtils.DATASET_URI);
-        metadata.setPublisher(null);
-        try {
-            fairMetaDataService.storeDataRecordMetaData(metadata);
-            DataRecordMetadata mdata = fairMetaDataService.
-                    retrieveDataRecordMetadata(valueFactory.createIRI(
-                            TEST_DATARECORD_URI));
-            assertNotNull(mdata.getPublisher());
-        } catch (Exception ex) {
-            fail("This test is not excepted to throw any error");
-        } 
     }
 
     /**
@@ -864,66 +386,5 @@ public class FairMetaDataServiceImplTest {
         assertNotNull(fairMetaDataService.retrieveDistributionMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.DISTRIBUTION_URI)));
     }
-    
-    /**
-     * Test existence of distribution metadata specs link
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
-    @DirtiesContext
-    @Test
-    public void existenceDistributionMetaDataSpecsLink() throws 
-            FairMetadataServiceException, MetadataException {
-        DistributionMetadata metadata = fairMetaDataService.
-                retrieveDistributionMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DISTRIBUTION_URI));
-        assertNotNull(metadata.getSpecification());
-    }
-    
-    @DirtiesContext
-    @Test
-    public void updatePropagationToParents() throws MetadataException, FairMetadataServiceException {
-        // given
-        DistributionMetadata newDistribution = ExampleFilesUtils.getDistributionMetadata(
-                TEST_DISTRIBUTION_URI, ExampleFilesUtils.DATASET_URI);
-        newDistribution.setByteSize(valueFactory.createLiteral(1_000L));
-        
-        // when
-        fairMetaDataService.storeDistributionMetaData(newDistribution);
-        
-        // then
-        newDistribution = fairMetaDataService.retrieveDistributionMetaData(
-                valueFactory.createIRI(TEST_DISTRIBUTION_URI));
-        ZonedDateTime distributionModified = ZonedDateTime.parse(
-                newDistribution.getModified().stringValue());
-        
-        // compare dataset timestamp with distribution timestamp
-        {
-            DatasetMetadata updated = fairMetaDataService.retrieveDatasetMetaData(
-                    valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
-            ZonedDateTime updatedModified = ZonedDateTime.parse(
-                    updated.getModified().stringValue());
-            assertTrue("Distribution is modified before the dataset is modified",
-                    distributionModified.isBefore(updatedModified));
-        }
-        // compare catalog timestamp with distribution timestamp
-        {
-            CatalogMetadata updated = fairMetaDataService.retrieveCatalogMetaData(
-                    valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
-            ZonedDateTime updatedModified = ZonedDateTime.parse(
-                    updated.getModified().stringValue());
-            assertTrue("Distribution is modified before the catalog is modified",
-                    distributionModified.isBefore(updatedModified));
-        }
-        // compare repository timestamp with distribution timestamp
-        {
-            FDPMetadata updated = fairMetaDataService.retrieveFDPMetaData(
-                    valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
-            ZonedDateTime updatedModified = ZonedDateTime.parse(
-                    updated.getModified().stringValue());
-            assertTrue("Distribution is modified before the repository is modified",
-                    distributionModified.isBefore(updatedModified));
-        }
-    }
+
 }

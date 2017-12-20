@@ -61,7 +61,7 @@ public class ApplicationFilter extends OncePerRequestFilter {
                 HttpHeaders.CONTENT_TYPE);
         response.setHeader(HttpHeaders.ALLOW, allowedMtds);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
-                allowedMtds);
+                (HttpHeaders.ACCEPT));
         ThreadContext.put("ipAddress", request.getRemoteAddr());
         ThreadContext.put("responseStatus", String.valueOf(
                 response.getStatus()));

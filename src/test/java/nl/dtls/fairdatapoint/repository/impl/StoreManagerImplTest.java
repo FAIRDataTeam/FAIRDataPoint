@@ -68,7 +68,7 @@ public class StoreManagerImplTest {
 
     @Autowired
     private StoreManager testStoreManager;
-    private final ValueFactory f = SimpleValueFactory.getInstance();
+    private ValueFactory f = SimpleValueFactory.getInstance();
 
     @Before
     public void storeExampleFile() throws StoreManagerException {

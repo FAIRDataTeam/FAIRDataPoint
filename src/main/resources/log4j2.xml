@@ -52,10 +52,10 @@ and open the template in the editor.
         <Logger name="nl.dtls.fairdatapoint.api" level="debug" additivity="false">
             <appender-ref ref="trace-log" level="info"/>
             <appender-ref ref="error-log" level="error"/>
-            <appender-ref ref="console-log" level="warn"/>
+            <appender-ref ref="console-log" level="info"/>
             <appender-ref ref="api-request-log" level="API-REQUEST"/>
         </Logger>
-        <Root level="warn" additivity="false">
+        <Root level="info" additivity="false">
             <AppenderRef ref="console-log"/>
         </Root>
     </Loggers>

@@ -23,4 +23,4 @@
     THE SOFTWARE.
 
 -->
-<Context antiJARLocking="true" path="/fairdatapoint"/>
+<Context path="/fdp"/>

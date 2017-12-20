@@ -9,13 +9,15 @@
 <> dct:hasVersion "1.0" ;
 	dct:publisher <http://dtls.nl> ;
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/textmining-metadataID> ;
-	dct:issued "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime  ;
-	dct:modified "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
-        dct:conformsTo <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued> "2016-10-27"^^xsd:date ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified> "2016-10-27"^^xsd:date ;
+	dct:issued "2016-10-27"^^xsd:date ;
+	dct:modified "2016-10-27"^^xsd:date ;
 	dct:language lang:en ;
 	dct:title "Catalog for textmining datasets"@en ;
 	a dcat:Catalog ;
 	rdfs:label "Catalog for textmining datasets"@en ;
+	dcat:dataset <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc> ;
 	dcat:themeTaxonomy <http://dbpedia.org/resource/Text_mining> , <http://edamontology.org/topic_0218> ;
         dct:identifier "textmining-metadataID" .
 

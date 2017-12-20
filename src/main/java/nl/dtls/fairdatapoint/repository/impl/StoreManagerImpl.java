@@ -113,18 +113,12 @@ public class StoreManagerImpl implements StoreManager {
     /**
      * Store string RDF to the repository
      *
-     * @param cntx context uri
      */
     @Override
-    public void storeStatements(List<Statement> statements, IRI... cntx) throws
+    public void storeStatements(List<Statement> statements) throws
             StoreManagerException {
         try (RepositoryConnection conn = getRepositoryConnection()) {
-            if(cntx != null) {
-              conn.add(statements, cntx);  
-            } else {
-                conn.add(statements); 
-            }
-            
+            conn.add(statements);
         } catch (RepositoryException e) {
             throw (new StoreManagerException("Error storing statements :"
                     + e.getMessage()));

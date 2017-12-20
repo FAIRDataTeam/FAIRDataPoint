@@ -8,16 +8,17 @@
 
 <> dct:hasVersion "1.0" ;
 	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gda-lumc-sparql/gda-lumc-sparql-metadataID> ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued> "2016-10-27"^^xsd:date ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified> "2016-10-27"^^xsd:date ;
 	dct:issued "2016-05-27T10:16:21+00:00"^^xsd:dateTime ;
 	dct:license <http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0> ;
-        dct:conformsTo <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
 	dct:modified "2016-05-27T10:16:21+00:00"^^xsd:dateTime ;
 	dct:title "GDA lumc SPARQL endpoint"@en ;
 	a dcat:Distribution ;
 	dcat:accessURL <http://triplestore.fair-dtls.vm.surfsara.nl:8890/sparql> ;
 	dcat:mediaType "application/json" , "text/turtle" , "text/html" ;
         dct:identifier "gda-lumc-sparql-metadataID" ;
-        dct:isPartOf <http://localhost/fdp/dataset/gene-disease-association_lumc> .
+        dct:isPartOf <http://localhost/dataset/gene-disease-association_lumc> .
 
 <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gda-lumc-sparql/gda-lumc-sparql-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
 	dct:identifier "gda-lumc-sparql-metadataID" .
