@@ -27,52 +27,39 @@
  */
 package nl.dtls.fairdatapoint.api.config;
 
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
-import static springfox.documentation.builders.PathSelectors.regex;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 /**
- * Swagger configuration.
+ * Root config
  * 
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2015-11-19
+ * @since 2017-03-27
  * @version 0.1
  */
-@EnableSwagger2
-public class ApplicationSwaggerConfig {
-
+@Configuration
+public class RootConfig {
     @Bean
-    public Docket api(){
-        return new Docket(DocumentationType.SWAGGER_2)
-            .select()
-            .apis(RequestHandlerSelectors.any())
-            .paths(regex("/.*"))
-            .build()
-            .apiInfo(apiInfo());
-    }
-
-    private ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo(
-            "FDP API Java based",
-            "<p>This API is a prototype version, If you find bugs in this api "
-                    + "please contact the developer.</p>"
-                    + "<p>"
-                    + "<li><a target='_blank' href = 'https://dtl-fair."
-                    + "atlassian.net/wiki/display/FDP/FAIR+Data+Point+"
-                    + "Software+Specification'>API specs</li>"
-                    + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
-                    + "FAIRDataPoint'>Source code</a> </li></p>",
-            "0.1-beta",
-            "ATO",
-            "rr.kaliyaperumal@gmail.com",
-            "The MIT License",
-            "https://opensource.org/licenses/MIT"
-        );
-        return apiInfo;
+    public static PropertySourcesPlaceholderConfigurer props(Environment env) {
+        PropertySourcesPlaceholderConfigurer configurer = 
+                new PropertySourcesPlaceholderConfigurer();        
+        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();        
+        Resource resource;
+        if (env.containsProperty("fdpConfig")) {
+            resource = new FileSystemResource(env.
+                    getRequiredProperty("fdpConfig"));
+        } else {
+            resource = new ClassPathResource("conf/fdpConfig.yml");
+        }        
+        yaml.setResources(resource);        
+        configurer.setProperties(yaml.getObject());        
+        return configurer;
     }
 }

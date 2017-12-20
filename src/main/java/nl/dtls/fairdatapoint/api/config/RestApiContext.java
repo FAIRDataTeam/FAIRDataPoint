@@ -22,6 +22,8 @@
  */
 package nl.dtls.fairdatapoint.api.config;
 
+
+import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import java.io.IOException;
 import java.util.List;
 
@@ -40,9 +42,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -55,11 +54,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
+import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import nl.dtl.fairmetadata4j.model.Agent;
 
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Spring context file.
@@ -70,11 +80,10 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
  * @version 0.2
  */
 @EnableWebMvc
+@EnableAsync
 @Configuration
 @Import(ApplicationSwaggerConfig.class)
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-@PropertySource({"${fdp.server.conf:classpath:/conf/fdp-server.properties}",
-    "${fdp.tripleStore.conf:classpath:/conf/triple-store.properties}"})
 public class RestApiContext extends WebMvcConfigurerAdapter {
 
     private final static Logger LOGGER
@@ -82,7 +91,9 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
-    
+
+    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
@@ -90,25 +101,72 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.defaultContentType(MediaType.parseMediaType(TURTLE.getDefaultMIMEType()));
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
     }
+    
+    @Bean( destroyMethod = "shutdownNow")
+    public Executor threadPoolTaskExecutor(@Value("${threadPoolSize:4}") int threadPoolSize) {
+        return Executors.newFixedThreadPool(threadPoolSize);
+    }
+
+    @Bean(name = "publisher")
+    public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") String publisherURI,
+            @Value("${metadataProperties.publisherName:nil}") String publishername) {
+        Agent publisher = null;
+        if (!publisherURI.contentEquals("nil")
+                && !publishername.contentEquals("nil")) {
+            publisher = new Agent();
+            publisher.setUri(valueFactory.createIRI(publisherURI));
+            publisher.setName(valueFactory.createLiteral(publishername));
+        }
+        return publisher;
+    }
+
+    @Bean(name = "language")
+    public IRI language(@Value("${metadataProperties.language:nil}") String languageURI) {
+        IRI language = null;
+        if (!languageURI.contentEquals("nil")) {
+            language = valueFactory.createIRI(languageURI);
+        }
+        return language;
+    }
+
+    @Bean(name = "license")
+    public IRI license(@Value("${metadataProperties.license:nil}") String licenseURI) {
+        IRI license = null;
+        if (!licenseURI.contentEquals("nil")) {
+            license = valueFactory.createIRI(licenseURI);
+        }
+        return license;
+    }
 
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
-    public Repository repository(Environment env)
+    public Repository repository(@Value("${store.type:1}") int storeType,
+            @Value("${store.url}") String storeUrl,
+            @Value("${store.username:nil}") String storeUsername,
+            @Value("${store.password:nil}") String storeUserPassword,
+            @Value("${store.dir:}") String storeDir)
             throws RepositoryException {
-        String storeURL = env.getProperty("store-url");
-        int storeType = env.getProperty("store-type", Integer.class);
         Repository repository;
-        if (storeType == 2) {
-            repository = new SPARQLRepository(storeURL);
-            LOGGER.info("HTTP triple store initialize");
+        if (storeType == 1 && !storeUsername.isEmpty()
+                && !storeUsername.contains("nil")) { // HTTP endpoint
+            SPARQLRepository sRepository = new SPARQLRepository(storeUrl);
+            LOGGER.info("Initializing HTTP triple store ");
+            sRepository.setUsernameAndPassword(storeUsername,
+                    storeUserPassword);
+            return sRepository;
+        } else if (storeType == 2 && !storeDir.isEmpty()) {
+            File dataDir = new File(storeDir);
+            LOGGER.info("Initializing native store");
+            repository = new SailRepository(new NativeStore(dataDir));
         } else { // In memory is the default store
             Sail store = new MemoryStore();
             repository = new SailRepository(store);
-            LOGGER.info("Inmemory triple store initialize");
+            LOGGER.info("Initializing inmemory store");
         }
         return repository;
     }
@@ -118,11 +176,6 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     public StoreManager storeManager() throws RepositoryException,
             StoreManagerException {
         return new StoreManagerImpl();
-    }
-
-    @Bean(name = "properties")
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
     }
 
     @Override
@@ -141,16 +194,16 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             final DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
-    
+
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(handlebars());
     }
-    
+
     @Bean
     public ViewResolver handlebars() {
         HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
-        
+
         // add handlebars helper to get a label's literal without datatype
         viewResolver.registerHelper("literal", new Helper<Literal>() {
             @Override
@@ -158,11 +211,11 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
                 return literal.getLabel();
             }
         });
-        
+
         viewResolver.setPrefix("/WEB-INF/templates/");
         viewResolver.setSuffix(".hbs");
         viewResolver.setFailOnMissingFile(false);
-        
+
         return viewResolver;
     }
 }
