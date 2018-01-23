@@ -101,6 +101,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private IRI license;    
     @Autowired
     private FairSearchClient fseService;
+    @Autowired
+    private FairMetaDataMetricsServiceImpl fmMetricsService;
 
     @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
     private String fdpSpecs;
@@ -345,6 +347,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         if (metadata.getLicense() == null && license != null) {
             metadata.setLicense(license);
         }
+        //Add FAIR metrics
+        metadata.setMetrics(fmMetricsService.getMetrics(metadata.getUri()));
     }
     
     /**
