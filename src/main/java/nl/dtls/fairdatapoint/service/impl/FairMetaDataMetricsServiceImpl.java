@@ -51,10 +51,10 @@ import org.springframework.stereotype.Service;
 @Service("fairMetaDataMetricsServiceImpl")
 public class FairMetaDataMetricsServiceImpl {
     
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    private static final Logger LOGGER = LogManager.getLogger(FairMetaDataServiceImpl.class
+            .getName());
     
-    private static final Logger LOGGER = LogManager.getLogger(
-            FairMetaDataServiceImpl.class.getName());
+    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     
     @Value("${metadataFM.F1.A:nil}")
     private String mdFmF1A;
