@@ -101,6 +101,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private IRI license;    
     @Autowired
     private FairSearchClient fseService;
+    @Autowired
+    private FairMetaDataMetricsServiceImpl fmMetricsService;
 
     @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
     private String fdpSpecs;
@@ -345,6 +347,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         if (metadata.getLicense() == null && license != null) {
             metadata.setLicense(license);
         }
+        //Add FAIR metrics
+        metadata.setMetrics(fmMetricsService.getMetrics(metadata.getUri()));
     }
     
     /**
@@ -433,7 +437,6 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 String msg = ("No metadata found for the uri : " + uri);
                 throw (new ResourceNotFoundException(msg));
             }
-            addAddtionalResource(statements);
             return statements;
         } catch (StoreManagerException ex) {
             LOGGER.error("Error retrieving fdp metadata from the store");
@@ -460,30 +463,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         }
         return isURIExist;
     }
-
-    private void addAddtionalResource(List<Statement> statements) throws
-            StoreManagerException {
-        List<Statement> otherResources = new ArrayList<>();
-        for (Statement st : statements) {
-            IRI predicate = st.getPredicate();
-            Value object = st.getObject();
-            if (predicate.equals(FDP.METADATAIDENTIFIER)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            } else if (predicate.equals(R3D.INSTITUTION)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            } else if (predicate.equals(DCTERMS.PUBLISHER)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            } else if (predicate.equals(R3D.REPOSITORYIDENTIFIER)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            }
-        }
-        statements.addAll(otherResources);
-    }
-
+    
     @Override
     public void updateFDPMetaData(IRI uri, FDPMetadata metaDataUpdate)
             throws FairMetadataServiceException, MetadataException {
