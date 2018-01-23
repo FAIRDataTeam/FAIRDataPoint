@@ -82,7 +82,7 @@ public class StoreManagerImpl implements StoreManager {
             }
             return statements;
         } catch (RepositoryException e) {
-            throw (new StoreManagerException("Error retrieve resource :" + e.getMessage()));
+            throw new StoreManagerException("Error retrieve resource :" + e.getMessage());
         }
     }
 

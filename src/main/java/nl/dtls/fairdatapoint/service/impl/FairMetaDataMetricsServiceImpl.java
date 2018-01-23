@@ -53,8 +53,8 @@ public class FairMetaDataMetricsServiceImpl {
     
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     
-    private final static Logger LOGGER
-            = LogManager.getLogger(FairMetaDataServiceImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(
+            FairMetaDataServiceImpl.class.getName());
     
     @Value("${metadataFM.F1.A:nil}")
     private String mdFmF1A;
