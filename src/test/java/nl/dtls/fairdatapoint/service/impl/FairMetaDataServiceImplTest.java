@@ -39,6 +39,7 @@ import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
+import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -305,9 +306,9 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void existenceMetric() throws 
             FairMetadataServiceException, MetadataException {
-        FairMetaDataMetricsServiceImpl mockMetricsService = new FairMetaDataMetricsServiceImpl();
+        FairMetaDataMetricsService mockMetricsService = new FairMetaDataMetricsServiceImpl();
         // Using reflection to mock MetricsService field
-        ReflectionTestUtils.setField(mockMetricsService, "mdFmF1A", 
+        ReflectionTestUtils.setField(mockMetricsService, "metricFindablity1A", 
                 "http://www.example.com");
         ReflectionTestUtils.setField(fairMetaDataService, "fmMetricsService",mockMetricsService);
         // Store a catalog metadata

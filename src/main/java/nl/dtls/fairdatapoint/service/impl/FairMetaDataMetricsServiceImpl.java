@@ -32,13 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import nl.dtl.fairmetadata4j.model.Metric;
+import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * Service layer for fair metric
@@ -48,8 +49,8 @@ import org.springframework.stereotype.Service;
  * @since 2018-01-16
  * @version 0.1
  */
-@Service("fairMetaDataMetricsServiceImpl")
-public class FairMetaDataMetricsServiceImpl {
+@Component
+public class FairMetaDataMetricsServiceImpl implements FairMetaDataMetricsService {
     
     private static final Logger LOGGER = LogManager.getLogger(FairMetaDataServiceImpl.class
             .getName());
@@ -57,16 +58,16 @@ public class FairMetaDataMetricsServiceImpl {
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     
     @Value("${metadataFM.F1.A:nil}")
-    private String mdFmF1A;
+    private String metricFindablity1A;
     
     @Value("${metadataFM.F1.B:nil}")
-    private String mdFmF1B;
+    private String metricFindablity1B;
     
     @Value("${metadataFM.A1.A:nil}")
-    private String mdFmA11;
+    private String metricAccessiblity1A;
     
     @Value("${metadataFM.A2:nil}")
-    private String mdFmA2;
+    private String metricAccessiblity2;
     
     /**
      * This method returns list of fair metrics for metadata
@@ -80,16 +81,16 @@ public class FairMetaDataMetricsServiceImpl {
         List<Metric> metrics = new ArrayList();
         
         addMetric(metrics, metadataURI.toString().concat("/mdFmF1A"), 
-                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_F1A", mdFmF1A);
+                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_F1A", metricFindablity1A);
         
         addMetric(metrics, metadataURI.toString().concat("/mdFmF1B"), 
-                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_F1B", mdFmF1B);
+                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_F1B", metricFindablity1B);
         
         addMetric(metrics, metadataURI.toString().concat("/mdFmA1_1"), 
-                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_A1.1", mdFmA11);
+                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_A1.1", metricAccessiblity1A);
         
         addMetric(metrics, metadataURI.toString().concat("/mdFmA2"), 
-                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_A2", mdFmA2);
+                "https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_A2", metricAccessiblity2);
         return metrics;
     }
     

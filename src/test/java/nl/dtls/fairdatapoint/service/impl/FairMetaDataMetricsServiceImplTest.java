@@ -30,6 +30,7 @@ package nl.dtls.fairdatapoint.service.impl;
 import java.util.List;
 import nl.dtl.fairmetadata4j.model.Metric;
 import nl.dtls.fairdatapoint.api.config.RestApiContext;
+import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -55,7 +56,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class FairMetaDataMetricsServiceImplTest {    
     
     @Autowired
-    private FairMetaDataMetricsServiceImpl fmMetricsServiceImpl;
+    private FairMetaDataMetricsService fmMetricsServiceImpl;
     
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     
