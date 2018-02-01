@@ -28,13 +28,13 @@
 package nl.dtls.fairdatapoint.repository.impl;
 
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -71,21 +71,15 @@ public class StoreManagerImpl implements StoreManager {
      * @throws StoreManagerException
      */
     @Override
-    public List<Statement> retrieveResource(@Nonnull IRI uri)
-            throws StoreManagerException {
+    public List<Statement> retrieveResource(@Nonnull IRI uri) throws StoreManagerException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
         LOGGER.info("Get statements for the URI <" + uri.toString() + ">");
         try (RepositoryConnection conn = getRepositoryConnection()) {
-            RepositoryResult<Statement> queryResult = conn.getStatements(uri,
-                    null, null, false);
-            List<Statement> statements = new ArrayList();
-            while (queryResult.hasNext()) {
-                statements.add(queryResult.next());
-            }
+            RepositoryResult<Statement> queryResult = conn.getStatements(null, null, null, uri);
+            List<Statement> statements = Iterations.asList(queryResult);
             return statements;
         } catch (RepositoryException e) {
-            throw (new StoreManagerException("Error retrieve resource :"
-                    + e.getMessage()));
+            throw new StoreManagerException("Error retrieve resource :" + e.getMessage());
         }
     }
 

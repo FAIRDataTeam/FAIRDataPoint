@@ -55,6 +55,7 @@ import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
+import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
@@ -62,11 +63,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
-import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +100,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private IRI license;    
     @Autowired
     private FairSearchClient fseService;
+    @Autowired
+    private FairMetaDataMetricsService fmMetricsService;
 
     @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
     private String fdpSpecs;
@@ -345,6 +346,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         if (metadata.getLicense() == null && license != null) {
             metadata.setLicense(license);
         }
+        //Add FAIR metrics
+        metadata.setMetrics(fmMetricsService.getMetrics(metadata.getUri()));
     }
     
     /**
@@ -433,7 +436,6 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 String msg = ("No metadata found for the uri : " + uri);
                 throw (new ResourceNotFoundException(msg));
             }
-            addAddtionalResource(statements);
             return statements;
         } catch (StoreManagerException ex) {
             LOGGER.error("Error retrieving fdp metadata from the store");
@@ -460,30 +462,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         }
         return isURIExist;
     }
-
-    private void addAddtionalResource(List<Statement> statements) throws
-            StoreManagerException {
-        List<Statement> otherResources = new ArrayList<>();
-        for (Statement st : statements) {
-            IRI predicate = st.getPredicate();
-            Value object = st.getObject();
-            if (predicate.equals(FDP.METADATAIDENTIFIER)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            } else if (predicate.equals(R3D.INSTITUTION)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            } else if (predicate.equals(DCTERMS.PUBLISHER)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            } else if (predicate.equals(R3D.REPOSITORYIDENTIFIER)) {
-                otherResources.addAll(storeManager.retrieveResource(
-                        (IRI) object));
-            }
-        }
-        statements.addAll(otherResources);
-    }
-
+    
     @Override
     public void updateFDPMetaData(IRI uri, FDPMetadata metaDataUpdate)
             throws FairMetadataServiceException, MetadataException {

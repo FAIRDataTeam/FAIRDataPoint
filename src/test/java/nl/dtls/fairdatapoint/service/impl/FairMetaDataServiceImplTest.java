@@ -39,6 +39,7 @@ import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
+import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -46,6 +47,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -58,6 +60,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * FairMetaDataServiceImpl class unit tests
@@ -291,6 +294,29 @@ public class FairMetaDataServiceImplTest {
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
                 valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
         assertNotNull(metadata.getSpecification());
+    }
+    
+    /**
+     * Test existence of mertic
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test
+    public void existenceMetric() throws 
+            FairMetadataServiceException, MetadataException {
+        FairMetaDataMetricsService mockMetricsService = new FairMetaDataMetricsServiceImpl();
+        // Using reflection to mock MetricsService field
+        ReflectionTestUtils.setField(mockMetricsService, "metricFindablity1A", 
+                "http://www.example.com");
+        ReflectionTestUtils.setField(fairMetaDataService, "fmMetricsService",mockMetricsService);
+        // Store a catalog metadata
+        fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.getCatalogMetadata(
+                "http://www.example.com/cat1", ExampleFilesUtils.FDP_URI));
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(
+                "http://www.example.com/cat1"));
+        assertFalse(metadata.getMetrics().isEmpty());
     }
 
     /**

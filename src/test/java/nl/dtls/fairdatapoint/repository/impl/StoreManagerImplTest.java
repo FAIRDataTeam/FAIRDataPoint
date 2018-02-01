@@ -75,7 +75,7 @@ public class StoreManagerImplTest {
         List<Statement> sts = ExampleFilesUtils.
                 getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE,
                         "http://www.dtls.nl/test");
-        testStoreManager.storeStatements(sts);
+        testStoreManager.storeStatements(sts, f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
     }
 
     /**
