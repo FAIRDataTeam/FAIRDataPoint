@@ -39,6 +39,7 @@ import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
 import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
 import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
 import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.model.AccessRights;
 import nl.dtl.fairmetadata4j.model.Agent;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
@@ -62,6 +63,7 @@ import nl.dtls.fairdatapoint.service.FairSearchClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -115,6 +117,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @org.springframework.beans.factory.annotation.Value(
             "${metadataProperties.distributionSpecs:nil}")
     private String distributionSpecs;
+    @org.springframework.beans.factory.annotation.Value(
+            "${metadataProperties.accessRightsDescription:This resource has no access restriction}")
+    private String accessRightsDescription;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     @Override
@@ -348,6 +353,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         }
         //Add FAIR metrics
         metadata.setMetrics(fmMetricsService.getMetrics(metadata.getUri()));
+        
+        // Add access rights
+        if (metadata.getAccessRights() == null) {
+            LOGGER.info("Metadata ID is null or empty, adding default value for access rights");
+            AccessRights accessRights = new AccessRights();
+            accessRights.setUri(valueFactory.createIRI(metadata.getUri().stringValue()
+                    + "#accessRights"));
+            Literal description = valueFactory.createLiteral(accessRightsDescription,
+                    XMLSchema.STRING);
+            accessRights.setDescription(description);
+            metadata.setAccessRights(accessRights);
+        }
     }
     
     /**

@@ -318,6 +318,21 @@ public class FairMetaDataServiceImplTest {
                 "http://www.example.com/cat1"));
         assertFalse(metadata.getMetrics().isEmpty());
     }
+    
+    /**
+     * Test existence of access rigghts
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     */
+    @DirtiesContext
+    @Test
+    public void existenceAccessRightsStatement() throws 
+            FairMetadataServiceException, MetadataException {
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
+                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+        assertNotNull(metadata.getAccessRights().getDescription());
+    }
 
     /**
      * Test to store catalog metadata, this test is excepted to throw error
