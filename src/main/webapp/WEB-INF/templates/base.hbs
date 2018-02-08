@@ -60,7 +60,7 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Metadata ID</span></div> 
-                        <div class="col-sm-7"><span>{{literal metadata.identifier.identifier}}</span></div>
+                        <div class="col-sm-7"><span title="{{metadata.identifier.type}}">{{literal metadata.identifier.identifier}}</span></div>
                     </h4>
                 </div>
                 
@@ -68,7 +68,7 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Description</span></div> 
-                        <div class="col-sm-7"><span>{{literal metadata.description}}</span></div>    
+                        <div class="col-sm-7"><p>{{literal metadata.description}}</p></div>    
                     </h4>
                 </div>
                 {{/if}}
@@ -96,20 +96,11 @@
                 </div>
                 {{/if}}
                 
-                {{#if metadata.description}}
-                <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Description</span></div>
-                        <div class="col-sm-7"><p>{{metadata.description}}</p></div>
-                    </h4>
-                </div>
-                {{/if}}
-                
                 {{#if metadata.license}}
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">License</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.license}}">license</a></div>
+                        <div class="col-sm-7"><a target="_blank" href="{{metadata.license}}">{{metadata.license}}</a></div>
                     </h4>
                 </div>
                 {{/if}}
@@ -118,7 +109,7 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Rights</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.rights}}">rights</a></div>
+                        <div class="col-sm-7"><a target="_blank" href="{{metadata.rights}}">{{metadata.rights}}</a></div>
                     </h4>
                 </div>
                 {{/if}}
@@ -127,8 +118,41 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Access Rights</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.accessRights}}">access rights</a></div>
+                        <div class="col-sm-7">
+                            <a data-toggle="collapse" href="#accessRights">Access Rights<span class="caret"></span></a>
+                        </div>
                     </h4>
+                </div>
+                
+                <div class="collapse" id="accessRights">
+                    <div class="row">
+                        <h4>
+                            <div class="col-sm-1"><span class="label label-default">Access modes</span></div>
+                            <div class="col-sm-7">
+                                <ul>
+                                    {{#metadata.accessRights.accessMode}}
+                                    <li>
+                                        <a href="{{.}}">{{.}}</a>
+                                    </li>
+                                    {{/metadata.accessRights.accessMode}}
+                                </ul>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="row">
+                        <h4>
+                            <div class="col-sm-1"><span class="label label-default">Authorized Agents</span></div>
+                            <div class="col-sm-7">
+                                <ul>
+                                    {{#metadata.accessRights.authorizedAgent}}
+                                    <li>
+                                        <a href="{{.}}">{{.}}</a>
+                                    </li>
+                                    {{/metadata.accessRights.authorizedAgent}}
+                                </ul>
+                            </div>
+                        </h4>
+                    </div>
                 </div>
                 {{/if}}
                 
@@ -136,7 +160,7 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Specification</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.specification}}">specification</a></div>
+                        <div class="col-sm-7"><a target="_blank" href="{{metadata.specification}}">{{metadata.specification}}</a></div>
                     </h4>
                 </div>
                 {{/if}}
@@ -145,7 +169,7 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Parent URI</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.parentURI}}">parent URI</a></div>
+                        <div class="col-sm-7"><a target="_blank" href="{{metadata.parentURI}}">{{metadata.parentURI}}</a></div>
                     </h4>
                 </div>
                 {{/if}}
@@ -154,7 +178,7 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Language</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.language}}">language</a></div>
+                        <div class="col-sm-7"><a target="_blank" href="{{metadata.language}}">{{metadata.language}}</a></div>
                     </h4>
                 </div>
                 {{/if}}
