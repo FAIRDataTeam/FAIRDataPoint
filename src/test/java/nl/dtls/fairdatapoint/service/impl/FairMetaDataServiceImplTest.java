@@ -320,17 +320,13 @@ public class FairMetaDataServiceImplTest {
     }
     
     /**
-     * Test existence of access rigghts
-     *
-     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
+     * Test existence of access rights description
      */
     @DirtiesContext
     @Test
-    public void existenceAccessRightsStatement() throws 
-            FairMetadataServiceException, MetadataException {
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+    public void existenceAccessRightsStatement() throws Exception {
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(
+                ExampleFilesUtils.FDP_URI));
         assertNotNull(metadata.getAccessRights().getDescription());
     }
 
