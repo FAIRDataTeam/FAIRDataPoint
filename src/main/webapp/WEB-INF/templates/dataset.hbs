@@ -30,7 +30,7 @@
     <h4>
         <div class="col-sm-1"><span class="label label-default">Contact point</span></div>
          <div class="col-sm-7"><span><a target="_blank" href="{{metadata.contactPoint}}">{{metadata.contactPoint}}</a></span></div>
-    </h4>    
+    </h4>
 </div>  
 {{/if}}
 
@@ -39,8 +39,26 @@
     <h4>
         <div class="col-sm-1"><span class="label label-default">Landing page</span></div>
         <div class="col-sm-7"><span><a target="_blank" href="{{metadata.landingPage}}">{{metadata.landingPage}}</a></span></div>
-    </h4>    
+    </h4>
 </div>  
+{{/if}}
+
+{{#if metadata.datasetIssued}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Dataset Issued</span></div>
+        <div class="col-sm-7"><span>{{literal metadata.datasetIssued}}</span></div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.datasetModified}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Dataset Modified</span></div>
+        <div class="col-sm-7"><span>{{literal metadata.datasetModified}}</span></div>
+    </h4>
+</div>
 {{/if}}
 
 <div class="row">

@@ -24,7 +24,23 @@
 </div>
 {{/if}}
 
+{{#if metadata.catalogIssued}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Catalog Issued</span></div>
+        <div class="col-sm-7"><span>{{literal metadata.catalogIssued}}</span></div>
+    </h4>
+</div>
+{{/if}}
 
+{{#if metadata.catalogModified}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Catalog Modified</span></div>
+        <div class="col-sm-7"><span>{{literal metadata.catalogModified}}</span></div>
+    </h4>
+</div>
+{{/if}}
 
 <div class="row">
     <h4>
