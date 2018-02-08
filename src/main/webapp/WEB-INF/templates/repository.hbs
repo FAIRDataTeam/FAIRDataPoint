@@ -1,5 +1,4 @@
 {{#partial "content"}}
-
 <div class="row">
     <h4>
         <div class="col-sm-1"><span class="label label-default">Catalogs</span></div>
@@ -10,6 +9,50 @@
         </div>
     </h4>
 </div>
-{{/partial}}
 
+{{#if metadata.repositoryIdentifier}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Repository Identifier</span></div>
+        <div class="col-sm-7"><span title="{{metadata.repositoryIdentifier.type}}">{{literal metadata.repositoryIdentifier.identifier}}</span></div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.institutionCountry}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Institution Country</span></div>
+        <div class="col-sm-7"><a target="_blank" href="{{metadata.institutionCountry}}">institution country</a></div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.lastUpdate}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Last Update</span></div>
+        <div class="col-sm-7"><span>{{literal metadata.lastUpdate}}</span></div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.startDate}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Start Date</span></div>
+        <div class="col-sm-7"><span>{{literal metadata.startDate}}</span></div>
+    </h4>
+</div>
+{{/if}}
+
+{{#if metadata.institution}}
+<div class="row">
+    <h4>
+        <div class="col-sm-1"><span class="label label-default">Institution</span></div>
+        <div class="col-sm-7"><a target="_blank" href="{{metadata.institution.uri}}">{{literal metadata.institution.name}}</a></div>
+    </h4>
+</div>
+{{/if}}
+{{/partial}}
 {{> base}}
