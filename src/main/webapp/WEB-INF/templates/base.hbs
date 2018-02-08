@@ -8,8 +8,8 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
         
         <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
-        </script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
         <title> 
             {{#if metadata.title}}
                 {{literal metadata.title}}
@@ -91,7 +91,7 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Version</span></div>
-                        <div class="col-sm-7"><span>{{metadata.version}}</span></div>
+                        <div class="col-sm-7"><span>{{literal metadata.version}}</span></div>
                     </h4>
                 </div>
                 {{/if}}
@@ -118,41 +118,8 @@
                 <div class="row">
                     <h4>
                         <div class="col-sm-1"><span class="label label-default">Access Rights</span></div>
-                        <div class="col-sm-7">
-                            <a data-toggle="collapse" href="#accessRights">Access Rights<span class="caret"></span></a>
-                        </div>
+                        <div class="col-sm-7"><p>{{literal metadata.accessRights.description}}</p></div>
                     </h4>
-                </div>
-                
-                <div class="collapse" id="accessRights">
-                    <div class="row">
-                        <h4>
-                            <div class="col-sm-1"><span class="label label-default">Access modes</span></div>
-                            <div class="col-sm-7">
-                                <ul>
-                                    {{#metadata.accessRights.accessMode}}
-                                    <li>
-                                        <a href="{{.}}">{{.}}</a>
-                                    </li>
-                                    {{/metadata.accessRights.accessMode}}
-                                </ul>
-                            </div>
-                        </h4>
-                    </div>
-                    <div class="row">
-                        <h4>
-                            <div class="col-sm-1"><span class="label label-default">Authorized Agents</span></div>
-                            <div class="col-sm-7">
-                                <ul>
-                                    {{#metadata.accessRights.authorizedAgent}}
-                                    <li>
-                                        <a href="{{.}}">{{.}}</a>
-                                    </li>
-                                    {{/metadata.accessRights.authorizedAgent}}
-                                </ul>
-                            </div>
-                        </h4>
-                    </div>
                 </div>
                 {{/if}}
                 
