@@ -88,6 +88,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     private final static Logger LOGGER
             = LogManager.getLogger(FairMetaDataServiceImpl.class);
+    
+    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
         
     private IRI fdpUri;
     @Autowired
@@ -120,7 +122,6 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @org.springframework.beans.factory.annotation.Value(
             "${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
-    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Override
     public FDPMetadata retrieveFDPMetaData(@Nonnull IRI uri) throws

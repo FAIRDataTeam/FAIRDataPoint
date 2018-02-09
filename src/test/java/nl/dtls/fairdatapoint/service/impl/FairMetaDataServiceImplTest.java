@@ -865,7 +865,7 @@ public class FairMetaDataServiceImplTest {
     public void retrieveNonExitingDatasetDistribution() throws
             FairMetadataServiceException {
         String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-       fairMetaDataService.retrieveDistributionMetaData(VALUEFACTORY.createIRI(uri));
+        fairMetaDataService.retrieveDistributionMetaData(VALUEFACTORY.createIRI(uri));
     }
 
     /**
