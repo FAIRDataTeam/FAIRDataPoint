@@ -120,7 +120,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @org.springframework.beans.factory.annotation.Value(
             "${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Override
     public FDPMetadata retrieveFDPMetaData(@Nonnull IRI uri) throws
@@ -177,7 +177,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             throws FairMetadataServiceException, MetadataException {
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
         if (!fdpSpecs.isEmpty() && !fdpSpecs.contains("nil")) {
-            metadata.setSpecification(valueFactory.createIRI(fdpSpecs));
+            metadata.setSpecification(VALUEFACTORY.createIRI(fdpSpecs));
         }
         storeMetadata(metadata);
         /*
@@ -199,7 +199,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 //                + "Please try with valid fdp URI");        
         if (!catalogSpecs.isEmpty()
                 && !catalogSpecs.contains("nil")) {
-            metadata.setSpecification(valueFactory.createIRI(catalogSpecs));
+            metadata.setSpecification(VALUEFACTORY.createIRI(catalogSpecs));
         }
         if (doesParentResourceExists(metadata)) {
             storeMetadata(metadata);
@@ -222,7 +222,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 + "Please try with valid catalog URI");
         if (!datasetSpecs.isEmpty()
                 && !datasetSpecs.contains("nil")) {
-            metadata.setSpecification(valueFactory.createIRI(datasetSpecs));
+            metadata.setSpecification(VALUEFACTORY.createIRI(datasetSpecs));
         }
         if (doesParentResourceExists(metadata)) {
             storeMetadata(metadata);
@@ -245,7 +245,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 + "Please try with valid dataset URI");
         if (!distributionSpecs.isEmpty()
                 && !distributionSpecs.contains("nil")) {
-            metadata.setSpecification(valueFactory.createIRI(
+            metadata.setSpecification(VALUEFACTORY.createIRI(
                     distributionSpecs));
         }
         if (doesParentResourceExists(metadata)) {
@@ -269,7 +269,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 + "Please try with valid dataset URI");
         if (!datarecordSpecs.isEmpty()
                 && !datarecordSpecs.contains("nil")) {
-            metadata.setSpecification(valueFactory.createIRI(
+            metadata.setSpecification(VALUEFACTORY.createIRI(
                     datarecordSpecs));
         }
         if (doesParentResourceExists(metadata)) {
@@ -300,10 +300,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                         LOGGER.info("Repository ID is null or empty, this feild"
                                 + " value will be generated automatically");
                         Identifier id = new Identifier();
-                        id.setUri(valueFactory.createIRI(metadata.getUri().
+                        id.setUri(VALUEFACTORY.createIRI(metadata.getUri().
                                 stringValue() + "#repositoryID"));
                         UUID uid = UUID.randomUUID();
-                        id.setIdentifier(valueFactory.createLiteral(
+                        id.setIdentifier(VALUEFACTORY.createLiteral(
                                 uid.toString(), XMLSchema.STRING));
                         id.setType(DATACITE.IDENTIFIER);
                         ((FDPMetadata) metadata).setRepostoryIdentifier(id);
@@ -331,10 +331,10 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             LOGGER.info("Metadata ID is null or empty, this feild value will "
                     + "be generated automatically");
             Identifier id = new Identifier();
-            id.setUri(valueFactory.createIRI(metadata.getUri().stringValue()
+            id.setUri(VALUEFACTORY.createIRI(metadata.getUri().stringValue()
                     + "#metadataID"));
             UUID uid = UUID.randomUUID();
-            id.setIdentifier(valueFactory.createLiteral(uid.toString(),
+            id.setIdentifier(VALUEFACTORY.createLiteral(uid.toString(),
                     XMLSchema.STRING));
             id.setType(DATACITE.RESOURCEIDENTIFIER);
             metadata.setIdentifier(id);
@@ -358,9 +358,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         if (metadata.getAccessRights() == null) {
             LOGGER.info("Metadata ID is null or empty, adding default value for access rights");
             AccessRights accessRights = new AccessRights();
-            accessRights.setUri(valueFactory.createIRI(metadata.getUri().stringValue()
+            accessRights.setUri(VALUEFACTORY.createIRI(metadata.getUri().stringValue()
                     + "#accessRights"));
-            Literal description = valueFactory.createLiteral(accessRightsDescription,
+            Literal description = VALUEFACTORY.createLiteral(accessRightsDescription,
                     XMLSchema.STRING);
             accessRights.setDescription(description);
             metadata.setAccessRights(accessRights);
