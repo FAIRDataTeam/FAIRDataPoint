@@ -78,6 +78,8 @@ public class FairMetaDataServiceImplTest {
 
     private final static Logger LOGGER
             = LogManager.getLogger(FairMetaDataServiceImplTest.class.getName());
+    
+    private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
     @Autowired
     private FairMetaDataService fairMetaDataService;
     private final String TEST_FDP_URI = "http://example.com/fdp";
@@ -88,7 +90,6 @@ public class FairMetaDataServiceImplTest {
             = "http://example.com/fdp/catalog/dataset/datarecord";
     private final String TEST_DISTRIBUTION_URI
             = "http://example.com/fdp/catalog/dataset/distrubtion";
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     @Before
     public void storeExampleMetadata() throws StoreManagerException,
@@ -156,8 +157,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setIdentifier(null);
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
             assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -175,8 +175,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setRepostoryIdentifier(null);
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
             assertNotNull(mdata.getRepostoryIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -194,8 +193,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setPublisher(null);
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
             assertNotNull(mdata.getPublisher());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -213,8 +211,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setLanguage(null);
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
             assertNotNull(mdata.getLanguage());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -232,8 +229,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setLicense(null);
         try {
             fairMetaDataService.storeFDPMetaData(metadata);
-            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            FDPMetadata mdata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
             assertNotNull(mdata.getLicense());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -250,7 +246,7 @@ public class FairMetaDataServiceImplTest {
             FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(
                     TEST_FDP_URI);
             fairMetaDataService.storeFDPMetaData(metadata);
-            fairMetaDataService.updateFDPMetaData(valueFactory.
+            fairMetaDataService.updateFDPMetaData(VALUEFACTORY.
                     createIRI(TEST_FDP_URI), metadata);
         } catch (FairMetadataServiceException | MetadataException ex) {
             fail("This test is not expected to throw an errors");
@@ -277,8 +273,7 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void retrieveFDPMetaData() throws FairMetadataServiceException {
-        assertNotNull(fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI)));
+        assertNotNull(fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI)));
     }     
     
     /**
@@ -291,8 +286,7 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void existenceFDPMetaDataSpecsLink() throws 
             FairMetadataServiceException, MetadataException {
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
         assertNotNull(metadata.getSpecification());
     }
     
@@ -314,7 +308,7 @@ public class FairMetaDataServiceImplTest {
         // Store a catalog metadata
         fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.getCatalogMetadata(
                 "http://www.example.com/cat1", ExampleFilesUtils.FDP_URI));
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(
                 "http://www.example.com/cat1"));
         assertFalse(metadata.getMetrics().isEmpty());
     }
@@ -325,7 +319,7 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void existenceAccessRightsStatement() throws Exception {
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(
                 ExampleFilesUtils.FDP_URI));
         assertNotNull(metadata.getAccessRights().getDescription());
     }
@@ -374,8 +368,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setIdentifier(null);
         try {
             fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
             assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -394,8 +387,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setPublisher(null);
         try {
             fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
             assertNotNull(mdata.getPublisher());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -414,8 +406,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setLanguage(null);
         try {
             fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
             assertNotNull(mdata.getLanguage());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -434,8 +425,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setLicense(null);
         try {
             fairMetaDataService.storeCatalogMetaData(metadata);
-            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            CatalogMetadata mdata = fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
             assertNotNull(mdata.getLicense());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -453,8 +443,7 @@ public class FairMetaDataServiceImplTest {
     public void retrieveNonExitingCatalogMetaData() throws
             FairMetadataServiceException {
         String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
-        fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(uri));
+        fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(uri));
     }
 
     /**
@@ -465,8 +454,7 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void retrieveCatalogMetaData() throws FairMetadataServiceException {
-        assertNotNull(fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI)));
+        assertNotNull(fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI)));
     }
     
     /**
@@ -479,8 +467,7 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void existenceCatalogMetaDataSpecsLink() throws 
             FairMetadataServiceException, MetadataException {
-        CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+        CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
         assertNotNull(metadata.getSpecification());
     }
 
@@ -543,8 +530,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setIdentifier(null);
         try {
             fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
             assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -563,8 +549,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setPublisher(null);
         try {
             fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
             assertNotNull(mdata.getPublisher());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -583,8 +568,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setLanguage(null);
         try {
             fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
             assertNotNull(mdata.getLanguage());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -603,8 +587,7 @@ public class FairMetaDataServiceImplTest {
         metadata.setLicense(null);
         try {
             fairMetaDataService.storeDatasetMetaData(metadata);
-            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            DatasetMetadata mdata = fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
             assertNotNull(mdata.getLicense());
         } catch (Exception ex) {
             fail("This test is not excepted to throw any error");
@@ -622,8 +605,7 @@ public class FairMetaDataServiceImplTest {
     public void retrieveNonExitingdDatasetMetaData() throws
             FairMetadataServiceException {
         String uri = ExampleFilesUtils.CATALOG_URI + "/dummpID676";
-        fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(uri));
+        fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(uri));
     }
 
     /**
@@ -634,8 +616,7 @@ public class FairMetaDataServiceImplTest {
     @DirtiesContext
     @Test
     public void retrieveDatasetMetaData() throws FairMetadataServiceException {
-        assertNotNull(fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI)));
+        assertNotNull(fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI)));
     }
     
     /**
@@ -648,8 +629,7 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void existenceDatasetMetaDataSpecsLink() throws 
             FairMetadataServiceException, MetadataException {
-        DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+        DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
         assertNotNull(metadata.getSpecification());
     }
 
@@ -712,7 +692,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeDistributionMetaData(metadata);
             DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
+                    retrieveDistributionMetaData(VALUEFACTORY.createIRI(
                             ExampleFilesUtils.DISTRIBUTION_URI));
             assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
@@ -733,7 +713,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeDistributionMetaData(metadata);
             DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
+                    retrieveDistributionMetaData(VALUEFACTORY.createIRI(
                             ExampleFilesUtils.DISTRIBUTION_URI));
             assertNotNull(mdata.getPublisher());
         } catch (Exception ex) {
@@ -755,7 +735,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeDistributionMetaData(metadata);
             DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
+                    retrieveDistributionMetaData(VALUEFACTORY.createIRI(
                             ExampleFilesUtils.DISTRIBUTION_URI));
             assertNotNull(mdata.getLicense());
         } catch (Exception ex) {
@@ -776,7 +756,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeDistributionMetaData(metadata);
             DistributionMetadata mdata = fairMetaDataService.
-                    retrieveDistributionMetaData(valueFactory.createIRI(
+                    retrieveDistributionMetaData(VALUEFACTORY.createIRI(
                             ExampleFilesUtils.DISTRIBUTION_URI));
             assertNotNull(mdata.getLanguage());
         } catch (Exception ex) {
@@ -845,7 +825,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeDataRecordMetaData(metadata);
             DataRecordMetadata mdata = fairMetaDataService.
-                    retrieveDataRecordMetadata(valueFactory.createIRI(
+                    retrieveDataRecordMetadata(VALUEFACTORY.createIRI(
                             TEST_DATARECORD_URI));
             assertNotNull(mdata.getIdentifier());
         } catch (Exception ex) {
@@ -866,7 +846,7 @@ public class FairMetaDataServiceImplTest {
         try {
             fairMetaDataService.storeDataRecordMetaData(metadata);
             DataRecordMetadata mdata = fairMetaDataService.
-                    retrieveDataRecordMetadata(valueFactory.createIRI(
+                    retrieveDataRecordMetadata(VALUEFACTORY.createIRI(
                             TEST_DATARECORD_URI));
             assertNotNull(mdata.getPublisher());
         } catch (Exception ex) {
@@ -885,8 +865,7 @@ public class FairMetaDataServiceImplTest {
     public void retrieveNonExitingDatasetDistribution() throws
             FairMetadataServiceException {
         String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-       fairMetaDataService.retrieveDistributionMetaData(
-                valueFactory.createIRI(uri));
+       fairMetaDataService.retrieveDistributionMetaData(VALUEFACTORY.createIRI(uri));
     }
 
     /**
@@ -898,8 +877,7 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveDatasetDistribution() throws
             FairMetadataServiceException {
-        assertNotNull(fairMetaDataService.retrieveDistributionMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DISTRIBUTION_URI)));
+        assertNotNull(fairMetaDataService.retrieveDistributionMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DISTRIBUTION_URI)));
     }
     
     /**
@@ -913,8 +891,7 @@ public class FairMetaDataServiceImplTest {
     public void existenceDistributionMetaDataSpecsLink() throws 
             FairMetadataServiceException, MetadataException {
         DistributionMetadata metadata = fairMetaDataService.
-                retrieveDistributionMetaData(
-                valueFactory.createIRI(ExampleFilesUtils.DISTRIBUTION_URI));
+                retrieveDistributionMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DISTRIBUTION_URI));
         assertNotNull(metadata.getSpecification());
     }
     
@@ -924,21 +901,19 @@ public class FairMetaDataServiceImplTest {
         // given
         DistributionMetadata newDistribution = ExampleFilesUtils.getDistributionMetadata(
                 TEST_DISTRIBUTION_URI, ExampleFilesUtils.DATASET_URI);
-        newDistribution.setByteSize(valueFactory.createLiteral(1_000L));
+        newDistribution.setByteSize(VALUEFACTORY.createLiteral(1_000L));
         
         // when
         fairMetaDataService.storeDistributionMetaData(newDistribution);
         
         // then
-        newDistribution = fairMetaDataService.retrieveDistributionMetaData(
-                valueFactory.createIRI(TEST_DISTRIBUTION_URI));
+        newDistribution = fairMetaDataService.retrieveDistributionMetaData(VALUEFACTORY.createIRI(TEST_DISTRIBUTION_URI));
         ZonedDateTime distributionModified = ZonedDateTime.parse(
                 newDistribution.getModified().stringValue());
         
         // compare dataset timestamp with distribution timestamp
         {
-            DatasetMetadata updated = fairMetaDataService.retrieveDatasetMetaData(
-                    valueFactory.createIRI(ExampleFilesUtils.DATASET_URI));
+            DatasetMetadata updated = fairMetaDataService.retrieveDatasetMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
             ZonedDateTime updatedModified = ZonedDateTime.parse(
                     updated.getModified().stringValue());
             assertTrue("Distribution is modified before the dataset is modified",
@@ -946,8 +921,7 @@ public class FairMetaDataServiceImplTest {
         }
         // compare catalog timestamp with distribution timestamp
         {
-            CatalogMetadata updated = fairMetaDataService.retrieveCatalogMetaData(
-                    valueFactory.createIRI(ExampleFilesUtils.CATALOG_URI));
+            CatalogMetadata updated = fairMetaDataService.retrieveCatalogMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
             ZonedDateTime updatedModified = ZonedDateTime.parse(
                     updated.getModified().stringValue());
             assertTrue("Distribution is modified before the catalog is modified",
@@ -955,8 +929,7 @@ public class FairMetaDataServiceImplTest {
         }
         // compare repository timestamp with distribution timestamp
         {
-            FDPMetadata updated = fairMetaDataService.retrieveFDPMetaData(
-                    valueFactory.createIRI(ExampleFilesUtils.FDP_URI));
+            FDPMetadata updated = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
             ZonedDateTime updatedModified = ZonedDateTime.parse(
                     updated.getModified().stringValue());
             assertTrue("Distribution is modified before the repository is modified",
