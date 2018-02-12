@@ -76,7 +76,7 @@ public class FairMetaDataMetricsServiceImpl implements FairMetaDataMetricsServic
         Preconditions.checkNotNull(metadataURI, "Metadata URI must not be null.");
         List<Metric> metrics = new ArrayList();
 
-        metadataMetrics.entrySet().forEach((entry) -> {
+        metadataMetrics.entrySet().forEach(entry -> {
             String metric = entry.getKey();
             String metricValue = entry.getValue();
             // Create metric uri
