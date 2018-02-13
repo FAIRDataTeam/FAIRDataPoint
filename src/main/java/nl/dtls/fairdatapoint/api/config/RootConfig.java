@@ -27,6 +27,8 @@
  */
 package nl.dtls.fairdatapoint.api.config;
 
+import java.util.Map;
+import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +40,7 @@ import org.springframework.core.io.Resource;
 
 /**
  * Root config
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2017-03-27
@@ -46,20 +48,36 @@ import org.springframework.core.io.Resource;
  */
 @Configuration
 public class RootConfig {
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer props(Environment env) {
-        PropertySourcesPlaceholderConfigurer configurer = 
-                new PropertySourcesPlaceholderConfigurer();        
-        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();        
+        
+        PropertySourcesPlaceholderConfigurer configurer
+                = new PropertySourcesPlaceholderConfigurer();
+        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+        yaml.setResources(fdpConfig(env));
+        configurer.setProperties(yaml.getObject());
+        return configurer;
+    }
+
+    @Bean(name = "metadataMetrics")
+    public Map<String, String> metadataMetrics(Environment env) {
+        
+        YamlMapFactoryBean yamlFactory = new YamlMapFactoryBean();
+        yamlFactory.setResources(fdpConfig(env));
+        Map<String, Object> config = yamlFactory.getObject();
+        Map<String, String> metadataMetrics = (Map) config.get("metadataMetrics");
+        return metadataMetrics;
+    }
+
+    private static Resource fdpConfig(Environment env) {
+        
         Resource resource;
         if (env.containsProperty("fdpConfig")) {
-            resource = new FileSystemResource(env.
-                    getRequiredProperty("fdpConfig"));
+            resource = new FileSystemResource(env.getRequiredProperty("fdpConfig"));
         } else {
             resource = new ClassPathResource("conf/fdpConfig.yml");
-        }        
-        yaml.setResources(resource);        
-        configurer.setProperties(yaml.getObject());        
-        return configurer;
+        }
+        return resource;
     }
 }
