@@ -21,7 +21,7 @@ fairSearch:
     fdpSubmitUrl: http://localhost:8080/fse/submitFdp
 threadPoolSize: 4
 metadataMetrics:
-    https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_F1A: https://www.ietf.org/rfc/rfc3986.txt
-    https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_F1B: http://example.com/THIS_IS_A_PH_URI_4_ID_PERSISTENCE
-    https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_A1.1: https://www.wikidata.org/wiki/Q8777
-    https://raw.githubusercontent.com/FAIRMetrics/Metrics/master/FM_A2: http://example.com/THIS_IS_A_PH_URI_4_MD_LONGEVITY
+    https://purl.org/fair-metrics/FM_F1A: https://www.ietf.org/rfc/rfc3986.txt
+    https://purl.org/fair-metrics/FM_F1B: http://example.com/THIS_IS_A_PH_URI_4_ID_PERSISTENCE
+    https://purl.org/fair-metrics/FM_A1.1: https://www.wikidata.org/wiki/Q8777
+    https://purl.org/fair-metrics/FM_A2: http://example.com/THIS_IS_A_PH_URI_4_MD_LONGEVITY

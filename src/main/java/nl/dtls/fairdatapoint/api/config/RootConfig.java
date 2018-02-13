@@ -51,36 +51,33 @@ public class RootConfig {
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer props(Environment env) {
+        
         PropertySourcesPlaceholderConfigurer configurer
                 = new PropertySourcesPlaceholderConfigurer();
         YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
-        Resource resource;
-        if (env.containsProperty("fdpConfig")) {
-            resource = new FileSystemResource(env.
-                    getRequiredProperty("fdpConfig"));
-        } else {
-            resource = fdpConfig();
-        }
-        yaml.setResources(resource);
+        yaml.setResources(fdpConfig(env));
         configurer.setProperties(yaml.getObject());
         return configurer;
     }
 
     @Bean(name = "metadataMetrics")
-    public Map<String, String> metadataMetrics() {
-        Map<String, Object> config = yamlFactory().getObject();
+    public Map<String, String> metadataMetrics(Environment env) {
+        
+        YamlMapFactoryBean yamlFactory = new YamlMapFactoryBean();
+        yamlFactory.setResources(fdpConfig(env));
+        Map<String, Object> config = yamlFactory.getObject();
         Map<String, String> metadataMetrics = (Map) config.get("metadataMetrics");
         return metadataMetrics;
     }
 
-    @Bean
-    public YamlMapFactoryBean yamlFactory() {
-        YamlMapFactoryBean factory = new YamlMapFactoryBean();
-        factory.setResources(fdpConfig());
-        return factory;
-    }
-
-    private static Resource fdpConfig() {
-        return new ClassPathResource("conf/fdpConfig.yml");
+    private static Resource fdpConfig(Environment env) {
+        
+        Resource resource;
+        if (env.containsProperty("fdpConfig")) {
+            resource = new FileSystemResource(env.getRequiredProperty("fdpConfig"));
+        } else {
+            resource = new ClassPathResource("conf/fdpConfig.yml");
+        }
+        return resource;
     }
 }
