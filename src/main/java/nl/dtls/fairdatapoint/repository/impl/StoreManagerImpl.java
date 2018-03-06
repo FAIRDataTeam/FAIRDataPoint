@@ -72,7 +72,7 @@ public class StoreManagerImpl implements StoreManager {
     @Override
     public List<Statement> retrieveResource(@Nonnull IRI uri) throws StoreManagerException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
-        LOGGER.info("Get statements for the URI <" + uri.toString() + ">");
+        LOGGER.info("Get statements for the URI {}", uri.toString());
         try (RepositoryConnection conn = getRepositoryConnection()) {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, null, null, uri);
             List<Statement> statements = Iterations.asList(queryResult);

@@ -106,7 +106,7 @@ public class ExampleFilesUtils {
             URL fileURL = ExampleFilesUtils.class.getResource(fileName);
             content = Resources.toString(fileURL, Charsets.UTF_8);
         } catch (IOException ex) {
-            LOGGER.error("Error getting turle file",ex);          
+            LOGGER.error("Error getting turle file{}", ex);          
         }        
         return content;
     } 
@@ -130,7 +130,7 @@ public class ExampleFilesUtils {
             statements =  Lists.newArrayList(it);
         } catch (IOException | RDFParseException | 
                 UnsupportedRDFormatException ex) {
-            LOGGER.error("Error getting turle file",ex);          
+            LOGGER.error("Error getting turle file {}", ex);          
         }         
         return statements;
     }

@@ -227,7 +227,7 @@
                         <exclude>**/*.yml</exclude>
                         <exclude>**/*.sparql</exclude>
                         <exclude>**/*.properties</exclude>
-                        <exclude>**/log4j2.xml</exclude>
+                        <exclude>**/*.xml</exclude>
                     </excludes>
                 </configuration>
                 <executions>

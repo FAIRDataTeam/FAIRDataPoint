@@ -112,14 +112,12 @@ public class MetadataControllerTest {
         String dUri = request.getRequestURL().toString();
         fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
                 getDatasetMetadata(dUri, cUri));
-        LOGGER.info("Storing example datarecord "
-                + "metadata for service layer tests");
+        LOGGER.info("Storing example datarecord metadata for service layer tests");
         request.setRequestURI(TEST_DATARECORD_PATH);
         String dRecUri = request.getRequestURL().toString();
         fairMetaDataService.storeDataRecordMetaData(ExampleFilesUtils.
                 getDataRecordMetadata(dRecUri, dUri));
-        LOGGER.info("Storing example distribution "
-                + "metadata for service layer tests");
+        LOGGER.info("Storing example distribution metadata for service layer tests");
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
         String disUri = request.getRequestURL().toString();
         fairMetaDataService.storeDistributionMetaData(

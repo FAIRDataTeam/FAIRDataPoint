@@ -104,8 +104,7 @@ public class FairMetaDataServiceImplTest {
         fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
                 getDatasetMetadata(ExampleFilesUtils.DATASET_URI,
                         ExampleFilesUtils.CATALOG_URI));
-        LOGGER.info("Storing example distribution "
-                + "metadata for service layer tests");
+        LOGGER.info("Storing example distribution metadata for service layer tests");
         fairMetaDataService.storeDistributionMetaData(
                 ExampleFilesUtils.getDistributionMetadata(
                         ExampleFilesUtils.DISTRIBUTION_URI,
