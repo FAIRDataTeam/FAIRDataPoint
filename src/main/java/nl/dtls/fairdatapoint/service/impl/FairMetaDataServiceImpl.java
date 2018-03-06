@@ -60,8 +60,6 @@ import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
@@ -70,6 +68,8 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -86,8 +86,7 @@ import org.springframework.stereotype.Service;
 @Service("fairMetaDataServiceImpl")
 public class FairMetaDataServiceImpl implements FairMetaDataService {
 
-    private final static Logger LOGGER
-            = LogManager.getLogger(FairMetaDataServiceImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
     
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
         

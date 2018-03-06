@@ -27,8 +27,6 @@ import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -67,6 +65,8 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -86,8 +86,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
 public class RestApiContext extends WebMvcConfigurerAdapter {
 
-    private final static Logger LOGGER
-            = LogManager.getLogger(RestApiContext.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(RestApiContext.class);
 
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;

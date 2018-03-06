@@ -29,8 +29,7 @@ package nl.dtls.fairdatapoint.api.controller.utils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.http.HttpHeaders;
 
@@ -61,7 +60,6 @@ public class LoggerUtils {
                 response.getStatus()));
         String contentLength = response.getHeader(HttpHeaders.CONTENT_LENGTH);
         ThreadContext.put("contentSize", contentLength);
-        logger.log(Level.getLevel("API-REQUEST"), "");
     }
     
 }

@@ -46,8 +46,6 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -56,6 +54,8 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** 
  * Contains references to the example metadata rdf files which are used in the 
@@ -92,8 +92,7 @@ public class ExampleFilesUtils {
     public static final String BASE_URI = "http://localhost/";   
     public static final String TEST_SUB_URI = "http://www.dtls.nl/test"; 
     public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;    
-    private static final Logger LOGGER = 
-            LogManager.getLogger(ExampleFilesUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleFilesUtils.class.getName());
     
     /**
      * Method to read the content of a turtle file

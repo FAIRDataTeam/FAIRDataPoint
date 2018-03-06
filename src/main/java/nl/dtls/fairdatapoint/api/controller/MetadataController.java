@@ -32,9 +32,6 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -70,6 +67,8 @@ import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFWriterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -86,7 +85,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("${urlPath.root:/fdp}")
 public class MetadataController {
 
-    private static final Logger LOGGER = LogManager.getLogger(MetadataController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();

@@ -32,8 +32,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
@@ -42,6 +40,8 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -57,8 +57,7 @@ import org.springframework.stereotype.Repository;
 @Repository("storeManager")
 public class StoreManagerImpl implements StoreManager {
 
-    private final static Logger LOGGER
-            = LogManager.getLogger(StoreManagerImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(StoreManagerImpl.class);
     @Autowired
     @Qualifier("repository")
     private org.eclipse.rdf4j.repository.Repository repository;

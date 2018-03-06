@@ -34,8 +34,9 @@ import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nonnull;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
 import org.apache.http.HttpStatus;
-import org.apache.logging.log4j.LogManager;
 import org.eclipse.rdf4j.model.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,7 @@ import org.springframework.stereotype.Service;
 @Service("fairSearchClientImpl")
 public class FairSearchClientImpl implements FairSearchClient {
     
-    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.
-            getLogger(FairSearchClientImpl.class);  
+    private static final Logger LOGGER = LoggerFactory.getLogger(FairSearchClientImpl.class);  
     
     @Value("${fairSearch.fdpSubmitUrl:http://example.com/fse}")
     private String fdpSubmitUrl;

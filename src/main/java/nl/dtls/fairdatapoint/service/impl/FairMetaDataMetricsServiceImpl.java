@@ -35,11 +35,11 @@ import javax.annotation.Nonnull;
 import nl.dtl.fairmetadata4j.model.Metric;
 import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -55,7 +55,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FairMetaDataMetricsServiceImpl implements FairMetaDataMetricsService {
 
-    private static final Logger LOGGER = LogManager.getLogger(FairMetaDataServiceImpl.class
+    private static final Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImpl.class
             .getName());
 
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
