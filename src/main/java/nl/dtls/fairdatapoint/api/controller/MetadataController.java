@@ -109,8 +109,7 @@ public class MetadataController {
     public FDPMetadata getFDPMetaData(final HttpServletRequest request, 
             HttpServletResponse response) throws FairMetadataServiceException, 
             ResourceNotFoundException, MetadataException {
-        LOGGER.info("Request to get FDP metadata");
-        LOGGER.info("GET : {}", request.getRequestURL());
+        LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         
         if (!isFDPMetaDataAvailable(uri)) {
@@ -118,7 +117,7 @@ public class MetadataController {
         }
         
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
+        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -142,8 +141,7 @@ public class MetadataController {
     public ModelAndView getHtmlFdpMetadata(HttpServletRequest request) throws
             FairMetadataServiceException, ResourceNotFoundException, MetadataException {
         ModelAndView mav = new ModelAndView("repository");
-        LOGGER.info("Request to get FDP metadata");
-        LOGGER.info("GET : {}", request.getRequestURL());
+        LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         
         if (!isFDPMetaDataAvailable(uri)) {
@@ -176,12 +174,11 @@ public class MetadataController {
     public CatalogMetadata getCatalogMetaData(@PathVariable final String id, 
             HttpServletRequest request, HttpServletResponse response) throws 
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get CATALOG metadata with ID {}", id);
-        LOGGER.info("GET : {}", request.getRequestURL());
+        LOGGER.info("Request to get CATALOG metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
+        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -218,12 +215,11 @@ public class MetadataController {
     public DatasetMetadata getDatasetMetaData(@PathVariable final String id,
             HttpServletRequest request, HttpServletResponse response) throws 
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get DATASET metadata with ID {}", id);
-        LOGGER.info("GET : {}", request.getRequestURL());
+        LOGGER.info("Request to get DATASET metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
+        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -260,12 +256,11 @@ public class MetadataController {
     public DataRecordMetadata getDataRecordMetaData(@PathVariable final String id,
             HttpServletRequest request, HttpServletResponse response) throws
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get DATARECORD metadata with ID {}", id);
-        LOGGER.info("GET : {}", request.getRequestURL());
+        LOGGER.info("Request to get DATARECORD metadata,request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         DataRecordMetadata metadata = fairMetaDataService.retrieveDataRecordMetadata(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
+        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -301,12 +296,12 @@ public class MetadataController {
     public DistributionMetadata getDistribution(@PathVariable final String id,
             HttpServletRequest request, HttpServletResponse response) throws 
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get dataset's distribution wih ID {}", id);
-        LOGGER.info("GET : {}", request.getRequestURL());
+        LOGGER.info("Request to get distribution metdata, request url : {}", 
+                request.getRequestURL());
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService.retrieveDistributionMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
+        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 

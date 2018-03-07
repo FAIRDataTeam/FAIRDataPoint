@@ -113,7 +113,7 @@ public class FairMetaDataMetricsServiceImpl implements FairMetaDataMetricsServic
             m.setValue(VALUEFACTORY.createIRI(valueUri));
             metrics.add(m);
         } catch (Exception e) {
-            LOGGER.info(e.getMessage());
+            LOGGER.error("Error adding metrics {}", e.getMessage());
         }
     }
 }
