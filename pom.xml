@@ -76,6 +76,14 @@
             <version>${springframework.version}</version>
         </dependency>
         <dependency>
+    <groupId>com.mysema.rdf</groupId>
+    <artifactId>rdfbean-virtuoso</artifactId>
+    <version>1.7.1</version>
+</dependency>
+
+
+
+        <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-rest-webmvc</artifactId>
             <version>${springdata.version}</version>

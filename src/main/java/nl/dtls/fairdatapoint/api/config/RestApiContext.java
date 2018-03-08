@@ -64,6 +64,8 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;
+import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,24 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    
+    @org.springframework.beans.factory.annotation.Value("${store.native.dir:nil}")
+    private String nativeStoreDir;
+    
+    @org.springframework.beans.factory.annotation.Value("${store.agraph.url:nil}")
+    private String agraphUrl;
+    
+    @org.springframework.beans.factory.annotation.Value("${store.agraph.username:nil}")
+    private String agraphUsername;
+    
+    @org.springframework.beans.factory.annotation.Value("${store.agraph.password:nil}")
+    private String agraphPassword;
+    
+    @org.springframework.beans.factory.annotation.Value("${store.graphDb.url:nil}")
+    private String graphDbUrl;
+    
+    @org.springframework.beans.factory.annotation.Value("${store.graphDb.repository:nil}")
+    private String graphDbRepository;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -144,28 +164,60 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "repository", initMethod = "initialize",
             destroyMethod = "shutDown")
-    public Repository repository(@Value("${store.type:1}") int storeType,
-            @Value("${store.url}") String storeUrl,
-            @Value("${store.username:nil}") String storeUsername,
-            @Value("${store.password:nil}") String storeUserPassword,
-            @Value("${store.dir:}") String storeDir)
+    public Repository repository(@Value("${store.type:1}") int storeType)
             throws RepositoryException {
-        Repository repository;
-        if (storeType == 1 && !storeUsername.isEmpty()
-                && !storeUsername.contains("nil")) { // HTTP endpoint
-            SPARQLRepository sRepository = new SPARQLRepository(storeUrl);
-            LOGGER.info("Initializing HTTP triple store ");
-            sRepository.setUsernameAndPassword(storeUsername,
-                    storeUserPassword);
-            return sRepository;
-        } else if (storeType == 2 && !storeDir.isEmpty()) {
-            File dataDir = new File(storeDir);
+        Repository repository = null;
+        if (storeType == 3) {
+            repository = getAgraphRepository();
+        } else if (storeType == 4) {
+            repository = getGraphRepository();
+        } else if (storeType == 2 && !nativeStoreDir.contains("nil")) {
+            File dataDir = new File(nativeStoreDir);
             LOGGER.info("Initializing native store");
             repository = new SailRepository(new NativeStore(dataDir));
-        } else { // In memory is the default store
+        }
+        // In memory is the default store
+        if (storeType == 3 || repository == null) {
             Sail store = new MemoryStore();
             repository = new SailRepository(store);
             LOGGER.info("Initializing inmemory store");
+        }
+        RepositoryManager repositoryManager = new RemoteRepositoryManager("http://localhost:8079/blazegraph");
+        repositoryManager.initialize();
+        SPARQLRepository repositor = new SPARQLRepository("http://localhost:8079/blazegraph/fdp");
+        repositor.enableQuadMode(true);
+        return repositor;
+    }
+    
+    /**
+     * Get allegrograph repository
+     * @return SPARQLRepository
+     */
+    private Repository getAgraphRepository() {
+
+        SPARQLRepository sRepository = null;
+        if (!agraphUrl.contains("nil")) {
+            LOGGER.info("Initializing allegrograph repository");
+            sRepository = new SPARQLRepository(agraphUrl);
+            if (!agraphUsername.contains("nil") && !agraphPassword.contains("nil")) {
+                sRepository.setUsernameAndPassword(agraphUsername, agraphPassword);
+            }
+        }
+        return sRepository;
+    }
+    
+    /**
+     * Get graphDB repository
+     * @return Repository
+     */
+    private Repository getGraphRepository() {
+
+        Repository repository = null;
+        if (!graphDbUrl.contains("nil") && !graphDbRepository.contains("nil")) {
+            LOGGER.info("Initializing graphDB repository");
+            RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
+            repositoryManager.initialize();
+            repository = repositoryManager.getRepository(graphDbRepository);
         }
         return repository;
     }

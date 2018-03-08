@@ -28,7 +28,9 @@
 package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
@@ -46,6 +48,7 @@ import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -133,4 +136,11 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter  {
                 "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
         return license;
     } 
+    
+    @Bean(name = "metadataMetrics")
+    public Map<String, String> metadataMetrics(Environment env) {
+        Map<String, String> metadataMetrics = new HashMap();
+        metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
+        return metadataMetrics;
+    }
 }
