@@ -38,8 +38,6 @@ import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.impl.FairMetaDataServiceImpl;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
@@ -48,6 +46,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -90,7 +90,7 @@ public class MetadataControllerTest {
     private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH
             + "/distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
     private final static Logger LOGGER
-            = LogManager.getLogger(FairMetaDataServiceImpl.class.getName());
+            = LoggerFactory.getLogger(FairMetaDataServiceImpl.class.getName());
 
     @Before
     public void storeExampleMetadata() throws StoreManagerException,
@@ -112,14 +112,12 @@ public class MetadataControllerTest {
         String dUri = request.getRequestURL().toString();
         fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
                 getDatasetMetadata(dUri, cUri));
-        LOGGER.info("Storing example datarecord "
-                + "metadata for service layer tests");
+        LOGGER.info("Storing example datarecord metadata for service layer tests");
         request.setRequestURI(TEST_DATARECORD_PATH);
         String dRecUri = request.getRequestURL().toString();
         fairMetaDataService.storeDataRecordMetaData(ExampleFilesUtils.
                 getDataRecordMetadata(dRecUri, dUri));
-        LOGGER.info("Storing example distribution "
-                + "metadata for service layer tests");
+        LOGGER.info("Storing example distribution metadata for service layer tests");
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
         String disUri = request.getRequestURL().toString();
         fairMetaDataService.storeDistributionMetaData(

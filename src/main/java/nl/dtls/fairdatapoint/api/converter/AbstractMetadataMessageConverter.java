@@ -27,10 +27,10 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
 import nl.dtl.fairmetadata4j.model.Metadata;
-import org.apache.logging.log4j.LogManager;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for {@link Metadata} based {@link HttpMessageConverter
@@ -43,8 +43,8 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 public abstract class AbstractMetadataMessageConverter<T extends Metadata> extends AbstractHttpMessageConverter<T> {
     protected RDFFormat format;
     
-     private static final org.apache.logging.log4j.Logger LOGGER
-            = LogManager.getLogger(AbstractMetadataMessageConverter.class);
+     private static final Logger LOGGER = LoggerFactory.getLogger(
+             AbstractMetadataMessageConverter.class);
     
     public AbstractMetadataMessageConverter(RDFFormat format) {
         super(getMediaTypes(format));

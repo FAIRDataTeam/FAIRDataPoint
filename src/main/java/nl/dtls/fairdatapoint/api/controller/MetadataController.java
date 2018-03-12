@@ -32,9 +32,6 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -65,11 +62,12 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFWriterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -86,7 +84,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("${urlPath.root:/fdp}")
 public class MetadataController {
 
-    private static final Logger LOGGER = LogManager.getLogger(MetadataController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataController.class);
     @Autowired
     private FairMetaDataService fairMetaDataService;
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
@@ -110,8 +108,7 @@ public class MetadataController {
     public FDPMetadata getFDPMetaData(final HttpServletRequest request, 
             HttpServletResponse response) throws FairMetadataServiceException, 
             ResourceNotFoundException, MetadataException {
-        LOGGER.info("Request to get FDP metadata");
-        LOGGER.info("GET : " + request.getRequestURL());
+        LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         
         if (!isFDPMetaDataAvailable(uri)) {
@@ -119,7 +116,6 @@ public class MetadataController {
         }
         
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
     }
 
@@ -133,7 +129,7 @@ public class MetadataController {
         } catch (ResourceNotFoundException ex) {
             return false;
         } catch (FairMetadataServiceException ex) {
-            LOGGER.error("Error retrieving FDP metadata. Msg:" + ex.getMessage());
+            LOGGER.error("Error retrieving FDP metadata. Msg: {}", ex.getMessage());
         }
         return true;
     }
@@ -143,8 +139,7 @@ public class MetadataController {
     public ModelAndView getHtmlFdpMetadata(HttpServletRequest request) throws
             FairMetadataServiceException, ResourceNotFoundException, MetadataException {
         ModelAndView mav = new ModelAndView("repository");
-        LOGGER.info("Request to get FDP metadata");
-        LOGGER.info("GET : " + request.getRequestURL());
+        LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         
         if (!isFDPMetaDataAvailable(uri)) {
@@ -177,12 +172,10 @@ public class MetadataController {
     public CatalogMetadata getCatalogMetaData(@PathVariable final String id, 
             HttpServletRequest request, HttpServletResponse response) throws 
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get CATALOG metadata with ID ", id);
-        LOGGER.info("GET : " + request.getRequestURL());
+        LOGGER.info("Request to get CATALOG metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
     }
 
@@ -219,12 +212,10 @@ public class MetadataController {
     public DatasetMetadata getDatasetMetaData(@PathVariable final String id,
             HttpServletRequest request, HttpServletResponse response) throws 
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get DATASET metadata with ID ", id);
-        LOGGER.info("GET : " + request.getRequestURL());
+        LOGGER.info("Request to get DATASET metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
     }
 
@@ -261,12 +252,10 @@ public class MetadataController {
     public DataRecordMetadata getDataRecordMetaData(@PathVariable final String id,
             HttpServletRequest request, HttpServletResponse response) throws
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get DATARECORD metadata with ID ", id);
-        LOGGER.info("GET : " + request.getRequestURL());
+        LOGGER.info("Request to get DATARECORD metadata,request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         DataRecordMetadata metadata = fairMetaDataService.retrieveDataRecordMetadata(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
     }
 
@@ -302,12 +291,11 @@ public class MetadataController {
     public DistributionMetadata getDistribution(@PathVariable final String id,
             HttpServletRequest request, HttpServletResponse response) throws 
             FairMetadataServiceException, ResourceNotFoundException {
-        LOGGER.info("Request to get dataset's distribution wih ID ", id);
-        LOGGER.info("GET : " + request.getRequestURL());
+        LOGGER.info("Request to get distribution metdata, request url : {}", 
+                request.getRequestURL());
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService.retrieveDistributionMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(LOGGER, request, response);
         return metadata;
     }
 
@@ -372,7 +360,7 @@ public class MetadataController {
             HttpServletResponse response, @RequestBody(required = true) CatalogMetadata metadata,
             @RequestParam("id") String id) throws FairMetadataServiceException, MetadataException {
         String trimmedId = trimmer(id);
-        LOGGER.info("Request to store catalog metatdata with ID ", trimmedId);
+        LOGGER.info("Request to store catalog metatdata with ID {}", trimmedId);
         String requestedURL = getRequesedURL(request);
         String fURI = requestedURL.replace("/catalog", "");
         
@@ -412,7 +400,7 @@ public class MetadataController {
             HttpServletResponse response, @RequestBody(required = true) DatasetMetadata metadata,
             @RequestParam("id") String id) throws FairMetadataServiceException, MetadataException {
         String trimmedId = trimmer(id);
-        LOGGER.info("Request to store dataset metatdata with ID ", trimmedId);
+        LOGGER.info("Request to store dataset metatdata with ID {}", trimmedId);
         String requestedURL = getRequesedURL(request);
         IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
@@ -443,7 +431,7 @@ public class MetadataController {
             HttpServletResponse response, @RequestBody(required = true) DataRecordMetadata metadata,
             @RequestParam("id") String id) throws FairMetadataServiceException, MetadataException {
         String trimmedId = trimmer(id);
-        LOGGER.info("Request to store datarecord metatdata with ID ", trimmedId);
+        LOGGER.info("Request to store datarecord metatdata with ID {}", trimmedId);
         String requestedURL = getRequesedURL(request);
         IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
@@ -473,7 +461,7 @@ public class MetadataController {
                     DistributionMetadata metadata, @RequestParam("id") String id)
             throws FairMetadataServiceException, MetadataException {
         String trimmedId = trimmer(id);
-        LOGGER.info("Request to store distribution metatdata with ID ", trimmedId);
+        LOGGER.info("Request to store distribution metatdata with ID {}", trimmedId);
         String requestedURL = getRequesedURL(request);
         IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
         metadata.setUri(uri);
@@ -490,7 +478,7 @@ public class MetadataController {
      */
     private String getRequesedURL(HttpServletRequest request) {
         String url = request.getRequestURL().toString();
-        LOGGER.info("Original requesed url " + url);
+        LOGGER.info("Original requesed url {}", url);
         
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
@@ -505,7 +493,7 @@ public class MetadataController {
         for (String ext : rdfExt) {
             String extension = "." + ext;
             if (url.contains(extension)) {
-                LOGGER.info("Found RDF extension in url : " + ext);
+                LOGGER.info("Found RDF extension in url {}", ext);
                 url = url.replace(extension, "");
                 break;
             }
@@ -526,7 +514,7 @@ public class MetadataController {
             
             if (port != null && requestedURL.getPort() != -1) {
                 String val = ":" + String.valueOf(requestedURL.getPort());
-                LOGGER.info("x-forwarded-port " + port);
+                LOGGER.info("x-forwarded-port {}", port);
                 switch (port) {
                     case "443":
                         url = url.replace(val, "");
@@ -539,10 +527,10 @@ public class MetadataController {
                 }
             }
         } catch (MalformedURLException ex) {
-            LOGGER.error("Error creating url  ", ex.getMessage());
+            LOGGER.error("Error creating url  {}", ex.getMessage());
             return null;
         }
-        LOGGER.info("Modified requesed url " + url);
+        LOGGER.info("Modified requesed url {}", url);
         return url;
     }
 

@@ -31,8 +31,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
 import org.apache.http.HttpStatus;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -41,6 +39,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FairSearchClientImplTest class unit tests
@@ -51,8 +51,8 @@ import static org.mockito.Mockito.when;
  */
 public class FairSearchClientImplTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(FairSearchClientImplTest.
-            class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+            FairSearchClientImplTest.class.getName());
 
     private static FairSearchClient FSE;
     private static final ValueFactory VF = SimpleValueFactory.getInstance();

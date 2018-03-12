@@ -42,8 +42,6 @@ import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertFalse;
@@ -53,6 +51,8 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
@@ -74,8 +74,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @DirtiesContext
 public class FairMetaDataServiceImplTest {
 
-    private final static Logger LOGGER
-            = LogManager.getLogger(FairMetaDataServiceImplTest.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(
+            FairMetaDataServiceImplTest.class.getName());
     
     private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
     @Autowired
@@ -104,8 +104,7 @@ public class FairMetaDataServiceImplTest {
         fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
                 getDatasetMetadata(ExampleFilesUtils.DATASET_URI,
                         ExampleFilesUtils.CATALOG_URI));
-        LOGGER.info("Storing example distribution "
-                + "metadata for service layer tests");
+        LOGGER.info("Storing example distribution metadata for service layer tests");
         fairMetaDataService.storeDistributionMetaData(
                 ExampleFilesUtils.getDistributionMetadata(
                         ExampleFilesUtils.DISTRIBUTION_URI,

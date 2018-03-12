@@ -33,6 +33,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,6 +52,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Component
 public class ApplicationFilter extends OncePerRequestFilter {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationFilter.class);
 
     @Override
     public void doFilterInternal(final HttpServletRequest request,
@@ -65,6 +71,14 @@ public class ApplicationFilter extends OncePerRequestFilter {
         ThreadContext.put("ipAddress", request.getRemoteAddr());
         ThreadContext.put("responseStatus", String.valueOf(
                 response.getStatus()));
+        ThreadContext.put("requestMethod", request.getMethod());
+        ThreadContext.put("requestURI", request.getRequestURI());
+        ThreadContext.put("requestProtocol", request.getProtocol());
+        ThreadContext.put("responseStatus", String.valueOf(response.getStatus()));
+        String contentLength = response.getHeader(HttpHeaders.CONTENT_LENGTH);
+        ThreadContext.put("contentSize", contentLength);
+        Marker apiRequest = MarkerFactory.getMarker("API-REQUEST");
+        LOGGER.info(apiRequest, "");
         fc.doFilter(request, response);
         ThreadContext.clearAll();
     }
