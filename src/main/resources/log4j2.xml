@@ -41,7 +41,7 @@
             <appender-ref ref="error-log" level="error"/>
             <appender-ref ref="console-log" level="warn"/>
         </Logger>        
-        <Logger name="nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils" level="info" additivity="false">
+        <Logger name="nl.dtls.fairdatapoint.api.config.ApplicationFilter" level="info" additivity="false">
             <appender-ref ref="api-request-log" level="info"/>
         </Logger>
         <Root level="warn" additivity="false">

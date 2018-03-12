@@ -62,7 +62,6 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtls.fairdatapoint.api.controller.utils.LoggerUtils;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -117,7 +116,6 @@ public class MetadataController {
         }
         
         FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -178,7 +176,6 @@ public class MetadataController {
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -219,7 +216,6 @@ public class MetadataController {
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -260,7 +256,6 @@ public class MetadataController {
         String uri = getRequesedURL(request);
         DataRecordMetadata metadata = fairMetaDataService.retrieveDataRecordMetadata(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
@@ -301,7 +296,6 @@ public class MetadataController {
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService.retrieveDistributionMetaData(
                 valueFactory.createIRI(uri));
-        LoggerUtils.logRequest(request, response);
         return metadata;
     }
 
