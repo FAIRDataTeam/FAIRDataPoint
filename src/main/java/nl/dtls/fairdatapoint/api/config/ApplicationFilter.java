@@ -61,14 +61,20 @@ public class ApplicationFilter extends OncePerRequestFilter {
     public void doFilterInternal(final HttpServletRequest request,
             final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
-        String allowedMtds = (RequestMethod.GET.name() + ","
-                + RequestMethod.POST.name() + "," + RequestMethod.PATCH.name());
         
+        StringBuilder allowedMtds = new StringBuilder();
+        allowedMtds.append(RequestMethod.GET.name());
+        allowedMtds.append(",");
+        allowedMtds.append(RequestMethod.POST.name());
+        allowedMtds.append(",");
+        allowedMtds.append(RequestMethod.PATCH.name());
+        
+        // Set default repsone headers
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, HttpHeaders.CONTENT_TYPE);
-        response.setHeader(HttpHeaders.ALLOW, allowedMtds);
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMtds);
+        response.setHeader(HttpHeaders.ALLOW, allowedMtds.toString());
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMtds.toString());
         
         // Set information for custom request log pattern 
         ThreadContext.put("ipAddress", request.getRemoteAddr());
