@@ -92,7 +92,7 @@ public class ExampleFilesUtils {
     public static final String BASE_URI = "http://localhost/";   
     public static final String TEST_SUB_URI = "http://www.dtls.nl/test"; 
     public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;    
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleFilesUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleFilesUtils.class);
     
     /**
      * Method to read the content of a turtle file
@@ -106,7 +106,7 @@ public class ExampleFilesUtils {
             URL fileURL = ExampleFilesUtils.class.getResource(fileName);
             content = Resources.toString(fileURL, Charsets.UTF_8);
         } catch (IOException ex) {
-            LOGGER.error("Error getting turle file{}", ex);          
+            LOGGER.error("Error getting turle file {}", ex);          
         }        
         return content;
     } 

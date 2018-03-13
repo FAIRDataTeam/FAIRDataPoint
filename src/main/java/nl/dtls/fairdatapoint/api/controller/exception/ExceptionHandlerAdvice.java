@@ -52,8 +52,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
     
-    private final static Logger LOGGER = LoggerFactory.getLogger(
-            ExceptionHandlerAdvice.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
     
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFound(

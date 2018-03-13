@@ -45,7 +45,7 @@
         <jackson.version>2.9.2</jackson.version>
         <slf4jVersion>1.7.25</slf4jVersion>
         <rdf4j.version>2.2.2</rdf4j.version>
-        <log4j.version>1.2.17</log4j.version>
+        <log4j.version>2.10.0</log4j.version>
         <handlebars.version>4.0.6</handlebars.version>
         <fairmetadata.version>0.1-beta</fairmetadata.version>
         <velocity.version>1.7</velocity.version>
@@ -111,8 +111,8 @@
             <version>${slf4jVersion}</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
             <scope>runtime</scope>
         </dependency>     

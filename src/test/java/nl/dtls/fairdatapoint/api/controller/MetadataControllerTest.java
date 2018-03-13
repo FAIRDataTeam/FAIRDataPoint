@@ -90,7 +90,7 @@ public class MetadataControllerTest {
     private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH
             + "/distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
     private final static Logger LOGGER
-            = LoggerFactory.getLogger(FairMetaDataServiceImpl.class.getName());
+            = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
 
     @Before
     public void storeExampleMetadata() throws StoreManagerException,

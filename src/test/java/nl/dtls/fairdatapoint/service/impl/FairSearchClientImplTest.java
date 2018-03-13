@@ -51,8 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FairSearchClientImplTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-            FairSearchClientImplTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FairSearchClientImplTest.class);
 
     private static FairSearchClient FSE;
     private static final ValueFactory VF = SimpleValueFactory.getInstance();

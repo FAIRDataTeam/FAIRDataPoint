@@ -44,7 +44,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * Filter to add mandatory headers to all request.
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
@@ -52,33 +52,35 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Component
 public class ApplicationFilter extends OncePerRequestFilter {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationFilter.class);
+
+    private static final Marker APIREQUEST = MarkerFactory.getMarker("API-REQUEST");
 
     @Override
     public void doFilterInternal(final HttpServletRequest request,
             final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
-        String allowedMtds = (RequestMethod.GET.name() + "," + 
-                RequestMethod.POST.name() + "," + RequestMethod.PATCH.name());
+        String allowedMtds = (RequestMethod.GET.name() + ","
+                + RequestMethod.POST.name() + "," + RequestMethod.PATCH.name());
+        
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, 
-                HttpHeaders.CONTENT_TYPE);
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, HttpHeaders.CONTENT_TYPE);
         response.setHeader(HttpHeaders.ALLOW, allowedMtds);
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
-                allowedMtds);
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMtds);
+        
+        // Set information for custom request log pattern 
         ThreadContext.put("ipAddress", request.getRemoteAddr());
-        ThreadContext.put("responseStatus", String.valueOf(
-                response.getStatus()));
+        ThreadContext.put("responseStatus", String.valueOf(response.getStatus()));
         ThreadContext.put("requestMethod", request.getMethod());
         ThreadContext.put("requestURI", request.getRequestURI());
         ThreadContext.put("requestProtocol", request.getProtocol());
         ThreadContext.put("responseStatus", String.valueOf(response.getStatus()));
         String contentLength = response.getHeader(HttpHeaders.CONTENT_LENGTH);
         ThreadContext.put("contentSize", contentLength);
-        Marker apiRequest = MarkerFactory.getMarker("API-REQUEST");
-        LOGGER.info(apiRequest, "");
+        // Log API request
+        LOGGER.info(APIREQUEST, "");
         fc.doFilter(request, response);
         ThreadContext.clearAll();
     }

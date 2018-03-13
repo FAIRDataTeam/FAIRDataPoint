@@ -74,8 +74,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @DirtiesContext
 public class FairMetaDataServiceImplTest {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(
-            FairMetaDataServiceImplTest.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImplTest.class);
     
     private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
     @Autowired
