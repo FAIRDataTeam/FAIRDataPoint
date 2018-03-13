@@ -77,8 +77,7 @@ public class ApplicationFilter extends OncePerRequestFilter {
         ThreadContext.put("requestURI", request.getRequestURI());
         ThreadContext.put("requestProtocol", request.getProtocol());
         ThreadContext.put("responseStatus", String.valueOf(response.getStatus()));
-        String contentLength = response.getHeader(HttpHeaders.CONTENT_LENGTH);
-        ThreadContext.put("contentSize", contentLength);
+        ThreadContext.put("contentSize", response.getHeader(HttpHeaders.CONTENT_LENGTH));
         // Log API request
         LOGGER.info(APIREQUEST, "");
         fc.doFilter(request, response);
