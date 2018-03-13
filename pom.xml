@@ -35,8 +35,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-                
+        <maven.compiler.target>1.8</maven.compiler.target>                
         <springframework.version>5.0.0.RELEASE</springframework.version>
         <springdata.version>3.0.0.RELEASE</springdata.version>        
         <springfox-swagger.version>2.6.1</springfox-swagger.version>        
@@ -52,8 +51,7 @@
         <snakeyaml.version>1.19</snakeyaml.version>        
         <unirest.version>1.4.9</unirest.version>
         <junit.version>4.12</junit.version>
-        <mockito.version>2.11.0</mockito.version>
-        
+        <mockito.version>2.11.0</mockito.version>        
         <plugin.mavenwar.version>3.2.0</plugin.mavenwar.version>
         <plugin.mavenlic.version>3.0</plugin.mavenlic.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
@@ -74,15 +72,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${springframework.version}</version>
-        </dependency>
-        <dependency>
-    <groupId>com.mysema.rdf</groupId>
-    <artifactId>rdfbean-virtuoso</artifactId>
-    <version>1.7.1</version>
-</dependency>
-
-
-
+        </dependency>        
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-rest-webmvc</artifactId>

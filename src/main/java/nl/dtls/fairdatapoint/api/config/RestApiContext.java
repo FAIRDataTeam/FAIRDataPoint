@@ -112,6 +112,12 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     
     @org.springframework.beans.factory.annotation.Value("${store.graphDb.repository:nil}")
     private String graphDbRepository;
+    
+    @org.springframework.beans.factory.annotation.Value("${store.blazegraph.url:nil}")
+    private String blazegraphUrl;
+    
+    @org.springframework.beans.factory.annotation.Value("${store.blazegraph.repository:nil}")
+    private String blazegraphRepository;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -171,6 +177,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             repository = getAgraphRepository();
         } else if (storeType == 4) {
             repository = getGraphRepository();
+        } else if (storeType == 5) {
+            repository = getBlazeGraphRepository();
         } else if (storeType == 2 && !nativeStoreDir.contains("nil")) {
             File dataDir = new File(nativeStoreDir);
             LOGGER.info("Initializing native store");
@@ -182,11 +190,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             repository = new SailRepository(store);
             LOGGER.info("Initializing inmemory store");
         }
-        RepositoryManager repositoryManager = new RemoteRepositoryManager("http://localhost:8079/blazegraph");
-        repositoryManager.initialize();
-        SPARQLRepository repositor = new SPARQLRepository("http://localhost:8079/blazegraph/fdp");
-        repositor.enableQuadMode(true);
-        return repositor;
+        return repository;
     }
     
     /**
@@ -202,6 +206,34 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             if (!agraphUsername.contains("nil") && !agraphPassword.contains("nil")) {
                 sRepository.setUsernameAndPassword(agraphUsername, agraphPassword);
             }
+        }
+        return sRepository;
+    }
+    
+    /**
+     * Get blazegraph repository
+     * @return SPARQLRepository
+     */
+    private Repository getBlazeGraphRepository() {
+
+        SPARQLRepository sRepository = null;
+        if (!blazegraphUrl.contains("nil")) {
+            LOGGER.info("Initializing blazegraph repository");
+            if (blazegraphUrl.endsWith("/")) {
+                blazegraphUrl = blazegraphUrl.substring(0, blazegraphUrl.length() - 1);
+            }
+            // Build url for blazegraph (Eg: http://localhost:8079/bigdata/namespace/test1/sparql)
+            StringBuilder sb = new StringBuilder();
+            sb.append(blazegraphUrl);
+            sb.append("/namespace/");
+            if (!blazegraphRepository.contains("nil")) {
+                sb.append(blazegraphRepository);
+            } else {
+                sb.append("kb");
+            }
+            sb.append("/sparql");
+            String url = sb.toString();
+            sRepository = new SPARQLRepository(url);
         }
         return sRepository;
     }
