@@ -55,8 +55,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FairMetaDataMetricsServiceImpl implements FairMetaDataMetricsService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImpl.class
-            .getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
 
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
