@@ -94,28 +94,28 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
-    @org.springframework.beans.factory.annotation.Value("${store.native.dir:nil}")
+    @Value("${store.native.dir:nil}")
     private String nativeStoreDir;
 
-    @org.springframework.beans.factory.annotation.Value("${store.agraph.url:nil}")
+    @Value("${store.agraph.url:nil}")
     private String agraphUrl;
 
-    @org.springframework.beans.factory.annotation.Value("${store.agraph.username:nil}")
+    @Value("${store.agraph.username:nil}")
     private String agraphUsername;
 
-    @org.springframework.beans.factory.annotation.Value("${store.agraph.password:nil}")
+    @Value("${store.agraph.password:nil}")
     private String agraphPassword;
 
-    @org.springframework.beans.factory.annotation.Value("${store.graphDb.url:nil}")
+    @Value("${store.graphDb.url:nil}")
     private String graphDbUrl;
 
-    @org.springframework.beans.factory.annotation.Value("${store.graphDb.repository:nil}")
+    @Value("${store.graphDb.repository:nil}")
     private String graphDbRepository;
 
-    @org.springframework.beans.factory.annotation.Value("${store.blazegraph.url:nil}")
+    @Value("${store.blazegraph.url:nil}")
     private String blazegraphUrl;
 
-    @org.springframework.beans.factory.annotation.Value("${store.blazegraph.repository:nil}")
+    @Value("${store.blazegraph.repository:nil}")
     private String blazegraphRepository;
 
     @Override

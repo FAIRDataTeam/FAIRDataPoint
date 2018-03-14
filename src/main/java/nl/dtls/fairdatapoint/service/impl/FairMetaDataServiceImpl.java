@@ -72,6 +72,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -106,20 +107,17 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Autowired
     private FairMetaDataMetricsService fmMetricsService;
 
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
+    @Value("${metadataProperties.rootSpecs:nil}")
     private String fdpSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.catalogSpecs:nil}")
+    @Value("${metadataProperties.catalogSpecs:nil}")
     private String catalogSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.datasetSpecs:nil}")
+    @Value("${metadataProperties.datasetSpecs:nil}")
     private String datasetSpecs;
-    @org.springframework.beans.factory.annotation.Value(
-            "${metadataProperties.datarecordSpecs:nil}")
+    @Value("${metadataProperties.datarecordSpecs:nil}")
     private String datarecordSpecs;
-    @org.springframework.beans.factory.annotation.Value(
-            "${metadataProperties.distributionSpecs:nil}")
+    @Value("${metadataProperties.distributionSpecs:nil}")
     private String distributionSpecs;
-    @org.springframework.beans.factory.annotation.Value(
-            "${metadataProperties.accessRightsDescription:This resource has no access restriction}")
+    @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
 
     @Override
