@@ -28,7 +28,9 @@
 package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
@@ -46,6 +48,7 @@ import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -58,8 +61,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * Spring test context file. 
- * 
+ * Spring test context file.
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-02-11
@@ -69,68 +72,75 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableAsync
 @Configuration
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-public class RestApiTestContext extends WebMvcConfigurerAdapter  {
-    
+public class RestApiTestContext extends WebMvcConfigurerAdapter {
+
     @Autowired
-    private List<AbstractMetadataMessageConverter<?>> metadataConverters;    
-    
+    private List<AbstractMetadataMessageConverter<?>> metadataConverters;
+
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    
+
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> 
-            converters) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
     }
-    
+
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer 
-            configurer) {
-        for (AbstractMetadataMessageConverter<?> converter : 
-                metadataConverters) {
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        
+        for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
     }
-    
+
     @Bean
     public Executor threadPoolTaskExecutor() {
         return Executors.newCachedThreadPool();
     }
-    
-    @Bean(name="repository", initMethod = "initialize",
-            destroyMethod = "shutDown")
-    public Repository repository(final Environment env)
-            throws RepositoryException, IOException, RDFParseException {
-        // For tets we use only in memory
+
+    @Bean(name = "repository", initMethod = "initialize", destroyMethod = "shutDown")
+    public Repository repository(final Environment env) throws RepositoryException, IOException
+            ,RDFParseException {
+        
+        // For tests we use only in memory
         Sail store = new MemoryStore();
         return new SailRepository(store);
     }
-    
+
     @Bean(name = "storeManager")
     @DependsOn({"repository"})
-    public StoreManager storeManager() throws RepositoryException,
-            StoreManagerException {
+    public StoreManager storeManager() throws RepositoryException, StoreManagerException {
         return new StoreManagerImpl();
     }
-        
+
     @Bean(name = "publisher")
     public Agent publisher() {
+        
         Agent publisher = new Agent();
         publisher.setUri(valueFactory.createIRI("https://www.dtls.nl"));
         publisher.setName(valueFactory.createLiteral("DTLS"));
         return publisher;
-    } 
-    
+    }
+
     @Bean(name = "language")
     public IRI language() {
-        IRI language = valueFactory.createIRI(
-                "http://id.loc.gov/vocabulary/iso639-1/en");
+        
+        IRI language = valueFactory.createIRI("http://id.loc.gov/vocabulary/iso639-1/en");
         return language;
     }
-    
+
     @Bean(name = "license")
     public IRI license() {
-        IRI license =  valueFactory.createIRI(
+        
+        IRI license = valueFactory.createIRI(
                 "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
         return license;
-    } 
+    }
+
+    @Bean(name = "metadataMetrics")
+    public Map<String, String> metadataMetrics(Environment env) {
+        
+        Map<String, String> metadataMetrics = new HashMap();
+        metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
+        return metadataMetrics;
+    }
 }

@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.api.config;
 
-
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import java.io.IOException;
 import java.util.List;
@@ -64,6 +63,8 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;
+import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +94,30 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
+    @org.springframework.beans.factory.annotation.Value("${store.native.dir:nil}")
+    private String nativeStoreDir;
+
+    @org.springframework.beans.factory.annotation.Value("${store.agraph.url:nil}")
+    private String agraphUrl;
+
+    @org.springframework.beans.factory.annotation.Value("${store.agraph.username:nil}")
+    private String agraphUsername;
+
+    @org.springframework.beans.factory.annotation.Value("${store.agraph.password:nil}")
+    private String agraphPassword;
+
+    @org.springframework.beans.factory.annotation.Value("${store.graphDb.url:nil}")
+    private String graphDbUrl;
+
+    @org.springframework.beans.factory.annotation.Value("${store.graphDb.repository:nil}")
+    private String graphDbRepository;
+
+    @org.springframework.beans.factory.annotation.Value("${store.blazegraph.url:nil}")
+    private String blazegraphUrl;
+
+    @org.springframework.beans.factory.annotation.Value("${store.blazegraph.repository:nil}")
+    private String blazegraphRepository;
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
@@ -105,8 +130,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             converter.configureContentNegotiation(configurer);
         }
     }
-    
-    @Bean( destroyMethod = "shutdownNow")
+
+    @Bean(destroyMethod = "shutdownNow")
     public Executor threadPoolTaskExecutor(@Value("${threadPoolSize:4}") int threadPoolSize) {
         return Executors.newFixedThreadPool(threadPoolSize);
     }
@@ -114,9 +139,9 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Bean(name = "publisher")
     public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") String publisherURI,
             @Value("${metadataProperties.publisherName:nil}") String publishername) {
+        
         Agent publisher = null;
-        if (!publisherURI.contentEquals("nil")
-                && !publishername.contentEquals("nil")) {
+        if (!publisherURI.contentEquals("nil") && !publishername.contentEquals("nil")) {
             publisher = new Agent();
             publisher.setUri(valueFactory.createIRI(publisherURI));
             publisher.setName(valueFactory.createLiteral(publishername));
@@ -126,6 +151,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "language")
     public IRI language(@Value("${metadataProperties.language:nil}") String languageURI) {
+        
         IRI language = null;
         if (!languageURI.contentEquals("nil")) {
             language = valueFactory.createIRI(languageURI);
@@ -135,6 +161,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "license")
     public IRI license(@Value("${metadataProperties.license:nil}") String licenseURI) {
+        
         IRI license = null;
         if (!licenseURI.contentEquals("nil")) {
             license = valueFactory.createIRI(licenseURI);
@@ -142,27 +169,24 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         return license;
     }
 
-    @Bean(name = "repository", initMethod = "initialize",
-            destroyMethod = "shutDown")
-    public Repository repository(@Value("${store.type:1}") int storeType,
-            @Value("${store.url}") String storeUrl,
-            @Value("${store.username:nil}") String storeUsername,
-            @Value("${store.password:nil}") String storeUserPassword,
-            @Value("${store.dir:}") String storeDir)
+    @Bean(name = "repository", initMethod = "initialize", destroyMethod = "shutDown")
+    public Repository repository(@Value("${store.type:1}") int storeType)
             throws RepositoryException {
-        Repository repository;
-        if (storeType == 1 && !storeUsername.isEmpty()
-                && !storeUsername.contains("nil")) { // HTTP endpoint
-            SPARQLRepository sRepository = new SPARQLRepository(storeUrl);
-            LOGGER.info("Initializing HTTP triple store ");
-            sRepository.setUsernameAndPassword(storeUsername,
-                    storeUserPassword);
-            return sRepository;
-        } else if (storeType == 2 && !storeDir.isEmpty()) {
-            File dataDir = new File(storeDir);
+        
+        Repository repository = null;
+        if (storeType == 3) { // Allegrograph as a backend store
+            repository = getAgraphRepository();
+        } else if (storeType == 4) { // GraphDB as a backend store
+            repository = getGraphRepository();
+        } else if (storeType == 5) {    // Blazegraph as a backend store
+            repository = getBlazeGraphRepository();
+        } else if (storeType == 2 && !nativeStoreDir.contains("nil")) { // Native store
+            File dataDir = new File(nativeStoreDir);
             LOGGER.info("Initializing native store");
             repository = new SailRepository(new NativeStore(dataDir));
-        } else { // In memory is the default store
+        }
+        // In memory is the default store
+        if (storeType == 3 || repository == null) {
             Sail store = new MemoryStore();
             repository = new SailRepository(store);
             LOGGER.info("Initializing inmemory store");
@@ -170,17 +194,80 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         return repository;
     }
 
+    /**
+     * Get allegrograph repository
+     *
+     * @return SPARQLRepository
+     */
+    private Repository getAgraphRepository() {
+
+        SPARQLRepository sRepository = null;
+        if (!agraphUrl.contains("nil")) {
+            LOGGER.info("Initializing allegrograph repository");
+            sRepository = new SPARQLRepository(agraphUrl);
+            if (!agraphUsername.contains("nil") && !agraphPassword.contains("nil")) {
+                sRepository.setUsernameAndPassword(agraphUsername, agraphPassword);
+            }
+        }
+        return sRepository;
+    }
+
+    /**
+     * Get blazegraph repository
+     *
+     * @return SPARQLRepository
+     */
+    private Repository getBlazeGraphRepository() {
+
+        SPARQLRepository sRepository = null;
+        if (!blazegraphUrl.contains("nil")) {
+            LOGGER.info("Initializing blazegraph repository");
+            if (blazegraphUrl.endsWith("/")) {
+                blazegraphUrl = blazegraphUrl.substring(0, blazegraphUrl.length() - 1);
+            }
+            // Build url for blazegraph (Eg: http://localhost:8079/bigdata/namespace/test1/sparql)
+            StringBuilder sb = new StringBuilder();
+            sb.append(blazegraphUrl);
+            sb.append("/namespace/");
+            if (!blazegraphRepository.contains("nil")) {
+                sb.append(blazegraphRepository);
+            } else {
+                sb.append("kb");
+            }
+            sb.append("/sparql");
+            String url = sb.toString();
+            sRepository = new SPARQLRepository(url);
+        }
+        return sRepository;
+    }
+
+    /**
+     * Get graphDB repository
+     *
+     * @return Repository
+     */
+    private Repository getGraphRepository() {
+
+        Repository repository = null;
+        if (!graphDbUrl.contains("nil") && !graphDbRepository.contains("nil")) {
+            LOGGER.info("Initializing graphDB repository");
+            RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
+            repositoryManager.initialize();
+            repository = repositoryManager.getRepository(graphDbRepository);
+        }
+        return repository;
+    }
+
     @Bean(name = "storeManager")
     @DependsOn({"repository"})
-    public StoreManager storeManager() throws RepositoryException,
-            StoreManagerException {
+    public StoreManager storeManager() throws RepositoryException, StoreManagerException {
         return new StoreManagerImpl();
     }
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.setOrder(Integer.MIN_VALUE + 1).
-                addResourceHandler("/swagger-ui.html")
+        
+        registry.setOrder(Integer.MIN_VALUE + 1).addResourceHandler("/swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 
         registry.setOrder(Integer.MIN_VALUE + 2).
@@ -189,8 +276,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
 
     @Override
-    public void configureDefaultServletHandling(
-            final DefaultServletHandlerConfigurer configurer) {
+    public void configureDefaultServletHandling(final DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
 
@@ -201,6 +287,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean
     public ViewResolver handlebars() {
+        
         HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
 
         // add handlebars helper to get a label's literal without datatype
