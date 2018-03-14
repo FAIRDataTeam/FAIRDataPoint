@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.api.config;
 
-
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import java.io.IOException;
 import java.util.List;
@@ -94,28 +93,28 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.native.dir:nil}")
     private String nativeStoreDir;
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.agraph.url:nil}")
     private String agraphUrl;
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.agraph.username:nil}")
     private String agraphUsername;
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.agraph.password:nil}")
     private String agraphPassword;
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.graphDb.url:nil}")
     private String graphDbUrl;
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.graphDb.repository:nil}")
     private String graphDbRepository;
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.blazegraph.url:nil}")
     private String blazegraphUrl;
-    
+
     @org.springframework.beans.factory.annotation.Value("${store.blazegraph.repository:nil}")
     private String blazegraphRepository;
 
@@ -131,8 +130,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             converter.configureContentNegotiation(configurer);
         }
     }
-    
-    @Bean( destroyMethod = "shutdownNow")
+
+    @Bean(destroyMethod = "shutdownNow")
     public Executor threadPoolTaskExecutor(@Value("${threadPoolSize:4}") int threadPoolSize) {
         return Executors.newFixedThreadPool(threadPoolSize);
     }
@@ -140,9 +139,9 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Bean(name = "publisher")
     public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") String publisherURI,
             @Value("${metadataProperties.publisherName:nil}") String publishername) {
+        
         Agent publisher = null;
-        if (!publisherURI.contentEquals("nil")
-                && !publishername.contentEquals("nil")) {
+        if (!publisherURI.contentEquals("nil") && !publishername.contentEquals("nil")) {
             publisher = new Agent();
             publisher.setUri(valueFactory.createIRI(publisherURI));
             publisher.setName(valueFactory.createLiteral(publishername));
@@ -152,6 +151,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "language")
     public IRI language(@Value("${metadataProperties.language:nil}") String languageURI) {
+        
         IRI language = null;
         if (!languageURI.contentEquals("nil")) {
             language = valueFactory.createIRI(languageURI);
@@ -161,6 +161,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "license")
     public IRI license(@Value("${metadataProperties.license:nil}") String licenseURI) {
+        
         IRI license = null;
         if (!licenseURI.contentEquals("nil")) {
             license = valueFactory.createIRI(licenseURI);
@@ -168,18 +169,18 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         return license;
     }
 
-    @Bean(name = "repository", initMethod = "initialize",
-            destroyMethod = "shutDown")
+    @Bean(name = "repository", initMethod = "initialize", destroyMethod = "shutDown")
     public Repository repository(@Value("${store.type:1}") int storeType)
             throws RepositoryException {
+        
         Repository repository = null;
-        if (storeType == 3) {
+        if (storeType == 3) { // Allegrograph as a backend store
             repository = getAgraphRepository();
-        } else if (storeType == 4) {
+        } else if (storeType == 4) { // GraphDB as a backend store
             repository = getGraphRepository();
-        } else if (storeType == 5) {
+        } else if (storeType == 5) {    // Blazegraph as a backend store
             repository = getBlazeGraphRepository();
-        } else if (storeType == 2 && !nativeStoreDir.contains("nil")) {
+        } else if (storeType == 2 && !nativeStoreDir.contains("nil")) { // Native store
             File dataDir = new File(nativeStoreDir);
             LOGGER.info("Initializing native store");
             repository = new SailRepository(new NativeStore(dataDir));
@@ -192,9 +193,10 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         }
         return repository;
     }
-    
+
     /**
      * Get allegrograph repository
+     *
      * @return SPARQLRepository
      */
     private Repository getAgraphRepository() {
@@ -209,9 +211,10 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         }
         return sRepository;
     }
-    
+
     /**
      * Get blazegraph repository
+     *
      * @return SPARQLRepository
      */
     private Repository getBlazeGraphRepository() {
@@ -237,9 +240,10 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         }
         return sRepository;
     }
-    
+
     /**
      * Get graphDB repository
+     *
      * @return Repository
      */
     private Repository getGraphRepository() {
@@ -256,15 +260,14 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "storeManager")
     @DependsOn({"repository"})
-    public StoreManager storeManager() throws RepositoryException,
-            StoreManagerException {
+    public StoreManager storeManager() throws RepositoryException, StoreManagerException {
         return new StoreManagerImpl();
     }
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.setOrder(Integer.MIN_VALUE + 1).
-                addResourceHandler("/swagger-ui.html")
+        
+        registry.setOrder(Integer.MIN_VALUE + 1).addResourceHandler("/swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 
         registry.setOrder(Integer.MIN_VALUE + 2).
@@ -273,8 +276,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
 
     @Override
-    public void configureDefaultServletHandling(
-            final DefaultServletHandlerConfigurer configurer) {
+    public void configureDefaultServletHandling(final DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
 
@@ -285,6 +287,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean
     public ViewResolver handlebars() {
+        
         HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
 
         // add handlebars helper to get a label's literal without datatype
