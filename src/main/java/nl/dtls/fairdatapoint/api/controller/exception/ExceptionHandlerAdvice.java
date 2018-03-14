@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -52,8 +52,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
     
-    private final static Logger LOGGER
-            = LogManager.getLogger(ExceptionHandlerAdvice.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
     
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFound(

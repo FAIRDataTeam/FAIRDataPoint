@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-
 <Configuration status="WARN">
     <Properties>
         <Property name="log-path">/tmp</Property>  <!--use ${env:VAR_NAME} for env variables --> 
     </Properties>
-     <!-- Define custom levels before using them for filtering below. -->
-    <CustomLevels>
-        <CustomLevel name="API-REQUEST" intLevel="350" />
-    </CustomLevels>
     <Appenders>
-        <Console name="console-log" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
-        </Console>
         <Console name="console-log" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
         </Console>
@@ -53,7 +40,9 @@ and open the template in the editor.
             <appender-ref ref="trace-log" level="info"/>
             <appender-ref ref="error-log" level="error"/>
             <appender-ref ref="console-log" level="warn"/>
-            <appender-ref ref="api-request-log" level="API-REQUEST"/>
+        </Logger>        
+        <Logger name="nl.dtls.fairdatapoint.api.config.ApplicationFilter" level="info" additivity="false">
+            <appender-ref ref="api-request-log" level="info"/>
         </Logger>
         <Root level="warn" additivity="false">
             <AppenderRef ref="console-log"/>

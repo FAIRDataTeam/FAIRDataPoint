@@ -60,8 +60,6 @@ import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
@@ -70,6 +68,8 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -86,8 +86,7 @@ import org.springframework.stereotype.Service;
 @Service("fairMetaDataServiceImpl")
 public class FairMetaDataServiceImpl implements FairMetaDataService {
 
-    private final static Logger LOGGER
-            = LogManager.getLogger(FairMetaDataServiceImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
     
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
         
@@ -329,8 +328,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private <T extends Metadata> void addDefaultValues(@Nonnull T metadata) 
     {
         if (metadata.getIdentifier() == null) {
-            LOGGER.info("Metadata ID is null or empty, this feild value will "
-                    + "be generated automatically");
+            LOGGER.info("Metadata ID is null or empty, this feild value will be generated "
+                    + "automatically");
             Identifier id = new Identifier();
             id.setUri(VALUEFACTORY.createIRI(metadata.getUri().stringValue()
                     + "#metadataID"));
@@ -441,7 +440,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             updateParentResource(parentMetadata);
         } catch (StoreManagerException | DatatypeConfigurationException |
                 FairMetadataServiceException ex) {
-            LOGGER.error("Error updating parent resource :" + ex.getMessage());
+            LOGGER.error("Error updating parent resource {}", ex.getMessage());
         }
     }
 
