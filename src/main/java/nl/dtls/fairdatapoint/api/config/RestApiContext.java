@@ -186,7 +186,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             repository = new SailRepository(new NativeStore(dataDir));
         }
         // In memory is the default store
-        if (storeType == 3 || repository == null) {
+        if (storeType == 1 || repository == null) {
             Sail store = new MemoryStore();
             repository = new SailRepository(store);
             LOGGER.info("Initializing inmemory store");

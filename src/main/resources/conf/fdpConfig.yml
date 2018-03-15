@@ -1,8 +1,8 @@
 # valid store type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph}
 store:
-    type: 5
+    type: 3
     agraph:
-        url: http://136.243.4.200:8892/repositories/test
+        url: http://localhost:10035/repositories/fdp
         username: test
         password: tester
     graphDb:
