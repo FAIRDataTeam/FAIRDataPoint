@@ -92,30 +92,30 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
 
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    private final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
-    @Value("${store.native.dir:nil}")
+    @Value("${store.native.dir:}")
     private String nativeStoreDir;
 
-    @Value("${store.agraph.url:nil}")
+    @Value("${store.agraph.url:}")
     private String agraphUrl;
 
-    @Value("${store.agraph.username:nil}")
+    @Value("${store.agraph.username:}")
     private String agraphUsername;
 
-    @Value("${store.agraph.password:nil}")
+    @Value("${store.agraph.password:}")
     private String agraphPassword;
 
-    @Value("${store.graphDb.url:nil}")
+    @Value("${store.graphDb.url:}")
     private String graphDbUrl;
 
-    @Value("${store.graphDb.repository:nil}")
+    @Value("${store.graphDb.repository:}")
     private String graphDbRepository;
 
-    @Value("${store.blazegraph.url:nil}")
+    @Value("${store.blazegraph.url:}")
     private String blazegraphUrl;
 
-    @Value("${store.blazegraph.repository:nil}")
+    @Value("${store.blazegraph.repository:}")
     private String blazegraphRepository;
 
     @Override
@@ -137,34 +137,34 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
 
     @Bean(name = "publisher")
-    public Agent publisher(@Value("${metadataProperties.publisherURI:nil}") String publisherURI,
-            @Value("${metadataProperties.publisherName:nil}") String publishername) {
+    public Agent publisher(@Value("${metadataProperties.publisherURI:}") String publisherURI,
+            @Value("${metadataProperties.publisherName:}") String publishername) {
         
         Agent publisher = null;
-        if (!publisherURI.contentEquals("nil") && !publishername.contentEquals("nil")) {
+        if (!publisherURI.isEmpty() && !publishername.isEmpty()) {
             publisher = new Agent();
-            publisher.setUri(valueFactory.createIRI(publisherURI));
-            publisher.setName(valueFactory.createLiteral(publishername));
+            publisher.setUri(VALUEFACTORY.createIRI(publisherURI));
+            publisher.setName(VALUEFACTORY.createLiteral(publishername));
         }
         return publisher;
     }
 
     @Bean(name = "language")
-    public IRI language(@Value("${metadataProperties.language:nil}") String languageURI) {
+    public IRI language(@Value("${metadataProperties.language:}") String languageURI) {
         
         IRI language = null;
-        if (!languageURI.contentEquals("nil")) {
-            language = valueFactory.createIRI(languageURI);
+        if (!languageURI.isEmpty()) {
+            language = VALUEFACTORY.createIRI(languageURI);
         }
         return language;
     }
 
     @Bean(name = "license")
-    public IRI license(@Value("${metadataProperties.license:nil}") String licenseURI) {
+    public IRI license(@Value("${metadataProperties.license:}") String licenseURI) {
         
         IRI license = null;
-        if (!licenseURI.contentEquals("nil")) {
-            license = valueFactory.createIRI(licenseURI);
+        if (!licenseURI.isEmpty()) {
+            license = VALUEFACTORY.createIRI(licenseURI);
         }
         return license;
     }
@@ -180,7 +180,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             repository = getGraphRepository();
         } else if (storeType == 5) {    // Blazegraph as a backend store
             repository = getBlazeGraphRepository();
-        } else if (storeType == 2 && !nativeStoreDir.contains("nil")) { // Native store
+        } else if (storeType == 2 && !nativeStoreDir.isEmpty()) { // Native store
             File dataDir = new File(nativeStoreDir);
             LOGGER.info("Initializing native store");
             repository = new SailRepository(new NativeStore(dataDir));
@@ -202,10 +202,10 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     private Repository getAgraphRepository() {
 
         SPARQLRepository sRepository = null;
-        if (!agraphUrl.contains("nil")) {
+        if (!agraphUrl.isEmpty()) {
             LOGGER.info("Initializing allegrograph repository");
             sRepository = new SPARQLRepository(agraphUrl);
-            if (!agraphUsername.contains("nil") && !agraphPassword.contains("nil")) {
+            if (!agraphUsername.isEmpty() && !agraphPassword.isEmpty()) {
                 sRepository.setUsernameAndPassword(agraphUsername, agraphPassword);
             }
         }
@@ -220,7 +220,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     private Repository getBlazeGraphRepository() {
 
         SPARQLRepository sRepository = null;
-        if (!blazegraphUrl.contains("nil")) {
+        if (!blazegraphUrl.isEmpty()) {
             LOGGER.info("Initializing blazegraph repository");
             if (blazegraphUrl.endsWith("/")) {
                 blazegraphUrl = blazegraphUrl.substring(0, blazegraphUrl.length() - 1);
@@ -229,7 +229,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             StringBuilder sb = new StringBuilder();
             sb.append(blazegraphUrl);
             sb.append("/namespace/");
-            if (!blazegraphRepository.contains("nil")) {
+            if (!blazegraphRepository.isEmpty()) {
                 sb.append(blazegraphRepository);
             } else {
                 sb.append("kb");
@@ -249,7 +249,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     private Repository getGraphRepository() {
 
         Repository repository = null;
-        if (!graphDbUrl.contains("nil") && !graphDbRepository.contains("nil")) {
+        if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
             LOGGER.info("Initializing graphDB repository");
             RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
             repositoryManager.initialize();

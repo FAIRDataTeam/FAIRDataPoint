@@ -107,15 +107,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Autowired
     private FairMetaDataMetricsService fmMetricsService;
 
-    @Value("${metadataProperties.rootSpecs:nil}")
+    @Value("${metadataProperties.rootSpecs:}")
     private String fdpSpecs;
-    @Value("${metadataProperties.catalogSpecs:nil}")
+    @Value("${metadataProperties.catalogSpecs:}")
     private String catalogSpecs;
-    @Value("${metadataProperties.datasetSpecs:nil}")
+    @Value("${metadataProperties.datasetSpecs:}")
     private String datasetSpecs;
-    @Value("${metadataProperties.datarecordSpecs:nil}")
+    @Value("${metadataProperties.datarecordSpecs:}")
     private String datarecordSpecs;
-    @Value("${metadataProperties.distributionSpecs:nil}")
+    @Value("${metadataProperties.distributionSpecs:}")
     private String distributionSpecs;
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
@@ -174,7 +174,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public void storeFDPMetaData(@Nonnull FDPMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
-        if (!fdpSpecs.isEmpty() && !fdpSpecs.contains("nil")) {
+        if (!fdpSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(fdpSpecs));
         }
         storeMetadata(metadata);
@@ -195,8 +195,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 //        Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
 //                "The fdp URI doesn't exist in the repository. "
 //                + "Please try with valid fdp URI");        
-        if (!catalogSpecs.isEmpty()
-                && !catalogSpecs.contains("nil")) {
+        if (!catalogSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(catalogSpecs));
         }
         if (doesParentResourceExists(metadata)) {
@@ -218,8 +217,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The catalog URI doesn't exist in the repository. "
                 + "Please try with valid catalog URI");
-        if (!datasetSpecs.isEmpty()
-                && !datasetSpecs.contains("nil")) {
+        if (!datasetSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(datasetSpecs));
         }
         if (doesParentResourceExists(metadata)) {
@@ -241,10 +239,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
                 + "Please try with valid dataset URI");
-        if (!distributionSpecs.isEmpty()
-                && !distributionSpecs.contains("nil")) {
-            metadata.setSpecification(VALUEFACTORY.createIRI(
-                    distributionSpecs));
+        if (!distributionSpecs.isEmpty()) {
+            metadata.setSpecification(VALUEFACTORY.createIRI(distributionSpecs));
         }
         if (doesParentResourceExists(metadata)) {
             storeMetadata(metadata);
@@ -265,10 +261,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
                 + "Please try with valid dataset URI");
-        if (!datarecordSpecs.isEmpty()
-                && !datarecordSpecs.contains("nil")) {
-            metadata.setSpecification(VALUEFACTORY.createIRI(
-                    datarecordSpecs));
+        if (!datarecordSpecs.isEmpty()) {
+            metadata.setSpecification(VALUEFACTORY.createIRI(datarecordSpecs));
         }
         if (doesParentResourceExists(metadata)) {
             storeMetadata(metadata);
