@@ -1,10 +1,18 @@
-# valid store type options { 1 = http SPARQLRepository, 2 = NativeStore, 3 = inMemoryStore}
+# valid store type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph}
 store:
-    type: 3
-    url: http://136.243.4.200:8892/repositories/test
-    username: test
-    password: tester
-    dir: /tmp/fdp-store/
+    type: 1
+    agraph:
+        url: http://localhost:10035/repositories/fdp
+        username: test
+        password: tester
+    graphDb:
+        url: http://localhost:7200
+        repository: test
+    blazegraph:
+        url: http://localhost:8079/blazegraph
+        repository: fdp    
+    native:    
+        dir: /tmp/fdp-store/
 urlPath:
     root: /fdp
 metadataProperties:

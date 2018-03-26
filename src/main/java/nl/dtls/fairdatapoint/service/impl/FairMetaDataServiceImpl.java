@@ -72,6 +72,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -106,20 +107,17 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Autowired
     private FairMetaDataMetricsService fmMetricsService;
 
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.rootSpecs:nil}")
+    @Value("${metadataProperties.rootSpecs:}")
     private String fdpSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.catalogSpecs:nil}")
+    @Value("${metadataProperties.catalogSpecs:}")
     private String catalogSpecs;
-    @org.springframework.beans.factory.annotation.Value("${metadataProperties.datasetSpecs:nil}")
+    @Value("${metadataProperties.datasetSpecs:}")
     private String datasetSpecs;
-    @org.springframework.beans.factory.annotation.Value(
-            "${metadataProperties.datarecordSpecs:nil}")
+    @Value("${metadataProperties.datarecordSpecs:}")
     private String datarecordSpecs;
-    @org.springframework.beans.factory.annotation.Value(
-            "${metadataProperties.distributionSpecs:nil}")
+    @Value("${metadataProperties.distributionSpecs:}")
     private String distributionSpecs;
-    @org.springframework.beans.factory.annotation.Value(
-            "${metadataProperties.accessRightsDescription:This resource has no access restriction}")
+    @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
 
     @Override
@@ -176,7 +174,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     public void storeFDPMetaData(@Nonnull FDPMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
-        if (!fdpSpecs.isEmpty() && !fdpSpecs.contains("nil")) {
+        if (!fdpSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(fdpSpecs));
         }
         storeMetadata(metadata);
@@ -197,8 +195,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 //        Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
 //                "The fdp URI doesn't exist in the repository. "
 //                + "Please try with valid fdp URI");        
-        if (!catalogSpecs.isEmpty()
-                && !catalogSpecs.contains("nil")) {
+        if (!catalogSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(catalogSpecs));
         }
         if (doesParentResourceExists(metadata)) {
@@ -220,8 +217,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The catalog URI doesn't exist in the repository. "
                 + "Please try with valid catalog URI");
-        if (!datasetSpecs.isEmpty()
-                && !datasetSpecs.contains("nil")) {
+        if (!datasetSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(datasetSpecs));
         }
         if (doesParentResourceExists(metadata)) {
@@ -243,10 +239,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
                 + "Please try with valid dataset URI");
-        if (!distributionSpecs.isEmpty()
-                && !distributionSpecs.contains("nil")) {
-            metadata.setSpecification(VALUEFACTORY.createIRI(
-                    distributionSpecs));
+        if (!distributionSpecs.isEmpty()) {
+            metadata.setSpecification(VALUEFACTORY.createIRI(distributionSpecs));
         }
         if (doesParentResourceExists(metadata)) {
             storeMetadata(metadata);
@@ -267,10 +261,8 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
                 + "Please try with valid dataset URI");
-        if (!datarecordSpecs.isEmpty()
-                && !datarecordSpecs.contains("nil")) {
-            metadata.setSpecification(VALUEFACTORY.createIRI(
-                    datarecordSpecs));
+        if (!datarecordSpecs.isEmpty()) {
+            metadata.setSpecification(VALUEFACTORY.createIRI(datarecordSpecs));
         }
         if (doesParentResourceExists(metadata)) {
             storeMetadata(metadata);
