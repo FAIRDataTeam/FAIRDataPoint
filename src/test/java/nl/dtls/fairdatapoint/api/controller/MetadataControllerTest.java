@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtls.fairdatapoint.api.config.ApplicationFilter;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
@@ -42,14 +43,17 @@ import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -91,6 +95,8 @@ public class MetadataControllerTest {
             + "/distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
     private final static Logger LOGGER
             = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
+    @InjectMocks
+    private final ApplicationFilter applicationFilter = new ApplicationFilter();
 
     @Before
     public void storeExampleMetadata() throws StoreManagerException,
@@ -266,6 +272,27 @@ public class MetadataControllerTest {
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
     
+    @DirtiesContext
+    @Test
+    public void testOncePerRequestFilter() throws Exception {
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        request.setMethod("GET");
+        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+
+        request.setRequestURI(TEST_FDP_PATH);
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        
+        MockFilterChain filterChain = new MockFilterChain();
+        applicationFilter.doFilterInternal(request, response, filterChain);
+        
+        assertTrue(response.containsHeader(HttpHeaders.SERVER));
+        
+    }
+    
     /**
      * Check supported accept headers.
      *
@@ -299,6 +326,11 @@ public class MetadataControllerTest {
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        
+        request.setRequestURI(TEST_DATARECORD_PATH);
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
     
     /**
@@ -319,6 +351,48 @@ public class MetadataControllerTest {
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
         assertEquals("text/turtle", response.getContentType());
+    }
+    
+    /**
+     * Check url ends with /
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void checkURLFilter() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        request.setMethod("GET");
+
+        request.setRequestURI(TEST_FDP_PATH + "/");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+        assertEquals("text/turtle", response.getContentType());
+    }
+    
+    
+    /**
+     * Update repository metadata.
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void updateRepositoryMetadata() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        Object handler;
+        String metadata = "<> <http://purl.org/dc/terms/title> \"Test update\" .";
+        request.setMethod("PATCH");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.setContent(metadata.getBytes());
+        request.setRequestURI("/fdp");
+        handler = handlerMapping.getHandler(request).getHandler();
+        handlerAdapter.handle(request, response, handler);
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
     
     /**
@@ -513,6 +587,7 @@ public class MetadataControllerTest {
         request.setRequestURI("/fdp/catalog/dumpy");
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
+        //assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
     }
 
     /**
@@ -855,7 +930,6 @@ public class MetadataControllerTest {
      */
     @Ignore
     @DirtiesContext
-    @Test
     public void storeCatalogByURLReretouringWithPort() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -871,7 +945,7 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
         request.setRequestURI("/fdp/catalog");        
-        request.setLocalPort(8080);
+        request.setServerPort(8080);
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         String exceptedUrl = 

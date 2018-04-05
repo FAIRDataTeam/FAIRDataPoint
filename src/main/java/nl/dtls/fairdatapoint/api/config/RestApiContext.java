@@ -249,11 +249,15 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     private Repository getGraphRepository() {
 
         Repository repository = null;
-        if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
-            LOGGER.info("Initializing graphDB repository");
-            RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
-            repositoryManager.initialize();
-            repository = repositoryManager.getRepository(graphDbRepository);
+        try {
+            if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
+                LOGGER.info("Initializing graphDB repository");
+                RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
+                repositoryManager.initialize();
+                repository = repositoryManager.getRepository(graphDbRepository);
+            }
+        } catch(Exception e) {
+            LOGGER.error("Initializing graphDB repository");
         }
         return repository;
     }
