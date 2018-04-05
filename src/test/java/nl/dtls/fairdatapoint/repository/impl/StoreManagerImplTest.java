@@ -34,11 +34,11 @@ import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -46,6 +46,10 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -70,95 +74,100 @@ public class StoreManagerImplTest {
     private StoreManager testStoreManager;
     private final ValueFactory f = SimpleValueFactory.getInstance();
 
+    @Mock
+    private Repository repository;
+
+    @InjectMocks
+    private StoreManagerImpl mockStoreManager;
+
+    private final List<Statement> STATEMENTS = ExampleFilesUtils.
+            getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE,
+                    "http://www.dtls.nl/test");
+    
+    
+    private final IRI TESTSUB = f.createIRI("http://www.dtls.nl/testSub");
+    private final IRI TESTOBJ = f.createIRI("http://www.dtls.nl/testObj");
+    private final Statement TESTSTMT = f.createStatement(TESTSUB, RDF.TYPE, TESTOBJ);
+
     @Before
     public void storeExampleFile() throws StoreManagerException {
-        List<Statement> sts = ExampleFilesUtils.
-                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE,
-                        "http://www.dtls.nl/test");
-        testStoreManager.storeStatements(sts, f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
+        testStoreManager.storeStatements(STATEMENTS, f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
+        MockitoAnnotations.initMocks(this);
     }
 
     /**
      * The URI of a RDF resource can't be NULL, this test is excepted to throw
      * IllegalArgumentException
+     *
+     * @throws nl.dtls.fairdatapoint.repository.StoreManagerException
      */
     @DirtiesContext
     @Test(expected = NullPointerException.class)
-    public void nullURI() {
-        try {
-            testStoreManager.retrieveResource(null);
-            fail("No RDF statements excepted for NULL URI");
-        } catch (StoreManagerException ex) {
-            fail("This test is not excepted to throw StoreManagerException");
-        }
+    public void nullURI() throws StoreManagerException {
+        testStoreManager.retrieveResource(null);
     }
 
     /**
      * The URI of a RDF resource can't be EMPTY, this test is excepted to throw
      * IllegalArgumentException
+     *
+     * @throws nl.dtls.fairdatapoint.repository.StoreManagerException
      */
     @DirtiesContext
     @Test(expected = IllegalArgumentException.class)
-    public void emptyURI() {
+    public void emptyURI() throws StoreManagerException {
         String uri = "";
-        try {
-            testStoreManager.retrieveResource(f.createIRI(uri));
-            fail("No RDF statements excepted for NULL URI");
-        } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw RepositoryException or "
-                    + "StoreManagerException");
-        }
+        testStoreManager.retrieveResource(f.createIRI(uri));
     }
 
     /**
      * This test is excepted to throw execption
+     *
+     * @throws nl.dtls.fairdatapoint.repository.StoreManagerException
      */
     @DirtiesContext
     @Test(expected = IllegalArgumentException.class)
-    public void emptyInvalidURI() {
+    public void emptyInvalidURI() throws StoreManagerException {
         String uri = "...";
-        try {
-            testStoreManager.retrieveResource(f.createIRI(uri));
-            fail("No RDF statements excepted for NULL URI");
-        } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw RepositoryException or "
-                    + "StoreManagerException");
-        }
+        testStoreManager.retrieveResource(f.createIRI(uri));
     }
 
     /**
      * The test is excepted to retrieve ZERO statements
      *
-     * @throws RepositoryException
-     * @throws StoreManagerException
      * @throws Exception
      */
     @DirtiesContext
     @Test
-    public void retrieveNonExitingResource() throws RepositoryException,
-            StoreManagerException,
-            Exception {
+    public void retrieveNonExitingResource() throws Exception {
         String uri = "http://localhost/dummy";
-        List<Statement> statements
-                = testStoreManager.retrieveResource(f.createIRI(uri));
+        List<Statement> statements = testStoreManager.retrieveResource(f.createIRI(uri));
         assertTrue(statements.isEmpty());
     }
 
     /**
      * The test is excepted retrieve to retrieve one or more statements
      *
-     * @throws RepositoryException
-     * @throws StoreManagerException
      * @throws Exception
      */
     @DirtiesContext
     @Test
-    public void retrieveExitingResource() throws RepositoryException,
-            StoreManagerException, Exception {
-        List<Statement> statements
-                = testStoreManager.retrieveResource(f.createIRI(
-                                ExampleFilesUtils.TEST_SUB_URI));
+    public void retrieveExitingResource() throws Exception {
+        List<Statement> statements = testStoreManager.retrieveResource(
+                f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
         assertTrue(statements.size() > 0);
+    }
+
+    /**
+     * The test is excepted to throw error
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = StoreManagerException.class)
+    public void retrieveResourceCatchBlock() throws Exception {
+        when(repository.getConnection()).thenThrow(RepositoryException.class);
+        mockStoreManager.retrieveResource(f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
     }
 
     /**
@@ -167,11 +176,8 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void storeResource() {
-        List<Statement> statements = ExampleFilesUtils.
-                getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE,
-                        "http://www.dtls.nl/test");
         try {
-            testStoreManager.storeStatements(statements);
+            testStoreManager.storeStatements(STATEMENTS);
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw StoreManagerException");
         }
@@ -184,50 +190,114 @@ public class StoreManagerImplTest {
     @Test
     public void deleteRource() {
         try {
-            Resource sub = f.createBNode("<http://www.dtls.nl/testSub>");
-            IRI obj = f.createIRI("<http://www.dtls.nl/testObj>");
-            Statement stmt = f.createStatement(sub, RDF.TYPE, obj);
             List<Statement> sts = new ArrayList();
-            sts.add(stmt);
+            sts.add(TESTSTMT);
             testStoreManager.storeStatements(sts);
-            testStoreManager.removeStatement(sub, RDF.TYPE, null);
+            testStoreManager.removeStatement(TESTSUB, RDF.TYPE, null);
+        } catch (StoreManagerException ex) {
+            fail("The test is not excepted to throw StoreManagerException");
+        }
+    }
+    
+    /**
+     * The test is excepted to pass
+     */
+    @DirtiesContext
+    @Test
+    public void storeStatement() {
+        try {
+            testStoreManager.storeStatements(STATEMENTS, TESTSUB);
+        } catch (StoreManagerException ex) {
+            fail("The test is not excepted to throw StoreManagerException");
+        }
+    }
+    
+    /**
+     * The test is excepted to pass
+     */
+    @DirtiesContext
+    @Test
+    public void storeStatementWithoutCtxt() {
+        try {
+            testStoreManager.storeStatements(STATEMENTS, null);
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw StoreManagerException");
         }
     }
 
+
     /**
      * The test is excepted to retrieve return false
      *
-     * @throws RepositoryException
-     * @throws StoreManagerException
      * @throws Exception
      */
     @DirtiesContext
     @Test
-    public void checkNonExitingResource() throws RepositoryException,
-            StoreManagerException,
-            Exception {
+    public void checkNonExitingResource() throws Exception {
         String uri = "http://localhost/dummy";
-        boolean isStatementExist = testStoreManager.isStatementExist(
-                f.createIRI(uri), null, null);
+        boolean isStatementExist = testStoreManager.isStatementExist(f.createIRI(uri), null, null);
         assertFalse(isStatementExist);
     }
 
     /**
      * The test is excepted to retrieve return true
      *
-     * @throws RepositoryException
-     * @throws StoreManagerException
      * @throws Exception
      */
     @DirtiesContext
     @Test
-    public void checkExitingResource() throws RepositoryException,
-            StoreManagerException, Exception {
+    public void checkExitingResource() throws Exception {
         boolean isStatementExist = testStoreManager.isStatementExist(
                 f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
         assertTrue(isStatementExist);
+    }
+
+    /**
+     * The test is excepted to throw error
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = StoreManagerException.class)
+    public void deleteResouceCatchBlock() throws Exception {
+        when(repository.getConnection()).thenThrow(RepositoryException.class);
+        mockStoreManager.removeResource(null);
+    }
+
+    /**
+     * The test is excepted to throw error
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = StoreManagerException.class)
+    public void deleteStatementCatchBlock() throws Exception {
+        when(repository.getConnection()).thenThrow(RepositoryException.class);
+        mockStoreManager.removeStatement(null, null, null);
+    }
+
+    /**
+     * The test is excepted to throw error
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = StoreManagerException.class)
+    public void isStatementExistCatchBlock() throws Exception {
+        when(repository.getConnection()).thenThrow(RepositoryException.class);
+        mockStoreManager.isStatementExist(f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
+    }
+
+    /**
+     * The test is excepted to throw error
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = StoreManagerException.class)
+    public void storeStatementCatchBlock() throws Exception {
+        when(repository.getConnection()).thenThrow(RepositoryException.class);
+        mockStoreManager.storeStatements(STATEMENTS);
     }
 
 }
