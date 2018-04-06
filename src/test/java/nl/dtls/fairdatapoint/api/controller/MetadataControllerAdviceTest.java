@@ -69,7 +69,7 @@ public class MetadataControllerAdviceTest {
     private FairMetaDataService fairMetaDataService;
 
     @InjectMocks
-    private static MetadataController metadataController;
+    private MetadataController metadataController;
 
     private MockMvc mockMvc;
     
