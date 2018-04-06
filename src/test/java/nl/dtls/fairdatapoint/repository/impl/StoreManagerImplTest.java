@@ -253,49 +253,49 @@ public class StoreManagerImplTest {
     }
 
     /**
-     * The test is excepted to throw error
+     * Check exception handling of delete resource method
      *
      * @throws Exception
      */
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
-    public void deleteResouceCatchBlock() throws Exception {
+    public void checkExceptionsDeleteResourceMethod() throws Exception {
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.removeResource(null);
     }
 
     /**
-     * The test is excepted to throw error
+     * Check exception handling of remove statement method
      *
      * @throws Exception
      */
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
-    public void deleteStatementCatchBlock() throws Exception {
+    public void checkExceptionsRemoveStatementMethod() throws Exception {
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.removeStatement(null, null, null);
     }
 
     /**
-     * The test is excepted to throw error
+     * Check exception handling of isStatementExist method
      *
      * @throws Exception
      */
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
-    public void isStatementExistCatchBlock() throws Exception {
+    public void checkExceptionsIsStatementMethod() throws Exception {
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.isStatementExist(f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
     }
 
     /**
-     * The test is excepted to throw error
+     * Check exception handling of storeStatement method
      *
      * @throws Exception
      */
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
-    public void storeStatementCatchBlock() throws Exception {
+    public void checkExceptionsStoreStatementMethod() throws Exception {
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.storeStatements(STATEMENTS);
     }

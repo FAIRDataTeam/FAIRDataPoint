@@ -68,9 +68,9 @@ public class MetadataControllerAdviceTest {
     private FairMetaDataService fairMetaDataService;
 
     @InjectMocks
-    private MetadataController metadataController;
+    private static MetadataController metadataController;
 
-    private final String path = "/fdp/catalog/invalid";
+    private static final String PATH = "/fdp/catalog/invalid";
     
     @Before
     public void setUp() {
@@ -86,7 +86,7 @@ public class MetadataControllerAdviceTest {
         Mockito.when(fairMetaDataService.retrieveCatalogMetaData(Mockito.any(IRI.class)))
                 .thenThrow(new ResourceNotFoundException("not found"));
 
-        mockMvc.perform(get(path)).andExpect(status().is(HttpStatus.NOT_FOUND.value())).andReturn();
+        mockMvc.perform(get(PATH)).andExpect(status().is(HttpStatus.NOT_FOUND.value())).andReturn();
     }
 
     @Ignore
@@ -110,7 +110,7 @@ public class MetadataControllerAdviceTest {
         Mockito.when(fairMetaDataService.retrieveCatalogMetaData(Mockito.any(IRI.class)))
                 .thenThrow(new FairMetadataServiceException("Internal server error"));
 
-        mockMvc.perform(get(path)).andExpect(status()
+        mockMvc.perform(get(PATH)).andExpect(status()
                 .is(HttpStatus.INTERNAL_SERVER_ERROR.value())).andReturn();
     }
 
