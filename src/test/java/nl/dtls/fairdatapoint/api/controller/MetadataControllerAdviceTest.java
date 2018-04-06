@@ -61,16 +61,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * @version 0.1
  */
 public class MetadataControllerAdviceTest {
-
-    private MockMvc mockMvc;
-
+    
+    
+    private static final String PATH = "/fdp/catalog/invalid";
+    
     @Mock
     private FairMetaDataService fairMetaDataService;
 
     @InjectMocks
     private static MetadataController metadataController;
 
-    private static final String PATH = "/fdp/catalog/invalid";
+    private MockMvc mockMvc;
     
     @Before
     public void setUp() {
