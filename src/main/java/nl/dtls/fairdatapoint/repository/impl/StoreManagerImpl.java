@@ -102,7 +102,7 @@ public class StoreManagerImpl implements StoreManager {
             LOGGER.info("Check if statements exists");
             return conn.hasStatement(rsrc, pred, value, false);
         } catch (RepositoryException e) {
-            throw (new StoreManagerException("Error check statement existence :" + e.getMessage()));
+            throw new StoreManagerException("Error check statement existence :" + e.getMessage());
         }
     }
 
@@ -123,7 +123,7 @@ public class StoreManagerImpl implements StoreManager {
             }
 
         } catch (RepositoryException e) {
-            throw (new StoreManagerException("Error storing statements :" + e.getMessage()));
+            throw new StoreManagerException("Error storing statements :" + e.getMessage());
         }
     }
 

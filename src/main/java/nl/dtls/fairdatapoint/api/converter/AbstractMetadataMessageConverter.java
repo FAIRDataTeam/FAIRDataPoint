@@ -44,10 +44,10 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractMetadataMessageConverter<T extends Metadata> extends
         AbstractHttpMessageConverter<T> {
 
-    protected RDFFormat format;
-
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AbstractMetadataMessageConverter.class);
+
+    protected RDFFormat format;
 
     public AbstractMetadataMessageConverter(RDFFormat format) {
         super(getMediaTypes(format));
@@ -62,7 +62,7 @@ public abstract class AbstractMetadataMessageConverter<T extends Metadata> exten
      *        WebMvcConfigurerAdapter} configurer instance.
      */
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        
+
         configurer.mediaType(format.getDefaultFileExtension(),
                 MediaType.parseMediaType(format.getDefaultMIMEType()));
 
