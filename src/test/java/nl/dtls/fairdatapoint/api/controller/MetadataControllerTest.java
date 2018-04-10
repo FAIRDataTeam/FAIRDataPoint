@@ -36,7 +36,6 @@ import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
-import nl.dtls.fairdatapoint.service.impl.FairMetaDataServiceImpl;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -49,8 +48,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.mock.web.MockFilterChain;
@@ -91,45 +88,47 @@ public class MetadataControllerTest {
             + ExampleFilesUtils.DATASET_ID;
     private final String TEST_DATARECORD_PATH = TEST_FDP_PATH + "/datarecord/"
             + ExampleFilesUtils.DATARECORD_ID;
-    private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH
-            + "/distribution/" + ExampleFilesUtils.DISTRIBUTION_ID;
-    private final static Logger LOGGER
-            = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
+    private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH + "/distribution/"
+            + ExampleFilesUtils.DISTRIBUTION_ID;
     @InjectMocks
     private final ApplicationFilter applicationFilter = new ApplicationFilter();
 
     @Before
-    public void storeExampleMetadata() throws StoreManagerException,
-            MalformedURLException, DatatypeConfigurationException,
-            FairMetadataServiceException, MetadataException {
+    public void storeExampleMetadata() throws StoreManagerException, MalformedURLException,
+            DatatypeConfigurationException, FairMetadataServiceException, MetadataException {
+
         MockHttpServletRequest request = new MockHttpServletRequest();
-        LOGGER.info("Storing example FDP metadata for service layer tests");        
+        // Store fdp metadata
         request.setRequestURI(TEST_FDP_PATH);
         String fdpUri = request.getRequestURL().toString();
-        fairMetaDataService.storeFDPMetaData(ExampleFilesUtils.
-                getFDPMetadata(fdpUri));
-        LOGGER.info("Storing example catalog metadata for service layer tests");
+        fairMetaDataService.storeFDPMetaData(ExampleFilesUtils.getFDPMetadata(fdpUri));
+
+        // Store catalog metadata
         request.setRequestURI(TEST_CATALOG_PATH);
         String cUri = request.getRequestURL().toString();
-        fairMetaDataService.storeCatalogMetaData(ExampleFilesUtils.
-                getCatalogMetadata(cUri, fdpUri));
-        LOGGER.info("Storing example dataset metadata for service layer tests");
+        fairMetaDataService.storeCatalogMetaData(
+                ExampleFilesUtils.getCatalogMetadata(cUri, fdpUri));
+
+        // Store dataset metadata
         request.setRequestURI(TEST_DATASET_PATH);
         String dUri = request.getRequestURL().toString();
-        fairMetaDataService.storeDatasetMetaData(ExampleFilesUtils.
-                getDatasetMetadata(dUri, cUri));
-        LOGGER.info("Storing example datarecord metadata for service layer tests");
+        fairMetaDataService.storeDatasetMetaData(
+                ExampleFilesUtils.getDatasetMetadata(dUri, cUri));
+
+        // Store datarecord metadata
         request.setRequestURI(TEST_DATARECORD_PATH);
         String dRecUri = request.getRequestURL().toString();
-        fairMetaDataService.storeDataRecordMetaData(ExampleFilesUtils.
-                getDataRecordMetadata(dRecUri, dUri));
-        LOGGER.info("Storing example distribution metadata for service layer tests");
+        fairMetaDataService.storeDataRecordMetaData(
+                ExampleFilesUtils.getDataRecordMetadata(dRecUri, dUri));
+
+        // Store distribution metadata
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
         String disUri = request.getRequestURL().toString();
         fairMetaDataService.storeDistributionMetaData(
                 ExampleFilesUtils.getDistributionMetadata(disUri, dUri));
 
     }
+
     /**
      * Check unsupported accept header.
      *
@@ -138,13 +137,15 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = HttpMediaTypeNotAcceptableException.class)
     public void unsupportedAcceptHeaderRepostory() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "application/trig");
         request.setRequestURI(TEST_FDP_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
 
@@ -156,13 +157,15 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = HttpMediaTypeNotAcceptableException.class)
     public void unsupportedAcceptHeaderCatalog() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "application/trig");
         request.setRequestURI(TEST_CATALOG_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
 
@@ -174,13 +177,15 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = HttpMediaTypeNotAcceptableException.class)
     public void unsupportedAcceptHeaderDataset() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "application/trig");
         request.setRequestURI(TEST_DATASET_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
 
@@ -192,32 +197,34 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = HttpMediaTypeNotAcceptableException.class)
     public void unsupportedAcceptHeaderDistribution() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "application/trig");
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
 
     /**
-     * The default content type is text/turtle, when the accept header is not
-     * set the default content type is served. This test is excepted to pass.
+     * The default content type is text/turtle, when the accept header is not set the default
+     * content type is served. This test is excepted to pass.
      *
      * @throws Exception
      */
     @DirtiesContext
     @Test
     public void noAcceptHeader() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        request.setMethod("GET");
 
+        request.setMethod("GET");
         request.setRequestURI(TEST_FDP_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(TURTLE.getDefaultMIMEType(), response.getContentType());
 
@@ -245,14 +252,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void supportedAcceptHeaders() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-
         request.setRequestURI(TEST_FDP_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
@@ -271,28 +278,28 @@ public class MetadataControllerTest {
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
-    
+
     @DirtiesContext
     @Test
     public void testOncePerRequestFilter() throws Exception {
-        
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-
         request.setRequestURI(TEST_FDP_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        
+
         MockFilterChain filterChain = new MockFilterChain();
         applicationFilter.doFilterInternal(request, response, filterChain);
-        
+
         assertTrue(response.containsHeader(HttpHeaders.SERVER));
-        
+
     }
-    
+
     /**
      * Check supported accept headers.
      *
@@ -301,14 +308,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void htmlAcceptHeaders() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/html");
-
         request.setRequestURI(TEST_FDP_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
@@ -326,13 +333,13 @@ public class MetadataControllerTest {
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-        
+
         request.setRequestURI(TEST_DATARECORD_PATH);
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
-    
+
     /**
      * Check file extension for repostory layer
      *
@@ -341,18 +348,19 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void getContentWithFileExtRepo() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        request.setMethod("GET");
 
+        request.setMethod("GET");
         request.setRequestURI(TEST_FDP_PATH + ".ttl");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
         assertEquals("text/turtle", response.getContentType());
     }
-    
+
     /**
      * Check url ends with /
      *
@@ -361,19 +369,19 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void checkURLFilter() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        request.setMethod("GET");
 
+        request.setMethod("GET");
         request.setRequestURI(TEST_FDP_PATH + "/");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
         assertEquals("text/turtle", response.getContentType());
     }
-    
-    
+
     /**
      * Update repository metadata.
      *
@@ -382,19 +390,21 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void updateRepositoryMetadata() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = "<> <http://purl.org/dc/terms/title> \"Test update\" .";
         request.setMethod("PATCH");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
         request.setRequestURI("/fdp");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
-    
+
     /**
      * Check file extension for catalog layer
      *
@@ -403,18 +413,19 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void getContentWithFileExtCatlog() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        request.setMethod("GET");
 
+        request.setMethod("GET");
         request.setRequestURI(TEST_CATALOG_PATH + ".rdf");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
         assertEquals("application/rdf+xml", response.getContentType());
     }
-    
+
     /**
      * Check file extension for DataRecord layer
      *
@@ -424,18 +435,19 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void getContentWithFileExtDataRecord() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        request.setMethod("GET");
 
+        request.setMethod("GET");
         request.setRequestURI(TEST_CATALOG_PATH + ".rdf");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
         assertEquals("application/rdf+xml", response.getContentType());
     }
-    
+
     /**
      * Check file extension for dataset layer
      *
@@ -444,18 +456,19 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void getContentWithFileExtDataset() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        request.setMethod("GET");
 
+        request.setMethod("GET");
         request.setRequestURI(TEST_DATASET_PATH + ".ttl");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
         assertEquals("text/turtle", response.getContentType());
     }
-    
+
     /**
      * Check file extension for repostory layer
      *
@@ -464,13 +477,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void getContentWithFileExtDistribution() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
-        request.setMethod("GET");
 
+        request.setMethod("GET");
         request.setRequestURI(TEST_DISTRIBUTION_PATH + ".ttl");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
         assertEquals("text/turtle", response.getContentType());
@@ -484,9 +498,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeCatalog() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.CATALOG_METADATA_FILE);
         request.setMethod("POST");
@@ -494,11 +509,12 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
         request.setRequestURI("/fdp/catalog");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
     }
-    
+
     /**
      * Store catalog with parent URI.
      *
@@ -507,16 +523,19 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeCatalogWithParentURI() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;        
+
         String parentURI = "http://localhost:8084/dummy/fdp";
-        StringBuilder tripleStr =new StringBuilder();
+
+        StringBuilder tripleStr = new StringBuilder();
         tripleStr.append("<> <");
         tripleStr.append(DCTERMS.IS_PART_OF.toString());
         tripleStr.append("> <");
         tripleStr.append(parentURI);
         tripleStr.append("> .");
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.CATALOG_METADATA_FILE) + tripleStr.toString();
         request.setMethod("POST");
@@ -524,16 +543,19 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
         request.setRequestURI("/fdp/catalog");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        
+
         MockHttpServletResponse responseGet = new MockHttpServletResponse();
         MockHttpServletRequest requestGet = new MockHttpServletRequest();
+
         requestGet.setMethod("GET");
         requestGet.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         requestGet.setRequestURI("/fdp/catalog/cat1");
+
         handler = handlerMapping.getHandler(requestGet).getHandler();
-        handlerAdapter.handle(requestGet, responseGet, handler);     
+        handlerAdapter.handle(requestGet, responseGet, handler);
         assertFalse(responseGet.getContentAsString().contains(parentURI));
     }
 
@@ -545,9 +567,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = IllegalStateException.class)
     public void storeCatalogTwice() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.CATALOG_METADATA_FILE);
         request.setMethod("POST");
@@ -555,12 +578,14 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
         request.setRequestURI("/fdp/catalog");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
         response = new MockHttpServletResponse();
         request = new MockHttpServletRequest();
+
         request.setServerName("localhost");
         request.setContextPath("fdp");
         request.setMethod("POST");
@@ -568,6 +593,7 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
         request.setRequestURI("/fdp/catalog");
+
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -580,11 +606,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = ResourceNotFoundException.class)
     public void nonExistingCatalog() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI("/fdp/catalog/dumpy");
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         //assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
@@ -598,11 +627,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void existingCatalog() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI(TEST_CATALOG_PATH);
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
@@ -616,9 +648,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeDataset() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.DATASET_METADATA_FILE);
         request.setMethod("POST");
@@ -626,7 +659,8 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dat1");
         request.setRequestURI("/fdp/dataset");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
     }
@@ -639,9 +673,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = IllegalStateException.class)
     public void storeDatasetTwice() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.DATASET_METADATA_FILE);
         request.setMethod("POST");
@@ -649,12 +684,14 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dat1");
         request.setRequestURI("/fdp/dataset");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
         response = new MockHttpServletResponse();
         request = new MockHttpServletRequest();
+
         request.setServerName("localhost");
         request.setContextPath("fdp");
         request.setMethod("POST");
@@ -662,7 +699,8 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dat1");
         request.setRequestURI("/fdp/dataset");
-        handler = handlerMapping.getHandler(request).getHandler();        
+
+        handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
 
@@ -674,11 +712,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = ResourceNotFoundException.class)
     public void nonExistingDataset() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI("/fdp/dataset/dumpy");
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -694,15 +735,16 @@ public class MetadataControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI(TEST_DATASET_PATH);
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
-    
-    
+
     /**
      * Store datarecord.
      *
@@ -711,9 +753,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeDataRecord() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.DATARECORD_METADATA_FILE);
         request.setMethod("POST");
@@ -721,7 +764,8 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "datarecord1");
         request.setRequestURI("/fdp/datarecord");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
     }
@@ -734,9 +778,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = IllegalStateException.class)
     public void storeDatarecordTwice() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.DATARECORD_METADATA_FILE);
         request.setMethod("POST");
@@ -744,12 +789,14 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "datarecord");
         request.setRequestURI("/fdp/datarecord");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
         response = new MockHttpServletResponse();
         request = new MockHttpServletRequest();
+
         request.setServerName("localhost");
         request.setContextPath("fdp");
         request.setMethod("POST");
@@ -757,10 +804,11 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "datarecord");
         request.setRequestURI("/fdp/datarecord");
-        handler = handlerMapping.getHandler(request).getHandler();        
+
+        handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
-    
+
     /**
      * Check non existing Content.
      *
@@ -769,11 +817,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = ResourceNotFoundException.class)
     public void nonExistingContentDatarecord() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI("/fdp/datarecord/dummy");
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -789,14 +840,15 @@ public class MetadataControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI(TEST_DATARECORD_PATH);
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
-    
 
     /**
      * Store distribution.
@@ -806,9 +858,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeDistribution() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
         request.setMethod("POST");
@@ -816,7 +869,8 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dis1");
         request.setRequestURI("/fdp/distribution");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
     }
@@ -829,9 +883,10 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = IllegalStateException.class)
     public void storeDistributionTwice() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
         request.setMethod("POST");
@@ -839,12 +894,14 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dis1");
         request.setRequestURI("/fdp/distribution");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
         response = new MockHttpServletResponse();
         request = new MockHttpServletRequest();
+
         request.setServerName("localhost");
         request.setContextPath("fdp");
         request.setMethod("POST");
@@ -852,6 +909,7 @@ public class MetadataControllerTest {
         request.setContent(metadata.getBytes());
         request.addParameter("id", "dis1");
         request.setRequestURI("/fdp/distribution");
+
         handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -864,11 +922,14 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test(expected = ResourceNotFoundException.class)
     public void nonExistingContentDistribution() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI("/fdp/distribution/dummy");
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
     }
@@ -884,14 +945,16 @@ public class MetadataControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
+
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
+
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
-    
+
     /**
      * Test url reretouring option for catalog.
      *
@@ -900,29 +963,31 @@ public class MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeCatalogByURLReretouring() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.CATALOG_METADATA_FILE);
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.addHeader("x-forwarded-host", 
+        request.addHeader("x-forwarded-host",
                 "lorentz.fair-dtls.surf-hosted.nl");
         request.addHeader("x-forwarded-proto", "https");
         request.addHeader("x-forwarded-port", "443");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
         request.setRequestURI("/fdp/catalog");
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        String exceptedUrl = 
-                "https://lorentz.fair-dtls.surf-hosted.nl/fdp/catalog/cat1";
-        String actualUrl = response.getHeader(
-                org.springframework.http.HttpHeaders.LOCATION);
+
+        String exceptedUrl
+                = "https://lorentz.fair-dtls.surf-hosted.nl/fdp/catalog/cat1";
+        String actualUrl = response.getHeader(HttpHeaders.LOCATION);
         assertEquals(exceptedUrl, actualUrl);
     }
-    
+
     /**
      * Test url reretouring with ports
      *
@@ -931,27 +996,29 @@ public class MetadataControllerTest {
     @Ignore
     @DirtiesContext
     public void storeCatalogByURLReretouringWithPort() throws Exception {
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Object handler;
+
         String metadata = ExampleFilesUtils.getFileContentAsString(
                 ExampleFilesUtils.CATALOG_METADATA_FILE);
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.addHeader("x-forwarded-host", 
+        request.addHeader("x-forwarded-host",
                 "lorentz.fair-dtls.surf-hosted.nl");
         request.addHeader("x-forwarded-proto", "https");
         request.addHeader("x-forwarded-port", "8006");
         request.setContent(metadata.getBytes());
         request.addParameter("id", "cat1");
-        request.setRequestURI("/fdp/catalog");        
+        request.setRequestURI("/fdp/catalog");
         request.setServerPort(8080);
-        handler = handlerMapping.getHandler(request).getHandler();
+
+        Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
-        String exceptedUrl = 
-                "https://lorentz.fair-dtls.surf-hosted.nl:8806/fdp/catalog/cat1";
-        String actualUrl = response.getHeader(
-                org.springframework.http.HttpHeaders.LOCATION);
+
+        String exceptedUrl
+                = "https://lorentz.fair-dtls.surf-hosted.nl:8806/fdp/catalog/cat1";
+        String actualUrl = response.getHeader(HttpHeaders.LOCATION);
         assertEquals(exceptedUrl, actualUrl);
     }
 

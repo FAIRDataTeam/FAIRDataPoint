@@ -51,7 +51,7 @@ public class RootConfig {
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer props(Environment env) {
-        
+
         PropertySourcesPlaceholderConfigurer configurer
                 = new PropertySourcesPlaceholderConfigurer();
         YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
@@ -62,7 +62,7 @@ public class RootConfig {
 
     @Bean(name = "metadataMetrics")
     public Map<String, String> metadataMetrics(Environment env) {
-        
+
         YamlMapFactoryBean yamlFactory = new YamlMapFactoryBean();
         yamlFactory.setResources(fdpConfig(env));
         Map<String, Object> config = yamlFactory.getObject();
@@ -71,7 +71,7 @@ public class RootConfig {
     }
 
     private static Resource fdpConfig(Environment env) {
-        
+
         Resource resource;
         if (env.containsProperty("fdpConfig")) {
             resource = new FileSystemResource(env.getRequiredProperty("fdpConfig"));

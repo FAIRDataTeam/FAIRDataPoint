@@ -47,14 +47,13 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 /**
  * Dataset metadata message converter
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-09-19
  * @version 0.1
  */
-public class DatasetMetadataConverter extends AbstractMetadataMessageConverter 
-        <DatasetMetadata> {
+public class DatasetMetadataConverter extends AbstractMetadataMessageConverter<DatasetMetadata> {
 
     public DatasetMetadataConverter(RDFFormat format) {
         super(format);
@@ -66,33 +65,33 @@ public class DatasetMetadataConverter extends AbstractMetadataMessageConverter
     }
 
     @Override
-    protected DatasetMetadata readInternal(Class<? extends DatasetMetadata> 
-            type, HttpInputMessage inputMessage) throws IOException, 
-            HttpMessageNotReadableException {
+    protected DatasetMetadata readInternal(Class<? extends DatasetMetadata> type,
+            HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+
         DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
         try {
             String body = CharStreams.toString(new InputStreamReader(
-                    inputMessage.getBody(), Charsets.UTF_8 ));
+                    inputMessage.getBody(), Charsets.UTF_8));
             return parser.parse(body, null, format);
         } catch (MetadataParserException ex) {
-           throw new HttpMessageNotReadableException("", ex);
+            throw new HttpMessageNotReadableException("", ex);
         }
     }
-    
+
     @Override
-    protected void writeInternal(DatasetMetadata metadata, HttpOutputMessage
-            outputMessage) 
+    protected void writeInternal(DatasetMetadata metadata, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
+
         String result;
         try {
             result = MetadataUtils.getString(metadata, format);
         } catch (MetadataException e) {
             throw new HttpMessageNotWritableException("", e);
         }
-        
+
         OutputStreamWriter writer = new OutputStreamWriter(
                 outputMessage.getBody(), StandardCharsets.UTF_8);
         writer.write(result);
         writer.close();
-    }   
+    }
 }

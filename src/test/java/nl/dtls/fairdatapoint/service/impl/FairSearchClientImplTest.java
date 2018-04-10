@@ -65,6 +65,7 @@ public class FairSearchClientImplTest {
      */
     @Test
     public void testException() throws Exception {
+
         ReflectionTestUtils.setField(search, "fdpSubmitUrl", "http://dummy.url");
         CompletableFuture result = search.submitFdpUri(FDP_URI);
         assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, (int) result.get());
@@ -75,6 +76,7 @@ public class FairSearchClientImplTest {
      */
     @Test
     public void validFDPUri() throws Exception {
+
         FairSearchClient mockSearch = Mockito.mock(FairSearchClient.class);
         when(mockSearch.submitFdpUri(FDP_URI)).thenReturn(CompletableFuture.completedFuture(
                 HttpStatus.SC_ACCEPTED));

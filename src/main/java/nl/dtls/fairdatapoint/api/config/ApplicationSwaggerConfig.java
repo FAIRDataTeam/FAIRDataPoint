@@ -37,7 +37,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Swagger configuration.
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
@@ -47,31 +47,31 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class ApplicationSwaggerConfig {
 
     @Bean
-    public Docket api(){
+    public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-            .select()
-            .apis(RequestHandlerSelectors.any())
-            .paths(regex("/.*"))
-            .build()
-            .apiInfo(apiInfo());
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(regex("/.*"))
+                .build()
+                .apiInfo(apiInfo());
     }
 
     private ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
-            "FDP API Java based",
-            "<p>This API is a prototype version, If you find bugs in this api "
-                    + "please contact the developer.</p>"
-                    + "<p>"
-                    + "<li><a target='_blank' href = 'https://dtl-fair."
-                    + "atlassian.net/wiki/display/FDP/FAIR+Data+Point+"
-                    + "Software+Specification'>API specs</li>"
-                    + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
-                    + "FAIRDataPoint'>Source code</a> </li></p>",
-            "0.1-beta",
-            "ATO",
-            "rr.kaliyaperumal@gmail.com",
-            "The MIT License",
-            "https://opensource.org/licenses/MIT"
+                "FDP API Java based",
+                "<p>This API is a prototype version, If you find bugs in this api "
+                + "please contact the developer.</p>"
+                + "<p>"
+                + "<li><a target='_blank' href = 'https://dtl-fair."
+                + "atlassian.net/wiki/display/FDP/FAIR+Data+Point+"
+                + "Software+Specification'>API specs</li>"
+                + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
+                + "FAIRDataPoint'>Source code</a> </li></p>",
+                "0.1-beta",
+                "ATO",
+                "rr.kaliyaperumal@gmail.com",
+                "The MIT License",
+                "https://opensource.org/licenses/MIT"
         );
         return apiInfo;
     }
