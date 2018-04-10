@@ -28,19 +28,16 @@
 package nl.dtls.fairdatapoint.service.impl;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import nl.dtls.fairdatapoint.service.FairSearchClient;
 import org.apache.http.HttpStatus;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import static org.junit.Assert.assertEquals;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * FairSearchClientImplTest class unit tests
@@ -51,37 +48,38 @@ import org.slf4j.LoggerFactory;
  */
 public class FairSearchClientImplTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FairSearchClientImplTest.class);
-
-    private static FairSearchClient FSE;
     private static final ValueFactory VF = SimpleValueFactory.getInstance();
     private static final IRI FDP_URI = VF.createIRI("http://example.com/fdp");
-
-    @BeforeClass
-    public static void setUp() {
-        FSE = Mockito.mock(FairSearchClient.class);
-        when(FSE.submitFdpUri(FDP_URI)).thenReturn(CompletableFuture.completedFuture(
-                HttpStatus.SC_ACCEPTED));
-    }
+    private final FairSearchClient search = new FairSearchClientImpl();
 
     /**
      * Test NULL fdp uri. This test is expected to thrown an error
      */
     @Test(expected = IllegalStateException.class)
     public void nullFDPUri() {
-        FairSearchClient search = new FairSearchClientImpl();
-        LOGGER.info("Test for NULL fdp url");
         search.submitFdpUri(null);
+    }
+
+    /**
+     * Test exception
+     */
+    @Test
+    public void testException() throws Exception {
+        ReflectionTestUtils.setField(search, "fdpSubmitUrl", "http://dummy.url");
+        CompletableFuture result = search.submitFdpUri(FDP_URI);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, (int) result.get());
     }
 
     /**
      * Test VALID fdp uri. This test is expected to pass
      */
     @Test
-    public void validFDPUri() throws InterruptedException, ExecutionException {
-        LOGGER.info("Test for valid fdp url");
-        CompletableFuture result = FSE.submitFdpUri(FDP_URI);
-        assertEquals(HttpStatus.SC_ACCEPTED, (int)result.get());
+    public void validFDPUri() throws Exception {
+        FairSearchClient mockSearch = Mockito.mock(FairSearchClient.class);
+        when(mockSearch.submitFdpUri(FDP_URI)).thenReturn(CompletableFuture.completedFuture(
+                HttpStatus.SC_ACCEPTED));
+        CompletableFuture result = mockSearch.submitFdpUri(FDP_URI);
+        assertEquals(HttpStatus.SC_ACCEPTED, (int) result.get());
     }
 
 }

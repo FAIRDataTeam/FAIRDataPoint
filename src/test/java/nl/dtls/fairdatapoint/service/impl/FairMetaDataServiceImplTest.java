@@ -51,6 +51,9 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +82,8 @@ public class FairMetaDataServiceImplTest {
     private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
     @Autowired
     private FairMetaDataService fairMetaDataService;
+    @Mock
+    private FairMetaDataService mockFairMetaDataService; 
     private final String TEST_FDP_URI = "http://example.com/fdp";
     private final String TEST_CATALOG_URI = "http://example.com/fdp/catalog";
     private final String TEST_DATASET_URI
@@ -108,6 +113,7 @@ public class FairMetaDataServiceImplTest {
                 ExampleFilesUtils.getDistributionMetadata(
                         ExampleFilesUtils.DISTRIBUTION_URI,
                         ExampleFilesUtils.DATASET_URI));
+        MockitoAnnotations.initMocks(this);
     }
 
     /**
@@ -270,7 +276,21 @@ public class FairMetaDataServiceImplTest {
     @Test
     public void retrieveFDPMetaData() throws FairMetadataServiceException {
         assertNotNull(fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI)));
-    }     
+    }
+    
+    /**
+     * Test FairMetadataServiceException exception
+     *
+     * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
+     */
+    @DirtiesContext
+    @Test(expected = FairMetadataServiceException.class)
+    public void retrieveFDPMetaDataCheckException() throws FairMetadataServiceException {
+        String uri = "http://example.com/dummy";
+        when(mockFairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(uri)))
+                .thenThrow(new FairMetadataServiceException(""));
+        mockFairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(uri));
+    } 
     
     /**
      * Test existence of FDP metadata specs link

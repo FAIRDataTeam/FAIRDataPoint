@@ -63,6 +63,7 @@ import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.repository.config.RepositoryConfigException;
 import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
@@ -177,7 +178,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         if (storeType == 3) { // Allegrograph as a backend store
             repository = getAgraphRepository();
         } else if (storeType == 4) { // GraphDB as a backend store
-            repository = getGraphRepository();
+            repository = getGraphDBRepository();
         } else if (storeType == 5) {    // Blazegraph as a backend store
             repository = getBlazeGraphRepository();
         } else if (storeType == 2 && !nativeStoreDir.isEmpty()) { // Native store
@@ -246,14 +247,18 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
      *
      * @return Repository
      */
-    private Repository getGraphRepository() {
+    private Repository getGraphDBRepository() {
 
         Repository repository = null;
-        if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
-            LOGGER.info("Initializing graphDB repository");
-            RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
-            repositoryManager.initialize();
-            repository = repositoryManager.getRepository(graphDbRepository);
+        try {
+            if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
+                LOGGER.info("Initializing graphDB repository");
+                RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
+                repositoryManager.initialize();
+                repository = repositoryManager.getRepository(graphDbRepository);
+            }
+        } catch(RepositoryConfigException | RepositoryException e) {
+            LOGGER.error("Initializing graphDB repository");
         }
         return repository;
     }
