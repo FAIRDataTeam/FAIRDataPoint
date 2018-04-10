@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
  * Handle controller exception
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-09-13
@@ -51,41 +51,40 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
-    
+
     private final static Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
-    
+
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFound(
-            ResourceNotFoundException ex, HttpServletResponse response) {
-        HttpHeaders headers = new HttpHeaders();    
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg = ex.getMessage();
-        LOGGER.error(msg);
-        return new ResponseEntity<>(msg, headers, 
-                HttpStatus.NOT_FOUND);
-    }
-    
-    @ExceptionHandler(MetadataException.class)
-    public ResponseEntity<String> handelBadRequest(MetadataException ex, 
-            HttpServletResponse response) {  
-        HttpHeaders headers = new HttpHeaders();    
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg = ex.getMessage();
-        LOGGER.error(msg);
-        return new ResponseEntity<>(msg, headers, 
-                HttpStatus.BAD_REQUEST);
-    } 
-        
-    @ExceptionHandler({FairMetadataServiceException.class, 
-        MetadataParserException.class})
-    public ResponseEntity<String> handelInternalServerError(Exception ex, 
+    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex,
             HttpServletResponse response) {
-        HttpHeaders headers = new HttpHeaders();    
+        
+        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg =  ex.getMessage();
+        String msg = ex.getMessage();
         LOGGER.error(msg);
-        return new ResponseEntity<>(msg, headers, 
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }    
-    
+        return new ResponseEntity<>(msg, headers, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MetadataException.class)
+    public ResponseEntity<String> handelBadRequest(MetadataException ex,
+            HttpServletResponse response) {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        String msg = ex.getMessage();
+        LOGGER.error(msg);
+        return new ResponseEntity<>(msg, headers, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({FairMetadataServiceException.class, MetadataParserException.class})
+    public ResponseEntity<String> handelInternalServerError(Exception ex,
+            HttpServletResponse response) {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        String msg = ex.getMessage();
+        LOGGER.error(msg);
+        return new ResponseEntity<>(msg, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

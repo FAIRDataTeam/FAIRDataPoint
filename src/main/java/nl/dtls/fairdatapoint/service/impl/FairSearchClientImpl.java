@@ -39,34 +39,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * Service layer implementation for FairSearchClient
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @since 2017-10-30
  * @version 0.1
  */
-@Service("fairSearchClientImpl")
+@Component
 public class FairSearchClientImpl implements FairSearchClient {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(FairSearchClientImpl.class);  
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FairSearchClientImpl.class);
+
     @Value("${fairSearch.fdpSubmitUrl:http://example.com/fse}")
     private String fdpSubmitUrl;
-    
+
     /**
      * This method submit FDP url to the FAIR search engine. This method returns the Http response
      * from the search. In case of exception Http Internal server error code (500) is returned.
-     * 
-     * @param uri   FDP base URI
+     *
+     * @param uri FDP base URI
      * @return Http response code
      */
-    
     @Async
     @Override
     public CompletableFuture submitFdpUri(@Nonnull IRI uri) {
+        
         Preconditions.checkState(uri != null, "FDP uri can't be null");
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -81,5 +81,5 @@ public class FairSearchClientImpl implements FairSearchClient {
             }
         });
     }
-    
+
 }

@@ -78,10 +78,12 @@ public class FairMetaDataMetricsServiceImpl implements FairMetaDataMetricsServic
         metadataMetrics.entrySet().forEach(entry -> {
             String metric = entry.getKey();
             String metricValue = entry.getValue();
+
             // Create metric uri
-            StringBuilder metricUri =new StringBuilder(metadataURI.toString()); 
+            StringBuilder metricUri = new StringBuilder(metadataURI.toString());
             metricUri.append("/metrics/");
             metricUri.append(DigestUtils.md5Hex(metric));
+
             addMetric(metrics, metricUri.toString(), metric, metricValue);
         });
         return metrics;

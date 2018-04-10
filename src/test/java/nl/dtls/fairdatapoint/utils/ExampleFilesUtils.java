@@ -57,136 +57,129 @@ import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** 
- * Contains references to the example metadata rdf files which are used in the 
- * Junit tests.
- * 
+/**
+ * Contains references to the example metadata rdf files which are used in the Junit tests.
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2016-08-10
  * @version 0.1
  */
 public class ExampleFilesUtils {
+
     public static final String FDP_METADATA_FILE = "dtl-fdp.ttl";
-    public static final String CATALOG_METADATA_FILE = "textmining-catalog.ttl";    
-    public static final String DATASET_METADATA_FILE = "gda-lumc.ttl";    
-    public static final String DATARECORD_METADATA_FILE = 
-            "example-datarecord.ttl";
-    public static final String DISTRIBUTION_METADATA_FILE = 
-            "gda-lumc-sparql.ttl";     
+    public static final String CATALOG_METADATA_FILE = "textmining-catalog.ttl";
+    public static final String DATASET_METADATA_FILE = "gda-lumc.ttl";
+    public static final String DATARECORD_METADATA_FILE = "example-datarecord.ttl";
+    public static final String DISTRIBUTION_METADATA_FILE = "gda-lumc-sparql.ttl";
     public static final String VALID_TEST_FILE = "valid-test-file.ttl";
     public static final String CATALOG_ID = "textmining";
-    public static final String DATASET_ID = "gene-disease-association_lumc";    
+    public static final String DATASET_ID = "gene-disease-association_lumc";
     public static final String DATARECORD_ID = "datarecord";
     public static final String DISTRIBUTION_ID = "sparql";
     public static final String FDP_URI = "http://localhost/fdp";
-    public static final String CATALOG_URI = "http://localhost/fdp/" + 
-            CATALOG_ID;
-    public static final String DATASET_URI = 
-            "http://localhost/fdp/textmining/" + DATASET_ID;
-    public static final String DATARECORD_URI = "http://dtls.nl/" + 
-            DATARECORD_ID;
-    public static final String DISTRIBUTION_URI = 
-            "http://localhost/fdp/textmining/gene-disease-association_lumc/" + 
-            DISTRIBUTION_ID;
-    public static final String BASE_URI = "http://localhost/";   
-    public static final String TEST_SUB_URI = "http://www.dtls.nl/test"; 
-    public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;    
+    public static final String CATALOG_URI = "http://localhost/fdp/" + CATALOG_ID;
+    public static final String DATASET_URI = "http://localhost/fdp/textmining/" + DATASET_ID;
+    public static final String DATARECORD_URI = "http://dtls.nl/" + DATARECORD_ID;
+    public static final String DISTRIBUTION_URI
+            = "http://localhost/fdp/textmining/gene-disease-association_lumc/"
+            + DISTRIBUTION_ID;
+    public static final String BASE_URI = "http://localhost/";
+    public static final String TEST_SUB_URI = "http://www.dtls.nl/test";
+    public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;
     private static final Logger LOGGER = LoggerFactory.getLogger(ExampleFilesUtils.class);
-    
+
     /**
      * Method to read the content of a turtle file
-     * 
+     *
      * @param fileName Turtle file name
      * @return File content as a string
      */
-    public static String getFileContentAsString(String fileName)  {        
-        String content = "";  
+    public static String getFileContentAsString(String fileName) {
+
+        String content = "";
         try {
             URL fileURL = ExampleFilesUtils.class.getResource(fileName);
             content = Resources.toString(fileURL, Charsets.UTF_8);
         } catch (IOException ex) {
-            LOGGER.error("Error getting turle file {}", ex);          
-        }        
+            LOGGER.error("Error getting turle file {}", ex);
+        }
         return content;
-    } 
-    
+    }
+
     /**
      * Method to read the content of a turtle file
-     * 
+     *
      * @param fileName Turtle file name
      * @param baseURI
      * @return File content as a string
      */
-    public static List<Statement> getFileContentAsStatements(String fileName, 
-            String baseURI)  {        
-        List<Statement> statements = null;  
+    public static List<Statement> getFileContentAsStatements(String fileName, String baseURI) {
+
+        List<Statement> statements = null;
         try {
             String content = getFileContentAsString(fileName);
             StringReader reader = new StringReader(content);
-            Model model;
-            model = Rio.parse(reader, baseURI, FILE_FORMAT);
+            Model model = Rio.parse(reader, baseURI, FILE_FORMAT);
             Iterator<Statement> it = model.iterator();
-            statements =  Lists.newArrayList(it);
-        } catch (IOException | RDFParseException | 
-                UnsupportedRDFormatException ex) {
-            LOGGER.error("Error getting turle file {}", ex);          
-        }         
+            statements = Lists.newArrayList(it);
+        } catch (IOException | RDFParseException | UnsupportedRDFormatException ex) {
+            LOGGER.error("Error getting turle file {}", ex);
+        }
         return statements;
     }
-    
-    public static FDPMetadata getFDPMetadata(String uri) {        
+
+    public static FDPMetadata getFDPMetadata(String uri) {
+
         LOGGER.info("Generating example FDP metadata object");
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
         ValueFactory f = SimpleValueFactory.getInstance();
-        FDPMetadata metadata = parser.parse(getFileContentAsStatements(
-                FDP_METADATA_FILE, uri), f.createIRI(uri));
+        FDPMetadata metadata = parser.parse(getFileContentAsStatements(FDP_METADATA_FILE, uri),
+                f.createIRI(uri));
         return metadata;
     }
-    
-    public static CatalogMetadata getCatalogMetadata(String uri, 
-            String parentURI) {        
+
+    public static CatalogMetadata getCatalogMetadata(String uri, String parentURI) {
+
         LOGGER.info("Generating example catalog metadata object");
         CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
         ValueFactory f = SimpleValueFactory.getInstance();
-        CatalogMetadata metadata = parser.parse(getFileContentAsStatements(
-                CATALOG_METADATA_FILE, uri), f.createIRI(uri));
+        CatalogMetadata metadata = parser.parse(getFileContentAsStatements(CATALOG_METADATA_FILE,
+                uri), f.createIRI(uri));
         metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }
-    
-    public static DatasetMetadata getDatasetMetadata(String uri, 
-            String parentURI) {        
+
+    public static DatasetMetadata getDatasetMetadata(String uri, String parentURI) {
+
         LOGGER.info("Generating example dataset metadata object");
         DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
         ValueFactory f = SimpleValueFactory.getInstance();
-        DatasetMetadata metadata = parser.parse(getFileContentAsStatements(
-                DATASET_METADATA_FILE, uri), f.createIRI(uri));
+        DatasetMetadata metadata = parser.parse(getFileContentAsStatements(DATASET_METADATA_FILE,
+                uri), f.createIRI(uri));
         metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
     }
-    
-    public static DistributionMetadata getDistributionMetadata(String uri, 
-            String parentURI) {        
+
+    public static DistributionMetadata getDistributionMetadata(String uri, String parentURI) {
+
         LOGGER.info("Generating example distribution metadata object");
-        DistributionMetadataParser parser = MetadataParserUtils.
-                getDistributionParser();
+        DistributionMetadataParser parser = MetadataParserUtils.getDistributionParser();
         ValueFactory f = SimpleValueFactory.getInstance();
         DistributionMetadata metadata = parser.parse(getFileContentAsStatements(
                 DISTRIBUTION_METADATA_FILE, uri), f.createIRI(uri));
         metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
-    } 
-    
-    public static DataRecordMetadata getDataRecordMetadata(String uri, 
-            String parentURI) {        
+    }
+
+    public static DataRecordMetadata getDataRecordMetadata(String uri, String parentURI) {
+
         LOGGER.info("Generating example datarecord metadata object");
-        DataRecordMetadataParser parser = MetadataParserUtils.
-                getDataRecordParser();
+        DataRecordMetadataParser parser = MetadataParserUtils.getDataRecordParser();
         ValueFactory f = SimpleValueFactory.getInstance();
         DataRecordMetadata metadata = parser.parse(getFileContentAsStatements(
                 DATARECORD_METADATA_FILE, uri), f.createIRI(uri));
         metadata.setParentURI(f.createIRI(parentURI));
         return metadata;
-    } 
+    }
 }

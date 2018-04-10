@@ -32,17 +32,18 @@ import org.eclipse.rdf4j.model.IRI;
 
 /**
  * Interface defines interaction with the FAIR search engine
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @since 2017-10-30
  * @version 0.1
  */
 public interface FairSearchClient {
-    
+
     /**
      * Submit FDP to the FAIR search engine's crawler.
+     *
      * @param uri FDP base URI
      * @return Http response code
      */
-    CompletableFuture submitFdpUri(IRI uri);    
+    CompletableFuture submitFdpUri(IRI uri);
 }

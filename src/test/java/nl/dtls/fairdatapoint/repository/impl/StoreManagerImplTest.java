@@ -83,14 +83,14 @@ public class StoreManagerImplTest {
     private final List<Statement> STATEMENTS = ExampleFilesUtils.
             getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE,
                     "http://www.dtls.nl/test");
-    
-    
+
     private final IRI TESTSUB = f.createIRI("http://www.dtls.nl/testSub");
     private final IRI TESTOBJ = f.createIRI("http://www.dtls.nl/testObj");
     private final Statement TESTSTMT = f.createStatement(TESTSUB, RDF.TYPE, TESTOBJ);
 
     @Before
     public void storeExampleFile() throws StoreManagerException {
+
         testStoreManager.storeStatements(STATEMENTS, f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
         MockitoAnnotations.initMocks(this);
     }
@@ -116,6 +116,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test(expected = IllegalArgumentException.class)
     public void emptyURI() throws StoreManagerException {
+
         String uri = "";
         testStoreManager.retrieveResource(f.createIRI(uri));
     }
@@ -128,6 +129,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test(expected = IllegalArgumentException.class)
     public void emptyInvalidURI() throws StoreManagerException {
+
         String uri = "...";
         testStoreManager.retrieveResource(f.createIRI(uri));
     }
@@ -140,6 +142,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void retrieveNonExitingResource() throws Exception {
+
         String uri = "http://localhost/dummy";
         List<Statement> statements = testStoreManager.retrieveResource(f.createIRI(uri));
         assertTrue(statements.isEmpty());
@@ -153,6 +156,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void retrieveExitingResource() throws Exception {
+
         List<Statement> statements = testStoreManager.retrieveResource(
                 f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
         assertTrue(statements.size() > 0);
@@ -166,6 +170,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
     public void retrieveResourceCatchBlock() throws Exception {
+
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.retrieveResource(f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
     }
@@ -176,6 +181,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void storeResource() {
+
         try {
             testStoreManager.storeStatements(STATEMENTS);
         } catch (StoreManagerException ex) {
@@ -189,6 +195,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void deleteRource() {
+
         try {
             List<Statement> sts = new ArrayList();
             sts.add(TESTSTMT);
@@ -198,33 +205,34 @@ public class StoreManagerImplTest {
             fail("The test is not excepted to throw StoreManagerException");
         }
     }
-    
+
     /**
      * The test is excepted to pass
      */
     @DirtiesContext
     @Test
     public void storeStatement() {
+
         try {
             testStoreManager.storeStatements(STATEMENTS, TESTSUB);
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw StoreManagerException");
         }
     }
-    
+
     /**
      * The test is excepted to pass
      */
     @DirtiesContext
     @Test
     public void storeStatementWithoutCtxt() {
+
         try {
             testStoreManager.storeStatements(STATEMENTS, null);
         } catch (StoreManagerException ex) {
             fail("The test is not excepted to throw StoreManagerException");
         }
     }
-
 
     /**
      * The test is excepted to retrieve return false
@@ -234,6 +242,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void checkNonExitingResource() throws Exception {
+
         String uri = "http://localhost/dummy";
         boolean isStatementExist = testStoreManager.isStatementExist(f.createIRI(uri), null, null);
         assertFalse(isStatementExist);
@@ -247,6 +256,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test
     public void checkExitingResource() throws Exception {
+
         boolean isStatementExist = testStoreManager.isStatementExist(
                 f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
         assertTrue(isStatementExist);
@@ -260,6 +270,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
     public void checkExceptionsDeleteResourceMethod() throws Exception {
+
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.removeResource(null);
     }
@@ -272,6 +283,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
     public void checkExceptionsRemoveStatementMethod() throws Exception {
+
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.removeStatement(null, null, null);
     }
@@ -284,6 +296,7 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
     public void checkExceptionsIsStatementMethod() throws Exception {
+
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.isStatementExist(f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
     }
@@ -296,8 +309,8 @@ public class StoreManagerImplTest {
     @DirtiesContext
     @Test(expected = StoreManagerException.class)
     public void checkExceptionsStoreStatementMethod() throws Exception {
+
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.storeStatements(STATEMENTS);
     }
-
 }

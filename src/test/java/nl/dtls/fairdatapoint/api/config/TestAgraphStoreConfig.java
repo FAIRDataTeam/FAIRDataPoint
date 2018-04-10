@@ -51,17 +51,17 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(classes = {RestApiContext.class})
 @TestPropertySource(properties = {"store.type=3"})
 public class TestAgraphStoreConfig {
-    
+
     @Autowired
     private Agent agent;
-    
+
     @Autowired
     private Repository repository;
-    
+
     @Test
     public void checkBeans() {
         assertNotNull(agent);
         assertNotNull(repository);
     }
-    
+
 }

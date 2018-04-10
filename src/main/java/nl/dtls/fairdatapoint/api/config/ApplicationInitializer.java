@@ -27,7 +27,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 /**
  * Application config (Similar to web.xml)
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2015-11-19
@@ -35,9 +35,10 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  */
 public class ApplicationInitializer extends
         AbstractAnnotationConfigDispatcherServletInitializer {
+
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{ RootConfig.class, RestApiContext.class };
+        return new Class[]{RootConfig.class, RestApiContext.class};
     }
 
     @Override

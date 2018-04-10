@@ -85,7 +85,7 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        
+
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
@@ -97,9 +97,9 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
     }
 
     @Bean(name = "repository", initMethod = "initialize", destroyMethod = "shutDown")
-    public Repository repository(final Environment env) throws RepositoryException, IOException
-            ,RDFParseException {
-        
+    public Repository repository(final Environment env) throws RepositoryException, IOException,
+            RDFParseException {
+
         // For tests we use only in memory
         Sail store = new MemoryStore();
         return new SailRepository(store);
@@ -113,7 +113,7 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "publisher")
     public Agent publisher() {
-        
+
         Agent publisher = new Agent();
         publisher.setUri(valueFactory.createIRI("https://www.dtls.nl"));
         publisher.setName(valueFactory.createLiteral("DTLS"));
@@ -122,22 +122,22 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "language")
     public IRI language() {
-        
+
         IRI language = valueFactory.createIRI("http://id.loc.gov/vocabulary/iso639-1/en");
         return language;
     }
 
     @Bean(name = "license")
     public IRI license() {
-        
-        IRI license = valueFactory.createIRI(
-                "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
+
+        IRI license = valueFactory
+                .createIRI("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
         return license;
     }
 
     @Bean(name = "metadataMetrics")
     public Map<String, String> metadataMetrics(Environment env) {
-        
+
         Map<String, String> metadataMetrics = new HashMap();
         metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
         return metadataMetrics;
