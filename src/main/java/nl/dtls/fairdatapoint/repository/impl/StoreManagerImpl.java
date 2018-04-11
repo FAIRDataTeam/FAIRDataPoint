@@ -58,6 +58,7 @@ import org.springframework.stereotype.Repository;
 public class StoreManagerImpl implements StoreManager {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StoreManagerImpl.class);
+
     @Autowired
     @Qualifier("repository")
     private org.eclipse.rdf4j.repository.Repository repository;
@@ -71,8 +72,10 @@ public class StoreManagerImpl implements StoreManager {
      */
     @Override
     public List<Statement> retrieveResource(@Nonnull IRI uri) throws StoreManagerException {
+
         Preconditions.checkNotNull(uri, "URI must not be null.");
         LOGGER.info("Get statements for the URI {}", uri.toString());
+
         try (RepositoryConnection conn = getRepositoryConnection()) {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, null, null, uri);
             List<Statement> statements = Iterations.asList(queryResult);
@@ -94,12 +97,12 @@ public class StoreManagerImpl implements StoreManager {
     @Override
     public boolean isStatementExist(Resource rsrc, IRI pred, Value value)
             throws StoreManagerException {
+
         try (RepositoryConnection conn = getRepositoryConnection()) {
             LOGGER.info("Check if statements exists");
             return conn.hasStatement(rsrc, pred, value, false);
         } catch (RepositoryException e) {
-            throw (new StoreManagerException("Error check statement existence :"
-                    + e.getMessage()));
+            throw new StoreManagerException("Error check statement existence :" + e.getMessage());
         }
     }
 
@@ -109,18 +112,18 @@ public class StoreManagerImpl implements StoreManager {
      * @param cntx context uri
      */
     @Override
-    public void storeStatements(List<Statement> statements, IRI... cntx) throws
-            StoreManagerException {
+    public void storeStatements(List<Statement> statements, IRI... cntx)
+            throws StoreManagerException {
+
         try (RepositoryConnection conn = getRepositoryConnection()) {
-            if(cntx != null) {
-              conn.add(statements, cntx);  
+            if (cntx != null) {
+                conn.add(statements, cntx);
             } else {
-                conn.add(statements); 
+                conn.add(statements);
             }
-            
+
         } catch (RepositoryException e) {
-            throw (new StoreManagerException("Error storing statements :"
-                    + e.getMessage()));
+            throw new StoreManagerException("Error storing statements :" + e.getMessage());
         }
     }
 
@@ -130,8 +133,8 @@ public class StoreManagerImpl implements StoreManager {
      * @param pred
      */
     @Override
-    public void removeStatement(Resource rsrc, IRI pred, Value value) throws 
-            StoreManagerException {
+    public void removeStatement(Resource rsrc, IRI pred, Value value) throws StoreManagerException {
+
         try (RepositoryConnection conn = getRepositoryConnection()) {
             conn.remove(rsrc, pred, value);
         } catch (RepositoryException e) {
@@ -145,8 +148,7 @@ public class StoreManagerImpl implements StoreManager {
      * @return RepositoryConnection
      * @throws Exception
      */
-    private RepositoryConnection getRepositoryConnection()
-            throws RepositoryException {
+    private RepositoryConnection getRepositoryConnection() throws RepositoryException {
         return this.repository.getConnection();
     }
 

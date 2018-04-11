@@ -35,38 +35,45 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for {@link Metadata} based {@link HttpMessageConverter
  * HttpMessageConverters}.
- * @param <T> {@link Metadata} instance this converter provides conversion for 
- * 
+ *
+ * @param <T> {@link Metadata} instance this converter provides conversion for
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  */
-public abstract class AbstractMetadataMessageConverter<T extends Metadata> extends AbstractHttpMessageConverter<T> {
+public abstract class AbstractMetadataMessageConverter<T extends Metadata> extends
+        AbstractHttpMessageConverter<T> {
+
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(AbstractMetadataMessageConverter.class);
+
     protected RDFFormat format;
-    
-     private static final Logger LOGGER = LoggerFactory.getLogger(
-             AbstractMetadataMessageConverter.class);
-    
+
     public AbstractMetadataMessageConverter(RDFFormat format) {
         super(getMediaTypes(format));
         this.format = format;
     }
-    
+
     /**
-     * Visitor method to configure content negotiation for this converter. 
-     * @param configurer {@link WebMvcConfigurerAdapter#configureContentNegotiation(ContentNegotiationConfigurer)
+     * Visitor method to configure content negotiation for this converter.
+     *
+     * @param configurer {@link WebMvcConfigurerAdapter
+     * #configureContentNegotiation(ContentNegotiationConfigurer)
      *        WebMvcConfigurerAdapter} configurer instance.
      */
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {           
-        configurer.mediaType(format.getDefaultFileExtension(), 
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+
+        configurer.mediaType(format.getDefaultFileExtension(),
                 MediaType.parseMediaType(format.getDefaultMIMEType()));
-           
-        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(), 
-                format.getDefaultMIMEType());          
+
+        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(),
+                format.getDefaultMIMEType());
     }
-    
+
     /**
-     * Convenience method for transforming the mimetypes of a {@link RDFFormat}
-     * into {@link MediaType} objecs Spring understands.
+     * Convenience method for transforming the mimetypes of a {@link RDFFormat} into
+     * {@link MediaType} objecs Spring understands.
+     *
      * @param format the {@link RDFFormat} this converter supports
      * @return array of {@link MediaType MediaTypes} based on {@link RDFFormat#getMIMETypes()}
      */

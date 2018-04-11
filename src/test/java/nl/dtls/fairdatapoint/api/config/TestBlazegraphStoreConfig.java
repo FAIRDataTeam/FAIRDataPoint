@@ -50,13 +50,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(classes = {RestApiContext.class})
 @TestPropertySource(properties = {"store.type=5"})
 public class TestBlazegraphStoreConfig {
-    
+
     @Autowired
     private Repository repository;
-    
+
     @Test
     public void checkBeans() {
         assertNotNull(repository);
     }
-    
+
 }

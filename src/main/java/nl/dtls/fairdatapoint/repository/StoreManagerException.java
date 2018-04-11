@@ -35,9 +35,10 @@ package nl.dtls.fairdatapoint.repository;
  * @version 0.1
  */
 public class StoreManagerException extends Exception {
+
     /**
-     * Constructs an instance of <code>StoreManagerException</code> with the
-     * specified detail message.
+     * Constructs an instance of <code>StoreManagerException</code> with the specified detail
+     * message.
      *
      * @param msg the detail message.
      */

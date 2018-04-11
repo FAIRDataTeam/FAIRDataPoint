@@ -34,20 +34,20 @@ import org.eclipse.rdf4j.model.IRI;
 
 /**
  * Fair metrics service interface
- * 
+ *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  * @since 2018-01-26
  * @version 0.1
  */
 public interface FairMetaDataMetricsService {
-    
+
     /**
      * This method returns list of fair metrics for the given metadata URI
-     * 
+     *
      * @param metadataURI metadata URI
      * @return List of fair metrics
      */
     List<Metric> getMetrics(@Nonnull IRI metadataURI);
-    
+
 }

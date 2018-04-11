@@ -29,7 +29,6 @@ package nl.dtls.fairdatapoint.service.impl;
 
 import java.util.List;
 import nl.dtl.fairmetadata4j.model.Metric;
-import nl.dtls.fairdatapoint.api.config.RestApiContext;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -54,13 +53,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {RestApiTestContext.class})
-public class FairMetaDataMetricsServiceImplTest {    
-    
+public class FairMetaDataMetricsServiceImplTest {
+
     @Autowired
     private FairMetaDataMetricsService fmMetricsServiceImpl;
-    
+
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    
+
     /**
      * Test getMetrics with null uri, this test is excepted to throw error
      */
@@ -68,15 +67,16 @@ public class FairMetaDataMetricsServiceImplTest {
     public void nullMetdataUri() throws Exception {
         fmMetricsServiceImpl.getMetrics(null);
     }
-    
+
     /**
      * This test is excepted to pass
      */
     @Test
     public void validMetdataUri() throws Exception {
+
         List<Metric> m = fmMetricsServiceImpl.getMetrics(valueFactory.createIRI(
                 ExampleFilesUtils.FDP_URI));
         assertTrue(m.size() > 0);
     }
-    
+
 }

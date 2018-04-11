@@ -140,7 +140,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Bean(name = "publisher")
     public Agent publisher(@Value("${metadataProperties.publisherURI:}") String publisherURI,
             @Value("${metadataProperties.publisherName:}") String publishername) {
-        
+
         Agent publisher = null;
         if (!publisherURI.isEmpty() && !publishername.isEmpty()) {
             publisher = new Agent();
@@ -152,7 +152,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "language")
     public IRI language(@Value("${metadataProperties.language:}") String languageURI) {
-        
+
         IRI language = null;
         if (!languageURI.isEmpty()) {
             language = VALUEFACTORY.createIRI(languageURI);
@@ -162,7 +162,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean(name = "license")
     public IRI license(@Value("${metadataProperties.license:}") String licenseURI) {
-        
+
         IRI license = null;
         if (!licenseURI.isEmpty()) {
             license = VALUEFACTORY.createIRI(licenseURI);
@@ -173,7 +173,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Bean(name = "repository", initMethod = "initialize", destroyMethod = "shutDown")
     public Repository repository(@Value("${store.type:1}") int storeType)
             throws RepositoryException {
-        
+
         Repository repository = null;
         if (storeType == 3) { // Allegrograph as a backend store
             repository = getAgraphRepository();
@@ -257,7 +257,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
                 repositoryManager.initialize();
                 repository = repositoryManager.getRepository(graphDbRepository);
             }
-        } catch(RepositoryConfigException | RepositoryException e) {
+        } catch (RepositoryConfigException | RepositoryException e) {
             LOGGER.error("Initializing graphDB repository");
         }
         return repository;
@@ -271,7 +271,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        
+
         registry.setOrder(Integer.MIN_VALUE + 1).addResourceHandler("/swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
 
@@ -292,7 +292,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
 
     @Bean
     public ViewResolver handlebars() {
-        
+
         HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
 
         // add handlebars helper to get a label's literal without datatype

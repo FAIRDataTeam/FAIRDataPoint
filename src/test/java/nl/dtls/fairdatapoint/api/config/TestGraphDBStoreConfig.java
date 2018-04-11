@@ -50,13 +50,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(classes = {RestApiContext.class})
 @TestPropertySource(properties = {"store.type=4"})
 public class TestGraphDBStoreConfig {
-    
+
     @Autowired
     private Repository repository;
-    
+
     @Test
     public void checkBeans() {
         assertNotNull(repository);
     }
-    
+
 }

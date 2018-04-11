@@ -74,7 +74,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * Service layer for manipulating fair metadata
@@ -84,13 +84,13 @@ import org.springframework.stereotype.Service;
  * @since 2015-12-17
  * @version 0.2
  */
-@Service("fairMetaDataServiceImpl")
+@Component
 public class FairMetaDataServiceImpl implements FairMetaDataService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
-    
+
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
-        
+
     private IRI fdpUri;
     @Autowired
     private StoreManager storeManager;
@@ -101,7 +101,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private IRI language;
     @Autowired
     @Qualifier("license")
-    private IRI license;    
+    private IRI license;
     @Autowired
     private FairSearchClient fseService;
     @Autowired
@@ -121,8 +121,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     private String accessRightsDescription;
 
     @Override
-    public FDPMetadata retrieveFDPMetaData(@Nonnull IRI uri) throws
-            FairMetadataServiceException, ResourceNotFoundException {
+    public FDPMetadata retrieveFDPMetaData(@Nonnull IRI uri)
+            throws FairMetadataServiceException, ResourceNotFoundException {
+
         List<Statement> statements = retrieveStatements(uri);
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
         FDPMetadata metadata = parser.parse(statements, uri);
@@ -132,9 +133,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public CatalogMetadata retrieveCatalogMetaData(@Nonnull IRI uri)
             throws FairMetadataServiceException, ResourceNotFoundException {
+
         List<Statement> statements = retrieveStatements(uri);
-        CatalogMetadataParser parser = MetadataParserUtils.
-                getCatalogParser();
+        CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
         CatalogMetadata metadata = parser.parse(statements, uri);
         return metadata;
     }
@@ -142,30 +143,30 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public DatasetMetadata retrieveDatasetMetaData(@Nonnull IRI uri)
             throws FairMetadataServiceException, ResourceNotFoundException {
+
         List<Statement> statements = retrieveStatements(uri);
-        DatasetMetadataParser parser = MetadataParserUtils.
-                getDatasetParser();
+        DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
         DatasetMetadata metadata = parser.parse(statements, uri);
         return metadata;
-    }   
-    
+    }
+
     //TODO finish -- check red labels
     @Override
-    public DataRecordMetadata retrieveDataRecordMetadata(IRI uri) throws 
-            FairMetadataServiceException {
+    public DataRecordMetadata retrieveDataRecordMetadata(IRI uri)
+            throws FairMetadataServiceException {
+
         List<Statement> statements = retrieveStatements(uri);
-    	DataRecordMetadataParser parser = MetadataParserUtils.
-        		getDataRecordParser();
-    	DataRecordMetadata metadata = parser.parse(statements, uri);
+        DataRecordMetadataParser parser = MetadataParserUtils.getDataRecordParser();
+        DataRecordMetadata metadata = parser.parse(statements, uri);
         return metadata;
     }
 
     @Override
     public DistributionMetadata retrieveDistributionMetaData(@Nonnull IRI uri)
             throws FairMetadataServiceException, ResourceNotFoundException {
+
         List<Statement> statements = retrieveStatements(uri);
-        DistributionMetadataParser parser = MetadataParserUtils.
-                getDistributionParser();
+        DistributionMetadataParser parser = MetadataParserUtils.getDistributionParser();
         DistributionMetadata metadata = parser.parse(statements, uri);
         return metadata;
     }
@@ -173,6 +174,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public void storeFDPMetaData(@Nonnull FDPMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
+
         Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
         if (!fdpSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(fdpSpecs));
@@ -181,7 +183,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         /*
         This method is called for the very first time the FDP is accessed. So it is better to assign
         fdpUri static variable here
-        */
+         */
         this.fdpUri = metadata.getUri();
         fseService.submitFdpUri(fdpUri);
     }
@@ -189,6 +191,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Override
     public void storeCatalogMetaData(@Nonnull CatalogMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
+
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No fdp URI is provied. Include dcterms:isPartOf statement "
                 + "in the post body rdf");
@@ -202,21 +205,23 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             storeMetadata(metadata);
         } else {
             String msg = "The fdp URI provided is not of type re3:Repository "
-                + "Please try with valid fdp URI";
+                    + "Please try with valid fdp URI";
             throw new IllegalStateException(msg);
-        } 
+        }
         fseService.submitFdpUri(fdpUri);
     }
 
     @Override
     public void storeDatasetMetaData(@Nonnull DatasetMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
+
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No catalog URI is provied. Include dcterms:isPartOf statement "
                 + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The catalog URI doesn't exist in the repository. "
                 + "Please try with valid catalog URI");
+
         if (!datasetSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(datasetSpecs));
         }
@@ -224,21 +229,23 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             storeMetadata(metadata);
         } else {
             String msg = "The catalog URI provided is not of type dcat:Catalog "
-                + "Please try with valid catalog URI";
+                    + "Please try with valid catalog URI";
             throw new IllegalStateException(msg);
-        } 
+        }
         fseService.submitFdpUri(fdpUri);
     }
 
     @Override
     public void storeDistributionMetaData(@Nonnull DistributionMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
+
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No dataset URI is provied. Include dcterms:isPartOf statement "
                 + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
                 + "Please try with valid dataset URI");
+
         if (!distributionSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(distributionSpecs));
         }
@@ -246,21 +253,23 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             storeMetadata(metadata);
         } else {
             String msg = "The dataset URI provided is not of type dcat:Dataset "
-                + "Please try with valid dataset URI";
+                    + "Please try with valid dataset URI";
             throw new IllegalStateException(msg);
-        }  
+        }
         fseService.submitFdpUri(fdpUri);
     }
-    
+
     @Override
-    public void storeDataRecordMetaData(DataRecordMetadata metadata) 
+    public void storeDataRecordMetaData(DataRecordMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
+
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No dataset URI is provied. Include dcterms:isPartOf statement "
                 + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
                 + "Please try with valid dataset URI");
+
         if (!datarecordSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(datarecordSpecs));
         }
@@ -268,35 +277,37 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             storeMetadata(metadata);
         } else {
             String msg = "The dataset URI provided is not of type dcat:Dataset "
-                + "Please try with valid dataset URI";
+                    + "Please try with valid dataset URI";
             throw new IllegalStateException(msg);
         }
         fseService.submitFdpUri(fdpUri);
-        
+
     }
 
     private <T extends Metadata> void storeMetadata(@Nonnull T metadata)
             throws FairMetadataServiceException, MetadataException {
+
         Preconditions.checkNotNull(metadata,
                 "Metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()),
                 "The metadata URI already exist in the repository. "
-                + "Please try with different ID");     
+                + "Please try with different ID");
+
         addDefaultValues(metadata);
         try {
             if (metadata instanceof FDPMetadata) {
                 if (metadata.getIssued() == null) {
                     metadata.setIssued(RDFUtils.getCurrentTime());
-                    if (((FDPMetadata) metadata).getRepostoryIdentifier() == 
-                            null) {
+                    if (((FDPMetadata) metadata).getRepostoryIdentifier()
+                            == null) {
                         LOGGER.info("Repository ID is null or empty, this feild"
                                 + " value will be generated automatically");
                         Identifier id = new Identifier();
-                        id.setUri(VALUEFACTORY.createIRI(metadata.getUri().
-                                stringValue() + "#repositoryID"));
+                        id.setUri(VALUEFACTORY.createIRI(metadata.getUri()
+                                .stringValue() + "#repositoryID"));
                         UUID uid = UUID.randomUUID();
-                        id.setIdentifier(VALUEFACTORY.createLiteral(
-                                uid.toString(), XMLSchema.STRING));
+                        id.setIdentifier(VALUEFACTORY
+                                .createLiteral(uid.toString(), XMLSchema.STRING));
                         id.setType(DATACITE.IDENTIFIER);
                         ((FDPMetadata) metadata).setRepostoryIdentifier(id);
                     }
@@ -305,29 +316,27 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
                 metadata.setIssued(RDFUtils.getCurrentTime());
             }
             metadata.setModified(RDFUtils.getCurrentTime());
-            storeManager.storeStatements(MetadataUtils.getStatements(metadata),
-                    metadata.getUri());
+            storeManager.storeStatements(MetadataUtils.getStatements(metadata), metadata.getUri());
             updateParentResource(metadata);
         } catch (StoreManagerException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing distribution metadata");
             throw (new FairMetadataServiceException(ex.getMessage()));
         }
     }
-    
-    /** Add default values for the mandatory metadata properties
-     * 
-     */ 
-    private <T extends Metadata> void addDefaultValues(@Nonnull T metadata) 
-    {
+
+    /**
+     * Add default values for the mandatory metadata properties
+     *
+     */
+    private <T extends Metadata> void addDefaultValues(@Nonnull T metadata) {
+
         if (metadata.getIdentifier() == null) {
             LOGGER.info("Metadata ID is null or empty, this feild value will be generated "
                     + "automatically");
             Identifier id = new Identifier();
-            id.setUri(VALUEFACTORY.createIRI(metadata.getUri().stringValue()
-                    + "#metadataID"));
+            id.setUri(VALUEFACTORY.createIRI(metadata.getUri().stringValue() + "#metadataID"));
             UUID uid = UUID.randomUUID();
-            id.setIdentifier(VALUEFACTORY.createLiteral(uid.toString(),
-                    XMLSchema.STRING));
+            id.setIdentifier(VALUEFACTORY.createLiteral(uid.toString(), XMLSchema.STRING));
             id.setType(DATACITE.RESOURCEIDENTIFIER);
             metadata.setIdentifier(id);
         }
@@ -345,7 +354,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         }
         //Add FAIR metrics
         metadata.setMetrics(fmMetricsService.getMetrics(metadata.getUri()));
-        
+
         // Add access rights
         if (metadata.getAccessRights() == null) {
             LOGGER.info("Metadata ID is null or empty, adding default value for access rights");
@@ -358,15 +367,16 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             metadata.setAccessRights(accessRights);
         }
     }
-    
+
     /**
      * Check if the parent resources exists
-     * 
+     *
      * @param <T>
      * @param metadata Subtype of Metadata object
      */
-    private <T extends Metadata> boolean doesParentResourceExists(
-            @Nonnull T metadata) throws FairMetadataServiceException {
+    private <T extends Metadata> boolean doesParentResourceExists(@Nonnull T metadata)
+            throws FairMetadataServiceException {
+
         boolean doesParentResourceExists = false;
         try {
             if (metadata instanceof CatalogMetadata) {
@@ -396,15 +406,15 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      * @param metadata Subtype of Metadata object
      */
     private <T extends Metadata> void updateParentResource(@Nonnull T metadata) {
-        Preconditions.checkNotNull(metadata,
-                "Metadata object must not be null.");
+
+        Preconditions.checkNotNull(metadata, "Metadata object must not be null.");
         try {
             ValueFactory f = SimpleValueFactory.getInstance();
             List<Statement> stmts = new ArrayList<>();
-            
+
             IRI parent = metadata.getParentURI();
             final Metadata parentMetadata;
-            
+
             if (metadata instanceof FDPMetadata) {
                 return;
             } else if (metadata instanceof CatalogMetadata) {
@@ -422,22 +432,23 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             } else {
                 throw new IllegalStateException("Unknown type of metadata passed");
             }
-            
+
             storeManager.removeStatement(parent, FDP.METADATAMODIFIED, null);
             stmts.add(f.createStatement(parent, FDP.METADATAMODIFIED, RDFUtils.getCurrentTime()));
             storeManager.storeStatements(stmts, parent);
-            
+
             // Propagate the update upward the parent hierarchy. Effectively, this will update the
             // timestamp properties of the parents.
             updateParentResource(parentMetadata);
-        } catch (StoreManagerException | DatatypeConfigurationException |
-                FairMetadataServiceException ex) {
+        } catch (StoreManagerException | DatatypeConfigurationException
+                | FairMetadataServiceException ex) {
             LOGGER.error("Error updating parent resource {}", ex.getMessage());
         }
     }
 
-    private List<Statement> retrieveStatements(@Nonnull IRI uri) throws
-            FairMetadataServiceException, ResourceNotFoundException {
+    private List<Statement> retrieveStatements(@Nonnull IRI uri)
+            throws FairMetadataServiceException, ResourceNotFoundException {
+
         try {
             Preconditions.checkNotNull(uri, "Resource uri not be null.");
             List<Statement> statements = storeManager.retrieveResource(uri);
@@ -459,8 +470,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      * @return
      * @throws FairMetadataServiceException
      */
-    private boolean isSubjectURIExist(@Nonnull IRI uri) throws
-            FairMetadataServiceException {
+    private boolean isSubjectURIExist(@Nonnull IRI uri)
+            throws FairMetadataServiceException {
+
         boolean isURIExist = false;
 
         try {
@@ -471,10 +483,11 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
         }
         return isURIExist;
     }
-    
+
     @Override
     public void updateFDPMetaData(IRI uri, FDPMetadata metaDataUpdate)
             throws FairMetadataServiceException, MetadataException {
+
         FDPMetadata metadata = retrieveFDPMetaData(uri);
 
         // This is an unconventional way of copying values from a source to a
@@ -520,30 +533,31 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
      * @param setter the setter method of the target object.
      */
     private <T> void setMetadataProperty(Getter<T> getter, Setter<T> setter) {
+
         if (getter.get() != null) {
             setter.set(getter.get());
         }
     }
 
     /**
-     * Convenience interface to facilitate referring to a getter method as a
-     * function pointer.
+     * Convenience interface to facilitate referring to a getter method as a function pointer.
      *
      * @param <T> datatype of the getter return value.
      */
     @FunctionalInterface
     private interface Getter<T> {
+
         T get();
     }
 
     /**
-     * Convenience interface to facilitate referring to a setter method as a
-     * function pointer.
+     * Convenience interface to facilitate referring to a setter method as a function pointer.
      *
      * @param <T> datatype of the setter parameter.
      */
     @FunctionalInterface
     private interface Setter<T> {
+
         void set(T value);
     }
 }
