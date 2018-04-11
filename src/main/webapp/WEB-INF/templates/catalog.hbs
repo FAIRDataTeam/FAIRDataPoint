@@ -2,55 +2,45 @@
 
 {{#if metadata.themeTaxonomys}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Theme taxonomy</span></div>
-        <div class="col-sm-7">
-            {{#metadata.themeTaxonomys}}
-                <p><a target="_blank" href="{{.}}">{{.}}</a></p>
-            {{/metadata.themeTaxonomys}}
-        </div>
-    </h4>
+    <div class="col-2"><span>Theme taxonomy</span></div>
+    <div class="col">
+        {{#metadata.themeTaxonomys}}
+            <p><a target="_blank" href="{{.}}">{{.}}</a></p>
+        {{/metadata.themeTaxonomys}}
+    </div>
 </div>
 {{/if}}
 
 {{#if metadata.homepage}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Theme taxonomy</span></div>
-        <div class="col-sm-7">
-                <span><a target="_blank" href="{{metadata.homepage}}">{{metadata.homepage}}</a></span>
-        </div>
-    </h4>
+    <div class="col-2"><span>Theme taxonomy</span></div>
+    <div class="col">
+            <span><a target="_blank" href="{{metadata.homepage}}">{{metadata.homepage}}</a></span>
+    </div>
 </div>
 {{/if}}
 
 {{#if metadata.catalogIssued}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Catalog Issued</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.catalogIssued}}</span></div>
-    </h4>
+    <div class="col-2"><span>Catalog Issued</span></div>
+    <div class="col"><span>{{literal metadata.catalogIssued}}</span></div>
 </div>
 {{/if}}
 
 {{#if metadata.catalogModified}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Catalog Modified</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.catalogModified}}</span></div>
-    </h4>
+    <div class="col-2"><span>Catalog Modified</span></div>
+    <div class="col"><span>{{literal metadata.catalogModified}}</span></div>
 </div>
 {{/if}}
 
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Datasets</span></div>
-        <div class="col-sm-7">
-            {{#metadata.datasets}}
-                <p><a target="_blank" href="{{.}}">{{.}}</a></p>
-            {{/metadata.datasets}}
-        </div>
-    </h4>
+    <div class="col-2"><span>Datasets</span></div>
+    <div class="col">
+        {{#metadata.datasets}}
+            <p><a target="_blank" href="{{.}}">{{.}}</a></p>
+        {{/metadata.datasets}}
+    </div>
 </div>
 {{/partial}}
 {{> base}}

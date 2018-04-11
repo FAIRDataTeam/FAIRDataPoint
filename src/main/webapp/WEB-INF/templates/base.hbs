@@ -2,18 +2,12 @@
 <html>
     <head>
         <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-        
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
         
         <title> 
-            {{#if metadata.title}}
-                {{literal metadata.title}}
-            {{/if}}
+        {{#if metadata.title}}
+            {{literal metadata.title}}
+        {{/if}}
         </title>
         {{#if jsonLd}}
         <script type="application/ld+json">
@@ -43,119 +37,115 @@
         </style>
     </head>
     <body>
-        <div class="panel panel-default">
-            <div class="panel-heading">
+        <div class="card">
+            <div class="card-header">
                 <h3 class="panel-title">FAIR metadata</h3>
             </div>
-            <div class="panel-body"> 
+            <div class="card-body"> 
                 {{#if metadata.title}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Title</span></div>
-                        <div class="col-sm-7"><span>{{literal metadata.title}}</span></div>
-                    </h4>
+                    <div class="col-2"><span>Title</span></div>
+                    <div class="col"><span>{{literal metadata.title}}</span></div>
                 </div>
                 {{/if}}
                 
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Metadata ID</span></div> 
-                        <div class="col-sm-7"><span title="{{metadata.identifier.type}}">{{literal metadata.identifier.identifier}}</span></div>
-                    </h4>
+                    <div class="col-2"><span>Metadata ID</span></div> 
+                    <div class="col"><span title="{{metadata.identifier.type}}">{{literal metadata.identifier.identifier}}</span></div>
                 </div>
                 
                 {{#if metadata.description}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Description</span></div> 
-                        <div class="col-sm-7"><p>{{literal metadata.description}}</p></div>    
-                    </h4>
+                    <div class="col-2"><span>Description</span></div> 
+                    <div class="col"><p>{{literal metadata.description}}</p></div>    
                 </div>
                 {{/if}}
                 
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Issued</span></div> 
-                        <div class="col-sm-7"><span>{{literal metadata.issued}}</span></div> 
-                    </h4>
+                    <div class="col-2"><span>Issued</span></div> 
+                    <div class="col"><span>{{literal metadata.issued}}</span></div> 
                 </div>
                 
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Modified</span></div> 
-                        <div class="col-sm-7"><span>{{literal metadata.modified}}</span></div>
-                    </h4>
+                    <div class="col-2"><span>Modified</span></div> 
+                    <div class="col"><span>{{literal metadata.modified}}</span></div>
                 </div>
                 
                 {{#if metadata.version}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Version</span></div>
-                        <div class="col-sm-7"><span>{{literal metadata.version}}</span></div>
-                    </h4>
+                    <div class="col-2"><span>Version</span></div>
+                    <div class="col-2"><span>{{literal metadata.version}}</span></div>
                 </div>
                 {{/if}}
                 
                 {{#if metadata.license}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">License</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.license}}">{{metadata.license}}</a></div>
-                    </h4>
+                    <div class="col-2"><span>License</span></div>
+                    <div class="col"><a target="_blank" href="{{metadata.license}}">{{metadata.license}}</a></div>
                 </div>
                 {{/if}}
                 
                 {{#if metadata.rights}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Rights</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.rights}}">{{metadata.rights}}</a></div>
-                    </h4>
+                    <div class="col-2"><span>Rights</span></div>
+                    <div class="col"><a target="_blank" href="{{metadata.rights}}">{{metadata.rights}}</a></div>
                 </div>
                 {{/if}}
                 
                 {{#if metadata.accessRights}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Access Rights</span></div>
-                        <div class="col-sm-7"><p>{{literal metadata.accessRights.description}}</p></div>
-                    </h4>
+                    <div class="col-2"><span>Access Rights</span></div>
+                    <div class="col"><p>{{literal metadata.accessRights.description}}</p></div>
                 </div>
                 {{/if}}
                 
                 {{#if metadata.specification}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Specification</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.specification}}">{{metadata.specification}}</a></div>
-                    </h4>
+                    <div class="col-2"><span>Specification</span></div>
+                    <div class="col"><a target="_blank" href="{{metadata.specification}}">{{metadata.specification}}</a></div>
                 </div>
                 {{/if}}
                 
                 {{#if metadata.parentURI}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Parent URI</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.parentURI}}">{{metadata.parentURI}}</a></div>
-                    </h4>
+                    <div class="col-2"><span>Parent URI</span></div>
+                    <div class="col"><a target="_blank" href="{{metadata.parentURI}}">{{metadata.parentURI}}</a></div>
                 </div>
                 {{/if}}
                 
                 {{#if metadata.language}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Language</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.language}}">{{metadata.language}}</a></div>
-                    </h4>
+                    <div class="col-2"><span>Language</span></div>
+                    <div class="col"><a target="_blank" href="{{metadata.language}}">{{metadata.language}}</a></div>
                 </div>
                 {{/if}}
                 
                 {{#if metadata.publisher}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Publisher</span></div>
-                        <div class="col-sm-7"><a target="_blank" href="{{metadata.publisher.uri}}">{{literal metadata.publisher.name}}</a></div>
-                    </h4>
+                    <div class="col-2"><span>Publisher</span></div>
+                    <div class="col"><a target="_blank" href="{{metadata.publisher.uri}}">{{literal metadata.publisher.name}}</a></div>
+                </div>
+                {{/if}}
+                
+                {{#if metadata.metrics}}
+                <div class="row">
+                    <div class="col-2"><span>Metrics</span></div>
+                    <div class="col">
+                    {{#metadata.metrics}}
+                        <div class="row">
+                            <div class="col-sm-2">Type</div>
+                            <div class="col-sm-10"><a href="{{metricType}}">{{metricType}}</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2">IRI</div>
+                            <div class="col-sm-10"><a href="{{uri}}">{{uri}}</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2">Value</div>
+                            <div class="col-sm-10"><a href="{{value}}">{{value}}</a></div>
+                        </div>
+                    {{/metadata.metrics}}
+                    </div>
                 </div>
                 {{/if}}
                 
@@ -164,24 +154,22 @@
                       
                 {{#if metadata.uri}}
                 <div class="row">
-                    <h4>
-                        <div class="col-sm-1"><span class="label label-default">Download RDF</span></div>
-                        <div class="col-sm-7">
-                            <a target="_blank" href="{{metadata.uri}}.ttl">ttl</a>
-                            &nbsp;
-                            <a target="_blank" href="{{metadata.uri}}.rdf">rdf+xml</a>
-                            &nbsp;
-                            <a target="_blank" href="{{metadata.uri}}.jsonld">jsonld</a>
-                        </div>
-                    </h4>
+                    <div class="col-2"><span>Download RDF</span></div>
+                    <div class="col">
+                        <a target="_blank" href="{{metadata.uri}}.ttl">ttl</a>
+                        &nbsp;
+                        <a target="_blank" href="{{metadata.uri}}.rdf">rdf+xml</a>
+                        &nbsp;
+                        <a target="_blank" href="{{metadata.uri}}.jsonld">jsonld</a>
+                    </div>
                 </div>
                 {{/if}}
             </div>
         </div>
         <footer class="footer">
             <div class="container">
-                <a href="https://www.dtls.nl/" target="_blank"><img class="pull-left" src="https://bioit.fair-dtls.surf-hosted.nl/dtllogo.png" width="135" height="45"></a>
-                <a href="https://www.dtls.nl/go-fair/" target="_blank"><img class="pull-right" src="https://bioit.fair-dtls.surf-hosted.nl/gofairlogo.png" width="210" height="40"></a>
+                <a class="float-left" href="https://www.go-fair.org/" target="_blank">GO-FAIR</a>
+                <a class="float-right" href="https://www.dtls.nl/" target="_blank">DTL</a>
             </div>
         </footer>
     </body>

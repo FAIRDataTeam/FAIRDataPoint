@@ -2,8 +2,8 @@
 {{#if metadata.themes}}
 <div class="row">
     <h4>
-        <div class="col-sm-1"><span class="label label-default">Themes</span></div>
-        <div class="col-sm-7">
+        <div class="col-2"><span>Themes</span></div>
+        <div class="col">
             {{#metadata.themes}}
                 <p><a target="_blank" href="{{.}}">{{.}}</a></p>
             {{/metadata.themes}}
@@ -15,8 +15,8 @@
 {{#if metadata.keywords}}
 <div class="row">
     <h4>
-        <div class="col-sm-1"><span class="label label-default">Keywords</span></div>
-        <div class="col-sm-7">
+        <div class="col-2"><span>Keywords</span></div>
+        <div class="col">
             {{#metadata.keywords}}
                 <p><span>{{literal .}}</span></p>
             {{/metadata.keywords}}
@@ -27,49 +27,39 @@
 
 {{#if metadata.contactPoint}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Contact point</span></div>
-         <div class="col-sm-7"><span><a target="_blank" href="{{metadata.contactPoint}}">{{metadata.contactPoint}}</a></span></div>
-    </h4>
+    <div class="col-2"><span>Contact point</span></div>
+    <div class="col"><span><a target="_blank" href="{{metadata.contactPoint}}">{{metadata.contactPoint}}</a></span></div>
 </div>  
 {{/if}}
 
 {{#if metadata.landingPage}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Landing page</span></div>
-        <div class="col-sm-7"><span><a target="_blank" href="{{metadata.landingPage}}">{{metadata.landingPage}}</a></span></div>
-    </h4>
+    <div class="col-2"><span>Landing page</span></div>
+    <div class="col"><span><a target="_blank" href="{{metadata.landingPage}}">{{metadata.landingPage}}</a></span></div>
 </div>  
 {{/if}}
 
 {{#if metadata.datasetIssued}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Dataset Issued</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.datasetIssued}}</span></div>
-    </h4>
+    <div class="col-2"><span>Dataset Issued</span></div>
+    <div class="col"><span>{{literal metadata.datasetIssued}}</span></div>
 </div>
 {{/if}}
 
 {{#if metadata.datasetModified}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Dataset Modified</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.datasetModified}}</span></div>
-    </h4>
+    <div class="col-2"><span>Dataset Modified</span></div>
+    <div class="col"><span>{{literal metadata.datasetModified}}</span></div>
 </div>
 {{/if}}
 
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Distributions</span></div>
-        <div class="col-sm-7">
-            {{#metadata.distributions}}
-                <p><a target="_blank" href="{{.}}">{{.}}</a></p>
-            {{/metadata.distributions}}
-        </div>
-    </h4>
+    <div class="col-2"><span>Distributions</span></div>
+    <div class="col">
+        {{#metadata.distributions}}
+            <p><a target="_blank" href="{{.}}">{{.}}</a></p>
+        {{/metadata.distributions}}
+    </div>
 </div>
 {{/partial}}
 {{> base}}
