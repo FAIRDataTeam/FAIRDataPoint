@@ -1,64 +1,50 @@
 {{#partial "content"}}
 {{#if metadata.accessURL}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Access url</span></div>
-        <div class="col-sm-7"><span><a target="_blank" href="{{metadata.accessURL}}">{{metadata.accessURL}}</a></span></div>
-    </h4>
+    <div class="col-2"><span>Access url</span></div>
+    <div class="col"><span><a target="_blank" href="{{metadata.accessURL}}">{{metadata.accessURL}}</a></span></div>
 </div>
 {{/if}}
 
 {{#if metadata.downloadURL}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Download url</span></div>
-        <div class="col-sm-7"><span><a target="_blank" href="{{metadata.downloadURL}}">{{metadata.downloadURL}}</a></span></div>
-    </h4>
+    <div class="col-2"><span>Download url</span></div>
+    <div class="col"><span><a target="_blank" href="{{metadata.downloadURL}}">{{metadata.downloadURL}}</a></span></div>
 </div>
 {{/if}}
 
 {{#if metadata.mediaType}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">MediaType</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.mediaType}}</span></div>
-    </h4>
+    <div class="col-2"><span>MediaType</span></div>
+    <div class="col"><span>{{literal metadata.mediaType}}</span></div>
 </div>
 {{/if}}
 
 {{#if metadata.format}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Format</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.format}}</span></div>
-    </h4>
+    <div class="col-2"><span>Format</span></div>
+    <div class="col"><span>{{literal metadata.format}}</span></div>
 </div>
 {{/if}}
 
 {{#if metadata.byteSize}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Bytesize</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.byteSize}}</span></div>
-    </h4>
+    <div class="col-2"><span>Bytesize</span></div>
+    <div class="col"><span>{{literal metadata.byteSize}}</span></div>
 </div>
 {{/if}}
 
 {{#if metadata.distributionIssued}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Distribution Issued</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.distributionIssued}}</span></div>
-    </h4>
+    <div class="col-2"><span>Distribution Issued</span></div>
+    <div class="col"><span>{{literal metadata.distributionIssued}}</span></div>
 </div>
 {{/if}}
 
 {{#if metadata.distributionModified}}
 <div class="row">
-    <h4>
-        <div class="col-sm-1"><span class="label label-default">Distribution Modified</span></div>
-        <div class="col-sm-7"><span>{{literal metadata.distributionModified}}</span></div>
-    </h4>
+    <div class="col-2"><span>Distribution Modified</span></div>
+    <div class="col"><span>{{literal metadata.distributionModified}}</span></div>
 </div>
 {{/if}}
 {{/partial}}
