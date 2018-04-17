@@ -1,27 +1,23 @@
 {{#partial "content"}}
 {{#if metadata.themes}}
 <div class="row">
-    <h4>
-        <div class="col-2"><span>Themes</span></div>
-        <div class="col">
-            {{#metadata.themes}}
-                <p><a target="_blank" href="{{.}}">{{.}}</a></p>
-            {{/metadata.themes}}
-        </div>
-    </h4>
+    <div class="col-2"><span>Themes</span></div>
+    <div class="col">
+        {{#metadata.themes}}
+            <p><a target="_blank" href="{{.}}">{{.}}</a></p>
+        {{/metadata.themes}}
+    </div>
 </div>
 {{/if}}
 
 {{#if metadata.keywords}}
 <div class="row">
-    <h4>
-        <div class="col-2"><span>Keywords</span></div>
-        <div class="col">
-            {{#metadata.keywords}}
-                <p><span>{{literal .}}</span></p>
-            {{/metadata.keywords}}
-        </div>
-    </h4>
+    <div class="col-2"><span>Keywords</span></div>
+    <div class="col">
+        {{#metadata.keywords}}
+            <p><span>{{literal .}}</span></p>
+        {{/metadata.keywords}}
+    </div>
 </div>
 {{/if}}
 
