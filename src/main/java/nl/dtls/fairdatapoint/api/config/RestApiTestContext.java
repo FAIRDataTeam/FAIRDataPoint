@@ -38,6 +38,8 @@ import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
+import nl.dtls.fairdatapoint.service.PIDSystem;
+import nl.dtls.fairdatapoint.service.impl.DefaultPIDSystemImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -133,6 +135,11 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
         IRI license = valueFactory
                 .createIRI("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
         return license;
+    }
+    
+    @Bean
+    public PIDSystem pIDSystem() {
+        return new DefaultPIDSystemImpl();
     }
 
     @Bean(name = "metadataMetrics")
