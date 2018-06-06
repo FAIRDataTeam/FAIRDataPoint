@@ -99,11 +99,14 @@ public class PurlPIDSystemImpl implements PIDSystem {
      *
      * @param iri Purl PID IRI
      * @throws NullPointerException exception if the purl pid URI is null
+     * @throws IllegalStateException exception if the purl URI doesn't contain "purl.org" string
      * @return ID as String
      */
     @Override
     public String getId(IRI iri) {
         Preconditions.checkNotNull(iri, "Purl pid uri must not be null.");
+        Preconditions.checkState(iri.toString().contains("purl.org"),
+                "Not an valid default pid uri.");
         String id = null;
         String uri = iri.toString();
         id = uri.substring(uri.lastIndexOf('/') + 1, uri.length());
