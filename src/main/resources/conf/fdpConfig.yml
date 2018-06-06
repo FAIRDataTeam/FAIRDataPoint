@@ -33,3 +33,9 @@ metadataMetrics:
     https://purl.org/fair-metrics/FM_F1B: http://example.com/THIS_IS_A_PH_URI_4_ID_PERSISTENCE
     https://purl.org/fair-metrics/FM_A1.1: https://www.wikidata.org/wiki/Q8777
     https://purl.org/fair-metrics/FM_A2: http://example.com/THIS_IS_A_PH_URI_4_MD_LONGEVITY
+
+# Valid pidSystem type options {1 = default PIDSystem, 2 = purl.org PIDSystem}      
+pidSystem:
+    type: 2
+    purl:
+        baseUrl: http://purl.org/biosemantics-lumc/fdp
