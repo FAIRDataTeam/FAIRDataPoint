@@ -57,6 +57,7 @@ public class DefaultPIDSystemImpl implements PIDSystem {
      *
      * @param <T>
      * @param metadata Subtype of Metadata object
+     * @throws NullPointerException exception if the metadata or the metadata URI is null
      * @return PID uri as IRI
      */
     @Override
@@ -66,8 +67,7 @@ public class DefaultPIDSystemImpl implements PIDSystem {
         Preconditions.checkNotNull(metadata.getUri(), "Metadata URI must not be null.");
         LOGGER.info("Creating an new default PID");
         UUID uid = UUID.randomUUID();
-        String id = ("pid-").concat(uid.toString());
-        String iri = String.join("#", metadata.getUri().stringValue(), id);
+        String iri = String.join("#", metadata.getUri().stringValue(), uid.toString());
         IRI pidIRI = VALUEFACTORY.createIRI(iri);
         return pidIRI;
     }
@@ -76,6 +76,8 @@ public class DefaultPIDSystemImpl implements PIDSystem {
      * Returns identifier of a given default PID iri.
      *
      * @param iri PID IRI
+     * @throws NullPointerException exception if the pid URI is null
+     * @throws IllegalStateException exception if the pid URI doesn't contain "#" character
      * @return ID as String
      */
     @Override

@@ -27,13 +27,14 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * DefaultPIDSystemImpl class unit tests
@@ -91,7 +92,6 @@ public class DefaultPIDSystemImplTest {
     @Test(expected = IllegalStateException.class)
     public void testGetIdForInvalidPIDIri() {
         String id = test.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
-        System.out.println(id);
     }
     
     /**
