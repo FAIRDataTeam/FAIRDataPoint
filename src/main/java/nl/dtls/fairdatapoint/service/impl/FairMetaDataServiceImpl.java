@@ -108,7 +108,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Autowired
     private FairMetaDataMetricsService fmMetricsService;
     @Autowired
-    private PIDSystem pIDSystem;
+    private PIDSystem pidSystem;
 
     @Value("${metadataProperties.rootSpecs:}")
     private String fdpSpecs;
@@ -335,9 +335,9 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
         // Add PID
         Identifier id = new Identifier();
-        IRI pidIri = pIDSystem.getURI(metadata);
+        IRI pidIri = pidSystem.getURI(metadata);
         id.setUri(pidIri);
-        id.setIdentifier(VALUEFACTORY.createLiteral(pIDSystem.getId(pidIri), XMLSchema.STRING));
+        id.setIdentifier(VALUEFACTORY.createLiteral(pidSystem.getId(pidIri), XMLSchema.STRING));
         id.setType(DATACITE.RESOURCEIDENTIFIER);
         metadata.setIdentifier(id);
             
