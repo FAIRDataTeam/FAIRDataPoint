@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultPIDSystemImpl implements PIDSystem {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DefaultPIDSystemImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPIDSystemImpl.class);
 
-    private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     /**
      * Create a new PID uri for a given metadata
