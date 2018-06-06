@@ -91,7 +91,7 @@ public class DefaultPIDSystemImplTest {
      */
     @Test(expected = IllegalStateException.class)
     public void testGetIdForInvalidPIDIri() {
-        String id = test.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
+        test.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
     }
     
     /**

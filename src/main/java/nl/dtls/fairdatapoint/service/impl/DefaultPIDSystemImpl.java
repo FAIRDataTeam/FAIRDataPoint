@@ -50,7 +50,7 @@ public class DefaultPIDSystemImpl implements PIDSystem {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DefaultPIDSystemImpl.class);
 
-    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+    private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     /**
      * Create a new PID uri for a given metadata
