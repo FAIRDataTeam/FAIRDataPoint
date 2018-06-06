@@ -40,6 +40,7 @@ import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import nl.dtls.fairdatapoint.service.PIDSystem;
 import nl.dtls.fairdatapoint.service.impl.DefaultPIDSystemImpl;
+import nl.dtls.fairdatapoint.service.impl.PurlPIDSystemImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -50,6 +51,7 @@ import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -138,8 +140,19 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    public PIDSystem pIDSystem() {
+    public PIDSystem pidSystem() {
         return new DefaultPIDSystemImpl();
+    }
+
+    @Bean
+    @DependsOn({"purlBaseUrl"})
+    public PurlPIDSystemImpl purlPIDSystemImpl() {
+        return new PurlPIDSystemImpl();
+    }
+
+    @Bean
+    public String purlBaseUrl() {
+        return "http://purl.org/biosemantics-lumc/fdp";
     }
 
     @Bean(name = "metadataMetrics")

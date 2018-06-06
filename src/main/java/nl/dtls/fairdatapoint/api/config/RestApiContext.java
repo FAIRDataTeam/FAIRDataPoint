@@ -62,6 +62,7 @@ import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.repository.impl.StoreManagerImpl;
 import nl.dtls.fairdatapoint.service.PIDSystem;
 import nl.dtls.fairdatapoint.service.impl.DefaultPIDSystemImpl;
+import nl.dtls.fairdatapoint.service.impl.PurlPIDSystemImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -198,8 +199,23 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    public PIDSystem pIDSystem() {
-        return new DefaultPIDSystemImpl();
+    @DependsOn({"purlBaseUrl"})
+    public PIDSystem pidSystem(@Value("${pidSystem.type:1}") int pidSystemtype) {
+
+        if (pidSystemtype == 2) {
+            return new PurlPIDSystemImpl();
+        } else {
+            return new DefaultPIDSystemImpl();
+        }
+    }
+
+    @Bean
+    public String purlBaseUrl(@Value("${pidSystem.purl.baseUrl:}") String url) {
+
+        if (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
+        }
+        return url;
     }
 
     /**
