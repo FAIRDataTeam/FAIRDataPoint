@@ -77,19 +77,9 @@ public class PurlPIDSystemImpl implements PIDSystem {
         if (metadata instanceof FDPMetadata) {
             fdpUri = metadata.getUri().toString();
         }
-
-        if (fdpUri == null || fdpUri.isEmpty()) {
-            String msg = "Fdp uri is not known to the purl PID system";
-            LOGGER.error(msg);
-            throw new IllegalStateException(msg);
-        }
-
         LOGGER.info("Creating an new purl.org PID");
         String purlIRI = metadata.getUri().toString().replace(fdpUri, purlBaseUrl);
-
-        if (purlIRI.endsWith("/")) {
-            purlIRI = purlIRI.substring(0, purlIRI.length() - 1);
-        }
+        
         return VALUEFACTORY.createIRI(purlIRI);
 
     }
