@@ -210,8 +210,8 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public String purlBaseUrl(@Value("${pidSystem.purl.baseUrl:}") String baseUrl) {
-
+    public String purlBaseUrl(@Value("${pidSystem.purl.baseUrl:}") String url) {
+        String baseUrl = url; 
         if (baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
