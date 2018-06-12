@@ -51,7 +51,7 @@ public class PurlPIDSystemImpl implements PIDSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PurlPIDSystemImpl.class);
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
-    private static IRI fdpUri = null;
+    private static IRI fdpUri;
 
     @Autowired
     @Qualifier("purlBaseUrl")
