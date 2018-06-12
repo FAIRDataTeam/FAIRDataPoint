@@ -27,12 +27,14 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.Test;
@@ -56,14 +58,21 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class PurlPIDSystemImplTest {
     
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    private final FDPMetadata metadata = ExampleFilesUtils
+    private final FDPMetadata fdpMetadata = ExampleFilesUtils
             .getFDPMetadata(ExampleFilesUtils.FDP_URI);
+    private final CatalogMetadata catalogMetadata = ExampleFilesUtils
+            .getCatalogMetadata(ExampleFilesUtils.CATALOG_URI, ExampleFilesUtils.FDP_URI);
+    private final DatasetMetadata datasetMetadata = ExampleFilesUtils
+            .getDatasetMetadata(ExampleFilesUtils.DATASET_URI, ExampleFilesUtils.CATALOG_URI);
+    private final DistributionMetadata distributionMetadata = ExampleFilesUtils
+            .getDistributionMetadata(ExampleFilesUtils.DISTRIBUTION_URI,
+                    ExampleFilesUtils.DATASET_URI);
     
     @Autowired
     private PurlPIDSystemImpl test;
 
     /**
-     * Test of null metadata, this test is excepted to throw error
+     * Test of null fdpMetadata, this test is excepted to throw error
      */
     @Test(expected = NullPointerException.class)
     public void testGetURIForNullMetadata() {
@@ -71,23 +80,35 @@ public class PurlPIDSystemImplTest {
     }
     
     /**
-     * Test of null metadata uri, this test is excepted to throw error
+     * Test of null fdpMetadata uri, this test is excepted to throw error
      */
     @Test(expected = NullPointerException.class)
     public void testGetURIForNullMetadataUri() {
-        FDPMetadata metadataCopy = metadata;
+        FDPMetadata metadataCopy = fdpMetadata;
         metadataCopy.setUri(null);
         test.getURI(metadataCopy);
     }
     
     
     /**
-     * Test of valid metadata uri, this test is excepted to pass
+     * Test of null fdp uri, this test is excepted to throw error
+     */
+    @Test(expected = NullPointerException.class)
+    public void testGetURIForNullFdpUri() {
+        PurlPIDSystemImpl pisdSys =  new PurlPIDSystemImpl();
+        pisdSys.getURI(catalogMetadata);
+    }
+    
+    
+    /**
+     * Test of valid fdpMetadata uri, this test is excepted to pass
      */
     @Test
     public void testGetURIForValidMetadata() {
-        IRI iri = test.getURI(metadata);
-        assertTrue(iri.toString().contains("purl.org"));
+        assertTrue(test.getURI(fdpMetadata).toString().contains("purl.org"));
+        assertTrue(test.getURI(catalogMetadata).toString().contains("purl.org"));
+        assertTrue(test.getURI(datasetMetadata).toString().contains("purl.org"));
+        assertTrue(test.getURI(distributionMetadata).toString().contains("purl.org"));
     }
     
     /**

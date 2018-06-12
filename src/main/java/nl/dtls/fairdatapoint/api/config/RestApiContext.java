@@ -199,7 +199,6 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    @DependsOn({"purlBaseUrl"})
     public PIDSystem pidSystem(@Value("${pidSystem.type:1}") int pidSystemtype) {
 
         if (pidSystemtype == 2) {

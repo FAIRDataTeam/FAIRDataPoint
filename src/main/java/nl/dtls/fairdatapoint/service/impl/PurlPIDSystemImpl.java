@@ -51,8 +51,8 @@ public class PurlPIDSystemImpl implements PIDSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PurlPIDSystemImpl.class);
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
-    private static String fdpUri = "";
-    
+    private static IRI fdpUri = null;
+
     @Autowired
     @Qualifier("purlBaseUrl")
     private String purlBaseUrl;
@@ -75,11 +75,14 @@ public class PurlPIDSystemImpl implements PIDSystem {
         Preconditions.checkState(!purlBaseUrl.isEmpty(), "Purl base url can't be empty");
 
         if (metadata instanceof FDPMetadata) {
-            fdpUri = metadata.getUri().toString();
+            fdpUri = metadata.getUri();
         }
+
+        Preconditions.checkNotNull(fdpUri, "FDP base url can't be null.");
+
         LOGGER.info("Creating an new purl.org PID");
-        String purlIRI = metadata.getUri().toString().replace(fdpUri, purlBaseUrl);
-        
+        String purlIRI = metadata.getUri().toString().replace(fdpUri.toString(), purlBaseUrl);
+
         return VALUEFACTORY.createIRI(purlIRI);
 
     }
@@ -97,9 +100,7 @@ public class PurlPIDSystemImpl implements PIDSystem {
         Preconditions.checkNotNull(iri, "Purl pid uri must not be null.");
         Preconditions.checkState(iri.toString().contains("purl.org"),
                 "Not an valid default pid uri.");
-        String id = null;
-        String uri = iri.toString();
-        id = uri.substring(uri.lastIndexOf('/') + 1, uri.length());
+        String id = iri.getLocalName();
         return id;
     }
 
