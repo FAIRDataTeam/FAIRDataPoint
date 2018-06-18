@@ -27,11 +27,12 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -39,6 +40,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -56,7 +58,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @ContextConfiguration(classes = {RestApiTestContext.class})
 public class PurlPIDSystemImplTest {
-    
+
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     private final FDPMetadata fdpMetadata = ExampleFilesUtils
             .getFDPMetadata(ExampleFilesUtils.FDP_URI);
@@ -67,7 +69,7 @@ public class PurlPIDSystemImplTest {
     private final DistributionMetadata distributionMetadata = ExampleFilesUtils
             .getDistributionMetadata(ExampleFilesUtils.DISTRIBUTION_URI,
                     ExampleFilesUtils.DATASET_URI);
-    
+
     @Autowired
     private PurlPIDSystemImpl test;
 
@@ -78,7 +80,7 @@ public class PurlPIDSystemImplTest {
     public void testGetURIForNullMetadata() {
         test.getURI(null);
     }
-    
+
     /**
      * Test of null fdpMetadata uri, this test is excepted to throw error
      */
@@ -88,29 +90,50 @@ public class PurlPIDSystemImplTest {
         metadataCopy.setUri(null);
         test.getURI(metadataCopy);
     }
-    
-    
+
     /**
      * Test of null fdp uri, this test is excepted to throw error
      */
     @Test(expected = NullPointerException.class)
     public void testGetURIForNullFdpUri() {
-        PurlPIDSystemImpl pisdSys =  new PurlPIDSystemImpl();
-        pisdSys.getURI(catalogMetadata);
+        test.getURI(catalogMetadata);
     }
-    
-    
+
+    /**
+     * Test of null parent uri, this test is excepted to throw error
+     */
+    @Test(expected = NullPointerException.class)
+    public void testGetURIForNullParentUri() {
+        CatalogMetadata mdata = catalogMetadata;
+        mdata.setParentURI(null);
+        test.getURI(mdata);
+    }
+
     /**
      * Test of valid fdpMetadata uri, this test is excepted to pass
+     *
+     * @throws java.lang.NoSuchFieldException If the filed is not declared
      */
     @Test
-    public void testGetURIForValidMetadata() {
-        assertTrue(test.getURI(fdpMetadata).toString().contains("purl.org"));
-        assertTrue(test.getURI(catalogMetadata).toString().contains("purl.org"));
-        assertTrue(test.getURI(datasetMetadata).toString().contains("purl.org"));
-        assertTrue(test.getURI(distributionMetadata).toString().contains("purl.org"));
+    public void testGetURIForValidMetadata() throws NoSuchFieldException {
+
+        PurlPIDSystemImpl mock = Mockito.mock(PurlPIDSystemImpl.class);
+        // Setting up mock object
+        when(mock.getURI(fdpMetadata)).thenReturn(valueFactory
+                .createIRI("http://purl.org/biosemantics-lumc/fdp"));
+        when(mock.getURI(catalogMetadata)).thenReturn(valueFactory
+                .createIRI("http://purl.org/biosemantics-lumc/fdp/catalog/1"));
+        when(mock.getURI(datasetMetadata)).thenReturn(valueFactory
+                .createIRI("http://purl.org/biosemantics-lumc/fdp/dataset/1"));
+        when(mock.getURI(distributionMetadata)).thenReturn(valueFactory
+                .createIRI("http://purl.org/biosemantics-lumc/fdp/distribution/1"));
+
+        assertTrue(mock.getURI(fdpMetadata).toString().contains("purl.org"));
+        assertTrue(mock.getURI(catalogMetadata).toString().contains("purl.org"));
+        assertTrue(mock.getURI(datasetMetadata).toString().contains("purl.org"));
+        assertTrue(mock.getURI(distributionMetadata).toString().contains("purl.org"));
     }
-    
+
     /**
      * Test of null pid iri, this test is excepted to throw error
      */
@@ -118,7 +141,7 @@ public class PurlPIDSystemImplTest {
     public void testGetIdForNullPIDIri() {
         test.getId(null);
     }
-    
+
     /**
      * Test of invalid purl pid iri, this test is excepted to throw error
      */
@@ -126,7 +149,7 @@ public class PurlPIDSystemImplTest {
     public void testGetIdForInvalidPIDIri() {
         test.getId(valueFactory.createIRI("http://example.com/fdp"));
     }
-    
+
     /**
      * Test of valid purl pid iri, this test is excepted to throw error
      */
@@ -136,5 +159,5 @@ public class PurlPIDSystemImplTest {
         String resultId = test.getId(valueFactory.createIRI("http://purl.org/lumc/" + id));
         assertEquals(resultId, id);
     }
-    
+
 }

@@ -29,6 +29,13 @@ package nl.dtls.fairdatapoint.service.impl;
 
 import java.time.ZonedDateTime;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
@@ -39,17 +46,13 @@ import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -951,5 +954,48 @@ public class FairMetaDataServiceImplTest {
             assertTrue("Distribution is modified before the repository is modified",
                     distributionModified.isBefore(updatedModified));
         }
+    }
+
+    /**
+     * Test non exist fdp uri
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = NullPointerException.class)
+    public void getFdpUriForNullUri() throws Exception {
+        fairMetaDataService.getFDPIri(null);
+    }
+
+    /**
+     * Test non exist fdp uri
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getNonExistFdpUri() throws Exception {
+        assertNull(fairMetaDataService.getFDPIri(VALUEFACTORY.createIRI(
+                ExampleFilesUtils.FDP_URI + "/dummy")));
+    }
+
+    /**
+     * Test existing fdp uri
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getExistingFdpUri() throws Exception {
+        IRI fdpUri = VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI);
+
+        assertEquals(fdpUri, fairMetaDataService.getFDPIri(
+                VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI)));
+        assertEquals(fdpUri, fairMetaDataService.getFDPIri(
+                VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI)));
+        assertEquals(fdpUri, fairMetaDataService.getFDPIri(
+                VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI)));
+        assertEquals(fdpUri, fairMetaDataService.getFDPIri(
+                VALUEFACTORY.createIRI(ExampleFilesUtils.DISTRIBUTION_URI)));
     }
 }

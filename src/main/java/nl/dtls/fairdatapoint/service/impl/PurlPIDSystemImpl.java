@@ -30,6 +30,8 @@ package nl.dtls.fairdatapoint.service.impl;
 import com.google.common.base.Preconditions;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtls.fairdatapoint.service.FairMetaDataService;
+import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.service.PIDSystem;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -51,11 +53,13 @@ public class PurlPIDSystemImpl implements PIDSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PurlPIDSystemImpl.class);
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
-    private static IRI fdpUri;
 
     @Autowired
     @Qualifier("purlBaseUrl")
     private String purlBaseUrl;
+
+    @Autowired
+    private FairMetaDataService fairMetaDataService;
 
     /**
      * Create a new purl.org PID uri for a given metadata
@@ -74,8 +78,17 @@ public class PurlPIDSystemImpl implements PIDSystem {
         Preconditions.checkNotNull(purlBaseUrl, "Purl base url can't be null.");
         Preconditions.checkState(!purlBaseUrl.isEmpty(), "Purl base url can't be empty");
 
-        if (metadata instanceof FDPMetadata) {
-            fdpUri = metadata.getUri();
+        IRI fdpUri = null;
+        try {
+            if (metadata instanceof FDPMetadata) {
+                fdpUri = metadata.getUri();
+            } else {
+                Preconditions.checkNotNull(metadata.getParentURI(),
+                        "Metadata parent URI must not be null");
+                fdpUri = fairMetaDataService.getFDPIri(metadata.getParentURI());
+            }
+        } catch (FairMetadataServiceException ex) {
+            LOGGER.error("Error getting fdp uri");
         }
 
         Preconditions.checkNotNull(fdpUri, "FDP base url can't be null.");

@@ -82,4 +82,13 @@ public interface StoreManager {
      * @throws StoreManagerException
      */
     void removeResource(IRI uri) throws StoreManagerException;
+
+    /**
+     * Get fdp URI for given URI
+     *
+     * @param uri any metadata URI
+     * @return IRI object
+     * @throws StoreManagerException
+     */
+    IRI getFDPIri(IRI uri) throws StoreManagerException;
 }
