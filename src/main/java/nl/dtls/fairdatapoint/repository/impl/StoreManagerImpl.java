@@ -73,7 +73,7 @@ public class StoreManagerImpl implements StoreManager {
     private org.eclipse.rdf4j.repository.Repository repository;
 
     private final String GETFDPURIQUERY = "getFdpIri.sparql";
-    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+    private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     /**
      * Retrieve all statements for an given URI

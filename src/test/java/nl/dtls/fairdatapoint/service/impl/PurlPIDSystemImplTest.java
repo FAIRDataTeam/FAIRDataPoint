@@ -88,7 +88,7 @@ public class PurlPIDSystemImplTest {
     private PurlPIDSystemImpl mockPurlSys;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
