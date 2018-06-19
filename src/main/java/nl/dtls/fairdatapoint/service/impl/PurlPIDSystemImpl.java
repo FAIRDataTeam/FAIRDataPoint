@@ -56,7 +56,7 @@ public class PurlPIDSystemImpl implements PIDSystem {
 
     @Autowired
     @Qualifier("purlBaseUrl")
-    private String purlBaseUrl;
+    private IRI purlBaseUrl;
 
     @Autowired
     private FairMetaDataService fairMetaDataService;
@@ -76,7 +76,6 @@ public class PurlPIDSystemImpl implements PIDSystem {
         Preconditions.checkNotNull(metadata, "Metadata must not be null.");
         Preconditions.checkNotNull(metadata.getUri(), "Metadata URI must not be null.");
         Preconditions.checkNotNull(purlBaseUrl, "Purl base url can't be null.");
-        Preconditions.checkState(!purlBaseUrl.isEmpty(), "Purl base url can't be empty");
 
         IRI fdpUri = null;
         try {
@@ -94,7 +93,8 @@ public class PurlPIDSystemImpl implements PIDSystem {
         Preconditions.checkNotNull(fdpUri, "FDP base url can't be null.");
 
         LOGGER.info("Creating an new purl.org PID");
-        String purlIRI = metadata.getUri().toString().replace(fdpUri.toString(), purlBaseUrl);
+        String purlIRI = metadata.getUri().toString().replace(fdpUri.toString(), 
+                purlBaseUrl.toString());
 
         return VALUEFACTORY.createIRI(purlIRI);
 

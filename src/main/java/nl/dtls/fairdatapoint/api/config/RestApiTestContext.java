@@ -150,8 +150,8 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public String purlBaseUrl() {
-        return "http://purl.org/biosemantics-lumc/fdp";
+    public IRI purlBaseUrl() {
+        return valueFactory.createIRI("http://purl.org/biosemantics-lumc/fdp");
     }
 
     @Bean(name = "metadataMetrics")

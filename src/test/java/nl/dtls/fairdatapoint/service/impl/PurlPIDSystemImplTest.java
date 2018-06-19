@@ -35,12 +35,17 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
+import nl.dtls.fairdatapoint.service.FairMetaDataService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -72,6 +77,20 @@ public class PurlPIDSystemImplTest {
 
     @Autowired
     private PurlPIDSystemImpl test;
+
+    @Mock
+    private FairMetaDataService fairMetaDataService;
+    
+    @Mock
+    private IRI purlBaseUrl;
+
+    @InjectMocks
+    private PurlPIDSystemImpl mockPurlSys;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     /**
      * Test of null fdpMetadata, this test is excepted to throw error
@@ -108,6 +127,15 @@ public class PurlPIDSystemImplTest {
         mdata.setParentURI(null);
         test.getURI(mdata);
     }
+    
+    /**
+     * Test of null purl base uri, this test is excepted to throw error
+     */
+    @Test(expected = NullPointerException.class)
+    public void testNullBaseUrl() throws Exception {
+        PurlPIDSystemImpl testInstance = new PurlPIDSystemImpl();
+        testInstance.getURI(fdpMetadata);
+    }
 
     /**
      * Test of valid fdpMetadata uri, this test is excepted to pass
@@ -115,23 +143,22 @@ public class PurlPIDSystemImplTest {
      * @throws java.lang.NoSuchFieldException If the filed is not declared
      */
     @Test
-    public void testGetURIForValidMetadata() throws NoSuchFieldException {
-
-        PurlPIDSystemImpl mock = Mockito.mock(PurlPIDSystemImpl.class);
+    public void testGetURIForValidMetadata() throws Exception {
+        
         // Setting up mock object
-        when(mock.getURI(fdpMetadata)).thenReturn(valueFactory
-                .createIRI("http://purl.org/biosemantics-lumc/fdp"));
-        when(mock.getURI(catalogMetadata)).thenReturn(valueFactory
-                .createIRI("http://purl.org/biosemantics-lumc/fdp/catalog/1"));
-        when(mock.getURI(datasetMetadata)).thenReturn(valueFactory
-                .createIRI("http://purl.org/biosemantics-lumc/fdp/dataset/1"));
-        when(mock.getURI(distributionMetadata)).thenReturn(valueFactory
-                .createIRI("http://purl.org/biosemantics-lumc/fdp/distribution/1"));
+        
+        when(purlBaseUrl.toString()).thenReturn("http://purl.org/biosemantics-lumc/fdp");
+        when(fairMetaDataService.getFDPIri(catalogMetadata.getParentURI()))
+                .thenReturn(fdpMetadata.getUri());
+        when(fairMetaDataService.getFDPIri(datasetMetadata.getParentURI()))
+                .thenReturn(fdpMetadata.getUri());
+        when(fairMetaDataService.getFDPIri(distributionMetadata.getParentURI()))
+                .thenReturn(fdpMetadata.getUri());
 
-        assertTrue(mock.getURI(fdpMetadata).toString().contains("purl.org"));
-        assertTrue(mock.getURI(catalogMetadata).toString().contains("purl.org"));
-        assertTrue(mock.getURI(datasetMetadata).toString().contains("purl.org"));
-        assertTrue(mock.getURI(distributionMetadata).toString().contains("purl.org"));
+        assertTrue(mockPurlSys.getURI(fdpMetadata).toString().contains("purl.org"));
+        assertTrue(mockPurlSys.getURI(catalogMetadata).toString().contains("purl.org"));
+        assertTrue(mockPurlSys.getURI(datasetMetadata).toString().contains("purl.org"));
+        assertTrue(mockPurlSys.getURI(distributionMetadata).toString().contains("purl.org"));
     }
 
     /**

@@ -548,7 +548,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
             return storeManager.getFDPIri(uri);
         } catch (StoreManagerException ex) {
             LOGGER.error("Error getting fdp uri from the store");
-            throw (new FairMetadataServiceException(ex.getMessage()));
+            throw new FairMetadataServiceException(ex.getMessage());
         }
     }
 
