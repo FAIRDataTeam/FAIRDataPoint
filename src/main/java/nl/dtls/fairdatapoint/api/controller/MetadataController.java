@@ -44,7 +44,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -53,6 +52,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
@@ -359,7 +359,6 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata catalog metadata
-     * @param id Unique catalog ID
      * @return created message
      * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws nl.dtls.fairdatapoint.service.FairMetadataServiceException
@@ -369,11 +368,8 @@ public class MetadataController {
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public CatalogMetadata storeCatalogMetaData(final HttpServletRequest request,
-            HttpServletResponse response, @RequestBody(required = true) CatalogMetadata metadata,
-            @RequestParam("id") String id) throws FairMetadataServiceException, MetadataException {
-
-        String trimmedId = trimmer(id);
-        LOGGER.info("Request to store catalog metatdata with ID {}", trimmedId);
+            HttpServletResponse response, @RequestBody(required = true) CatalogMetadata metadata)
+            throws FairMetadataServiceException, MetadataException {
         String requestedURL = getRequesedURL(request);
         String fURI = requestedURL.replace("/catalog", "");
 
@@ -381,7 +377,9 @@ public class MetadataController {
             storeDefaultFDPMetadata(fURI);
         }
 
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
+        UUID uid = UUID.randomUUID();
+        LOGGER.info("Request to store catalog metatdata with ID {}", uid.toString());
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
         IRI fdpURI = valueFactory.createIRI(fURI);
 
@@ -402,7 +400,6 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata Dataset metadata
-     * @param id Unique dataset ID
      * @return created message
      *
      * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
@@ -413,13 +410,13 @@ public class MetadataController {
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public DatasetMetadata storeDatasetMetaData(final HttpServletRequest request,
-            HttpServletResponse response, @RequestBody(required = true) DatasetMetadata metadata,
-            @RequestParam("id") String id) throws FairMetadataServiceException, MetadataException {
+            HttpServletResponse response, @RequestBody(required = true) DatasetMetadata metadata)
+            throws FairMetadataServiceException, MetadataException {
 
-        String trimmedId = trimmer(id);
-        LOGGER.info("Request to store dataset metatdata with ID {}", trimmedId);
         String requestedURL = getRequesedURL(request);
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
+        UUID uid = UUID.randomUUID();
+        LOGGER.info("Request to store dataset metatdata with ID {}", uid.toString());
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
 
         // Ignore children links 
@@ -436,7 +433,6 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata datarecord metadata
-     * @param id Unique datarecord ID
      * @return created message
      *
      * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
@@ -447,13 +443,13 @@ public class MetadataController {
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public DataRecordMetadata storeDataRecord(final HttpServletRequest request,
-            HttpServletResponse response, @RequestBody(required = true) DataRecordMetadata metadata,
-            @RequestParam("id") String id) throws FairMetadataServiceException, MetadataException {
+            HttpServletResponse response, @RequestBody(required = true) DataRecordMetadata metadata)
+            throws FairMetadataServiceException, MetadataException {
 
-        String trimmedId = trimmer(id);
-        LOGGER.info("Request to store datarecord metatdata with ID {}", trimmedId);
         String requestedURL = getRequesedURL(request);
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
+        UUID uid = UUID.randomUUID();
+        LOGGER.info("Request to store datarecord metatdata with ID {}", uid.toString());
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
         fairMetaDataService.storeDataRecordMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -466,7 +462,6 @@ public class MetadataController {
      * @param request Http request
      * @param response Http response
      * @param metadata distribution metadata
-     * @param id Unique distribution ID
      * @return created message
      *
      * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
@@ -478,13 +473,13 @@ public class MetadataController {
     @ResponseStatus(HttpStatus.CREATED)
     public DistributionMetadata storeDistribution(final HttpServletRequest request,
             HttpServletResponse response, @RequestBody(required = true)
-                    DistributionMetadata metadata, @RequestParam("id") String id)
+                    DistributionMetadata metadata)
             throws FairMetadataServiceException, MetadataException {
 
-        String trimmedId = trimmer(id);
-        LOGGER.info("Request to store distribution metatdata with ID {}", trimmedId);
         String requestedURL = getRequesedURL(request);
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + trimmedId);
+        UUID uid = UUID.randomUUID();
+        LOGGER.info("Request to store distribution metatdata with ID {}", uid.toString());
+        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
         fairMetaDataService.storeDistributionMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -576,19 +571,5 @@ public class MetadataController {
             throw new MetadataParserException("Error creating generic FDP meatdata "
                     + ex.getMessage());
         }
-    }
-
-    /**
-     * Trim white space at start, end and between strings
-     *
-     * @param str Input string
-     * @return Trimmed string
-     */
-    private String trimmer(String str) {
-
-        String trimmedStr = str;
-        trimmedStr = trimmedStr.trim();
-        trimmedStr = trimmedStr.replace(" ", "-");
-        return trimmedStr;
     }
 }
