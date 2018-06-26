@@ -152,4 +152,13 @@ public interface FairMetaDataService {
     void updateFDPMetaData(IRI uri, FDPMetadata fdpMetaData)
             throws FairMetadataServiceException, MetadataException;
 
+    /**
+     * Get fdp URI for given URI
+     *
+     * @param uri any metadata URI
+     * @return IRI object
+     * @throws FairMetadataServiceException
+     */
+    IRI getFDPIri(IRI uri) throws FairMetadataServiceException;
+
 }

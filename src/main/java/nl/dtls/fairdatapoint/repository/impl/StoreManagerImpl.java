@@ -27,7 +27,11 @@
  */
 package nl.dtls.fairdatapoint.repository.impl;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.common.io.Resources;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import javax.annotation.Nonnull;
 import nl.dtls.fairdatapoint.repository.StoreManager;
@@ -37,6 +41,11 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.QueryResults;
+import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
@@ -57,7 +66,9 @@ import org.springframework.stereotype.Repository;
 @Repository("storeManager")
 public class StoreManagerImpl implements StoreManager {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(StoreManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoreManagerImpl.class);    
+    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+    private final String GETFDPURIQUERY = "getFdpIri.sparql";
 
     @Autowired
     @Qualifier("repository")
@@ -155,6 +166,33 @@ public class StoreManagerImpl implements StoreManager {
     @Override
     public void removeResource(IRI uri) throws StoreManagerException {
         removeStatement(uri, null, null);
+    }
+
+    @Override
+    public IRI getFDPIri(IRI uri) throws StoreManagerException {
+
+        Preconditions.checkNotNull(uri, "URI must not be null.");
+        LOGGER.info("Get fdp uri for the given uri {}", uri.toString());
+
+        try (RepositoryConnection conn = getRepositoryConnection()) {
+
+            URL fileURL = StoreManagerImpl.class.getResource(GETFDPURIQUERY);
+            String queryString = Resources.toString(fileURL, Charsets.UTF_8);
+            TupleQuery query = conn.prepareTupleQuery(queryString);
+            query.setBinding("iri", uri);
+            
+            IRI fdpIri = null;
+            List<BindingSet> resultSet = QueryResults.asList(query.evaluate());
+            for (BindingSet solution : resultSet) {
+                fdpIri = VALUEFACTORY.createIRI(solution.getValue("fdp").stringValue());
+            }
+            return fdpIri;
+        } catch (RepositoryException e) {
+            throw new StoreManagerException("Error retrieve fdp uri :" + e.getMessage());
+        } catch (IOException e) {
+            throw new StoreManagerException("Error reading getFdpIri.sparql file :"
+                    + e.getMessage());
+        }
     }
 
 }

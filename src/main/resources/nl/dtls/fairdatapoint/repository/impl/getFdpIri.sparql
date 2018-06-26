@@ -1,0 +1,9 @@
+prefix r3d: <http://www.re3data.org/schema/3-0#>
+prefix dcterms: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?fdp {         
+         
+  ?iri dcterms:isPartOf* ?fdp.  
+  ?fdp a r3d:Repository.
+
+}

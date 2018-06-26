@@ -27,6 +27,12 @@
  */
 package nl.dtls.fairdatapoint.repository.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
@@ -40,15 +46,11 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -312,5 +314,49 @@ public class StoreManagerImplTest {
 
         when(repository.getConnection()).thenThrow(RepositoryException.class);
         mockStoreManager.storeStatements(STATEMENTS);
+    }
+
+    /**
+     * Test non exist fdp uri
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test(expected = NullPointerException.class)
+    public void getFdpUriForNullUri() throws Exception {
+        testStoreManager.getFDPIri(null);
+    }
+
+    /**
+     * Test non exist fdp uri
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getNonExistFdpUri() throws Exception {
+        assertNull(testStoreManager.getFDPIri(f.createIRI(ExampleFilesUtils.FDP_URI + "/dummy")));
+    }
+
+    /**
+     * Test existing fdp uri
+     *
+     * @throws Exception
+     */
+    @DirtiesContext
+    @Test
+    public void getExistingFdpUri() throws Exception {
+        List<Statement> stmt = ExampleFilesUtils.getFileContentAsStatements(
+                ExampleFilesUtils.FDP_URI_FILE, ExampleFilesUtils.FDP_URI);
+        IRI fdpUri = f.createIRI(ExampleFilesUtils.FDP_URI);
+        testStoreManager.storeStatements(stmt, fdpUri);
+
+        assertEquals(fdpUri, testStoreManager.getFDPIri(f.createIRI(ExampleFilesUtils.FDP_URI)));
+        assertEquals(fdpUri, testStoreManager.getFDPIri(
+                f.createIRI(ExampleFilesUtils.CATALOG_URI)));
+        assertEquals(fdpUri, testStoreManager.getFDPIri(
+                f.createIRI(ExampleFilesUtils.DATASET_URI)));
+        assertEquals(fdpUri, testStoreManager.getFDPIri(
+                f.createIRI(ExampleFilesUtils.DISTRIBUTION_URI)));
     }
 }

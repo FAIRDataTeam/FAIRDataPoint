@@ -73,6 +73,7 @@ public class ExampleFilesUtils {
     public static final String DATARECORD_METADATA_FILE = "example-datarecord.ttl";
     public static final String DISTRIBUTION_METADATA_FILE = "gda-lumc-sparql.ttl";
     public static final String VALID_TEST_FILE = "valid-test-file.ttl";
+    public static final String FDP_URI_FILE = "getFdpUriContent.ttl";
     public static final String CATALOG_ID = "textmining";
     public static final String DATASET_ID = "gene-disease-association_lumc";
     public static final String DATARECORD_ID = "datarecord";

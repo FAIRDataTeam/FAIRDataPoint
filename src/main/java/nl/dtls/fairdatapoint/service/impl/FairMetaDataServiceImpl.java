@@ -108,7 +108,7 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
     @Autowired
     private FairMetaDataMetricsService fmMetricsService;
     @Autowired
-    private PIDSystem pIDSystem;
+    private PIDSystem pidSystem;
 
     @Value("${metadataProperties.rootSpecs:}")
     private String fdpSpecs;
@@ -335,12 +335,12 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
         // Add PID
         Identifier id = new Identifier();
-        IRI pidIri = pIDSystem.getURI(metadata);
+        IRI pidIri = pidSystem.getURI(metadata);
         id.setUri(pidIri);
-        id.setIdentifier(VALUEFACTORY.createLiteral(pIDSystem.getId(pidIri), XMLSchema.STRING));
+        id.setIdentifier(VALUEFACTORY.createLiteral(pidSystem.getId(pidIri), XMLSchema.STRING));
         id.setType(DATACITE.RESOURCEIDENTIFIER);
         metadata.setIdentifier(id);
-            
+
         // Add default publisher
         if (metadata.getPublisher() == null && publisher != null) {
             metadata.setPublisher(publisher);
@@ -537,6 +537,18 @@ public class FairMetaDataServiceImpl implements FairMetaDataService {
 
         if (getter.get() != null) {
             setter.set(getter.get());
+        }
+    }
+
+    @Override
+    public IRI getFDPIri(IRI uri) throws FairMetadataServiceException {
+        Preconditions.checkNotNull(uri, "URI must not be null.");
+        LOGGER.info("Get fdp uri for the given uri {}", uri.toString());
+        try {
+            return storeManager.getFDPIri(uri);
+        } catch (StoreManagerException ex) {
+            LOGGER.error("Error getting fdp uri from the store");
+            throw new FairMetadataServiceException(ex.getMessage());
         }
     }
 
