@@ -85,7 +85,7 @@ public class PurlPIDSystemImplTest {
     private IRI purlBaseUrl;
 
     @InjectMocks
-    private PurlPIDSystemImpl mockPurlSys;
+    private PurlPIDSystemImpl purlSys;
 
     @Before
     public void setUp() {
@@ -155,10 +155,10 @@ public class PurlPIDSystemImplTest {
         when(fairMetaDataService.getFDPIri(distributionMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());
 
-        assertTrue(mockPurlSys.getURI(fdpMetadata).toString().contains("purl.org"));
-        assertTrue(mockPurlSys.getURI(catalogMetadata).toString().contains("purl.org"));
-        assertTrue(mockPurlSys.getURI(datasetMetadata).toString().contains("purl.org"));
-        assertTrue(mockPurlSys.getURI(distributionMetadata).toString().contains("purl.org"));
+        assertTrue(purlSys.getURI(fdpMetadata).toString().contains("purl.org"));
+        assertTrue(purlSys.getURI(catalogMetadata).toString().contains("purl.org"));
+        assertTrue(purlSys.getURI(datasetMetadata).toString().contains("purl.org"));
+        assertTrue(purlSys.getURI(distributionMetadata).toString().contains("purl.org"));
     }
 
     /**

@@ -178,12 +178,12 @@ public class StoreManagerImpl implements StoreManager {
         try (RepositoryConnection conn = getRepositoryConnection()) {
 
             URL fileURL = StoreManagerImpl.class.getResource(GETFDPURIQUERY);
-            String query = Resources.toString(fileURL, Charsets.UTF_8);
-            TupleQuery result = conn.prepareTupleQuery(query);
-            result.setBinding("iri", uri);
+            String queryString = Resources.toString(fileURL, Charsets.UTF_8);
+            TupleQuery query = conn.prepareTupleQuery(queryString);
+            query.setBinding("iri", uri);
             
             IRI fdpIri = null;
-            List<BindingSet> resultSet = QueryResults.asList(result.evaluate());
+            List<BindingSet> resultSet = QueryResults.asList(query.evaluate());
             for (BindingSet solution : resultSet) {
                 fdpIri = VALUEFACTORY.createIRI(solution.getValue("fdp").stringValue());
             }
