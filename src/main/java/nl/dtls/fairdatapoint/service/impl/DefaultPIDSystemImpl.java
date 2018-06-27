@@ -66,8 +66,8 @@ public class DefaultPIDSystemImpl implements PIDSystem {
         Preconditions.checkNotNull(metadata, "Metadata must not be null.");
         Preconditions.checkNotNull(metadata.getUri(), "Metadata URI must not be null.");
         LOGGER.info("Creating an new default PID");
-        UUID uid = UUID.randomUUID();
-        String iri = String.join("#", metadata.getUri().stringValue(), uid.toString());
+        String id = metadata.getUri().getLocalName();
+        String iri = String.join("#", metadata.getUri().stringValue(), id);
         IRI pidIRI = VALUEFACTORY.createIRI(iri);
         return pidIRI;
     }
