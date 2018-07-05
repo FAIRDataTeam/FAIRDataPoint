@@ -28,6 +28,7 @@
 package nl.dtls.fairdatapoint.api.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import static springfox.documentation.builders.PathSelectors.regex;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -43,6 +44,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 2015-11-19
  * @version 0.1
  */
+@Configuration
 @EnableSwagger2
 public class ApplicationSwaggerConfig {
 
@@ -62,9 +64,8 @@ public class ApplicationSwaggerConfig {
                 "<p>This API is a prototype version, If you find bugs in this api "
                 + "please contact the developer.</p>"
                 + "<p>"
-                + "<li><a target='_blank' href = 'https://dtl-fair."
-                + "atlassian.net/wiki/display/FDP/FAIR+Data+Point+"
-                + "Software+Specification'>API specs</li>"
+                + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/FAIRDataPoint/"
+                        + "wiki/FAIR-Data-Point-Specification'>API specs</li>"
                 + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
                 + "FAIRDataPoint'>Source code</a> </li></p>",
                 "0.1-beta",
