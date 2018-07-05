@@ -933,7 +933,7 @@ public class FairMetaDataServiceImplTest {
                     VALUEFACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
             ZonedDateTime updatedModified = ZonedDateTime.parse(
                     updated.getModified().stringValue());
-            assertFalse("Distribution is modified before the dataset is modified",
+            assertFalse("Distribution is modified after the dataset is modified",
                     distributionModified.isAfter(updatedModified));
         }
         // compare catalog timestamp with distribution timestamp
@@ -942,7 +942,7 @@ public class FairMetaDataServiceImplTest {
                     VALUEFACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
             ZonedDateTime updatedModified = ZonedDateTime.parse(
                     updated.getModified().stringValue());
-            assertFalse("Distribution is modified before the catalog is modified",
+            assertFalse("Distribution is modified after the catalog is modified",
                     distributionModified.isAfter(updatedModified));
         }
         // compare repository timestamp with distribution timestamp
@@ -951,7 +951,7 @@ public class FairMetaDataServiceImplTest {
                     VALUEFACTORY.createIRI(ExampleFilesUtils.FDP_URI));
             ZonedDateTime updatedModified = ZonedDateTime.parse(
                     updated.getModified().stringValue());
-            assertFalse("Distribution is modified before the repository is modified",
+            assertFalse("Distribution is modified after the repository is modified",
                     distributionModified.isAfter(updatedModified));
         }
     }
