@@ -1,0 +1,113 @@
+{{#partial "content"}}
+
+{{#if metadata.description}}<p>{{literal metadata.description}}</p>{{/if}}
+
+<div class="row">
+    <div class="col">
+        <p class="text-left">
+            <strong>Issued</strong>:
+            {{literal metadata.issued}}
+        </p>
+    </div>
+    <div class="col">
+        <p class="text-center">
+            <a href="{{metadata.license}}">License</a>
+        </p>
+    </div>
+    <div class="col">
+        <p class="text-right">
+            <strong>Modified</strong>:
+            {{literal metadata.modified}}
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col text-center">
+        <strong>Responsible organisation</strong>:
+        <a href="{{metadata.publisher.uri}}">{{literal metadata.publisher.name}}</a>
+    </div>
+</div>
+
+<!-- divider between metadata and catalogs -->
+<hr/>
+
+<!-- catalogs -->
+<div class="row">
+    <div class="col text-center">
+        <h2>Catalogs</h2>
+    </div>
+</div>
+
+<div id="catalog-panels" class="row" >
+    <div class="col-5 rounded">
+        <h3>Catalog title</h3>
+        <p>Catalog description text.</p>
+        <span>Dataset count</span>
+    </div>
+    
+    <div class="col-5 rounded">
+        <h3>Another catalog title</h3>
+        <p>Here is another catalog description text.</p>
+        <span>Dataset count</span>
+    </div>
+    
+    <div class="col-5 rounded">
+        <h3>And a third catalog title</h3>
+        <p>Catalog description text which is a bit different.</p>
+        <span>Dataset count</span>
+    </div>
+</div>
+
+<div id="catalog-detail" style="display:none;">
+    <hr>
+    
+    <div class="row">
+        <div class="col text-center">
+            <h2>Catalog detail</h2>
+        </div>
+    </div>
+</div>
+
+<!-- style -->
+<style>
+div#catalog-panels>div {
+    margin: 5px;
+    max-height: 260px;
+    background-color: lavender;
+    border-radius: .5em!important; /*override the bootstrap .25 default*/
+}
+
+div#catalog-panels>div:hover {
+    cursor: pointer;
+    background-color: #66C;
+    color: #FFF;
+}
+</style>
+
+<!-- script -->
+<script>
+var retrieveCatalog = function(metadata) {
+  $.get({
+    url: "",
+    headers: {
+      "Accept": "application/ld+json"
+    },
+    success: function(data) {
+      $.each(data["@graph"], function(index, graph) {
+        if (graph["@id"] === "") {
+          // add catalog panel
+        }
+      });
+    }
+  });
+};
+
+$("div#catalog-panels>div").bind("click", function(e) {
+  $("#catalog-detail").show();
+});
+</script>
+
+{{/partial}}
+
+{{> base}}
