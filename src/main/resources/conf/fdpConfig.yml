@@ -39,3 +39,7 @@ pidSystem:
     type: 2
     purl:
         baseUrl: http://purl.org/biosemantics-lumc/fdp
+
+# GUI settings
+gui:
+  theme: default
