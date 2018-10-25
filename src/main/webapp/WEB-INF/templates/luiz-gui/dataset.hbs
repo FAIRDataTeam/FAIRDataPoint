@@ -1,0 +1,58 @@
+{{#partial "content"}}
+
+<!-- non-trimmed metadata title -->
+<h2>{{literal metadata.title}}</h2>
+
+<!-- contact -->
+<p class="mx-auto text-center">{{metadata.publisher.uri}}</p>
+
+<!-- description -->
+<p>{{literal metadata.description}}</p>
+
+<!-- publication metadata -->
+<div class="row">
+    <div class="col text-left">
+        <p><strong>Published on</strong> {{literal metadata.issued}}</p>
+        <p><strong>Last modified on</strong> {{literal metadata.modified}}</p>
+    </div>
+    <div class="col text-center">
+        <a href="{{metadata.license}}">License</a>
+    </div>
+    <div class="col text-right">
+        <strong>Version</strong>: {{literal metadata.version}}
+    </div>
+</div>
+
+<!-- distributions -->
+<div id="dist-list" class="row justify-content-center">
+    <!--<div class="col-2 text-center">
+        <a title="SPARQL">[X]</a>
+    </div>
+    <div class="col-2 text-center">
+        <a title="CSV">[X]</a>
+    </div>-->
+</div>
+
+<!-- keywords -->
+<div class="row">
+    <div class="col-1">
+        <strong>Keywords</strong>:
+    </div>
+    <div class="col">
+        <ul class="list-unstyled">
+            {{#metadata.keywords}}<li><span>{{literal .}}</span></li>{{/metadata.keywords}}
+        </ul>
+        <ul class="list-unstyled">
+            {{#metadata.themes}}<li><span>{{.}}</span></li>{{/metadata.themes}}
+        </ul>
+    </div>
+</div>
+
+<script>
+{{#metadata.distributions}}retrieveMetadata("{{.}}", addDistributionThing);
+{{/metadata.distributions}}
+</script>
+
+{{/partial}}
+
+{{> base}}
