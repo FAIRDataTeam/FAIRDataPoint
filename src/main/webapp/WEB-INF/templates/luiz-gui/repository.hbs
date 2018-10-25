@@ -39,46 +39,72 @@
     </div>
 </div>
 
-<div id="catalog-panels" class="row" >
-    <div class="col-5 rounded">
-        <h3>Catalog title</h3>
-        <p>Catalog description text.</p>
-        <span>Dataset count</span>
-    </div>
-    
-    <div class="col-5 rounded">
-        <h3>Another catalog title</h3>
-        <p>Here is another catalog description text.</p>
-        <span>Dataset count</span>
-    </div>
-    
-    <div class="col-5 rounded">
-        <h3>And a third catalog title</h3>
-        <p>Catalog description text which is a bit different.</p>
-        <span>Dataset count</span>
-    </div>
-</div>
+<div id="catalog-panels" class="row metadata-panels"></div>
 
 <div id="catalog-detail" style="display:none;">
     <hr>
     
     <div class="row">
         <div class="col text-center">
-            <h2>Catalog detail</h2>
+            <h2 id="catalog-title"></h2>
         </div>
+    </div>
+    
+    <p id="catalog-description"></p>
+    
+    <div class="row">
+        <div class="col">
+            <p class="text-left">
+                <strong>Issued</strong>: <span id="catalog-issued"></span>
+            </p>
+        </div>
+        <div class="col">
+            <p class="text-center">
+                <a id="catalog-license">License</a>
+            </p>
+        </div>
+        <div class="col">
+            <p class="text-right">
+                <strong>Modified</strong>: <span id="catalog-modified"></span>
+            </p>
+        </div>
+    </div>
+    
+    <!-- summarize keywords -->
+    
+    <!-- dataset panels -->
+    <h2>Datasets</h2>
+    
+    <div id="dataset-panels" class="row metadata-panels">
+        <!--<div class="col-5 rounded">
+            <h4>dataset title</h4>
+            <p>dataset description text.</p>
+            
+            <div class="row">
+                <div class="col text-left">
+                    <strong>Published</strong>: $date
+                </div>
+                <div class="col text-center">
+                    <a>license</a>
+                </div>
+                <div class="col text-right">
+                    <strong>Version</strong>: $version
+                </div>
+            </div>
+        </div>-->
     </div>
 </div>
 
 <!-- style -->
 <style>
-div#catalog-panels>div {
+.metadata-panels>div {
     margin: 5px;
     max-height: 260px;
     background-color: lavender;
     border-radius: .5em!important; /*override the bootstrap .25 default*/
 }
 
-div#catalog-panels>div:hover {
+.metadata-panels>div:hover {
     cursor: pointer;
     background-color: #66C;
     color: #FFF;
@@ -87,25 +113,119 @@ div#catalog-panels>div:hover {
 
 <!-- script -->
 <script>
-var retrieveCatalog = function(metadata) {
+var retrieveMetadata = function(url, callback) {
   $.get({
-    url: "",
+    url: url,
     headers: {
       "Accept": "application/ld+json"
     },
     success: function(data) {
       $.each(data["@graph"], function(index, graph) {
-        if (graph["@id"] === "") {
-          // add catalog panel
+        if (graph["@id"] === url) {
+          console.log('adding metadata', graph);
+          callback(graph);
         }
       });
     }
   });
 };
 
-$("div#catalog-panels>div").bind("click", function(e) {
-  $("#catalog-detail").show();
-});
+var normalizeArray = function(thing) {
+  return thing == undefined ? [] :
+    thing instanceof Array ? thing : [ thing ];
+};
+
+var getDateString = function(metadata, predicate) {
+  return new Date(metadata[predicate]["@value"]).toDateString();
+};
+
+var trimText = function(str, limit) {
+  var strlimit = limit || 64;
+  var threshold = 8;
+  
+  if (str.length < strlimit) {
+    return str;
+  }
+  
+  // limit scope to threshold
+  var slice = str.slice(strlimit - threshold, strlimit + threshold);
+  
+  var slice_split = -1;
+  
+  for (var i = slice.length; i > 0; i--) {
+    var char = slice.charAt(i);
+    
+    if (char == ' ' || char == '.') {
+      slice_split = i;
+      break;
+    }
+  }
+  
+  var split_point = strlimit - threshold + slice_split;
+  
+  return str.substring(0, split_point) + "...";
+};
+
+var addCatalogPanel = function(metadata) {
+  var datasets = normalizeArray(metadata["dcat:dataset"]);
+  
+  var panel = $("<div>")
+    .addClass("col-5 rounded")
+    .append($("<h3>").text(trimText(metadata["dcterms:title"])))
+    .append($("<p>").text(trimText(metadata["dcterms:description"])))
+    .append($("<span>").text("Datasets: " + datasets.length));
+  
+  panel.appendTo($("#catalog-panels"));
+  
+  panel.bind("click", function(e) {
+    $("#catalog-detail").show();
+    
+    $.each(datasets, function(index, dataset) {
+      $("#catalog-title").text(metadata["dcterms:title"]);
+      $("#catalog-description").text(metadata["dcterms:description"]);
+      $("#catalog-issued").text(getDateString(metadata, "fdp:metadataIssued"));
+      $("#catalog-license").attr("href", metadata["dcterms:license"]["@id"]);
+      $("#catalog-modified").text(getDateString(metadata, "fdp:metadataModified"));
+      
+      // reset the datasets
+      $("#dataset-panels").html("");
+      
+      // populate the dataset panels
+      retrieveMetadata(dataset["@id"], addDatasetPanel);
+    });
+  });
+}; 
+
+var addDatasetPanel = function(metadata) {
+  var panel = $("<div>")
+    .addClass("col-5 rounded")
+    .append($("<h4>").text(trimText(metadata["dcterms:title"])))
+    .append($("<p>").text(trimText(metadata["dcterms:description"])));
+    
+  var row = $("<div>").addClass("row");
+  
+  var col1 = $("<div>").addClass("col text-left")
+    .append($("<strong>").text("Published:"))
+    .append(getDateString(metadata, "fdp:metadataIssued"));
+  row.append(col1);
+  
+  var col2 = $("<div>").addClass("col text-center")
+    .append($("<a>").attr("href", metadata["dcterms:license"]["@id"]).text("license"));
+  row.append(col2);
+  
+  var col3 = $("<div>").addClass("col text-right")
+    .append($("<strong>").text("Version:"))
+    .append(metadata["dcterms:hasVersion"]);
+  row.append(col3);
+  
+  panel.append(row);
+  
+  panel.appendTo($("#dataset-panels"));
+};
+
+// add catalog panels
+{{#metadata.catalogs}}retrieveMetadata("{{.}}", addCatalogPanel);
+{{/metadata.catalogs}}
 </script>
 
 {{/partial}}
