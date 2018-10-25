@@ -113,59 +113,6 @@
 
 <!-- script -->
 <script>
-var retrieveMetadata = function(url, callback) {
-  $.get({
-    url: url,
-    headers: {
-      "Accept": "application/ld+json"
-    },
-    success: function(data) {
-      $.each(data["@graph"], function(index, graph) {
-        if (graph["@id"] === url) {
-          console.log('adding metadata', graph);
-          callback(graph);
-        }
-      });
-    }
-  });
-};
-
-var normalizeArray = function(thing) {
-  return thing == undefined ? [] :
-    thing instanceof Array ? thing : [ thing ];
-};
-
-var getDateString = function(metadata, predicate) {
-  return new Date(metadata[predicate]["@value"]).toDateString();
-};
-
-var trimText = function(str, limit) {
-  var strlimit = limit || 64;
-  var threshold = 8;
-  
-  if (str.length < strlimit) {
-    return str;
-  }
-  
-  // limit scope to threshold
-  var slice = str.slice(strlimit - threshold, strlimit + threshold);
-  
-  var slice_split = -1;
-  
-  for (var i = slice.length; i > 0; i--) {
-    var char = slice.charAt(i);
-    
-    if (char == ' ' || char == '.') {
-      slice_split = i;
-      break;
-    }
-  }
-  
-  var split_point = strlimit - threshold + slice_split;
-  
-  return str.substring(0, split_point) + "...";
-};
-
 var addCatalogPanel = function(metadata) {
   var datasets = normalizeArray(metadata["dcat:dataset"]);
   
@@ -173,26 +120,25 @@ var addCatalogPanel = function(metadata) {
     .addClass("col-5 rounded")
     .append($("<h3>").text(trimText(metadata["dcterms:title"])))
     .append($("<p>").text(trimText(metadata["dcterms:description"])))
-    .append($("<span>").text("Datasets: " + datasets.length));
-  
-  panel.appendTo($("#catalog-panels"));
+    .append($("<span>").text("Datasets: " + datasets.length))
+    .appendTo($("#catalog-panels"));
   
   panel.bind("click", function(e) {
-    $("#catalog-detail").show();
+    $("#catalog-title").text(metadata["dcterms:title"]);
+    $("#catalog-description").text(metadata["dcterms:description"]);
+    $("#catalog-issued").text(getDateString(metadata, "fdp:metadataIssued"));
+    $("#catalog-license").attr("href", metadata["dcterms:license"]["@id"]);
+    $("#catalog-modified").text(getDateString(metadata, "fdp:metadataModified"));
+    
+    // reset the datasets
+    $("#dataset-panels").html("");
     
     $.each(datasets, function(index, dataset) {
-      $("#catalog-title").text(metadata["dcterms:title"]);
-      $("#catalog-description").text(metadata["dcterms:description"]);
-      $("#catalog-issued").text(getDateString(metadata, "fdp:metadataIssued"));
-      $("#catalog-license").attr("href", metadata["dcterms:license"]["@id"]);
-      $("#catalog-modified").text(getDateString(metadata, "fdp:metadataModified"));
-      
-      // reset the datasets
-      $("#dataset-panels").html("");
-      
       // populate the dataset panels
       retrieveMetadata(dataset["@id"], addDatasetPanel);
     });
+    
+    $("#catalog-detail").show();
   });
 }; 
 
@@ -204,23 +150,38 @@ var addDatasetPanel = function(metadata) {
     
   var row = $("<div>").addClass("row");
   
-  var col1 = $("<div>").addClass("col text-left")
-    .append($("<strong>").text("Published:"))
-    .append(getDateString(metadata, "fdp:metadataIssued"));
-  row.append(col1);
+  $("<div>").addClass("col text-left")
+    .append($("<strong>").text("Published: "))
+    .append(getDateString(metadata, "fdp:metadataIssued"))
+    .appendTo(row);
   
-  var col2 = $("<div>").addClass("col text-center")
-    .append($("<a>").attr("href", metadata["dcterms:license"]["@id"]).text("license"));
-  row.append(col2);
+  $("<div>").addClass("col text-center")
+    .append($("<a>").attr("href", metadata["dcterms:license"]["@id"]).text("license"))
+    .appendTo(row);
   
-  var col3 = $("<div>").addClass("col text-right")
-    .append($("<strong>").text("Version:"))
-    .append(metadata["dcterms:hasVersion"]);
-  row.append(col3);
+  $("<div>").addClass("col text-right")
+    .append($("<strong>").text("Version: "))
+    .append(metadata["dcterms:hasVersion"])
+    .appendTo(row);
   
   panel.append(row);
   
+  var distlist = $("<div>")
+    .addClass("row justify-content-center")
+    .appendTo(panel);
+  
+  var dists = normalizeArray(metadata["dcat:distribution"]);
+  $.each(dists, function(index, dist) {
+    retrieveMetadata(dist["@id"], function(meta) {
+      addDistributionThing(meta, distlist);
+    });
+  });
+  
   panel.appendTo($("#dataset-panels"));
+  
+  panel.bind("click", function(e) {
+    location.assign(metadata["@id"]);
+  });
 };
 
 // add catalog panels
