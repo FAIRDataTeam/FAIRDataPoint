@@ -27,7 +27,10 @@
  */
 package nl.dtls.fairdatapoint.service.impl;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import nl.dtl.fairmetadata4j.model.Metric;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
 import nl.dtls.fairdatapoint.service.FairMetaDataMetricsService;
@@ -73,6 +76,14 @@ public class FairMetaDataMetricsServiceImplTest {
      */
     @Test
     public void validMetdataUri() throws Exception {
+        
+        Field metricsField = fmMetricsServiceImpl.getClass().getDeclaredField("metadataMetrics");
+        metricsField.setAccessible(true);
+        
+        Map<String, String> metadataMetrics = new HashMap();
+        metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
+        
+        metricsField.set(fmMetricsServiceImpl, metadataMetrics);
 
         List<Metric> m = fmMetricsServiceImpl.getMetrics(valueFactory.createIRI(
                 ExampleFilesUtils.FDP_URI));
