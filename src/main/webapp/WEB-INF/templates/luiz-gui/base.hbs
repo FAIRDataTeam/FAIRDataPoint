@@ -2,90 +2,15 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"/>
-        
-        <style>
-        html {
-            position: relative;
-            min-height: 100%;
-        }
-        body {
-            margin-bottom: 60px;
-        }
-        footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 60px;
-        }
-        
-        #header {
-            padding-bottom: 20px;
-        }
-        </style>
+        <link rel="stylesheet" href="/fairdatapoint/fdp/css/luiz-gui.css"/>
         
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script>
-        var retrieveMetadata = function(url, callback) {
-          $.get({
-            url: url,
-            headers: {
-              "Accept": "application/ld+json"
-            },
-            success: function(data) {
-              $.each(data["@graph"], function(index, graph) {
-                if (graph["@id"] === url) {
-                  console.log('adding metadata', graph);
-                  callback(graph);
-                }
-              });
-            }
-          });
-        };
+        <script src="/fairdatapoint/fdp/js/luiz-gui.js"></script>
         
-        var normalizeArray = function(thing) {
-          return thing == undefined ? [] :
-            thing instanceof Array ? thing : [ thing ];
-        };
-        
-        var getDateString = function(metadata, predicate) {
-          return new Date(metadata[predicate]["@value"]).toDateString();
-        };
-        
-        var trimText = function(str, limit) {
-          var strlimit = limit || 128;
-          var threshold = 8;
-          
-          if (str.length <= strlimit) {
-            return str;
-          }
-          
-          // limit scope to threshold
-          var slice = str.slice(strlimit - threshold, strlimit + threshold);
-          
-          var slice_split = -1;
-          
-          for (var i = slice.length; i > 0; i--) {
-            var char = slice.charAt(i);
-            
-            if (char == ' ' || char == '.') {
-              slice_split = i;
-              break;
-            }
-          }
-          
-          var split_point = (slice_split == -1) ? strlimit : strlimit - threshold + slice_split;
-          
-          return str.substring(0, split_point) + "...";
-        };
-        
-        var addDistributionThing = function(metadata, parent) {
-          var thing = $("<div>")
-            .addClass("col-2 text-center")
-            .append($("<a>").attr("title", metadata["dcterms:title"]).html("<span>[X]</span>"));
-          
-          $(parent || "#dist-list").append(thing);
-        };
-        </script>
+        {{#if jsonLd}}
+        <!-- schema.org metadata -->
+        <script type="application/ld+json">{{{jsonLd}}}</script>
+        {{/if}}
     </head>
     <body>
         <div class="container">

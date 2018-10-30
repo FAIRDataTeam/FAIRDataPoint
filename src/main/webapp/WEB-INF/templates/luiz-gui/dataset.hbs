@@ -12,8 +12,8 @@
 <!-- publication metadata -->
 <div class="row">
     <div class="col text-left">
-        <p><strong>Published on</strong> {{literal metadata.issued}}</p>
-        <p><strong>Last modified on</strong> {{literal metadata.modified}}</p>
+        <p><strong>Published on</strong> <span id="meta-issued">{{literal metadata.issued}}</span></p>
+        <p><strong>Last modified on</strong> <span id="meta-modified">{{literal metadata.modified}}</span></p>
     </div>
     <div class="col text-center">
         <a href="{{metadata.license}}">License</a>
@@ -24,14 +24,7 @@
 </div>
 
 <!-- distributions -->
-<div id="dist-list" class="row justify-content-center">
-    <!--<div class="col-2 text-center">
-        <a title="SPARQL">[X]</a>
-    </div>
-    <div class="col-2 text-center">
-        <a title="CSV">[X]</a>
-    </div>-->
-</div>
+<div id="dist-list" class="row justify-content-center"></div>
 
 <!-- keywords -->
 <div class="row">
@@ -49,6 +42,9 @@
 </div>
 
 <script>
+humanifyTimestamp("span#meta-issued");
+humanifyTimestamp("span#meta-modified");
+
 {{#metadata.distributions}}retrieveMetadata("{{.}}", addDistributionThing);
 {{/metadata.distributions}}
 </script>
