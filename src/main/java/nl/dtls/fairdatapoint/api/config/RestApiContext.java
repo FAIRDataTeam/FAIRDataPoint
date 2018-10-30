@@ -127,6 +127,8 @@ public class RestApiContext implements WebMvcConfigurer {
      */
     @Value("${gui.theme:default}")
     private String guiTheme;
+    @Value("${urlPath.root:/fdp}")
+    private String rootPath;
     
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -306,6 +308,14 @@ public class RestApiContext implements WebMvcConfigurer {
         registry.setOrder(Integer.MIN_VALUE + 2).
                 addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        
+        // serving static resources from gui themes
+        registry.addResourceHandler(rootPath + "/images/**")
+                .addResourceLocations("/WEB-INF/templates/" + guiTheme + "/images/");
+        registry.addResourceHandler(rootPath + "/js/**")
+                .addResourceLocations("/WEB-INF/templates/" + guiTheme + "/js/");
+        registry.addResourceHandler(rootPath + "/css/**")
+                .addResourceLocations("/WEB-INF/templates/" + guiTheme + "/css/");
     }
 
     @Override
@@ -317,7 +327,7 @@ public class RestApiContext implements WebMvcConfigurer {
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(handlebars());
     }
-
+    
     @Bean
     public ViewResolver handlebars() {
         HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
