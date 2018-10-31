@@ -55,13 +55,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class FairMetaDataMetricsServiceImpl implements FairMetaDataMetricsService {
 
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(FairMetaDataServiceImpl.class);
 
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
+    
+    private Map<String, String> metadataMetrics;
+    
+    /**
+     * Setter method to initiate metadata metrics and its value.
+     * 
+     * @param metadataMetrics Set of metrics for metadata
+     */
     @Autowired
     @Qualifier("metadataMetrics")
-    private Map<String, String> metadataMetrics;
+    public void setMetadataMetrics(Map<String, String> metadataMetrics) {
+        this.metadataMetrics = metadataMetrics;
+    }
+
 
     /**
      * This method returns list of fair metrics for metadata
