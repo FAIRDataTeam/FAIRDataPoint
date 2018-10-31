@@ -55,7 +55,7 @@ import java.io.File;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
-
+import nl.dtls.fairdatapoint.api.controller.MetadataController;
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
@@ -127,7 +127,10 @@ public class RestApiContext implements WebMvcConfigurer {
      */
     @Value("${gui.theme:default}")
     private String guiTheme;
-    @Value("${urlPath.root:/fdp}")
+    /**
+     * Root path property, used for setting the static resource handlers.
+     */
+    @Value(MetadataController.PATH)
     private String rootPath;
     
     @Override

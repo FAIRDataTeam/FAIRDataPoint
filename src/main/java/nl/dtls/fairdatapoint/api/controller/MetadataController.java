@@ -37,6 +37,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -81,14 +82,25 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @RestController
 @Api(description = "FDP metadata")
-@RequestMapping("${urlPath.root:/fdp}")
+@RequestMapping(MetadataController.PATH)
 public class MetadataController {
-
+    /**
+     * Spring template for the root path property, defaults to {@code /fdp}.
+     */
+    public static final String PATH = "${urlPath.root:/fdp}";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(MetadataController.class);
+    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+    
     @Autowired
     private FairMetaDataService fairMetaDataService;
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-
+    
+    /**
+     * Injected root path value, used for the static resource resolving in html templates.
+     */
+    @Value(PATH)
+    private String rootPath;
+    
     /**
      * To handle GET FDP metadata request. (Note:) The first value in the produces annotation is
      * used as a fallback value, for the request with the accept header value (* / *), manually
@@ -116,7 +128,7 @@ public class MetadataController {
             storeDefaultFDPMetadata(uri);
         }
 
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(uri));
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(uri));
         return metadata;
     }
 
@@ -124,7 +136,7 @@ public class MetadataController {
 
         FDPMetadata metadata;
         try {
-            metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(uri));
+            metadata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(uri));
             if (metadata.getUri() == null) {
                 return false;
             }
@@ -149,10 +161,13 @@ public class MetadataController {
             storeDefaultFDPMetadata(uri);
         }
 
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(uri));
+        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
                 MetadataUtils.SCHEMA_DOT_ORG_MODEL));
+        
+        mav.addObject("contextPath", request.getContextPath() + rootPath);
+        
         return mav;
     }
 
@@ -179,7 +194,7 @@ public class MetadataController {
         LOGGER.info("Request to get CATALOG metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService
-                .retrieveCatalogMetaData(valueFactory.createIRI(uri));
+                .retrieveCatalogMetaData(VALUEFACTORY.createIRI(uri));
         return metadata;
     }
 
@@ -192,10 +207,13 @@ public class MetadataController {
         ModelAndView mav = new ModelAndView("catalog");
         String uri = getRequesedURL(request);
         CatalogMetadata metadata = fairMetaDataService.retrieveCatalogMetaData(
-                valueFactory.createIRI(uri));
+                VALUEFACTORY.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
                 MetadataUtils.SCHEMA_DOT_ORG_MODEL));
+        
+        mav.addObject("contextPath", request.getContextPath() + rootPath);
+        
         return mav;
     }
 
@@ -221,7 +239,7 @@ public class MetadataController {
         LOGGER.info("Request to get DATASET metadata, request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService
-                .retrieveDatasetMetaData(valueFactory.createIRI(uri));
+                .retrieveDatasetMetaData(VALUEFACTORY.createIRI(uri));
         return metadata;
     }
 
@@ -234,10 +252,13 @@ public class MetadataController {
         ModelAndView mav = new ModelAndView("dataset");
         String uri = getRequesedURL(request);
         DatasetMetadata metadata = fairMetaDataService
-                .retrieveDatasetMetaData(valueFactory.createIRI(uri));
+                .retrieveDatasetMetaData(VALUEFACTORY.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
                 MetadataUtils.SCHEMA_DOT_ORG_MODEL));
+        
+        mav.addObject("contextPath", request.getContextPath() + rootPath);
+        
         return mav;
     }
 
@@ -263,7 +284,7 @@ public class MetadataController {
         LOGGER.info("Request to get DATARECORD metadata,request url : {}", request.getRequestURL());
         String uri = getRequesedURL(request);
         DataRecordMetadata metadata = fairMetaDataService
-                .retrieveDataRecordMetadata(valueFactory.createIRI(uri));
+                .retrieveDataRecordMetadata(VALUEFACTORY.createIRI(uri));
         return metadata;
     }
 
@@ -276,9 +297,12 @@ public class MetadataController {
         ModelAndView mav = new ModelAndView("dataset");
         String uri = getRequesedURL(request);
         DataRecordMetadata metadata = fairMetaDataService
-                .retrieveDataRecordMetadata(valueFactory.createIRI(uri));
+                .retrieveDataRecordMetadata(VALUEFACTORY.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD));
+        
+        mav.addObject("contextPath", request.getContextPath() + rootPath);
+        
         return mav;
     }
 
@@ -305,7 +329,7 @@ public class MetadataController {
                 request.getRequestURL());
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService
-                .retrieveDistributionMetaData(valueFactory.createIRI(uri));
+                .retrieveDistributionMetaData(VALUEFACTORY.createIRI(uri));
         return metadata;
     }
 
@@ -318,10 +342,13 @@ public class MetadataController {
         ModelAndView mav = new ModelAndView("distribution");
         String uri = getRequesedURL(request);
         DistributionMetadata metadata = fairMetaDataService
-                .retrieveDistributionMetaData(valueFactory.createIRI(uri));
+                .retrieveDistributionMetaData(VALUEFACTORY.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
                 MetadataUtils.SCHEMA_DOT_ORG_MODEL));
+        
+        mav.addObject("contextPath", request.getContextPath() + rootPath);
+        
         return mav;
     }
 
@@ -349,8 +376,8 @@ public class MetadataController {
             storeDefaultFDPMetadata(uri);
         }
 
-        fairMetaDataService.updateFDPMetaData(valueFactory.createIRI(uri), metadata);
-        return fairMetaDataService.retrieveFDPMetaData(valueFactory.createIRI(uri));
+        fairMetaDataService.updateFDPMetaData(VALUEFACTORY.createIRI(uri), metadata);
+        return fairMetaDataService.retrieveFDPMetaData(VALUEFACTORY.createIRI(uri));
     }
 
     /**
@@ -379,9 +406,9 @@ public class MetadataController {
 
         UUID uid = UUID.randomUUID();
         LOGGER.info("Request to store catalog metatdata with ID {}", uid.toString());
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
+        IRI uri = VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
-        IRI fdpURI = valueFactory.createIRI(fURI);
+        IRI fdpURI = VALUEFACTORY.createIRI(fURI);
 
         // Set parent uri
         metadata.setParentURI(fdpURI);
@@ -416,7 +443,7 @@ public class MetadataController {
         String requestedURL = getRequesedURL(request);
         UUID uid = UUID.randomUUID();
         LOGGER.info("Request to store dataset metatdata with ID {}", uid.toString());
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
+        IRI uri = VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
 
         // Ignore children links 
@@ -449,7 +476,7 @@ public class MetadataController {
         String requestedURL = getRequesedURL(request);
         UUID uid = UUID.randomUUID();
         LOGGER.info("Request to store datarecord metatdata with ID {}", uid.toString());
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
+        IRI uri = VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
         fairMetaDataService.storeDataRecordMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -479,7 +506,7 @@ public class MetadataController {
         String requestedURL = getRequesedURL(request);
         UUID uid = UUID.randomUUID();
         LOGGER.info("Request to store distribution metatdata with ID {}", uid.toString());
-        IRI uri = valueFactory.createIRI(requestedURL + "/" + uid.toString());
+        IRI uri = VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
         metadata.setUri(uri);
         fairMetaDataService.storeDistributionMetaData(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
@@ -563,9 +590,9 @@ public class MetadataController {
         try {
             String host = new URL(fdpUrl).getAuthority();
             FDPMetadata metadata = new FDPMetadata();
-            metadata.setUri(valueFactory.createIRI(fdpUrl));
-            metadata.setTitle(valueFactory.createLiteral("FDP of " + host, XMLSchema.STRING));
-            metadata.setVersion(valueFactory.createLiteral("1.0", XMLSchema.FLOAT));
+            metadata.setUri(VALUEFACTORY.createIRI(fdpUrl));
+            metadata.setTitle(VALUEFACTORY.createLiteral("FDP of " + host, XMLSchema.STRING));
+            metadata.setVersion(VALUEFACTORY.createLiteral("1.0", XMLSchema.FLOAT));
             fairMetaDataService.storeFDPMetaData(metadata);
         } catch (MalformedURLException | MetadataException | FairMetadataServiceException ex) {
             throw new MetadataParserException("Error creating generic FDP meatdata "

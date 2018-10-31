@@ -81,17 +81,18 @@ var trimText = function(str, limit) {
   return str.substring(0, split_point) + "...";
 };
 
-var RDF_ICON = "/fairdatapoint/fdp/images/rdf_w3c_icon.48";
-var HTML_ICON = "/fairdatapoint/fdp/images/html-filetype.png";
-var CSV_ICON = "/fairdatapoint/fdp/images/microsoft-excel.png";
-var UNKNOWN_ICON = "/fairdatapoint/fdp/images/unknown.png";
+var RDF_ICON = CONTEXTPATH + "/images/rdf_w3c_icon.48";
+var HTML_ICON = CONTEXTPATH + "/images/html-filetype.png";
+var CSV_ICON = CONTEXTPATH + "/images/microsoft-excel.png";
+var TXT_ICON = CONTEXTPATH + "/images/txt-filetype.png";
+var UNKNOWN_ICON = CONTEXTPATH + "/images/unknown.png";
 
 var iconMapping = {
   "text/turtle": RDF_ICON,
   "application/rdf+xml": RDF_ICON,
   "text/html": HTML_ICON,
   "text/csv": CSV_ICON,
-  "text/plain": "/fairdatapoint/fdp/images/txt-filetype.png"
+  "text/plain": TXT_ICON
 };
 
 var getDistIcon = function(metadata) {
@@ -106,8 +107,12 @@ var getDistIcon = function(metadata) {
 
 var addDistributionThing = function(metadata, parent) {
   var thing = $("<div>")
-    .addClass("col-2 text-center")
-    .append($("<img>").attr("src", getDistIcon(metadata)).attr("title", metadata["dcterms:title"]));
+    .addClass("col-2 text-center above-panel-link");
+  
+  var img = $("<img>").attr("src", getDistIcon(metadata))
+    .tooltip({title: metadata["dcterms:title"], placement: 'auto'});
+  
+  thing.append(img);
   
   $(parent || "#dist-list").append(thing);
 };
@@ -116,28 +121,28 @@ var addCatalogPanel = function(metadata) {
   var datasets = normalizeArray(metadata["dcat:dataset"]);
   
   var panel = $("<div>")
-  	.addClass("col-5 rounded")
-  	.append($("<h3>").text(trimText(metadata["dcterms:title"])))
-  	.append($("<p>").text(trimText(metadata["dcterms:description"])))
-  	.append($("<span>").text("Datasets: " + datasets.length))
-  	.appendTo($("#catalog-panels"));
+    .addClass("col-5 rounded")
+    .append($("<h3>").text(trimText(metadata["dcterms:title"])))
+    .append($("<p>").text(trimText(metadata["dcterms:description"])))
+    .append($("<span>").text("Datasets: " + datasets.length))
+    .appendTo($("#catalog-panels"));
   
   panel.bind("click", function(e) {
-	$("#catalog-title").text(metadata["dcterms:title"]);
-	$("#catalog-description").text(metadata["dcterms:description"]);
-	$("#catalog-issued").text(getDateString(metadata, "fdp:metadataIssued"));
-	$("#catalog-license").attr("href", metadata["dcterms:license"]["@id"]);
-	$("#catalog-modified").text(getDateString(metadata, "fdp:metadataModified"));
+    $("#catalog-title").text(metadata["dcterms:title"]);
+    $("#catalog-description").text(metadata["dcterms:description"]);
+    $("#catalog-issued").text(getDateString(metadata, "fdp:metadataIssued"));
+    $("#catalog-license").attr("href", metadata["dcterms:license"]["@id"]);
+    $("#catalog-modified").text(getDateString(metadata, "fdp:metadataModified"));
 
-	// reset the datasets
-	$("#dataset-panels").html("");
+    // reset the datasets
+    $("#dataset-panels").html("");
 
-	$.each(datasets, function(index, dataset) {
-	  // populate the dataset panels
-	  retrieveMetadata(dataset["@id"], addDatasetPanel);
-	});
+    $.each(datasets, function(index, dataset) {
+      // populate the dataset panels
+      retrieveMetadata(dataset["@id"], addDatasetPanel);
+    });
 
-	$("#catalog-detail").show();
+    $("#catalog-detail").show();
   });
 }; 
 
@@ -154,13 +159,13 @@ var addDatasetPanel = function(metadata) {
     .append(getDateString(metadata, "fdp:metadataIssued"))
     .appendTo(row);
   
-  $("<div>").addClass("col text-center panel-content-link")
-  	.append($("<a>", {"href": metadata["dcterms:license"]["@id"]}).text("license"))
+  $("<div>").addClass("col text-center above-panel-link")
+    .append($("<a>", {"href": metadata["dcterms:license"]["@id"]}).text("license"))
     .appendTo(row);
   
   $("<div>").addClass("col text-right")
-  	.append($("<strong>").text("Version: "))
-	.append(metadata["dcterms:hasVersion"])
+    .append($("<strong>").text("Version: "))
+    .append(metadata["dcterms:hasVersion"])
     .appendTo(row);
   
   panel.append(row);
@@ -172,7 +177,7 @@ var addDatasetPanel = function(metadata) {
   panel.append(link);
   
   var distlist = $("<div>")
-  	.addClass("row justify-content-center")
+    .addClass("row justify-content-center")
     .appendTo(panel);
   
   var dists = normalizeArray(metadata["dcat:distribution"]);
