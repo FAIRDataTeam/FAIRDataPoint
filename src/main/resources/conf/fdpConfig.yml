@@ -37,3 +37,5 @@ pidSystem:
     type: 1
     purl:
         baseUrl: http://purl.org/YOUR-PURL-DOMAIN/fdp
+gui:
+    theme: default
