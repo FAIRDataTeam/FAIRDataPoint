@@ -28,9 +28,7 @@
 package nl.dtls.fairdatapoint.api.config;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
@@ -152,13 +150,5 @@ public class RestApiTestContext extends WebMvcConfigurerAdapter {
     @Bean
     public IRI purlBaseUrl() {
         return valueFactory.createIRI("http://purl.org/biosemantics-lumc/fdp");
-    }
-
-    @Bean(name = "metadataMetrics")
-    public Map<String, String> metadataMetrics(Environment env) {
-
-        Map<String, String> metadataMetrics = new HashMap();
-        metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
-        return metadataMetrics;
     }
 }

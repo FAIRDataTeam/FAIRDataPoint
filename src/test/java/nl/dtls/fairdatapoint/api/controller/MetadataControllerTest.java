@@ -27,17 +27,15 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
-import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.datatype.DatatypeConfigurationException;
-import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtls.fairdatapoint.api.config.ApplicationFilter;
 import nl.dtls.fairdatapoint.api.config.RestApiTestContext;
-import nl.dtls.fairdatapoint.repository.StoreManagerException;
 import nl.dtls.fairdatapoint.service.FairMetaDataService;
-import nl.dtls.fairdatapoint.service.FairMetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
@@ -48,7 +46,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -57,6 +60,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -78,6 +85,7 @@ public class MetadataControllerTest {
     @Autowired
     private RequestMappingHandlerAdapter handlerAdapter;
     @Autowired
+    @Qualifier("requestMappingHandlerMapping")
     private RequestMappingHandlerMapping handlerMapping;
     @Autowired
     private FairMetaDataService fairMetaDataService;
@@ -89,15 +97,25 @@ public class MetadataControllerTest {
     private final String TEST_DATARECORD_PATH = TEST_FDP_PATH + "/datarecord/"
             + ExampleFilesUtils.DATARECORD_ID;
     private final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH + "/distribution/"
-            + ExampleFilesUtils.DISTRIBUTION_ID;
+            + ExampleFilesUtils.DISTRIBUTION_ID;        
+    private final ValueFactory f = SimpleValueFactory.getInstance();
+    
     @InjectMocks
-    private final ApplicationFilter applicationFilter = new ApplicationFilter();
-
+    private final ApplicationFilter applicationFilter = new ApplicationFilter();    
+    @Mock
+    private FairMetaDataService fairMDService4MockMVC;
+    @InjectMocks
+    private MetadataController metadataController;
+    private MockMvc mvc;
+    
     @Before
-    public void storeExampleMetadata() throws StoreManagerException, MalformedURLException,
-            DatatypeConfigurationException, FairMetadataServiceException, MetadataException {
-
+    public void storeExampleMetadata() throws Exception {
+        
+        MockitoAnnotations.initMocks(this);
+        // setup mockmvc
+        mvc = MockMvcBuilders.standaloneSetup(metadataController).build();        
         MockHttpServletRequest request = new MockHttpServletRequest();
+        
         // Store fdp metadata
         request.setRequestURI(TEST_FDP_PATH);
         String fdpUri = request.getRequestURL().toString();
@@ -125,8 +143,22 @@ public class MetadataControllerTest {
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
         String disUri = request.getRequestURL().toString();
         fairMetaDataService.storeDistributionMetaData(
-                ExampleFilesUtils.getDistributionMetadata(disUri, dUri));
+                ExampleFilesUtils.getDistributionMetadata(disUri, dUri));        
+        
+        when(fairMDService4MockMVC.retrieveFDPMetaData(Mockito.any(IRI.class)))
+                .thenReturn(fairMetaDataService.retrieveFDPMetaData(f.createIRI(fdpUri)));
 
+    }
+    
+    /*
+    This is an example test to demonstrate how to create MockMvc test.
+    */
+    
+    @DirtiesContext
+    @Test
+    public void testMvc() throws Exception{
+        mvc.perform(MockMvcRequestBuilders.get("/fdp"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     /**
