@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/DTL-FAIRData/FAIRDataPoint/badge.svg?branch=develop)](https://coveralls.io/github/DTL-FAIRData/FAIRDataPoint?branch=develop)
 
 ### Summary 
-`FAIRDataPoint` is a REST api for creating, storing and servering `FAIR metadata`. The metadata contents are in this api are generated `semi-automatically` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document. In the current version of api we support `GET, POST and PATCH` requests.
+`FAIRDataPoint` is a REST api for creating, storing and servering `FAIR metadata`. The metadata contents are in this api are generated `semi-automatically` according to the [FAIR Data Point software specification](https://github.com/FAIRDataTeam/FAIRDataPoint-Spec) document. In the current version of api we support `GET, POST and PATCH` requests.
 
 #### Deployment machine's requirement
 * JRE 1.8
