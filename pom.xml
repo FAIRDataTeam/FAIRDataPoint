@@ -42,7 +42,7 @@
         <springsecurity.version>5.0.6.RELEASE</springsecurity.version>
         <javaxservlet.version>4.0.1</javaxservlet.version>
         <jackson.version>2.9.9</jackson.version>
-        <slf4jVersion>1.7.25</slf4jVersion>
+        <slf4jVersion>1.7.26</slf4jVersion>
         <rdf4j.version>2.4.0-M1</rdf4j.version>
         <log4j.version>2.11.0</log4j.version>
         <handlebars.version>4.1.0</handlebars.version>
