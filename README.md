@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint.svg?branch=develop)](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/61f029299b814ca8be2b8edbaab6ce50)](https://www.codacy.com/app/rajaram5/FAIRDataPoint?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DTL-FAIRData/FAIRDataPoint&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/61f029299b814ca8be2b8edbaab6ce50)](https://www.codacy.com/app/rajaram5/FAIRDataPoint?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FAIRDataTeam/FAIRDataPoint&amp;utm_campaign=Badge_Grade)
+[![Coverage Status](https://coveralls.io/repos/github/FAIRDataTeam/FAIRDataPoint/badge.svg?branch=develop)](https://coveralls.io/github/FAIRDataTeam/FAIRDataPoint?branch=develop)
 
 ### Summary 
 `FAIRDataPoint` is a REST api for creating, storing and servering `FAIR metadata`. The metadata contents are in this api are generated `semi-automatically` according to the [FAIR Data Point software specification](https://github.com/FAIRDataTeam/FAIRDataPoint-Spec) document. In the current version of api we support `GET, POST and PATCH` requests.
