@@ -37,5 +37,8 @@ pidSystem:
     type: 1
     purl:
         baseUrl: http://purl.org/YOUR-PURL-DOMAIN/fdp
+
+# The 'gui.theme' value should refer to a folder in the src/main/webapp/WEB-INF/templates/
+# directory. When absent, the fallback value is 'default'.
 gui:
     theme: default
