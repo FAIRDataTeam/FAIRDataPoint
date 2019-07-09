@@ -52,7 +52,7 @@
         <unirest.version>1.4.9</unirest.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.28.2</mockito.version>        
-        <plugin.mavenwar.version>3.2.0</plugin.mavenwar.version>
+        <plugin.mavenwar.version>3.2.3</plugin.mavenwar.version>
         <plugin.mavenlic.version>3.0</plugin.mavenlic.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.cobertura.version>2.7</plugin.cobertura.version>
