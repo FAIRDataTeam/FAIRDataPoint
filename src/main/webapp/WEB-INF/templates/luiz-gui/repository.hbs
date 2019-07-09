@@ -1,0 +1,108 @@
+{{#partial "content"}}
+
+{{#if metadata.description}}<p>{{literal metadata.description}}</p>{{/if}}
+
+<div class="row">
+    <div class="col">
+        <p class="text-left">
+            <strong>Issued</strong>: <span id="meta-issued">{{literal metadata.issued}}</span>
+        </p>
+    </div>
+    <div class="col">
+        <p class="text-center">
+            <a href="{{metadata.license}}">License</a>
+        </p>
+    </div>
+    <div class="col">
+        <p class="text-right">
+            <strong>Modified</strong>: <span id="meta-modified">{{literal metadata.modified}}</span>
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col text-center">
+        <strong>Responsible organisation</strong>:
+        <a href="{{metadata.publisher.uri}}">{{literal metadata.publisher.name}}</a>
+    </div>
+</div>
+
+<!-- divider between metadata and catalogs -->
+<hr/>
+
+<!-- catalogs -->
+<div class="row">
+    <div class="col text-center">
+        <h2>Catalogs</h2>
+    </div>
+</div>
+
+<div id="catalog-panels" class="row metadata-panels"></div>
+
+<div id="catalog-detail" style="display:none;">
+    <hr>
+    
+    <div class="row">
+        <div class="col text-center">
+            <h2 id="catalog-title"></h2>
+        </div>
+    </div>
+    
+    <p id="catalog-description"></p>
+    
+    <div class="row">
+        <div class="col">
+            <p class="text-left">
+                <strong>Issued</strong>: <span id="catalog-issued"></span>
+            </p>
+        </div>
+        <div class="col">
+            <p class="text-center">
+                <a id="catalog-license">License</a>
+            </p>
+        </div>
+        <div class="col">
+            <p class="text-right">
+                <strong>Modified</strong>: <span id="catalog-modified"></span>
+            </p>
+        </div>
+    </div>
+    
+    <!-- summarize keywords -->
+    
+    <!-- dataset panels -->
+    <h2>Datasets</h2>
+    
+    <div id="dataset-panels" class="row metadata-panels">
+        <!--<div class="col-5 rounded">
+            <h4>dataset title</h4>
+            <p>dataset description text.</p>
+            
+            <div class="row">
+                <div class="col text-left">
+                    <strong>Published</strong>: $date
+                </div>
+                <div class="col text-center">
+                    <a>license</a>
+                </div>
+                <div class="col text-right">
+                    <strong>Version</strong>: $version
+                </div>
+            </div>
+        </div>-->
+    </div>
+</div>
+
+<!-- script -->
+<script>
+humanifyTimestamp("span#meta-issued");
+humanifyTimestamp("span#meta-modified");
+
+// add catalog panels
+{{#metadata.catalogs}}retrieveMetadata("{{.}}", addCatalogPanel);
+{{/metadata.catalogs}}
+</script>
+
+{{/partial}}
+
+{{> base}}

@@ -46,7 +46,7 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
@@ -55,7 +55,7 @@ import java.io.File;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import nl.dtl.fairmetadata4j.model.Agent;
-
+import nl.dtls.fairdatapoint.api.controller.MetadataController;
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.repository.StoreManager;
 import nl.dtls.fairdatapoint.repository.StoreManagerException;
@@ -89,7 +89,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Configuration
 @Import(ApplicationSwaggerConfig.class)
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-public class RestApiContext extends WebMvcConfigurerAdapter {
+public class RestApiContext implements WebMvcConfigurer {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RestApiContext.class);
 
@@ -122,6 +122,17 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     @Value("${store.blazegraph.repository:}")
     private String blazegraphRepository;
 
+    /**
+     * GUI theme setting. Default fallback value is "default".
+     */
+    @Value("${gui.theme:default}")
+    private String guiTheme;
+    /**
+     * Root path property, used for setting the static resource handlers.
+     */
+    @Value(MetadataController.PATH)
+    private String rootPath;
+    
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
@@ -300,6 +311,14 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
         registry.setOrder(Integer.MIN_VALUE + 2).
                 addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        
+        // serving static resources from gui themes
+        registry.addResourceHandler(rootPath + "/images/**")
+                .addResourceLocations("/WEB-INF/templates/" + guiTheme + "/images/");
+        registry.addResourceHandler(rootPath + "/js/**")
+                .addResourceLocations("/WEB-INF/templates/" + guiTheme + "/js/");
+        registry.addResourceHandler(rootPath + "/css/**")
+                .addResourceLocations("/WEB-INF/templates/" + guiTheme + "/css/");
     }
 
     @Override
@@ -311,10 +330,9 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(handlebars());
     }
-
+    
     @Bean
     public ViewResolver handlebars() {
-
         HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
 
         // add handlebars helper to get a label's literal without datatype
@@ -325,7 +343,7 @@ public class RestApiContext extends WebMvcConfigurerAdapter {
             }
         });
 
-        viewResolver.setPrefix("/WEB-INF/templates/");
+        viewResolver.setPrefix("/WEB-INF/templates/" + guiTheme + "/");
         viewResolver.setSuffix(".hbs");
         viewResolver.setFailOnMissingFile(false);
 
