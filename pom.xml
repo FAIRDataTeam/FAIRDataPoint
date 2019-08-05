@@ -36,7 +36,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>                
-        <springframework.version>5.1.8.RELEASE</springframework.version>
+        <springframework.version>5.1.9.RELEASE</springframework.version>
         <springdata.version>3.1.9.RELEASE</springdata.version>        
         <springfox-swagger.version>2.9.2</springfox-swagger.version>        
         <springsecurity.version>5.1.5.RELEASE</springsecurity.version>
