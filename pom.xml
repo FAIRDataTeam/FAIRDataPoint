@@ -48,7 +48,7 @@
         <handlebars.version>4.1.2</handlebars.version>
         <fairmetadata.version>0.1-beta</fairmetadata.version>
         <velocity.version>1.7</velocity.version>
-        <snakeyaml.version>1.21</snakeyaml.version>        
+        <snakeyaml.version>1.25</snakeyaml.version>        
         <unirest.version>1.4.9</unirest.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.23.0</mockito.version>        
