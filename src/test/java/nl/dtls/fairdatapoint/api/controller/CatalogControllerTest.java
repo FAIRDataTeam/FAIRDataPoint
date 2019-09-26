@@ -22,11 +22,13 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
+import nl.dtls.fairdatapoint.repository.fixtures.MetadataFixtures;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -40,6 +42,8 @@ import static org.junit.Assert.assertFalse;
 
 public class CatalogControllerTest extends MetadataControllerTest {
 
+    @Autowired
+    MetadataFixtures metadataFixtures;
 
     /**
      * Check file extension for DataRecord layer
@@ -261,8 +265,8 @@ public class CatalogControllerTest extends MetadataControllerTest {
      */
     @DirtiesContext
     @Test
-    @Ignore //TODO Sliva - fix it
     public void storeCatalogByURLReretouring() throws Exception {
+        metadataFixtures.importDefaultFixtures("https://lorentz.fair-dtls.surf-hosted.nl/fdp");
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();

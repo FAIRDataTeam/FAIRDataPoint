@@ -1,0 +1,85 @@
+{{#> layouts/base }}
+    {{#*inline "breadcrumbs"}}
+        <ul>
+            <li>
+                <a href="{{repository.uri}}">{{literal repository.title}}</a>
+            </li>
+            <li>
+                {{literal metadata.title}}
+            </li>
+        </ul>
+    {{/inline}}
+
+    {{#*inline "content"}}
+        {{#if datasets}}
+            <h2>Datasets</h2>
+            <div class="item-list">
+                {{#each datasets}}
+                    {{#> includes/list-item
+                            list-item-title=(literal this.title)
+                            list-item-link=this.uri
+                            list-item-description=(trim (literal this.description) limit=180)
+                            list-item-tags=this.themes
+                    }}
+                        {{#*inline "list-item-metadata"}}
+                            <dl class="item-metadata">
+                                <dt>Distributions</dt>
+                                <dd>{{length this.distributions}}</dd>
+                                <dt>Issued</dt>
+                                <dd>{{dateFormat (stringToDate (literal this.issued)) "dd-MM-YYYY"}}</dd>
+                                <dt>Modified</dt>
+                                <dd>{{dateFormat (stringToDate (literal this.modified)) "dd-MM-YYYY"}}</dd>
+                            </dl>
+                        {{/inline}}
+                    {{/ includes/list-item}}
+                {{/each}}
+            </div>
+        {{/if}}
+    {{/inline}}
+
+    {{#*inline "metadata"}}
+        {{> includes/metadata-common }}
+
+        {{!-- Theme Taxonomies --}}
+        {{#if metadata.themeTaxonomys}}
+            {{#> includes/metadata-item-list
+                    metadata-item-key="Theme Taxonomies"
+            }}
+                {{#*inline "metadata-item-content"}}
+                    {{#each metadata.themeTaxonomys}}
+                        <li>
+                            <a href="{{this}}" target="_blank">{{this}}</a>
+                        </li>
+                    {{/each}}
+                {{/inline}}
+            {{/ includes/metadata-item-list}}
+        {{/if}}
+
+        {{!-- Homepage --}}
+        {{# if metadata.homepage}}
+            {{> includes/metadata-item
+                    metadata-item-key="Homepage"
+                    metadata-item-value=metadata.homepage
+                    metadata-item-link=metadata.homepage
+            }}
+        {{/if}}
+
+        {{!-- Catalog Issued --}}
+        {{# if metadata.catalogIssued}}
+            {{> includes/metadata-item
+                    metadata-item-key="Catalog Issued"
+                    metadata-item-value=(dateFormat (stringToDate (literal metadata.catalogIssued)) "dd-MM-YYYY")
+            }}
+        {{/if}}
+
+        {{!-- Catalog Modified --}}
+        {{# if metadata.catalogModified}}
+            {{> includes/metadata-item
+                    metadata-item-key="Catalog Modified"
+                    metadata-item-value=(dateFormat (stringToDate (literal metadata.catalogModified)) "dd-MM-YYYY")
+            }}
+        {{/if}}
+
+        {{> includes/metadata-download }}
+    {{/inline}}
+{{/ layouts/base}}
