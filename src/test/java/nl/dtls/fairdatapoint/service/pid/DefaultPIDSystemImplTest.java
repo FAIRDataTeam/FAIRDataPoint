@@ -42,8 +42,8 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2018-06-05
  * @version 0.1
+ * @since 2018-06-05
  */
 public class DefaultPIDSystemImplTest {
 

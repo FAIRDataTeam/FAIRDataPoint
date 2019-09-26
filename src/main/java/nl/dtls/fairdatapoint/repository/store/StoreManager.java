@@ -39,8 +39,8 @@ import java.util.List;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-01-05
  * @version 0.1
+ * @since 2016-01-05
  */
 public interface StoreManager {
 
@@ -50,7 +50,7 @@ public interface StoreManager {
      * Store RDF from openRDF model to the repository
      *
      * @param statements
-     * @param iri context uri
+     * @param iri        context uri
      * @throws StoreManagerException
      */
     void storeStatements(List<Statement> statements, IRI... iri) throws StoreManagerException;

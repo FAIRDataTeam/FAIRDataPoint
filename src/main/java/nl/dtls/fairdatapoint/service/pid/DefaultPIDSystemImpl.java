@@ -42,8 +42,8 @@ import javax.annotation.Nonnull;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2018-06-05
  * @version 0.1
+ * @since 2018-06-05
  */
 public class DefaultPIDSystemImpl implements PIDSystem {
 
@@ -56,8 +56,8 @@ public class DefaultPIDSystemImpl implements PIDSystem {
      *
      * @param <T>
      * @param metadata Subtype of Metadata object
-     * @throws NullPointerException exception if the metadata or the metadata URI is null
      * @return PID uri as IRI
+     * @throws NullPointerException exception if the metadata or the metadata URI is null
      */
     @Override
     public <T extends Metadata> IRI getURI(@Nonnull T metadata) {
@@ -75,9 +75,9 @@ public class DefaultPIDSystemImpl implements PIDSystem {
      * Returns identifier of a given default PID iri.
      *
      * @param iri PID IRI
-     * @throws NullPointerException exception if the pid URI is null
-     * @throws IllegalStateException exception if the pid URI doesn't contain "#" character
      * @return ID as String
+     * @throws NullPointerException  exception if the pid URI is null
+     * @throws IllegalStateException exception if the pid URI doesn't contain "#" character
      */
     @Override
     public String getId(@Nonnull IRI iri) {

@@ -45,8 +45,8 @@ import java.util.concurrent.CompletableFuture;
  * Service layer implementation for FairSearchClient
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @since 2017-10-30
  * @version 0.1
+ * @since 2017-10-30
  */
 @Component
 public class FairSearchClientImpl implements FairSearchClient {

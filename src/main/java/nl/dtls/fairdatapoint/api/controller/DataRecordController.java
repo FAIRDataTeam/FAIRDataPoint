@@ -55,7 +55,6 @@ public class DataRecordController extends MetadataController {
      * @param response
      * @return Metadata about the dataset in one of the acceptable formats (RDF Turtle, JSON-LD, RDF
      * XML and RDF N3)
-     *
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "Dataset metadata")
@@ -94,11 +93,10 @@ public class DataRecordController extends MetadataController {
     /**
      * To handle POST datarecord metadata request.
      *
-     * @param request Http request
+     * @param request  Http request
      * @param response Http response
      * @param metadata datarecord metadata
      * @return created message
-     *
      * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws MetadataServiceException
      */

@@ -28,11 +28,10 @@
 package nl.dtls.fairdatapoint.service.metadata;
 
 /**
- *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2015-11-25
  * @version 0.1
+ * @since 2015-11-25
  */
 public class MetadataServiceException extends Exception {
 

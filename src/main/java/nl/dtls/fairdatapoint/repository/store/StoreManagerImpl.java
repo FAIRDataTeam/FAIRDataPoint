@@ -54,8 +54,8 @@ import java.util.List;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-01-05
  * @version 0.2
+ * @since 2016-01-05
  */
 public class StoreManagerImpl implements StoreManager {
 

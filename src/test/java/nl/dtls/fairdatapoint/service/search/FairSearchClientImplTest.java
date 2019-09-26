@@ -44,8 +44,8 @@ import static org.mockito.Mockito.when;
  * FairSearchClientImplTest class unit tests
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @since 2017-10-30
  * @version 0.1
+ * @since 2017-10-30
  */
 public class FairSearchClientImplTest {
 

@@ -54,17 +54,6 @@ import static org.mockito.Mockito.when;
 @DirtiesContext
 public abstract class MetadataControllerTest extends BaseIntegrationTest {
 
-    @Autowired
-    @Qualifier("requestMappingHandlerAdapter")
-    protected RequestMappingHandlerAdapter handlerAdapter;
-
-    @Autowired
-    @Qualifier("requestMappingHandlerMapping")
-    protected RequestMappingHandlerMapping handlerMapping;
-
-    @Autowired
-    private MetadataService fairMetaDataService;
-
     protected final String TEST_FDP_PATH = "/fdp";
     protected final String TEST_CATALOG_PATH = TEST_FDP_PATH + "/catalog/"
             + ExampleFilesUtils.CATALOG_ID;
@@ -75,20 +64,23 @@ public abstract class MetadataControllerTest extends BaseIntegrationTest {
     protected final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH + "/distribution/"
             + ExampleFilesUtils.DISTRIBUTION_ID;
     protected final ValueFactory f = SimpleValueFactory.getInstance();
-
     @InjectMocks
     protected final LoggingFilter loggingFilter = new LoggingFilter();
-
     @InjectMocks
     protected final CORSFilter corsFilter = new CORSFilter();
-
+    @Autowired
+    @Qualifier("requestMappingHandlerAdapter")
+    protected RequestMappingHandlerAdapter handlerAdapter;
+    @Autowired
+    @Qualifier("requestMappingHandlerMapping")
+    protected RequestMappingHandlerMapping handlerMapping;
+    protected MockMvc mvc;
+    @Autowired
+    private MetadataService fairMetaDataService;
     @Mock
     private MetadataService fairMDService4MockMVC;
-
     @InjectMocks
     private FdpController fdpController;
-
-    protected MockMvc mvc;
 
     @Before
     public void storeExampleMetadata() throws Exception {

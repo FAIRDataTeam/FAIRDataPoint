@@ -37,13 +37,14 @@ import javax.annotation.Nonnull;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2018-06-04
  * @version 0.1
+ * @since 2018-06-04
  */
 public interface PIDSystem {
 
     /**
      * This method returns PID uri of a given metadata
+     *
      * @param <T>
      * @param metadata Subtype of Metadata object
      * @return PID uri as IRI
@@ -51,8 +52,9 @@ public interface PIDSystem {
     <T extends Metadata> IRI getURI(@Nonnull T metadata);
 
     /**
-     * This method returns identifier of a given iri 
-     * @param iri PID uri   
+     * This method returns identifier of a given iri
+     *
+     * @param iri PID uri
      * @return Identifier as String
      */
     String getId(@Nonnull IRI iri);

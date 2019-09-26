@@ -45,8 +45,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2018-06-06
  * @version 0.1
+ * @since 2018-06-06
  */
 public class PurlPIDSystemImpl implements PIDSystem {
 
@@ -65,10 +65,10 @@ public class PurlPIDSystemImpl implements PIDSystem {
      *
      * @param <T>
      * @param metadata Subtype of Metadata object
-     * @throws NullPointerException exception if the metadata or the metadata URI is null
+     * @return purl.org uri as IRI
+     * @throws NullPointerException  exception if the metadata or the metadata URI is null
      * @throws IllegalStateException exception if the base purl.org is empty
      * @throws IllegalStateException exception if the fdpUri is empty or null
-     * @return purl.org uri as IRI
      */
     @Override
     public <T extends Metadata> IRI getURI(T metadata) throws IllegalStateException {
@@ -103,9 +103,9 @@ public class PurlPIDSystemImpl implements PIDSystem {
      * Returns identifier of a given purl PID iri.
      *
      * @param iri Purl PID IRI
-     * @throws NullPointerException exception if the purl pid URI is null
-     * @throws IllegalStateException exception if the purl URI doesn't contain "purl.org" string
      * @return ID as String
+     * @throws NullPointerException  exception if the purl pid URI is null
+     * @throws IllegalStateException exception if the purl URI doesn't contain "purl.org" string
      */
     @Override
     public String getId(IRI iri) {

@@ -37,7 +37,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * HttpMessageConverters}.
  *
  * @param <T> {@link Metadata} instance this converter provides conversion for
- *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
  */
@@ -55,22 +54,6 @@ public abstract class AbstractMetadataMessageConverter<T extends Metadata> exten
     }
 
     /**
-     * Visitor method to configure content negotiation for this converter.
-     *
-     * @param configurer {@link WebMvcConfigurerAdapter
-     * #configureContentNegotiation(ContentNegotiationConfigurer)
-     *        WebMvcConfigurerAdapter} configurer instance.
-     */
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-
-        configurer.mediaType(format.getDefaultFileExtension(),
-                MediaType.parseMediaType(format.getDefaultMIMEType()));
-
-        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(),
-                format.getDefaultMIMEType());
-    }
-
-    /**
      * Convenience method for transforming the mimetypes of a {@link RDFFormat} into
      * {@link MediaType} objecs Spring understands.
      *
@@ -82,5 +65,21 @@ public abstract class AbstractMetadataMessageConverter<T extends Metadata> exten
                 .stream()
                 .map(MediaType::parseMediaType)
                 .toArray(MediaType[]::new);
+    }
+
+    /**
+     * Visitor method to configure content negotiation for this converter.
+     *
+     * @param configurer {@link WebMvcConfigurerAdapter
+     *                   #configureContentNegotiation(ContentNegotiationConfigurer)
+     *                   WebMvcConfigurerAdapter} configurer instance.
+     */
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+
+        configurer.mediaType(format.getDefaultFileExtension(),
+                MediaType.parseMediaType(format.getDefaultMIMEType()));
+
+        LOGGER.info("registering {} with {}", format.getDefaultFileExtension(),
+                format.getDefaultMIMEType());
     }
 }

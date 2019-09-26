@@ -302,7 +302,6 @@ public class MetadataServiceImpl implements MetadataService {
 
     /**
      * Add default values for the mandatory metadata properties
-     *
      */
     private <T extends Metadata> void addDefaultValues(@Nonnull T metadata) {
 

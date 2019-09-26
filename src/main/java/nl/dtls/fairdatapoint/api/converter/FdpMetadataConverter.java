@@ -46,8 +46,8 @@ import java.nio.charset.StandardCharsets;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-09-19
  * @version 0.1
+ * @since 2016-09-19
  */
 public class FdpMetadataConverter extends AbstractMetadataMessageConverter<FDPMetadata> {
 

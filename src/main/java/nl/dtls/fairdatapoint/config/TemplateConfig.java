@@ -44,18 +44,6 @@ public class TemplateConfig {
     @Autowired
     private HandlebarsViewResolver handlebarsViewResolver;
 
-    @PostConstruct
-    public void registerHelper() {
-        handlebarsViewResolver.registerHelper("literal",
-                (Helper<Literal>) (literal, options) -> literal.getLabel());
-        handlebarsViewResolver.registerHelper("stringToDate",
-                (Helper<String>) (string, options) -> stringToDate(string));
-        handlebarsViewResolver.registerHelper("length",
-                (Helper<Collection>) (collection, options) -> collection.size());
-        handlebarsViewResolver.registerHelper("trim",
-                (Helper<String>) (string, options) -> trim(string, options.hash("limit")));
-    }
-
     private static Date stringToDate(String string) {
         try {
             final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -71,5 +59,17 @@ public class TemplateConfig {
         }
 
         return string.substring(0, limit) + "...";
+    }
+
+    @PostConstruct
+    public void registerHelper() {
+        handlebarsViewResolver.registerHelper("literal",
+                (Helper<Literal>) (literal, options) -> literal.getLabel());
+        handlebarsViewResolver.registerHelper("stringToDate",
+                (Helper<String>) (string, options) -> stringToDate(string));
+        handlebarsViewResolver.registerHelper("length",
+                (Helper<Collection>) (collection, options) -> collection.size());
+        handlebarsViewResolver.registerHelper("trim",
+                (Helper<String>) (string, options) -> trim(string, options.hash("limit")));
     }
 }

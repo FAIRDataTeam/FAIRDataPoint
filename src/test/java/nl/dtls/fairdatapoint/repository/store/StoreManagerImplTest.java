@@ -55,29 +55,25 @@ import static org.mockito.Mockito.when;
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-01-05
  * @version 0.2
+ * @since 2016-01-05
  */
 @DirtiesContext
 public class StoreManagerImplTest extends BaseIntegrationTest {
 
-    @Autowired
-    private StoreManager testStoreManager;
     private final ValueFactory f = SimpleValueFactory.getInstance();
-
-    @Mock
-    private Repository repository;
-
-    @InjectMocks
-    private StoreManagerImpl mockStoreManager;
-
     private final List<Statement> STATEMENTS = ExampleFilesUtils.
             getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE,
                     "http://www.dtls.nl/test");
-
     private final IRI TESTSUB = f.createIRI("http://www.dtls.nl/testSub");
     private final IRI TESTOBJ = f.createIRI("http://www.dtls.nl/testObj");
     private final Statement TESTSTMT = f.createStatement(TESTSUB, RDF.TYPE, TESTOBJ);
+    @Autowired
+    private StoreManager testStoreManager;
+    @Mock
+    private Repository repository;
+    @InjectMocks
+    private StoreManagerImpl mockStoreManager;
 
     @Before
     public void storeExampleFile() throws StoreManagerException {

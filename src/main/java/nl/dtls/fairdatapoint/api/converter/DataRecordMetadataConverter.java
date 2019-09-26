@@ -47,7 +47,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
- *
  * @author rajaram
  */
 public class DataRecordMetadataConverter extends

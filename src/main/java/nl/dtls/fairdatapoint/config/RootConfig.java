@@ -40,16 +40,6 @@ import java.util.Map;
 @Configuration
 public class RootConfig {
 
-    @Bean(name = "metadataMetrics")
-    public Map<String, String> metadataMetrics(Environment env) {
-
-        YamlMapFactoryBean yamlFactory = new YamlMapFactoryBean();
-        yamlFactory.setResources(fdpConfig(env));
-        Map<String, Object> config = yamlFactory.getObject();
-        Map<String, String> metadataMetrics = (Map) config.get("metadataMetrics");
-        return metadataMetrics;
-    }
-
     private static Resource fdpConfig(Environment env) {
 
         Resource resource;
@@ -59,5 +49,15 @@ public class RootConfig {
             resource = new ClassPathResource("application.yml");
         }
         return resource;
+    }
+
+    @Bean(name = "metadataMetrics")
+    public Map<String, String> metadataMetrics(Environment env) {
+
+        YamlMapFactoryBean yamlFactory = new YamlMapFactoryBean();
+        yamlFactory.setResources(fdpConfig(env));
+        Map<String, Object> config = yamlFactory.getObject();
+        Map<String, String> metadataMetrics = (Map) config.get("metadataMetrics");
+        return metadataMetrics;
     }
 }

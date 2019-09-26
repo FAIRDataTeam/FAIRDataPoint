@@ -41,10 +41,9 @@ import static org.junit.Assert.assertTrue;
 
 public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
 
+    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     @Autowired
     private FairMetadataMetricsServiceImpl fmMetricsServiceImpl;
-
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
     /**
      * Test getMetrics with null uri, this test is excepted to throw error

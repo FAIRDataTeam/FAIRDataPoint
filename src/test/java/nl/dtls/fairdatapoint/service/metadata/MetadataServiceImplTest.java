@@ -51,16 +51,16 @@ import static org.mockito.Mockito.when;
 public class MetadataServiceImplTest extends BaseIntegrationTest {
 
     private final static ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
-    @Autowired
-    private MetadataService fairMetaDataService;
-    @Mock
-    private MetadataService mockFairMetaDataService;
     private final String TEST_FDP_URI = "http://example.com/fdp";
     private final String TEST_CATALOG_URI = "http://example.com/fdp/catalog";
     private final String TEST_DATASET_URI = "http://example.com/fdp/catalog/dataset";
     private final String TEST_DATARECORD_URI = "http://example.com/fdp/catalog/dataset/datarecord";
     private final String TEST_DISTRIBUTION_URI
             = "http://example.com/fdp/catalog/dataset/distrubtion";
+    @Autowired
+    private MetadataService fairMetaDataService;
+    @Mock
+    private MetadataService mockFairMetaDataService;
 
     @Before
     public void storeExampleMetadata() throws Exception {
