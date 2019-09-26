@@ -25,19 +25,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.converter;
+package nl.dtls.fairdatapoint.config;
 
+import nl.dtls.fairdatapoint.api.converter.*;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-09-19
- * @version 0.1
- */
 @Configuration
 public class ConverterConfig {
 
