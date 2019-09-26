@@ -21,12 +21,14 @@
 # THE SOFTWARE.
 #
 
-FROM tomcat:8.0-jre8-alpine
+FROM openjdk:8-jdk-slim
 
-MAINTAINER Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+RUN apt-get update && apt-get install -y libsass1
 
-# Copy setup file
-COPY dockerSetup.sh /
+WORKDIR /fdp
 
-# RUN setup file
-RUN sh /dockerSetup.sh
+ADD target/fdp-spring-boot.jar /fdp/app.jar
+ADD target/classes/application-production.yml /fdp/application-production.yml
+ADD target/classes/META-INF/resources/WEB-INF/scss /fdp/scss
+
+ENTRYPOINT java -jar app.jar --spring.profiles.active=production --spring.config.location=classpath:/application.yml,file:/fdp/application-production.yml

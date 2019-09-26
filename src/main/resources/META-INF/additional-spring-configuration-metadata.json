@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "scssDir",
+      "type": "java.lang.String",
+      "description": "Path to the scssDir."
+    },
+    {
+      "name": "instance.url",
+      "type": "java.lang.String",
+      "description": "Instance URL."
+    }
+  ]
+}
