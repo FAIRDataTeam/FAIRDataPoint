@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,17 +30,8 @@ package nl.dtls.fairdatapoint.repository.store;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import javax.annotation.Nonnull;
-
 import org.eclipse.rdf4j.common.iteration.Iterations;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
@@ -53,6 +44,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+
 /**
  * Contain methods to store data and retrieve data from the triple store
  *
@@ -63,7 +59,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 public class StoreManagerImpl implements StoreManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StoreManagerImpl.class);    
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoreManagerImpl.class);
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
     private final String GETFDPURIQUERY = "getFdpIri.sparql";
 
@@ -177,7 +173,7 @@ public class StoreManagerImpl implements StoreManager {
             String queryString = Resources.toString(fileURL, Charsets.UTF_8);
             TupleQuery query = conn.prepareTupleQuery(queryString);
             query.setBinding("iri", uri);
-            
+
             IRI fdpIri = null;
             List<BindingSet> resultSet = QueryResults.asList(query.evaluate());
             for (BindingSet solution : resultSet) {

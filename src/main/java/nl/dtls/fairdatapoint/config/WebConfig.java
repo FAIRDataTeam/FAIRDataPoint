@@ -25,7 +25,6 @@ package nl.dtls.fairdatapoint.config;
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;

@@ -14,7 +14,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableWebMvc
 @ActiveProfiles(Profiles.TESTING)
-@ContextConfiguration(classes = {RepositoryTestConfig.class, MetadataTestConfig.class}, loader = SpringBootContextLoader.class)
+@ContextConfiguration(classes = {RepositoryTestConfig.class, MetadataTestConfig.class}, loader =
+        SpringBootContextLoader.class)
 @SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
 public abstract class BaseIntegrationTest {

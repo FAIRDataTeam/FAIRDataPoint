@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,10 +27,8 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
-import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.Metadata;
 import nl.dtls.fairdatapoint.service.metadata.MetadataService;
-import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -101,7 +99,7 @@ public abstract class MetadataController {
             }
 
             if (port != null && requestedURL.getPort() != -1) {
-                String val = ":" + String.valueOf(requestedURL.getPort());
+                String val = ":" + requestedURL.getPort();
                 LOGGER.info("x-forwarded-port {}", port);
                 switch (port) {
                     case "443":

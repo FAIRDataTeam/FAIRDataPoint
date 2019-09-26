@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,15 +27,15 @@
  */
 package nl.dtls.fairdatapoint.service.pid;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * DefaultPIDSystemImpl class unit tests
@@ -46,7 +46,7 @@ import org.junit.Test;
  * @version 0.1
  */
 public class DefaultPIDSystemImplTest {
-    
+
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     private final DefaultPIDSystemImpl test = new DefaultPIDSystemImpl();
     private final FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI);
@@ -58,7 +58,7 @@ public class DefaultPIDSystemImplTest {
     public void testGetURIForNullMetadata() {
         test.getURI(null);
     }
-    
+
     /**
      * Test of null metadata uri, this test is excepted to throw error
      */
@@ -68,8 +68,8 @@ public class DefaultPIDSystemImplTest {
         metadataCopy.setUri(null);
         test.getURI(metadataCopy);
     }
-    
-    
+
+
     /**
      * Test of valid metadata uri, this test is excepted to pass
      */
@@ -78,7 +78,7 @@ public class DefaultPIDSystemImplTest {
         IRI iri = test.getURI(metadata);
         assertTrue(iri.toString().contains("#"));
     }
-    
+
     /**
      * Test of null pid iri, this test is excepted to throw error
      */
@@ -86,7 +86,7 @@ public class DefaultPIDSystemImplTest {
     public void testGetIdForNullPIDIri() {
         test.getId(null);
     }
-    
+
     /**
      * Test of invalid default pid iri, this test is excepted to throw error
      */
@@ -94,7 +94,7 @@ public class DefaultPIDSystemImplTest {
     public void testGetIdForInvalidPIDIri() {
         test.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
     }
-    
+
     /**
      * Test of valid default pid iri, this test is excepted to throw error
      */
@@ -104,5 +104,5 @@ public class DefaultPIDSystemImplTest {
         String resultId = test.getId(valueFactory.createIRI("http://example.com/fdp#" + id));
         assertEquals(resultId, id);
     }
-    
+
 }

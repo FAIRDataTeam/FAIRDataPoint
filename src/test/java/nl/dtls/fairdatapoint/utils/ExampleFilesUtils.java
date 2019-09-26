@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,21 +30,8 @@ package nl.dtls.fairdatapoint.utils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
-import nl.dtl.fairmetadata4j.io.DataRecordMetadataParser;
-import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
-import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.io.*;
+import nl.dtl.fairmetadata4j.model.*;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -56,6 +43,12 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Contains references to the example metadata rdf files which are used in the Junit tests.

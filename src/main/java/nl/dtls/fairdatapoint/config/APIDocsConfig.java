@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,6 @@ package nl.dtls.fairdatapoint.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -55,12 +54,12 @@ public class APIDocsConfig {
         return new ApiInfo(
                 "FDP API Java based",
                 "<p>This API is a prototype version, If you find bugs in this api "
-                + "please contact the developer.</p>"
-                + "<p>"
-                + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/FAIRDataPoint/"
+                        + "please contact the developer.</p>"
+                        + "<p>"
+                        + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/FAIRDataPoint/"
                         + "wiki/FAIR-Data-Point-Specification'>API specs</li>"
-                + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
-                + "FAIRDataPoint'>Source code</a> </li></p>",
+                        + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
+                        + "FAIRDataPoint'>Source code</a> </li></p>",
                 "0.1-beta",
                 "ATO",
                 "rr.kaliyaperumal@gmail.com",

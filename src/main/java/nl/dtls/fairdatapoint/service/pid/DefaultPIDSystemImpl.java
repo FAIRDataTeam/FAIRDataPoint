@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,14 +28,14 @@
 package nl.dtls.fairdatapoint.service.pid;
 
 import com.google.common.base.Preconditions;
-
-import javax.annotation.Nonnull;
 import nl.dtl.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 /**
  * Implementation of default PID system
@@ -61,7 +61,7 @@ public class DefaultPIDSystemImpl implements PIDSystem {
      */
     @Override
     public <T extends Metadata> IRI getURI(@Nonnull T metadata) {
-        
+
         Preconditions.checkNotNull(metadata, "Metadata must not be null.");
         Preconditions.checkNotNull(metadata.getUri(), "Metadata URI must not be null.");
         LOGGER.info("Creating an new default PID");
@@ -86,7 +86,7 @@ public class DefaultPIDSystemImpl implements PIDSystem {
         Preconditions.checkState(iri.toString().contains("#"), "Not an valid default pid uri.");
         String id = null;
         String uri = iri.toString();
-        id = uri.substring(uri.lastIndexOf('#') + 1, uri.length());
+        id = uri.substring(uri.lastIndexOf('#') + 1);
         return id;
     }
 

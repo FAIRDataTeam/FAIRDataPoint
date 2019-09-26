@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,9 +30,6 @@ package nl.dtls.fairdatapoint.service.search;
 import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nonnull;
-
 import org.apache.http.HttpStatus;
 import org.eclipse.rdf4j.model.IRI;
 import org.slf4j.Logger;
@@ -40,6 +37,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nonnull;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Service layer implementation for FairSearchClient
@@ -66,7 +66,7 @@ public class FairSearchClientImpl implements FairSearchClient {
     @Async
     @Override
     public CompletableFuture submitFdpUri(@Nonnull IRI uri) {
-        
+
         Preconditions.checkState(uri != null, "FDP uri can't be null");
         return CompletableFuture.supplyAsync(() -> {
             try {

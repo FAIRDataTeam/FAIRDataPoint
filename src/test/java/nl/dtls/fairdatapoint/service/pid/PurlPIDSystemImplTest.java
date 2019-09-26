@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,9 +27,6 @@
  */
 package nl.dtls.fairdatapoint.service.pid;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
@@ -46,6 +43,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 /**
  * PurlPIDSystemImplTest class unit tests
@@ -73,7 +74,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
 
     @Mock
     private MetadataService fairMetaDataService;
-    
+
     @Mock
     private IRI purlBaseUrl;
 
@@ -120,7 +121,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
         mdata.setParentURI(null);
         test.getURI(mdata);
     }
-    
+
     /**
      * Test of null purl base uri, this test is excepted to throw error
      */
@@ -137,9 +138,9 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
      */
     @Test
     public void testGetURIForValidMetadata() throws Exception {
-        
+
         // Setting up mock object
-        
+
         when(purlBaseUrl.toString()).thenReturn("http://purl.org/biosemantics-lumc/fdp");
         when(fairMetaDataService.getFDPIri(catalogMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());

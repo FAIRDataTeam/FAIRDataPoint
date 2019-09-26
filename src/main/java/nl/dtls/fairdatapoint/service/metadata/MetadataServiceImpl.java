@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,26 +28,8 @@
 package nl.dtls.fairdatapoint.service.metadata;
 
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import javax.annotation.Nonnull;
-import javax.xml.datatype.DatatypeConfigurationException;
-import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
-import nl.dtl.fairmetadata4j.io.DataRecordMetadataParser;
-import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
-import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
-import nl.dtl.fairmetadata4j.io.MetadataException;
-import nl.dtl.fairmetadata4j.model.AccessRights;
-import nl.dtl.fairmetadata4j.model.Agent;
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.model.Identifier;
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtl.fairmetadata4j.io.*;
+import nl.dtl.fairmetadata4j.model.*;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtl.fairmetadata4j.utils.RDFUtils;
@@ -57,8 +39,8 @@ import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.repository.store.StoreManager;
 import nl.dtls.fairdatapoint.repository.store.StoreManagerException;
 import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
-import nl.dtls.fairdatapoint.service.search.FairSearchClient;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
+import nl.dtls.fairdatapoint.service.search.FairSearchClient;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
@@ -74,6 +56,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Nonnull;
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class MetadataServiceImpl implements MetadataService {
@@ -182,7 +170,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No fdp URI is provied. Include dcterms:isPartOf statement "
-                + "in the post body rdf");
+                        + "in the post body rdf");
 //        Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
 //                "The fdp URI doesn't exist in the repository. "
 //                + "Please try with valid fdp URI");        
@@ -205,10 +193,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No catalog URI is provied. Include dcterms:isPartOf statement "
-                + "in the post body rdf");
+                        + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The catalog URI doesn't exist in the repository. "
-                + "Please try with valid catalog URI");
+                        + "Please try with valid catalog URI");
 
         if (!datasetSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(datasetSpecs));
@@ -229,10 +217,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No dataset URI is provied. Include dcterms:isPartOf statement "
-                + "in the post body rdf");
+                        + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
-                + "Please try with valid dataset URI");
+                        + "Please try with valid dataset URI");
 
         if (!distributionSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(distributionSpecs));
@@ -253,10 +241,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         Preconditions.checkState(metadata.getParentURI() != null,
                 "No dataset URI is provied. Include dcterms:isPartOf statement "
-                + "in the post body rdf");
+                        + "in the post body rdf");
         Preconditions.checkState(isSubjectURIExist(metadata.getParentURI()),
                 "The dataset URI doesn't exist in the repository. "
-                + "Please try with valid dataset URI");
+                        + "Please try with valid dataset URI");
 
         if (!datarecordSpecs.isEmpty()) {
             metadata.setSpecification(VALUEFACTORY.createIRI(datarecordSpecs));
@@ -279,7 +267,7 @@ public class MetadataServiceImpl implements MetadataService {
                 "Metadata must not be null.");
         Preconditions.checkState(!isSubjectURIExist(metadata.getUri()),
                 "The metadata URI already exist in the repository. "
-                + "Please try with different ID");
+                        + "Please try with different ID");
 
         addDefaultValues(metadata);
         try {

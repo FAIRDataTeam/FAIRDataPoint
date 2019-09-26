@@ -28,7 +28,9 @@
         <RollingFile name="api-request-log" fileName="${log-path}/fdp-api-request.log"
                      filePattern="${log-path}/fdp-api-request-%d{yyyy-MM-dd}.log">
             <PatternLayout>
-                <pattern>%X{ipAddress} - - %d{[dd/MM/yyyy:HH:mm:ss -SSSS]} \"%X{requestMethod} %X{requestURI} %X{requestProtocol}\" %X{responseStatus} %X{contentSize}%n</pattern>
+                <pattern>%X{ipAddress} - - %d{[dd/MM/yyyy:HH:mm:ss -SSSS]} \"%X{requestMethod} %X{requestURI}
+                    %X{requestProtocol}\" %X{responseStatus} %X{contentSize}%n
+                </pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
