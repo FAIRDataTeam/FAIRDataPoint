@@ -27,38 +27,22 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.repository.store.StoreManager;
-import nl.dtls.fairdatapoint.repository.store.StoreManagerException;
-import nl.dtls.fairdatapoint.repository.store.StoreManagerImpl;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFParseException;
-import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 
-import java.io.IOException;
-
 @TestConfiguration
-public class RepositoryConfig {
+public class RepositoryTestConfig {
 
-    @Bean(name = "repository", initMethod = "initialize", destroyMethod = "shutDown")
-    public Repository repository(final Environment env) throws RepositoryException, IOException,
-            RDFParseException {
-
+    @Bean(initMethod = "initialize", destroyMethod = "shutDown")
+    public Repository repository(final Environment env) throws RepositoryException, RDFParseException {
         // For tests we use only in memory
-        Sail store = new MemoryStore();
-        return new SailRepository(store);
-    }
-
-    @Bean(name = "storeManager")
-    @DependsOn({"repository"})
-    public StoreManager storeManager() throws RepositoryException, StoreManagerException {
-        return new StoreManagerImpl();
+        return new SailRepository(new MemoryStore());
     }
 
 }

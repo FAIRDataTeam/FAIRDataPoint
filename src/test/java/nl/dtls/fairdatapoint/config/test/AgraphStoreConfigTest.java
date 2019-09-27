@@ -36,7 +36,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.assertNotNull;
 
-@TestPropertySource(properties = {"store.type=3"})
+@TestPropertySource(properties = {"repository.type=3"})
 public class AgraphStoreConfigTest extends BaseIntegrationTest {
 
     @Autowired

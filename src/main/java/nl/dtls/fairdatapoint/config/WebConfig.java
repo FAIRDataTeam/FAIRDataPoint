@@ -60,14 +60,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+        // Swagger
         registry.setOrder(Integer.MIN_VALUE + 1).addResourceHandler("/swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
-
-        registry.setOrder(Integer.MIN_VALUE + 2).
-                addResourceHandler("/webjars/**")
+        registry.setOrder(Integer.MIN_VALUE + 2).addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
 
-        // serving static resources from gui themes
+        // Serving static resources
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("classpath:/META-INF/resources/WEB-INF/static/images/");
     }

@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.assertNotNull;
 
-@TestPropertySource(properties = {"store.type=4"})
+@TestPropertySource(properties = {"repository.type=4"})
 public class GraphDBStoreConfigTest extends BaseIntegrationTest {
 
     @Autowired

@@ -5,8 +5,8 @@ instance:
 handlebars:
   prefix: classpath:templates
 
-# valid store type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph}
-store:
+# valid repository type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph}
+repository:
   type: 1
   agraph:
     url: http://localhost:10035/repositories/fdp

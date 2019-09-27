@@ -41,7 +41,8 @@ public class CssController {
     @RequestMapping(value = "/main.css", method = RequestMethod.GET, produces = {"text/css"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getScss() {
+    public String getCss() {
         return scssService.loadScss("main");
     }
+
 }

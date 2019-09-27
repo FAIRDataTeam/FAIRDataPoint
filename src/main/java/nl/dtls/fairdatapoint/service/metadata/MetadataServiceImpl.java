@@ -36,8 +36,8 @@ import nl.dtl.fairmetadata4j.utils.RDFUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
 import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
-import nl.dtls.fairdatapoint.repository.store.StoreManager;
-import nl.dtls.fairdatapoint.repository.store.StoreManagerException;
+import nl.dtls.fairdatapoint.repository.metadata.MetadataRepository;
+import nl.dtls.fairdatapoint.repository.metadata.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.search.FairSearchClient;
@@ -72,7 +72,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     private IRI fdpUri;
     @Autowired
-    private StoreManager storeManager;
+    private MetadataRepository storeManager;
     @Autowired
     private Agent publisher;
     @Autowired
@@ -294,7 +294,7 @@ public class MetadataServiceImpl implements MetadataService {
             metadata.setModified(RDFUtils.getCurrentTime());
             storeManager.storeStatements(MetadataUtils.getStatements(metadata), metadata.getUri());
             updateParentResource(metadata);
-        } catch (StoreManagerException | DatatypeConfigurationException ex) {
+        } catch (MetadataRepositoryException | DatatypeConfigurationException ex) {
             LOGGER.error("Error storing distribution metadata");
             throw (new MetadataServiceException(ex.getMessage()));
         }
@@ -365,7 +365,7 @@ public class MetadataServiceImpl implements MetadataService {
                 doesParentResourceExists = storeManager.isStatementExist(
                         metadata.getParentURI(), RDF.TYPE, DCAT.DATASET);
             }
-        } catch (StoreManagerException ex) {
+        } catch (MetadataRepositoryException ex) {
             LOGGER.error("Error checking existence of subject URI");
             throw (new MetadataServiceException(ex.getMessage()));
         }
@@ -413,7 +413,7 @@ public class MetadataServiceImpl implements MetadataService {
             // Propagate the update upward the parent hierarchy. Effectively, this will update the
             // timestamp properties of the parents.
             updateParentResource(parentMetadata);
-        } catch (StoreManagerException | DatatypeConfigurationException
+        } catch (MetadataRepositoryException | DatatypeConfigurationException
                 | MetadataServiceException ex) {
             LOGGER.error("Error updating parent resource {}", ex.getMessage());
         }
@@ -430,8 +430,8 @@ public class MetadataServiceImpl implements MetadataService {
                 throw (new ResourceNotFoundException(msg));
             }
             return statements;
-        } catch (StoreManagerException ex) {
-            LOGGER.error("Error retrieving fdp metadata from the store");
+        } catch (MetadataRepositoryException ex) {
+            LOGGER.error("Error retrieving fdp metadata from the metadata");
             throw (new MetadataServiceException(ex.getMessage()));
         }
     }
@@ -450,7 +450,7 @@ public class MetadataServiceImpl implements MetadataService {
 
         try {
             isURIExist = storeManager.isStatementExist(uri, null, null);
-        } catch (StoreManagerException ex) {
+        } catch (MetadataRepositoryException ex) {
             LOGGER.error("Error checking existence of subject URI");
             throw (new MetadataServiceException(ex.getMessage()));
         }
@@ -492,7 +492,7 @@ public class MetadataServiceImpl implements MetadataService {
         try {
             storeManager.removeResource(uri);
             storeFDPMetadata(metadata);
-        } catch (StoreManagerException ex) {
+        } catch (MetadataRepositoryException ex) {
             LOGGER.error("Error deleting existence fdp resource");
             throw (new MetadataServiceException(ex.getMessage()));
         }
@@ -518,8 +518,8 @@ public class MetadataServiceImpl implements MetadataService {
         LOGGER.info("Get fdp uri for the given uri {}", uri.toString());
         try {
             return storeManager.getFDPIri(uri);
-        } catch (StoreManagerException ex) {
-            LOGGER.error("Error getting fdp uri from the store");
+        } catch (MetadataRepositoryException ex) {
+            LOGGER.error("Error getting fdp uri from the metadata");
             throw new MetadataServiceException(ex.getMessage());
         }
     }

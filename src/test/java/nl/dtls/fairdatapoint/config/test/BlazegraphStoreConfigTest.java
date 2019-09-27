@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.assertNotNull;
 
-@TestPropertySource(properties = {"store.type=5"})
+@TestPropertySource(properties = {"repository.type=5"})
 public class BlazegraphStoreConfigTest extends BaseIntegrationTest {
 
     @Autowired

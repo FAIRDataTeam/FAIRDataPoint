@@ -86,7 +86,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store FDP metadata, this test is excepted to throw error
+     * Test to metadata FDP metadata, this test is excepted to throw error
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -101,7 +101,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store FDP metadata, this test is excepted to pass
+     * Test to metadata FDP metadata, this test is excepted to pass
      */
     @DirtiesContext
     @Test
@@ -115,7 +115,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store FDP metadata without metadata ID
+     * Test to metadata FDP metadata without metadata ID
      */
     @DirtiesContext
     @Test
@@ -134,7 +134,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store FDP metadata without repo ID
+     * Test to metadata FDP metadata without repo ID
      */
     @DirtiesContext
     @Test
@@ -153,7 +153,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store FDP metadata without publisher
+     * Test to metadata FDP metadata without publisher
      */
     @DirtiesContext
     @Test
@@ -172,7 +172,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store FDP metadata without language
+     * Test to metadata FDP metadata without language
      */
     @DirtiesContext
     @Test
@@ -191,7 +191,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store FDP metadata without license
+     * Test to metadata FDP metadata without license
      */
     @DirtiesContext
     @Test
@@ -309,7 +309,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store catalog metadata, this test is excepted to throw error
+     * Test to metadata catalog metadata, this test is excepted to throw error
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -325,7 +325,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store catalog metadata, this test is excepted to pass
+     * Test to metadata catalog metadata, this test is excepted to pass
      */
     @DirtiesContext
     @Test
@@ -340,7 +340,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store catalog metadata without metadata ID
+     * Test to metadata catalog metadata without metadata ID
      */
     @DirtiesContext
     @Test
@@ -360,7 +360,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store catalog metadata without publisher
+     * Test to metadata catalog metadata without publisher
      */
     @DirtiesContext
     @Test
@@ -380,7 +380,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store catalog metadata without language
+     * Test to metadata catalog metadata without language
      */
     @DirtiesContext
     @Test
@@ -400,7 +400,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store catalog metadata without license
+     * Test to metadata catalog metadata without license
      */
     @DirtiesContext
     @Test
@@ -461,7 +461,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset metadata, this test is excepted to throw error
+     * Test to metadata dataset metadata, this test is excepted to throw error
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -477,7 +477,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset metadata with wrong parent uri
+     * Test to metadata dataset metadata with wrong parent uri
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -491,7 +491,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset metadata, this test is excepted to pass
+     * Test to metadata dataset metadata, this test is excepted to pass
      */
     @DirtiesContext
     @Test
@@ -506,7 +506,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset metadata without metadata ID
+     * Test to metadata dataset metadata without metadata ID
      */
     @DirtiesContext
     @Test
@@ -526,7 +526,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset metadata without publisher
+     * Test to metadata dataset metadata without publisher
      */
     @DirtiesContext
     @Test
@@ -546,7 +546,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset metadata without language
+     * Test to metadata dataset metadata without language
      */
     @DirtiesContext
     @Test
@@ -566,7 +566,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset metadata without license
+     * Test to metadata dataset metadata without license
      */
     @DirtiesContext
     @Test
@@ -627,7 +627,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store dataset distribution, this test is excepted to throw error
+     * Test to metadata dataset distribution, this test is excepted to throw error
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -643,7 +643,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store distribution, this test is excepted to pass
+     * Test to metadata distribution, this test is excepted to pass
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -657,7 +657,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store distribution metadata with wrong parent uri
+     * Test to metadata distribution metadata with wrong parent uri
      */
     @DirtiesContext
     @Test
@@ -672,7 +672,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store distribution metadata without metadata ID
+     * Test to metadata distribution metadata without metadata ID
      */
     @DirtiesContext
     @Test
@@ -693,7 +693,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store distribution metadata without publisher
+     * Test to metadata distribution metadata without publisher
      */
     @DirtiesContext
     @Test
@@ -714,7 +714,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store distribution metadata without license
+     * Test to metadata distribution metadata without license
      */
     @DirtiesContext
     @Test
@@ -735,7 +735,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store distribution metadata without language
+     * Test to metadata distribution metadata without language
      */
     @DirtiesContext
     @Test
@@ -756,7 +756,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store datarecord metadata, this test is excepted to throw error
+     * Test to metadata datarecord metadata, this test is excepted to throw error
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -772,7 +772,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store datarecord metadata, this test is excepted to pass
+     * Test to metadata datarecord metadata, this test is excepted to pass
      *
      * @throws MetadataServiceException
      * @throws nl.dtl.fairmetadata4j.io.MetadataException
@@ -787,7 +787,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store datarecord metadata
+     * Test to metadata datarecord metadata
      */
     @DirtiesContext
     @Test
@@ -803,7 +803,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store datarecord metadata without metadata ID
+     * Test to metadata datarecord metadata without metadata ID
      */
     @DirtiesContext
     @Test
@@ -823,7 +823,7 @@ public class MetadataServiceImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test to store datarecord metadata without publisher
+     * Test to metadata datarecord metadata without publisher
      */
     @DirtiesContext
     @Test

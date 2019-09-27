@@ -22,8 +22,6 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.repository.store.StoreManager;
-import nl.dtls.fairdatapoint.repository.store.StoreManagerImpl;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.config.RepositoryConfigException;
@@ -39,41 +37,40 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 import java.io.File;
 
 @Configuration
-public class RepositoryTestConfig {
+public class RepositoryConfig {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(RepositoryTestConfig.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
-    @Value("${store.agraph.url:}")
+    @Value("${repository.agraph.url:}")
     private String agraphUrl;
 
-    @Value("${store.agraph.username:}")
+    @Value("${repository.agraph.username:}")
     private String agraphUsername;
 
-    @Value("${store.agraph.password:}")
+    @Value("${repository.agraph.password:}")
     private String agraphPassword;
 
-    @Value("${store.graphDb.url:}")
+    @Value("${repository.graphDb.url:}")
     private String graphDbUrl;
 
-    @Value("${store.graphDb.repository:}")
+    @Value("${repository.graphDb.repository:}")
     private String graphDbRepository;
 
-    @Value("${store.blazegraph.url:}")
+    @Value("${repository.blazegraph.url:}")
     private String blazegraphUrl;
 
-    @Value("${store.blazegraph.repository:}")
+    @Value("${repository.blazegraph.repository:}")
     private String blazegraphRepository;
 
-    @Value("${store.native.dir:}")
+    @Value("${repository.native.dir:}")
     private String nativeStoreDir;
 
-    @Bean(name = "repository", initMethod = "initialize", destroyMethod = "shutDown")
-    public Repository repository(@Value("${store.type:1}") int storeType)
+    @Bean(initMethod = "initialize", destroyMethod = "shutDown")
+    public Repository repository(@Value("${repository.type:1}") int storeType)
             throws RepositoryException {
 
         Repository repository = null;
@@ -97,13 +94,7 @@ public class RepositoryTestConfig {
         return repository;
     }
 
-    /**
-     * Get allegrograph repository
-     *
-     * @return SPARQLRepository
-     */
     private Repository getAgraphRepository() {
-
         SPARQLRepository sRepository = null;
         if (!agraphUrl.isEmpty()) {
             LOGGER.info("Initializing allegrograph repository");
@@ -115,13 +106,7 @@ public class RepositoryTestConfig {
         return sRepository;
     }
 
-    /**
-     * Get blazegraph repository
-     *
-     * @return SPARQLRepository
-     */
     private Repository getBlazeGraphRepository() {
-
         SPARQLRepository sRepository = null;
         if (!blazegraphUrl.isEmpty()) {
             LOGGER.info("Initializing blazegraph repository");
@@ -144,13 +129,7 @@ public class RepositoryTestConfig {
         return sRepository;
     }
 
-    /**
-     * Get graphDB repository
-     *
-     * @return Repository
-     */
     private Repository getGraphDBRepository() {
-
         Repository repository = null;
         try {
             if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
@@ -160,15 +139,9 @@ public class RepositoryTestConfig {
                 repository = repositoryManager.getRepository(graphDbRepository);
             }
         } catch (RepositoryConfigException | RepositoryException e) {
-            LOGGER.error("Initializing graphDB repository");
+            LOGGER.error("Failed to connect to GraphDB");
         }
         return repository;
-    }
-
-    @Bean(name = "storeManager")
-    @DependsOn({"repository"})
-    public StoreManager storeManager() throws RepositoryException {
-        return new StoreManagerImpl();
     }
 
 }

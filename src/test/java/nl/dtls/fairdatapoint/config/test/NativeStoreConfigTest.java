@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.assertNotNull;
 
-@TestPropertySource(properties = {"store.type=2"})
+@TestPropertySource(properties = {"repository.type=2"})
 public class NativeStoreConfigTest extends BaseIntegrationTest {
 
     @Autowired

@@ -24,6 +24,9 @@ package nl.dtls.fairdatapoint.service.scss;
 
 public interface ScssService {
 
+    /**
+     * Load scss and return compiled css
+     */
     String loadScss(String fileName);
 
 }

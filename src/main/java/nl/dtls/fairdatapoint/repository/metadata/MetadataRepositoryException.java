@@ -25,23 +25,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.repository.store;
+package nl.dtls.fairdatapoint.repository.metadata;
 
-/**
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @version 0.1
- * @since 2016-01-05
- */
-public class StoreManagerException extends Exception {
+public class MetadataRepositoryException extends Exception {
 
-    /**
-     * Constructs an instance of <code>StoreManagerException</code> with the specified detail
-     * message.
-     *
-     * @param msg the detail message.
-     */
-    public StoreManagerException(String msg) {
+    public MetadataRepositoryException(String msg) {
         super(msg);
     }
+
 }

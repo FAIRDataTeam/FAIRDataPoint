@@ -52,18 +52,9 @@ public class FairMetadataMetricsServiceImpl implements FairMetadataMetricsServic
 
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
-    private Map<String, String> metadataMetrics;
-
-    /**
-     * Setter method to initiate metadata metrics and its value.
-     *
-     * @param metadataMetrics Set of metrics for metadata
-     */
     @Autowired
     @Qualifier("metadataMetrics")
-    public void setMetadataMetrics(Map<String, String> metadataMetrics) {
-        this.metadataMetrics = metadataMetrics;
-    }
+    private Map<String, String> metadataMetrics;
 
     /**
      * This method returns list of fair metrics for metadata

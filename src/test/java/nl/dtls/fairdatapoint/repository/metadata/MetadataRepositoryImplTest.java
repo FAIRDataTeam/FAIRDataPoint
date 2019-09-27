@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.repository.store;
+package nl.dtls.fairdatapoint.repository.metadata;
 
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -50,33 +50,31 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
-/**
- * StoreManagerImpl class unit tests
- *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @version 0.2
- * @since 2016-01-05
- */
 @DirtiesContext
-public class StoreManagerImplTest extends BaseIntegrationTest {
+public class MetadataRepositoryImplTest extends BaseIntegrationTest {
 
     private final ValueFactory f = SimpleValueFactory.getInstance();
-    private final List<Statement> STATEMENTS = ExampleFilesUtils.
-            getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE,
-                    "http://www.dtls.nl/test");
+
+    private final List<Statement> STATEMENTS =
+            ExampleFilesUtils.getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE, "http://www.dtls.nl/test");
+
     private final IRI TESTSUB = f.createIRI("http://www.dtls.nl/testSub");
+
     private final IRI TESTOBJ = f.createIRI("http://www.dtls.nl/testObj");
+
     private final Statement TESTSTMT = f.createStatement(TESTSUB, RDF.TYPE, TESTOBJ);
+
     @Autowired
-    private StoreManager testStoreManager;
+    private MetadataRepository testStoreManager;
+
     @Mock
     private Repository repository;
+
     @InjectMocks
-    private StoreManagerImpl mockStoreManager;
+    private MetadataRepositoryImpl mockStoreManager;
 
     @Before
-    public void storeExampleFile() throws StoreManagerException {
+    public void storeExampleFile() throws MetadataRepositoryException {
 
         testStoreManager.storeStatements(STATEMENTS, f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
         MockitoAnnotations.initMocks(this);
@@ -85,24 +83,20 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
     /**
      * The URI of a RDF resource can't be NULL, this test is excepted to throw
      * IllegalArgumentException
-     *
-     * @throws StoreManagerException
      */
     @DirtiesContext
     @Test(expected = NullPointerException.class)
-    public void nullURI() throws StoreManagerException {
+    public void nullURI() throws MetadataRepositoryException {
         testStoreManager.retrieveResource(null);
     }
 
     /**
      * The URI of a RDF resource can't be EMPTY, this test is excepted to throw
      * IllegalArgumentException
-     *
-     * @throws StoreManagerException
      */
     @DirtiesContext
     @Test(expected = IllegalArgumentException.class)
-    public void emptyURI() throws StoreManagerException {
+    public void emptyURI() throws MetadataRepositoryException {
 
         String uri = "";
         testStoreManager.retrieveResource(f.createIRI(uri));
@@ -110,12 +104,10 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * This test is excepted to throw execption
-     *
-     * @throws StoreManagerException
      */
     @DirtiesContext
     @Test(expected = IllegalArgumentException.class)
-    public void emptyInvalidURI() throws StoreManagerException {
+    public void emptyInvalidURI() throws MetadataRepositoryException {
 
         String uri = "...";
         testStoreManager.retrieveResource(f.createIRI(uri));
@@ -123,8 +115,6 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * The test is excepted to retrieve ZERO statements
-     *
-     * @throws Exception
      */
     @DirtiesContext
     @Test
@@ -137,8 +127,6 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * The test is excepted retrieve to retrieve one or more statements
-     *
-     * @throws Exception
      */
     @DirtiesContext
     @Test
@@ -151,11 +139,9 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * The test is excepted to throw error
-     *
-     * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = StoreManagerException.class)
+    @Test(expected = MetadataRepositoryException.class)
     public void retrieveResourceCatchBlock() throws Exception {
 
         when(repository.getConnection()).thenThrow(RepositoryException.class);
@@ -171,8 +157,8 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
         try {
             testStoreManager.storeStatements(STATEMENTS);
-        } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw StoreManagerException");
+        } catch (MetadataRepositoryException ex) {
+            fail("The test is not excepted to throw MetadataRepositoryException");
         }
     }
 
@@ -184,12 +170,12 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
     public void deleteRource() {
 
         try {
-            List<Statement> sts = new ArrayList();
+            List<Statement> sts = new ArrayList<>();
             sts.add(TESTSTMT);
             testStoreManager.storeStatements(sts);
             testStoreManager.removeStatement(TESTSUB, RDF.TYPE, null);
-        } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw StoreManagerException");
+        } catch (MetadataRepositoryException ex) {
+            fail("The test is not excepted to throw MetadataRepositoryException");
         }
     }
 
@@ -202,8 +188,8 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
         try {
             testStoreManager.storeStatements(STATEMENTS, TESTSUB);
-        } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw StoreManagerException");
+        } catch (MetadataRepositoryException ex) {
+            fail("The test is not excepted to throw MetadataRepositoryException");
         }
     }
 
@@ -216,15 +202,13 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
         try {
             testStoreManager.storeStatements(STATEMENTS, null);
-        } catch (StoreManagerException ex) {
-            fail("The test is not excepted to throw StoreManagerException");
+        } catch (MetadataRepositoryException ex) {
+            fail("The test is not excepted to throw MetadataRepositoryException");
         }
     }
 
     /**
      * The test is excepted to retrieve return false
-     *
-     * @throws Exception
      */
     @DirtiesContext
     @Test
@@ -237,8 +221,6 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * The test is excepted to retrieve return true
-     *
-     * @throws Exception
      */
     @DirtiesContext
     @Test
@@ -251,11 +233,9 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * Check exception handling of delete resource method
-     *
-     * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = StoreManagerException.class)
+    @Test(expected = MetadataRepositoryException.class)
     public void checkExceptionsDeleteResourceMethod() throws Exception {
 
         when(repository.getConnection()).thenThrow(RepositoryException.class);
@@ -264,11 +244,9 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * Check exception handling of remove statement method
-     *
-     * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = StoreManagerException.class)
+    @Test(expected = MetadataRepositoryException.class)
     public void checkExceptionsRemoveStatementMethod() throws Exception {
 
         when(repository.getConnection()).thenThrow(RepositoryException.class);
@@ -277,11 +255,9 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * Check exception handling of isStatementExist method
-     *
-     * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = StoreManagerException.class)
+    @Test(expected = MetadataRepositoryException.class)
     public void checkExceptionsIsStatementMethod() throws Exception {
 
         when(repository.getConnection()).thenThrow(RepositoryException.class);
@@ -290,11 +266,9 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * Check exception handling of storeStatement method
-     *
-     * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = StoreManagerException.class)
+    @Test(expected = MetadataRepositoryException.class)
     public void checkExceptionsStoreStatementMethod() throws Exception {
 
         when(repository.getConnection()).thenThrow(RepositoryException.class);
@@ -303,8 +277,6 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * Test non exist fdp uri
-     *
-     * @throws Exception
      */
     @DirtiesContext
     @Test(expected = NullPointerException.class)
@@ -314,8 +286,6 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * Test non exist fdp uri
-     *
-     * @throws Exception
      */
     @DirtiesContext
     @Test
@@ -325,8 +295,6 @@ public class StoreManagerImplTest extends BaseIntegrationTest {
 
     /**
      * Test existing fdp uri
-     *
-     * @throws Exception
      */
     @DirtiesContext
     @Test

@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.repository.store;
+package nl.dtls.fairdatapoint.repository.metadata;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -36,90 +36,55 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-/**
- * Contain methods to store data and retrieve data from the triple store
- *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @version 0.2
- * @since 2016-01-05
- */
-public class StoreManagerImpl implements StoreManager {
+@Service
+public class MetadataRepositoryImpl implements MetadataRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StoreManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataRepositoryImpl.class);
+
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
-    private final String GETFDPURIQUERY = "getFdpIri.sparql";
+
+    private static final String GETFDPURIQUERY = "getFdpIri.sparql";
 
     @Autowired
-    @Qualifier("repository")
-    private org.eclipse.rdf4j.repository.Repository repository;
+    private Repository repository;
 
-    /**
-     * Retrieve all statements for an given URI
-     *
-     * @param uri Valid RDF URI as a string
-     * @return List of RDF statements
-     * @throws StoreManagerException
-     */
-    @Override
-    public List<Statement> retrieveResource(@Nonnull IRI uri) throws StoreManagerException {
-
+    public List<Statement> retrieveResource(@Nonnull IRI uri) throws MetadataRepositoryException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
         LOGGER.info("Get statements for the URI {}", uri.toString());
 
-        try (RepositoryConnection conn = getRepositoryConnection()) {
+        try (RepositoryConnection conn = repository.getConnection()) {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, null, null, uri);
-            List<Statement> statements = Iterations.asList(queryResult);
-            return statements;
+            return Iterations.asList(queryResult);
         } catch (RepositoryException e) {
-            throw new StoreManagerException("Error retrieve resource :" + e.getMessage());
+            throw new MetadataRepositoryException("Error retrieve resource :" + e.getMessage());
         }
     }
 
-    /**
-     * Check if a statement exist in a triple store
-     *
-     * @param rsrc
-     * @param pred
-     * @param value
-     * @return
-     * @throws StoreManagerException
-     */
-    @Override
-    public boolean isStatementExist(Resource rsrc, IRI pred, Value value)
-            throws StoreManagerException {
-
-        try (RepositoryConnection conn = getRepositoryConnection()) {
+    public boolean isStatementExist(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException {
+        try (RepositoryConnection conn = repository.getConnection()) {
             LOGGER.info("Check if statements exists");
             return conn.hasStatement(rsrc, pred, value, false);
         } catch (RepositoryException e) {
-            throw new StoreManagerException("Error check statement existence :" + e.getMessage());
+            throw new MetadataRepositoryException("Error check statement existence :" + e.getMessage());
         }
     }
 
-    /**
-     * Store string RDF to the repository
-     *
-     * @param cntx context uri
-     */
-    @Override
-    public void storeStatements(List<Statement> statements, IRI... cntx)
-            throws StoreManagerException {
-
-        try (RepositoryConnection conn = getRepositoryConnection()) {
+    public void storeStatements(List<Statement> statements, IRI... cntx) throws MetadataRepositoryException {
+        try (RepositoryConnection conn = repository.getConnection()) {
             if (cntx != null) {
                 conn.add(statements, cntx);
             } else {
@@ -127,49 +92,29 @@ public class StoreManagerImpl implements StoreManager {
             }
 
         } catch (RepositoryException e) {
-            throw new StoreManagerException("Error storing statements :" + e.getMessage());
+            throw new MetadataRepositoryException("Error storing statements :" + e.getMessage());
         }
     }
 
-    /**
-     * Remove a statement from the repository
-     *
-     * @param pred
-     */
-    @Override
-    public void removeStatement(Resource rsrc, IRI pred, Value value) throws StoreManagerException {
-
-        try (RepositoryConnection conn = getRepositoryConnection()) {
+    public void removeStatement(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException {
+        try (RepositoryConnection conn = repository.getConnection()) {
             conn.remove(rsrc, pred, value);
         } catch (RepositoryException e) {
-            throw (new StoreManagerException("Error removing statement"));
+            throw (new MetadataRepositoryException("Error removing statement"));
         }
     }
 
-    /**
-     * Repository connection to interact with the triple store
-     *
-     * @return RepositoryConnection
-     * @throws Exception
-     */
-    private RepositoryConnection getRepositoryConnection() throws RepositoryException {
-        return this.repository.getConnection();
-    }
-
-    @Override
-    public void removeResource(IRI uri) throws StoreManagerException {
+    public void removeResource(IRI uri) throws MetadataRepositoryException {
         removeStatement(uri, null, null);
     }
 
-    @Override
-    public IRI getFDPIri(IRI uri) throws StoreManagerException {
-
+    public IRI getFDPIri(IRI uri) throws MetadataRepositoryException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
         LOGGER.info("Get fdp uri for the given uri {}", uri.toString());
 
-        try (RepositoryConnection conn = getRepositoryConnection()) {
+        try (RepositoryConnection conn = repository.getConnection()) {
 
-            URL fileURL = StoreManagerImpl.class.getResource(GETFDPURIQUERY);
+            URL fileURL = MetadataRepositoryImpl.class.getResource(GETFDPURIQUERY);
             String queryString = Resources.toString(fileURL, Charsets.UTF_8);
             TupleQuery query = conn.prepareTupleQuery(queryString);
             query.setBinding("iri", uri);
@@ -181,10 +126,9 @@ public class StoreManagerImpl implements StoreManager {
             }
             return fdpIri;
         } catch (RepositoryException e) {
-            throw new StoreManagerException("Error retrieve fdp uri :" + e.getMessage());
+            throw new MetadataRepositoryException("Error retrieve fdp uri :" + e.getMessage());
         } catch (IOException e) {
-            throw new StoreManagerException("Error reading getFdpIri.sparql file :"
-                    + e.getMessage());
+            throw new MetadataRepositoryException("Error reading getFdpIri.sparql file :" + e.getMessage());
         }
     }
 
