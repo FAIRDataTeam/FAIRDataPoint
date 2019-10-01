@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @RestController
-@Api(description = "FDP metadata")
+@Api(description = "Distribution Metadata")
 @RequestMapping("/fdp/distribution")
 public class DistributionController extends MetadataController {
 

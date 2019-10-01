@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @RestController
-@Api(description = "FDP metadata")
+@Api(description = "Data Record Metadata")
 @RequestMapping("/fdp/datarecord")
 public class DataRecordController extends MetadataController {
 

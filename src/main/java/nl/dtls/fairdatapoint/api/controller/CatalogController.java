@@ -47,7 +47,7 @@ import java.util.UUID;
 import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
 
 @RestController
-@Api(description = "FDP metadata")
+@Api(description = "Catalog Metadata")
 @RequestMapping("/fdp/catalog")
 public class CatalogController extends MetadataController {
 
