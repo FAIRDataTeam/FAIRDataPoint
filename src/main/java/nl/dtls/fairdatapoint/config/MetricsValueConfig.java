@@ -35,7 +35,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.Map;
 
 @Configuration
-public class RootConfig {
+public class MetricsValueConfig {
 
     @Bean(name = "metadataMetrics")
     public Map<String, String> metadataMetrics() {
