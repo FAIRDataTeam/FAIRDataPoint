@@ -1,0 +1,77 @@
+{{#> layouts/base }}
+    {{#*inline "content"}}
+        {{#if catalogs}}
+            <h2>Catalogs</h2>
+            <div class="item-list">
+                {{#each catalogs}}
+                    {{#> includes/list-item
+                            list-item-title=(literal this.title)
+                            list-item-link=this.uri
+                            list-item-description=(trim (literal this.description) limit=180)
+                            list-item-tags=this.themeTaxonomys
+                    }}
+                        {{#*inline "list-item-metadata"}}
+                            <dl class="item-metadata">
+                                <dt>Datasets</dt>
+                                <dd>{{length this.datasets}}</dd>
+                                <dt>Issued</dt>
+                                <dd>{{dateFormat (stringToDate (literal this.issued)) "dd-MM-YYYY"}}</dd>
+                                <dt>Modified</dt>
+                                <dd>{{dateFormat (stringToDate (literal this.modified)) "dd-MM-YYYY"}}</dd>
+                            </dl>
+                        {{/inline}}
+                    {{/ includes/list-item}}
+                {{/each}}
+            </div>
+        {{/if}}
+    {{/inline}}
+
+
+    {{#*inline "metadata"}}
+        {{> includes/metadata-common }}
+
+        {{!-- Repository Identifier --}}
+        {{# if metadata.repositoryIdentifier}}
+            {{> includes/metadata-item
+                    metadata-item-key="Repository Identifier"
+                    metadata-item-value=metadata.repositoryIdentifier.identifier
+            }}
+        {{/if}}
+
+        {{!-- Start Date --}}
+        {{# if metadata.startDate}}
+            {{> includes/metadata-item
+                    metadata-item-key="Start Date"
+                    metadata-item-value=(dateFormat (stringToDate (literal metadata.startDate)) "dd-MM-YYYY")
+            }}
+        {{/if}}
+
+        {{!-- Last Update --}}
+        {{# if metadata.startDate}}
+            {{> includes/metadata-item
+                    metadata-item-key="Last Update"
+                    metadata-item-value=(dateFormat (stringToDate (literal metadata.lastUpdate)) "dd-MM-YYYY")
+            }}
+        {{/if}}
+
+        {{!-- Institution --}}
+        {{# if metadata.institution}}
+            {{> includes/metadata-item
+                    metadata-item-key="Institution"
+                    metadata-item-value=(literal metadata.institution.name)
+                    metadata-item-link=metadata.institution.uri
+            }}
+        {{/if}}
+
+        {{!-- Institution Country --}}
+        {{# if metadata.institutionCountry}}
+            {{> includes/metadata-item
+                    metadata-item-key="Institution Country"
+                    metadata-item-value=(simplifyUrl metadata.institutionCountry)
+                    metadata-item-link=metadata.institutionCountry
+            }}
+        {{/if}}
+
+        {{> includes/metadata-download }}
+    {{/inline}}
+{{/ layouts/base}}

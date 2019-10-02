@@ -22,33 +22,32 @@
  */
 package nl.dtls.fairdatapoint.api.converter;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.io.MetadataParserException;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtl.fairmetadata4j.utils.MetadataUtils;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
-import nl.dtl.fairmetadata4j.io.MetadataException;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import nl.dtl.fairmetadata4j.io.MetadataParserException;
-import org.eclipse.rdf4j.rio.RDFFormat;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Repository metadata message converter
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-09-19
  * @version 0.1
+ * @since 2016-09-19
  */
 public class FdpMetadataConverter extends AbstractMetadataMessageConverter<FDPMetadata> {
 
@@ -63,7 +62,8 @@ public class FdpMetadataConverter extends AbstractMetadataMessageConverter<FDPMe
 
     @Override
     protected FDPMetadata readInternal(Class<? extends FDPMetadata> type,
-            HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+                                       HttpInputMessage inputMessage) throws IOException,
+            HttpMessageNotReadableException {
 
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
         try {

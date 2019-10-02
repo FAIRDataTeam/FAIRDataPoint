@@ -1,0 +1,4 @@
+logging:
+  config: classpath:log4j2-production.xml
+
+scssDir: /fdp/scss

@@ -1,0 +1,75 @@
+{{!-- Issued --}}
+{{> includes/metadata-item
+        metadata-item-key="Issued"
+        metadata-item-value=(dateFormat (stringToDate (literal metadata.issued)) "dd-MM-YYYY")
+        metadata-item-sm=true
+}}
+
+{{!-- Modified --}}
+{{> includes/metadata-item
+        metadata-item-key="Modified"
+        metadata-item-value=(dateFormat (stringToDate (literal metadata.modified)) "dd-MM-YYYY")
+        metadata-item-sm=true
+}}
+
+{{!-- Version --}}
+{{# if metadata.version}}
+    {{> includes/metadata-item
+            metadata-item-key="Version"
+            metadata-item-value=(literal metadata.version)
+    }}
+{{/if}}
+
+{{!-- License --}}
+{{# if metadata.license}}
+    {{> includes/metadata-item
+            metadata-item-key="License"
+            metadata-item-value=(simplifyUrl metadata.license)
+            metadata-item-link=metadata.license
+    }}
+{{/if}}
+
+{{!-- Rights --}}
+{{# if metadata.rights}}
+    {{> includes/metadata-item
+            metadata-item-key="Rights"
+            metadata-item-value=(simplifyUrl metadata.rights)
+            metadata-item-link=metadata.rights
+    }}
+{{/if}}
+
+{{!-- Access Rights --}}
+{{# if metadata.version}}
+    {{> includes/metadata-item
+            metadata-item-key="Access Rights"
+            metadata-item-value=(literal metadata.accessRights.description)
+    }}
+{{/if}}
+
+{{!-- Specification --}}
+{{# if metadata.specification}}
+    {{> includes/metadata-item
+            metadata-item-key="Specification"
+            metadata-item-value=(simplifyUrl metadata.specification)
+            metadata-item-link=metadata.specification
+    }}
+{{/if}}
+
+{{!-- Language --}}
+{{# if metadata.language}}
+    {{> includes/metadata-item
+            metadata-item-key="Language"
+            metadata-item-value=(simplifyUrl metadata.language)
+            metadata-item-link=metadata.language
+    }}
+{{/if}}
+
+{{!-- Publisher --}}
+{{# if metadata.publisher}}
+    {{> includes/metadata-item
+            metadata-item-key="Publisher"
+            metadata-item-value=(literal metadata.publisher.name)
+            metadata-item-link=metadata.publisher.uri
+    }}
+{{/if}}
+

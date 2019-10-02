@@ -1,0 +1,88 @@
+@import "../variables";
+@import "../mixins";
+@import "../text-styles";
+
+
+.content {
+  padding: $space-md 0;
+
+  @media (min-width: $breakpoint-small) {
+    width: 63%;
+  }
+
+  .description {
+    @include text-style-default-18;
+    margin: 0;
+    text-align: justify;
+
+    @media (max-width: $breakpoint-small - 1px) {
+      margin: $space-lg 0;
+    }
+  }
+
+  h2 {
+    @include text-style-default-24-bold;
+  }
+
+  .item-list {
+    .item {
+      @include border-radius($border-radius-default);
+      background: $color-background-highlighted;
+      margin-bottom: $space-md;
+      padding: $space-md;
+
+      .item-name {
+        @include text-style-primary-18-bold;
+        text-decoration: none;
+
+        &:hover {
+          color: $color-primary-lighter;
+        }
+      }
+
+      .item-description {
+        @include text-style-default-16;
+        margin: $space-sm 0;
+        text-align: justify;
+      }
+
+      .tags {
+        margin: $space-sm 0 $space-xs 0;
+
+        .tag {
+          @include text-style-primary-14;
+          @include border-radius($border-radius-full);
+          display: inline-block;
+          background: $color-background-primary;
+          padding: $space-xs $space-sm;
+          margin-bottom: $space-xs;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .item-metadata {
+        margin: 0;
+
+        dt {
+          @include text-style-default-14-bold;
+          display: inline-block;
+          margin: 0;
+
+          &::after {
+            content: ":";
+          }
+        }
+
+        dd {
+          @include text-style-default-14;
+          display: inline-block;
+          margin: 0 $space-md 0 0;
+        }
+      }
+    }
+  }
+}

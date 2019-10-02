@@ -1,0 +1,52 @@
+@import "../variables";
+@import "../mixins";
+@import "../text-styles";
+
+
+.breadcrumbs {
+  @include text-style-default-14;
+  width: 100%;
+  background: $color-background-highlighted;
+  height: $breadcrumbs-height;
+
+  @media (max-width: $breakpoint-small - 1px) {
+    display: none;
+  }
+
+  .container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    ul {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+
+      li {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        max-width: 24.5%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:not(:first-child)::before {
+          content: "/";
+          margin: 0 $space-xs;
+        }
+
+        a {
+          @include text-style-default-14;
+          @include transition-default(color);
+
+          &:hover {
+            color: $color-primary;
+          }
+        }
+      }
+    }
+  }
+}

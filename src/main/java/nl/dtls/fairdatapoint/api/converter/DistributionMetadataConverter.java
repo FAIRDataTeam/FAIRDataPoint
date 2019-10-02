@@ -29,10 +29,6 @@ package nl.dtls.fairdatapoint.api.converter;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
@@ -45,13 +41,18 @@ import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Distribution metadata message converter
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-09-19
  * @version 0.1
+ * @since 2016-09-19
  */
 public class DistributionMetadataConverter extends
         AbstractMetadataMessageConverter<DistributionMetadata> {
@@ -67,7 +68,8 @@ public class DistributionMetadataConverter extends
 
     @Override
     protected DistributionMetadata readInternal(Class<? extends DistributionMetadata> type,
-            HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+                                                HttpInputMessage inputMessage) throws IOException,
+            HttpMessageNotReadableException {
 
         DistributionMetadataParser parser = MetadataParserUtils.getDistributionParser();
         try {

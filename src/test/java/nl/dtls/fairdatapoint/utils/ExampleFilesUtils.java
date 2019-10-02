@@ -30,21 +30,8 @@ package nl.dtls.fairdatapoint.utils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import nl.dtl.fairmetadata4j.io.CatalogMetadataParser;
-import nl.dtl.fairmetadata4j.io.DataRecordMetadataParser;
-import nl.dtl.fairmetadata4j.io.DatasetMetadataParser;
-import nl.dtl.fairmetadata4j.io.DistributionMetadataParser;
-import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.io.*;
+import nl.dtl.fairmetadata4j.model.*;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -57,13 +44,19 @@ import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Contains references to the example metadata rdf files which are used in the Junit tests.
  *
  * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
  * @author Kees Burger <kees.burger@dtls.nl>
- * @since 2016-08-10
  * @version 0.1
+ * @since 2016-08-10
  */
 public class ExampleFilesUtils {
 

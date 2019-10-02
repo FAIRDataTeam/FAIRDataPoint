@@ -1,0 +1,12 @@
+<div class="metadata-item{{# if metadata-item-sm }} metadata-item-sm{{/if}}">
+    <h3>{{metadata-item-key}}</h3>
+    <p>
+        {{# if metadata-item-link }}
+        <a href="{{metadata-item-link}}" target="_blank">
+        {{/if}}
+        {{metadata-item-value}}
+        {{# if metadata-item-link }}
+        </a>
+        {{/if}}
+    </p>
+</div>

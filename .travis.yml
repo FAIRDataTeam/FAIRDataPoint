@@ -1,11 +1,64 @@
-language: java
+dist: xenial
+language: generic
+
 jdk:
-  - oraclejdk8
+  - openjdk11
+
+env:
+  - IMAGE="fairdata/fairdatapoint" \
+    IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT" \
+    IMAGE_TAG_BRANCH="$IMAGE:"`echo $TRAVIS_BRANCH | sed 's#/#-#g'` \
+    IMAGE_TAG_DEVELOP="$IMAGE:develop" \
+    IMAGE_TAG_LATEST="$IMAGE:latest"
+
 before_install:
-  - git clone -b develop https://github.com/DTL-FAIRData/fairmetadata4j ~/fairmetadata4j
-  - cd ~/fairmetadata4j
-#  - git checkout 0.1-beta
-  - mvn install
-  - cd $TRAVIS_BUILD_DIR
-after_success:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report coveralls:report
+  # 1. Log to public Docker Hub
+  - docker login -u "$PUBLIC_DOCKER_USER" -p "$PUBLIC_DOCKER_PASSWORD"
+
+jobs:
+  include:
+    - stage: build
+      install:
+        # 1. Install fairmetadata4j
+        - git clone --depth 1 -b $TRAVIS_BRANCH https://github.com/DTL-FAIRData/fairmetadata4j ./fairmetadata4j
+        - cd  ./fairmetadata4j
+        - mvn --quiet --fail-fast install
+        - cd ..
+      script:
+        # 2. Build FAIR Data Point
+        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent test
+        - mvn --quiet --fail-fast -DskipTests package
+#        - docker pull $IMAGE_TAG_DEVELOP
+#        - docker build --cache-from $IMAGE_TAG_DEVELOP -t $IMAGE_TAG .
+        - docker build -t $IMAGE_TAG .
+        - docker push $IMAGE_TAG
+      after_success:
+        - mvn org.jacoco:jacoco-maven-plugin:report coveralls:report
+
+    - stage: tag
+      if: (branch = develop) AND (NOT (type IN (pull_request)))
+      install: false
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_DEVELOP
+        - docker push $IMAGE_TAG_DEVELOP
+
+    - stage: tag
+      if: (branch = master) AND (NOT (type IN (pull_request)))
+      install: false
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_LATEST
+        - docker push $IMAGE_TAG_LATEST
+
+    - stage: tag
+      if: (type = push)
+      install: false
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_BRANCH
+        - docker push $IMAGE_TAG_BRANCH
+
+
+#after_success:
+#  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report coveralls:report

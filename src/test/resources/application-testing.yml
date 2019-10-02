@@ -1,0 +1,5 @@
+metadataMetrics:
+  https://purl.org/fair-metrics/FM_F1A: http://example.com/f1a
+
+instance:
+  url: http://localhost:8084
