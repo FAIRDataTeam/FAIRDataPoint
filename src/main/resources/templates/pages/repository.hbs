@@ -67,7 +67,7 @@
         {{# if metadata.institutionCountry}}
             {{> includes/metadata-item
                     metadata-item-key="Institution Country"
-                    metadata-item-value=metadata.institutionCountry
+                    metadata-item-value=(simplifyUrl metadata.institutionCountry)
                     metadata-item-link=metadata.institutionCountry
             }}
         {{/if}}

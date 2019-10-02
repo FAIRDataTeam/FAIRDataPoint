@@ -24,7 +24,7 @@
 {{# if metadata.license}}
     {{> includes/metadata-item
             metadata-item-key="License"
-            metadata-item-value=metadata.license
+            metadata-item-value=(simplifyUrl metadata.license)
             metadata-item-link=metadata.license
     }}
 {{/if}}
@@ -33,7 +33,7 @@
 {{# if metadata.rights}}
     {{> includes/metadata-item
             metadata-item-key="Rights"
-            metadata-item-value=metadata.rights
+            metadata-item-value=(simplifyUrl metadata.rights)
             metadata-item-link=metadata.rights
     }}
 {{/if}}
@@ -50,7 +50,7 @@
 {{# if metadata.specification}}
     {{> includes/metadata-item
             metadata-item-key="Specification"
-            metadata-item-value=metadata.specification
+            metadata-item-value=(simplifyUrl metadata.specification)
             metadata-item-link=metadata.specification
     }}
 {{/if}}
@@ -59,7 +59,7 @@
 {{# if metadata.language}}
     {{> includes/metadata-item
             metadata-item-key="Language"
-            metadata-item-value=metadata.language
+            metadata-item-value=(simplifyUrl metadata.language)
             metadata-item-link=metadata.language
     }}
 {{/if}}

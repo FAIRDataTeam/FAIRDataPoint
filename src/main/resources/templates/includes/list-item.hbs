@@ -8,7 +8,7 @@
     {{#if list-item-tags}}
         <div class="tags">
             {{#each list-item-tags}}
-                <a href="{{this}}" target="_blank" class="tag">{{this}}</a>
+                <a href="{{this}}" target="_blank" class="tag">{{simplifyUrl this}}</a>
             {{/each}}
         </div>
     {{/if}}
