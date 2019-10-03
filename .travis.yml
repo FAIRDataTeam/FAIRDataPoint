@@ -28,9 +28,8 @@ jobs:
         # 2. Build FAIR Data Point
         - mvn org.jacoco:jacoco-maven-plugin:prepare-agent test
         - mvn --quiet --fail-fast -DskipTests package
-#        - docker pull $IMAGE_TAG_DEVELOP
-#        - docker build --cache-from $IMAGE_TAG_DEVELOP -t $IMAGE_TAG .
-        - docker build -t $IMAGE_TAG .
+        - docker pull $IMAGE_TAG_DEVELOP
+        - docker build --cache-from $IMAGE_TAG_DEVELOP -t $IMAGE_TAG .
         - docker push $IMAGE_TAG
       after_success:
         - mvn org.jacoco:jacoco-maven-plugin:report coveralls:report
