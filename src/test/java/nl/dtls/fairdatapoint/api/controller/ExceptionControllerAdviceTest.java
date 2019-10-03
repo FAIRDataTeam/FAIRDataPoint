@@ -29,6 +29,7 @@ package nl.dtls.fairdatapoint.api.controller;
 
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairdatapoint.api.controller.exception.ExceptionControllerAdvice;
 import nl.dtls.fairdatapoint.service.metadata.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;

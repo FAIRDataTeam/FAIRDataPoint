@@ -22,25 +22,35 @@
  */
 package nl.dtls.fairdatapoint;
 
-import nl.dtls.fairdatapoint.config.MetadataTestConfig;
-import nl.dtls.fairdatapoint.config.RepositoryTestConfig;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootContextLoader;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.dtls.fairdatapoint.api.filter.JwtTokenFilter;
+import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@EnableWebMvc
-@EnableWebSecurity
-@ActiveProfiles(Profiles.TESTING)
-@ContextConfiguration(classes = {RepositoryTestConfig.class, MetadataTestConfig.class}, loader =
-        SpringBootContextLoader.class)
-@SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true"})
-@ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-public abstract class BaseIntegrationTest {
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
+public abstract class WebIntegrationTest extends BaseIntegrationTest {
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @Autowired
+    private JwtTokenFilter jwtTokenFilter;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    protected MockMvc mockMvc;
+
+    @Before
+    public void setup() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .addFilters(jwtTokenFilter)
+                .alwaysDo(print())
+                .build();
+    }
+
 }

@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
-import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.filter.CORSFilter;
 import nl.dtls.fairdatapoint.api.filter.LoggingFilter;
 import nl.dtls.fairdatapoint.service.metadata.MetadataService;
@@ -45,14 +45,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import static org.mockito.Mockito.when;
 
 @DirtiesContext
-public abstract class MetadataControllerTest extends BaseIntegrationTest {
+public abstract class MetadataControllerTest extends WebIntegrationTest {
 
     protected final String TEST_FDP_PATH = "/fdp";
     protected final String TEST_CATALOG_PATH = TEST_FDP_PATH + "/catalog/"
@@ -84,10 +83,7 @@ public abstract class MetadataControllerTest extends BaseIntegrationTest {
 
     @Before
     public void storeExampleMetadata() throws Exception {
-
         MockitoAnnotations.initMocks(this);
-        // setup mockmvc
-        mvc = MockMvcBuilders.standaloneSetup(fdpController).build();
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         // Store fdp metadata

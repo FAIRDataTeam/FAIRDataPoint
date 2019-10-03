@@ -28,28 +28,18 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GeneralControllerTest extends MetadataControllerTest {
-
-     /*
-    This is an example test to demonstrate how to create MockMvc test.
-    */
-
-    @DirtiesContext
-    @Test
-    public void testMvc() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/fdp"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
-
 
     /**
      * The default content type is text/turtle, when the accept header is not set the default
@@ -184,5 +174,66 @@ public class GeneralControllerTest extends MetadataControllerTest {
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 
+    @DirtiesContext
+    @Test
+    public void getRequestsAreSecured() throws Exception {
+        // GIVEN:
+        String reqBody = "";
+        MockHttpServletRequestBuilder request = get("/fdp");
+
+        // WHEN:
+        ResultActions result = mockMvc.perform(request);
+
+        // THEN:
+        result.andExpect(status().isOk());
+    }
+
+    @DirtiesContext
+    @Test
+    public void optionsRequestsAreSecured() throws Exception {
+        // GIVEN:
+        String reqBody = "";
+        MockHttpServletRequestBuilder request = options("/fdp");
+
+        // WHEN:
+        ResultActions result = mockMvc.perform(request);
+
+        // THEN:
+        result.andExpect(status().isOk());
+    }
+
+    @DirtiesContext
+    @Test
+    public void postRequestsAreSecured() throws Exception {
+        // GIVEN:
+        String reqBody = "";
+        MockHttpServletRequestBuilder request =
+                post("/fdp/distribution")
+                        .contentType("text/turtle")
+                        .content(reqBody);
+
+        // WHEN:
+        ResultActions result = mockMvc.perform(request);
+
+        // THEN:
+        result.andExpect(status().isForbidden());
+    }
+
+    @DirtiesContext
+    @Test
+    public void patchRequestsAreSecured() throws Exception {
+        // GIVEN:
+        String reqBody = "";
+        MockHttpServletRequestBuilder request =
+                patch("/fdp/distribution")
+                        .contentType("text/turtle")
+                        .content(reqBody);
+
+        // WHEN:
+        ResultActions result = mockMvc.perform(request);
+
+        // THEN:
+        result.andExpect(status().isForbidden());
+    }
 
 }

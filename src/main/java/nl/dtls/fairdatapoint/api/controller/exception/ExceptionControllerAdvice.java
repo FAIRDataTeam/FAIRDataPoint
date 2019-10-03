@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.exception;
 
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
@@ -38,6 +38,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -48,17 +50,6 @@ public class ExceptionControllerAdvice {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ExceptionControllerAdvice.class);
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex,
-                                                         HttpServletResponse response) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        String msg = ex.getMessage();
-        LOGGER.error(msg);
-        return new ResponseEntity<>(msg, headers, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(MetadataException.class)
     public ResponseEntity<String> handelBadRequest(MetadataException ex,
                                                    HttpServletResponse response) {
@@ -68,6 +59,37 @@ public class ExceptionControllerAdvice {
         String msg = ex.getMessage();
         LOGGER.error(msg);
         return new ResponseEntity<>(msg, headers, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class, CredentialsExpiredException.class})
+    public ResponseEntity<String> handleUnauthorized(Exception ex,
+                                                     HttpServletResponse response) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        String msg = ex.getMessage();
+        LOGGER.error(msg);
+        return new ResponseEntity<>(msg, headers, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleForbidden(Exception ex,
+                                                  HttpServletResponse response) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        String msg = ex.getMessage();
+        LOGGER.error(msg);
+        return new ResponseEntity<>(msg, headers, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex,
+                                                         HttpServletResponse response) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        String msg = ex.getMessage();
+        LOGGER.error(msg);
+        return new ResponseEntity<>(msg, headers, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({MetadataServiceException.class, MetadataParserException.class, ScssCompilationException.class})

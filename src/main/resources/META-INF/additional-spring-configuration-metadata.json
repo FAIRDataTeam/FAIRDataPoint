@@ -9,6 +9,16 @@
       "name": "instance.url",
       "type": "java.lang.String",
       "description": "Instance URL."
+    },
+    {
+      "name": "security.jwt.token.secret-key",
+      "type": "java.lang.String",
+      "description": "Secret string used for JWT signing and validation (we recommend to generate some randomly)."
+    },
+    {
+      "name": "security.jwt.token.expiration",
+      "type": "java.lang.Long",
+      "description": "Number of days until a token expires."
     }
   ]
 }

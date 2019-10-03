@@ -52,6 +52,14 @@ Run these comands from the root of the project
 $ mvn test
 ```
 
+### Security
+
+The all `GET` and `OPTIONS` are public-accessible. `POST` and `PATCH` endpoints are secured
+and for accessing them, you need to be authorized. We use JWT Tokens for authorization.
+The token can be retrieved in `/token` endpoint where you send username and password. 
+Currently, there exists just one default user (username: `user`, password: `password`) and 
+there is no possibility of how to change it.  
+
 ### API documentation
 `FAIRDataPoint` (fdp) api comes with an embedded [swagger document] (http://swagger.io/), the details of api calls can be found here. To access the fdp swagger document please visit the following url via web browser
  

@@ -22,9 +22,12 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -35,6 +38,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY;
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 
 @Configuration
@@ -69,6 +74,16 @@ public class WebConfig implements WebMvcConfigurer {
         // Serving static resources
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("classpath:/META-INF/resources/WEB-INF/static/images/");
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
+        mapper.setSerializationInclusion(NON_NULL);
+        mapper.enable(SORT_PROPERTIES_ALPHABETICALLY);
+        return mapper;
     }
 
 }
