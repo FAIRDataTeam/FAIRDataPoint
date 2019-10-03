@@ -68,12 +68,8 @@ public class DistributionController extends MetadataController {
                                                 HttpServletRequest request, HttpServletResponse response) throws
             MetadataServiceException, ResourceNotFoundException {
 
-        LOGGER.info("Request to get distribution metdata, request url : {}",
-                request.getRequestURL());
-        String uri = getRequesedURL(request);
-        DistributionMetadata metadata = fairMetaDataService
-                .retrieveDistributionMetadata(VALUEFACTORY.createIRI(uri));
-        return metadata;
+        LOGGER.info("Request to get distribution metadata, request url : {}", request.getRequestURL());
+        return distributionMetadataService.retrieve(getRequestURLasIRI(request));
     }
 
     @ApiIgnore
@@ -83,19 +79,19 @@ public class DistributionController extends MetadataController {
             MetadataServiceException, ResourceNotFoundException, MetadataException {
 
         ModelAndView mav = new ModelAndView("pages/distribution");
-        String uri = getRequesedURL(request);
+        IRI uri = getRequestURLasIRI(request);
         mav.addObject("contextPath", request.getContextPath());
 
         // Retrieve Distribution metadata
-        DistributionMetadata metadata = fairMetaDataService.retrieveDistributionMetadata(VALUEFACTORY.createIRI(uri));
+        DistributionMetadata metadata = distributionMetadataService.retrieve(uri);
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
                 MetadataUtils.SCHEMA_DOT_ORG_MODEL));
 
         // Retrieve parents for breadcrumbs links
-        DatasetMetadata dataset = fairMetaDataService.retrieveDatasetMetadata(metadata.getParentURI());
-        CatalogMetadata catalog = fairMetaDataService.retrieveCatalogMetadata(dataset.getParentURI());
-        FDPMetadata repository = fairMetaDataService.retrieveFDPMetadata(catalog.getParentURI());
+        DatasetMetadata dataset = datasetMetadataService.retrieve(metadata.getParentURI());
+        CatalogMetadata catalog = catalogMetadataService.retrieve(dataset.getParentURI());
+        FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
         mav.addObject("repository", repository);
         mav.addObject("catalog", catalog);
         mav.addObject("dataset", dataset);
@@ -110,7 +106,6 @@ public class DistributionController extends MetadataController {
      * @param response Http response
      * @param metadata distribution metadata
      * @return created message
-     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "POST distribution metadata")
@@ -119,16 +114,14 @@ public class DistributionController extends MetadataController {
     public DistributionMetadata storeDistribution(final HttpServletRequest request,
                                                   HttpServletResponse response, @RequestBody(required = true)
                                                           DistributionMetadata metadata)
-            throws MetadataServiceException, MetadataException {
+            throws MetadataServiceException {
 
-        String requestedURL = getRequesedURL(request);
-        UUID uid = UUID.randomUUID();
-        LOGGER.info("Request to store distribution metatdata with ID {}", uid.toString());
-        IRI uri = VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
+        IRI uri = generateNewIRI(request);
+        LOGGER.info("Request to store distribution metadata with IRI {}", uri.toString());
         metadata.setUri(uri);
-        fairMetaDataService.storeDistributionMetadata(metadata);
+        distributionMetadataService.store(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
-        return fairMetaDataService.retrieveDistributionMetadata(uri);
+        return distributionMetadataService.retrieve(uri);
     }
 
 }

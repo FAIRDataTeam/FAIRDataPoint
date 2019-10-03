@@ -22,18 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata;
 
-import nl.dtl.fairmetadata4j.model.Metadata;
-import org.eclipse.rdf4j.model.IRI;
+import nl.dtl.fairmetadata4j.model.MetadataVisitor;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public interface MetadataService<T extends Metadata> {
-    T retrieve(@Nonnull IRI iri) throws MetadataServiceException;
-
-    List<T> retrieve(List<IRI> iris);
-
-    void store(@Nonnull T metadata) throws MetadataServiceException;
-
-    void update(IRI uri, T metadataUpdate) throws MetadataServiceException;
+public interface MetadataUpdateService extends MetadataVisitor {
 }

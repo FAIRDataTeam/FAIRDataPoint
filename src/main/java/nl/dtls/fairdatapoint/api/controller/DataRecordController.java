@@ -40,7 +40,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 @RestController
 @Api(description = "Data Record Metadata")
@@ -66,22 +65,18 @@ public class DataRecordController extends MetadataController {
             MetadataServiceException, ResourceNotFoundException {
 
         LOGGER.info("Request to get DATARECORD metadata,request url : {}", request.getRequestURL());
-        String uri = getRequesedURL(request);
-        DataRecordMetadata metadata = fairMetaDataService
-                .retrieveDataRecordMetadata(VALUEFACTORY.createIRI(uri));
-        return metadata;
+        return dataRecordMetadataService.retrieve(getRequestURLasIRI(request));
     }
 
     @ApiIgnore
     @RequestMapping(value = "/{id}", method = RequestMethod.GET,
             produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlDataRecordMetadata(HttpServletRequest request) throws
-            MetadataServiceException, ResourceNotFoundException, MetadataException {
+            ResourceNotFoundException, MetadataException, MetadataServiceException {
 
         ModelAndView mav = new ModelAndView("dataset");
-        String uri = getRequesedURL(request);
-        DataRecordMetadata metadata = fairMetaDataService
-                .retrieveDataRecordMetadata(VALUEFACTORY.createIRI(uri));
+        IRI uri = getRequestURLasIRI(request);
+        DataRecordMetadata metadata = dataRecordMetadataService.retrieve(uri);
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD));
 
@@ -97,7 +92,6 @@ public class DataRecordController extends MetadataController {
      * @param response Http response
      * @param metadata datarecord metadata
      * @return created message
-     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "POST datarecord metadata")
@@ -107,16 +101,14 @@ public class DataRecordController extends MetadataController {
     public DataRecordMetadata storeDataRecord(final HttpServletRequest request,
                                               HttpServletResponse response,
                                               @RequestBody(required = true) DataRecordMetadata metadata)
-            throws MetadataServiceException, MetadataException {
+            throws MetadataServiceException {
 
-        String requestedURL = getRequesedURL(request);
-        UUID uid = UUID.randomUUID();
-        LOGGER.info("Request to store datarecord metatdata with ID {}", uid.toString());
-        IRI uri = VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
+        IRI uri = generateNewIRI(request);
+        LOGGER.info("Request to store datarecord metatdata with IRI {}", uri.toString());
         metadata.setUri(uri);
-        fairMetaDataService.storeDataRecordMetadata(metadata);
+        dataRecordMetadataService.store(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
-        return fairMetaDataService.retrieveDataRecordMetadata(uri);
+        return dataRecordMetadataService.retrieve(uri);
     }
 
 }

@@ -28,6 +28,7 @@
 package nl.dtls.fairdatapoint.api.controller;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtl.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.api.filter.CORSFilter;
 import nl.dtls.fairdatapoint.api.filter.LoggingFilter;
 import nl.dtls.fairdatapoint.service.metadata.MetadataService;
@@ -75,11 +76,27 @@ public abstract class MetadataControllerTest extends WebIntegrationTest {
     protected RequestMappingHandlerMapping handlerMapping;
     protected MockMvc mvc;
     @Autowired
-    private MetadataService fairMetaDataService;
-    @Mock
-    private MetadataService fairMDService4MockMVC;
+    private MetadataService<FDPMetadata> fdpMetadataService;
+    @Autowired
+    private MetadataService<CatalogMetadata> catalogMetadataService;
+    @Autowired
+    private MetadataService<DatasetMetadata> datasetMetadataService;
+    @Autowired
+    private MetadataService<DistributionMetadata> distributionMetadataService;
+    @Autowired
+    private MetadataService<DataRecordMetadata> dataRecordMetadataService;
+    @Mock(name="fdpMetadataService")
+    private MetadataService<FDPMetadata> fdpMetadataService4MockMVC;
+    @Mock(name="catalogMetadataService")
+    private MetadataService<CatalogMetadata> catalogMetadataService4MockMVC;
+    @Mock(name="datasetMetadataService")
+    private MetadataService<DatasetMetadata> datasetMetadataService4MockMVC;
+    @Mock(name="distributionMetadataService")
+    private MetadataService<DistributionMetadata> distributionMetadataService4MockMVC;
+    @Mock(name="dataRecordMetadataService")
+    private MetadataService<DataRecordMetadata> dataRecordMetadataService4MockMVC;
     @InjectMocks
-    private FdpController fdpController;
+    public FdpController fdpController;
 
     @Before
     public void storeExampleMetadata() throws Exception {
@@ -89,36 +106,29 @@ public abstract class MetadataControllerTest extends WebIntegrationTest {
         // Store fdp metadata
         request.setRequestURI(TEST_FDP_PATH);
         String fdpUri = request.getRequestURL().toString();
-        fairMetaDataService.storeFDPMetadata(ExampleFilesUtils.getFDPMetadata(fdpUri));
+        fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(fdpUri));
 
         // Store catalog metadata
         request.setRequestURI(TEST_CATALOG_PATH);
         String cUri = request.getRequestURL().toString();
-        fairMetaDataService.storeCatalogMetadata(
-                ExampleFilesUtils.getCatalogMetadata(cUri, fdpUri));
+        catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(cUri, fdpUri));
 
         // Store dataset metadata
         request.setRequestURI(TEST_DATASET_PATH);
         String dUri = request.getRequestURL().toString();
-        fairMetaDataService.storeDatasetMetadata(
-                ExampleFilesUtils.getDatasetMetadata(dUri, cUri));
+        datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(dUri, cUri));
 
         // Store datarecord metadata
         request.setRequestURI(TEST_DATARECORD_PATH);
         String dRecUri = request.getRequestURL().toString();
-        fairMetaDataService.storeDataRecordMetadata(
-                ExampleFilesUtils.getDataRecordMetadata(dRecUri, dUri));
+        dataRecordMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(dRecUri, dUri));
 
         // Store distribution metadata
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
         String disUri = request.getRequestURL().toString();
-        fairMetaDataService.storeDistributionMetadata(
-                ExampleFilesUtils.getDistributionMetadata(disUri, dUri));
+        distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(disUri, dUri));
 
-        when(fairMDService4MockMVC.retrieveFDPMetadata(Mockito.any(IRI.class)))
-                .thenReturn(fairMetaDataService.retrieveFDPMetadata(f.createIRI(fdpUri)));
-
+        when(fdpMetadataService4MockMVC.retrieve(Mockito.any(IRI.class)))
+                .thenReturn(fdpMetadataService.retrieve(f.createIRI(fdpUri)));
     }
-
-
 }

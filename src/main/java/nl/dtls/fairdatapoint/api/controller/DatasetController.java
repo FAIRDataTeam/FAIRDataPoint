@@ -42,10 +42,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.UUID;
-
-import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
+import java.util.Collections;
 
 @RestController
 @Api(description = "Dataset Metadata")
@@ -71,10 +68,7 @@ public class DatasetController extends MetadataController {
             MetadataServiceException, ResourceNotFoundException {
 
         LOGGER.info("Request to get DATASET metadata, request url : {}", request.getRequestURL());
-        String uri = getRequesedURL(request);
-        DatasetMetadata metadata = fairMetaDataService
-                .retrieveDatasetMetadata(VALUEFACTORY.createIRI(uri));
-        return metadata;
+        return datasetMetadataService.retrieve(getRequestURLasIRI(request));
     }
 
     @ApiIgnore
@@ -84,24 +78,23 @@ public class DatasetController extends MetadataController {
             throws MetadataServiceException, ResourceNotFoundException, MetadataException {
 
         ModelAndView mav = new ModelAndView("pages/dataset");
-        String uri = getRequesedURL(request);
+        IRI uri = getRequestURLasIRI(request);
         mav.addObject("contextPath", request.getContextPath());
 
         // Retrieve Dataset metadata
-        DatasetMetadata metadata = fairMetaDataService.retrieveDatasetMetadata(VALUEFACTORY.createIRI(uri));
+        DatasetMetadata metadata = datasetMetadataService.retrieve(uri);
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
                 MetadataUtils.SCHEMA_DOT_ORG_MODEL));
 
         // Retrieve parents for breadcrumbs
-        CatalogMetadata catalog = fairMetaDataService.retrieveCatalogMetadata(metadata.getParentURI());
-        FDPMetadata repository = fairMetaDataService.retrieveFDPMetadata(catalog.getParentURI());
+        CatalogMetadata catalog = catalogMetadataService.retrieve(metadata.getParentURI());
+        FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
         mav.addObject("repository", repository);
         mav.addObject("catalog", catalog);
 
         // Retrieve Distributions details
-        mav.addObject("distributions", retrieveMetadata(metadata.getDistributions(),
-                suppress(fairMetaDataService::retrieveDistributionMetadata)));
+        mav.addObject("distributions", distributionMetadataService.retrieve(metadata.getDistributions()));
 
         return mav;
     }
@@ -113,7 +106,6 @@ public class DatasetController extends MetadataController {
      * @param response Http response
      * @param metadata Dataset metadata
      * @return created message
-     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "POST dataset metadata")
@@ -123,20 +115,19 @@ public class DatasetController extends MetadataController {
     public DatasetMetadata storeDatasetMetaData(final HttpServletRequest request,
                                                 HttpServletResponse response,
                                                 @RequestBody(required = true) DatasetMetadata metadata)
-            throws MetadataServiceException, MetadataException {
+            throws MetadataServiceException {
 
-        String requestedURL = getRequesedURL(request);
-        UUID uid = UUID.randomUUID();
-        LOGGER.info("Request to store dataset metatdata with ID {}", uid.toString());
-        IRI uri = VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
+        IRI uri = generateNewIRI(request);
+        LOGGER.info("Request to store dataset metadata with IRI {}", uri.toString());
+
         metadata.setUri(uri);
 
         // Ignore children links
-        metadata.setDistributions(new ArrayList());
+        metadata.setDistributions(Collections.emptyList());
 
-        fairMetaDataService.storeDatasetMetadata(metadata);
+        datasetMetadataService.store(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
-        return fairMetaDataService.retrieveDatasetMetadata(uri);
+        return datasetMetadataService.retrieve(uri);
     }
 
 }

@@ -20,7 +20,7 @@ jobs:
     - stage: build
       install:
         # 1. Install fairmetadata4j
-        - git clone --depth 1 -b $TRAVIS_BRANCH https://github.com/DTL-FAIRData/fairmetadata4j ./fairmetadata4j
+        - git clone --depth 1 -b $TRAVIS_BRANCH https://github.com/DTL-FAIRData/fairmetadata4j ./fairmetadata4j || git clone --depth 1 -b develop https://github.com/DTL-FAIRData/fairmetadata4j ./fairmetadata4j
         - cd  ./fairmetadata4j
         - mvn --quiet --fail-fast install
         - cd ..
