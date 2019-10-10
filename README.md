@@ -56,7 +56,7 @@ $ mvn test
 
 The all `GET` and `OPTIONS` are public-accessible. `POST` and `PATCH` endpoints are secured
 and for accessing them, you need to be authorized. We use JWT Tokens for authorization.
-The token can be retrieved in `/token` endpoint where you send username and password. 
+The token can be retrieved in `/tokens` endpoint where you send username and password. 
 Currently, there exists just one default user (username: `user`, password: `password`) and 
 there is no possibility of how to change it.  
 

@@ -40,7 +40,7 @@ public class AuthControllerTest extends WebIntegrationTest {
         AuthDTO reqDto = new AuthDTO("user", "password");
         String reqBody = objectMapper.writeValueAsString(reqDto);
         MockHttpServletRequestBuilder request =
-                post("/token")
+                post("/tokens")
                         .contentType(MediaType.APPLICATION_JSON.toString())
                         .content(reqBody);
 
@@ -57,7 +57,7 @@ public class AuthControllerTest extends WebIntegrationTest {
         AuthDTO reqDto = new AuthDTO("nonExistingUser", "badPassword");
         String reqBody = objectMapper.writeValueAsString(reqDto);
         MockHttpServletRequestBuilder request =
-                post("/token")
+                post("/tokens")
                         .contentType(MediaType.APPLICATION_JSON.toString())
                         .content(reqBody);
 
