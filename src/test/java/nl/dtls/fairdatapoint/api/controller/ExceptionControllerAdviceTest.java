@@ -30,8 +30,8 @@ package nl.dtls.fairdatapoint.api.controller;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtls.fairdatapoint.api.controller.exception.ExceptionControllerAdvice;
-import nl.dtls.fairdatapoint.service.metadata.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.MetadataService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
 import org.eclipse.rdf4j.model.IRI;
@@ -58,7 +58,7 @@ public class ExceptionControllerAdviceTest {
     private static final String PATH = "/fdp/catalog/invalid";
 
     @Mock
-    private MetadataService fairMetaDataService;
+    private MetadataService<CatalogMetadata> catalogMetadataService;
 
     @InjectMocks
     private CatalogController catalogController;
@@ -75,7 +75,7 @@ public class ExceptionControllerAdviceTest {
 
     @Test
     public void notFoundExceptionHandlerError() throws Exception {
-        Mockito.when(fairMetaDataService.retrieveCatalogMetadata(Mockito.any(IRI.class)))
+        Mockito.when(catalogMetadataService.retrieve(Mockito.any(IRI.class)))
                 .thenThrow(new ResourceNotFoundException("not found"));
 
         mockMvc.perform(get(PATH)).andExpect(status().is(HttpStatus.NOT_FOUND.value())).andReturn();
@@ -86,7 +86,7 @@ public class ExceptionControllerAdviceTest {
     public void badRequestExceptionHandlerError() throws Exception {
 
         doThrow(new MetadataException("Invalid metadata"))
-                .when(fairMetaDataService).storeCatalogMetadata(Mockito.any(CatalogMetadata.class));
+                .when(catalogMetadataService).store(Mockito.any(CatalogMetadata.class));
 
         mockMvc.perform(post("/fdp/catalog")
                 .content(ExampleFilesUtils
@@ -99,7 +99,7 @@ public class ExceptionControllerAdviceTest {
 
     @Test
     public void internalServerErrorExceptionHandlerError() throws Exception {
-        Mockito.when(fairMetaDataService.retrieveCatalogMetadata(Mockito.any(IRI.class)))
+        Mockito.when(catalogMetadataService.retrieve(Mockito.any(IRI.class)))
                 .thenThrow(new MetadataServiceException("Internal server error"));
 
         mockMvc.perform(get(PATH)).andExpect(status()

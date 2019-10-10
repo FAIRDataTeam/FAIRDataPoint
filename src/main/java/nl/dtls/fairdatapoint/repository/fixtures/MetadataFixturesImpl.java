@@ -22,13 +22,12 @@
  */
 package nl.dtls.fairdatapoint.repository.fixtures;
 
-import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.service.metadata.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.MetadataService;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,16 @@ public class MetadataFixturesImpl implements MetadataFixtures {
     protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
-    protected MetadataService fairMetaDataService;
+    protected MetadataService<FDPMetadata> fdpMetadataService;
+
+    @Autowired
+    protected MetadataService<CatalogMetadata> catalogMetadataService;
+
+    @Autowired
+    protected MetadataService<DatasetMetadata> datasetMetadataService;
+
+    @Autowired
+    protected MetadataService<DistributionMetadata> distributionMetadataService;
 
     @Autowired
     protected MetadataFactory metadataFactory;
@@ -57,26 +65,26 @@ public class MetadataFixturesImpl implements MetadataFixtures {
         try {
             final String fdpUrl = instanceUrl + "/fdp";
             importDefaultFixtures(fdpUrl);
-        } catch (MetadataException | MetadataServiceException e) {
+        } catch (MetadataServiceException e) {
             e.printStackTrace();
         }
     }
 
-    public void importDefaultFixtures(String fdpUrl) throws MetadataException, MetadataServiceException {
+    public void importDefaultFixtures(String fdpUrl) throws MetadataServiceException {
         FDPMetadata fdp = fdpMetadata(fdpUrl);
-        fairMetaDataService.storeFDPMetadata(fdp);
+        fdpMetadataService.store(fdp);
 
         CatalogMetadata catalog = catalog1(fdpUrl, fdp);
-        fairMetaDataService.storeCatalogMetadata(catalog);
+        catalogMetadataService.store(catalog);
 
         DatasetMetadata dataset = dataset1(fdpUrl, catalog);
-        fairMetaDataService.storeDatasetMetadata(dataset);
+        datasetMetadataService.store(dataset);
 
         DistributionMetadata distribution1 = distribution1(fdpUrl, dataset);
-        fairMetaDataService.storeDistributionMetadata(distribution1);
+        distributionMetadataService.store(distribution1);
 
         DistributionMetadata distribution2 = distribution2(fdpUrl, dataset);
-        fairMetaDataService.storeDistributionMetadata(distribution2);
+        distributionMetadataService.store(distribution2);
     }
 
     private FDPMetadata fdpMetadata(String fdpUrl) {

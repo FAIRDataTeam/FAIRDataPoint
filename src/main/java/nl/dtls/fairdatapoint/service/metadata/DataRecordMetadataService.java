@@ -22,18 +22,41 @@
  */
 package nl.dtls.fairdatapoint.service.metadata;
 
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
+import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public interface MetadataService<T extends Metadata> {
-    T retrieve(@Nonnull IRI iri) throws MetadataServiceException;
+@Service
+public class DataRecordMetadataService extends AbstractMetadataService<DataRecordMetadata> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(DataRecordMetadataService.class);
 
-    List<T> retrieve(List<IRI> iris);
+    public DataRecordMetadataService(@Value("${metadataProperties.datarecordSpecs:}") String specs) {
+        super();
+        this.specs = specs;
+        this.parentType = DCAT.DATASET;
+    }
 
-    void store(@Nonnull T metadata) throws MetadataServiceException;
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
+    }
 
-    void update(IRI uri, T metadataUpdate) throws MetadataServiceException;
+    @Override
+    protected DataRecordMetadata parse(@Nonnull List<Statement> statements, @Nonnull IRI iri) {
+        return MetadataParserUtils.getDataRecordParser().parse(statements, iri);
+    }
+
+    @Override
+    protected void updateParent(DataRecordMetadata metadata) {
+        metadataUpdateService.visit(metadata);
+    }
 }

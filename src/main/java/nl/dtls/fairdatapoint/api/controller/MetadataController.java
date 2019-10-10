@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtl.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.service.metadata.MetadataService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -42,8 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public abstract class MetadataController {
@@ -53,15 +52,21 @@ public abstract class MetadataController {
     protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
-    protected MetadataService fairMetaDataService;
+    protected MetadataService<FDPMetadata> fdpMetadataService;
 
-    /**
-     * Get requested URL
-     *
-     * @param request HttpServletRequest
-     * @return URL as a string
-     */
-    protected String getRequesedURL(HttpServletRequest request) {
+    @Autowired
+    protected MetadataService<CatalogMetadata> catalogMetadataService;
+
+    @Autowired
+    protected MetadataService<DatasetMetadata> datasetMetadataService;
+
+    @Autowired
+    protected MetadataService<DistributionMetadata> distributionMetadataService;
+
+    @Autowired
+    protected MetadataService<DataRecordMetadata> dataRecordMetadataService;
+
+    protected String getRequestURL(HttpServletRequest request) {
 
         String url = request.getRequestURL().toString();
         LOGGER.info("Original requesed url {}", url);
@@ -120,11 +125,13 @@ public abstract class MetadataController {
         return url;
     }
 
-    <T extends Metadata> List<T> retrieveMetadata(List<IRI> iris, Function<IRI, T> retrieve) {
-        return iris
-                .stream()
-                .map(retrieve)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+    protected IRI getRequestURLasIRI(HttpServletRequest request) {
+        return VALUEFACTORY.createIRI(getRequestURL(request));
+    }
+
+    protected IRI generateNewIRI(HttpServletRequest request) {
+        String requestedURL = getRequestURL(request);
+        UUID uid = UUID.randomUUID();
+        return VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
     }
 }

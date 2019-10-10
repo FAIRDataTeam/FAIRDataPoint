@@ -32,7 +32,7 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.service.metadata.MetadataService;
+import nl.dtls.fairdatapoint.repository.metadata.MetadataRepository;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -73,7 +73,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     private PurlPIDSystemImpl test;
 
     @Mock
-    private MetadataService fairMetaDataService;
+    private MetadataRepository metadataRepository;
 
     @Mock
     private IRI purlBaseUrl;
@@ -142,11 +142,11 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
         // Setting up mock object
 
         when(purlBaseUrl.toString()).thenReturn("http://purl.org/biosemantics-lumc/fdp");
-        when(fairMetaDataService.getFDPIri(catalogMetadata.getParentURI()))
+        when(metadataRepository.getFDPIri(catalogMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());
-        when(fairMetaDataService.getFDPIri(datasetMetadata.getParentURI()))
+        when(metadataRepository.getFDPIri(datasetMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());
-        when(fairMetaDataService.getFDPIri(distributionMetadata.getParentURI()))
+        when(metadataRepository.getFDPIri(distributionMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());
 
         assertTrue(purlSys.getURI(fdpMetadata).toString().contains("purl.org"));

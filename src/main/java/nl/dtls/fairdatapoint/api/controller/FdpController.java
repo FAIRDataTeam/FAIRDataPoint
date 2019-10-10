@@ -28,6 +28,7 @@ import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -38,8 +39,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
 
 @RestController
 @Api(description = "FDP metadata")
@@ -67,10 +66,9 @@ public class FdpController extends MetadataController {
             ResourceNotFoundException, MetadataException {
 
         LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
-        String uri = getRequesedURL(request);
+        String uri = getRequestURL(request);
 
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetadata(VALUEFACTORY.createIRI(uri));
-        return metadata;
+        return fdpMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
     }
 
     @ApiIgnore
@@ -81,18 +79,17 @@ public class FdpController extends MetadataController {
         LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
 
         ModelAndView mav = new ModelAndView("pages/repository");
-        String uri = getRequesedURL(request);
+        String uri = getRequestURL(request);
         mav.addObject("contextPath", request.getContextPath());
 
         // Retrieve FDP metadata
-        FDPMetadata metadata = fairMetaDataService.retrieveFDPMetadata(VALUEFACTORY.createIRI(uri));
+        FDPMetadata metadata = fdpMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
         mav.addObject("metadata", metadata);
         mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
                 MetadataUtils.SCHEMA_DOT_ORG_MODEL));
 
         // Retrieve Catalogs details
-        mav.addObject("catalogs", retrieveMetadata(metadata.getCatalogs(),
-                suppress(fairMetaDataService::retrieveCatalogMetadata)));
+        mav.addObject("catalogs", catalogMetadataService.retrieve(metadata.getCatalogs()));
 
         // We don't want breadcrumbs on FDP page
         mav.addObject("ignoreBreadcrumbs", true);
@@ -107,7 +104,6 @@ public class FdpController extends MetadataController {
      * @param response Http response
      * @param metadata catalog metadata
      * @return created message
-     * @throws nl.dtl.fairmetadata4j.io.MetadataParserException
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "Update fdp metadata")
@@ -117,13 +113,11 @@ public class FdpController extends MetadataController {
     public FDPMetadata updateFDPMetaData(final HttpServletRequest request,
                                          HttpServletResponse response,
                                          @RequestBody(required = true) FDPMetadata metadata) throws
-            MetadataServiceException, MetadataException {
+            MetadataServiceException {
 
-        String uri = getRequesedURL(request);
+        IRI uri = VALUEFACTORY.createIRI(getRequestURL(request));
 
-        fairMetaDataService.updateFDPMetadata(VALUEFACTORY.createIRI(uri), metadata);
-        return fairMetaDataService.retrieveFDPMetadata(VALUEFACTORY.createIRI(uri));
+        fdpMetadataService.update(uri, metadata);
+        return fdpMetadataService.retrieve(uri);
     }
-
-
 }

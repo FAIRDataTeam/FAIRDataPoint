@@ -29,7 +29,6 @@ package nl.dtls.fairdatapoint.service.metadatametrics;
 
 import com.google.common.base.Preconditions;
 import nl.dtl.fairmetadata4j.model.Metric;
-import nl.dtls.fairdatapoint.service.metadata.MetadataServiceImpl;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -48,7 +47,7 @@ import java.util.Map;
 @Service
 public class FairMetadataMetricsServiceImpl implements FairMetadataMetricsService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FairMetadataMetricsServiceImpl.class);
 
     private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
