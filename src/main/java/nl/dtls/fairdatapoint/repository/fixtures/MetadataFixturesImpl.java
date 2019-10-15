@@ -115,7 +115,7 @@ public class MetadataFixturesImpl implements MetadataFixtures {
                         "elementum neque ac ex ultricies auctor. Vestibulum aliquet porttitor enim eu pellentesque. " +
                         "Aenean dapibus tellus ipsum.",
                 "catalog-1",
-                Arrays.asList("https://www.wikidata.org/wiki/Q27318"),
+                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
                 fdpUrl,
                 fdp
         );
@@ -129,7 +129,7 @@ public class MetadataFixturesImpl implements MetadataFixtures {
                         " Praesent placerat ultrices tempor. Pellentesque posuere sapien eu rutrum efficitur. Quisque" +
                         " ac risus malesuada, tempus diam at, elementum urna. Suspendisse quis posuere leo.",
                 "dataset-1",
-                Arrays.asList("https://www.wikidata.org/wiki/Q27318"),
+                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example:theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
                 fdpUrl,
                 catalog

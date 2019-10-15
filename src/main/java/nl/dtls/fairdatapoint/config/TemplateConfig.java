@@ -109,10 +109,7 @@ public class TemplateConfig {
      */
     private static String simplifyUrl(IRI iri, Options options) {
         if (iri != null) {
-            String[] parts = iri.toString().split("/");
-            if (parts.length > 0) {
-                return parts[parts.length - 1];
-            }
+            return iri.getLocalName();
         }
         return "";
     }
