@@ -61,13 +61,14 @@ Currently, there exists just one default user (username: `user`, password: `pass
 there is no possibility of how to change it.  
 
 ### API documentation
-`FAIRDataPoint` (fdp) api comes with an embedded [swagger document] (http://swagger.io/), the details of api calls can be found here. To access the fdp swagger document please visit the following url via web browser
+
+`FAIRDataPoint` (FDP) API comes with an embedded [swagger document](http://swagger.io/), the details of API calls can be found here. To access the FDP swagger document please visit the following url via web browser:
  
- `<TOMCAT_BASE_URL>/fdp/swagger-ui.html` 
+ `<BASE_URL>/swagger-ui.html` 
  
- `An example swagger doc uri :` http://localhost:8084/fdp/swagger-ui.html
+An example swagger URI: http://localhost:8080/swagger-ui.html
  
-In the current implementation the `REPOSITORY` layer metadata is automatically created, however this metadata can be updated through PATCH calls. The metadata of `other` layers can be stored in the `FAIRDataPoint` through POST calls. The table below gives an overview of api calls allowed on different `FAIR metadata` layers. 
+In the current implementation the `REPOSITORY` layer metadata is automatically created, however this metadata can be updated through PATCH calls. The metadata of `other` layers can be stored in the `FAIRDataPoint` through POST calls. The table below gives an overview of API calls allowed on different `FAIR metadata` layers. 
  
 |Metadata layer|GET|POST|PATCH|
 | :---: | :---: | :---: | :---: |
