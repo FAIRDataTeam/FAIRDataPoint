@@ -2,7 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.9.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
     <version>0.1-beta</version>
@@ -45,8 +50,6 @@
         <fairmetadata.version>0.1-beta</fairmetadata.version>
 
         <!-- Spring -->
-        <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
-        <spring.data.version>3.1.10.RELEASE</spring.data.version>
         <spring.boot.handlebars.version>0.3.0</spring.boot.handlebars.version>
 
         <!-- Core -->
@@ -58,6 +61,7 @@
         <unirest.version>1.4.9</unirest.version>
         <sass.version>5.3.0</sass.version>
         <jwt.version>0.10.5</jwt.version>
+        <lombok.version>1.18.10</lombok.version>
 
         <!-- Test -->
         <junit.version>4.12</junit.version>
@@ -87,7 +91,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring.boot.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -98,17 +101,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-rest-webmvc</artifactId>
-            <version>${spring.data.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-            <version>${spring.boot.version}</version>
         </dependency>
         <dependency>
             <groupId>pl.allegro.tech.boot</groupId>
@@ -124,7 +120,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>${spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
         </dependency>
 
         <!-- ////////////////// -->
@@ -198,6 +197,11 @@
             <version>${jwt.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
 
         <!-- ////////////////// -->
         <!--   Test             -->
@@ -205,7 +209,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring.boot.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -213,6 +216,11 @@
                     <artifactId>android-json</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -277,7 +285,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring.boot.version}</version>
                 <executions>
                     <execution>
                         <goals>

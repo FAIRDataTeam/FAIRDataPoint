@@ -24,16 +24,21 @@ package nl.dtls.fairdatapoint.api.controller;
 
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataDTO;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.catalog.CatalogMetadataMapper;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
@@ -41,15 +46,32 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/fdp/catalog")
 public class CatalogController extends MetadataController {
+
+    @Autowired
+    private CatalogMetadataMapper catalogMetadataMapper;
+
     @Value("${instance.url}")
     private String instanceUrl;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {"text/turtle", "application/ld+json",
-            "application/rdf+xml", "text/n3"})
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
+    public ResponseEntity<CatalogMetadataDTO> getCatalogMetaData(@PathVariable final String id,
+                                                                 HttpServletRequest request) throws
+            MetadataServiceException, ResourceNotFoundException {
+        IRI uri = getRequestURLasIRI(request);
+        CatalogMetadata metadata = catalogMetadataService.retrieve(uri);
+        List<DatasetMetadata> datasets = datasetMetadataService.retrieve(metadata.getDatasets());
+        FDPMetadata repository = fdpMetadataService.retrieve(metadata.getParentURI());
+        CatalogMetadataDTO dto = catalogMetadataMapper.toDTO(metadata, datasets, repository);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=*/*"}, produces = {"text/turtle",
+            "application/ld+json", "application/rdf+xml", "text/n3"})
     @ResponseStatus(HttpStatus.OK)
     public CatalogMetadata getCatalogMetaData(@PathVariable final String id,
                                               HttpServletRequest request, HttpServletResponse response) throws
@@ -60,7 +82,8 @@ public class CatalogController extends MetadataController {
     }
 
     @ApiIgnore
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html"},
+            produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlCatalogMetadata(HttpServletRequest request)
             throws MetadataServiceException, ResourceNotFoundException, MetadataException {
 
@@ -85,7 +108,8 @@ public class CatalogController extends MetadataController {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"}, produces = {"text/turtle"})
+    @RequestMapping(method = RequestMethod.POST, headers = {"Accept=*/*"}, consumes = {"text/turtle"},
+            produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public CatalogMetadata storeCatalogMetaData(final HttpServletRequest request, HttpServletResponse response,
                                                 @RequestBody(required = true) CatalogMetadata metadata)

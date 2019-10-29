@@ -1,6 +1,12 @@
 instance:
   url: http://localhost:8080
 
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongo:27017
+      database: fdp
+
 security:
   jwt:
     token:

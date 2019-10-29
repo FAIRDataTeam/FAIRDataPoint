@@ -30,25 +30,44 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
+import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataDTO;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.distribution.DistributionMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 @RestController
 @Api(description = "Distribution Metadata")
 @RequestMapping("/fdp/distribution")
 public class DistributionController extends MetadataController {
+
+    @Autowired
+    private DistributionMetadataMapper distributionMetadataMapper;
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
+    public ResponseEntity<DistributionMetadataDTO> getDistributionMetaData(@PathVariable final String id,
+                                                                           HttpServletRequest request) throws
+            MetadataServiceException, ResourceNotFoundException {
+        IRI uri = getRequestURLasIRI(request);
+        DistributionMetadata metadata = distributionMetadataService.retrieve(uri);
+        DatasetMetadata dataset = datasetMetadataService.retrieve(metadata.getParentURI());
+        CatalogMetadata catalog = catalogMetadataService.retrieve(dataset.getParentURI());
+        FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
+        DistributionMetadataDTO dto = distributionMetadataMapper.toDTO(metadata, repository, catalog, dataset);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 
     /**
      * Get distribution metadata
@@ -61,7 +80,7 @@ public class DistributionController extends MetadataController {
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "Dataset distribution metadata")
-    @RequestMapping(value = "/{id}", produces = {"text/turtle", "application/ld+json",
+    @RequestMapping(value = "/{id}", headers = {"Accept=*/*"}, produces = {"text/turtle", "application/ld+json",
             "application/rdf+xml", "text/n3"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public DistributionMetadata getDistribution(@PathVariable final String id,
@@ -73,7 +92,7 @@ public class DistributionController extends MetadataController {
     }
 
     @ApiIgnore
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html"},
             produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlDistributionMetadata(HttpServletRequest request) throws
             MetadataServiceException, ResourceNotFoundException, MetadataException {
@@ -109,7 +128,8 @@ public class DistributionController extends MetadataController {
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "POST distribution metadata")
-    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"}, produces = {"text/turtle"})
+    @RequestMapping(method = RequestMethod.POST, headers = {"Accept=*/*"}, consumes = {"text/turtle"}, produces = {
+            "text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public DistributionMetadata storeDistribution(final HttpServletRequest request,
                                                   HttpServletResponse response, @RequestBody(required = true)

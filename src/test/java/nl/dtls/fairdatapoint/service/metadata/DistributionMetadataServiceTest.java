@@ -27,6 +27,8 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -38,8 +40,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
@@ -196,10 +198,10 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
         ZonedDateTime datasetModified = ZonedDateTime.parse(updatedDataset.getModified().stringValue());
         ZonedDateTime distributionModified = ZonedDateTime.parse(storedDistribution.getModified().stringValue());
 
-        assertTrue("Dataset modified is not after Distribution modified",
-                datasetModified.isAfter(distributionModified));
-        assertTrue("Catalog modified is not after Dataset modified", catalogModified.isAfter(distributionModified));
-        assertTrue("FDP modified is not after Dataset modified", fdpModified.isAfter(distributionModified));
+        assertFalse("Dataset modified is not after Distribution modified",
+                datasetModified.isBefore(distributionModified));
+        assertFalse("Catalog modified is not after Dataset modified", catalogModified.isBefore(distributionModified));
+        assertFalse("FDP modified is not after Dataset modified", fdpModified.isBefore(distributionModified));
     }
 
     private static DistributionMetadata createExampleMetadata() {

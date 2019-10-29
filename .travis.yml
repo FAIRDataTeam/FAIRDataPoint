@@ -1,6 +1,9 @@
 dist: xenial
 language: generic
 
+services:
+  - mongodb
+
 jdk:
   - openjdk11
 
@@ -24,8 +27,10 @@ jobs:
         - cd  ./fairmetadata4j
         - mvn --quiet --fail-fast install
         - cd ..
+        # 2. Init and check testing Mongo Database
+        - mongo fdp-test --eval 'db.collection.find()'
       script:
-        # 2. Build FAIR Data Point
+        # 3. Build FAIR Data Point
         - mvn org.jacoco:jacoco-maven-plugin:prepare-agent test
         - mvn --quiet --fail-fast -DskipTests package
         - docker pull $IMAGE_TAG_DEVELOP

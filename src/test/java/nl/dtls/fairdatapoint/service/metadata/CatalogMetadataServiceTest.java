@@ -25,6 +25,9 @@ package nl.dtls.fairdatapoint.service.metadata;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -32,13 +35,12 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
@@ -172,7 +174,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         ZonedDateTime fdpModified = ZonedDateTime.parse(updatedFdpMetadata.getModified().stringValue());
         ZonedDateTime catalogModified = ZonedDateTime.parse(storedCatalog.getModified().stringValue());
 
-        assertTrue("FDP modified is not after Catalog modified", fdpModified.isAfter(catalogModified));
+        assertFalse("FDP modified is not after Catalog modified", fdpModified.isBefore(catalogModified));
     }
 
     private static CatalogMetadata createExampleMetadata() {

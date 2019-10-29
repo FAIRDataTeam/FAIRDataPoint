@@ -32,7 +32,7 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.repository.metadata.MetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepository;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;

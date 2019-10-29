@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.filter;
 
-import nl.dtls.fairdatapoint.security.JwtTokenProvider;
+import nl.dtls.fairdatapoint.service.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,15 +39,15 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private JwtService jwtService;
 
     @Override
     public void doFilterInternal(final HttpServletRequest request,
                                  final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
-        String token = jwtTokenProvider.resolveToken(request);
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication auth = jwtTokenProvider.getAuthentication(token);
+        String token = jwtService.resolveToken(request);
+        if (token != null && jwtService.validateToken(token)) {
+            Authentication auth = jwtService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         fc.doFilter(request, response);

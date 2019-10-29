@@ -22,19 +22,43 @@
  */
 package nl.dtls.fairdatapoint;
 
+import nl.dtls.fairdatapoint.database.mongo.fixtures.DummyDataLoader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import static org.springframework.core.env.Profiles.of;
 
 @SpringBootApplication
 @EnableWebMvc
 @EnableAsync
 @ComponentScan(basePackages = "nl.dtls.fairdatapoint.*")
-public class Application {
+public class Application implements ApplicationRunner {
+
+    @Autowired
+    private DummyDataLoader dummyDataLoader;
+
+    @Autowired
+    private Environment environment;
 
     public static void main(String[] args) {
+        String property = System.getProperties().getProperty("spring.profiles.active");
+        if (property == null) {
+            System.setProperty("spring.profiles.active", Profiles.PRODUCTION);
+        }
         SpringApplication.run(Application.class, args);
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        if (environment.acceptsProfiles(of(Profiles.DEVELOPMENT))) {
+            dummyDataLoader.load();
+        }
     }
 }

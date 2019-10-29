@@ -22,35 +22,37 @@
  */
 package nl.dtls.fairdatapoint;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtls.fairdatapoint.api.filter.JwtTokenFilter;
+import nl.dtls.fairdatapoint.database.mongo.fixtures.DummyDataLoader;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+@RunWith(SpringRunner.class)
+@ActiveProfiles(Profiles.TESTING)
+@DirtiesContext
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+        properties = {"spring.main.allow-bean-definition-overriding=true"})
+public abstract class WebIntegrationTest {
 
-public abstract class WebIntegrationTest extends BaseIntegrationTest {
+    public static final String TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE1NzI0NDczNTksImV4cCI6MjQzNjM2MDk1OX0" +
+            ".yGZthRlVezhbKk1gDymW6pZfbCoxxqJda6md9btp00w";
 
     @Autowired
-    private WebApplicationContext context;
+    protected TestRestTemplate client;
 
     @Autowired
-    private JwtTokenFilter jwtTokenFilter;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-    protected MockMvc mockMvc;
+    protected DummyDataLoader dummyDataLoader;
 
     @Before
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .addFilters(jwtTokenFilter)
-                .alwaysDo(print())
-                .build();
+        dummyDataLoader.load();
     }
 
 }

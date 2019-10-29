@@ -3,3 +3,17 @@ metadataMetrics:
 
 instance:
   url: http://localhost:8084
+
+server:
+  port: 8084
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: fdp-test
+
+security:
+  jwt:
+    token:
+      expiration: 9999

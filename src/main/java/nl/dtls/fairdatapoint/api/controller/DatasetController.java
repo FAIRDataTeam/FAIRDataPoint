@@ -27,15 +27,20 @@ import io.swagger.annotations.ApiOperation;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataDTO;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.dataset.DatasetMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
@@ -43,11 +48,28 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @Api(description = "Dataset Metadata")
 @RequestMapping("/fdp/dataset")
 public class DatasetController extends MetadataController {
+
+    @Autowired
+    private DatasetMetadataMapper datasetMetadataMapper;
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
+    public ResponseEntity<DatasetMetadataDTO> getDatasetMetaData(@PathVariable final String id,
+                                                                 HttpServletRequest request) throws
+            MetadataServiceException, ResourceNotFoundException {
+        IRI uri = getRequestURLasIRI(request);
+        DatasetMetadata metadata = datasetMetadataService.retrieve(uri);
+        List<DistributionMetadata> distributions = distributionMetadataService.retrieve(metadata.getDistributions());
+        CatalogMetadata catalog = catalogMetadataService.retrieve(metadata.getParentURI());
+        FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
+        DatasetMetadataDTO dto = datasetMetadataMapper.toDTO(metadata, distributions, repository, catalog);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 
     /**
      * Get dataset metadata
@@ -60,7 +82,7 @@ public class DatasetController extends MetadataController {
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "Dataset metadata")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {"text/turtle",
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=*/*"}, produces = {"text/turtle",
             "application/ld+json", "application/rdf+xml", "text/n3"})
     @ResponseStatus(HttpStatus.OK)
     public DatasetMetadata getDatasetMetaData(@PathVariable final String id,
@@ -72,7 +94,7 @@ public class DatasetController extends MetadataController {
     }
 
     @ApiIgnore
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html"},
             produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlDatasetMetadata(HttpServletRequest request)
             throws MetadataServiceException, ResourceNotFoundException, MetadataException {
@@ -109,7 +131,7 @@ public class DatasetController extends MetadataController {
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "POST dataset metadata")
-    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"},
+    @RequestMapping(method = RequestMethod.POST, headers = {"Accept=*/*"}, consumes = {"text/turtle"},
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public DatasetMetadata storeDatasetMetaData(final HttpServletRequest request,

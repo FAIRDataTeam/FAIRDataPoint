@@ -27,10 +27,10 @@ import io.swagger.annotations.ApiOperation;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtls.fairdatapoint.service.metadata.MetadataServiceException;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,7 +57,7 @@ public class DataRecordController extends MetadataController {
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "Dataset metadata")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=*/*"},
             produces = {"text/turtle", "application/ld+json", "application/rdf+xml", "text/n3"})
     @ResponseStatus(HttpStatus.OK)
     public DataRecordMetadata getDataRecordMetaData(@PathVariable final String id,
@@ -69,7 +69,7 @@ public class DataRecordController extends MetadataController {
     }
 
     @ApiIgnore
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html"},
             produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHtmlDataRecordMetadata(HttpServletRequest request) throws
             ResourceNotFoundException, MetadataException, MetadataServiceException {
@@ -95,7 +95,7 @@ public class DataRecordController extends MetadataController {
      * @throws MetadataServiceException
      */
     @ApiOperation(value = "POST datarecord metadata")
-    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"},
+    @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"}, headers = {"Accept=*/*"},
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public DataRecordMetadata storeDataRecord(final HttpServletRequest request,

@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.security.JwtConfigurer;
+import nl.dtls.fairdatapoint.service.jwt.JwtFilterConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,15 +31,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private JwtConfigurer jwtConfigurer;
+    private JwtFilterConfigurer jwtConfigurer;
 
     @Bean
     @Override
@@ -55,22 +52,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/tokens").permitAll()
-                .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/fdp/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/**.jsonld").permitAll()
+                .antMatchers(HttpMethod.GET, "/**.ttl").permitAll()
+                .antMatchers(HttpMethod.GET, "/**.rdf").permitAll()
+                .antMatchers(HttpMethod.GET, "/images/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/css/**").permitAll()
+                .antMatchers("/tokens").permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                        "/configuration/**", "/swagger-ui.html", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(jwtConfigurer);
     }
 
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager(
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build());
-    }
 }

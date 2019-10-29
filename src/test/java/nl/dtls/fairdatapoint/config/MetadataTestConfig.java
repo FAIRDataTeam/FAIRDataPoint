@@ -29,9 +29,11 @@ import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 
+@TestConfiguration
 public class MetadataTestConfig {
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
