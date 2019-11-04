@@ -34,9 +34,12 @@ import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.search.FairSearchClient;
+import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
@@ -49,12 +52,14 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.acls.domain.BasePermission;
 
 import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
@@ -109,6 +114,13 @@ public abstract class AbstractMetadataService<T extends Metadata> implements Met
 
     @Autowired
     protected MetadataRepository storeManager;
+
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private CurrentUserService currentUserService;
+
 
     /**
      * Each child class defines its own logger.
@@ -165,6 +177,7 @@ public abstract class AbstractMetadataService<T extends Metadata> implements Met
             storeManager.storeStatements(MetadataUtils.getStatements(metadata), metadata.getUri());
 
             updateParent(metadata);
+            addPermissions(metadata);
             fseService.submitFdpUri(VALUE_FACTORY.createIRI(instanceUrl));
 
             getLogger().info("Stored {} - {}", metadata.getTitle(), metadata.getUri());
@@ -287,6 +300,17 @@ public abstract class AbstractMetadataService<T extends Metadata> implements Met
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
             getLogger().error(ex.getMessage());
         }
+    }
 
+    private void addPermissions(T metadata) {
+        Optional<User> oUser = currentUserService.getCurrentUser();
+        if (oUser.isEmpty()) {
+            return;
+        }
+        User user = oUser.get();
+        String entityId = metadata.getIdentifier().getIdentifier().getLabel();
+        memberService.createPermission(entityId, metadata.getClass(), user.getUuid(), BasePermission.WRITE);
+        memberService.createPermission(entityId, metadata.getClass(), user.getUuid(), BasePermission.CREATE);
+        memberService.createPermission(entityId, metadata.getClass(), user.getUuid(), BasePermission.DELETE);
     }
 }

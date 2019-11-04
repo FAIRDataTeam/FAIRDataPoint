@@ -26,6 +26,7 @@ import io.jsonwebtoken.*;
 import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
 import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -33,8 +34,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -57,13 +56,13 @@ public class JwtService {
     private long expiration;
 
     @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private MongoAuthenticationService mongoAuthenticationService;
 
     @PostConstruct
     protected void init() {
@@ -82,8 +81,7 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserUuid(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return mongoAuthenticationService.getAuthentication(getUserUuid(token));
     }
 
     public String getUserUuid(String token) {

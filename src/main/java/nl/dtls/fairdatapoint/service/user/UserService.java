@@ -29,9 +29,9 @@ import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.service.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,6 +52,9 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private MemberService memberService;
+
     public List<UserDTO> getUsers() {
         List<User> users = userRepository.findAll();
         return
@@ -68,16 +71,17 @@ public class UserService {
                         .map(userMapper::toDTO);
     }
 
-    public String getCurrentUserUuid() {
-        return ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    public Optional<String> getCurrentUserUuid() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof org.springframework.security.core.userdetails.User) {
+            return of(((org.springframework.security.core.userdetails.User) principal).getUsername());
+        } else {
+            return empty();
+        }
     }
 
-    public UserDTO getCurrentUser() {
-        Optional<UserDTO> oUser = getUserByUuid(getCurrentUserUuid());
-        if (oUser.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return oUser.get();
+    public Optional<UserDTO> getCurrentUser() {
+        return getCurrentUserUuid().flatMap(this::getUserByUuid);
     }
 
     public UserDTO createUser(UserCreateDTO reqDto) {
@@ -122,7 +126,9 @@ public class UserService {
         if (oUser.isEmpty()) {
             return false;
         }
-        userRepository.delete(oUser.get());
+        User user = oUser.get();
+        userRepository.delete(user);
+        memberService.deleteMembers(user);
         return true;
     }
 }

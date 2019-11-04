@@ -51,6 +51,7 @@
 
         <!-- Spring -->
         <spring.boot.handlebars.version>0.3.0</spring.boot.handlebars.version>
+        <spring.security.acl.mongo.version>5.1.5-SNAPSHOT</spring.security.acl.mongo.version>
 
         <!-- Core -->
         <springfox.swagger.version>2.9.1</springfox.swagger.version>
@@ -124,6 +125,15 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl-mongodb</artifactId>
+            <version>${spring.security.acl.mongo.version}</version>
         </dependency>
 
         <!-- ////////////////// -->

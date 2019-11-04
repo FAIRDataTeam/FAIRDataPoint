@@ -62,8 +62,12 @@ public class UserController {
     @RequestMapping(value = "/current", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserCurrent()
             throws ResourceNotFoundException {
-        UserDTO dto = userService.getCurrentUser();
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        Optional<UserDTO> oDto = userService.getCurrentUser();
+        if (oDto.isPresent()) {
+            return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
+        } else {
+            throw new ResourceNotFoundException("You have to be login at first");
+        }
     }
 
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)

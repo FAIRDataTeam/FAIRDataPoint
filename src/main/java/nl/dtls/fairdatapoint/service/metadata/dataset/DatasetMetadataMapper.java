@@ -27,6 +27,7 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.dto.common.BreadcrumbDTO;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataSimpleDTO;
 import nl.dtls.fairdatapoint.api.dto.uri.UriDTO;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +52,7 @@ public class DatasetMetadataMapper {
     private DistributionMetadataMapper distributionMetadataMapper;
 
     public DatasetMetadataDTO toDTO(DatasetMetadata d, List<DistributionMetadata> distributions,
-                                    FDPMetadata repository, CatalogMetadata catalog) {
+                                    FDPMetadata repository, CatalogMetadata catalog, Optional<MemberDTO> member) {
         return new DatasetMetadataDTO(
                 d.getIdentifier().getIdentifier().getLabel(),
                 d.getUri().toString(),
@@ -75,7 +77,8 @@ public class DatasetMetadataMapper {
                             repository.getIdentifier().getIdentifier().getLabel()));
                     put("catalog", new BreadcrumbDTO(catalog.getTitle().getLabel(),
                             catalog.getIdentifier().getIdentifier().getLabel()));
-                }}
+                }},
+                member.map(MemberDTO::getMembership).orElse(null)
         );
     }
 

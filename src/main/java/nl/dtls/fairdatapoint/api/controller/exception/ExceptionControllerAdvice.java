@@ -30,6 +30,7 @@ package nl.dtls.fairdatapoint.api.controller.exception;
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
+import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
@@ -65,6 +66,14 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleUnauthorized(Exception e, HttpServletResponse response) {
         LOGGER.error(e.getMessage());
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
+    @ExceptionHandler({ForbiddenException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorDTO handleForbidden(Exception e, HttpServletResponse response) {
+        LOGGER.error(e.getMessage());
+        return new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

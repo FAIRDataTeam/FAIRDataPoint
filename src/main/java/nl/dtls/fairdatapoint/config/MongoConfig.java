@@ -41,7 +41,7 @@ import javax.annotation.PostConstruct;
 
 @Configuration
 @EnableMongoAuditing
-@EnableMongoRepositories(basePackages = {"nl.dtls.fairdatapoint"})
+@EnableMongoRepositories(basePackages = {"nl.dtls.fairdatapoint", "org.springframework.security.acls"})
 public class MongoConfig extends AbstractMongoConfiguration {
 
     @Value("${spring.data.mongodb.uri}")
@@ -58,11 +58,6 @@ public class MongoConfig extends AbstractMongoConfiguration {
     @Override
     public MongoClient mongoClient() {
         return new MongoClient(new MongoClientURI(mongoUri));
-    }
-
-    @Override
-    protected String getMappingBasePackage() {
-        return "nl.dtls.fairdatapoint";
     }
 
     @Autowired

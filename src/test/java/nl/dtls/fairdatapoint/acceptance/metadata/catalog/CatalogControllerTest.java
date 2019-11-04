@@ -33,6 +33,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.acls.dao.AclRepository;
+import org.springframework.security.acls.model.AclCache;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
@@ -44,7 +46,13 @@ import static org.junit.Assert.assertFalse;
 public class CatalogControllerTest extends MetadataControllerTest {
 
     @Autowired
-    MetadataFixtures metadataFixtures;
+    private MetadataFixtures metadataFixtures;
+
+    @Autowired
+    private AclRepository aclRepository;
+
+    @Autowired
+    private AclCache aclCache;
 
     /**
      * Check file extension for DataRecord layer
@@ -267,6 +275,9 @@ public class CatalogControllerTest extends MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeCatalogByURLReretouring() throws Exception {
+        // We need to clear all permissions from default FDP fixtures
+        aclRepository.deleteAll();
+        aclCache.clearCache();
         metadataFixtures.importDefaultFixtures("https://lorentz.fair-dtls.surf-hosted.nl/fdp");
 
         MockHttpServletResponse response = new MockHttpServletResponse();

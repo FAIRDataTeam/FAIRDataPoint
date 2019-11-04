@@ -39,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class Repository_Detail_GET extends WebIntegrationTest {
+public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String id) {
         return URI.create(format("/%s", id));

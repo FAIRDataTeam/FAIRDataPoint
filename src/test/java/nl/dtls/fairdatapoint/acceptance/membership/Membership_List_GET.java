@@ -20,11 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
+package nl.dtls.fairdatapoint.acceptance.membership;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataDTO;
+import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
+import nl.dtls.fairdatapoint.database.mongo.fixtures.MembershipFixtures;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,39 +34,46 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.List;
 
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class Distribution_Detail_GET extends WebIntegrationTest {
+public class Membership_List_GET extends WebIntegrationTest {
 
-    private URI url(String id) {
-        return URI.create(format("/fdp/distribution/%s", id));
+    private URI url() {
+        return URI.create("/memberships");
     }
+
+    @Autowired
+    private MembershipFixtures membershipFixtures;
 
     @Test
     public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(url("distribution-1"))
+                .get(url())
                 .header(HttpHeaders.AUTHORIZATION, TOKEN)
                 .build();
-        ParameterizedTypeReference<DistributionMetadataDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<List<MembershipDTO>> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<DistributionMetadataDTO> result = client.exchange(request, responseType);
+        ResponseEntity<List<MembershipDTO>> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        List<MembershipDTO> body = result.getBody();
+        assertThat(body.size(), is(equalTo(2)));
+        Common.compare(membershipFixtures.owner(), body.get(0));
+        Common.compare(membershipFixtures.dataProvider(), body.get(1));
     }
 
     @Test
-    public void res404() {
-        createNotFoundTestGet(client, url("nonExisting"));
+    public void res403() {
+        createForbiddenTestGet(client, url());
     }
 
 }

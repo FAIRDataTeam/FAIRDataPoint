@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
+package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataDTO;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -39,24 +39,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class Dataset_Detail_GET extends WebIntegrationTest {
+public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String id) {
-        return URI.create(format("/fdp/dataset/%s", id));
+        return URI.create(format("/fdp/distribution/%s", id));
     }
 
     @Test
     public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(url("dataset-1"))
+                .get(url("distribution-1"))
                 .header(HttpHeaders.AUTHORIZATION, TOKEN)
                 .build();
-        ParameterizedTypeReference<DatasetMetadataDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<DistributionMetadataDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<DatasetMetadataDTO> result = client.exchange(request, responseType);
+        ResponseEntity<DistributionMetadataDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));

@@ -27,8 +27,10 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -36,6 +38,8 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
@@ -46,6 +50,12 @@ import static org.junit.Assert.assertNotNull;
 public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
     private final static String TEST_DISTRIBUTION_URI = "http://example.com/fdp/catalog/dataset/distrubtion";
+
+    @Autowired
+    private UserFixtures userFixtures;
+
+    @Autowired
+    private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
     private MetadataService<FDPMetadata> fdpMetadataService;
@@ -61,6 +71,9 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
 
     @Before
     public void createParents() throws MetadataServiceException {
+        String albertUuid = userFixtures.albert().getUuid();
+        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        SecurityContextHolder.getContext().setAuthentication(auth);
         fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
         catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
                 ExampleFilesUtils.FDP_URI));

@@ -52,7 +52,7 @@ public abstract class WebIntegrationTest {
 
     @Before
     public void setup() {
-        dummyDataLoader.load();
+        dummyDataLoader.init();
     }
 
 }

@@ -25,9 +25,11 @@ package nl.dtls.fairdatapoint.service.metadata;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -35,6 +37,8 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
@@ -47,6 +51,12 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private final static String TEST_CATALOG_URI = "http://example.com/fdp/catalog";
 
     @Autowired
+    private UserFixtures userFixtures;
+
+    @Autowired
+    private MongoAuthenticationService mongoAuthenticationService;
+
+    @Autowired
     private MetadataService<FDPMetadata> fdpMetadataService;
 
     @Autowired
@@ -54,6 +64,9 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
 
     @Before
     public void createParent() throws MetadataServiceException {
+        String albertUuid = userFixtures.albert().getUuid();
+        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        SecurityContextHolder.getContext().setAuthentication(auth);
         fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
     }
 

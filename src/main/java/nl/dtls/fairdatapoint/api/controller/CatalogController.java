@@ -27,8 +27,10 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.catalog.CatalogMetadataMapper;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
@@ -47,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/fdp/catalog")
@@ -54,6 +57,9 @@ public class CatalogController extends MetadataController {
 
     @Autowired
     private CatalogMetadataMapper catalogMetadataMapper;
+
+    @Autowired
+    private MemberService memberService;
 
     @Value("${instance.url}")
     private String instanceUrl;
@@ -66,7 +72,9 @@ public class CatalogController extends MetadataController {
         CatalogMetadata metadata = catalogMetadataService.retrieve(uri);
         List<DatasetMetadata> datasets = datasetMetadataService.retrieve(metadata.getDatasets());
         FDPMetadata repository = fdpMetadataService.retrieve(metadata.getParentURI());
-        CatalogMetadataDTO dto = catalogMetadataMapper.toDTO(metadata, datasets, repository);
+        String catalogId = metadata.getIdentifier().getIdentifier().getLabel();
+        Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(catalogId, CatalogMetadata.class);
+        CatalogMetadataDTO dto = catalogMetadataMapper.toDTO(metadata, datasets, repository, oMember);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

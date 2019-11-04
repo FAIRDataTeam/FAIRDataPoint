@@ -31,7 +31,9 @@ import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataDTO;
+import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.distribution.DistributionMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
@@ -41,6 +43,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
@@ -55,6 +58,9 @@ public class DistributionController extends MetadataController {
 
     @Autowired
     private DistributionMetadataMapper distributionMetadataMapper;
+
+    @Autowired
+    private MemberService memberService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
     public ResponseEntity<DistributionMetadataDTO> getDistributionMetaData(@PathVariable final String id,
@@ -139,6 +145,12 @@ public class DistributionController extends MetadataController {
         IRI uri = generateNewIRI(request);
         LOGGER.info("Request to store distribution metadata with IRI {}", uri.toString());
         metadata.setUri(uri);
+
+        String parentId = metadata.getParentURI().getLocalName();
+        if (!memberService.checkPermission(parentId, DatasetMetadata.class, BasePermission.CREATE)) {
+            throw new ForbiddenException("You are not allow to add new entry");
+        }
+
         distributionMetadataService.store(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return distributionMetadataService.retrieve(uri);

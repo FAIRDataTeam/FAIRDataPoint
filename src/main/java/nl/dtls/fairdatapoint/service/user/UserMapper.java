@@ -22,10 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.user;
 
-import nl.dtls.fairdatapoint.api.dto.user.UserChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
+import nl.dtls.fairdatapoint.api.dto.user.*;
 import nl.dtls.fairdatapoint.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,6 +42,15 @@ public class UserMapper {
                         user.getLastName(),
                         user.getEmail(),
                         user.getRole());
+    }
+
+    public UserSimpleDTO toSimpleDTO(User user) {
+        return
+                new UserSimpleDTO(
+                        user.getUuid(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail());
     }
 
     public User fromCreateDTO(UserCreateDTO dto, String uuid) {

@@ -30,8 +30,11 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataDTO;
+import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.dataset.DatasetMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
@@ -41,6 +44,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
@@ -49,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Api(description = "Dataset Metadata")
@@ -57,6 +62,9 @@ public class DatasetController extends MetadataController {
 
     @Autowired
     private DatasetMetadataMapper datasetMetadataMapper;
+
+    @Autowired
+    private MemberService memberService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
     public ResponseEntity<DatasetMetadataDTO> getDatasetMetaData(@PathVariable final String id,
@@ -67,7 +75,9 @@ public class DatasetController extends MetadataController {
         List<DistributionMetadata> distributions = distributionMetadataService.retrieve(metadata.getDistributions());
         CatalogMetadata catalog = catalogMetadataService.retrieve(metadata.getParentURI());
         FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
-        DatasetMetadataDTO dto = datasetMetadataMapper.toDTO(metadata, distributions, repository, catalog);
+        String datasetId = metadata.getIdentifier().getIdentifier().getLabel();
+        Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(datasetId, DatasetMetadata.class);
+        DatasetMetadataDTO dto = datasetMetadataMapper.toDTO(metadata, distributions, repository, catalog, oMember);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -143,6 +153,10 @@ public class DatasetController extends MetadataController {
         LOGGER.info("Request to store dataset metadata with IRI {}", uri.toString());
 
         metadata.setUri(uri);
+        String parentId = metadata.getParentURI().getLocalName();
+        if (!memberService.checkPermission(parentId, CatalogMetadata.class, BasePermission.CREATE)) {
+            throw new ForbiddenException("You are not allow to add new entry");
+        }
 
         // Ignore children links
         metadata.setDistributions(Collections.emptyList());

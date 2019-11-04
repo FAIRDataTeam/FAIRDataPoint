@@ -49,7 +49,7 @@ public class CORSFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
 
         String allowedMtds = String.join(",", RequestMethod.GET.name(), RequestMethod.POST.name(),
-                RequestMethod.PUT.name(), RequestMethod.PATCH.name());
+                RequestMethod.PUT.name(), RequestMethod.PATCH.name(), RequestMethod.DELETE.name());
 
         response.setHeader(HttpHeaders.SERVER, "FAIR data point (JAVA)");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");

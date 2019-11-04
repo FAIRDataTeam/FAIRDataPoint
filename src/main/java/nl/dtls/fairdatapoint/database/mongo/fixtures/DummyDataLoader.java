@@ -22,11 +22,18 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.fixtures;
 
+import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 @Service
+@Profile(Profiles.NON_PRODUCTION)
 public class DummyDataLoader {
 
     @Autowired
@@ -35,10 +42,26 @@ public class DummyDataLoader {
     @Autowired
     private UserFixtures userFixtures;
 
-    public void load() {
+    @Autowired
+    private MembershipRepository membershipRepository;
+
+    @Autowired
+    private AclRepository aclRepository;
+
+    @Autowired
+    private MembershipFixtures membershipFixtures;
+
+    @PostConstruct
+    public void init() {
         userRepository.deleteAll();
         userRepository.save(userFixtures.albert());
         userRepository.save(userFixtures.nikola());
+
+        membershipRepository.deleteAll();
+        membershipRepository.save(membershipFixtures.owner());
+        membershipRepository.save(membershipFixtures.dataProvider());
+
+        aclRepository.deleteAll();
     }
 
 }
