@@ -26,8 +26,8 @@ import nl.dtls.fairdatapoint.acceptance.metadata.common.MetadataControllerTest;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -35,7 +35,9 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_DATASET_PATH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DatasetControllerTest extends MetadataControllerTest {
 
@@ -69,37 +71,39 @@ public class DatasetControllerTest extends MetadataControllerTest {
      *
      * @throws Exception
      */
-    @Ignore
+    @Disabled
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeDatasetTwice() throws Exception {
+        assertThrows(IllegalStateException.class, () -> {
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        String metadata = ExampleFilesUtils.getFileContentAsString(
-                ExampleFilesUtils.DATASET_METADATA_FILE);
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/dataset");
+            String metadata = ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DATASET_METADATA_FILE);
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/dataset");
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+            assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
-        response = new MockHttpServletResponse();
-        request = new MockHttpServletRequest();
+            response = new MockHttpServletResponse();
+            request = new MockHttpServletRequest();
 
-        request.setServerName("localhost");
-        request.setContextPath("fdp");
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/dataset");
+            request.setServerName("localhost");
+            request.setContextPath("fdp");
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/dataset");
 
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**
@@ -108,18 +112,20 @@ public class DatasetControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void nonExistingDataset() throws Exception {
+        assertThrows(ResourceNotFoundException.class, () -> {
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/fdp/dataset/dumpy");
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+            request.setRequestURI("/fdp/dataset/dumpy");
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**
@@ -172,18 +178,20 @@ public class DatasetControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = HttpMediaTypeNotAcceptableException.class)
+    @Test
     public void unsupportedAcceptHeaderDataset() throws Exception {
+        assertThrows(HttpMediaTypeNotAcceptableException.class, () -> {
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "application/trig");
-        request.setRequestURI(TEST_DATASET_PATH);
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "application/trig");
+            request.setRequestURI(TEST_DATASET_PATH);
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
 }

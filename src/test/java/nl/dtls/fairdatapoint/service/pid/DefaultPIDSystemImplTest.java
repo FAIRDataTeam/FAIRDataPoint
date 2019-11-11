@@ -32,10 +32,11 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * DefaultPIDSystemImpl class unit tests
@@ -54,19 +55,23 @@ public class DefaultPIDSystemImplTest {
     /**
      * Test of null metadata, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetURIForNullMetadata() {
-        test.getURI(null);
+        assertThrows(NullPointerException.class, () -> {
+            test.getURI(null);
+        });
     }
 
     /**
      * Test of null metadata uri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetURIForNullMetadataUri() {
-        FDPMetadata metadataCopy = metadata;
-        metadataCopy.setUri(null);
-        test.getURI(metadataCopy);
+        assertThrows(NullPointerException.class, () -> {
+            FDPMetadata metadataCopy = metadata;
+            metadataCopy.setUri(null);
+            test.getURI(metadataCopy);
+        });
     }
 
 
@@ -82,17 +87,21 @@ public class DefaultPIDSystemImplTest {
     /**
      * Test of null pid iri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetIdForNullPIDIri() {
-        test.getId(null);
+        assertThrows(NullPointerException.class, () -> {
+            test.getId(null);
+        });
     }
 
     /**
      * Test of invalid default pid iri, this test is excepted to throw error
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testGetIdForInvalidPIDIri() {
-        test.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
+        assertThrows(IllegalStateException.class, () -> {
+            test.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
+        });
     }
 
     /**

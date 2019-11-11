@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.common;
 
 import org.apache.http.HttpHeaders;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import javax.servlet.http.HttpServletResponse;
 
+import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.*;
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

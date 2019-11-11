@@ -36,8 +36,8 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @DirtiesContext
@@ -73,7 +74,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     @InjectMocks
     private MetadataRepositoryImpl mockStoreManager;
 
-    @Before
+    @BeforeEach
     public void storeExampleFile() throws MetadataRepositoryException {
 
         testStoreManager.storeStatements(STATEMENTS, f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
@@ -85,9 +86,11 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
      * IllegalArgumentException
      */
     @DirtiesContext
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullURI() throws MetadataRepositoryException {
-        testStoreManager.retrieveResource(null);
+        assertThrows(NullPointerException.class, () -> {
+            testStoreManager.retrieveResource(null);
+        });
     }
 
     /**
@@ -95,22 +98,25 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
      * IllegalArgumentException
      */
     @DirtiesContext
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyURI() throws MetadataRepositoryException {
+        assertThrows(IllegalArgumentException.class, () -> {
 
-        String uri = "";
-        testStoreManager.retrieveResource(f.createIRI(uri));
+            String uri = "";
+            testStoreManager.retrieveResource(f.createIRI(uri));
+        });
     }
 
     /**
      * This test is excepted to throw execption
      */
     @DirtiesContext
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyInvalidURI() throws MetadataRepositoryException {
-
-        String uri = "...";
-        testStoreManager.retrieveResource(f.createIRI(uri));
+        assertThrows(IllegalArgumentException.class, () -> {
+            String uri = "...";
+            testStoreManager.retrieveResource(f.createIRI(uri));
+        });
     }
 
     /**
@@ -141,11 +147,13 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
      * The test is excepted to throw error
      */
     @DirtiesContext
-    @Test(expected = MetadataRepositoryException.class)
+    @Test
     public void retrieveResourceCatchBlock() throws Exception {
+        assertThrows(MetadataRepositoryException.class, () -> {
 
-        when(repository.getConnection()).thenThrow(RepositoryException.class);
-        mockStoreManager.retrieveResource(f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
+            when(repository.getConnection()).thenThrow(RepositoryException.class);
+            mockStoreManager.retrieveResource(f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
+        });
     }
 
     /**
@@ -235,53 +243,60 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
      * Check exception handling of delete resource method
      */
     @DirtiesContext
-    @Test(expected = MetadataRepositoryException.class)
+    @Test
     public void checkExceptionsDeleteResourceMethod() throws Exception {
-
-        when(repository.getConnection()).thenThrow(RepositoryException.class);
-        mockStoreManager.removeResource(null);
+        assertThrows(MetadataRepositoryException.class, () -> {
+            when(repository.getConnection()).thenThrow(RepositoryException.class);
+            mockStoreManager.removeResource(null);
+        });
     }
 
     /**
      * Check exception handling of remove statement method
      */
     @DirtiesContext
-    @Test(expected = MetadataRepositoryException.class)
+    @Test
     public void checkExceptionsRemoveStatementMethod() throws Exception {
+        assertThrows(MetadataRepositoryException.class, () -> {
 
-        when(repository.getConnection()).thenThrow(RepositoryException.class);
-        mockStoreManager.removeStatement(null, null, null);
+            when(repository.getConnection()).thenThrow(RepositoryException.class);
+            mockStoreManager.removeStatement(null, null, null);
+        });
     }
 
     /**
      * Check exception handling of isStatementExist method
      */
     @DirtiesContext
-    @Test(expected = MetadataRepositoryException.class)
+    @Test
     public void checkExceptionsIsStatementMethod() throws Exception {
-
-        when(repository.getConnection()).thenThrow(RepositoryException.class);
-        mockStoreManager.isStatementExist(f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
+        assertThrows(MetadataRepositoryException.class, () -> {
+            when(repository.getConnection()).thenThrow(RepositoryException.class);
+            mockStoreManager.isStatementExist(f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
+        });
     }
 
     /**
      * Check exception handling of storeStatement method
      */
     @DirtiesContext
-    @Test(expected = MetadataRepositoryException.class)
+    @Test
     public void checkExceptionsStoreStatementMethod() throws Exception {
-
-        when(repository.getConnection()).thenThrow(RepositoryException.class);
-        mockStoreManager.storeStatements(STATEMENTS);
+        assertThrows(MetadataRepositoryException.class, () -> {
+            when(repository.getConnection()).thenThrow(RepositoryException.class);
+            mockStoreManager.storeStatements(STATEMENTS);
+        });
     }
 
     /**
      * Test non exist fdp uri
      */
     @DirtiesContext
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getFdpUriForNullUri() throws Exception {
-        testStoreManager.getFDPIri(null);
+        assertThrows(NullPointerException.class, () -> {
+            testStoreManager.getFDPIri(null);
+        });
     }
 
     /**

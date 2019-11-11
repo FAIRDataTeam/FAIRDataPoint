@@ -26,8 +26,8 @@ import nl.dtls.fairdatapoint.acceptance.metadata.common.MetadataControllerTest;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -35,7 +35,9 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_DISTRIBUTION_PATH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DistributionControllerTest extends MetadataControllerTest {
 
@@ -69,37 +71,38 @@ public class DistributionControllerTest extends MetadataControllerTest {
      *
      * @throws Exception
      */
-    @Ignore
+    @Disabled
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeDistributionTwice() throws Exception {
+        assertThrows(IllegalStateException.class, () -> {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            String metadata = ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/distribution");
 
-        String metadata = ExampleFilesUtils.getFileContentAsString(
-                ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/distribution");
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+            assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+            response = new MockHttpServletResponse();
+            request = new MockHttpServletRequest();
 
-        response = new MockHttpServletResponse();
-        request = new MockHttpServletRequest();
+            request.setServerName("localhost");
+            request.setContextPath("fdp");
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/distribution");
 
-        request.setServerName("localhost");
-        request.setContextPath("fdp");
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/distribution");
-
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**
@@ -108,18 +111,19 @@ public class DistributionControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void nonExistingContentDistribution() throws Exception {
+        assertThrows(ResourceNotFoundException.class, () -> {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+            request.setRequestURI("/fdp/distribution/dummy");
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/fdp/distribution/dummy");
-
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**
@@ -172,18 +176,19 @@ public class DistributionControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = HttpMediaTypeNotAcceptableException.class)
-    public void unsupportedAcceptHeaderDistribution() throws Exception {
+    @Test
+    public void unsupportedAcceptHeaderDistribution() {
+        assertThrows(HttpMediaTypeNotAcceptableException.class, () -> {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "application/trig");
+            request.setRequestURI(TEST_DISTRIBUTION_PATH);
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "application/trig");
-        request.setRequestURI(TEST_DISTRIBUTION_PATH);
-
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
 

@@ -20,14 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.user;
+package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,32 +38,36 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class User_Current_GET extends WebIntegrationTest {
+@DisplayName("GET /fdp/catalog")
+public class Detail_POST_RDF extends WebIntegrationTest {
 
     private URI url() {
-        return URI.create("/users/current");
+        return URI.create("/fdp/catalog");
     }
 
-    @Autowired
-    private UserFixtures userFixtures;
+    private String reqDto() {
+        return ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.CATALOG_METADATA_FILE);
+    }
 
     @Test
-    public void res200() {
+    @DisplayName("HTTP 201")
+    public void res201() {
         // GIVEN:
-        User user = userFixtures.albert();
-        RequestEntity<Void> request = RequestEntity
-                .get(url())
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
-                .build();
-        ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
+        RequestEntity<String> request = RequestEntity
+                .post(url())
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+//                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .body(reqDto());
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<UserDTO> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(user, result.getBody());
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
     }
 
 }

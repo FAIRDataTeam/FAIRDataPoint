@@ -20,11 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance;
+package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,39 +42,59 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class GeneralTest extends WebIntegrationTest {
+@DisplayName("GET /fdp/dataset")
+public class Detail_POST_RDF extends WebIntegrationTest {
 
-    @Test
-    public void postRequestsAreSecured() {
-        // GIVEN:
-        String reqDto = ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
-        RequestEntity<String> request = RequestEntity
-                .post(URI.create("/fdp/distribution"))
-                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
-                .body(reqDto);
-        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
-        };
+    @Autowired
+    private TestMetadataFixtures testMetadataFixtures;
 
-        // WHEN:
-        ResponseEntity<Void> result = client.exchange(request, responseType);
+    private URI url() {
+        return URI.create("/fdp/dataset");
+    }
 
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
+    private String reqDto() {
+        return ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.DATASET_METADATA_FILE);
+    }
+
+    @BeforeEach
+    public void setupExampleMetadata() throws MetadataServiceException {
+        testMetadataFixtures.storeExampleMetadata();
     }
 
     @Test
-    public void patchRequestsAreSecured() {
+    @DisplayName("HTTP 201")
+    public void res201() {
         // GIVEN:
-        String reqDto = ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.FDP_METADATA_FILE);
         RequestEntity<String> request = RequestEntity
-                .patch(URI.create("/fdp"))
+                .post(url())
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
-                .body(reqDto);
-        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .body(reqDto());
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<Void> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
+    }
+
+    @Test
+    @DisplayName("HTTP 403")
+    public void res403() {
+        // GIVEN:
+        RequestEntity<String> request = RequestEntity
+                .post(url())
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .body(reqDto());
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));

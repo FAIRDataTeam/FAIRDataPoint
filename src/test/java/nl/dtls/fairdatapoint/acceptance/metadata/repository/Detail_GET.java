@@ -24,7 +24,8 @@ package nl.dtls.fairdatapoint.acceptance.metadata.repository;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataDTO;
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
+@DisplayName("GET /:repositoryId")
 public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String id) {
@@ -46,11 +48,12 @@ public class Detail_GET extends WebIntegrationTest {
     }
 
     @Test
+    @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
                 .get(url("fdp"))
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<FdpMetadataDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -63,6 +66,7 @@ public class Detail_GET extends WebIntegrationTest {
     }
 
     @Test
+    @DisplayName("HTTP 404")
     public void res404() {
         createNotFoundTestGet(client, url("nonExisting"));
     }

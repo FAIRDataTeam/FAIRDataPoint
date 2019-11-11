@@ -20,12 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
+package nl.dtls.fairdatapoint.acceptance.user;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataDTO;
+import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
+import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
+import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
+import nl.dtls.fairdatapoint.entity.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,40 +39,57 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestPut;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /fdp/distribution/:distributionId")
-public class Detail_GET extends WebIntegrationTest {
+@DisplayName("PUT /users/:userUuid/password")
+public class Detail_Password_PUT extends WebIntegrationTest {
 
-    private URI url(String id) {
-        return URI.create(format("/fdp/distribution/%s", id));
+    private URI url(String uuid) {
+        return URI.create(format("/users/%s/password", uuid));
     }
+
+    private UserPasswordDTO reqDto() {
+        return new UserPasswordDTO("newPassword");
+    }
+
+    @Autowired
+    private UserFixtures userFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(url("distribution-1"))
+        User user = userFixtures.albert();
+        RequestEntity<UserPasswordDTO> request = RequestEntity
+                .put(url(user.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .build();
-        ParameterizedTypeReference<DistributionMetadataDTO> responseType = new ParameterizedTypeReference<>() {
+                .body(reqDto());
+        ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<DistributionMetadataDTO> result = client.exchange(request, responseType);
+        ResponseEntity<UserDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        Common.compare(user, result.getBody());
+    }
+
+    @Test
+    @DisplayName("HTTP 403")
+    public void res403() {
+        User user = userFixtures.albert();
+        createForbiddenTestPut(client, url(user.getUuid()), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createNotFoundTestGet(client, url("nonExisting"));
+        createNotFoundTestPut(client, url("nonExisting"), reqDto());
     }
 
 }

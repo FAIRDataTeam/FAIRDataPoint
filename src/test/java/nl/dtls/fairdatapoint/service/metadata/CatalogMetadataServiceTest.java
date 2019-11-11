@@ -34,8 +34,8 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,6 +45,7 @@ import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
@@ -62,7 +63,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     @Autowired
     private MetadataService<CatalogMetadata> catalogMetadataService;
 
-    @Before
+    @BeforeEach
     public void createParent() throws MetadataServiceException {
         String albertUuid = userFixtures.albert().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
@@ -81,15 +82,17 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentUri() throws Exception {
-        // WHEN:
-        CatalogMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        catalogMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            CatalogMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            catalogMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -145,14 +148,16 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void retrieveNonExitingMetadata() throws Exception {
-        // WHEN:
-        String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
-        catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+        assertThrows(ResourceNotFoundException.class, () -> {
+            // WHEN:
+            String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
+            catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext

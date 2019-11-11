@@ -38,9 +38,9 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -66,7 +66,7 @@ public class ExceptionControllerAdviceTest {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(catalogController)
@@ -82,7 +82,7 @@ public class ExceptionControllerAdviceTest {
         mockMvc.perform(get(PATH)).andExpect(status().is(HttpStatus.NOT_FOUND.value())).andReturn();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void badRequestExceptionHandlerError() throws Exception {
 

@@ -36,14 +36,15 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
@@ -67,7 +68,7 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     @Autowired
     private MetadataService<DataRecordMetadata> dataRecordMetadataMetadataService;
 
-    @Before
+    @BeforeEach
     public void createParents() throws MetadataServiceException {
         String albertUuid = userFixtures.albert().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
@@ -90,26 +91,30 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentURI() throws Exception {
-        // WHEN:
-        DataRecordMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        dataRecordMetadataMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            DataRecordMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            dataRecordMetadataMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithWrongParentURI() throws Exception {
-        // WHEN:
-        dataRecordMetadataMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI,
-                ExampleFilesUtils.CATALOG_URI));
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            dataRecordMetadataMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI,
+                    ExampleFilesUtils.CATALOG_URI));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -139,14 +144,16 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void retrieveNonExitingDatasetDistribution() throws Exception {
-        // WHEN:
-        String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-        dataRecordMetadataMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+        assertThrows(ResourceNotFoundException.class, () -> {
+            // WHEN:
+            String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
+            dataRecordMetadataMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     private static DataRecordMetadata createExampleMetadata() {

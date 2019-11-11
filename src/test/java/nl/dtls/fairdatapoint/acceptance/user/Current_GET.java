@@ -23,13 +23,11 @@
 package nl.dtls.fairdatapoint.acceptance.user;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
 import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.entity.user.UserRole;
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -39,35 +37,29 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestPut;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class User_Detail_PUT extends WebIntegrationTest {
+@DisplayName("GET /users/current")
+public class Current_GET extends WebIntegrationTest {
 
-    private URI url(String uuid) {
-        return URI.create(format("/users/%s", uuid));
-    }
-
-    private UserChangeDTO reqDto() {
-        return new UserChangeDTO("EDITED: Albert", "EDITED: Einstein", "albert.einstein.edited@example.com",
-                UserRole.USER);
+    private URI url() {
+        return URI.create("/users/current");
     }
 
     @Autowired
     private UserFixtures userFixtures;
 
     @Test
+    @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
         User user = userFixtures.albert();
-        RequestEntity<UserChangeDTO> request = RequestEntity
-                .put(url(user.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
-                .body(reqDto());
+        RequestEntity<Void> request = RequestEntity
+                .get(url())
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .build();
         ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -76,39 +68,7 @@ public class User_Detail_PUT extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(reqDto(), result.getBody());
-    }
-
-    @Test
-    public void res400_emailAlreadyExists() {
-        // GIVEN:
-        User user = userFixtures.albert();
-        UserChangeDTO reqDto = new UserChangeDTO("EDITED: Albert", "EDITED: Einstein", "nikola.tesla@example.com",
-                UserRole.USER);
-        RequestEntity<UserChangeDTO> request = RequestEntity
-                .put(url(user.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
-                .body(reqDto);
-        ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
-        assertThat(result.getBody().getMessage(), is(format("Email '%s' is already taken", reqDto.getEmail())));
-    }
-
-    @Test
-    public void res403() {
-        User user = userFixtures.albert();
-        createForbiddenTestPut(client, url(user.getUuid()), reqDto());
-    }
-
-    @Test
-    public void res404() {
-        createNotFoundTestPut(client, url("nonExisting"), reqDto());
+        Common.compare(user, result.getBody());
     }
 
 }

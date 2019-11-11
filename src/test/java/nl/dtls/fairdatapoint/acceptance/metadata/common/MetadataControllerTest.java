@@ -28,25 +28,16 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtl.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.api.controller.FdpController;
+import nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures;
 import nl.dtls.fairdatapoint.api.filter.CORSFilter;
 import nl.dtls.fairdatapoint.api.filter.JwtTokenFilter;
 import nl.dtls.fairdatapoint.api.filter.LoggingFilter;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,7 +47,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @EnableWebMvc
@@ -64,49 +54,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @DirtiesContext
 public abstract class MetadataControllerTest extends BaseIntegrationTest {
 
-    protected final String TEST_FDP_PATH = "/fdp";
-    protected final String TEST_CATALOG_PATH = TEST_FDP_PATH + "/catalog/"
-            + ExampleFilesUtils.CATALOG_ID;
-    protected final String TEST_DATASET_PATH = TEST_FDP_PATH + "/dataset/"
-            + ExampleFilesUtils.DATASET_ID;
-    protected final String TEST_DATARECORD_PATH = TEST_FDP_PATH + "/datarecord/"
-            + ExampleFilesUtils.DATARECORD_ID;
-    protected final String TEST_DISTRIBUTION_PATH = TEST_FDP_PATH + "/distribution/"
-            + ExampleFilesUtils.DISTRIBUTION_ID;
-    protected final ValueFactory f = SimpleValueFactory.getInstance();
     @InjectMocks
     protected final LoggingFilter loggingFilter = new LoggingFilter();
+
     @InjectMocks
     protected final CORSFilter corsFilter = new CORSFilter();
+
     @Autowired
     @Qualifier("requestMappingHandlerAdapter")
     protected RequestMappingHandlerAdapter handlerAdapter;
+
     @Autowired
     @Qualifier("requestMappingHandlerMapping")
     protected RequestMappingHandlerMapping handlerMapping;
-    protected MockMvc mvc;
-    @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
-    @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
-    @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
-    @Autowired
-    private MetadataService<DistributionMetadata> distributionMetadataService;
-    @Autowired
-    private MetadataService<DataRecordMetadata> dataRecordMetadataService;
-    @Mock(name = "fdpMetadataService")
-    private MetadataService<FDPMetadata> fdpMetadataService4MockMVC;
-    @Mock(name = "catalogMetadataService")
-    private MetadataService<CatalogMetadata> catalogMetadataService4MockMVC;
-    @Mock(name = "datasetMetadataService")
-    private MetadataService<DatasetMetadata> datasetMetadataService4MockMVC;
-    @Mock(name = "distributionMetadataService")
-    private MetadataService<DistributionMetadata> distributionMetadataService4MockMVC;
-    @Mock(name = "dataRecordMetadataService")
-    private MetadataService<DataRecordMetadata> dataRecordMetadataService4MockMVC;
-    @InjectMocks
-    public FdpController fdpController;
 
     @Autowired
     private WebApplicationContext context;
@@ -117,9 +77,12 @@ public abstract class MetadataControllerTest extends BaseIntegrationTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
+    @Autowired
+    private TestMetadataFixtures testMetadataFixtures;
+
     protected MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .addFilters(jwtTokenFilter)
@@ -127,37 +90,9 @@ public abstract class MetadataControllerTest extends BaseIntegrationTest {
                 .build();
     }
 
-    @Before
-    public void storeExampleMetadata() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        // Store fdp metadata
-        request.setRequestURI(TEST_FDP_PATH);
-        String fdpUri = request.getRequestURL().toString();
-        fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(fdpUri));
-
-        // Store catalog metadata
-        request.setRequestURI(TEST_CATALOG_PATH);
-        String cUri = request.getRequestURL().toString();
-        catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(cUri, fdpUri));
-
-        // Store dataset metadata
-        request.setRequestURI(TEST_DATASET_PATH);
-        String dUri = request.getRequestURL().toString();
-        datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(dUri, cUri));
-
-        // Store datarecord metadata
-        request.setRequestURI(TEST_DATARECORD_PATH);
-        String dRecUri = request.getRequestURL().toString();
-        dataRecordMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(dRecUri, dUri));
-
-        // Store distribution metadata
-        request.setRequestURI(TEST_DISTRIBUTION_PATH);
-        String disUri = request.getRequestURL().toString();
-        distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(disUri, dUri));
-
-        when(fdpMetadataService4MockMVC.retrieve(Mockito.any(IRI.class)))
-                .thenReturn(fdpMetadataService.retrieve(f.createIRI(fdpUri)));
+    @BeforeEach
+    public void setupExampleMetadata() throws MetadataServiceException {
+        testMetadataFixtures.storeExampleMetadata();
     }
+
 }

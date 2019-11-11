@@ -34,6 +34,7 @@ import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.dao.AclRepository;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.MongoAcl;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
@@ -146,6 +147,12 @@ public class MemberService {
         return memberMapper.toDTO(user, membership);
     }
 
+    public <T> void createOwner(String entityId, Class<T> entityType, String userUuid) {
+        createPermission(entityId, entityType, userUuid, BasePermission.WRITE);
+        createPermission(entityId, entityType, userUuid, BasePermission.CREATE);
+        createPermission(entityId, entityType, userUuid, BasePermission.DELETE);
+    }
+
     public <T> void createPermission(String entityId, Class<T> entityType, String userUuid, Permission permission) {
         MutableAcl acl = retrieveAcl(entityId, entityType);
         insertAce(acl, userUuid, permission);
@@ -202,10 +209,12 @@ public class MemberService {
             List<Integer> mpMasks = membershipPermissions
                     .stream()
                     .map(MembershipPermission::getMask)
+                    .sorted()
                     .collect(Collectors.toList());
             List<Integer> pMasks = permissions
                     .stream()
                     .map(Permission::getMask)
+                    .sorted()
                     .collect(Collectors.toList());
             if (mpMasks.equals(pMasks)) {
                 return membership;

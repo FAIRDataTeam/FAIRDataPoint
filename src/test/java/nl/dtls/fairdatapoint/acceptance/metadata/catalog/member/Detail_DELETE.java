@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.user;
+package nl.dtls.fairdatapoint.acceptance.metadata.catalog.member;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -36,28 +36,28 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestDelete;
 import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class User_Detail_DELETE extends WebIntegrationTest {
-
-    private URI url(String uuid) {
-        return URI.create(format("/users/%s", uuid));
-    }
+@DisplayName("DELETE /fdp/catalog/:catalogId/members/:userUuid")
+public class Detail_DELETE extends WebIntegrationTest {
 
     @Autowired
     private UserFixtures userFixtures;
 
+    private URI url(String catalogId, String userUuid) {
+        return URI.create(format("/fdp/catalog/%s/members/%s", catalogId, userUuid));
+    }
+
     @Test
+    @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        User user = userFixtures.albert();
         RequestEntity<Void> request = RequestEntity
-                .delete(url(user.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
+                .delete(url("catalog-1", userFixtures.nikola().getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
@@ -70,14 +70,27 @@ public class User_Detail_DELETE extends WebIntegrationTest {
     }
 
     @Test
+    @DisplayName("HTTP 403: Current user has to be an owner of the resource")
     public void res403() {
-        User user = userFixtures.albert();
-        createForbiddenTestDelete(client, url(user.getUuid()));
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .delete(url("catalog-1", userFixtures.nikola().getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .build();
+        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<Void> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
     }
 
     @Test
-    public void res404() {
-        createNotFoundTestDelete(client, url("nonExisting"));
+    @DisplayName("HTTP 404: non-existing catalog")
+    public void res404_nonExistingCatalog() {
+        createNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
     }
 
 }

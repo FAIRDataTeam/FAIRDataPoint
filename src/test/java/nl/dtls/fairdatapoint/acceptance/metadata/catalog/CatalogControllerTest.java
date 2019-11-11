@@ -28,8 +28,8 @@ import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -40,8 +40,10 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_CATALOG_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CatalogControllerTest extends MetadataControllerTest {
 
@@ -83,18 +85,20 @@ public class CatalogControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = HttpMediaTypeNotAcceptableException.class)
+    @Test
     public void unsupportedAcceptHeaderCatalog() throws Exception {
+        assertThrows(HttpMediaTypeNotAcceptableException.class, () -> {
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "application/trig");
-        request.setRequestURI(TEST_CATALOG_PATH);
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "application/trig");
+            request.setRequestURI(TEST_CATALOG_PATH);
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**
@@ -192,37 +196,39 @@ public class CatalogControllerTest extends MetadataControllerTest {
      *
      * @throws Exception
      */
-    @Ignore
+    @Disabled
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeCatalogTwice() throws Exception {
+        assertThrows(IllegalStateException.class, () -> {
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        String metadata = ExampleFilesUtils.getFileContentAsString(
-                ExampleFilesUtils.CATALOG_METADATA_FILE);
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/catalog");
+            String metadata = ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.CATALOG_METADATA_FILE);
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/catalog");
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+            assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
-        response = new MockHttpServletResponse();
-        request = new MockHttpServletRequest();
+            response = new MockHttpServletResponse();
+            request = new MockHttpServletRequest();
 
-        request.setServerName("localhost");
-        request.setContextPath("fdp");
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/catalog");
+            request.setServerName("localhost");
+            request.setContextPath("fdp");
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/catalog");
 
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**
@@ -231,19 +237,20 @@ public class CatalogControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void nonExistingCatalog() throws Exception {
+        assertThrows(ResourceNotFoundException.class, () -> {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+            request.setRequestURI("/fdp/catalog/dumpy");
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/fdp/catalog/dumpy");
-
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        //assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+            //assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
+        });
     }
 
     /**
@@ -303,7 +310,7 @@ public class CatalogControllerTest extends MetadataControllerTest {
      *
      * @throws Exception
      */
-    @Ignore
+    @Disabled
     @DirtiesContext
     public void storeCatalogByURLReretouringWithPort() throws Exception {
 

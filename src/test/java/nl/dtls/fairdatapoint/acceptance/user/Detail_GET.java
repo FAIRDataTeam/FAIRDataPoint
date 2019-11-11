@@ -24,10 +24,10 @@ package nl.dtls.fairdatapoint.acceptance.user;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
 import nl.dtls.fairdatapoint.entity.user.User;
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -38,33 +38,31 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestPut;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestPut;
+import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class User_Detail_Password_PUT extends WebIntegrationTest {
+@DisplayName("GET /users/:userUuid")
+public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String uuid) {
-        return URI.create(format("/users/%s/password", uuid));
-    }
-
-    private UserPasswordDTO reqDto() {
-        return new UserPasswordDTO("newPassword");
+        return URI.create(format("/users/%s", uuid));
     }
 
     @Autowired
     private UserFixtures userFixtures;
 
     @Test
+    @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
         User user = userFixtures.albert();
-        RequestEntity<UserPasswordDTO> request = RequestEntity
-                .put(url(user.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
-                .body(reqDto());
+        RequestEntity<Void> request = RequestEntity
+                .get(url(user.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .build();
         ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -77,14 +75,16 @@ public class User_Detail_Password_PUT extends WebIntegrationTest {
     }
 
     @Test
+    @DisplayName("HTTP 403")
     public void res403() {
         User user = userFixtures.albert();
-        createForbiddenTestPut(client, url(user.getUuid()), reqDto());
+        createForbiddenTestGet(client, url(user.getUuid()));
     }
 
     @Test
+    @DisplayName("HTTP 404")
     public void res404() {
-        createNotFoundTestPut(client, url("nonExisting"), reqDto());
+        createNotFoundTestGet(client, url("nonExisting"));
     }
 
 }

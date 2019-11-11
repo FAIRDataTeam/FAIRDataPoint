@@ -20,52 +20,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.token;
+package nl.dtls.fairdatapoint.acceptance.metadata.catalog.member;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
-import nl.dtls.fairdatapoint.api.dto.auth.TokenDTO;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import org.junit.Test;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.List;
 
+import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class Token_List_POST extends WebIntegrationTest {
+@DisplayName("GET /fdp/catalog/:catalogId/members")
+public class List_GET extends WebIntegrationTest {
 
-    @Test
-    public void res200() {
-        // GIVEN:
-        AuthDTO reqDto = new AuthDTO("albert.einstein@example.com", "password");
-        RequestEntity<AuthDTO> request = RequestEntity
-                .post(URI.create("/tokens"))
-                .body(reqDto);
-        ParameterizedTypeReference<TokenDTO> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<TokenDTO> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getBody().getToken(), is(anything()));
+    private URI url(String id) {
+        return URI.create(format("/fdp/catalog/%s/members", id));
     }
 
     @Test
-    public void res401_badCredentials() {
+    @DisplayName("HTTP 200")
+    public void res200() {
         // GIVEN:
-        AuthDTO reqDto = new AuthDTO("nonExistingUser@example.com", "badPassword");
-        RequestEntity<AuthDTO> request = RequestEntity
-                .post(URI.create("/tokens"))
-                .body(reqDto);
+        RequestEntity<Void> request = RequestEntity
+                .get(url("catalog-1"))
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .build();
+        ParameterizedTypeReference<List<MemberDTO>> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<List<MemberDTO>> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+    }
+
+    @Test
+    @DisplayName("HTTP 403: Current user has to be an owner of the resource")
+    public void res403() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(url("catalog-1"))
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .build();
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -73,8 +82,13 @@ public class Token_List_POST extends WebIntegrationTest {
         ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.UNAUTHORIZED)));
-        assertThat(result.getBody().getMessage(), is("Invalid username/password supplied"));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
+    }
+
+    @Test
+    @DisplayName("HTTP 404")
+    public void res404() {
+        createNotFoundTestGet(client, url("nonExisting"));
     }
 
 }

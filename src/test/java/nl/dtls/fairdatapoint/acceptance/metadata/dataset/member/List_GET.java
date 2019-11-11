@@ -20,16 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.user;
+package nl.dtls.fairdatapoint.acceptance.metadata.dataset.member;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,55 +34,47 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.List;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestPost;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class User_List_POST extends WebIntegrationTest {
+@DisplayName("GET /fdp/dataset/:datasetId/members")
+public class List_GET extends WebIntegrationTest {
 
-    @Autowired
-    private UserFixtures userFixtures;
-
-    private URI url() {
-        return URI.create("/users");
-    }
-
-    private UserCreateDTO reqDto() {
-        User user = userFixtures.isaac();
-        return new UserCreateDTO(user.getFirstName(), user.getLastName(), user.getEmail(), "password", user.getRole());
+    private URI url(String id) {
+        return URI.create(format("/fdp/dataset/%s/members", id));
     }
 
     @Test
+    @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        RequestEntity<UserCreateDTO> request = RequestEntity
-                .post(url())
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
-                .body(reqDto());
-        ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
+        RequestEntity<Void> request = RequestEntity
+                .get(url("dataset-1"))
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .build();
+        ParameterizedTypeReference<List<MemberDTO>> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<UserDTO> result = client.exchange(request, responseType);
+        ResponseEntity<List<MemberDTO>> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(reqDto(), result.getBody());
     }
 
     @Test
-    public void res400_emailAlreadyExists() {
+    @DisplayName("HTTP 403: Current user has to be an owner of the resource")
+    public void res403() {
         // GIVEN:
-        User user = userFixtures.albert();
-        UserCreateDTO reqDto = new UserCreateDTO(user.getFirstName(), user.getLastName(), user.getEmail(), "password"
-                , user.getRole());
-        RequestEntity<UserCreateDTO> request = RequestEntity
-                .post(url())
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
-                .body(reqDto);
+        RequestEntity<Void> request = RequestEntity
+                .get(url("dataset-1"))
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .build();
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -93,13 +82,13 @@ public class User_List_POST extends WebIntegrationTest {
         ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
-        assertThat(result.getBody().getMessage(), is(format("Email '%s' is already taken", reqDto.getEmail())));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
     }
 
     @Test
-    public void res403() {
-        createForbiddenTestPost(client, url(), reqDto());
+    @DisplayName("HTTP 404")
+    public void res404() {
+        createNotFoundTestGet(client, url("nonExisting"));
     }
 
 }

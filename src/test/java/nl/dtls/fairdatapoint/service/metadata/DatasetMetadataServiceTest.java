@@ -35,8 +35,8 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +46,7 @@ import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
@@ -66,7 +67,7 @@ public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     @Autowired
     private MetadataService<DatasetMetadata> datasetMetadataService;
 
-    @Before
+    @BeforeEach
     public void createParents() throws MetadataServiceException {
         String albertUuid = userFixtures.albert().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
@@ -87,25 +88,30 @@ public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentURI() throws Exception {
-        // WHEN:
-        DatasetMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        datasetMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            DatasetMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            datasetMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeDatasetMetaDataWrongParentUri() throws Exception {
-        // WHEN:
-        datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(TEST_DATASET_URI, ExampleFilesUtils.FDP_URI));
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(TEST_DATASET_URI,
+                    ExampleFilesUtils.FDP_URI));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -161,14 +167,16 @@ public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void retrieveNonExitingMetadata() throws Exception {
-        // WHEN:
-        String uri = ExampleFilesUtils.CATALOG_URI + "/dummpID676";
-        datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+        assertThrows(ResourceNotFoundException.class, () -> {
+            // WHEN:
+            String uri = ExampleFilesUtils.CATALOG_URI + "/dummpID676";
+            datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext

@@ -22,12 +22,19 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.fixtures;
 
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
+import nl.dtls.fairdatapoint.service.member.MemberService;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.acls.dao.AclRepository;
+import org.springframework.security.acls.model.AclCache;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -51,17 +58,45 @@ public class DummyDataLoader {
     @Autowired
     private MembershipFixtures membershipFixtures;
 
+    @Autowired
+    protected MemberService memberService;
+
+    @Autowired
+    private MongoAuthenticationService mongoAuthenticationService;
+
+    @Autowired
+    private AclCache aclCache;
+
     @PostConstruct
     public void init() {
+        // User
         userRepository.deleteAll();
         userRepository.save(userFixtures.albert());
         userRepository.save(userFixtures.nikola());
 
+        // Membership
         membershipRepository.deleteAll();
         membershipRepository.save(membershipFixtures.owner());
         membershipRepository.save(membershipFixtures.dataProvider());
 
+        // ACL
         aclRepository.deleteAll();
+        aclCache.clearCache();
+
+        String albertUuid = userFixtures.albert().getUuid();
+        String nicolaUuid = userFixtures.nikola().getUuid();
+        String dataProviderUuid = membershipFixtures.dataProvider().getUuid();
+        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        // -- Catalog
+        String catalogId = "catalog-1";
+        memberService.createOwner(catalogId, CatalogMetadata.class, albertUuid);
+        memberService.createOrUpdateMember(catalogId, CatalogMetadata.class, nicolaUuid, dataProviderUuid);
+
+        // -- Dataset
+        String datasetId = "dataset-1";
+        memberService.createOwner(datasetId, DatasetMetadata.class, albertUuid);
     }
 
 }

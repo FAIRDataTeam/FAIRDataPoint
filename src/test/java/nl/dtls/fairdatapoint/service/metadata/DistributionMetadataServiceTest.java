@@ -35,8 +35,8 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +46,7 @@ import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
@@ -69,7 +70,7 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     @Autowired
     private MetadataService<DistributionMetadata> distributionMetadataService;
 
-    @Before
+    @BeforeEach
     public void createParents() throws MetadataServiceException {
         String albertUuid = userFixtures.albert().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
@@ -92,26 +93,30 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentURI() throws Exception {
-        // WHEN:
-        DistributionMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        distributionMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            DistributionMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            distributionMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithWrongParentURI() throws Exception {
-        // WHEN:
-        distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                ExampleFilesUtils.CATALOG_URI));
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                    ExampleFilesUtils.CATALOG_URI));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext

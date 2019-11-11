@@ -31,7 +31,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static nl.dtls.fairdatapoint.WebIntegrationTest.TOKEN;
+import static nl.dtls.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -93,28 +93,28 @@ public class Common {
     public static <T> void createNotFoundTestGet(TestRestTemplate client, URI url) {
         createNotFoundTest(
                 client,
-                RequestEntity.get(url).header(HttpHeaders.AUTHORIZATION, TOKEN).build()
+                RequestEntity.get(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
         );
     }
 
     public static <T> void createNotFoundTestPost(TestRestTemplate client, URI url, T object) {
         createNotFoundTest(
                 client,
-                RequestEntity.post(url).header(HttpHeaders.AUTHORIZATION, TOKEN).body(object)
+                RequestEntity.post(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
         );
     }
 
     public static <T> void createNotFoundTestPut(TestRestTemplate client, URI url, T object) {
         createNotFoundTest(
                 client,
-                RequestEntity.put(url).header(HttpHeaders.AUTHORIZATION, TOKEN).body(object)
+                RequestEntity.put(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
         );
     }
 
     public static <T> void createNotFoundTestDelete(TestRestTemplate client, URI url) {
         createNotFoundTest(
                 client,
-                RequestEntity.delete(url).header(HttpHeaders.AUTHORIZATION, TOKEN).build()
+                RequestEntity.delete(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
         );
     }
 

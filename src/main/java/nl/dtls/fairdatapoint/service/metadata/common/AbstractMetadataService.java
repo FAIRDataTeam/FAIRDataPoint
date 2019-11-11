@@ -52,7 +52,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.acls.domain.BasePermission;
 
 import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -309,8 +308,6 @@ public abstract class AbstractMetadataService<T extends Metadata> implements Met
         }
         User user = oUser.get();
         String entityId = metadata.getIdentifier().getIdentifier().getLabel();
-        memberService.createPermission(entityId, metadata.getClass(), user.getUuid(), BasePermission.WRITE);
-        memberService.createPermission(entityId, metadata.getClass(), user.getUuid(), BasePermission.CREATE);
-        memberService.createPermission(entityId, metadata.getClass(), user.getUuid(), BasePermission.DELETE);
+        memberService.createOwner(entityId, metadata.getClass(), user.getUuid());
     }
 }

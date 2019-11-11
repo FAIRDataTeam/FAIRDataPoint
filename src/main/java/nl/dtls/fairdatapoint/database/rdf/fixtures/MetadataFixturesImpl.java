@@ -28,17 +28,10 @@ import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
-import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.acls.dao.AclRepository;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -46,8 +39,6 @@ import java.util.Arrays;
 
 @Service
 public class MetadataFixturesImpl implements MetadataFixtures {
-
-    protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
     protected MetadataService<FDPMetadata> fdpMetadataService;
@@ -65,19 +56,10 @@ public class MetadataFixturesImpl implements MetadataFixtures {
     protected MetadataFactory metadataFactory;
 
     @Autowired
-    protected MemberService memberService;
-
-    @Autowired
     protected UserFixtures userFixtures;
 
     @Autowired
     protected MembershipFixtures membershipFixtures;
-
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
-
-    @Autowired
-    private AclRepository aclRepository;
 
     @Value("${instance.url}")
     private String instanceUrl;
@@ -93,30 +75,14 @@ public class MetadataFixturesImpl implements MetadataFixtures {
     }
 
     public void importDefaultFixtures(String fdpUrl) throws MetadataServiceException {
-        // 1. Reset ACL and authenticate
-        aclRepository.deleteAll();
-        String albertUuid = userFixtures.albert().getUuid();
-        String nicolaUuid = userFixtures.nikola().getUuid();
-        String ownerUuid = membershipFixtures.owner().getUuid();
-        String dataProviderUuid = membershipFixtures.dataProvider().getUuid();
-        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        // 2. Insert metadata
         FDPMetadata fdp = fdpMetadata(fdpUrl);
         fdpMetadataService.store(fdp);
 
         CatalogMetadata catalog = catalog1(fdpUrl, fdp);
         catalogMetadataService.store(catalog);
-        String catalogId = catalog.getIdentifier().getIdentifier().getLabel();
-        memberService.createOrUpdateMember(catalogId, CatalogMetadata.class, albertUuid, ownerUuid);
-        memberService.createOrUpdateMember(catalogId, CatalogMetadata.class, nicolaUuid, dataProviderUuid);
 
         DatasetMetadata dataset = dataset1(fdpUrl, catalog);
         datasetMetadataService.store(dataset);
-        String datasetId = dataset.getIdentifier().getIdentifier().getLabel();
-        memberService.createOrUpdateMember(datasetId, DatasetMetadata.class, albertUuid,
-                membershipFixtures.owner().getUuid());
 
         DistributionMetadata distribution1 = distribution1(fdpUrl, dataset);
         distributionMetadataService.store(distribution1);

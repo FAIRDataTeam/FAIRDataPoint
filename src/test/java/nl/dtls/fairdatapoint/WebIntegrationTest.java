@@ -23,16 +23,16 @@
 package nl.dtls.fairdatapoint;
 
 import nl.dtls.fairdatapoint.database.mongo.fixtures.DummyDataLoader;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles(Profiles.TESTING)
 @DirtiesContext
 @SpringBootTest(
@@ -40,9 +40,13 @@ import org.springframework.test.context.junit4.SpringRunner;
         properties = {"spring.main.allow-bean-definition-overriding=true"})
 public abstract class WebIntegrationTest {
 
-    public static final String TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+    public static final String ALBERT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
             ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE1NzI0NDczNTksImV4cCI6MjQzNjM2MDk1OX0" +
             ".yGZthRlVezhbKk1gDymW6pZfbCoxxqJda6md9btp00w";
+
+    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE1NzI5NjU2NTksImV4cCI6MjQzNjg3OTI1OX0" +
+            ".f-nAX35Ob392xzerVqN9j34kCorZ0Lu6I18OgflHROs";
 
     @Autowired
     protected TestRestTemplate client;
@@ -50,7 +54,7 @@ public abstract class WebIntegrationTest {
     @Autowired
     protected DummyDataLoader dummyDataLoader;
 
-    @Before
+    @BeforeEach
     public void setup() {
         dummyDataLoader.init();
     }

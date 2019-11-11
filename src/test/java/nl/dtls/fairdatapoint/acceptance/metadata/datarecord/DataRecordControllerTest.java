@@ -26,18 +26,19 @@ import nl.dtls.fairdatapoint.acceptance.metadata.common.MetadataControllerTest;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.apache.http.HttpHeaders;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_DATARECORD_PATH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DataRecordControllerTest extends MetadataControllerTest {
-
 
     /**
      * Store datarecord.
@@ -47,7 +48,6 @@ public class DataRecordControllerTest extends MetadataControllerTest {
     @DirtiesContext
     @Test
     public void storeDataRecord() throws Exception {
-
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -68,37 +68,38 @@ public class DataRecordControllerTest extends MetadataControllerTest {
      *
      * @throws Exception
      */
-    @Ignore
+    @Disabled
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
-    public void storeDatarecordTwice() throws Exception {
+    @Test
+    public void storeDatarecordTwice() {
+        assertThrows(IllegalStateException.class, () -> {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            String metadata = ExampleFilesUtils.getFileContentAsString(
+                    ExampleFilesUtils.DATARECORD_METADATA_FILE);
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/datarecord");
 
-        String metadata = ExampleFilesUtils.getFileContentAsString(
-                ExampleFilesUtils.DATARECORD_METADATA_FILE);
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/datarecord");
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+            assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
+            response = new MockHttpServletResponse();
+            request = new MockHttpServletRequest();
 
-        response = new MockHttpServletResponse();
-        request = new MockHttpServletRequest();
+            request.setServerName("localhost");
+            request.setContextPath("fdp");
+            request.setMethod("POST");
+            request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+            request.setContent(metadata.getBytes());
+            request.setRequestURI("/fdp/datarecord");
 
-        request.setServerName("localhost");
-        request.setContextPath("fdp");
-        request.setMethod("POST");
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
-        request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/datarecord");
-
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**
@@ -107,18 +108,19 @@ public class DataRecordControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
-    public void nonExistingContentDatarecord() throws Exception {
+    @Test
+    public void nonExistingContentDatarecord() {
+        assertThrows(ResourceNotFoundException.class, () -> {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
+            request.setRequestURI("/fdp/datarecord/dummy");
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI("/fdp/datarecord/dummy");
-
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
     /**

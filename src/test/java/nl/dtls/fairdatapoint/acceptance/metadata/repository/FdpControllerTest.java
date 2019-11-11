@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.metadata.repository;
 
 import nl.dtls.fairdatapoint.acceptance.metadata.common.MetadataControllerTest;
 import org.apache.http.HttpHeaders;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -32,7 +32,9 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_FDP_PATH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FdpControllerTest extends MetadataControllerTest {
 
@@ -42,18 +44,20 @@ public class FdpControllerTest extends MetadataControllerTest {
      * @throws Exception
      */
     @DirtiesContext
-    @Test(expected = HttpMediaTypeNotAcceptableException.class)
+    @Test
     public void unsupportedAcceptHeaderRepostory() throws Exception {
+        assertThrows(HttpMediaTypeNotAcceptableException.class, () -> {
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
 
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "application/trig");
-        request.setRequestURI(TEST_FDP_PATH);
+            request.setMethod("GET");
+            request.addHeader(HttpHeaders.ACCEPT, "application/trig");
+            request.setRequestURI(TEST_FDP_PATH);
 
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
+            Object handler = handlerMapping.getHandler(request).getHandler();
+            handlerAdapter.handle(request, response, handler);
+        });
     }
 
 

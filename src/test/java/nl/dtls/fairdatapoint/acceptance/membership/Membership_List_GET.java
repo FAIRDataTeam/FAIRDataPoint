@@ -25,7 +25,7 @@ package nl.dtls.fairdatapoint.acceptance.membership;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.MembershipFixtures;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -55,7 +55,7 @@ public class Membership_List_GET extends WebIntegrationTest {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
                 .get(url())
-                .header(HttpHeaders.AUTHORIZATION, TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<List<MembershipDTO>> responseType = new ParameterizedTypeReference<>() {
         };

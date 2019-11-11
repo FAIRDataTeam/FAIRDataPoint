@@ -31,11 +31,12 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FdpMetadataServiceTest extends BaseIntegrationTest {
 
@@ -56,15 +57,17 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = MetadataServiceException.class)
+    @Test
     public void storeWithNoTitle() throws Exception {
-        // WHEN:
-        FDPMetadata metadata = createExampleMetadata();
-        metadata.setTitle(null);
-        fdpMetadataService.store(metadata);
+        assertThrows(MetadataServiceException.class, () -> {
+            // WHEN:
+            FDPMetadata metadata = createExampleMetadata();
+            metadata.setTitle(null);
+            fdpMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -150,13 +153,15 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullFDPURI() throws Exception {
-        // WHEN:
-        fdpMetadataService.retrieve((IRI) null);
+        assertThrows(NullPointerException.class, () -> {
+            // WHEN:
+            fdpMetadataService.retrieve((IRI) null);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext

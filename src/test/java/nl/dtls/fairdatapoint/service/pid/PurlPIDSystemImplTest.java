@@ -37,8 +37,8 @@ import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -46,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 /**
@@ -81,7 +82,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     @InjectMocks
     private PurlPIDSystemImpl purlSys;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
@@ -89,46 +90,56 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     /**
      * Test of null fdpMetadata, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetURIForNullMetadata() {
-        test.getURI(null);
+        assertThrows(NullPointerException.class, () -> {
+            test.getURI(null);
+        });
     }
 
     /**
      * Test of null fdpMetadata uri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetURIForNullMetadataUri() {
-        FDPMetadata metadataCopy = fdpMetadata;
-        metadataCopy.setUri(null);
-        test.getURI(metadataCopy);
+        assertThrows(NullPointerException.class, () -> {
+            FDPMetadata metadataCopy = fdpMetadata;
+            metadataCopy.setUri(null);
+            test.getURI(metadataCopy);
+        });
     }
 
     /**
      * Test of null fdp uri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetURIForNullFdpUri() {
-        test.getURI(catalogMetadata);
+        assertThrows(NullPointerException.class, () -> {
+            test.getURI(catalogMetadata);
+        });
     }
 
     /**
      * Test of null parent uri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetURIForNullParentUri() {
-        CatalogMetadata mdata = catalogMetadata;
-        mdata.setParentURI(null);
-        test.getURI(mdata);
+        assertThrows(NullPointerException.class, () -> {
+            CatalogMetadata mdata = catalogMetadata;
+            mdata.setParentURI(null);
+            test.getURI(mdata);
+        });
     }
 
     /**
      * Test of null purl base uri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullBaseUrl() throws Exception {
-        PurlPIDSystemImpl testInstance = new PurlPIDSystemImpl();
-        testInstance.getURI(fdpMetadata);
+        assertThrows(NullPointerException.class, () -> {
+            PurlPIDSystemImpl testInstance = new PurlPIDSystemImpl();
+            testInstance.getURI(fdpMetadata);
+        });
     }
 
     /**
@@ -158,17 +169,21 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     /**
      * Test of null pid iri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetIdForNullPIDIri() {
-        test.getId(null);
+        assertThrows(NullPointerException.class, () -> {
+            test.getId(null);
+        });
     }
 
     /**
      * Test of invalid purl pid iri, this test is excepted to throw error
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testGetIdForInvalidPIDIri() {
-        test.getId(valueFactory.createIRI("http://example.com/fdp"));
+        assertThrows(IllegalStateException.class, () -> {
+            test.getId(valueFactory.createIRI("http://example.com/fdp"));
+        });
     }
 
     /**
