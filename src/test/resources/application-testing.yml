@@ -10,8 +10,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017
-      database: fdp-test
+      uri: mongodb://localhost:27017/fdp-test
 
 security:
   jwt:

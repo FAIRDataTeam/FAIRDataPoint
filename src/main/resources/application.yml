@@ -4,8 +4,7 @@ instance:
 spring:
   data:
     mongodb:
-      uri: mongodb://mongo:27017
-      database: fdp
+      uri: mongodb://mongo:27017/fdp
 
 security:
   jwt:
