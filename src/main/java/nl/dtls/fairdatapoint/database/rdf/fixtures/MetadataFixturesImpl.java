@@ -26,18 +26,24 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 @Service
+@Profile(Profiles.NON_PRODUCTION)
 public class MetadataFixturesImpl implements MetadataFixtures {
 
     @Autowired
@@ -61,12 +67,21 @@ public class MetadataFixturesImpl implements MetadataFixtures {
     @Autowired
     protected MembershipFixtures membershipFixtures;
 
+    @Autowired
+    private MongoAuthenticationService mongoAuthenticationService;
+
     @Value("${instance.url}")
     private String instanceUrl;
 
     @PostConstruct
     public void init() {
         try {
+            // 1. Auth user
+            String albertUuid = userFixtures.albert().getUuid();
+            Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            // 2. Load metadata fixtures
             final String fdpUrl = instanceUrl + "/fdp";
             importDefaultFixtures(fdpUrl);
         } catch (MetadataServiceException e) {
@@ -78,16 +93,22 @@ public class MetadataFixturesImpl implements MetadataFixtures {
         FDPMetadata fdp = fdpMetadata(fdpUrl);
         fdpMetadataService.store(fdp);
 
-        CatalogMetadata catalog = catalog1(fdpUrl, fdp);
-        catalogMetadataService.store(catalog);
+        CatalogMetadata catalog1 = catalog1(fdpUrl, fdp);
+        catalogMetadataService.store(catalog1);
 
-        DatasetMetadata dataset = dataset1(fdpUrl, catalog);
-        datasetMetadataService.store(dataset);
+        CatalogMetadata catalog2 = catalog2(fdpUrl, fdp);
+        catalogMetadataService.store(catalog2);
 
-        DistributionMetadata distribution1 = distribution1(fdpUrl, dataset);
+        DatasetMetadata dataset1 = dataset1(fdpUrl, catalog1);
+        datasetMetadataService.store(dataset1);
+
+        DatasetMetadata dataset2 = dataset2(fdpUrl, catalog1);
+        datasetMetadataService.store(dataset2);
+
+        DistributionMetadata distribution1 = distribution1(fdpUrl, dataset1);
         distributionMetadataService.store(distribution1);
 
-        DistributionMetadata distribution2 = distribution2(fdpUrl, dataset);
+        DistributionMetadata distribution2 = distribution2(fdpUrl, dataset1);
         distributionMetadataService.store(distribution2);
     }
 
@@ -109,7 +130,7 @@ public class MetadataFixturesImpl implements MetadataFixtures {
 
     private CatalogMetadata catalog1(String fdpUrl, FDPMetadata fdp) {
         return metadataFactory.createCatalogMetadata(
-                "Catalog 1",
+                "Bio Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
                         "sagittis et. Praesent fringilla, justo malesuada gravida cursus, nibh augue semper enim, et " +
                         "efficitur augue justo id odio. Donec id malesuada leo, vel molestie sem. Sed vitae libero a " +
@@ -125,14 +146,47 @@ public class MetadataFixturesImpl implements MetadataFixtures {
         );
     }
 
+    private CatalogMetadata catalog2(String fdpUrl, FDPMetadata fdp) {
+        return metadataFactory.createCatalogMetadata(
+                "Tech Catalog",
+                "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
+                        "sagittis et. Praesent fringilla, justo malesuada gravida cursus, nibh augue semper enim, et " +
+                        "efficitur augue justo id odio. Donec id malesuada leo, vel molestie sem. Sed vitae libero a " +
+                        "tortor vestibulum ullamcorper vitae ac turpis. Proin posuere nisl sit amet mollis auctor. In" +
+                        " vehicula fringilla lorem, a tristique ligula. Vivamus fringilla leo molestie pellentesque " +
+                        "vehicula. Nam aliquet condimentum varius. In hac habitasse platea dictumst. Maecenas " +
+                        "elementum neque ac ex ultricies auctor. Vestibulum aliquet porttitor enim eu pellentesque. " +
+                        "Aenean dapibus tellus ipsum.",
+                "catalog-2",
+                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
+                fdpUrl,
+                fdp
+        );
+    }
+
     private DatasetMetadata dataset1(String fdpUrl, CatalogMetadata catalog) {
         return metadataFactory.createDatasetMetadata(
-                "Dataset 1",
+                "Cat Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
                         "viverra. Donec finibus ultricies venenatis. Suspendisse non pulvinar augue, vel dictum erat." +
                         " Praesent placerat ultrices tempor. Pellentesque posuere sapien eu rutrum efficitur. Quisque" +
                         " ac risus malesuada, tempus diam at, elementum urna. Suspendisse quis posuere leo.",
                 "dataset-1",
+                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example:theme"),
+                Arrays.asList("Text Mining", "Natural Language Processing"),
+                fdpUrl,
+                catalog
+        );
+    }
+
+    private DatasetMetadata dataset2(String fdpUrl, CatalogMetadata catalog) {
+        return metadataFactory.createDatasetMetadata(
+                "Dog Dataset",
+                "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
+                        "viverra. Donec finibus ultricies venenatis. Suspendisse non pulvinar augue, vel dictum erat." +
+                        " Praesent placerat ultrices tempor. Pellentesque posuere sapien eu rutrum efficitur. Quisque" +
+                        " ac risus malesuada, tempus diam at, elementum urna. Suspendisse quis posuere leo.",
+                "dataset-2",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example:theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
                 fdpUrl,

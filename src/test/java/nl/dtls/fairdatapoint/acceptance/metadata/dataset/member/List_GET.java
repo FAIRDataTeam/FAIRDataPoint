@@ -72,7 +72,7 @@ public class List_GET extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(url("dataset-1"))
+                .get(url("dataset-2"))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {

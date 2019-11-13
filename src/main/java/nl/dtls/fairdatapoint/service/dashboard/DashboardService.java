@@ -73,7 +73,7 @@ public class DashboardService {
                 if (oDatasetMember.isEmpty()) {
                     continue;
                 }
-                MemberDTO datasetMember = oCatalogMember.get();
+                MemberDTO datasetMember = oDatasetMember.get();
                 datasetDtos.add(dashboardMapper.toDatasetDTO(dataset, datasetMember.getMembership()));
             }
             dto.add(dashboardMapper.toCatalogDTO(catalog, catalogMember.getMembership(), datasetDtos));

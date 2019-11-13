@@ -40,6 +40,6 @@ public class DashboardDatasetDTO {
 
     protected String title;
 
-    protected MembershipDTO membershipDTO;
+    protected MembershipDTO membership;
 
 }

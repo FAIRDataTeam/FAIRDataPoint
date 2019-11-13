@@ -85,18 +85,26 @@ public class DummyDataLoader {
 
         String albertUuid = userFixtures.albert().getUuid();
         String nicolaUuid = userFixtures.nikola().getUuid();
+        String ownerUuid = membershipFixtures.owner().getUuid();
         String dataProviderUuid = membershipFixtures.dataProvider().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         // -- Catalog
-        String catalogId = "catalog-1";
-        memberService.createOwner(catalogId, CatalogMetadata.class, albertUuid);
-        memberService.createOrUpdateMember(catalogId, CatalogMetadata.class, nicolaUuid, dataProviderUuid);
+        String catalog1Id = "catalog-1";
+        memberService.createOwner(catalog1Id, CatalogMetadata.class, albertUuid);
+        memberService.createOrUpdateMember(catalog1Id, CatalogMetadata.class, nicolaUuid, dataProviderUuid);
+
+        String catalog2Id = "catalog-2";
+        memberService.createOwner(catalog2Id, CatalogMetadata.class, albertUuid);
 
         // -- Dataset
-        String datasetId = "dataset-1";
-        memberService.createOwner(datasetId, DatasetMetadata.class, albertUuid);
+        String dataset1Id = "dataset-1";
+        memberService.createOwner(dataset1Id, DatasetMetadata.class, albertUuid);
+        memberService.createOrUpdateMember(dataset1Id, DatasetMetadata.class, nicolaUuid, ownerUuid);
+
+        String dataset2Id = "dataset-2";
+        memberService.createOwner(dataset2Id, DatasetMetadata.class, albertUuid);
     }
 
 }

@@ -48,6 +48,7 @@ public class MembershipFixtures {
                     add(WRITE);
                     add(DELETE);
                     add(CREATE);
+                    add(ADMINISTRATION);
                 }},
                 new ArrayList<>() {{
                     add(CATALOG);

@@ -151,12 +151,15 @@ public class MemberService {
         createPermission(entityId, entityType, userUuid, BasePermission.WRITE);
         createPermission(entityId, entityType, userUuid, BasePermission.CREATE);
         createPermission(entityId, entityType, userUuid, BasePermission.DELETE);
+        createPermission(entityId, entityType, userUuid, BasePermission.ADMINISTRATION);
     }
 
     public <T> void createPermission(String entityId, Class<T> entityType, String userUuid, Permission permission) {
         MutableAcl acl = retrieveAcl(entityId, entityType);
-        insertAce(acl, userUuid, permission);
-        aclService.updateAcl(acl);
+        if (acl.getEntries().stream().filter(ace -> ace.getPermission().getMask() == permission.getMask()).findAny().isEmpty()) {
+            insertAce(acl, userUuid, permission);
+            aclService.updateAcl(acl);
+        }
     }
 
     public <T> boolean checkPermission(String entityId, Class<T> entityType, Permission permission) {
@@ -188,17 +191,24 @@ public class MemberService {
         // Get ACL
         MutableAcl acl = retrieveAcl(entityId, entityType);
 
-        // Remove old user's ace
-        List<AccessControlEntry> aces = acl.getEntries()
-                .stream()
-                .filter(ace -> !ace.getSid().equals(new PrincipalSid(userUuid)))
-                .collect(Collectors.toList());
         for (int i = acl.getEntries().size() - 1; i >= 0; i--) {
-            acl.deleteAce(i);
+            AccessControlEntry ace = acl.getEntries().get(i);
+            if (ace.getSid().equals(new PrincipalSid(userUuid))) {
+                acl.deleteAce(i);
+            }
         }
-        for (AccessControlEntry ace : aces) {
-            insertAce(acl, ace);
-        }
+
+        // Remove old user's ace
+//        List<AccessControlEntry> aces = acl.getEntries()
+//                .stream()
+//                .filter(ace -> !ace.getSid().equals(new PrincipalSid(userUuid)))
+//                .collect(Collectors.toList());
+//        for (int i = acl.getEntries().size() - 1; i >= 0; i--) {
+//            acl.deleteAce(i);
+//        }
+//        for (AccessControlEntry ace : aces) {
+//            insertAce(acl, ace);
+//        }
         aclService.updateAcl(acl);
     }
 
