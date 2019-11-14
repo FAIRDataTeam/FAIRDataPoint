@@ -34,7 +34,6 @@ import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.scss.ScssCompilationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -84,7 +83,7 @@ public class ExceptionControllerAdvice {
         return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
-    @ExceptionHandler({MetadataServiceException.class, MetadataParserException.class, ScssCompilationException.class})
+    @ExceptionHandler({MetadataServiceException.class, MetadataParserException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorDTO handleInternalServerError(Exception e, HttpServletResponse response) {

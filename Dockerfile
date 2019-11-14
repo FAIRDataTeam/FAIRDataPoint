@@ -23,12 +23,9 @@
 
 FROM openjdk:11-jdk-slim
 
-RUN apt-get update && apt-get install -y libsass1
-
 WORKDIR /fdp
 
 ADD target/fdp-spring-boot.jar /fdp/app.jar
 ADD target/classes/application-production.yml /fdp/application-production.yml
-ADD target/classes/META-INF/resources/WEB-INF/scss /fdp/scss
 
 ENTRYPOINT java -jar app.jar --spring.profiles.active=production --spring.config.location=classpath:/application.yml,file:/fdp/application-production.yml

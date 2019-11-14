@@ -24,12 +24,10 @@ package nl.dtls.fairdatapoint.api.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
@@ -38,16 +36,12 @@ import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.dataset.DatasetMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,16 +75,6 @@ public class DatasetController extends MetadataController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    /**
-     * Get dataset metadata
-     *
-     * @param id
-     * @param request
-     * @param response
-     * @return Metadata about the dataset in one of the acceptable formats (RDF Turtle, JSON-LD, RDF
-     * XML and RDF N3)
-     * @throws MetadataServiceException
-     */
     @ApiOperation(value = "Dataset metadata")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=*/*"}, produces = {"text/turtle",
             "application/ld+json", "application/rdf+xml", "text/n3"})
@@ -103,51 +87,13 @@ public class DatasetController extends MetadataController {
         return datasetMetadataService.retrieve(getRequestURLasIRI(request));
     }
 
-    @ApiIgnore
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html"},
-            produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getHtmlDatasetMetadata(HttpServletRequest request)
-            throws MetadataServiceException, ResourceNotFoundException, MetadataException {
-
-        ModelAndView mav = new ModelAndView("pages/dataset");
-        IRI uri = getRequestURLasIRI(request);
-        mav.addObject("contextPath", request.getContextPath());
-
-        // Retrieve Dataset metadata
-        DatasetMetadata metadata = datasetMetadataService.retrieve(uri);
-        mav.addObject("metadata", metadata);
-        mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
-                MetadataUtils.SCHEMA_DOT_ORG_MODEL));
-
-        // Retrieve parents for breadcrumbs
-        CatalogMetadata catalog = catalogMetadataService.retrieve(metadata.getParentURI());
-        FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
-        mav.addObject("repository", repository);
-        mav.addObject("catalog", catalog);
-
-        // Retrieve Distributions details
-        mav.addObject("distributions", distributionMetadataService.retrieve(metadata.getDistributions()));
-
-        return mav;
-    }
-
-    /**
-     * To handle POST dataset metadata request.
-     *
-     * @param request  Http request
-     * @param response Http response
-     * @param metadata Dataset metadata
-     * @return created message
-     * @throws MetadataServiceException
-     */
     @ApiOperation(value = "POST dataset metadata")
     @RequestMapping(method = RequestMethod.POST, headers = {"Accept=*/*"}, consumes = {"text/turtle"},
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public DatasetMetadata storeDatasetMetaData(final HttpServletRequest request,
                                                 HttpServletResponse response,
-                                                @RequestBody(required = true) DatasetMetadata metadata)
-            throws MetadataServiceException {
+                                                @RequestBody DatasetMetadata metadata) throws MetadataServiceException {
 
         IRI uri = generateNewIRI(request);
         LOGGER.info("Request to store dataset metadata with IRI {}", uri.toString());

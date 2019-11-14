@@ -24,19 +24,13 @@ package nl.dtls.fairdatapoint.api.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,16 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/fdp/datarecord")
 public class DataRecordController extends MetadataController {
 
-    /**
-     * Get datarecord metadata
-     *
-     * @param id
-     * @param request
-     * @param response
-     * @return Metadata about the dataset in one of the acceptable formats (RDF Turtle, JSON-LD, RDF
-     * XML and RDF N3)
-     * @throws MetadataServiceException
-     */
     @ApiOperation(value = "Dataset metadata")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=*/*"},
             produces = {"text/turtle", "application/ld+json", "application/rdf+xml", "text/n3"})
@@ -68,39 +52,13 @@ public class DataRecordController extends MetadataController {
         return dataRecordMetadataService.retrieve(getRequestURLasIRI(request));
     }
 
-    @ApiIgnore
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html"},
-            produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getHtmlDataRecordMetadata(HttpServletRequest request) throws
-            ResourceNotFoundException, MetadataException, MetadataServiceException {
-
-        ModelAndView mav = new ModelAndView("dataset");
-        IRI uri = getRequestURLasIRI(request);
-        DataRecordMetadata metadata = dataRecordMetadataService.retrieve(uri);
-        mav.addObject("metadata", metadata);
-        mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD));
-
-        mav.addObject("contextPath", request.getContextPath());
-
-        return mav;
-    }
-
-    /**
-     * To handle POST datarecord metadata request.
-     *
-     * @param request  Http request
-     * @param response Http response
-     * @param metadata datarecord metadata
-     * @return created message
-     * @throws MetadataServiceException
-     */
     @ApiOperation(value = "POST datarecord metadata")
     @RequestMapping(method = RequestMethod.POST, consumes = {"text/turtle"}, headers = {"Accept=*/*"},
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public DataRecordMetadata storeDataRecord(final HttpServletRequest request,
                                               HttpServletResponse response,
-                                              @RequestBody(required = true) DataRecordMetadata metadata)
+                                              @RequestBody DataRecordMetadata metadata)
             throws MetadataServiceException {
 
         IRI uri = generateNewIRI(request);

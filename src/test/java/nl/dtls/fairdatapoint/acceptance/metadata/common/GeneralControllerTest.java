@@ -136,46 +136,6 @@ public class GeneralControllerTest extends MetadataControllerTest {
 
     }
 
-    /**
-     * Check supported accept headers.
-     *
-     * @throws Exception
-     */
-    @DirtiesContext
-    @Test
-    public void htmlAcceptHeaders() throws Exception {
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        request.setMethod("GET");
-        request.addHeader(HttpHeaders.ACCEPT, "text/html");
-        request.setRequestURI(TEST_FDP_PATH);
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-
-        request.setRequestURI(TEST_CATALOG_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-
-        request.setRequestURI(TEST_DATASET_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-
-        request.setRequestURI(TEST_DISTRIBUTION_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-
-        request.setRequestURI(TEST_DATARECORD_PATH);
-        handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-    }
-
     @DirtiesContext
     @Test
     public void getRequestsAreSecured() throws Exception {

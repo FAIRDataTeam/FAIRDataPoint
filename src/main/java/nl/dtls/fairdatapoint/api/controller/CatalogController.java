@@ -22,11 +22,9 @@
  */
 package nl.dtls.fairdatapoint.api.controller;
 
-import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -34,16 +32,12 @@ import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.catalog.CatalogMetadataMapper;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,39 +83,13 @@ public class CatalogController extends MetadataController {
         return catalogMetadataService.retrieve(getRequestURLasIRI(request));
     }
 
-    @ApiIgnore
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html"},
-            produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getHtmlCatalogMetadata(HttpServletRequest request)
-            throws MetadataServiceException, ResourceNotFoundException, MetadataException {
-
-        ModelAndView mav = new ModelAndView("pages/catalog");
-        IRI uri = getRequestURLasIRI(request);
-        mav.addObject("contextPath", request.getContextPath());
-
-        // Retrieve Catalog metadata
-        CatalogMetadata metadata = catalogMetadataService.retrieve(uri);
-        mav.addObject("metadata", metadata);
-        mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
-                MetadataUtils.SCHEMA_DOT_ORG_MODEL));
-
-        // Retrieve parent for breadcrumbs
-        FDPMetadata repository = fdpMetadataService.retrieve(metadata.getParentURI());
-        mav.addObject("repository", repository);
-
-        // Retrieve Datasets details
-        mav.addObject("datasets", datasetMetadataService.retrieve(metadata.getDatasets()));
-
-        return mav;
-    }
-
-
     @RequestMapping(method = RequestMethod.POST, headers = {"Accept=*/*"}, consumes = {"text/turtle"},
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.CREATED)
     public CatalogMetadata storeCatalogMetaData(final HttpServletRequest request, HttpServletResponse response,
-                                                @RequestBody(required = true) CatalogMetadata metadata)
+                                                @RequestBody CatalogMetadata metadata)
             throws MetadataServiceException {
+
         IRI uri = generateNewIRI(request);
         LOGGER.info("Request to store catalog metadata with IRI {}", uri.toString());
 

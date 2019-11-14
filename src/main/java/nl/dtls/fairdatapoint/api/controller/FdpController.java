@@ -24,23 +24,17 @@ package nl.dtls.fairdatapoint.api.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.repository.FdpMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +50,8 @@ public class FdpController extends MetadataController {
 
     @RequestMapping(method = RequestMethod.GET, headers = {"Accept=application/json"})
     public ResponseEntity<FdpMetadataDTO> getFdpMetadata(HttpServletRequest request) throws
-            MetadataServiceException, ResourceNotFoundException, MetadataException {
+            MetadataServiceException, ResourceNotFoundException {
+
         String uri = getRequestURL(request);
         FDPMetadata metadata = fdpMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
         List<CatalogMetadata> catalogs = catalogMetadataService.retrieve(metadata.getCatalogs());
@@ -64,18 +59,6 @@ public class FdpController extends MetadataController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    /**
-     * To handle GET FDP metadata request. (Note:) The first value in the produces annotation is
-     * used as a fallback value, for the request with the accept header value (* / *), manually
-     * setting the contentType of the response is not working.
-     *
-     * @param request  Http request
-     * @param response Http response
-     * @return Metadata about the FDP in one of the acceptable formats (RDF Turtle, JSON-LD, RDF XML
-     * and RDF N3)
-     * @throws MetadataServiceException
-     * @throws nl.dtl.fairmetadata4j.io.MetadataException
-     */
     @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET, headers = {"Accept=*/*"}, produces = {"text/turtle", "application/ld" +
             "+json",
@@ -83,60 +66,21 @@ public class FdpController extends MetadataController {
     @ResponseStatus(HttpStatus.OK)
     public FDPMetadata getFDPMetaData(final HttpServletRequest request,
                                       HttpServletResponse response) throws MetadataServiceException,
-            ResourceNotFoundException, MetadataException {
+            ResourceNotFoundException {
 
         LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
         String uri = getRequestURL(request);
-
         return fdpMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
     }
 
-    @ApiIgnore
-    @RequestMapping(method = RequestMethod.GET, headers = {"Accept=text/html"}, produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getHtmlFdpMetadata(HttpServletRequest request) throws
-            MetadataServiceException, ResourceNotFoundException, MetadataException {
-
-        LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
-
-        ModelAndView mav = new ModelAndView("pages/repository");
-        String uri = getRequestURL(request);
-        mav.addObject("contextPath", request.getContextPath());
-
-        // Retrieve FDP metadata
-        FDPMetadata metadata = fdpMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
-        mav.addObject("metadata", metadata);
-        mav.addObject("jsonLd", MetadataUtils.getString(metadata, RDFFormat.JSONLD,
-                MetadataUtils.SCHEMA_DOT_ORG_MODEL));
-
-        // Retrieve Catalogs details
-        mav.addObject("catalogs", catalogMetadataService.retrieve(metadata.getCatalogs()));
-
-        // We don't want breadcrumbs on FDP page
-        mav.addObject("ignoreBreadcrumbs", true);
-
-        return mav;
-    }
-
-    /**
-     * To handle POST catalog metadata request.
-     *
-     * @param request  Http request
-     * @param response Http response
-     * @param metadata catalog metadata
-     * @return created message
-     * @throws MetadataServiceException
-     */
     @ApiOperation(value = "Update fdp metadata")
     @RequestMapping(method = RequestMethod.PATCH, headers = {"Accept=*/*"}, consumes = {"text/turtle"},
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.OK)
-    public FDPMetadata updateFDPMetaData(final HttpServletRequest request,
-                                         HttpServletResponse response,
-                                         @RequestBody(required = true) FDPMetadata metadata) throws
-            MetadataServiceException {
+    public FDPMetadata updateFDPMetaData(final HttpServletRequest request, @RequestBody FDPMetadata metadata)
+            throws MetadataServiceException {
 
         IRI uri = VALUEFACTORY.createIRI(getRequestURL(request));
-
         fdpMetadataService.update(uri, metadata);
         return fdpMetadataService.retrieve(uri);
     }
