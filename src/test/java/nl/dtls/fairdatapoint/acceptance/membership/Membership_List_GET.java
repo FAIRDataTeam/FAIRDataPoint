@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.membership;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
-import nl.dtls.fairdatapoint.database.mongo.fixtures.MembershipFixtures;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;

@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.user;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.fixtures.UserFixtures;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

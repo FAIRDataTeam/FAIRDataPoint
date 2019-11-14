@@ -20,11 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.fixtures;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.membership;
 
-import nl.dtl.fairmetadata4j.io.MetadataException;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.common.Migration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface MetadataFixtures {
-    void importDefaultFixtures(String fdpUrl) throws MetadataException, MetadataServiceException;
+@Service
+public class MembershipMigration implements Migration {
+
+    @Autowired
+    private MembershipFixtures membershipFixtures;
+
+    @Autowired
+    private MembershipRepository membershipRepository;
+
+    public void runMigration() {
+        membershipRepository.deleteAll();
+        membershipRepository.save(membershipFixtures.owner());
+        membershipRepository.save(membershipFixtures.dataProvider());
+    }
+
 }

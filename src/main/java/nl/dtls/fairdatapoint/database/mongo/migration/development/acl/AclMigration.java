@@ -20,43 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.fixtures;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.acl;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.common.Migration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-
 @Service
-@Profile(Profiles.NON_PRODUCTION)
-public class DummyDataLoader {
-
-    @Autowired
-    private UserRepository userRepository;
+public class AclMigration implements Migration {
 
     @Autowired
     private UserFixtures userFixtures;
 
     @Autowired
-    private MembershipRepository membershipRepository;
+    private MembershipFixtures membershipFixtures;
 
     @Autowired
     private AclRepository aclRepository;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
 
     @Autowired
     protected MemberService memberService;
@@ -67,19 +57,7 @@ public class DummyDataLoader {
     @Autowired
     private AclCache aclCache;
 
-    @PostConstruct
-    public void init() {
-        // User
-        userRepository.deleteAll();
-        userRepository.save(userFixtures.albert());
-        userRepository.save(userFixtures.nikola());
-
-        // Membership
-        membershipRepository.deleteAll();
-        membershipRepository.save(membershipFixtures.owner());
-        membershipRepository.save(membershipFixtures.dataProvider());
-
-        // ACL
+    public void runMigration() {
         aclRepository.deleteAll();
         aclCache.clearCache();
 

@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint;
 
-import nl.dtls.fairdatapoint.database.mongo.fixtures.DummyDataLoader;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.MigrationRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +52,11 @@ public abstract class WebIntegrationTest {
     protected TestRestTemplate client;
 
     @Autowired
-    protected DummyDataLoader dummyDataLoader;
+    protected MigrationRunner migrationRunner;
 
     @BeforeEach
     public void setup() {
-        dummyDataLoader.init();
+        migrationRunner.run();
     }
 
 }

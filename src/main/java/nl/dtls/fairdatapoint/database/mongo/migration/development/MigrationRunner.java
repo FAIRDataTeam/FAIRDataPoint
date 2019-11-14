@@ -20,25 +20,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.fixtures;
+package nl.dtls.fairdatapoint.database.mongo.migration.development;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.acl.AclMigration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.MembershipMigration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
 
-public interface MetadataFactory {
-    FDPMetadata createFDPMetadata(String title, String description, String fdpUrl);
+@Service
+@Profile(Profiles.NON_PRODUCTION)
+public class MigrationRunner {
 
-    CatalogMetadata createCatalogMetadata(String title, String description, String identifier,
-                                          List<String> themeTaxonomies, String fdpUrl, FDPMetadata fdp);
+    @Autowired
+    private UserMigration userMigration;
 
-    DatasetMetadata createDatasetMetadata(String title, String description, String identifier, List<String> themes,
-                                          List<String> keywords, String fdpUrl, CatalogMetadata catalog);
+    @Autowired
+    private MembershipMigration membershipMigration;
 
-    DistributionMetadata createDistributionMetadata(String title, String description, String identifier,
-                                                    String downloadUrl, String accessUrl, String mediaType,
-                                                    String fdpUrl, DatasetMetadata dataset);
+    @Autowired
+    private AclMigration aclMigration;
+
+    @PostConstruct
+    public void run() {
+        userMigration.runMigration();
+        membershipMigration.runMigration();
+        aclMigration.runMigration();
+    }
+
 }

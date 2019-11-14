@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.fixtures;
+package nl.dtls.fairdatapoint.database.rdf.migration;
 
 import nl.dtl.fairmetadata4j.model.*;
 import org.eclipse.rdf4j.model.ValueFactory;

@@ -20,51 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.fixtures;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.user;
 
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.entity.user.UserRole;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.common.Migration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserFixtures {
+public class UserMigration implements Migration {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserFixtures userFixtures;
 
-    public User albert() {
-        return new User(
-                "7e64818d-6276-46fb-8bb1-732e6e09f7e9",
-                "Albert",
-                "Einstein",
-                "albert.einstein@example.com",
-                passwordEncoder.encode("password"),
-                UserRole.ADMIN
-        );
-    }
+    @Autowired
+    private UserRepository userRepository;
 
-    public User nikola() {
-        return new User(
-                "b5b92c69-5ed9-4054-954d-0121c29b6800",
-                "Nikola",
-                "Tesla",
-                "nikola.tesla@example.com",
-                passwordEncoder.encode("password"),
-                UserRole.USER
-        );
-    }
-
-    public User isaac() {
-        return new User(
-                "8d1a4c06-bb0e-4d03-a01f-14fa49bbc152",
-                "Isaac",
-                "Newton",
-                "isaac.newton@example.com",
-                passwordEncoder.encode("password"),
-                UserRole.USER
-        );
+    public void runMigration() {
+        userRepository.deleteAll();
+        userRepository.save(userFixtures.albert());
+        userRepository.save(userFixtures.nikola());
     }
 
 }

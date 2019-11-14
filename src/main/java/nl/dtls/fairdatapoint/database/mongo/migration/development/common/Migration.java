@@ -20,35 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.common;
 
-import com.github.mongobee.Mongobee;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+public interface Migration {
 
-@Configuration
-@EnableMongoAuditing
-@EnableMongoRepositories(basePackages = {"nl.dtls.fairdatapoint", "org.springframework.security.acls"})
-public class MongoConfig {
-
-    @Value("${spring.data.mongodb.uri}")
-    private String mongoUri;
-
-    @Autowired
-    private Environment environment;
-
-    @Bean
-    public Mongobee mongobee() throws Exception {
-        Mongobee runner = new Mongobee(mongoUri);
-        runner.setChangeLogsScanPackage("nl.dtls.fairdatapoint");
-        runner.setSpringEnvironment(environment);
-        runner.execute();
-        return runner;
-    }
+    void runMigration();
 
 }
