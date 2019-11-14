@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -54,12 +53,12 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({MetadataException.class, ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorDTO handleBadRequest(MetadataException e, HttpServletResponse response) {
+    public ErrorDTO handleBadRequest(Exception e, HttpServletResponse response) {
         LOGGER.error(e.getMessage());
         return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler({BadCredentialsException.class, CredentialsExpiredException.class})
+    @ExceptionHandler({BadCredentialsException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public ErrorDTO handleUnauthorized(Exception e, HttpServletResponse response) {

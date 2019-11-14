@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.service.jwt.JwtFilterConfigurer;
+import nl.dtls.fairdatapoint.api.filter.FilterConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +36,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private JwtFilterConfigurer jwtConfigurer;
+    private FilterConfigurer filterConfigurer;
 
     @Bean
     @Override
@@ -69,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/**", "/swagger-ui.html", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .apply(jwtConfigurer);
+                .apply(filterConfigurer);
     }
 
 }
