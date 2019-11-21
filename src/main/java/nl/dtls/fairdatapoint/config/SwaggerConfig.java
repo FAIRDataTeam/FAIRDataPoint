@@ -31,10 +31,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableSwagger2
@@ -47,24 +51,43 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .apiInfo(apiInfo());
+                .apiInfo(apiInfo())
+                .securitySchemes(List.of(apiKey()))
+                .securityContexts(List.of(securityContext()));
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "FDP API Java based",
-                "<p>This API is a prototype version, If you find bugs in this api "
-                        + "please contact the developer.</p>"
-                        + "<p>"
-                        + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/FAIRDataPoint/"
-                        + "wiki/FAIR-Data-Point-Specification'>API specs</li>"
-                        + "<li><a target='_blank' href = 'https://github.com/DTL-FAIRData/"
-                        + "FAIRDataPoint'>Source code</a> </li></p>",
+                "FAIR Data Point API",
+                "<a target='_blank' " +
+                        "    href='https://github.com/FAIRDataTeam/FAIRDataPoint/wiki/FAIR-Data-Point-Specification'>" +
+                        "       FAIR Data Point Specification" +
+                        "   </a>" +
+                        "   <br/>",
                 "0.1-beta",
                 "ATO",
-                "rr.kaliyaperumal@gmail.com",
+                new Contact("RR Kaliyaperumal", "https://github.com/FAIRDataTeam/FAIRDataPoint", "rr.kaliyaperumal" +
+                        "@gmail.com"),
                 "The MIT License",
-                "https://opensource.org/licenses/MIT"
+                "https://opensource.org/licenses/MIT",
+                Collections.emptyList()
         );
     }
+
+    private ApiKey apiKey() {
+        return new ApiKey("apiKey", "Authorization", "header");
+    }
+
+    private SecurityContext securityContext() {
+        return SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .forPaths(PathSelectors.any())
+                .build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope[] authorizationScopes = {new AuthorizationScope("global", "global description")};
+        return List.of(new SecurityReference("apiKey", authorizationScopes));
+    }
+
 }
