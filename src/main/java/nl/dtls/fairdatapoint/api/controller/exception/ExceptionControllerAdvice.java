@@ -32,6 +32,7 @@ import nl.dtl.fairmetadata4j.io.MetadataParserException;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.slf4j.Logger;
@@ -58,7 +59,7 @@ public class ExceptionControllerAdvice {
         return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler({BadCredentialsException.class})
+    @ExceptionHandler({BadCredentialsException.class, UnauthorizedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public ErrorDTO handleUnauthorized(Exception e, HttpServletResponse response) {

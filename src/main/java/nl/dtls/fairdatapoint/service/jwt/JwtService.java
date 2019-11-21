@@ -25,7 +25,7 @@ package nl.dtls.fairdatapoint.service.jwt;
 import io.jsonwebtoken.*;
 import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
+import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +100,7 @@ public class JwtService {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new ForbiddenException("Expired or invalid JWT token");
+            throw new UnauthorizedException("Expired or invalid JWT token");
         }
     }
 
