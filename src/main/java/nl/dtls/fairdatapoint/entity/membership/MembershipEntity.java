@@ -23,5 +23,5 @@
 package nl.dtls.fairdatapoint.entity.membership;
 
 public enum MembershipEntity {
-    CATALOG, DATASET
+    CATALOG, DATASET, DISTRIBUTION
 }

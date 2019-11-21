@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.annotation.Nonnull;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -69,7 +70,7 @@ import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
  *
  * @param <T> Metadata Type
  */
-public abstract class AbstractMetadataService<T extends Metadata> implements MetadataService<T> {
+public abstract class AbstractMetadataService<T extends Metadata, S> implements MetadataService<T, S> {
     protected final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
     /**
@@ -115,7 +116,7 @@ public abstract class AbstractMetadataService<T extends Metadata> implements Met
     protected MetadataRepository storeManager;
 
     @Autowired
-    private MemberService memberService;
+    protected MemberService memberService;
 
     @Autowired
     private CurrentUserService currentUserService;
@@ -197,6 +198,14 @@ public abstract class AbstractMetadataService<T extends Metadata> implements Met
             getLogger().error("Error updating metadata");
             throw (new MetadataServiceException(e.getMessage()));
         }
+    }
+
+    @Override
+    @PreAuthorize("hasPermission(#uri.getLocalName(), #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
+    public void update(IRI uri, Class<T> entityType, S reqChangeDto) throws MetadataServiceException {
+        T metadata = retrieve(uri);
+        metadata = metadataMapper().fromChangeDTO(metadata, reqChangeDto);
+        update(uri, metadata);
     }
 
     private List<Statement> retrieveStatements(@Nonnull IRI uri)

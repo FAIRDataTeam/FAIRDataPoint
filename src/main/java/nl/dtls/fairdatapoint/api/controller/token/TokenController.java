@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.token;
 
 import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
 import nl.dtls.fairdatapoint.api.dto.auth.TokenDTO;

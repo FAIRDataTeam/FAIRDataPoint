@@ -20,9 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.metadata.distribution;
 
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -42,8 +43,8 @@ import java.util.List;
 import static nl.dtls.fairdatapoint.util.IRIUtils.removeLastPartOfIRI;
 
 @RestController
-@RequestMapping("/fdp/dataset/{id}/members")
-public class DatasetMemberController extends MetadataController {
+@RequestMapping("/fdp/distribution/{id}/members")
+public class DistributionMemberController extends MetadataController {
 
     @Autowired
     private MemberService memberService;
@@ -54,14 +55,14 @@ public class DatasetMemberController extends MetadataController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<MemberDTO>> getMembers(HttpServletRequest request) throws
             ResourceNotFoundException, MetadataServiceException {
-        // Get dataset
+        // Get distribution
         IRI uri = getRequestURLasIRI(request);
-        IRI datasetUri = removeLastPartOfIRI(uri);
-        DatasetMetadata metadata = datasetMetadataService.retrieve(datasetUri);
+        IRI distributionUri = removeLastPartOfIRI(uri);
+        DistributionMetadata metadata = distributionMetadataService.retrieve(distributionUri);
 
         // Get members
-        String datasetId = metadata.getIdentifier().getIdentifier().getLabel();
-        List<MemberDTO> dto = memberService.getMembers(datasetId, DatasetMetadata.class);
+        String distributionId = metadata.getIdentifier().getIdentifier().getLabel();
+        List<MemberDTO> dto = memberService.getMembers(distributionId, DistributionMetadata.class);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -70,28 +71,28 @@ public class DatasetMemberController extends MetadataController {
                                                @RequestBody @Valid MemberCreateDTO reqDto,
                                                HttpServletRequest request) throws
             ResourceNotFoundException, MetadataServiceException {
-        // Get dataset
+        // Get distribution
         IRI uri = getRequestURLasIRI(request);
-        IRI datasetUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
-        DatasetMetadata metadata = datasetMetadataService.retrieve(datasetUri);
+        IRI distributionUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
+        DistributionMetadata metadata = distributionMetadataService.retrieve(distributionUri);
 
         // Create / Update member
-        String datasetId = metadata.getIdentifier().getIdentifier().getLabel();
-        MemberDTO dto = memberService.createOrUpdateMember(datasetId, DatasetMetadata.class, userUuid,
+        String distributionId = metadata.getIdentifier().getIdentifier().getLabel();
+        MemberDTO dto = memberService.createOrUpdateMember(distributionId, DistributionMetadata.class, userUuid,
                 reqDto.getMembershipUuid());
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{userUuid}", method = RequestMethod.DELETE)
     public ResponseEntity deleteMember(@PathVariable final String userUuid, HttpServletRequest request) throws ResourceNotFoundException, MetadataServiceException {
-        // Get dataset
+        // Get distribution
         IRI uri = getRequestURLasIRI(request);
-        IRI datasetUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
-        DatasetMetadata metadata = datasetMetadataService.retrieve(datasetUri);
+        IRI distributionUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
+        DistributionMetadata metadata = distributionMetadataService.retrieve(distributionUri);
 
         // Delete member
-        String datasetId = metadata.getIdentifier().getIdentifier().getLabel();
-        memberService.deleteMember(datasetId, DatasetMetadata.class, userUuid);
+        String distributionId = metadata.getIdentifier().getIdentifier().getLabel();
+        memberService.deleteMember(distributionId, DistributionMetadata.class, userUuid);
         return ResponseEntity.noContent().build();
     }
 

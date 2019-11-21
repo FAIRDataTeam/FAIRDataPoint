@@ -20,12 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.metadata.catalog;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.member.MemberService;
@@ -34,6 +37,8 @@ import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +46,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +63,21 @@ public class CatalogController extends MetadataController {
 
     @Value("${instance.url}")
     private String instanceUrl;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @RequestMapping(value = "/spec", method = RequestMethod.GET, headers = {"Accept=application/json"})
+    @ResponseBody
+    public Object getFormMetadata() {
+        Resource resource = new ClassPathResource("form-specs/catalog-spec.json");
+        try {
+            return objectMapper.readValue(resource.getInputStream(), Object.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
     public ResponseEntity<CatalogMetadataDTO> getCatalogMetaData(@PathVariable final String id,
@@ -102,5 +123,17 @@ public class CatalogController extends MetadataController {
         catalogMetadataService.store(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return catalogMetadataService.retrieve(uri);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = {"Accept=application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity updateCatalogMetaData(@PathVariable final String id, final HttpServletRequest request,
+                                                HttpServletResponse response,
+                                                @RequestBody CatalogMetadataChangeDTO reqDto)
+            throws MetadataServiceException {
+
+        IRI uri = getRequestURLasIRI(request);
+        catalogMetadataService.update(uri, CatalogMetadata.class, reqDto);
+        return ResponseEntity.noContent().build();
     }
 }

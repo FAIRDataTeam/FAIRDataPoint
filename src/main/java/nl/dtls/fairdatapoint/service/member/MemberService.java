@@ -73,7 +73,7 @@ public class MemberService {
     @Autowired
     private AclCache aclCache;
 
-    @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE')")
+    @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> List<MemberDTO> getMembers(String entityId, Class<T> entityType) {
         MutableAcl acl = retrieveAcl(entityId, entityType);
         return acl.getEntries()
@@ -111,7 +111,7 @@ public class MemberService {
         }
     }
 
-    @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE')")
+    @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> MemberDTO createOrUpdateMember(String entityId, Class<T> entityType, String userUuid,
                                               String membershipUuid) {
         // Get membership
@@ -186,7 +186,7 @@ public class MemberService {
         aclCache.clearCache();
     }
 
-    @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE')")
+    @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> void deleteMember(String entityId, Class<T> entityType, String userUuid) {
         // Get ACL
         MutableAcl acl = retrieveAcl(entityId, entityType);
@@ -240,10 +240,6 @@ public class MemberService {
         } catch (NotFoundException nfe) {
             return aclService.createAcl(oi);
         }
-    }
-
-    private void insertAce(MutableAcl acl, AccessControlEntry ace) {
-        acl.insertAce(acl.getEntries().size(), ace.getPermission(), ace.getSid(), true);
     }
 
     private void insertAce(MutableAcl acl, String userUuid, Permission permission) {

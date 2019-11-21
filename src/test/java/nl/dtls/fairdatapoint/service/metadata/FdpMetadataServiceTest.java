@@ -24,8 +24,10 @@ package nl.dtls.fairdatapoint.service.metadata;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.utils.AuthHelper;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
@@ -44,7 +46,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     private final static String TEST_FDP_URI = "http://example.com/fdp";
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+
+    @Autowired
+    private AuthHelper authHelper;
 
     @DirtiesContext
     @Test
@@ -139,6 +144,7 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void update() throws MetadataServiceException {
         // GIVEN:
+        authHelper.authenticateAsAdmin();
         FDPMetadata metadata = createExampleMetadata();
         fdpMetadataService.store(metadata);
 

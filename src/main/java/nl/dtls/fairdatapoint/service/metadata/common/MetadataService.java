@@ -28,7 +28,7 @@ import org.eclipse.rdf4j.model.IRI;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public interface MetadataService<T extends Metadata> {
+public interface MetadataService<T extends Metadata, S> {
     T retrieve(@Nonnull IRI iri) throws MetadataServiceException;
 
     List<T> retrieve(List<IRI> iris);
@@ -36,4 +36,8 @@ public interface MetadataService<T extends Metadata> {
     void store(@Nonnull T metadata) throws MetadataServiceException;
 
     void update(IRI uri, T metadataUpdate) throws MetadataServiceException;
+
+    void update(IRI uri, Class<T> entityType, S reqChangeDto) throws MetadataServiceException;
+
+    MetadataMapper<T, S> metadataMapper();
 }

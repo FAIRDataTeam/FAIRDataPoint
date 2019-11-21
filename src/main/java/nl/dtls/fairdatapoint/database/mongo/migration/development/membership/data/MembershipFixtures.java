@@ -28,8 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-import static nl.dtls.fairdatapoint.entity.membership.MembershipEntity.CATALOG;
-import static nl.dtls.fairdatapoint.entity.membership.MembershipEntity.DATASET;
+import static nl.dtls.fairdatapoint.entity.membership.MembershipEntity.*;
 
 @Service
 public class MembershipFixtures {
@@ -53,6 +52,7 @@ public class MembershipFixtures {
                 new ArrayList<>() {{
                     add(CATALOG);
                     add(DATASET);
+                    add(DISTRIBUTION);
                 }}
         );
     }

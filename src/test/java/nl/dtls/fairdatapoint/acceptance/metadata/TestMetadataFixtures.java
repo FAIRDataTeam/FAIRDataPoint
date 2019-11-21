@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata;
 
 import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
@@ -45,19 +46,19 @@ public class TestMetadataFixtures {
             ExampleFilesUtils.DISTRIBUTION_ID);
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
 
     @Autowired
-    private MetadataService<DistributionMetadata> distributionMetadataService;
+    private MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
 
     @Autowired
-    private MetadataService<DataRecordMetadata> dataRecordMetadataService;
+    private MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
 
     public void storeExampleMetadata() throws MetadataServiceException {
         MockitoAnnotations.initMocks(this);

@@ -26,7 +26,9 @@ import nl.dtl.fairmetadata4j.model.*;
 import nl.dtl.fairmetadata4j.utils.RDFUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
-import nl.dtls.fairdatapoint.api.controller.MetadataController;
+import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
@@ -53,10 +55,10 @@ public class MetadataUpdateServiceImpl implements MetadataUpdateService {
     private MetadataRepository storeManager;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
 
     @Override
     public void visit(FDPMetadata fdpMetadata) {

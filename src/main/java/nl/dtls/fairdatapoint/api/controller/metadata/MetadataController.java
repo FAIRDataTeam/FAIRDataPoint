@@ -25,9 +25,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.metadata;
 
 import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -52,19 +53,19 @@ public abstract class MetadataController {
     protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
-    protected MetadataService<FDPMetadata> fdpMetadataService;
+    protected MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
     @Autowired
-    protected MetadataService<CatalogMetadata> catalogMetadataService;
+    protected MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
     @Autowired
-    protected MetadataService<DatasetMetadata> datasetMetadataService;
+    protected MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
 
     @Autowired
-    protected MetadataService<DistributionMetadata> distributionMetadataService;
+    protected MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
 
     @Autowired
-    protected MetadataService<DataRecordMetadata> dataRecordMetadataService;
+    protected MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
 
     protected String getRequestURL(HttpServletRequest request) {
 

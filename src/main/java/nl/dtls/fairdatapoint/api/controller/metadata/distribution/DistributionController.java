@@ -20,14 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.metadata.distribution;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -36,6 +40,8 @@ import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.distribution.DistributionMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +50,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @Api(description = "Distribution Metadata")
@@ -56,6 +64,21 @@ public class DistributionController extends MetadataController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @RequestMapping(value = "/spec", method = RequestMethod.GET, headers = {"Accept=application/json"})
+    @ResponseBody
+    public Object getFormMetadata() {
+        Resource resource = new ClassPathResource("form-specs/distribution-spec.json");
+        try {
+            return objectMapper.readValue(resource.getInputStream(), Object.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
     public ResponseEntity<DistributionMetadataDTO> getDistributionMetaData(@PathVariable final String id,
                                                                            HttpServletRequest request) throws
@@ -65,7 +88,9 @@ public class DistributionController extends MetadataController {
         DatasetMetadata dataset = datasetMetadataService.retrieve(metadata.getParentURI());
         CatalogMetadata catalog = catalogMetadataService.retrieve(dataset.getParentURI());
         FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
-        DistributionMetadataDTO dto = distributionMetadataMapper.toDTO(metadata, repository, catalog, dataset);
+        String distributionId = metadata.getIdentifier().getIdentifier().getLabel();
+        Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(distributionId, DistributionMetadata.class);
+        DistributionMetadataDTO dto = distributionMetadataMapper.toDTO(metadata, repository, catalog, dataset, oMember);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -100,6 +125,18 @@ public class DistributionController extends MetadataController {
         distributionMetadataService.store(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return distributionMetadataService.retrieve(uri);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = {"Accept=application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity updateDistributionMetaData(@PathVariable final String id, final HttpServletRequest request,
+                                                     HttpServletResponse response,
+                                                     @RequestBody DistributionMetadataChangeDTO reqDto)
+            throws MetadataServiceException {
+
+        IRI uri = getRequestURLasIRI(request);
+        distributionMetadataService.update(uri, DistributionMetadata.class, reqDto);
+        return ResponseEntity.noContent().build();
     }
 
 }

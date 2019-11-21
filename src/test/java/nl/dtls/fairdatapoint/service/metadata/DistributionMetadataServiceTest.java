@@ -27,6 +27,10 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
@@ -59,16 +63,16 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
 
     @Autowired
-    private MetadataService<DistributionMetadata> distributionMetadataService;
+    private MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
 
     @BeforeEach
     public void createParents() throws MetadataServiceException {

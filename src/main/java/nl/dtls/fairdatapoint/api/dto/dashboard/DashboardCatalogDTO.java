@@ -29,6 +29,7 @@ import lombok.Setter;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,8 +43,8 @@ public class DashboardCatalogDTO {
 
     protected String title;
 
-    protected MembershipDTO membership;
-
     protected List<DashboardDatasetDTO> datasets;
+
+    protected Optional<MembershipDTO> membership;
 
 }

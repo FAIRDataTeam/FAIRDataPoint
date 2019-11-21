@@ -31,6 +31,7 @@ import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +85,7 @@ public class UserService {
         return getCurrentUserUuid().flatMap(this::getUserByUuid);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserDTO createUser(UserCreateDTO reqDto) {
         Optional<User> oUser = userRepository.findByEmail(reqDto.getEmail());
         if (oUser.isPresent()) {
@@ -95,6 +97,7 @@ public class UserService {
         return userMapper.toDTO(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Optional<UserDTO> updateUser(String uuid, UserChangeDTO reqDto) {
         Optional<User> oUserEmail = userRepository.findByEmail(reqDto.getEmail());
         if (oUserEmail.isPresent() && !uuid.equals(oUserEmail.get().getUuid())) {
@@ -110,6 +113,7 @@ public class UserService {
         return of(userMapper.toDTO(updatedUser));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Optional<UserDTO> updatePassword(String uuid, UserPasswordDTO reqDto) {
         Optional<User> oUser = userRepository.findByUuid(uuid);
         if (oUser.isEmpty()) {
@@ -121,6 +125,7 @@ public class UserService {
         return of(userMapper.toDTO(updatedUser));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteUser(String uuid) {
         Optional<User> oUser = userRepository.findByUuid(uuid);
         if (oUser.isEmpty()) {

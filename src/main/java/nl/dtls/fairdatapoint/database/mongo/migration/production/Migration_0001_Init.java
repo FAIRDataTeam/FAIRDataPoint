@@ -84,6 +84,7 @@ public class Migration_0001_Init {
         BasicBSONList allowedEntities = new BasicBSONList();
         allowedEntities.add("CATALOG");
         allowedEntities.add("DATASET");
+        allowedEntities.add("DISTRIBUTION");
         user.append("allowedEntities", allowedEntities);
         user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
         return user;

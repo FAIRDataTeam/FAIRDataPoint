@@ -24,12 +24,15 @@ package nl.dtls.fairdatapoint.service.metadata.dataset;
 
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,13 +40,21 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 @Service
-public class DatasetMetadataService extends AbstractMetadataService<DatasetMetadata> {
+public class DatasetMetadataService extends AbstractMetadataService<DatasetMetadata, DatasetMetadataChangeDTO> {
     private final static Logger LOGGER = LoggerFactory.getLogger(DatasetMetadataService.class);
+
+    @Autowired
+    private DatasetMetadataMapper datasetMetadataMapper;
 
     public DatasetMetadataService(@Value("${metadataProperties.datasetSpecs:}") String specs) {
         super();
         this.specs = specs;
         this.parentType = DCAT.CATALOG;
+    }
+
+    @Override
+    public MetadataMapper<DatasetMetadata, DatasetMetadataChangeDTO> metadataMapper() {
+        return datasetMetadataMapper;
     }
 
     @Override

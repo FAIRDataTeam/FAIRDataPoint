@@ -40,7 +40,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestPut;
+import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -65,10 +65,20 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
+        create_res200(ALBERT_TOKEN);
+    }
+
+    @Test
+    @DisplayName("HTTP 200: User is an admin")
+    public void res200_admin() {
+        create_res200(ADMIN_TOKEN);
+    }
+
+    private void create_res200(String token) {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
                 .put(url("catalog-1", userFixtures.nikola().getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .body(reqDto());
         ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -120,7 +130,7 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing catalog")
     public void res404_nonExistingCatalog() {
-        createNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid()), reqDto());
+        createUserNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid()), reqDto());
     }
 
 }

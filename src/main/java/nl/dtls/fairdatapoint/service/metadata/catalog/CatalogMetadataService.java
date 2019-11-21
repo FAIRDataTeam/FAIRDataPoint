@@ -25,11 +25,14 @@ package nl.dtls.fairdatapoint.service.metadata.catalog;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,13 +40,22 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 @Service
-public class CatalogMetadataService extends AbstractMetadataService<CatalogMetadata> {
+public class CatalogMetadataService extends AbstractMetadataService<CatalogMetadata, CatalogMetadataChangeDTO> {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(CatalogMetadataService.class);
+
+    @Autowired
+    private CatalogMetadataMapper catalogMetadataMapper;
 
     public CatalogMetadataService(@Value("${metadataProperties.catalogSpecs:}") String specs) {
         super();
         this.specs = specs;
         this.parentType = R3D.REPOSITORY;
+    }
+
+    @Override
+    public MetadataMapper<CatalogMetadata, CatalogMetadataChangeDTO> metadataMapper() {
+        return catalogMetadataMapper;
     }
 
     @Override

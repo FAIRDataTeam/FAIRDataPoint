@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.api.dto.common.BreadcrumbDTO;
+import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.api.dto.uri.UriDTO;
 
 import java.util.Map;
@@ -68,5 +69,7 @@ public class DistributionMetadataDTO {
     protected String accessUrl;
 
     protected Map<String, BreadcrumbDTO> links;
+
+    protected MembershipDTO membership;
 
 }

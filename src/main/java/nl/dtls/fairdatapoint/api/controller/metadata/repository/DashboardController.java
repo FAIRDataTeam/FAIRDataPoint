@@ -20,9 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.metadata.repository;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
 import nl.dtls.fairdatapoint.service.dashboard.DashboardService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;

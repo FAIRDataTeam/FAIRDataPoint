@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
+import static nl.dtls.fairdatapoint.WebIntegrationTest.ADMIN_TOKEN;
 import static nl.dtls.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -50,31 +51,52 @@ public class Common {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
     }
 
-    public static <T> void createForbiddenTestGet(TestRestTemplate client, URI url) {
+    public static <T> void createNoUserForbiddenTestGet(TestRestTemplate client, URI url) {
         createForbiddenTest(
                 client,
                 RequestEntity.get(url).build()
         );
     }
 
-    public static <T> void createForbiddenTestPost(TestRestTemplate client, URI url, T object) {
+    public static <T> void createNoUserForbiddenTestPost(TestRestTemplate client, URI url, T object) {
         createForbiddenTest(
                 client,
                 RequestEntity.post(url).body(object)
         );
     }
 
-    public static <T> void createForbiddenTestPut(TestRestTemplate client, URI url, T object) {
+    public static <T> void createNoUserForbiddenTestPut(TestRestTemplate client, URI url, T object) {
         createForbiddenTest(
                 client,
                 RequestEntity.put(url).body(object)
         );
     }
 
-    public static <T> void createForbiddenTestDelete(TestRestTemplate client, URI url) {
+    public static <T> void createNoUserForbiddenTestDelete(TestRestTemplate client, URI url) {
         createForbiddenTest(
                 client,
                 RequestEntity.delete(url).build()
+        );
+    }
+
+    public static <T> void createUserForbiddenTestPost(TestRestTemplate client, URI url, T object) {
+        createForbiddenTest(
+                client,
+                RequestEntity.post(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
+        );
+    }
+
+    public static <T> void createUserForbiddenTestPut(TestRestTemplate client, URI url, T object) {
+        createForbiddenTest(
+                client,
+                RequestEntity.put(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
+        );
+    }
+
+    public static <T> void createUserForbiddenTestDelete(TestRestTemplate client, URI url) {
+        createForbiddenTest(
+                client,
+                RequestEntity.delete(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
         );
     }
 
@@ -90,31 +112,45 @@ public class Common {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NOT_FOUND)));
     }
 
-    public static <T> void createNotFoundTestGet(TestRestTemplate client, URI url) {
+    public static <T> void createUserNotFoundTestGet(TestRestTemplate client, URI url) {
         createNotFoundTest(
                 client,
                 RequestEntity.get(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
         );
     }
 
-    public static <T> void createNotFoundTestPost(TestRestTemplate client, URI url, T object) {
+    public static <T> void createUserNotFoundTestPost(TestRestTemplate client, URI url, T object) {
         createNotFoundTest(
                 client,
                 RequestEntity.post(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
         );
     }
 
-    public static <T> void createNotFoundTestPut(TestRestTemplate client, URI url, T object) {
+    public static <T> void createUserNotFoundTestPut(TestRestTemplate client, URI url, T object) {
         createNotFoundTest(
                 client,
                 RequestEntity.put(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
         );
     }
 
-    public static <T> void createNotFoundTestDelete(TestRestTemplate client, URI url) {
+    public static <T> void createUserNotFoundTestDelete(TestRestTemplate client, URI url) {
         createNotFoundTest(
                 client,
                 RequestEntity.delete(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
+        );
+    }
+
+    public static <T> void createAdminNotFoundTestPut(TestRestTemplate client, URI url, T object) {
+        createNotFoundTest(
+                client,
+                RequestEntity.put(url).header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN).body(object)
+        );
+    }
+
+    public static <T> void createAdminNotFoundTestDelete(TestRestTemplate client, URI url) {
+        createNotFoundTest(
+                client,
+                RequestEntity.delete(url).header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN).build()
         );
     }
 

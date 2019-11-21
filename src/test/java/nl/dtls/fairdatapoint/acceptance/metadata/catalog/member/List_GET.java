@@ -25,8 +25,10 @@ package nl.dtls.fairdatapoint.acceptance.metadata.catalog.member;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,13 +39,16 @@ import java.net.URI;
 import java.util.List;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("GET /fdp/catalog/:catalogId/members")
 public class List_GET extends WebIntegrationTest {
+
+    @Autowired
+    private UserFixtures userFixtures;
 
     private URI url(String id) {
         return URI.create(format("/fdp/catalog/%s/members", id));
@@ -52,10 +57,20 @@ public class List_GET extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
+        create_res200(ALBERT_TOKEN);
+    }
+
+    @Test
+    @DisplayName("HTTP 200: User is an admin")
+    public void res200_admin() {
+        create_res200(ADMIN_TOKEN);
+    }
+
+    private void create_res200(String token) {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
                 .get(url("catalog-1"))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .build();
         ParameterizedTypeReference<List<MemberDTO>> responseType = new ParameterizedTypeReference<>() {
         };
@@ -65,6 +80,9 @@ public class List_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getBody().size(), is(equalTo(2)));
+        assertThat(result.getBody().get(0).getUser().getEmail(), is(equalTo(userFixtures.nikolaEmail)));
+        assertThat(result.getBody().get(1).getUser().getEmail(), is(equalTo(userFixtures.albertEmail)));
     }
 
     @Test
@@ -88,7 +106,7 @@ public class List_GET extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createNotFoundTestGet(client, url("nonExisting"));
+        createUserNotFoundTestGet(client, url("nonExisting"));
     }
 
 }

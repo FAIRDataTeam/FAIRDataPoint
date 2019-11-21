@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.*;
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -131,9 +130,6 @@ public class GeneralControllerTest extends MetadataControllerTest {
         MockFilterChain filterChain2 = new MockFilterChain();
         loggingFilter.doFilterInternal(request, response, filterChain1);
         corsFilter.doFilterInternal(request, response, filterChain2);
-
-        assertTrue(response.containsHeader(HttpHeaders.SERVER));
-
     }
 
     @DirtiesContext

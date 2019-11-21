@@ -20,15 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.metadata.dataset;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -37,6 +40,8 @@ import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.dataset.DatasetMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +50,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +65,21 @@ public class DatasetController extends MetadataController {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @RequestMapping(value = "/spec", method = RequestMethod.GET, headers = {"Accept=application/json"})
+    @ResponseBody
+    public Object getFormMetadata() {
+        Resource resource = new ClassPathResource("form-specs/dataset-spec.json");
+        try {
+            return objectMapper.readValue(resource.getInputStream(), Object.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=application/json"})
     public ResponseEntity<DatasetMetadataDTO> getDatasetMetaData(@PathVariable final String id,
@@ -110,6 +131,18 @@ public class DatasetController extends MetadataController {
         datasetMetadataService.store(metadata);
         response.addHeader(HttpHeaders.LOCATION, uri.toString());
         return datasetMetadataService.retrieve(uri);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = {"Accept=application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity updateDatasetMetaData(@PathVariable final String id, final HttpServletRequest request,
+                                                HttpServletResponse response,
+                                                @RequestBody DatasetMetadataChangeDTO reqDto)
+            throws MetadataServiceException {
+
+        IRI uri = getRequestURLasIRI(request);
+        datasetMetadataService.update(uri, DatasetMetadata.class, reqDto);
+        return ResponseEntity.noContent().build();
     }
 
 }

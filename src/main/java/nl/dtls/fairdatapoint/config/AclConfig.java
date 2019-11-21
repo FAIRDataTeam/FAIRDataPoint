@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import nl.dtls.fairdatapoint.entity.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -42,6 +43,8 @@ import org.springframework.security.acls.model.PermissionGrantingStrategy;
 import org.springframework.security.acls.mongodb.BasicLookupStrategy;
 import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import static java.lang.String.format;
 
 @Configuration
 public class AclConfig {
@@ -77,7 +80,8 @@ public class AclConfig {
 
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
-        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE"));
+        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(format("ROLE_%s",
+                UserRole.ADMIN.toString())));
     }
 
     @Bean

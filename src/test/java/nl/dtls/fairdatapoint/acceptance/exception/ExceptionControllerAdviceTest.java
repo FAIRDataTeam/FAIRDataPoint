@@ -29,8 +29,9 @@ package nl.dtls.fairdatapoint.acceptance.exception;
 
 import nl.dtl.fairmetadata4j.io.MetadataException;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairdatapoint.api.controller.CatalogController;
 import nl.dtls.fairdatapoint.api.controller.exception.ExceptionControllerAdvice;
+import nl.dtls.fairdatapoint.api.controller.metadata.catalog.CatalogController;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
@@ -59,7 +60,7 @@ public class ExceptionControllerAdviceTest {
     private static final String PATH = "/fdp/catalog/invalid";
 
     @Mock
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
     @InjectMocks
     private CatalogController catalogController;

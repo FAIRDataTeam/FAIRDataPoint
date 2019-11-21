@@ -37,8 +37,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestDelete;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestDelete;
+import static nl.dtls.fairdatapoint.acceptance.Common.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -60,7 +59,7 @@ public class Detail_DELETE extends WebIntegrationTest {
         User user = userFixtures.albert();
         RequestEntity<Void> request = RequestEntity
                 .delete(url(user.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
@@ -73,16 +72,23 @@ public class Detail_DELETE extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 403")
-    public void res403() {
+    @DisplayName("HTTP 403: User is not authenticated")
+    public void res403_notAuthenticated() {
         User user = userFixtures.albert();
-        createForbiddenTestDelete(client, url(user.getUuid()));
+        createNoUserForbiddenTestDelete(client, url(user.getUuid()));
+    }
+
+    @Test
+    @DisplayName("HTTP 403: User is not an admin")
+    public void res403_user() {
+        User user = userFixtures.albert();
+        createUserForbiddenTestDelete(client, url(user.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createNotFoundTestDelete(client, url("nonExisting"));
+        createAdminNotFoundTestDelete(client, url("nonExisting"));
     }
 
 }

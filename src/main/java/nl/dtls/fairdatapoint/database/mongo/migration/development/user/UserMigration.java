@@ -39,6 +39,7 @@ public class UserMigration implements Migration {
 
     public void runMigration() {
         userRepository.deleteAll();
+        userRepository.save(userFixtures.admin());
         userRepository.save(userFixtures.albert());
         userRepository.save(userFixtures.nikola());
     }

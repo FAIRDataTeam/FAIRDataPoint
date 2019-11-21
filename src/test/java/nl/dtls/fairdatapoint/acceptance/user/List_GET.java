@@ -37,7 +37,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNoUserForbiddenTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -69,15 +69,16 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<UserDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(2)));
-        Common.compare(userFixtures.albert(), body.get(0));
-        Common.compare(userFixtures.nikola(), body.get(1));
+        assertThat(body.size(), is(equalTo(3)));
+        Common.compare(userFixtures.admin(), body.get(0));
+        Common.compare(userFixtures.albert(), body.get(1));
+        Common.compare(userFixtures.nikola(), body.get(2));
     }
 
     @Test
     @DisplayName("HTTP 403")
     public void res403() {
-        createForbiddenTestGet(client, url());
+        createNoUserForbiddenTestGet(client, url());
     }
 
 }

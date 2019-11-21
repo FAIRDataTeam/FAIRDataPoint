@@ -36,7 +36,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNoUserForbiddenTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -73,7 +73,7 @@ public class Membership_List_GET extends WebIntegrationTest {
 
     @Test
     public void res403() {
-        createForbiddenTestGet(client, url());
+        createNoUserForbiddenTestGet(client, url());
     }
 
 }

@@ -39,8 +39,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestPut;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestPut;
+import static nl.dtls.fairdatapoint.acceptance.Common.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -66,7 +65,7 @@ public class Detail_Password_PUT extends WebIntegrationTest {
         User user = userFixtures.albert();
         RequestEntity<UserPasswordDTO> request = RequestEntity
                 .put(url(user.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(reqDto());
         ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -80,16 +79,23 @@ public class Detail_Password_PUT extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 403")
-    public void res403() {
+    @DisplayName("HTTP 403: User is not authenticated")
+    public void res403_notAuthenticated() {
         User user = userFixtures.albert();
-        createForbiddenTestPut(client, url(user.getUuid()), reqDto());
+        createNoUserForbiddenTestPut(client, url(user.getUuid()), reqDto());
+    }
+
+    @Test
+    @DisplayName("HTTP 403: User is not an admin")
+    public void res403_user() {
+        User user = userFixtures.albert();
+        createUserForbiddenTestPut(client, url(user.getUuid()), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createNotFoundTestPut(client, url("nonExisting"), reqDto());
+        createAdminNotFoundTestPut(client, url("nonExisting"), reqDto());
     }
 
 }

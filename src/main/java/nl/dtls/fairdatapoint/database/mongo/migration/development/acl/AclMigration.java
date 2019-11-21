@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.database.mongo.migration.development.acl;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.common.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
@@ -83,6 +84,14 @@ public class AclMigration implements Migration {
 
         String dataset2Id = "dataset-2";
         memberService.createOwner(dataset2Id, DatasetMetadata.class, albertUuid);
+
+        // -- Distribution
+        String distribution1Id = "distribution-1";
+        memberService.createOwner(distribution1Id, DistributionMetadata.class, albertUuid);
+        memberService.createOrUpdateMember(distribution1Id, DistributionMetadata.class, nicolaUuid, ownerUuid);
+
+        String distribution2Id = "distribution-2";
+        memberService.createOwner(distribution2Id, DistributionMetadata.class, albertUuid);
     }
 
 }

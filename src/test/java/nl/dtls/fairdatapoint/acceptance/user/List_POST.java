@@ -40,7 +40,8 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestPost;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNoUserForbiddenTestPost;
+import static nl.dtls.fairdatapoint.acceptance.Common.createUserForbiddenTestPost;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -66,7 +67,7 @@ public class List_POST extends WebIntegrationTest {
         // GIVEN:
         RequestEntity<UserCreateDTO> request = RequestEntity
                 .post(url())
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(reqDto());
         ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -88,7 +89,7 @@ public class List_POST extends WebIntegrationTest {
                 , user.getRole());
         RequestEntity<UserCreateDTO> request = RequestEntity
                 .post(url())
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(reqDto);
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -102,9 +103,15 @@ public class List_POST extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 403")
-    public void res403() {
-        createForbiddenTestPost(client, url(), reqDto());
+    @DisplayName("HTTP 403: User is not authenticated")
+    public void res403_notAuthenticated() {
+        createNoUserForbiddenTestPost(client, url(), reqDto());
+    }
+
+    @Test
+    @DisplayName("HTTP 403: User is not an admin")
+    public void res403_user() {
+        createUserForbiddenTestPost(client, url(), reqDto());
     }
 
 }

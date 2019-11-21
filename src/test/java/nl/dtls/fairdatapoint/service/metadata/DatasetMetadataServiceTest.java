@@ -26,6 +26,9 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
@@ -59,13 +62,13 @@ public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
 
     @BeforeEach
     public void createParents() throws MetadataServiceException {

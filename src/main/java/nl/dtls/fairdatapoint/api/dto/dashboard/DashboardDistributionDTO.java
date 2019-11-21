@@ -20,30 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.dto.dashboard;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
-import nl.dtls.fairdatapoint.service.membership.MembershipService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping("/memberships")
-public class MembershipController {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class DashboardDistributionDTO {
 
-    @Autowired
-    private MembershipService membershipService;
+    protected String identifier;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<MembershipDTO>> getUsers() {
-        List<MembershipDTO> dto = membershipService.getMemberships();
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
+    protected String uri;
+
+    protected String title;
+
+    protected Optional<MembershipDTO> membership;
 
 }

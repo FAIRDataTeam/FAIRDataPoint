@@ -27,6 +27,10 @@ import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DataRecordMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
@@ -57,16 +61,16 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
 
     @Autowired
-    private MetadataService<DataRecordMetadata> dataRecordMetadataMetadataService;
+    private MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
 
     @BeforeEach
     public void createParents() throws MetadataServiceException {
@@ -84,10 +88,10 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeAndRetrieve() throws MetadataServiceException {
         // WHEN:
-        dataRecordMetadataMetadataService.store(createExampleMetadata());
+        dataRecordMetadataService.store(createExampleMetadata());
 
         // THEN:
-        assertNotNull(dataRecordMetadataMetadataService.retrieve(exampleIRI()));
+        assertNotNull(dataRecordMetadataService.retrieve(exampleIRI()));
     }
 
     @DirtiesContext
@@ -97,7 +101,7 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
             // WHEN:
             DataRecordMetadata metadata = createExampleMetadata();
             metadata.setParentURI(null);
-            dataRecordMetadataMetadataService.store(metadata);
+            dataRecordMetadataService.store(metadata);
 
             // THEN:
             // Expect exception
@@ -109,7 +113,7 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithWrongParentURI() throws Exception {
         assertThrows(IllegalStateException.class, () -> {
             // WHEN:
-            dataRecordMetadataMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI,
+            dataRecordMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI,
                     ExampleFilesUtils.CATALOG_URI));
 
             // THEN:
@@ -123,10 +127,10 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         DataRecordMetadata metadata = createExampleMetadata();
         metadata.setIdentifier(null);
-        dataRecordMetadataMetadataService.store(metadata);
+        dataRecordMetadataService.store(metadata);
 
         // THEN:
-        DataRecordMetadata mdata = dataRecordMetadataMetadataService.retrieve(exampleIRI());
+        DataRecordMetadata mdata = dataRecordMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getIdentifier());
     }
 
@@ -136,10 +140,10 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         DataRecordMetadata metadata = createExampleMetadata();
         metadata.setPublisher(null);
-        dataRecordMetadataMetadataService.store(metadata);
+        dataRecordMetadataService.store(metadata);
 
         // THEN:
-        DataRecordMetadata mdata = dataRecordMetadataMetadataService.retrieve(exampleIRI());
+        DataRecordMetadata mdata = dataRecordMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getPublisher());
     }
 
@@ -149,7 +153,7 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
         assertThrows(ResourceNotFoundException.class, () -> {
             // WHEN:
             String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-            dataRecordMetadataMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+            dataRecordMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
             // THEN:
             // Expect exception

@@ -36,28 +36,38 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestDelete;
+import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("DELETE /fdp/catalog/:catalogId/members/:userUuid")
+@DisplayName("DELETE /fdp/dataset/:datasetId/members/:userUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
     @Autowired
     private UserFixtures userFixtures;
 
-    private URI url(String catalogId, String userUuid) {
-        return URI.create(format("/fdp/catalog/%s/members/%s", catalogId, userUuid));
+    private URI url(String datasetId, String userUuid) {
+        return URI.create(format("/fdp/dataset/%s/members/%s", datasetId, userUuid));
     }
 
     @Test
     @DisplayName("HTTP 204")
     public void res204() {
+        create_res204(ALBERT_TOKEN);
+    }
+
+    @Test
+    @DisplayName("HTTP 204: User is an admin")
+    public void res204_admin() {
+        create_res204(ADMIN_TOKEN);
+    }
+
+    private void create_res204(String token) {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("catalog-1", userFixtures.nikola().getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .delete(url("dataset-1", userFixtures.nikola().getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
@@ -74,7 +84,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("catalog-1", userFixtures.nikola().getUuid()))
+                .delete(url("dataset-2", userFixtures.nikola().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -88,9 +98,9 @@ public class Detail_DELETE extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 404: non-existing catalog")
+    @DisplayName("HTTP 404: non-existing dataset")
     public void res404_nonExistingCatalog() {
-        createNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
+        createUserNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
     }
 
 }

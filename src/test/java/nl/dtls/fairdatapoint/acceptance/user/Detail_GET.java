@@ -38,8 +38,8 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createForbiddenTestGet;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createNoUserForbiddenTestGet;
+import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -78,13 +78,13 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 403")
     public void res403() {
         User user = userFixtures.albert();
-        createForbiddenTestGet(client, url(user.getUuid()));
+        createNoUserForbiddenTestGet(client, url(user.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createNotFoundTestGet(client, url("nonExisting"));
+        createUserNotFoundTestGet(client, url("nonExisting"));
     }
 
 }

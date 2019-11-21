@@ -20,9 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.api.controller.metadata.catalog;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;

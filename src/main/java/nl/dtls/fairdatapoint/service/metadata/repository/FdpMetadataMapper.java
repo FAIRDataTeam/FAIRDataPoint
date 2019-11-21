@@ -24,9 +24,13 @@ package nl.dtls.fairdatapoint.service.metadata.repository;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataDTO;
 import nl.dtls.fairdatapoint.service.metadata.catalog.CatalogMetadataMapper;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import nl.dtls.fairdatapoint.service.uri.UriMapper;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +38,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class FdpMetadataMapper {
+public class FdpMetadataMapper implements MetadataMapper<FDPMetadata, FdpMetadataChangeDTO> {
+
+    private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
     private UriMapper uriMapper;
@@ -61,7 +67,15 @@ public class FdpMetadataMapper {
                         .map(c -> catalogMetadataMapper.toSimpleDTO(c))
                         .collect(Collectors.toList())
         );
+    }
 
+    public FDPMetadata fromChangeDTO(FDPMetadata metadata, FdpMetadataChangeDTO reqDto) {
+        metadata.setTitle(VALUE_FACTORY.createLiteral(reqDto.getTitle()));
+        metadata.setDescription(VALUE_FACTORY.createLiteral(reqDto.getDescription()));
+        metadata.setVersion(VALUE_FACTORY.createLiteral(reqDto.getVersion()));
+        metadata.setLicense(VALUE_FACTORY.createIRI(reqDto.getLicense()));
+        metadata.setLanguage(VALUE_FACTORY.createIRI(reqDto.getLanguage()));
+        return metadata;
     }
 
 }

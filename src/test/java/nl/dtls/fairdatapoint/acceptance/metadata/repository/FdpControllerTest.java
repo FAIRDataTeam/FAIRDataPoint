@@ -23,8 +23,10 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.repository;
 
 import nl.dtls.fairdatapoint.acceptance.metadata.common.MetadataControllerTest;
+import nl.dtls.fairdatapoint.utils.AuthHelper;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -32,11 +34,15 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static nl.dtls.fairdatapoint.WebIntegrationTest.ADMIN_TOKEN;
 import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_FDP_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FdpControllerTest extends MetadataControllerTest {
+
+    @Autowired
+    private AuthHelper authHelper;
 
     /**
      * Check unsupported accept header.
@@ -112,6 +118,7 @@ public class FdpControllerTest extends MetadataControllerTest {
     @DirtiesContext
     @Test
     public void updateRepositoryMetadata() throws Exception {
+        authHelper.authenticateAsAdmin();
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -119,6 +126,7 @@ public class FdpControllerTest extends MetadataControllerTest {
         String metadata = "<> <http://purl.org/dc/terms/title> \"Test update\" .";
         request.setMethod("PATCH");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
+        request.addHeader(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN);
         request.setContent(metadata.getBytes());
         request.setRequestURI("/fdp");
 

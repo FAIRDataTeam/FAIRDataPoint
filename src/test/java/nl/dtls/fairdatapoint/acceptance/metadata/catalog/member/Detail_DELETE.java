@@ -36,7 +36,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestDelete;
+import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -54,10 +54,20 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 204")
     public void res204() {
+        create_res204(ALBERT_TOKEN);
+    }
+
+    @Test
+    @DisplayName("HTTP 204: User is an admin")
+    public void res204_admin() {
+        create_res204(ADMIN_TOKEN);
+    }
+
+    private void create_res204(String token) {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
                 .delete(url("catalog-1", userFixtures.nikola().getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
@@ -90,7 +100,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing catalog")
     public void res404_nonExistingCatalog() {
-        createNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
+        createUserNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
     }
 
 }

@@ -40,12 +40,12 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNotFoundTestPut;
+import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("PUT /fdp/catalog/:catalogId/members/:userUuid")
+@DisplayName("PUT /fdp/dataset/:datasetId/members/:userUuid")
 public class Detail_PUT extends WebIntegrationTest {
 
     @Autowired
@@ -54,8 +54,8 @@ public class Detail_PUT extends WebIntegrationTest {
     @Autowired
     private MembershipFixtures membershipFixtures;
 
-    private URI url(String catalogId, String userUuid) {
-        return URI.create(format("/fdp/catalog/%s/members/%s", catalogId, userUuid));
+    private URI url(String datasetId, String userUuid) {
+        return URI.create(format("/fdp/dataset/%s/members/%s", datasetId, userUuid));
     }
 
     private MemberCreateDTO reqDto() {
@@ -65,10 +65,20 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
+        create_res200(ALBERT_TOKEN);
+    }
+
+    @Test
+    @DisplayName("HTTP 200: User is an admin")
+    public void res200_admin() {
+        create_res200(ADMIN_TOKEN);
+    }
+
+    private void create_res200(String token) {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("catalog-1", userFixtures.nikola().getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .put(url("dataset-1", userFixtures.nikola().getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .body(reqDto());
         ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -85,7 +95,7 @@ public class Detail_PUT extends WebIntegrationTest {
     public void res400_nonExistingUser() {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("catalog-1", "nonExisting"))
+                .put(url("dataset-1", "nonExisting"))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .body(reqDto());
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
@@ -104,7 +114,7 @@ public class Detail_PUT extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("catalog-1", userFixtures.nikola().getUuid()))
+                .put(url("dataset-2", userFixtures.nikola().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .body(reqDto());
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
@@ -118,9 +128,9 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 404: non-existing catalog")
+    @DisplayName("HTTP 404: non-existing dataset")
     public void res404_nonExistingCatalog() {
-        createNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid()), reqDto());
+        createUserNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid()), reqDto());
     }
 
 }

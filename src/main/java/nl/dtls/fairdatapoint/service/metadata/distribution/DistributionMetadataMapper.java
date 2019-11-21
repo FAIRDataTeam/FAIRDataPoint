@@ -27,22 +27,30 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.dto.common.BreadcrumbDTO;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataSimpleDTO;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import nl.dtls.fairdatapoint.service.uri.UriMapper;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
-public class DistributionMetadataMapper {
+public class DistributionMetadataMapper implements MetadataMapper<DistributionMetadata, DistributionMetadataChangeDTO> {
+
+    private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
     private UriMapper uriMapper;
 
     public DistributionMetadataDTO toDTO(DistributionMetadata d, FDPMetadata repository, CatalogMetadata catalog,
-                                         DatasetMetadata dataset) {
+                                         DatasetMetadata dataset, Optional<MemberDTO> member) {
         return new DistributionMetadataDTO(
                 d.getIdentifier().getIdentifier().getLabel(),
                 d.getUri().toString(),
@@ -66,7 +74,8 @@ public class DistributionMetadataMapper {
                             catalog.getIdentifier().getIdentifier().getLabel()));
                     put("dataset", new BreadcrumbDTO(dataset.getTitle().getLabel(),
                             dataset.getIdentifier().getIdentifier().getLabel()));
-                }}
+                }},
+                member.map(MemberDTO::getMembership).orElse(null)
         );
 
     }
@@ -83,4 +92,16 @@ public class DistributionMetadataMapper {
         );
     }
 
+    public DistributionMetadata fromChangeDTO(DistributionMetadata metadata, DistributionMetadataChangeDTO reqDto) {
+        metadata.setTitle(VALUE_FACTORY.createLiteral(reqDto.getTitle()));
+        metadata.setDescription(VALUE_FACTORY.createLiteral(reqDto.getDescription()));
+        metadata.setVersion(VALUE_FACTORY.createLiteral(reqDto.getVersion()));
+        metadata.setLicense(VALUE_FACTORY.createIRI(reqDto.getLicense()));
+        metadata.setLanguage(VALUE_FACTORY.createIRI(reqDto.getLanguage()));
+        metadata.setMediaType(VALUE_FACTORY.createLiteral(reqDto.getMediaType()));
+        metadata.setDownloadURL(reqDto.getDownloadUrl() != null ? VALUE_FACTORY.createIRI(reqDto.getDownloadUrl()) :
+                null);
+        metadata.setAccessURL(reqDto.getAccessUrl() != null ? VALUE_FACTORY.createIRI(reqDto.getAccessUrl()) : null);
+        return metadata;
+    }
 }

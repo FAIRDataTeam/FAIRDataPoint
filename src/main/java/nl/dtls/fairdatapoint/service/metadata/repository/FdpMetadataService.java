@@ -27,13 +27,18 @@ import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.model.Identifier;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
@@ -41,12 +46,26 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class FdpMetadataService extends AbstractMetadataService<FDPMetadata> {
+public class FdpMetadataService extends AbstractMetadataService<FDPMetadata, FdpMetadataChangeDTO> {
     private final static Logger LOGGER = LoggerFactory.getLogger(FdpMetadataService.class);
+
+    @Autowired
+    private FdpMetadataMapper fdpMetadataMapper;
 
     public FdpMetadataService(@Value("${metadataProperties.rootSpecs:}") String specs) {
         super();
         this.specs = specs;
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public void update(IRI uri, FDPMetadata metadataUpdate) throws MetadataServiceException {
+        super.update(uri, metadataUpdate);
+    }
+
+    @Override
+    public MetadataMapper<FDPMetadata, FdpMetadataChangeDTO> metadataMapper() {
+        return fdpMetadataMapper;
     }
 
     @Override
