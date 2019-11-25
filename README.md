@@ -5,7 +5,7 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6)
 [![Coverage Status](https://coveralls.io/repos/github/DTL-FAIRData/FAIRDataPoint/badge.svg?branch=master)](https://coveralls.io/github/DTL-FAIRData/FAIRDataPoint?branch=master)
 
-`FAIRDataPoint` is a REST API for creating, storing and servering `FAIR metadata`. The metadata contents are in this API are generated `semi-automatically` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document. In the current version of API we support `GET, POST and PATCH` requests.
+`FAIRDataPoint` is a REST API for creating, storing, and serving `FAIR metadata`. The metadata contents are in this API are generated `semi-automatically` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document. In the current version of API, we support `GET, POST, and PATCH` requests.
 
 ## Deployment
 
@@ -26,19 +26,45 @@ services:
     restart: always
     ports:
       - 80:8080
+
+  mongo:
+      image: mongo:4.0.12
+      restart: always
+      ports:
+        - 27017:27017
+      command: mongod
 ```
 
-## Contribute
+## How to contribute
 
-### Requirements
+### Install requirements
+
+**Stack:**
 
  - **Java** (recommended 1.8)
  - **Maven** (recommended 3.2.5 or higher)
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
 
+**Additional libraries:**
+
+1. Install `fairmetadata4j`
+
+    ```bash
+    $ git clone https://github.com/FAIRDataTeam/fairmetadata4j
+    $ cd fairmetadata4j
+    $ mvn install
+    ```
+2. Install `spring-security-acl-mongodb`
+
+    ```
+    $ git clone https://github.com/FAIRDataTeam/spring-security-acl-mongodb
+    $ cd spring-security-acl-mongodb
+    $ mvn install
+    ```
+
 ### Build & Run
 
-Run these comands from the root of the project
+Run these commands from the root of the project
 
 ```bash
 $ mvn spring-boot:start
@@ -46,19 +72,49 @@ $ mvn spring-boot:start
 
 ### Run tests
 
-Run these comands from the root of the project
+Run these commands from the root of the project
 
 ```bash
 $ mvn test
 ```
 
+### Package the application
+
+Run these commands from the root of the project
+
+```bash
+$ mvn package
+```
+
+### Create a Docker image
+
+Run these commands from the root of the project
+
+```bash
+$ docker build -t fairdata/fairdatapoint .
+```
+
 ### Security
 
-The all `GET` and `OPTIONS` are public-accessible. `POST` and `PATCH` endpoints are secured
-and for accessing them, you need to be authorized. We use JWT Tokens for authorization.
-The token can be retrieved in `/tokens` endpoint where you send username and password. 
-Currently, there exists just one default user (username: `user`, password: `password`) and 
-there is no possibility of how to change it.  
+#### From user point of view
+We have two levels of accessibility in FDP. All resources (e.g., catalogs, datasets,...) are publicly accessible. You don't need to be logged in to browse them. If you want to upload your own resources, you need to be logged in. To get an account, you need to contact an administrator of the FDP. By default, all uploaded resources are publicly accessible by anyone. But if you want to allow someone to manage your resources (edit/delete), you need to allow it in the resource settings. 
+
+We have two types of roles in FDP - an administrator and a user. The administrator is allowed to manage users and all resources. The user can manage just the resources which he owns.
+
+
+#### From technical point of view  
+
+Most of the `GET` requests are publicly accessible compares to `POST`, `PUT`, and `PATCH` requests, which are mainly secured. We use [JWT Tokens](https://jwt.io/) and [Bearer Token Authentication](https://swagger.io/docs/specification/authentication/bearer-authentication/). The token can be retrieved in `/tokens` endpoint where you send username and password. 
+
+**Default users**
+
+- **ADMIN:**
+    - Username: `albert.einstein@example.com`
+    - Password: `password`
+- **USER:**
+    - Username: `nikola.tesla@example.com`
+    - Password: `password`
+
 
 ### API documentation
 
