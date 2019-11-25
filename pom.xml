@@ -2,7 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.9.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
     <version>0.1-beta</version>
@@ -45,11 +50,11 @@
         <fairmetadata.version>0.1-beta</fairmetadata.version>
 
         <!-- Spring -->
-        <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
-        <spring.data.version>3.1.10.RELEASE</spring.data.version>
         <spring.boot.handlebars.version>0.3.0</spring.boot.handlebars.version>
+        <spring.security.acl.mongo.version>5.1.5-SNAPSHOT</spring.security.acl.mongo.version>
 
         <!-- Core -->
+        <mongobee.version>0.13</mongobee.version>
         <springfox.swagger.version>2.9.1</springfox.swagger.version>
         <logback.version>1.2.3</logback.version>
         <jackson.version>2.9.6</jackson.version>
@@ -58,9 +63,10 @@
         <unirest.version>1.4.9</unirest.version>
         <sass.version>5.3.0</sass.version>
         <jwt.version>0.10.5</jwt.version>
+        <lombok.version>1.18.10</lombok.version>
 
         <!-- Test -->
-        <junit.version>4.12</junit.version>
+        <junit-jupiter.version>5.3.2</junit-jupiter.version>
         <mockito.version>2.23.0</mockito.version>
 
         <!-- Plugins -->
@@ -87,7 +93,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring.boot.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -98,38 +103,37 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-rest-webmvc</artifactId>
-            <version>${spring.data.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>pl.allegro.tech.boot</groupId>
-            <artifactId>handlebars-spring-boot-starter</artifactId>
-            <version>${spring.boot.handlebars.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>${spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl-mongodb</artifactId>
+            <version>${spring.security.acl.mongo.version}</version>
         </dependency>
 
         <!-- ////////////////// -->
         <!--   Core             -->
         <!-- ////////////////// -->
+        <dependency>
+            <groupId>com.github.mongobee</groupId>
+            <artifactId>mongobee</artifactId>
+            <version>${mongobee.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -177,11 +181,6 @@
             <version>${unirest.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.bit3</groupId>
-            <artifactId>jsass</artifactId>
-            <version>${sass.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>${jwt.version}</version>
@@ -198,6 +197,11 @@
             <version>${jwt.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
 
         <!-- ////////////////// -->
         <!--   Test             -->
@@ -205,19 +209,28 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring.boot.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.vaadin.external.google</groupId>
                     <artifactId>android-json</artifactId>
                 </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- junit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -247,6 +260,7 @@
                         <exclude>**/*.sparql</exclude>
                         <exclude>**/*.properties</exclude>
                         <exclude>**/*.xml</exclude>
+                        <exclude>**/*.json</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -277,7 +291,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring.boot.version}</version>
                 <executions>
                     <execution>
                         <goals>

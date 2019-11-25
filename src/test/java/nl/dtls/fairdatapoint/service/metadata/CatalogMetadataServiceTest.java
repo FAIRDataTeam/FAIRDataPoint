@@ -25,33 +25,51 @@ package nl.dtls.fairdatapoint.service.metadata;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
     private final static String TEST_CATALOG_URI = "http://example.com/fdp/catalog";
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private UserFixtures userFixtures;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MongoAuthenticationService mongoAuthenticationService;
 
-    @Before
+    @Autowired
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+
+    @Autowired
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
+
+    @BeforeEach
     public void createParent() throws MetadataServiceException {
+        String albertUuid = userFixtures.albert().getUuid();
+        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        SecurityContextHolder.getContext().setAuthentication(auth);
         fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
     }
 
@@ -66,15 +84,17 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentUri() throws Exception {
-        // WHEN:
-        CatalogMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        catalogMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            CatalogMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            catalogMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -130,14 +150,16 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void retrieveNonExitingMetadata() throws Exception {
-        // WHEN:
-        String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
-        catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+        assertThrows(ResourceNotFoundException.class, () -> {
+            // WHEN:
+            String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
+            catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -172,7 +194,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         ZonedDateTime fdpModified = ZonedDateTime.parse(updatedFdpMetadata.getModified().stringValue());
         ZonedDateTime catalogModified = ZonedDateTime.parse(storedCatalog.getModified().stringValue());
 
-        assertTrue("FDP modified is not after Catalog modified", fdpModified.isAfter(catalogModified));
+        assertFalse("FDP modified is not after Catalog modified", fdpModified.isBefore(catalogModified));
     }
 
     private static CatalogMetadata createExampleMetadata() {

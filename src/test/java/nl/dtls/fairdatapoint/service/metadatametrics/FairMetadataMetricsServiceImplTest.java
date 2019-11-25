@@ -32,12 +32,13 @@ import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
 
@@ -48,9 +49,11 @@ public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
     /**
      * Test getMetrics with null uri, this test is excepted to throw error
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullMetadataUri() {
-        fmMetricsServiceImpl.getMetrics(null);
+        assertThrows(NullPointerException.class, () -> {
+            fmMetricsServiceImpl.getMetrics(null);
+        });
     }
 
     /**

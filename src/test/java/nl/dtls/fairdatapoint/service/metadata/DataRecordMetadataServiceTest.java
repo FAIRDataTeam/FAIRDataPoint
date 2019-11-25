@@ -27,36 +27,56 @@ import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DataRecordMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
     private final static String TEST_DATARECORD_URI = "http://example.com/fdp/catalog";
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private UserFixtures userFixtures;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
     @Autowired
-    private MetadataService<DataRecordMetadata> dataRecordMetadataMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
-    @Before
+    @Autowired
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
+
+    @Autowired
+    private MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
+
+    @BeforeEach
     public void createParents() throws MetadataServiceException {
+        String albertUuid = userFixtures.albert().getUuid();
+        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        SecurityContextHolder.getContext().setAuthentication(auth);
         fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
         catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
                 ExampleFilesUtils.FDP_URI));
@@ -68,33 +88,37 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeAndRetrieve() throws MetadataServiceException {
         // WHEN:
-        dataRecordMetadataMetadataService.store(createExampleMetadata());
+        dataRecordMetadataService.store(createExampleMetadata());
 
         // THEN:
-        assertNotNull(dataRecordMetadataMetadataService.retrieve(exampleIRI()));
+        assertNotNull(dataRecordMetadataService.retrieve(exampleIRI()));
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentURI() throws Exception {
-        // WHEN:
-        DataRecordMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        dataRecordMetadataMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            DataRecordMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            dataRecordMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithWrongParentURI() throws Exception {
-        // WHEN:
-        dataRecordMetadataMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI,
-                ExampleFilesUtils.CATALOG_URI));
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            dataRecordMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI,
+                    ExampleFilesUtils.CATALOG_URI));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -103,10 +127,10 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         DataRecordMetadata metadata = createExampleMetadata();
         metadata.setIdentifier(null);
-        dataRecordMetadataMetadataService.store(metadata);
+        dataRecordMetadataService.store(metadata);
 
         // THEN:
-        DataRecordMetadata mdata = dataRecordMetadataMetadataService.retrieve(exampleIRI());
+        DataRecordMetadata mdata = dataRecordMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getIdentifier());
     }
 
@@ -116,22 +140,24 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         DataRecordMetadata metadata = createExampleMetadata();
         metadata.setPublisher(null);
-        dataRecordMetadataMetadataService.store(metadata);
+        dataRecordMetadataService.store(metadata);
 
         // THEN:
-        DataRecordMetadata mdata = dataRecordMetadataMetadataService.retrieve(exampleIRI());
+        DataRecordMetadata mdata = dataRecordMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getPublisher());
     }
 
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void retrieveNonExitingDatasetDistribution() throws Exception {
-        // WHEN:
-        String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
-        dataRecordMetadataMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+        assertThrows(ResourceNotFoundException.class, () -> {
+            // WHEN:
+            String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
+            dataRecordMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     private static DataRecordMetadata createExampleMetadata() {

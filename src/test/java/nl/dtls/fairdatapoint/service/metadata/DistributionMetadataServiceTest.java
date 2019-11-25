@@ -27,38 +27,58 @@ import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
     private final static String TEST_DISTRIBUTION_URI = "http://example.com/fdp/catalog/dataset/distrubtion";
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private UserFixtures userFixtures;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
     @Autowired
-    private MetadataService<DistributionMetadata> distributionMetadataService;
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
-    @Before
+    @Autowired
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
+
+    @Autowired
+    private MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
+
+    @BeforeEach
     public void createParents() throws MetadataServiceException {
+        String albertUuid = userFixtures.albert().getUuid();
+        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        SecurityContextHolder.getContext().setAuthentication(auth);
         fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
         catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
                 ExampleFilesUtils.FDP_URI));
@@ -77,26 +97,30 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentURI() throws Exception {
-        // WHEN:
-        DistributionMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        distributionMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            DistributionMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            distributionMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithWrongParentURI() throws Exception {
-        // WHEN:
-        distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                ExampleFilesUtils.CATALOG_URI));
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                    ExampleFilesUtils.CATALOG_URI));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -196,10 +220,10 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
         ZonedDateTime datasetModified = ZonedDateTime.parse(updatedDataset.getModified().stringValue());
         ZonedDateTime distributionModified = ZonedDateTime.parse(storedDistribution.getModified().stringValue());
 
-        assertTrue("Dataset modified is not after Distribution modified",
-                datasetModified.isAfter(distributionModified));
-        assertTrue("Catalog modified is not after Dataset modified", catalogModified.isAfter(distributionModified));
-        assertTrue("FDP modified is not after Dataset modified", fdpModified.isAfter(distributionModified));
+        assertFalse("Dataset modified is not after Distribution modified",
+                datasetModified.isBefore(distributionModified));
+        assertFalse("Catalog modified is not after Dataset modified", catalogModified.isBefore(distributionModified));
+        assertFalse("FDP modified is not after Dataset modified", fdpModified.isBefore(distributionModified));
     }
 
     private static DistributionMetadata createExampleMetadata() {

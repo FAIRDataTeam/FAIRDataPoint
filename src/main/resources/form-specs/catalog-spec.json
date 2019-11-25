@@ -1,0 +1,50 @@
+{
+  "id": "catalog",
+  "fields": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "required": true
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "version",
+      "label": "Version",
+      "type": "string",
+      "required": true
+    },
+    {
+      "id": "license",
+      "label": "License",
+      "type": "iri",
+      "required": false,
+      "typehints": {
+        "name": "license",
+        "type": "static"
+      }
+    },
+    {
+      "id": "language",
+      "label": "Language",
+      "type": "iri",
+      "required": false,
+      "typehints": {
+        "name": "language",
+        "type": "static"
+      }
+    },
+    {
+      "id": "themeTaxonomies",
+      "label": "Theme Taxonomies",
+      "type": "iri",
+      "required": true,
+      "multiple": true
+    }
+  ]
+}

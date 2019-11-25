@@ -26,36 +26,55 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.ZonedDateTime;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
     private final static String TEST_DATASET_URI = "http://example.com/fdp/catalog/dataset";
 
     @Autowired
-    private MetadataService<FDPMetadata> fdpMetadataService;
+    private UserFixtures userFixtures;
 
     @Autowired
-    private MetadataService<CatalogMetadata> catalogMetadataService;
+    private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<DatasetMetadata> datasetMetadataService;
+    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
 
-    @Before
+    @Autowired
+    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
+
+    @Autowired
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
+
+    @BeforeEach
     public void createParents() throws MetadataServiceException {
+        String albertUuid = userFixtures.albert().getUuid();
+        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        SecurityContextHolder.getContext().setAuthentication(auth);
         fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
         catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
                 ExampleFilesUtils.FDP_URI));
@@ -72,25 +91,30 @@ public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeWithNoParentURI() throws Exception {
-        // WHEN:
-        DatasetMetadata metadata = createExampleMetadata();
-        metadata.setParentURI(null);
-        datasetMetadataService.store(metadata);
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            DatasetMetadata metadata = createExampleMetadata();
+            metadata.setParentURI(null);
+            datasetMetadataService.store(metadata);
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void storeDatasetMetaDataWrongParentUri() throws Exception {
-        // WHEN:
-        datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(TEST_DATASET_URI, ExampleFilesUtils.FDP_URI));
+        assertThrows(IllegalStateException.class, () -> {
+            // WHEN:
+            datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(TEST_DATASET_URI,
+                    ExampleFilesUtils.FDP_URI));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -146,14 +170,16 @@ public class DatasetMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @DirtiesContext
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void retrieveNonExitingMetadata() throws Exception {
-        // WHEN:
-        String uri = ExampleFilesUtils.CATALOG_URI + "/dummpID676";
-        datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+        assertThrows(ResourceNotFoundException.class, () -> {
+            // WHEN:
+            String uri = ExampleFilesUtils.CATALOG_URI + "/dummpID676";
+            datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
-        // THEN:
-        // Expect exception
+            // THEN:
+            // Expect exception
+        });
     }
 
     @DirtiesContext
@@ -194,8 +220,8 @@ public class DatasetMetadataServiceTest extends BaseIntegrationTest {
         ZonedDateTime catalogModified = ZonedDateTime.parse(updatedCatalogMetadata.getModified().stringValue());
         ZonedDateTime datasetModified = ZonedDateTime.parse(storedDataset.getModified().stringValue());
 
-        assertTrue("Catalog modified is not after Dataset modified", catalogModified.isAfter(datasetModified));
-        assertTrue("FDP modified is not after Dataset modified", fdpModified.isAfter(datasetModified));
+        assertFalse("Catalog modified is not after Dataset modified", catalogModified.isBefore(datasetModified));
+        assertFalse("FDP modified is not after Dataset modified", fdpModified.isBefore(datasetModified));
     }
 
     private static DatasetMetadata createExampleMetadata() {

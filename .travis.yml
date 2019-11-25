@@ -1,6 +1,9 @@
 dist: xenial
 language: generic
 
+services:
+  - mongodb
+
 jdk:
   - openjdk11
 
@@ -24,8 +27,15 @@ jobs:
         - cd  ./fairmetadata4j
         - mvn --quiet --fail-fast install
         - cd ..
+        # 2. Install Spring Security ACL Mongo
+        - git clone https://github.com/FAIRDataTeam/spring-security-acl-mongodb
+        - cd spring-security-acl-mongodb
+        - mvn --quiet --fail-fast -DskipTests install
+        - cd ..
+        # 3. Init and check testing Mongo Database
+        - mongo fdp-test --eval 'db.collection.find()'
       script:
-        # 2. Build FAIR Data Point
+        # 4. Build FAIR Data Point
         - mvn org.jacoco:jacoco-maven-plugin:prepare-agent test
         - mvn --quiet --fail-fast -DskipTests package
         - docker pull $IMAGE_TAG_DEVELOP
@@ -57,7 +67,3 @@ jobs:
         - docker pull $IMAGE_TAG
         - docker image tag $IMAGE_TAG $IMAGE_TAG_BRANCH
         - docker push $IMAGE_TAG_BRANCH
-
-
-#after_success:
-#  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report coveralls:report

@@ -22,35 +22,45 @@
  */
 package nl.dtls.fairdatapoint;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtls.fairdatapoint.api.filter.JwtTokenFilter;
-import org.junit.Before;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.MigrationRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+@ExtendWith(SpringExtension.class)
+@ActiveProfiles(Profiles.TESTING)
+@DirtiesContext
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+        properties = {"spring.main.allow-bean-definition-overriding=true"})
+public abstract class WebIntegrationTest {
 
-public abstract class WebIntegrationTest extends BaseIntegrationTest {
+    public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiI5NTU4OWU1MC1kMjYxLTQ5MmItODg1Mi05MzI0ZTlhNjZhNDIiLCJpYXQiOjE1NzQyNTE5OTAsImV4cCI6MjQzODE2NTU5MH0" +
+            ".KHcGQqqTOzC9Xqzj07PRuTDa__c1BDC9obb-DKsSaQo";
+
+    public static final String ALBERT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE1NzI0NDczNTksImV4cCI6MjQzNjM2MDk1OX0" +
+            ".yGZthRlVezhbKk1gDymW6pZfbCoxxqJda6md9btp00w";
+
+    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE1NzI5NjU2NTksImV4cCI6MjQzNjg3OTI1OX0" +
+            ".f-nAX35Ob392xzerVqN9j34kCorZ0Lu6I18OgflHROs";
 
     @Autowired
-    private WebApplicationContext context;
+    protected TestRestTemplate client;
 
     @Autowired
-    private JwtTokenFilter jwtTokenFilter;
+    protected MigrationRunner migrationRunner;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-    protected MockMvc mockMvc;
-
-    @Before
+    @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .addFilters(jwtTokenFilter)
-                .alwaysDo(print())
-                .build();
+        migrationRunner.run();
     }
 
 }

@@ -35,6 +35,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class Application {
 
     public static void main(String[] args) {
+        String property = System.getProperties().getProperty("spring.profiles.active");
+        if (property == null) {
+            System.setProperty("spring.profiles.active", Profiles.PRODUCTION);
+        }
         SpringApplication.run(Application.class, args);
     }
+
 }

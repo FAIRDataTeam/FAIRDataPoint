@@ -29,7 +29,7 @@ package nl.dtls.fairdatapoint.config.test;
 
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import org.eclipse.rdf4j.repository.Repository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 

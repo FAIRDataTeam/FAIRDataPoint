@@ -31,13 +31,14 @@ import org.apache.http.HttpStatus;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 /**
@@ -56,9 +57,11 @@ public class FairSearchClientImplTest {
     /**
      * Test NULL fdp uri. This test is expected to thrown an error
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void nullFDPUri() {
-        search.submitFdpUri(null);
+        assertThrows(IllegalStateException.class, () -> {
+            search.submitFdpUri(null);
+        });
     }
 
     /**
