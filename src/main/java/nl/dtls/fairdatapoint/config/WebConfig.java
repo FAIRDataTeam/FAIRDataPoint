@@ -67,10 +67,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.setOrder(Integer.MIN_VALUE + 2).addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
-
-        // Serving static resources
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("classpath:/META-INF/resources/WEB-INF/static/images/");
     }
 
     @Bean

@@ -62,8 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/**.jsonld").permitAll()
                 .antMatchers(HttpMethod.GET, "/**.ttl").permitAll()
                 .antMatchers(HttpMethod.GET, "/**.rdf").permitAll()
-                .antMatchers(HttpMethod.GET, "/images/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/css/**").permitAll()
                 .antMatchers("/tokens").permitAll()
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
                         "/configuration/**", "/swagger-ui.html", "/webjars/**").permitAll()
