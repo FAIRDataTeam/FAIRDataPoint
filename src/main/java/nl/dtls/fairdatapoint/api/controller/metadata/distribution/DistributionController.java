@@ -55,7 +55,7 @@ import java.util.Optional;
 
 @RestController
 @Api(description = "Distribution Metadata")
-@RequestMapping("/fdp/distribution")
+@RequestMapping("/distribution")
 public class DistributionController extends MetadataController {
 
     @Autowired
@@ -87,7 +87,7 @@ public class DistributionController extends MetadataController {
         DistributionMetadata metadata = distributionMetadataService.retrieve(uri);
         DatasetMetadata dataset = datasetMetadataService.retrieve(metadata.getParentURI());
         CatalogMetadata catalog = catalogMetadataService.retrieve(dataset.getParentURI());
-        FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
+        FDPMetadata repository = repositoryMetadataService.retrieve(catalog.getParentURI());
         String distributionId = metadata.getIdentifier().getIdentifier().getLabel();
         Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(distributionId, DistributionMetadata.class);
         DistributionMetadataDTO dto = distributionMetadataMapper.toDTO(metadata, repository, catalog, dataset, oMember);

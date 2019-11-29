@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.metadata.datarecord;
 
 import nl.dtls.fairdatapoint.acceptance.metadata.common.MetadataControllerTest;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_DATARECORD_PATH;
+import static nl.dtls.fairdatapoint.utils.MetadataFixtureLoader.TEST_DATARECORD_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -51,12 +51,12 @@ public class DataRecordControllerTest extends MetadataControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        String metadata = ExampleFilesUtils.getFileContentAsString(
-                ExampleFilesUtils.DATARECORD_METADATA_FILE);
+        String metadata = MetadataFixtureFilesHelper.getFileContentAsString(
+                MetadataFixtureFilesHelper.DATARECORD_METADATA_FILE);
         request.setMethod("POST");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp/datarecord");
+        request.setRequestURI("/datarecord");
 
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -76,12 +76,12 @@ public class DataRecordControllerTest extends MetadataControllerTest {
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
 
-            String metadata = ExampleFilesUtils.getFileContentAsString(
-                    ExampleFilesUtils.DATARECORD_METADATA_FILE);
+            String metadata = MetadataFixtureFilesHelper.getFileContentAsString(
+                    MetadataFixtureFilesHelper.DATARECORD_METADATA_FILE);
             request.setMethod("POST");
             request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
             request.setContent(metadata.getBytes());
-            request.setRequestURI("/fdp/datarecord");
+            request.setRequestURI("/datarecord");
 
             Object handler = handlerMapping.getHandler(request).getHandler();
             handlerAdapter.handle(request, response, handler);
@@ -95,7 +95,7 @@ public class DataRecordControllerTest extends MetadataControllerTest {
             request.setMethod("POST");
             request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
             request.setContent(metadata.getBytes());
-            request.setRequestURI("/fdp/datarecord");
+            request.setRequestURI("/datarecord");
 
             handler = handlerMapping.getHandler(request).getHandler();
             handlerAdapter.handle(request, response, handler);
@@ -116,7 +116,7 @@ public class DataRecordControllerTest extends MetadataControllerTest {
 
             request.setMethod("GET");
             request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-            request.setRequestURI("/fdp/datarecord/dummy");
+            request.setRequestURI("/datarecord/dummy");
 
             Object handler = handlerMapping.getHandler(request).getHandler();
             handlerAdapter.handle(request, response, handler);

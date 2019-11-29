@@ -24,11 +24,11 @@ package nl.dtls.fairdatapoint.service.metadata;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.utils.AuthHelper;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -40,13 +40,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FdpMetadataServiceTest extends BaseIntegrationTest {
+public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
 
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
     private final static String TEST_FDP_URI = "http://example.com/fdp";
 
     @Autowired
-    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
 
     @Autowired
     private AuthHelper authHelper;
@@ -55,10 +55,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeAndRetrieve() throws MetadataServiceException {
         // WHEN:
-        fdpMetadataService.store(createExampleMetadata());
+        repositoryMetadataService.store(createExampleMetadata());
 
         // THEN:
-        assertNotNull(fdpMetadataService.retrieve(exampleIRI()));
+        assertNotNull(repositoryMetadataService.retrieve(exampleIRI()));
     }
 
     @DirtiesContext
@@ -68,7 +68,7 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
             // WHEN:
             FDPMetadata metadata = createExampleMetadata();
             metadata.setTitle(null);
-            fdpMetadataService.store(metadata);
+            repositoryMetadataService.store(metadata);
 
             // THEN:
             // Expect exception
@@ -81,10 +81,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         FDPMetadata metadata = createExampleMetadata();
         metadata.setIdentifier(null);
-        fdpMetadataService.store(metadata);
+        repositoryMetadataService.store(metadata);
 
         // THEN:
-        FDPMetadata mdata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata mdata = repositoryMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getIdentifier());
     }
 
@@ -94,10 +94,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         FDPMetadata metadata = createExampleMetadata();
         metadata.setRepostoryIdentifier(null);
-        fdpMetadataService.store(metadata);
+        repositoryMetadataService.store(metadata);
 
         // THEN:
-        FDPMetadata mdata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata mdata = repositoryMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getRepostoryIdentifier());
     }
 
@@ -107,10 +107,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         FDPMetadata metadata = createExampleMetadata();
         metadata.setPublisher(null);
-        fdpMetadataService.store(metadata);
+        repositoryMetadataService.store(metadata);
 
         // THEN:
-        FDPMetadata mdata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata mdata = repositoryMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getPublisher());
     }
 
@@ -120,10 +120,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         FDPMetadata metadata = createExampleMetadata();
         metadata.setLanguage(null);
-        fdpMetadataService.store(metadata);
+        repositoryMetadataService.store(metadata);
 
         // THEN:
-        FDPMetadata mdata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata mdata = repositoryMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getLanguage());
     }
 
@@ -133,10 +133,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         FDPMetadata metadata = createExampleMetadata();
         metadata.setLicense(null);
-        fdpMetadataService.store(metadata);
+        repositoryMetadataService.store(metadata);
 
         // THEN:
-        FDPMetadata mdata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata mdata = repositoryMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getLicense());
     }
 
@@ -146,15 +146,15 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
         // GIVEN:
         authHelper.authenticateAsAdmin();
         FDPMetadata metadata = createExampleMetadata();
-        fdpMetadataService.store(metadata);
+        repositoryMetadataService.store(metadata);
 
         // WHEN:
         Literal title = VALUE_FACTORY.createLiteral("New FDP title");
         metadata.setTitle(title);
-        fdpMetadataService.update(exampleIRI(), metadata);
+        repositoryMetadataService.update(exampleIRI(), metadata);
 
         // THEN:
-        FDPMetadata mdata = fdpMetadataService.retrieve(metadata.getUri());
+        FDPMetadata mdata = repositoryMetadataService.retrieve(metadata.getUri());
         assertEquals(title, mdata.getTitle());
     }
 
@@ -163,7 +163,7 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     public void nullFDPURI() throws Exception {
         assertThrows(NullPointerException.class, () -> {
             // WHEN:
-            fdpMetadataService.retrieve((IRI) null);
+            repositoryMetadataService.retrieve((IRI) null);
 
             // THEN:
             // Expect exception
@@ -174,10 +174,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void specsLink() throws Exception {
         // WHEN:
-        fdpMetadataService.store(createExampleMetadata());
+        repositoryMetadataService.store(createExampleMetadata());
 
         // THEN:
-        FDPMetadata metadata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata metadata = repositoryMetadataService.retrieve(exampleIRI());
         assertNotNull(metadata.getSpecification());
     }
 
@@ -185,10 +185,10 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void metrics() throws Exception {
         // WHEN:
-        fdpMetadataService.store(createExampleMetadata());
+        repositoryMetadataService.store(createExampleMetadata());
 
         // THEN:
-        FDPMetadata metadata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata metadata = repositoryMetadataService.retrieve(exampleIRI());
         assertFalse(metadata.getMetrics().isEmpty());
     }
 
@@ -196,15 +196,15 @@ public class FdpMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void accessRights() throws Exception {
         // WHEN:
-        fdpMetadataService.store(createExampleMetadata());
+        repositoryMetadataService.store(createExampleMetadata());
 
         // THEN:
-        FDPMetadata metadata = fdpMetadataService.retrieve(exampleIRI());
+        FDPMetadata metadata = repositoryMetadataService.retrieve(exampleIRI());
         assertNotNull(metadata.getAccessRights().getDescription());
     }
 
     private static FDPMetadata createExampleMetadata() {
-        return ExampleFilesUtils.getFDPMetadata(TEST_FDP_URI);
+        return MetadataFixtureFilesHelper.getFDPMetadata(TEST_FDP_URI);
     }
 
     private static IRI exampleIRI() {

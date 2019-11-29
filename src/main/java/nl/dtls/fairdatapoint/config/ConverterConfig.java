@@ -36,23 +36,23 @@ import org.springframework.context.annotation.Configuration;
 public class ConverterConfig {
 
     @Bean
-    public FdpMetadataConverter turtleFdpMetadata() {
-        return new FdpMetadataConverter(RDFFormat.TURTLE);
+    public RepositoryMetadataConverter turtleRepositoryMetadata() {
+        return new RepositoryMetadataConverter(RDFFormat.TURTLE);
     }
 
     @Bean
-    public FdpMetadataConverter jsonldFdpMetadata() {
-        return new FdpMetadataConverter(RDFFormat.JSONLD);
+    public RepositoryMetadataConverter jsonldRepositoryMetadata() {
+        return new RepositoryMetadataConverter(RDFFormat.JSONLD);
     }
 
     @Bean
-    public FdpMetadataConverter n3FdpMetadata() {
-        return new FdpMetadataConverter(RDFFormat.N3);
+    public RepositoryMetadataConverter n3RepositoryMetadata() {
+        return new RepositoryMetadataConverter(RDFFormat.N3);
     }
 
     @Bean
-    public FdpMetadataConverter rdfxmlFdpMetadata() {
-        return new FdpMetadataConverter(RDFFormat.RDFXML);
+    public RepositoryMetadataConverter rdfxmlRepositoryMetadata() {
+        return new RepositoryMetadataConverter(RDFFormat.RDFXML);
     }
 
     @Bean

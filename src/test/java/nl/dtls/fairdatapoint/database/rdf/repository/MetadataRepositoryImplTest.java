@@ -28,7 +28,7 @@
 package nl.dtls.fairdatapoint.database.rdf.repository;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -57,7 +57,8 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     private final ValueFactory f = SimpleValueFactory.getInstance();
 
     private final List<Statement> STATEMENTS =
-            ExampleFilesUtils.getFileContentAsStatements(ExampleFilesUtils.VALID_TEST_FILE, "http://www.dtls.nl/test");
+            MetadataFixtureFilesHelper.getFileContentAsStatements(MetadataFixtureFilesHelper.TEST_RDF_FILE, "http" +
+                    "://www.dtls.nl/test");
 
     private final IRI TESTSUB = f.createIRI("http://www.dtls.nl/testSub");
 
@@ -77,7 +78,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     @BeforeEach
     public void storeExampleFile() throws MetadataRepositoryException {
 
-        testStoreManager.storeStatements(STATEMENTS, f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
+        testStoreManager.storeStatements(STATEMENTS, f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
         MockitoAnnotations.initMocks(this);
     }
 
@@ -139,7 +140,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void retrieveExitingResource() throws Exception {
 
         List<Statement> statements = testStoreManager.retrieveResource(
-                f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
+                f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
         assertTrue(statements.size() > 0);
     }
 
@@ -152,7 +153,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
         assertThrows(MetadataRepositoryException.class, () -> {
 
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockStoreManager.retrieveResource(f.createIRI(ExampleFilesUtils.TEST_SUB_URI));
+            mockStoreManager.retrieveResource(f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
         });
     }
 
@@ -235,7 +236,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void checkExitingResource() throws Exception {
 
         boolean isStatementExist = testStoreManager.isStatementExist(
-                f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
+                f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI), null, null);
         assertTrue(isStatementExist);
     }
 
@@ -272,7 +273,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void checkExceptionsIsStatementMethod() throws Exception {
         assertThrows(MetadataRepositoryException.class, () -> {
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockStoreManager.isStatementExist(f.createIRI(ExampleFilesUtils.TEST_SUB_URI), null, null);
+            mockStoreManager.isStatementExist(f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI), null, null);
         });
     }
 
@@ -289,42 +290,43 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     }
 
     /**
-     * Test non exist fdp uri
+     * Test non exist repository uri
      */
     @DirtiesContext
     @Test
     public void getFdpUriForNullUri() throws Exception {
         assertThrows(NullPointerException.class, () -> {
-            testStoreManager.getFDPIri(null);
+            testStoreManager.getRepositoryIri(null);
         });
     }
 
     /**
-     * Test non exist fdp uri
+     * Test non exist repository uri
      */
     @DirtiesContext
     @Test
     public void getNonExistFdpUri() throws Exception {
-        assertNull(testStoreManager.getFDPIri(f.createIRI(ExampleFilesUtils.FDP_URI + "/dummy")));
+        assertNull(testStoreManager.getRepositoryIri(f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI + "/dummy")));
     }
 
     /**
-     * Test existing fdp uri
+     * Test existing repository uri
      */
     @DirtiesContext
     @Test
     public void getExistingFdpUri() throws Exception {
-        List<Statement> stmt = ExampleFilesUtils.getFileContentAsStatements(
-                ExampleFilesUtils.FDP_URI_FILE, ExampleFilesUtils.FDP_URI);
-        IRI fdpUri = f.createIRI(ExampleFilesUtils.FDP_URI);
-        testStoreManager.storeStatements(stmt, fdpUri);
+        List<Statement> stmt = MetadataFixtureFilesHelper.getFileContentAsStatements(
+                MetadataFixtureFilesHelper.REPOSITORY_URI_FILE, MetadataFixtureFilesHelper.REPOSITORY_URI);
+        IRI repositoryUri = f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI);
+        testStoreManager.storeStatements(stmt, repositoryUri);
 
-        assertEquals(fdpUri, testStoreManager.getFDPIri(f.createIRI(ExampleFilesUtils.FDP_URI)));
-        assertEquals(fdpUri, testStoreManager.getFDPIri(
-                f.createIRI(ExampleFilesUtils.CATALOG_URI)));
-        assertEquals(fdpUri, testStoreManager.getFDPIri(
-                f.createIRI(ExampleFilesUtils.DATASET_URI)));
-        assertEquals(fdpUri, testStoreManager.getFDPIri(
-                f.createIRI(ExampleFilesUtils.DISTRIBUTION_URI)));
+        assertEquals(repositoryUri,
+                testStoreManager.getRepositoryIri(f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI)));
+        assertEquals(repositoryUri, testStoreManager.getRepositoryIri(
+                f.createIRI(MetadataFixtureFilesHelper.CATALOG_URI)));
+        assertEquals(repositoryUri, testStoreManager.getRepositoryIri(
+                f.createIRI(MetadataFixtureFilesHelper.DATASET_URI)));
+        assertEquals(repositoryUri, testStoreManager.getRepositoryIri(
+                f.createIRI(MetadataFixtureFilesHelper.DISTRIBUTION_URI)));
     }
 }

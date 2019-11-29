@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.metadata.repository;
+package nl.dtls.fairdatapoint.api.controller.dashboard;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
@@ -41,7 +41,7 @@ import java.util.List;
 import static nl.dtls.fairdatapoint.util.IRIUtils.removeLastPartOfIRI;
 
 @RestController
-@RequestMapping("/fdp/dashboard")
+@RequestMapping("/dashboard")
 public class DashboardController extends MetadataController {
 
     @Autowired
@@ -50,8 +50,8 @@ public class DashboardController extends MetadataController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<DashboardCatalogDTO>> getDashboard(HttpServletRequest request) throws MetadataServiceException {
         IRI uri = getRequestURLasIRI(request);
-        IRI fdpUri = removeLastPartOfIRI(uri);
-        FDPMetadata metadata = fdpMetadataService.retrieve(fdpUri);
+        IRI repositoryUri = removeLastPartOfIRI(uri);
+        FDPMetadata metadata = repositoryMetadataService.retrieve(repositoryUri);
         List<DashboardCatalogDTO> dto = dashboardService.getDashboard(metadata);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

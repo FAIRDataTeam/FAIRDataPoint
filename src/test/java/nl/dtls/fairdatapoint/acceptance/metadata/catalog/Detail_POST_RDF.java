@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -38,15 +38,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /fdp/catalog")
+@DisplayName("GET /catalog")
 public class Detail_POST_RDF extends WebIntegrationTest {
 
     private URI url() {
-        return URI.create("/fdp/catalog");
+        return URI.create("/catalog");
     }
 
     private String reqDto() {
-        return ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.CATALOG_METADATA_FILE);
+        return MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.CATALOG_METADATA_FILE);
     }
 
     @Test

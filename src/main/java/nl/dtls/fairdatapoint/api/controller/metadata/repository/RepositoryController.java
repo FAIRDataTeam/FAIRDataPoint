@@ -23,16 +23,14 @@
 package nl.dtls.fairdatapoint.api.controller.metadata.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.repository.FdpMetadataMapper;
+import nl.dtls.fairdatapoint.service.metadata.repository.RepositoryMetadataMapper;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -47,12 +45,11 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@Api(description = "FDP metadata")
-@RequestMapping("/fdp")
-public class FdpController extends MetadataController {
+@RequestMapping("/")
+public class RepositoryController extends MetadataController {
 
     @Autowired
-    private FdpMetadataMapper fdpMetadataMapper;
+    private RepositoryMetadataMapper repositoryMetadataMapper;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -60,7 +57,7 @@ public class FdpController extends MetadataController {
     @RequestMapping(value = "/spec", method = RequestMethod.GET, headers = {"Accept=application/json"})
     @ResponseBody
     public Object getFormMetadata() {
-        Resource resource = new ClassPathResource("form-specs/fdp-spec.json");
+        Resource resource = new ClassPathResource("form-specs/repository-spec.json");
         try {
             return objectMapper.readValue(resource.getInputStream(), Object.class);
         } catch (IOException e) {
@@ -70,49 +67,47 @@ public class FdpController extends MetadataController {
     }
 
     @RequestMapping(method = RequestMethod.GET, headers = {"Accept=application/json"})
-    public ResponseEntity<FdpMetadataDTO> getFdpMetadata(HttpServletRequest request) throws
+    public ResponseEntity<RepositoryMetadataDTO> getRepositoryMetadata(HttpServletRequest request) throws
             MetadataServiceException, ResourceNotFoundException {
 
         String uri = getRequestURL(request);
-        FDPMetadata metadata = fdpMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
+        FDPMetadata metadata = repositoryMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
         List<CatalogMetadata> catalogs = catalogMetadataService.retrieve(metadata.getCatalogs());
-        FdpMetadataDTO dto = fdpMetadataMapper.toDTO(metadata, catalogs);
+        RepositoryMetadataDTO dto = repositoryMetadataMapper.toDTO(metadata, catalogs);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "FDP metadata")
     @RequestMapping(method = RequestMethod.GET, headers = {"Accept=*/*"}, produces = {"text/turtle", "application/ld" +
             "+json",
             "application/rdf+xml", "text/n3"})
     @ResponseStatus(HttpStatus.OK)
-    public FDPMetadata getFDPMetaData(final HttpServletRequest request,
-                                      HttpServletResponse response) throws MetadataServiceException,
+    public FDPMetadata getRepositoryMetaData(final HttpServletRequest request,
+                                             HttpServletResponse response) throws MetadataServiceException,
             ResourceNotFoundException {
 
         LOGGER.info("Request to get FDP metadata, request url : {}", request.getRequestURL());
         String uri = getRequestURL(request);
-        return fdpMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
+        return repositoryMetadataService.retrieve(VALUEFACTORY.createIRI(uri));
     }
 
-    @ApiOperation(value = "Update fdp metadata")
     @RequestMapping(method = RequestMethod.PATCH, headers = {"Accept=text/turtle"}, consumes = {"text/turtle"},
             produces = {"text/turtle"})
     @ResponseStatus(HttpStatus.OK)
-    public FDPMetadata updateFDPMetaData(final HttpServletRequest request, @RequestBody FDPMetadata metadata)
+    public FDPMetadata updateRepositoryMetaData(final HttpServletRequest request, @RequestBody FDPMetadata metadata)
             throws MetadataServiceException {
 
         IRI uri = VALUEFACTORY.createIRI(getRequestURL(request));
-        fdpMetadataService.update(uri, metadata);
-        return fdpMetadataService.retrieve(uri);
+        repositoryMetadataService.update(uri, metadata);
+        return repositoryMetadataService.retrieve(uri);
     }
 
     @RequestMapping(method = RequestMethod.PUT, headers = {"Accept=application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity updateFDPMetaData(final HttpServletRequest request, HttpServletResponse response,
-                                            @RequestBody FdpMetadataChangeDTO reqDto) throws MetadataServiceException {
+    public ResponseEntity updateRepositoryMetaData(final HttpServletRequest request, HttpServletResponse response,
+                                                   @RequestBody RepositoryMetadataChangeDTO reqDto) throws MetadataServiceException {
 
         IRI uri = getRequestURLasIRI(request);
-        fdpMetadataService.update(uri, FDPMetadata.class, reqDto);
+        repositoryMetadataService.update(uri, FDPMetadata.class, reqDto);
         return ResponseEntity.noContent().build();
     }
 }

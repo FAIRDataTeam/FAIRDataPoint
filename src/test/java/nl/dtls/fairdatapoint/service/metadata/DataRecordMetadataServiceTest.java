@@ -30,13 +30,13 @@ import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DataRecordMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -61,7 +61,7 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
 
     @Autowired
     private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
@@ -77,11 +77,11 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
         String albertUuid = userFixtures.albert().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
-        catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
-                ExampleFilesUtils.FDP_URI));
-        datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(ExampleFilesUtils.DATASET_URI,
-                ExampleFilesUtils.CATALOG_URI));
+        repositoryMetadataService.store(MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI));
+        catalogMetadataService.store(MetadataFixtureFilesHelper.getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI,
+                MetadataFixtureFilesHelper.REPOSITORY_URI));
+        datasetMetadataService.store(MetadataFixtureFilesHelper.getDatasetMetadata(MetadataFixtureFilesHelper.DATASET_URI,
+                MetadataFixtureFilesHelper.CATALOG_URI));
     }
 
     @DirtiesContext
@@ -113,8 +113,8 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithWrongParentURI() throws Exception {
         assertThrows(IllegalStateException.class, () -> {
             // WHEN:
-            dataRecordMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI,
-                    ExampleFilesUtils.CATALOG_URI));
+            dataRecordMetadataService.store(MetadataFixtureFilesHelper.getDataRecordMetadata(TEST_DATARECORD_URI,
+                    MetadataFixtureFilesHelper.CATALOG_URI));
 
             // THEN:
             // Expect exception
@@ -152,7 +152,7 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     public void retrieveNonExitingDatasetDistribution() throws Exception {
         assertThrows(ResourceNotFoundException.class, () -> {
             // WHEN:
-            String uri = ExampleFilesUtils.DATASET_URI + "/dummpID676";
+            String uri = MetadataFixtureFilesHelper.DATASET_URI + "/dummpID676";
             dataRecordMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
             // THEN:
@@ -161,7 +161,8 @@ public class DataRecordMetadataServiceTest extends BaseIntegrationTest {
     }
 
     private static DataRecordMetadata createExampleMetadata() {
-        return ExampleFilesUtils.getDataRecordMetadata(TEST_DATARECORD_URI, ExampleFilesUtils.DATASET_URI);
+        return MetadataFixtureFilesHelper.getDataRecordMetadata(TEST_DATARECORD_URI,
+                MetadataFixtureFilesHelper.DATASET_URI);
     }
 
     private static IRI exampleIRI() {

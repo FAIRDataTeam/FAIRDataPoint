@@ -30,12 +30,12 @@ import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -63,7 +63,7 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
 
     @Autowired
     private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
@@ -79,11 +79,11 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
         String albertUuid = userFixtures.albert().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
-        catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
-                ExampleFilesUtils.FDP_URI));
-        datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(ExampleFilesUtils.DATASET_URI,
-                ExampleFilesUtils.CATALOG_URI));
+        repositoryMetadataService.store(MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI));
+        catalogMetadataService.store(MetadataFixtureFilesHelper.getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI,
+                MetadataFixtureFilesHelper.REPOSITORY_URI));
+        datasetMetadataService.store(MetadataFixtureFilesHelper.getDatasetMetadata(MetadataFixtureFilesHelper.DATASET_URI,
+                MetadataFixtureFilesHelper.CATALOG_URI));
     }
 
     @DirtiesContext
@@ -115,8 +115,8 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithWrongParentURI() throws Exception {
         assertThrows(IllegalStateException.class, () -> {
             // WHEN:
-            distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                    ExampleFilesUtils.CATALOG_URI));
+            distributionMetadataService.store(MetadataFixtureFilesHelper.getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                    MetadataFixtureFilesHelper.CATALOG_URI));
 
             // THEN:
             // Expect exception
@@ -190,30 +190,32 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void updateParent() throws MetadataServiceException {
         // GIVEN:
-        FDPMetadata fdpMetadata = ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI);
-        fdpMetadataService.store(fdpMetadata);
-        CatalogMetadata catalogMetadata = ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
-                ExampleFilesUtils.FDP_URI);
+        FDPMetadata fdpMetadata = MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI);
+        repositoryMetadataService.store(fdpMetadata);
+        CatalogMetadata catalogMetadata =
+                MetadataFixtureFilesHelper.getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI,
+                        MetadataFixtureFilesHelper.REPOSITORY_URI);
         catalogMetadataService.store(catalogMetadata);
-        DatasetMetadata datasetMetadata = ExampleFilesUtils.getDatasetMetadata(ExampleFilesUtils.DATASET_URI,
-                ExampleFilesUtils.CATALOG_URI);
+        DatasetMetadata datasetMetadata =
+                MetadataFixtureFilesHelper.getDatasetMetadata(MetadataFixtureFilesHelper.DATASET_URI,
+                        MetadataFixtureFilesHelper.CATALOG_URI);
         datasetMetadataService.store(datasetMetadata);
 
         // WHEN:
         DistributionMetadata distributionMetadata =
-                ExampleFilesUtils.getDistributionMetadata(ExampleFilesUtils.DISTRIBUTION_URI,
-                        ExampleFilesUtils.DATASET_URI);
+                MetadataFixtureFilesHelper.getDistributionMetadata(MetadataFixtureFilesHelper.DISTRIBUTION_URI,
+                        MetadataFixtureFilesHelper.DATASET_URI);
         distributionMetadataService.store(distributionMetadata);
 
         // THEN:
         FDPMetadata updatedFdpMetadata =
-                fdpMetadataService.retrieve(VALUE_FACTORY.createIRI(ExampleFilesUtils.FDP_URI));
+                repositoryMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI));
         CatalogMetadata updatedCatalogMetadata =
-                catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
+                catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.CATALOG_URI));
         DatasetMetadata updatedDataset =
-                datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(ExampleFilesUtils.DATASET_URI));
+                datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.DATASET_URI));
         DistributionMetadata storedDistribution =
-                distributionMetadataService.retrieve(VALUE_FACTORY.createIRI(ExampleFilesUtils.DISTRIBUTION_URI));
+                distributionMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.DISTRIBUTION_URI));
 
         ZonedDateTime fdpModified = ZonedDateTime.parse(updatedFdpMetadata.getModified().stringValue());
         ZonedDateTime catalogModified = ZonedDateTime.parse(updatedCatalogMetadata.getModified().stringValue());
@@ -227,7 +229,8 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     }
 
     private static DistributionMetadata createExampleMetadata() {
-        return ExampleFilesUtils.getDistributionMetadata(TEST_DISTRIBUTION_URI, ExampleFilesUtils.DATASET_URI);
+        return MetadataFixtureFilesHelper.getDistributionMetadata(TEST_DISTRIBUTION_URI,
+                MetadataFixtureFilesHelper.DATASET_URI);
     }
 
     private static IRI exampleIRI() {

@@ -5,14 +5,21 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6)
 [![Coverage Status](https://coveralls.io/repos/github/DTL-FAIRData/FAIRDataPoint/badge.svg?branch=master)](https://coveralls.io/github/DTL-FAIRData/FAIRDataPoint?branch=master)
 
-`FAIRDataPoint` is a REST API for creating, storing, and serving `FAIR metadata`. The metadata contents are in this API are generated `semi-automatically` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document. In the current version of API, we support `GET, POST, and PATCH` requests.
+`FAIRDataPoint` is a REST API for creating, storing, and serving `FAIR metadata`. The metadata contents are generated `semi-automatically` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document.
+
+## Features
+
+- Store catalogs, datasets, and distributions 
+- Manage users
+- Manage access rights to your catalogs, datasets, and distributions
+- Integration with [FAIR Data Point Client](https://github.com/FAIRDataTeam/FAIRDataPoint-client)
 
 ## Deployment
 
-The simplest way is to use [Docker Compose](https://docs.docker.com/compose/). Requirements are just to have Docker installed, privileges for current user and the Docker daemon started.
+FAIR Data Point is distributed as a Docker image. For a basic setup, you need to run just [Mongo DB database](https://docs.mongodb.com/). You can use Docker Compose to run FDP and Mongo DB together:
 
-1.  Create a folder (e.g., `/fdp`, all commands in this manual are from this working directory)
-2.  Copy (and adjust) docker-compose.yml provided below
+1.  Create a folder (e.g., `/fdp`) and enter it
+2.  Copy docker-compose.yml provided below
 3.  Run the FAIR Data Point with Docker compose `docker-compose up -d`
 4.  After starting up, you will be able to open the FAIR Data Point in your browser on <http://localhost>
 5.  You can use `docker-compose logs` to see the logs and `docker-compose down` to stop all the services
@@ -35,6 +42,49 @@ services:
       command: mongod
 ```
 
+### Override application configuration
+
+You can override default settings in `application-production.yml` file. You can take inspiration in the [default configuration](https://github.com/FAIRDataTeam/FAIRDataPoint/blob/develop/src/main/resources/application.yml) and [default production configuration](https://github.com/FAIRDataTeam/FAIRDataPoint/blob/develop/src/main/resources/application-production.yml). Create the `application-production.yml` in the `/fdp` folder and attach it into a docker container using `volumes` directive.
+
+```
+fdp:
+    image: fairtools/fairdatapoint
+    restart: always
+    volumes:
+      - ./application-production.yml:/fdp/application-production.yml
+    ports:
+      - 80:8080
+```
+
+**Possible configuration**
+
+Here you can list possible configuration. The configuration marked as required should be addressed if you are intending to use the FDP professionally.
+ 
+| Customization                  | Level         | Description   |
+| ------------------------------ | ------------- | ------------- |
+| **Application (instance) URL** | **Required**  | Override property `instance.url` (e.g., `http://fdp-staging.fair-dtls.surf-hosted.nl`) |
+| Server Port                    | Optional      | Override property `server.port` (e.g., `80`) |
+| **JWT Token secret**           | **Required**  | Override property `security.jwt.token.secret-key` |
+| Metadata Properties            | Optional      | Override property `metadataProperties` with nested properties: `rootSpecs`, `catalogSpecs`, `datasetSpecs`, `distributionSpecs`, `publisherURI`, `publisherName`, `language`, `license`, `accessRightsDescription` |
+| Metadata Metrics               | Optional      | Override property `metadataMetrics`. Nested properties are captured as Map with metric uri as a key (e.g., `https://purl.org/fair-metrics/FM_F1A`) and with its value (e.g., `https://www.ietf.org/rfc/rfc3986.txt`)
+| PID                            | Optional      | Override property `pid`. You can choose between 2 types of persistent identifiers (`default PIDSystem (1)`, `purl.org PID System (2)`). Select one of those and write the number of the type into `type` property. To configure the concrete PID System, create a property named by the type of the PID System and include the required information for that repository. For `default`, you don't need to configure anything. For `purl`, you need to configure `baseUrl`.
+| **Mongo DB**                   | **Required**  | Override property `spring.data.mongodb.uri` with connection string (e.g. `mongodb://mongo:27017/fdp`)
+| Triple Store                   | **Required**  | Override property `repository`. You can choose between 5 types of triple stores (`inMemoryStore (1)`, `NativeStore (2)`, `AllegroGraph (3)`, `graphDB (4)`, `blazegraph (5)`). Select one of those and write the number of the type into `type` property. To configure the concrete repository, create a property named by the type of repository and include the required information for that repository. For `agraph`, you need to configure `url`, `username` and `password`. For `graphDb`, you need to configure `url` and `repository`. For `blazegraph`, you need to configure `url` and `repository`. And for `native`, you need to configure `/tmp/fdp-store`. |
+   
+**Run application in nested URL**
+
+If you plan to use FAIR Data Point in the nested URL (e.g., `https://example.com/fairdatapoint`), you need to configure an environment variable `PUBLIC_PATH` (same as in FAIR Data Point Client). For setting it up, add `environment` directive to your `docker-compose.yml` file.
+
+```
+fdp:
+    image: fairtools/fairdatapoint
+    restart: always
+    environment:
+      - PUBLIC_PATH=/fairdatapoint
+    ports:
+      - 80:8080
+```
+   
 ## How to contribute
 
 ### Install requirements

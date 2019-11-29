@@ -35,7 +35,7 @@ import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.apache.http.HttpHeaders;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ExceptionControllerAdviceTest {
 
-    private static final String PATH = "/fdp/catalog/invalid";
+    private static final String PATH = "/catalog/invalid";
 
     @Mock
     private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
@@ -90,9 +90,9 @@ public class ExceptionControllerAdviceTest {
         doThrow(new MetadataException("Invalid metadata"))
                 .when(catalogMetadataService).store(Mockito.any(CatalogMetadata.class));
 
-        mockMvc.perform(post("/fdp/catalog")
-                .content(ExampleFilesUtils
-                        .getFileContentAsString(ExampleFilesUtils.CATALOG_METADATA_FILE))
+        mockMvc.perform(post("/catalog")
+                .content(MetadataFixtureFilesHelper
+                        .getFileContentAsString(MetadataFixtureFilesHelper.CATALOG_METADATA_FILE))
                 .param("id", "test")
                 .accept(RDFFormat.TURTLE.getDefaultMIMEType())
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle"))

@@ -41,11 +41,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("PUT /fdp/catalog/:catalogId")
+@DisplayName("PUT /catalog/:catalogId")
 public class Detail_PUT extends WebIntegrationTest {
 
     private URI url(String id) {
-        return URI.create(format("/fdp/catalog/%s", id));
+        return URI.create(format("/catalog/%s", id));
     }
 
     private CatalogMetadataChangeDTO redDto() {

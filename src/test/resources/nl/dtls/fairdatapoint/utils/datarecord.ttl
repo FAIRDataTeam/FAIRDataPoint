@@ -7,7 +7,7 @@
 <> dct:title "An example data record metadata" ;
     rdfs:label "An example data record metadata" ;
     <http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued> "2016-10-27"^^xsd:date ;
-    <http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/dataRecord-metadataID> ;
+    <http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/dataRecord-metadataID> ;
     <http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified> "2016-10-27"^^xsd:date ;
     a fdp:DataRecord ; 
     dct:identifier "dataRecord" ;
@@ -16,9 +16,9 @@
     dct:publisher	<http://dtls.nl> ;
     fdp:rmlMapping <https://git.lumc.nl/biosemantics/ring14-fdp-metadata/raw/bd01b84fb792ae3860fdda646e9cb96a1a11205c/rml/biobank/RING_14_biobank_mapping.ttl> ;
     fdp:rmlInputSource <http://localhost.com/an-example-distribution>  ;
-    dct:isPartOf <http://localhost/fdp/dataset/gene-disease-association_lumc> .
+    dct:isPartOf <http://localhost/dataset/gene-disease-association_lumc> .
 
-<http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/dataRecord-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
+<http://dev-vm.fair-dtls.surf-hosted.nl:8082/dataRecord-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
 	dct:identifier "dataRecord-metadataID" .
 
 <http://dtls.nl> a foaf:Organization;

@@ -41,17 +41,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Repository metadata message converter
- *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @version 0.1
- * @since 2016-09-19
- */
-public class FdpMetadataConverter extends AbstractMetadataMessageConverter<FDPMetadata> {
+public class RepositoryMetadataConverter extends AbstractMetadataMessageConverter<FDPMetadata> {
 
-    public FdpMetadataConverter(RDFFormat format) {
+    public RepositoryMetadataConverter(RDFFormat format) {
         super(format);
     }
 

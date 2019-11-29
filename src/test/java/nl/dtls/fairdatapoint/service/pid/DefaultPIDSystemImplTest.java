@@ -28,7 +28,7 @@
 package nl.dtls.fairdatapoint.service.pid;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -50,7 +50,8 @@ public class DefaultPIDSystemImplTest {
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     private final DefaultPIDSystemImpl test = new DefaultPIDSystemImpl();
-    private final FDPMetadata metadata = ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI);
+    private final FDPMetadata metadata =
+            MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI);
 
     /**
      * Test of null metadata, this test is excepted to throw error

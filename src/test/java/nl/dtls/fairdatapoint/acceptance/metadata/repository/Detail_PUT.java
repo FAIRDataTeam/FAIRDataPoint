@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.repository;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,8 +34,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -43,12 +41,12 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("PUT /:repositoryId")
 public class Detail_PUT extends WebIntegrationTest {
 
-    private URI url(String id) {
-        return URI.create(format("/%s", id));
+    private URI url() {
+        return URI.create("/");
     }
 
-    private FdpMetadataChangeDTO redDto() {
-        return new FdpMetadataChangeDTO(
+    private RepositoryMetadataChangeDTO redDto() {
+        return new RepositoryMetadataChangeDTO(
                 "EDITED: Some title",
                 "EDITED: Some description",
                 "99.0",
@@ -61,8 +59,8 @@ public class Detail_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        RequestEntity<FdpMetadataChangeDTO> request = RequestEntity
-                .put(url("fdp"))
+        RequestEntity<RepositoryMetadataChangeDTO> request = RequestEntity
+                .put(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(redDto());
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -79,8 +77,8 @@ public class Detail_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 403")
     public void res403() {
         // GIVEN:
-        RequestEntity<FdpMetadataChangeDTO> request = RequestEntity
-                .put(url("fdp"))
+        RequestEntity<RepositoryMetadataChangeDTO> request = RequestEntity
+                .put(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .body(redDto());
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -91,12 +89,6 @@ public class Detail_PUT extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-    }
-
-    @Test
-    @DisplayName("HTTP 404")
-    public void res404() {
-        createUserNotFoundTestGet(client, url("nonExisting"));
     }
 
 }

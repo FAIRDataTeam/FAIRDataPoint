@@ -40,11 +40,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /fdp/dataset/:datasetId")
+@DisplayName("GET /dataset/:datasetId")
 public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String id) {
-        return URI.create(format("/fdp/dataset/%s", id));
+        return URI.create(format("/dataset/%s", id));
     }
 
     @Test

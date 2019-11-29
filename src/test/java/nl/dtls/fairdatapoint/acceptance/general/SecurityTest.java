@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance;
+package nl.dtls.fairdatapoint.acceptance.general;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -37,14 +37,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class GeneralTest extends WebIntegrationTest {
+public class SecurityTest extends WebIntegrationTest {
 
     @Test
     public void postRequestsAreSecured() {
         // GIVEN:
-        String reqDto = ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
+        String reqDto =
+                MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.DISTRIBUTION_METADATA_FILE);
         RequestEntity<String> request = RequestEntity
-                .post(URI.create("/fdp/distribution"))
+                .post(URI.create("/distribution"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .body(reqDto);
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -60,9 +61,10 @@ public class GeneralTest extends WebIntegrationTest {
     @Test
     public void patchRequestsAreSecured() {
         // GIVEN:
-        String reqDto = ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.FDP_METADATA_FILE);
+        String reqDto =
+                MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.REPOSITORY_METADATA_FILE);
         RequestEntity<String> request = RequestEntity
-                .patch(URI.create("/fdp"))
+                .patch(URI.create("/"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .body(reqDto);
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {

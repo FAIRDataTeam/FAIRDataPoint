@@ -58,42 +58,43 @@ import java.util.List;
  * @version 0.1
  * @since 2016-08-10
  */
-public class ExampleFilesUtils {
+public class MetadataFixtureFilesHelper {
 
-    public static final String FDP_METADATA_FILE = "dtl-fdp.ttl";
-    public static final String CATALOG_METADATA_FILE = "textmining-catalog.ttl";
-    public static final String DATASET_METADATA_FILE = "gda-lumc.ttl";
-    public static final String DATARECORD_METADATA_FILE = "example-datarecord.ttl";
-    public static final String DISTRIBUTION_METADATA_FILE = "gda-lumc-sparql.ttl";
-    public static final String VALID_TEST_FILE = "valid-test-file.ttl";
-    public static final String FDP_URI_FILE = "getFdpUriContent.ttl";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataFixtureFilesHelper.class);
+
+    // Metadata
+    // - repository
+    public static final String REPOSITORY_METADATA_FILE = "repository.ttl";
+    public static final String REPOSITORY_URI = "http://localhost";
+    // - catalog
+    public static final String CATALOG_METADATA_FILE = "catalog.ttl";
     public static final String CATALOG_ID = "textmining";
+    public static final String CATALOG_URI = "http://localhost/" + CATALOG_ID;
+    // - dataset
+    public static final String DATASET_METADATA_FILE = "dataset.ttl";
     public static final String DATASET_ID = "gene-disease-association_lumc";
-    public static final String DATARECORD_ID = "datarecord";
+    public static final String DATASET_URI = "http://localhost/textmining/" + DATASET_ID;
+    // - distribution
+    public static final String DISTRIBUTION_METADATA_FILE = "distribution.ttl";
     public static final String DISTRIBUTION_ID = "sparql";
-    public static final String FDP_URI = "http://localhost/fdp";
-    public static final String CATALOG_URI = "http://localhost/fdp/" + CATALOG_ID;
-    public static final String DATASET_URI = "http://localhost/fdp/textmining/" + DATASET_ID;
-    public static final String DATARECORD_URI = "http://dtls.nl/" + DATARECORD_ID;
-    public static final String DISTRIBUTION_URI
-            = "http://localhost/fdp/textmining/gene-disease-association_lumc/"
-            + DISTRIBUTION_ID;
-    public static final String BASE_URI = "http://localhost/";
-    public static final String TEST_SUB_URI = "http://www.dtls.nl/test";
+    public static final String DISTRIBUTION_URI =
+            "http://localhost/textmining/gene-disease-association_lumc/" + DISTRIBUTION_ID;
+    // - data record
+    public static final String DATARECORD_METADATA_FILE = "datarecord.ttl";
+    public static final String DATARECORD_ID = "datarecord";
+
+    // Test RDF
+    public static final String TEST_RDF_FILE = "test-rdf.ttl";
+    public static final String TEST_RDF_URI = "http://www.dtls.nl/test";
+
+    // Other
     public static final RDFFormat FILE_FORMAT = RDFFormat.TURTLE;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleFilesUtils.class);
+    public static final String REPOSITORY_URI_FILE = "getRepositoryUriContent.ttl";
 
-    /**
-     * Method to read the content of a turtle file
-     *
-     * @param fileName Turtle file name
-     * @return File content as a string
-     */
     public static String getFileContentAsString(String fileName) {
-
         String content = "";
         try {
-            URL fileURL = ExampleFilesUtils.class.getResource(fileName);
+            URL fileURL = MetadataFixtureFilesHelper.class.getResource(fileName);
             content = Resources.toString(fileURL, Charsets.UTF_8);
         } catch (IOException ex) {
             LOGGER.error("Error getting turle file {}", ex);
@@ -101,15 +102,7 @@ public class ExampleFilesUtils {
         return content;
     }
 
-    /**
-     * Method to read the content of a turtle file
-     *
-     * @param fileName Turtle file name
-     * @param baseURI
-     * @return File content as a string
-     */
     public static List<Statement> getFileContentAsStatements(String fileName, String baseURI) {
-
         List<Statement> statements = null;
         try {
             String content = getFileContentAsString(fileName);
@@ -124,17 +117,15 @@ public class ExampleFilesUtils {
     }
 
     public static FDPMetadata getFDPMetadata(String uri) {
-
         LOGGER.info("Generating example FDP metadata object");
         FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
         ValueFactory f = SimpleValueFactory.getInstance();
-        FDPMetadata metadata = parser.parse(getFileContentAsStatements(FDP_METADATA_FILE, uri),
+        FDPMetadata metadata = parser.parse(getFileContentAsStatements(REPOSITORY_METADATA_FILE, uri),
                 f.createIRI(uri));
         return metadata;
     }
 
     public static CatalogMetadata getCatalogMetadata(String uri, String parentURI) {
-
         LOGGER.info("Generating example catalog metadata object");
         CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
         ValueFactory f = SimpleValueFactory.getInstance();
@@ -145,7 +136,6 @@ public class ExampleFilesUtils {
     }
 
     public static DatasetMetadata getDatasetMetadata(String uri, String parentURI) {
-
         LOGGER.info("Generating example dataset metadata object");
         DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
         ValueFactory f = SimpleValueFactory.getInstance();
@@ -156,7 +146,6 @@ public class ExampleFilesUtils {
     }
 
     public static DistributionMetadata getDistributionMetadata(String uri, String parentURI) {
-
         LOGGER.info("Generating example distribution metadata object");
         DistributionMetadataParser parser = MetadataParserUtils.getDistributionParser();
         ValueFactory f = SimpleValueFactory.getInstance();
@@ -167,7 +156,6 @@ public class ExampleFilesUtils {
     }
 
     public static DataRecordMetadata getDataRecordMetadata(String uri, String parentURI) {
-
         LOGGER.info("Generating example datarecord metadata object");
         DataRecordMetadataParser parser = MetadataParserUtils.getDataRecordParser();
         ValueFactory f = SimpleValueFactory.getInstance();

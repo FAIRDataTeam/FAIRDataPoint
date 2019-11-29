@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/fdp/catalog")
+@RequestMapping("/catalog")
 public class CatalogController extends MetadataController {
 
     @Autowired
@@ -86,7 +86,7 @@ public class CatalogController extends MetadataController {
         IRI uri = getRequestURLasIRI(request);
         CatalogMetadata metadata = catalogMetadataService.retrieve(uri);
         List<DatasetMetadata> datasets = datasetMetadataService.retrieve(metadata.getDatasets());
-        FDPMetadata repository = fdpMetadataService.retrieve(metadata.getParentURI());
+        FDPMetadata repository = repositoryMetadataService.retrieve(metadata.getParentURI());
         String catalogId = metadata.getIdentifier().getIdentifier().getLabel();
         Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(catalogId, CatalogMetadata.class);
         CatalogMetadataDTO dto = catalogMetadataMapper.toDTO(metadata, datasets, repository, oMember);
@@ -115,7 +115,7 @@ public class CatalogController extends MetadataController {
         LOGGER.info("Request to store catalog metadata with IRI {}", uri.toString());
 
         metadata.setUri(uri);
-        metadata.setParentURI(VALUEFACTORY.createIRI(instanceUrl + "/fdp"));
+        metadata.setParentURI(VALUEFACTORY.createIRI(instanceUrl));
 
         // Ignore children links
         metadata.setDatasets(Collections.emptyList());

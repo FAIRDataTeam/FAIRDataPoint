@@ -58,6 +58,8 @@ public class WebConfig implements WebMvcConfigurer {
         for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
             converter.configureContentNegotiation(configurer);
         }
+        configurer.favorPathExtension(false);
+        configurer.favorParameter(true);
     }
 
     @Override

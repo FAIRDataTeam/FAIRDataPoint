@@ -28,10 +28,6 @@
 package nl.dtls.fairdatapoint.api.filter;
 
 import org.apache.logging.log4j.ThreadContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -45,10 +41,6 @@ import java.io.IOException;
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
-
-    private static final Marker APIREQUEST = MarkerFactory.getMarker("API-REQUEST");
-
     @Override
     public void doFilterInternal(final HttpServletRequest request,
                                  final HttpServletResponse response, final FilterChain fc)
@@ -61,7 +53,7 @@ public class LoggingFilter extends OncePerRequestFilter {
         ThreadContext.put("requestProtocol", request.getProtocol());
         ThreadContext.put("responseStatus", String.valueOf(response.getStatus()));
         ThreadContext.put("contentSize", response.getHeader(HttpHeaders.CONTENT_LENGTH));
-        LOGGER.info(APIREQUEST, "");
+        logger.info(request.getRequestURL());
 
         fc.doFilter(request, response);
         ThreadContext.clearAll();

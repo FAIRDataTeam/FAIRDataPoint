@@ -108,9 +108,9 @@ public class MetadataRepositoryImpl implements MetadataRepository {
         removeStatement(uri, null, null);
     }
 
-    public IRI getFDPIri(IRI uri) throws MetadataRepositoryException {
+    public IRI getRepositoryIri(IRI uri) throws MetadataRepositoryException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
-        LOGGER.info("Get fdp uri for the given uri {}", uri.toString());
+        LOGGER.info("Get repository uri for the given uri {}", uri.toString());
 
         try (RepositoryConnection conn = repository.getConnection()) {
 
@@ -119,14 +119,14 @@ public class MetadataRepositoryImpl implements MetadataRepository {
             TupleQuery query = conn.prepareTupleQuery(queryString);
             query.setBinding("iri", uri);
 
-            IRI fdpIri = null;
+            IRI repositoryIri = null;
             List<BindingSet> resultSet = QueryResults.asList(query.evaluate());
             for (BindingSet solution : resultSet) {
-                fdpIri = VALUEFACTORY.createIRI(solution.getValue("fdp").stringValue());
+                repositoryIri = VALUEFACTORY.createIRI(solution.getValue("fdp").stringValue());
             }
-            return fdpIri;
+            return repositoryIri;
         } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error retrieve fdp uri :" + e.getMessage());
+            throw new MetadataRepositoryException("Error retrieve repository uri :" + e.getMessage());
         } catch (IOException e) {
             throw new MetadataRepositoryException("Error reading getFdpIri.sparql file :" + e.getMessage());
         }

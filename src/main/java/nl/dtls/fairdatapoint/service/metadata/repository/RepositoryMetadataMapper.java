@@ -24,8 +24,8 @@ package nl.dtls.fairdatapoint.service.metadata.repository;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataDTO;
 import nl.dtls.fairdatapoint.service.metadata.catalog.CatalogMetadataMapper;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import nl.dtls.fairdatapoint.service.uri.UriMapper;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class FdpMetadataMapper implements MetadataMapper<FDPMetadata, FdpMetadataChangeDTO> {
+public class RepositoryMetadataMapper implements MetadataMapper<FDPMetadata, RepositoryMetadataChangeDTO> {
 
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
@@ -48,8 +48,8 @@ public class FdpMetadataMapper implements MetadataMapper<FDPMetadata, FdpMetadat
     @Autowired
     private CatalogMetadataMapper catalogMetadataMapper;
 
-    public FdpMetadataDTO toDTO(FDPMetadata r, List<CatalogMetadata> catalogs) {
-        return new FdpMetadataDTO(
+    public RepositoryMetadataDTO toDTO(FDPMetadata r, List<CatalogMetadata> catalogs) {
+        return new RepositoryMetadataDTO(
                 r.getIdentifier().getIdentifier().getLabel(),
                 r.getUri().toString(),
                 r.getTitle().getLabel(),
@@ -69,7 +69,7 @@ public class FdpMetadataMapper implements MetadataMapper<FDPMetadata, FdpMetadat
         );
     }
 
-    public FDPMetadata fromChangeDTO(FDPMetadata metadata, FdpMetadataChangeDTO reqDto) {
+    public FDPMetadata fromChangeDTO(FDPMetadata metadata, RepositoryMetadataChangeDTO reqDto) {
         metadata.setTitle(VALUE_FACTORY.createLiteral(reqDto.getTitle()));
         metadata.setDescription(VALUE_FACTORY.createLiteral(reqDto.getDescription()));
         metadata.setVersion(VALUE_FACTORY.createLiteral(reqDto.getVersion()));

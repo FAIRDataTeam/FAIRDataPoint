@@ -44,14 +44,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /fdp/dataset/:datasetId/members")
+@DisplayName("GET /dataset/:datasetId/members")
 public class List_GET extends WebIntegrationTest {
 
     @Autowired
     private UserFixtures userFixtures;
 
     private URI url(String id) {
-        return URI.create(format("/fdp/dataset/%s/members", id));
+        return URI.create(format("/dataset/%s/members", id));
     }
 
     @Test

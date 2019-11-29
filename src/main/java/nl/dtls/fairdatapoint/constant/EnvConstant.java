@@ -20,21 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller;
+package nl.dtls.fairdatapoint.constant;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
+public class EnvConstant {
 
-@Controller
-@RequestMapping("/")
-public class RedirectController {
-
-    @GetMapping
-    public RedirectView redirectWithUsingRedirectView(RedirectAttributes attributes) {
-        return new RedirectView("fdp");
-    }
+    public static final String PUBLIC_PATH = "PUBLIC_PATH";
 
 }

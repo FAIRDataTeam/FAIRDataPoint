@@ -34,7 +34,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class FdpMetadataDTO {
+public class RepositoryMetadataDTO {
 
     protected String identifier;
 
