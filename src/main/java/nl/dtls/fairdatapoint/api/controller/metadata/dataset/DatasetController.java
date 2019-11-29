@@ -57,7 +57,7 @@ import java.util.Optional;
 
 @RestController
 @Api(description = "Dataset Metadata")
-@RequestMapping("/fdp/dataset")
+@RequestMapping("/dataset")
 public class DatasetController extends MetadataController {
 
     @Autowired
@@ -89,7 +89,7 @@ public class DatasetController extends MetadataController {
         DatasetMetadata metadata = datasetMetadataService.retrieve(uri);
         List<DistributionMetadata> distributions = distributionMetadataService.retrieve(metadata.getDistributions());
         CatalogMetadata catalog = catalogMetadataService.retrieve(metadata.getParentURI());
-        FDPMetadata repository = fdpMetadataService.retrieve(catalog.getParentURI());
+        FDPMetadata repository = repositoryMetadataService.retrieve(catalog.getParentURI());
         String datasetId = metadata.getIdentifier().getIdentifier().getLabel();
         Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(datasetId, DatasetMetadata.class);
         DatasetMetadataDTO dto = datasetMetadataMapper.toDTO(metadata, distributions, repository, catalog, oMember);

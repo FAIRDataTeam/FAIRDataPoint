@@ -41,11 +41,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("PUT /fdp/dataset/:datasetId")
+@DisplayName("PUT /dataset/:datasetId")
 public class Detail_PUT extends WebIntegrationTest {
 
     private URI url(String id) {
-        return URI.create(format("/fdp/dataset/%s", id));
+        return URI.create(format("/dataset/%s", id));
     }
 
     private DatasetMetadataChangeDTO redDto() {

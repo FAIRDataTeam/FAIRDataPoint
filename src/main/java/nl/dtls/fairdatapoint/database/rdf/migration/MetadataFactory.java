@@ -33,7 +33,7 @@ public interface MetadataFactory {
     FDPMetadata createFDPMetadata(String title, String description, String fdpUrl);
 
     CatalogMetadata createCatalogMetadata(String title, String description, String identifier,
-                                          List<String> themeTaxonomies, String fdpUrl, FDPMetadata fdp);
+                                          List<String> themeTaxonomies, String repositoryUrl, FDPMetadata repository);
 
     DatasetMetadata createDatasetMetadata(String title, String description, String identifier, List<String> themes,
                                           List<String> keywords, String fdpUrl, CatalogMetadata catalog);

@@ -46,6 +46,6 @@ public interface MetadataRepository {
 
     void removeResource(IRI uri) throws MetadataRepositoryException;
 
-    IRI getFDPIri(IRI uri) throws MetadataRepositoryException;
+    IRI getRepositoryIri(IRI uri) throws MetadataRepositoryException;
 
 }

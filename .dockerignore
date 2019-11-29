@@ -1,0 +1,5 @@
+.idea
+src
+target/**
+!target/fdp-spring-boot.jar
+!target/classes/application-production.yml

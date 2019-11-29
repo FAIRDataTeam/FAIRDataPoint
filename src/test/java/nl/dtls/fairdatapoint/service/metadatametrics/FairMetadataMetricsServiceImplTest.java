@@ -29,7 +29,7 @@ package nl.dtls.fairdatapoint.service.metadatametrics;
 
 import nl.dtl.fairmetadata4j.model.Metric;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.jupiter.api.Test;
@@ -66,7 +66,7 @@ public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
 //        fmMetricsServiceImpl.setMetadataMetrics(metadataMetrics);
 
         List<Metric> m = fmMetricsServiceImpl.getMetrics(valueFactory.createIRI(
-                ExampleFilesUtils.FDP_URI));
+                MetadataFixtureFilesHelper.REPOSITORY_URI));
         assertTrue(m.size() > 0);
     }
 

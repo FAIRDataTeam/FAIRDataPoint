@@ -68,7 +68,7 @@ public class PurlPIDSystemImpl implements PIDSystem {
      * @return purl.org uri as IRI
      * @throws NullPointerException  exception if the metadata or the metadata URI is null
      * @throws IllegalStateException exception if the base purl.org is empty
-     * @throws IllegalStateException exception if the fdpUri is empty or null
+     * @throws IllegalStateException exception if the repositoryUri is empty or null
      */
     @Override
     public <T extends Metadata> IRI getURI(T metadata) throws IllegalStateException {
@@ -76,23 +76,23 @@ public class PurlPIDSystemImpl implements PIDSystem {
         Preconditions.checkNotNull(metadata.getUri(), "Metadata URI must not be null.");
         Preconditions.checkNotNull(purlBaseUrl, "Purl base url can't be null.");
 
-        IRI fdpUri = null;
+        IRI repositoryUri = null;
         try {
             if (metadata instanceof FDPMetadata) {
-                fdpUri = metadata.getUri();
+                repositoryUri = metadata.getUri();
             } else {
                 Preconditions.checkNotNull(metadata.getParentURI(),
                         "Metadata parent URI must not be null");
-                fdpUri = metadataRepository.getFDPIri(metadata.getParentURI());
+                repositoryUri = metadataRepository.getRepositoryIri(metadata.getParentURI());
             }
         } catch (MetadataRepositoryException ex) {
-            LOGGER.error("Error getting fdp uri");
+            LOGGER.error("Error getting repository uri");
         }
 
-        Preconditions.checkNotNull(fdpUri, "FDP base url can't be null.");
+        Preconditions.checkNotNull(repositoryUri, "FDP base url can't be null.");
 
         LOGGER.info("Creating an new purl.org PID");
-        String purlIRI = metadata.getUri().toString().replace(fdpUri.toString(),
+        String purlIRI = metadata.getUri().toString().replace(repositoryUri.toString(),
                 purlBaseUrl.toString());
 
         return VALUEFACTORY.createIRI(purlIRI);

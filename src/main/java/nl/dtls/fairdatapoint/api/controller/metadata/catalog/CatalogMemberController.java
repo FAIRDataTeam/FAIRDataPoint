@@ -43,7 +43,7 @@ import java.util.List;
 import static nl.dtls.fairdatapoint.util.IRIUtils.removeLastPartOfIRI;
 
 @RestController
-@RequestMapping("/fdp/catalog/{id}/members")
+@RequestMapping("/catalog/{id}/members")
 public class CatalogMemberController extends MetadataController {
 
     @Autowired

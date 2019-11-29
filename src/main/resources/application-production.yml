@@ -1,2 +1,8 @@
+instance:
+  url: http://localhost
+
+server:
+  port: 80
+
 logging:
   config: classpath:log4j2-production.xml

@@ -20,14 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.repository;
+package nl.dtls.fairdatapoint.acceptance.general;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataDTO;
-import org.junit.jupiter.api.DisplayName;
+import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -38,29 +36,40 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /:repositoryId")
-public class Detail_GET extends WebIntegrationTest {
-
-    private URI url() {
-        return URI.create("/");
-    }
+public class ContentNegotiationTest extends WebIntegrationTest {
 
     @Test
-    @DisplayName("HTTP 200")
-    public void res200() {
+    public void getContentAccordingToFormatQueryString() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(url())
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .get(URI.create("/?format=rdf"))
                 .build();
-        ParameterizedTypeReference<RepositoryMetadataDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<RepositoryMetadataDTO> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getHeaders().getContentType().toString(), is(equalTo("application/rdf+xml")));
+    }
+
+    @Test
+    public void getNotAcceptableWhenUnsupportedAcceptHeaderIsSent() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(URI.create("/"))
+                .header(HttpHeaders.ACCEPT, "application/trig")
+                .build();
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<String> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NOT_ACCEPTABLE)));
     }
 
 }

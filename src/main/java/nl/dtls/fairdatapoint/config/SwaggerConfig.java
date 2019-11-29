@@ -27,6 +27,7 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -34,15 +35,22 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
+import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import javax.servlet.ServletContext;
 import java.util.Collections;
 import java.util.List;
+
+import static nl.dtls.fairdatapoint.constant.EnvConstant.PUBLIC_PATH;
 
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+
+    @Autowired
+    private ServletContext servletContext;
 
     @Bean
     public Docket api() {
@@ -53,7 +61,14 @@ public class SwaggerConfig {
                 .build()
                 .apiInfo(apiInfo())
                 .securitySchemes(List.of(apiKey()))
-                .securityContexts(List.of(securityContext()));
+                .securityContexts(List.of(securityContext()))
+                .pathProvider(new RelativePathProvider(servletContext) {
+                    @Override
+                    public String getApplicationBasePath() {
+                        String publicPath = System.getenv(PUBLIC_PATH);
+                        return publicPath;
+                    }
+                });
     }
 
     private ApiInfo apiInfo() {

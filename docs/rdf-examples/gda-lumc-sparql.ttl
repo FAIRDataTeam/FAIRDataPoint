@@ -4,7 +4,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://www.dtls.nl/fdp/textmining/gene-disease-association_lumc/sparql> dct:title "GDA lumc SPARQL endpoint"@en ;
+<http://www.dtls.nl/textmining/gene-disease-association_lumc/sparql> dct:title "GDA lumc SPARQL endpoint"@en ;
 rdfs:label "GDA lumc SPARQL endpoint"@en ;
 	a dcat:Distribution ;
         dct:identifier "sparql" ;

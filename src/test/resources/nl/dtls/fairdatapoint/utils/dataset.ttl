@@ -9,7 +9,7 @@
 <> dct:publisher <http://biosemantics.humgen.nl> ;
 	dct:description "Gene disease association dataset from LUMC"@en ;
 	dct:hasVersion "1.0" ;
-	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> ;
+	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> ;
 	dct:issued "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
         dct:conformsTo <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
 	dct:language lang:en ;
@@ -21,10 +21,10 @@
 	dcat:landingPage <http://rdf.biosemantics.org/> ;
 	dcat:theme <http://semanticscience.org/resource/statistical-association> , <http://dbpedia.org/resource/Text_mining> ;
         dct:identifier "gene-disease-association-lumc-metadataID" ;
-        dct:isPartOf <http://localhost/fdp/catalog/textmining> . 
+        dct:isPartOf <http://localhost/catalog/textmining> .
 
 <http://biosemantics.humgen.nl> a <http://xmlns.com/foaf/0.1/Organization> ;
 	<http://xmlns.com/foaf/0.1/name> "Biosemantics LUMC"@en .
 
-<http://dev-vm.fair-dtls.surf-hosted.nl:8082/fdp/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
+<http://dev-vm.fair-dtls.surf-hosted.nl:8082/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
 	dct:identifier "gene-disease-association-lumc-metadataID" .

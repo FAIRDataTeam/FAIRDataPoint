@@ -28,17 +28,12 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.*;
+import static nl.dtls.fairdatapoint.utils.MetadataFixtureLoader.*;
 import static org.eclipse.rdf4j.rio.RDFFormat.TURTLE;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GeneralControllerTest extends MetadataControllerTest {
 
@@ -56,7 +51,7 @@ public class GeneralControllerTest extends MetadataControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.setMethod("GET");
-        request.setRequestURI(TEST_FDP_PATH);
+        request.setRequestURI(TEST_REPOSITORY_PATH);
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(TURTLE.getDefaultMIMEType(), response.getContentType());
@@ -91,7 +86,7 @@ public class GeneralControllerTest extends MetadataControllerTest {
 
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI(TEST_FDP_PATH);
+        request.setRequestURI(TEST_REPOSITORY_PATH);
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
@@ -121,7 +116,7 @@ public class GeneralControllerTest extends MetadataControllerTest {
 
         request.setMethod("GET");
         request.addHeader(HttpHeaders.ACCEPT, "text/turtle");
-        request.setRequestURI(TEST_FDP_PATH);
+        request.setRequestURI(TEST_REPOSITORY_PATH);
 
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -130,34 +125,6 @@ public class GeneralControllerTest extends MetadataControllerTest {
         MockFilterChain filterChain2 = new MockFilterChain();
         loggingFilter.doFilterInternal(request, response, filterChain1);
         corsFilter.doFilterInternal(request, response, filterChain2);
-    }
-
-    @DirtiesContext
-    @Test
-    public void getRequestsAreSecured() throws Exception {
-        // GIVEN:
-        String reqBody = "";
-        MockHttpServletRequestBuilder request = get("/fdp");
-
-        // WHEN:
-        ResultActions result = mockMvc.perform(request);
-
-        // THEN:
-        result.andExpect(status().isOk());
-    }
-
-    @DirtiesContext
-    @Test
-    public void optionsRequestsAreSecured() throws Exception {
-        // GIVEN:
-        String reqBody = "";
-        MockHttpServletRequestBuilder request = options("/fdp");
-
-        // WHEN:
-        ResultActions result = mockMvc.perform(request);
-
-        // THEN:
-        result.andExpect(status().isOk());
     }
 
 }

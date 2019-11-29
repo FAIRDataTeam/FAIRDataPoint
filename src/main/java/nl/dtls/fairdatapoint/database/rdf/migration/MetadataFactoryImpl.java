@@ -36,25 +36,26 @@ public class MetadataFactoryImpl implements MetadataFactory {
 
     private static final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
-    public FDPMetadata createFDPMetadata(String title, String description, String fdpUrl) {
+    public FDPMetadata createFDPMetadata(String title, String description, String repositoryUrl) {
         FDPMetadata metadata = new FDPMetadata();
-        setCommonMetadata(metadata, fdpUrl, title, description, null);
+        setCommonMetadata(metadata, repositoryUrl, title, description, null);
         return metadata;
     }
 
     public CatalogMetadata createCatalogMetadata(String title, String description, String identifier,
-                                                 List<String> themeTaxonomies, String fdpUrl, FDPMetadata fdp) {
+                                                 List<String> themeTaxonomies, String repositoryUrl,
+                                                 FDPMetadata repository) {
         CatalogMetadata metadata = new CatalogMetadata();
-        setCommonMetadata(metadata, fdpUrl + "/catalog/" + identifier, title, description, fdp);
+        setCommonMetadata(metadata, repositoryUrl + "/catalog/" + identifier, title, description, repository);
         metadata.setThemeTaxonomys(themeTaxonomies.stream().map(valueFactory::createIRI).collect(Collectors.toList()));
         return metadata;
     }
 
     public DatasetMetadata createDatasetMetadata(String title, String description, String identifier,
-                                                 List<String> themes, List<String> keywords, String fdpUrl,
+                                                 List<String> themes, List<String> keywords, String repositoryUrl,
                                                  CatalogMetadata catalog) {
         DatasetMetadata metadata = new DatasetMetadata();
-        setCommonMetadata(metadata, fdpUrl + "/dataset/" + identifier, title, description, catalog);
+        setCommonMetadata(metadata, repositoryUrl + "/dataset/" + identifier, title, description, catalog);
         metadata.setThemes(themes.stream().map(valueFactory::createIRI).collect(Collectors.toList()));
         metadata.setKeywords(keywords.stream().map(valueFactory::createLiteral).collect(Collectors.toList()));
         return metadata;
@@ -62,9 +63,9 @@ public class MetadataFactoryImpl implements MetadataFactory {
 
     public DistributionMetadata createDistributionMetadata(String title, String description, String identifier,
                                                            String downloadUrl, String accessUrl, String mediaType,
-                                                           String fdpUrl, DatasetMetadata dataset) {
+                                                           String repositoryUrl, DatasetMetadata dataset) {
         DistributionMetadata metadata = new DistributionMetadata();
-        setCommonMetadata(metadata, fdpUrl + "/distribution/" + identifier, title, description, dataset);
+        setCommonMetadata(metadata, repositoryUrl + "/distribution/" + identifier, title, description, dataset);
 
         if (downloadUrl != null) {
             metadata.setDownloadURL(valueFactory.createIRI(downloadUrl));

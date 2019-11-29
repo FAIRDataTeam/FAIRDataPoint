@@ -1,54 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="INFO" monitorInterval="30">
     <Properties>
-        <Property name="log-path">/tmp</Property>  <!--use ${env:VAR_NAME} for env variables -->
+        <Property name="LOG_PATTERN">%d %-4relative [%thread] %-5level %logger{35} - %msg%n</Property>
     </Properties>
     <Appenders>
-        <Console name="console-log" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
-        <RollingFile name="trace-log" fileName="${log-path}/fdp-api-trace.log"
-                     filePattern="${log-path}/fdp-api-trace-%d{yyyy-MM-dd}.log">
-            <PatternLayout>
-                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
-            </Policies>
-        </RollingFile>
-        <RollingFile name="error-log" fileName="${log-path}/fdp-api-error.log"
-                     filePattern="${log-path}/fdp-api-error-%d{yyyy-MM-dd}.log">
-            <PatternLayout>
-                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
-            </Policies>
-        </RollingFile>
-        <RollingFile name="api-request-log" fileName="${log-path}/fdp-api-request.log"
-                     filePattern="${log-path}/fdp-api-request-%d{yyyy-MM-dd}.log">
-            <PatternLayout>
-                <pattern>%X{ipAddress} - - %d{[dd/MM/yyyy:HH:mm:ss -SSSS]} \"%X{requestMethod} %X{requestURI}
-                    %X{requestProtocol}\" %X{responseStatus} %X{contentSize}%n
-                </pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
-            </Policies>
-        </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="nl.dtls.fairdatapoint.api" level="info" additivity="false">
-            <appender-ref ref="trace-log" level="info"/>
-            <appender-ref ref="error-log" level="error"/>
-            <appender-ref ref="console-log" level="warn"/>
-        </Logger>
-        <Logger name="nl.dtls.fairdatapoint.api.filter.LoggingFilter" level="info" additivity="false">
-            <appender-ref ref="api-request-log" level="info"/>
-        </Logger>
-        <Root level="warn" additivity="false">
-            <AppenderRef ref="console-log"/>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>
-

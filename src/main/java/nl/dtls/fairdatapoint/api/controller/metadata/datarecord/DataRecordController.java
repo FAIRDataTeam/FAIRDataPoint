@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @Api(description = "Data Record Metadata")
-@RequestMapping("/fdp/datarecord")
+@RequestMapping("/datarecord")
 public class DataRecordController extends MetadataController {
 
     @ApiOperation(value = "Dataset metadata")

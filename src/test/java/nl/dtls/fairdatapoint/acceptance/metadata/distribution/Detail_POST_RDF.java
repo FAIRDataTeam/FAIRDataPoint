@@ -23,9 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,23 +42,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /fdp/distribution")
+@DisplayName("GET /distribution")
 public class Detail_POST_RDF extends WebIntegrationTest {
 
     @Autowired
-    private TestMetadataFixtures testMetadataFixtures;
+    private MetadataFixtureLoader metadataFixtureLoader;
 
     private URI url() {
-        return URI.create("/fdp/distribution");
+        return URI.create("/distribution");
     }
 
     private String reqDto() {
-        return ExampleFilesUtils.getFileContentAsString(ExampleFilesUtils.DISTRIBUTION_METADATA_FILE);
+        return MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.DISTRIBUTION_METADATA_FILE);
     }
 
     @BeforeEach
     public void setupExampleMetadata() throws MetadataServiceException {
-        testMetadataFixtures.storeExampleMetadata();
+        metadataFixtureLoader.storeExampleMetadata();
     }
 
     @Test

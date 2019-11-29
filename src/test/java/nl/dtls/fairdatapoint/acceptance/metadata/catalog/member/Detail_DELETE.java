@@ -41,14 +41,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("DELETE /fdp/catalog/:catalogId/members/:userUuid")
+@DisplayName("DELETE /catalog/:catalogId/members/:userUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
     @Autowired
     private UserFixtures userFixtures;
 
     private URI url(String catalogId, String userUuid) {
-        return URI.create(format("/fdp/catalog/%s/members/%s", catalogId, userUuid));
+        return URI.create(format("/catalog/%s/members/%s", catalogId, userUuid));
     }
 
     @Test

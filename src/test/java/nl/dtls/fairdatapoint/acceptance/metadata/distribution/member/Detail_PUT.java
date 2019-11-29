@@ -45,7 +45,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("PUT /fdp/distribution/:distributionId/members/:userUuid")
+@DisplayName("PUT /distribution/:distributionId/members/:userUuid")
 public class Detail_PUT extends WebIntegrationTest {
 
     @Autowired
@@ -55,7 +55,7 @@ public class Detail_PUT extends WebIntegrationTest {
     private MembershipFixtures membershipFixtures;
 
     private URI url(String distributionId, String userUuid) {
-        return URI.create(format("/fdp/distribution/%s/members/%s", distributionId, userUuid));
+        return URI.create(format("/distribution/%s/members/%s", distributionId, userUuid));
     }
 
     private MemberCreateDTO reqDto() {

@@ -20,13 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata;
+package nl.dtls.fairdatapoint.utils;
 
 import nl.dtl.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,18 +34,18 @@ import org.springframework.stereotype.Service;
 import static java.lang.String.format;
 
 @Service
-public class TestMetadataFixtures {
+public class MetadataFixtureLoader {
 
-    public static final String TEST_FDP_PATH = "/fdp";
-    public static final String TEST_CATALOG_PATH = format("%s/catalog/%s", TEST_FDP_PATH, ExampleFilesUtils.CATALOG_ID);
-    public static final String TEST_DATASET_PATH = format("%s/dataset/%s", TEST_FDP_PATH, ExampleFilesUtils.DATASET_ID);
-    public static final String TEST_DATARECORD_PATH = format("%s/datarecord/%s", TEST_FDP_PATH,
-            ExampleFilesUtils.DATARECORD_ID);
-    public static final String TEST_DISTRIBUTION_PATH = format("%s/distribution/%s", TEST_FDP_PATH,
-            ExampleFilesUtils.DISTRIBUTION_ID);
+    public static final String TEST_REPOSITORY_PATH = "";
+    public static final String TEST_CATALOG_PATH = format("/catalog/%s", MetadataFixtureFilesHelper.CATALOG_ID);
+    public static final String TEST_DATASET_PATH = format("/dataset/%s", MetadataFixtureFilesHelper.DATASET_ID);
+    public static final String TEST_DATARECORD_PATH = format("/datarecord/%s",
+            MetadataFixtureFilesHelper.DATARECORD_ID);
+    public static final String TEST_DISTRIBUTION_PATH = format("/distribution/%s",
+            MetadataFixtureFilesHelper.DISTRIBUTION_ID);
 
     @Autowired
-    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
 
     @Autowired
     private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
@@ -64,30 +63,30 @@ public class TestMetadataFixtures {
         MockitoAnnotations.initMocks(this);
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        // Store fdp metadata
-        request.setRequestURI(TEST_FDP_PATH);
-        String fdpUri = request.getRequestURL().toString();
-        fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(fdpUri));
+        // Store repository metadata
+        request.setRequestURI(TEST_REPOSITORY_PATH);
+        String repositoryUri = request.getRequestURL().toString();
+        repositoryMetadataService.store(MetadataFixtureFilesHelper.getFDPMetadata(repositoryUri));
 
         // Store catalog metadata
         request.setRequestURI(TEST_CATALOG_PATH);
         String cUri = request.getRequestURL().toString();
-        catalogMetadataService.store(ExampleFilesUtils.getCatalogMetadata(cUri, fdpUri));
+        catalogMetadataService.store(MetadataFixtureFilesHelper.getCatalogMetadata(cUri, repositoryUri));
 
         // Store dataset metadata
         request.setRequestURI(TEST_DATASET_PATH);
         String dUri = request.getRequestURL().toString();
-        datasetMetadataService.store(ExampleFilesUtils.getDatasetMetadata(dUri, cUri));
+        datasetMetadataService.store(MetadataFixtureFilesHelper.getDatasetMetadata(dUri, cUri));
 
         // Store datarecord metadata
         request.setRequestURI(TEST_DATARECORD_PATH);
         String dRecUri = request.getRequestURL().toString();
-        dataRecordMetadataService.store(ExampleFilesUtils.getDataRecordMetadata(dRecUri, dUri));
+        dataRecordMetadataService.store(MetadataFixtureFilesHelper.getDataRecordMetadata(dRecUri, dUri));
 
         // Store distribution metadata
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
         String disUri = request.getRequestURL().toString();
-        distributionMetadataService.store(ExampleFilesUtils.getDistributionMetadata(disUri, dUri));
+        distributionMetadataService.store(MetadataFixtureFilesHelper.getDistributionMetadata(disUri, dUri));
     }
 
 

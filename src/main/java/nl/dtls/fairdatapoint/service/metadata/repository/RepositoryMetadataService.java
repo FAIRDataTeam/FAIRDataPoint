@@ -27,7 +27,7 @@ import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.model.Identifier;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
@@ -46,13 +46,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class FdpMetadataService extends AbstractMetadataService<FDPMetadata, FdpMetadataChangeDTO> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(FdpMetadataService.class);
+public class RepositoryMetadataService extends AbstractMetadataService<FDPMetadata, RepositoryMetadataChangeDTO> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RepositoryMetadataService.class);
 
     @Autowired
-    private FdpMetadataMapper fdpMetadataMapper;
+    private RepositoryMetadataMapper repositoryMetadataMapper;
 
-    public FdpMetadataService(@Value("${metadataProperties.rootSpecs:}") String specs) {
+    public RepositoryMetadataService(@Value("${metadataProperties.rootSpecs:}") String specs) {
         super();
         this.specs = specs;
     }
@@ -64,8 +64,8 @@ public class FdpMetadataService extends AbstractMetadataService<FDPMetadata, Fdp
     }
 
     @Override
-    public MetadataMapper<FDPMetadata, FdpMetadataChangeDTO> metadataMapper() {
-        return fdpMetadataMapper;
+    public MetadataMapper<FDPMetadata, RepositoryMetadataChangeDTO> metadataMapper() {
+        return repositoryMetadataMapper;
     }
 
     @Override

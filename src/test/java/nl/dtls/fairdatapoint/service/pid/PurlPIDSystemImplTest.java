@@ -33,7 +33,7 @@ import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -60,15 +60,15 @@ import static org.mockito.Mockito.when;
 public class PurlPIDSystemImplTest extends BaseIntegrationTest {
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    private final FDPMetadata fdpMetadata = ExampleFilesUtils
-            .getFDPMetadata(ExampleFilesUtils.FDP_URI);
-    private final CatalogMetadata catalogMetadata = ExampleFilesUtils
-            .getCatalogMetadata(ExampleFilesUtils.CATALOG_URI, ExampleFilesUtils.FDP_URI);
-    private final DatasetMetadata datasetMetadata = ExampleFilesUtils
-            .getDatasetMetadata(ExampleFilesUtils.DATASET_URI, ExampleFilesUtils.CATALOG_URI);
-    private final DistributionMetadata distributionMetadata = ExampleFilesUtils
-            .getDistributionMetadata(ExampleFilesUtils.DISTRIBUTION_URI,
-                    ExampleFilesUtils.DATASET_URI);
+    private final FDPMetadata fdpMetadata = MetadataFixtureFilesHelper
+            .getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI);
+    private final CatalogMetadata catalogMetadata = MetadataFixtureFilesHelper
+            .getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI, MetadataFixtureFilesHelper.REPOSITORY_URI);
+    private final DatasetMetadata datasetMetadata = MetadataFixtureFilesHelper
+            .getDatasetMetadata(MetadataFixtureFilesHelper.DATASET_URI, MetadataFixtureFilesHelper.CATALOG_URI);
+    private final DistributionMetadata distributionMetadata = MetadataFixtureFilesHelper
+            .getDistributionMetadata(MetadataFixtureFilesHelper.DISTRIBUTION_URI,
+                    MetadataFixtureFilesHelper.DATASET_URI);
 
     @Autowired
     private PurlPIDSystemImpl test;
@@ -110,7 +110,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test of null fdp uri, this test is excepted to throw error
+     * Test of null repository uri, this test is excepted to throw error
      */
     @Test
     public void testGetURIForNullFdpUri() {
@@ -153,11 +153,11 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
         // Setting up mock object
 
         when(purlBaseUrl.toString()).thenReturn("http://purl.org/biosemantics-lumc/fdp");
-        when(metadataRepository.getFDPIri(catalogMetadata.getParentURI()))
+        when(metadataRepository.getRepositoryIri(catalogMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());
-        when(metadataRepository.getFDPIri(datasetMetadata.getParentURI()))
+        when(metadataRepository.getRepositoryIri(datasetMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());
-        when(metadataRepository.getFDPIri(distributionMetadata.getParentURI()))
+        when(metadataRepository.getRepositoryIri(distributionMetadata.getParentURI()))
                 .thenReturn(fdpMetadata.getUri());
 
         assertTrue(purlSys.getURI(fdpMetadata).toString().contains("purl.org"));

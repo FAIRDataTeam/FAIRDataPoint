@@ -51,11 +51,11 @@ import static org.mockito.Mockito.when;
 public class FairSearchClientImplTest {
 
     private static final ValueFactory VF = SimpleValueFactory.getInstance();
-    private static final IRI FDP_URI = VF.createIRI("http://example.com/fdp");
+    private static final IRI REPOSITORY_URI = VF.createIRI("http://example.com/fdp");
     private final FairSearchClient search = new FairSearchClientImpl();
 
     /**
-     * Test NULL fdp uri. This test is expected to thrown an error
+     * Test NULL repository uri. This test is expected to thrown an error
      */
     @Test
     public void nullFDPUri() {
@@ -71,20 +71,20 @@ public class FairSearchClientImplTest {
     public void testException() throws Exception {
 
         ReflectionTestUtils.setField(search, "fdpSubmitUrl", "http://dummy.url");
-        CompletableFuture result = search.submitFdpUri(FDP_URI);
+        CompletableFuture result = search.submitFdpUri(REPOSITORY_URI);
         assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, (int) result.get());
     }
 
     /**
-     * Test VALID fdp uri. This test is expected to pass
+     * Test VALID repository uri. This test is expected to pass
      */
     @Test
     public void validFDPUri() throws Exception {
 
         FairSearchClient mockSearch = Mockito.mock(FairSearchClient.class);
-        when(mockSearch.submitFdpUri(FDP_URI)).thenReturn(CompletableFuture.completedFuture(
+        when(mockSearch.submitFdpUri(REPOSITORY_URI)).thenReturn(CompletableFuture.completedFuture(
                 HttpStatus.SC_ACCEPTED));
-        CompletableFuture result = mockSearch.submitFdpUri(FDP_URI);
+        CompletableFuture result = mockSearch.submitFdpUri(REPOSITORY_URI);
         assertEquals(HttpStatus.SC_ACCEPTED, (int) result.get());
     }
 

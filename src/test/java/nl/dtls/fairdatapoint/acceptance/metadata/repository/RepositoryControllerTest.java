@@ -35,11 +35,11 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import javax.servlet.http.HttpServletResponse;
 
 import static nl.dtls.fairdatapoint.WebIntegrationTest.ADMIN_TOKEN;
-import static nl.dtls.fairdatapoint.acceptance.metadata.TestMetadataFixtures.TEST_FDP_PATH;
+import static nl.dtls.fairdatapoint.utils.MetadataFixtureLoader.TEST_REPOSITORY_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FdpControllerTest extends MetadataControllerTest {
+public class RepositoryControllerTest extends MetadataControllerTest {
 
     @Autowired
     private AuthHelper authHelper;
@@ -59,33 +59,11 @@ public class FdpControllerTest extends MetadataControllerTest {
 
             request.setMethod("GET");
             request.addHeader(HttpHeaders.ACCEPT, "application/trig");
-            request.setRequestURI(TEST_FDP_PATH);
+            request.setRequestURI(TEST_REPOSITORY_PATH);
 
             Object handler = handlerMapping.getHandler(request).getHandler();
             handlerAdapter.handle(request, response, handler);
         });
-    }
-
-
-    /**
-     * Check file extension for repostory layer
-     *
-     * @throws Exception
-     */
-    @DirtiesContext
-    @Test
-    public void getContentWithFileExtRepo() throws Exception {
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        request.setMethod("GET");
-        request.setRequestURI(TEST_FDP_PATH + ".ttl");
-
-        Object handler = handlerMapping.getHandler(request).getHandler();
-        handlerAdapter.handle(request, response, handler);
-        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-        assertEquals("text/turtle", response.getContentType());
     }
 
     /**
@@ -101,7 +79,7 @@ public class FdpControllerTest extends MetadataControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.setMethod("GET");
-        request.setRequestURI(TEST_FDP_PATH + "/");
+        request.setRequestURI(TEST_REPOSITORY_PATH + "/");
 
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);
@@ -128,7 +106,7 @@ public class FdpControllerTest extends MetadataControllerTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "text/turtle");
         request.addHeader(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN);
         request.setContent(metadata.getBytes());
-        request.setRequestURI("/fdp");
+        request.setRequestURI("");
 
         Object handler = handlerMapping.getHandler(request).getHandler();
         handlerAdapter.handle(request, response, handler);

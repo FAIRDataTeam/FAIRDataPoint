@@ -53,7 +53,7 @@ public abstract class MetadataController {
     protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
-    protected MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+    protected MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
 
     @Autowired
     protected MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;

@@ -29,7 +29,7 @@ import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
@@ -50,7 +50,7 @@ import java.util.Arrays;
 public class MetadataFixtures {
 
     @Autowired
-    protected MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+    protected MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
 
     @Autowired
     protected MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
@@ -85,40 +85,37 @@ public class MetadataFixtures {
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             // 2. Load metadata fixtures
-            importDefaultFixtures(fdpUrl());
+            importDefaultFixtures(instanceUrl);
         } catch (MetadataServiceException e) {
             e.printStackTrace();
         }
     }
 
-    public void importDefaultFixtures(String fdpUrl) throws MetadataServiceException {
-        FDPMetadata fdp = fdpMetadata(fdpUrl);
-        fdpMetadataService.store(fdp);
+    public void importDefaultFixtures(String repositoryUrl) throws MetadataServiceException {
+        FDPMetadata repository = repositoryMetadata(repositoryUrl);
+        repositoryMetadataService.store(repository);
 
-        CatalogMetadata catalog1 = catalog1(fdpUrl, fdp);
+        CatalogMetadata catalog1 = catalog1(repositoryUrl, repository);
         catalogMetadataService.store(catalog1);
 
-        CatalogMetadata catalog2 = catalog2(fdpUrl, fdp);
+        CatalogMetadata catalog2 = catalog2(repositoryUrl, repository);
         catalogMetadataService.store(catalog2);
 
-        DatasetMetadata dataset1 = dataset1(fdpUrl, catalog1);
+        DatasetMetadata dataset1 = dataset1(repositoryUrl, catalog1);
         datasetMetadataService.store(dataset1);
 
-        DatasetMetadata dataset2 = dataset2(fdpUrl, catalog1);
+        DatasetMetadata dataset2 = dataset2(repositoryUrl, catalog1);
         datasetMetadataService.store(dataset2);
 
-        DistributionMetadata distribution1 = distribution1(fdpUrl, dataset1);
+        DistributionMetadata distribution1 = distribution1(repositoryUrl, dataset1);
         distributionMetadataService.store(distribution1);
 
-        DistributionMetadata distribution2 = distribution2(fdpUrl, dataset1);
+        DistributionMetadata distribution2 = distribution2(repositoryUrl, dataset1);
         distributionMetadataService.store(distribution2);
     }
 
-    public String fdpUrl() {
-        return instanceUrl + "/fdp";
-    }
 
-    public FDPMetadata fdpMetadata(String fdpUrl) {
+    public FDPMetadata repositoryMetadata(String repositoryUrl) {
         return metadataFactory.createFDPMetadata(
                 "My FAIR Data Point",
                 "Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec ultricies augue turpis sed " +
@@ -130,11 +127,11 @@ public class MetadataFixtures {
                         "blandit venenatis. Cras ullamcorper, justo vitae feugiat commodo, orci metus suscipit purus," +
                         " quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum" +
                         " euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at.",
-                fdpUrl
+                repositoryUrl
         );
     }
 
-    public CatalogMetadata catalog1(String fdpUrl, FDPMetadata fdp) {
+    public CatalogMetadata catalog1(String repositoryUrl, FDPMetadata repository) {
         return metadataFactory.createCatalogMetadata(
                 "Bio Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -147,12 +144,12 @@ public class MetadataFixtures {
                         "Aenean dapibus tellus ipsum.",
                 "catalog-1",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
-                fdpUrl,
-                fdp
+                repositoryUrl,
+                repository
         );
     }
 
-    public CatalogMetadata catalog2(String fdpUrl, FDPMetadata fdp) {
+    public CatalogMetadata catalog2(String repositoryUrl, FDPMetadata repository) {
         return metadataFactory.createCatalogMetadata(
                 "Tech Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -165,12 +162,12 @@ public class MetadataFixtures {
                         "Aenean dapibus tellus ipsum.",
                 "catalog-2",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
-                fdpUrl,
-                fdp
+                repositoryUrl,
+                repository
         );
     }
 
-    public DatasetMetadata dataset1(String fdpUrl, CatalogMetadata catalog) {
+    public DatasetMetadata dataset1(String repositoryUrl, CatalogMetadata catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Cat Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -180,12 +177,12 @@ public class MetadataFixtures {
                 "dataset-1",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example:theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
-                fdpUrl,
+                repositoryUrl,
                 catalog
         );
     }
 
-    public DatasetMetadata dataset2(String fdpUrl, CatalogMetadata catalog) {
+    public DatasetMetadata dataset2(String repositoryUrl, CatalogMetadata catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Dog Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -195,12 +192,12 @@ public class MetadataFixtures {
                 "dataset-2",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example:theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
-                fdpUrl,
+                repositoryUrl,
                 catalog
         );
     }
 
-    public DistributionMetadata distribution1(String fdpUrl, DatasetMetadata dataset) {
+    public DistributionMetadata distribution1(String repositoryUrl, DatasetMetadata dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Downloadable Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -216,12 +213,12 @@ public class MetadataFixtures {
                 "http://example.com",
                 null,
                 "text/plain",
-                fdpUrl,
+                repositoryUrl,
                 dataset
         );
     }
 
-    public DistributionMetadata distribution2(String fdpUrl, DatasetMetadata dataset) {
+    public DistributionMetadata distribution2(String repositoryUrl, DatasetMetadata dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Accessible Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -237,7 +234,7 @@ public class MetadataFixtures {
                 null,
                 "http://example.com",
                 "text/plain",
-                fdpUrl,
+                repositoryUrl,
                 dataset
         );
     }

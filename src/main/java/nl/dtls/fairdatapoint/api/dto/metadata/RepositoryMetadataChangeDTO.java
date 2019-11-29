@@ -31,7 +31,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class FdpMetadataChangeDTO {
+public class RepositoryMetadataChangeDTO {
 
     protected String title;
 

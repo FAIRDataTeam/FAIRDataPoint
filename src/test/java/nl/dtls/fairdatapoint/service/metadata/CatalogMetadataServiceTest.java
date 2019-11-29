@@ -26,13 +26,13 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.FdpMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
-import nl.dtls.fairdatapoint.utils.ExampleFilesUtils;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -60,7 +60,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private MongoAuthenticationService mongoAuthenticationService;
 
     @Autowired
-    private MetadataService<FDPMetadata, FdpMetadataChangeDTO> fdpMetadataService;
+    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
 
     @Autowired
     private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
@@ -70,7 +70,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         String albertUuid = userFixtures.albert().getUuid();
         Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        fdpMetadataService.store(ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI));
+        repositoryMetadataService.store(MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI));
     }
 
     @DirtiesContext
@@ -154,7 +154,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     public void retrieveNonExitingMetadata() throws Exception {
         assertThrows(ResourceNotFoundException.class, () -> {
             // WHEN:
-            String uri = ExampleFilesUtils.FDP_URI + "/dummpID676";
+            String uri = MetadataFixtureFilesHelper.REPOSITORY_URI + "/dummpID676";
             catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
 
             // THEN:
@@ -177,19 +177,20 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void updateParent() throws MetadataServiceException {
         // GIVEN:
-        FDPMetadata fdpMetadata = ExampleFilesUtils.getFDPMetadata(ExampleFilesUtils.FDP_URI);
-        fdpMetadataService.store(fdpMetadata);
+        FDPMetadata fdpMetadata = MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI);
+        repositoryMetadataService.store(fdpMetadata);
 
         // WHEN:
-        CatalogMetadata catalogMetadata = ExampleFilesUtils.getCatalogMetadata(ExampleFilesUtils.CATALOG_URI,
-                ExampleFilesUtils.FDP_URI);
+        CatalogMetadata catalogMetadata =
+                MetadataFixtureFilesHelper.getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI,
+                        MetadataFixtureFilesHelper.REPOSITORY_URI);
         catalogMetadataService.store(catalogMetadata);
 
         // THEN:
         FDPMetadata updatedFdpMetadata =
-                fdpMetadataService.retrieve(VALUE_FACTORY.createIRI(ExampleFilesUtils.FDP_URI));
+                repositoryMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI));
         CatalogMetadata storedCatalog =
-                catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(ExampleFilesUtils.CATALOG_URI));
+                catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.CATALOG_URI));
 
         ZonedDateTime fdpModified = ZonedDateTime.parse(updatedFdpMetadata.getModified().stringValue());
         ZonedDateTime catalogModified = ZonedDateTime.parse(storedCatalog.getModified().stringValue());
@@ -198,7 +199,8 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     }
 
     private static CatalogMetadata createExampleMetadata() {
-        return ExampleFilesUtils.getCatalogMetadata(TEST_CATALOG_URI, ExampleFilesUtils.FDP_URI);
+        return MetadataFixtureFilesHelper.getCatalogMetadata(TEST_CATALOG_URI,
+                MetadataFixtureFilesHelper.REPOSITORY_URI);
     }
 
     private static IRI exampleIRI() {

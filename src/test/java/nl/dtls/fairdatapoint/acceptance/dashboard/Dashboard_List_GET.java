@@ -48,7 +48,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class Dashboard_List_GET extends WebIntegrationTest {
 
     private URI url() {
-        return URI.create("/fdp/dashboard");
+        return URI.create("/dashboard");
     }
 
     @Autowired
