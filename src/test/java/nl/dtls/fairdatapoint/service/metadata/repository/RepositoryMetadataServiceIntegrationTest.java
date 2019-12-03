@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata;
+package nl.dtls.fairdatapoint.service.metadata.repository;
 
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
@@ -40,7 +40,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
+public class RepositoryMetadataServiceIntegrationTest extends BaseIntegrationTest {
 
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
     private final static String TEST_FDP_URI = "http://example.com/fdp";

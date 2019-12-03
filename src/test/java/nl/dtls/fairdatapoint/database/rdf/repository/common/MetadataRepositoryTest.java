@@ -25,9 +25,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository;
+package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.rdf.repository.repository.RepositoryMetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.repository.RepositoryMetadataRepositoryImpl;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
@@ -52,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @DirtiesContext
-public class MetadataRepositoryImplTest extends WebIntegrationTest {
+public class MetadataRepositoryTest extends WebIntegrationTest {
 
     private final ValueFactory f = SimpleValueFactory.getInstance();
 
@@ -67,18 +69,18 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     private final Statement TESTSTMT = f.createStatement(TESTSUB, RDF.TYPE, TESTOBJ);
 
     @Autowired
-    private MetadataRepository testStoreManager;
+    private RepositoryMetadataRepository repositoryMetadataRepository;
 
     @Mock
     private Repository repository;
 
     @InjectMocks
-    private MetadataRepositoryImpl mockStoreManager;
+    private RepositoryMetadataRepositoryImpl mockRepositoryMetadataRepository;
 
     @BeforeEach
     public void storeExampleFile() throws MetadataRepositoryException {
 
-        testStoreManager.storeStatements(STATEMENTS, f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
+        repositoryMetadataRepository.storeStatements(STATEMENTS, f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
         MockitoAnnotations.initMocks(this);
     }
 
@@ -90,7 +92,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     @Test
     public void nullURI() throws MetadataRepositoryException {
         assertThrows(NullPointerException.class, () -> {
-            testStoreManager.retrieveResource(null);
+            repositoryMetadataRepository.retrieveResource(null);
         });
     }
 
@@ -104,7 +106,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
         assertThrows(IllegalArgumentException.class, () -> {
 
             String uri = "";
-            testStoreManager.retrieveResource(f.createIRI(uri));
+            repositoryMetadataRepository.retrieveResource(f.createIRI(uri));
         });
     }
 
@@ -116,7 +118,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void emptyInvalidURI() throws MetadataRepositoryException {
         assertThrows(IllegalArgumentException.class, () -> {
             String uri = "...";
-            testStoreManager.retrieveResource(f.createIRI(uri));
+            repositoryMetadataRepository.retrieveResource(f.createIRI(uri));
         });
     }
 
@@ -128,7 +130,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void retrieveNonExitingResource() throws Exception {
 
         String uri = "http://localhost/dummy";
-        List<Statement> statements = testStoreManager.retrieveResource(f.createIRI(uri));
+        List<Statement> statements = repositoryMetadataRepository.retrieveResource(f.createIRI(uri));
         assertTrue(statements.isEmpty());
     }
 
@@ -139,7 +141,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     @Test
     public void retrieveExitingResource() throws Exception {
 
-        List<Statement> statements = testStoreManager.retrieveResource(
+        List<Statement> statements = repositoryMetadataRepository.retrieveResource(
                 f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
         assertTrue(statements.size() > 0);
     }
@@ -153,7 +155,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
         assertThrows(MetadataRepositoryException.class, () -> {
 
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockStoreManager.retrieveResource(f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
+            mockRepositoryMetadataRepository.retrieveResource(f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI));
         });
     }
 
@@ -165,7 +167,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void storeResource() {
 
         try {
-            testStoreManager.storeStatements(STATEMENTS);
+            repositoryMetadataRepository.storeStatements(STATEMENTS);
         } catch (MetadataRepositoryException ex) {
             fail("The test is not excepted to throw MetadataRepositoryException");
         }
@@ -181,8 +183,8 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
         try {
             List<Statement> sts = new ArrayList<>();
             sts.add(TESTSTMT);
-            testStoreManager.storeStatements(sts);
-            testStoreManager.removeStatement(TESTSUB, RDF.TYPE, null);
+            repositoryMetadataRepository.storeStatements(sts);
+            repositoryMetadataRepository.removeStatement(TESTSUB, RDF.TYPE, null);
         } catch (MetadataRepositoryException ex) {
             fail("The test is not excepted to throw MetadataRepositoryException");
         }
@@ -196,7 +198,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void storeStatement() {
 
         try {
-            testStoreManager.storeStatements(STATEMENTS, TESTSUB);
+            repositoryMetadataRepository.storeStatements(STATEMENTS, TESTSUB);
         } catch (MetadataRepositoryException ex) {
             fail("The test is not excepted to throw MetadataRepositoryException");
         }
@@ -210,7 +212,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void storeStatementWithoutCtxt() {
 
         try {
-            testStoreManager.storeStatements(STATEMENTS, null);
+            repositoryMetadataRepository.storeStatements(STATEMENTS, null);
         } catch (MetadataRepositoryException ex) {
             fail("The test is not excepted to throw MetadataRepositoryException");
         }
@@ -224,7 +226,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void checkNonExitingResource() throws Exception {
 
         String uri = "http://localhost/dummy";
-        boolean isStatementExist = testStoreManager.isStatementExist(f.createIRI(uri), null, null);
+        boolean isStatementExist = repositoryMetadataRepository.isStatementExist(f.createIRI(uri), null, null);
         assertFalse(isStatementExist);
     }
 
@@ -235,7 +237,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     @Test
     public void checkExitingResource() throws Exception {
 
-        boolean isStatementExist = testStoreManager.isStatementExist(
+        boolean isStatementExist = repositoryMetadataRepository.isStatementExist(
                 f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI), null, null);
         assertTrue(isStatementExist);
     }
@@ -248,7 +250,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void checkExceptionsDeleteResourceMethod() throws Exception {
         assertThrows(MetadataRepositoryException.class, () -> {
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockStoreManager.removeResource(null);
+            mockRepositoryMetadataRepository.removeResource(null);
         });
     }
 
@@ -261,7 +263,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
         assertThrows(MetadataRepositoryException.class, () -> {
 
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockStoreManager.removeStatement(null, null, null);
+            mockRepositoryMetadataRepository.removeStatement(null, null, null);
         });
     }
 
@@ -273,7 +275,8 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void checkExceptionsIsStatementMethod() throws Exception {
         assertThrows(MetadataRepositoryException.class, () -> {
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockStoreManager.isStatementExist(f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI), null, null);
+            mockRepositoryMetadataRepository.isStatementExist(f.createIRI(MetadataFixtureFilesHelper.TEST_RDF_URI),
+                    null, null);
         });
     }
 
@@ -285,7 +288,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     public void checkExceptionsStoreStatementMethod() throws Exception {
         assertThrows(MetadataRepositoryException.class, () -> {
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockStoreManager.storeStatements(STATEMENTS);
+            mockRepositoryMetadataRepository.storeStatements(STATEMENTS);
         });
     }
 
@@ -296,7 +299,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     @Test
     public void getFdpUriForNullUri() throws Exception {
         assertThrows(NullPointerException.class, () -> {
-            testStoreManager.getRepositoryIri(null);
+            repositoryMetadataRepository.getRepositoryIri(null);
         });
     }
 
@@ -306,7 +309,7 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
     @DirtiesContext
     @Test
     public void getNonExistFdpUri() throws Exception {
-        assertNull(testStoreManager.getRepositoryIri(f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI + "/dummy")));
+        assertNull(repositoryMetadataRepository.getRepositoryIri(f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI + "/dummy")));
     }
 
     /**
@@ -318,15 +321,15 @@ public class MetadataRepositoryImplTest extends WebIntegrationTest {
         List<Statement> stmt = MetadataFixtureFilesHelper.getFileContentAsStatements(
                 MetadataFixtureFilesHelper.REPOSITORY_URI_FILE, MetadataFixtureFilesHelper.REPOSITORY_URI);
         IRI repositoryUri = f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI);
-        testStoreManager.storeStatements(stmt, repositoryUri);
+        repositoryMetadataRepository.storeStatements(stmt, repositoryUri);
 
         assertEquals(repositoryUri,
-                testStoreManager.getRepositoryIri(f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI)));
-        assertEquals(repositoryUri, testStoreManager.getRepositoryIri(
+                repositoryMetadataRepository.getRepositoryIri(f.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI)));
+        assertEquals(repositoryUri, repositoryMetadataRepository.getRepositoryIri(
                 f.createIRI(MetadataFixtureFilesHelper.CATALOG_URI)));
-        assertEquals(repositoryUri, testStoreManager.getRepositoryIri(
+        assertEquals(repositoryUri, repositoryMetadataRepository.getRepositoryIri(
                 f.createIRI(MetadataFixtureFilesHelper.DATASET_URI)));
-        assertEquals(repositoryUri, testStoreManager.getRepositoryIri(
+        assertEquals(repositoryUri, repositoryMetadataRepository.getRepositoryIri(
                 f.createIRI(MetadataFixtureFilesHelper.DISTRIBUTION_URI)));
     }
 }

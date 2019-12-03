@@ -31,8 +31,8 @@ import nl.dtl.fairmetadata4j.model.Metadata;
 import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtl.fairmetadata4j.utils.RDFUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
@@ -113,7 +113,7 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
     private PIDSystem pidSystem;
 
     @Autowired
-    protected MetadataRepository storeManager;
+    protected MetadataRepository<T> metadataRepository;
 
     @Autowired
     protected MemberService memberService;
@@ -174,7 +174,7 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
             setSpecification(metadata);
             setTimestamps(metadata);
 
-            storeManager.storeStatements(MetadataUtils.getStatements(metadata), metadata.getUri());
+            metadataRepository.storeStatements(MetadataUtils.getStatements(metadata), metadata.getUri());
 
             updateParent(metadata);
             addPermissions(metadata);
@@ -192,7 +192,7 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
         try {
             T metadata = retrieve(uri);
             updateProperties(metadata, metadataUpdate);
-            storeManager.removeResource(uri);
+            metadataRepository.removeResource(uri);
             store(metadata);
         } catch (MetadataRepositoryException e) {
             getLogger().error("Error updating metadata");
@@ -213,7 +213,7 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
 
         try {
             Preconditions.checkNotNull(uri, "Resource uri not be null.");
-            List<Statement> statements = storeManager.retrieveResource(uri);
+            List<Statement> statements = metadataRepository.retrieveResource(uri);
             if (statements.isEmpty()) {
                 String msg = ("No metadata found for the uri : " + uri);
                 throw new ResourceNotFoundException(msg);
@@ -282,7 +282,7 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
     private boolean parentExists(IRI uri) throws MetadataServiceException {
         try {
             if (parentType != null) {
-                return storeManager.isStatementExist(uri, RDF.TYPE, parentType);
+                return metadataRepository.isStatementExist(uri, RDF.TYPE, parentType);
             }
             return false;
         } catch (MetadataRepositoryException e) {

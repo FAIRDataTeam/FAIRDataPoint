@@ -25,7 +25,6 @@ package nl.dtls.fairdatapoint.config;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +43,8 @@ import org.springframework.security.acls.mongodb.BasicLookupStrategy;
 import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.List;
+
 import static java.lang.String.format;
 
 @Configuration
@@ -58,19 +59,15 @@ public class AclConfig {
     private AclRepository aclRepository;
 
     @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager(CACHE_NAME);
-    }
-
-    @Bean
-    public AclCache aclCache() {
-        Cache springCache = cacheManager().getCache(CACHE_NAME);
+    public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
+        cacheManager.setCacheNames(List.of(CACHE_NAME));
+        Cache springCache = cacheManager.getCache(CACHE_NAME);
         return new SpringCacheBasedAclCache(springCache, permissionGrantingStrategy(), aclAuthorizationStrategy());
     }
 
     @Bean
-    public AclService aclService() {
-        return new MongoDBMutableAclService(aclRepository, lookupStrategy(), aclCache());
+    public AclService aclService(AclCache aclCache) {
+        return new MongoDBMutableAclService(aclRepository, lookupStrategy(aclCache), aclCache);
     }
 
     @Bean
@@ -85,17 +82,17 @@ public class AclConfig {
     }
 
     @Bean
-    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler() {
+    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(AclCache aclCache) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService());
+        AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService(aclCache));
         expressionHandler.setPermissionEvaluator(permissionEvaluator);
-        expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService()));
+        expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService(aclCache)));
         return expressionHandler;
     }
 
     @Bean
-    public LookupStrategy lookupStrategy() {
-        return new BasicLookupStrategy(mongoTemplate, aclCache(), aclAuthorizationStrategy(),
+    public LookupStrategy lookupStrategy(AclCache aclCache) {
+        return new BasicLookupStrategy(mongoTemplate, aclCache, aclAuthorizationStrategy(),
                 permissionGrantingStrategy());
     }
 

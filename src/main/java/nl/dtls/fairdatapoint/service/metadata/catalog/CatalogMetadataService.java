@@ -26,8 +26,11 @@ import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.slf4j.Logger;
@@ -37,12 +40,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CatalogMetadataService extends AbstractMetadataService<CatalogMetadata, CatalogMetadataChangeDTO> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CatalogMetadataService.class);
+
+    @Autowired
+    private CatalogMetadataRepository catalogMetadataRepository;
 
     @Autowired
     private CatalogMetadataMapper catalogMetadataMapper;
@@ -51,6 +57,22 @@ public class CatalogMetadataService extends AbstractMetadataService<CatalogMetad
         super();
         this.specs = specs;
         this.parentType = R3D.REPOSITORY;
+    }
+
+    @Override
+    public CatalogMetadata retrieve(@Nonnull IRI uri) throws MetadataServiceException {
+        CatalogMetadata catalog = super.retrieve(uri);
+        try {
+            List<IRI> themes = catalogMetadataRepository.getDatasetThemesForCatalog(catalog.getUri());
+            Set<IRI> set = new TreeSet<>(Comparator.comparing(IRI::toString));
+            set.addAll(catalog.getThemeTaxonomys());
+            set.addAll(themes);
+            catalog.setThemeTaxonomys(new ArrayList<>(set));
+        } catch (MetadataRepositoryException ex) {
+            getLogger().error("Error retrieving the metadata");
+            throw new MetadataServiceException(ex.getMessage());
+        }
+        return catalog;
     }
 
     @Override

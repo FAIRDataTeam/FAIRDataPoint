@@ -20,32 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package nl.dtls.fairdatapoint.database.rdf.repository;
+package nl.dtls.fairdatapoint.database.rdf.repository.distribution;
 
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 
-import java.util.List;
-
-public interface MetadataRepository {
-
-    List<Statement> retrieveResource(IRI uri) throws MetadataRepositoryException;
-
-    void storeStatements(List<Statement> statements, IRI... iri) throws MetadataRepositoryException;
-
-    void removeStatement(Resource rsrc, IRI uri, Value value) throws MetadataRepositoryException;
-
-    boolean isStatementExist(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException;
-
-    void removeResource(IRI uri) throws MetadataRepositoryException;
-
-    IRI getRepositoryIri(IRI uri) throws MetadataRepositoryException;
-
+public interface DistributionMetadataRepository extends MetadataRepository<DistributionMetadata> {
 }

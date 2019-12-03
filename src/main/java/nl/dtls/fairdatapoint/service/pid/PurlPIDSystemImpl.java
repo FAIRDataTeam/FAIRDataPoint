@@ -30,8 +30,8 @@ package nl.dtls.fairdatapoint.service.pid;
 import com.google.common.base.Preconditions;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtl.fairmetadata4j.model.Metadata;
-import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.repository.RepositoryMetadataRepository;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -58,7 +58,7 @@ public class PurlPIDSystemImpl implements PIDSystem {
     private IRI purlBaseUrl;
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private RepositoryMetadataRepository repositoryMetadataRepository;
 
     /**
      * Create a new purl.org PID uri for a given metadata
@@ -83,7 +83,7 @@ public class PurlPIDSystemImpl implements PIDSystem {
             } else {
                 Preconditions.checkNotNull(metadata.getParentURI(),
                         "Metadata parent URI must not be null");
-                repositoryUri = metadataRepository.getRepositoryIri(metadata.getParentURI());
+                repositoryUri = repositoryMetadataRepository.getRepositoryIri(metadata.getParentURI());
             }
         } catch (MetadataRepositoryException ex) {
             LOGGER.error("Error getting repository uri");

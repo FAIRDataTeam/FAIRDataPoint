@@ -143,7 +143,7 @@ public class MetadataFixtures {
                         "elementum neque ac ex ultricies auctor. Vestibulum aliquet porttitor enim eu pellentesque. " +
                         "Aenean dapibus tellus ipsum.",
                 "catalog-1",
-                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
+                Arrays.asList("https://www.wikidata.org/wiki/Q27317", "https://purl.org/example#theme"),
                 repositoryUrl,
                 repository
         );
@@ -175,7 +175,8 @@ public class MetadataFixtures {
                         " Praesent placerat ultrices tempor. Pellentesque posuere sapien eu rutrum efficitur. Quisque" +
                         " ac risus malesuada, tempus diam at, elementum urna. Suspendisse quis posuere leo.",
                 "dataset-1",
-                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example:theme"),
+                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://www.wikidata.org/wiki/Q27319", "https" +
+                        "://purl.org/example#theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
                 repositoryUrl,
                 catalog
@@ -190,7 +191,7 @@ public class MetadataFixtures {
                         " Praesent placerat ultrices tempor. Pellentesque posuere sapien eu rutrum efficitur. Quisque" +
                         " ac risus malesuada, tempus diam at, elementum urna. Suspendisse quis posuere leo.",
                 "dataset-2",
-                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example:theme"),
+                Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
                 repositoryUrl,
                 catalog

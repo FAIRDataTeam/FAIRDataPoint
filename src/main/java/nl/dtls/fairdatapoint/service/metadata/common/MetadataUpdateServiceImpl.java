@@ -29,8 +29,8 @@ import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
-import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -52,7 +52,16 @@ public class MetadataUpdateServiceImpl implements MetadataUpdateService {
     private static final ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
-    private MetadataRepository storeManager;
+    private MetadataRepository<CatalogMetadata> catalogMetadataRepository;
+
+    @Autowired
+    private MetadataRepository<DatasetMetadata> datasetMetadataRepository;
+
+    @Autowired
+    private MetadataRepository<DistributionMetadata> distributionMetadataRepository;
+
+    @Autowired
+    private MetadataRepository<DataRecordMetadata> dataRecordMetadataRepository;
 
     @Autowired
     private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
@@ -68,7 +77,7 @@ public class MetadataUpdateServiceImpl implements MetadataUpdateService {
     @Override
     public void visit(CatalogMetadata catalogMetadata) {
         try {
-            update(catalogMetadata, R3D.DATACATALOG);
+            update(catalogMetadata, catalogMetadataRepository, R3D.DATACATALOG);
         } catch (MetadataRepositoryException | DatatypeConfigurationException ex) {
             LOGGER.error("Error updating catalog parent, {}", ex.getMessage());
         }
@@ -77,7 +86,7 @@ public class MetadataUpdateServiceImpl implements MetadataUpdateService {
     @Override
     public void visit(DatasetMetadata datasetMetadata) {
         try {
-            update(datasetMetadata, DCAT.HAS_DATASET);
+            update(datasetMetadata, datasetMetadataRepository, DCAT.HAS_DATASET);
             CatalogMetadata parent = catalogMetadataService.retrieve(datasetMetadata.getParentURI());
             visit(parent);
         } catch (MetadataRepositoryException | DatatypeConfigurationException | MetadataServiceException ex) {
@@ -89,7 +98,7 @@ public class MetadataUpdateServiceImpl implements MetadataUpdateService {
     @Override
     public void visit(DistributionMetadata distributionMetadata) {
         try {
-            update(distributionMetadata, DCAT.HAS_DISTRIBUTION);
+            update(distributionMetadata, distributionMetadataRepository, DCAT.HAS_DISTRIBUTION);
             DatasetMetadata parent = datasetMetadataService.retrieve(distributionMetadata.getParentURI());
             visit(parent);
         } catch (MetadataRepositoryException | DatatypeConfigurationException | MetadataServiceException ex) {
@@ -100,7 +109,7 @@ public class MetadataUpdateServiceImpl implements MetadataUpdateService {
     @Override
     public void visit(DataRecordMetadata dataRecordMetadata) {
         try {
-            update(dataRecordMetadata, DCAT.HAS_RECORD);
+            update(dataRecordMetadata, dataRecordMetadataRepository, DCAT.HAS_RECORD);
             DatasetMetadata parent = datasetMetadataService.retrieve(dataRecordMetadata.getParentURI());
             visit(parent);
         } catch (MetadataRepositoryException | DatatypeConfigurationException | MetadataServiceException ex) {
@@ -108,13 +117,13 @@ public class MetadataUpdateServiceImpl implements MetadataUpdateService {
         }
     }
 
-    private void update(Metadata metadata, IRI relation) throws MetadataRepositoryException,
+    private <T extends Metadata> void update(T metadata, MetadataRepository<T> metadataRepository, IRI relation) throws MetadataRepositoryException,
             DatatypeConfigurationException {
         IRI parent = metadata.getParentURI();
         List<Statement> stmts = new ArrayList<>();
         stmts.add(VALUE_FACTORY.createStatement(parent, relation, metadata.getUri()));
-        storeManager.removeStatement(parent, FDP.METADATAMODIFIED, null);
+        metadataRepository.removeStatement(parent, FDP.METADATAMODIFIED, null);
         stmts.add(VALUE_FACTORY.createStatement(parent, FDP.METADATAMODIFIED, RDFUtils.getCurrentTime()));
-        storeManager.storeStatements(stmts, parent);
+        metadataRepository.storeStatements(stmts, parent);
     }
 }
