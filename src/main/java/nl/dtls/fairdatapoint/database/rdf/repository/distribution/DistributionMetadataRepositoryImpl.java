@@ -20,39 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.user;
+package nl.dtls.fairdatapoint.database.rdf.repository.distribution;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-
 @Service
-public class CurrentUserService {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public Optional<String> getCurrentUserUuid() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            Object principal = auth.getPrincipal();
-            if (principal instanceof org.springframework.security.core.userdetails.User) {
-                return of(((org.springframework.security.core.userdetails.User) principal).getUsername());
-            }
-        }
-        return empty();
-    }
-
-    public Optional<User> getCurrentUser() {
-        return getCurrentUserUuid().flatMap(userRepository::findByUuid);
-    }
-
+public class DistributionMetadataRepositoryImpl extends AbstractMetadataRepository<DistributionMetadata> implements DistributionMetadataRepository {
 }

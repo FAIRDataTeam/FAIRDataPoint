@@ -20,17 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package nl.dtls.fairdatapoint.database.rdf.repository;
+package nl.dtls.fairdatapoint.database.rdf.repository.dataset;
 
-public class MetadataRepositoryException extends Exception {
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 
-    public MetadataRepositoryException(String msg) {
-        super(msg);
-    }
-
+public interface DatasetMetadataRepository extends MetadataRepository<DatasetMetadata> {
 }

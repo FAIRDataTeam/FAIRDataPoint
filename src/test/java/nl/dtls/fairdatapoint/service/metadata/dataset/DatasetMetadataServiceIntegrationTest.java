@@ -20,18 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata;
+package nl.dtls.fairdatapoint.service.metadata.dataset;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
@@ -52,9 +51,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DistributionMetadataServiceTest extends BaseIntegrationTest {
+public class DatasetMetadataServiceIntegrationTest extends BaseIntegrationTest {
     private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
-    private final static String TEST_DISTRIBUTION_URI = "http://example.com/fdp/catalog/dataset/distrubtion";
+    private final static String TEST_DATASET_URI = "http://example.com/fdp/catalog/dataset";
 
     @Autowired
     private UserFixtures userFixtures;
@@ -71,9 +70,6 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     @Autowired
     private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
 
-    @Autowired
-    private MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
-
     @BeforeEach
     public void createParents() throws MetadataServiceException {
         String albertUuid = userFixtures.albert().getUuid();
@@ -82,18 +78,16 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
         repositoryMetadataService.store(MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI));
         catalogMetadataService.store(MetadataFixtureFilesHelper.getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI,
                 MetadataFixtureFilesHelper.REPOSITORY_URI));
-        datasetMetadataService.store(MetadataFixtureFilesHelper.getDatasetMetadata(MetadataFixtureFilesHelper.DATASET_URI,
-                MetadataFixtureFilesHelper.CATALOG_URI));
     }
 
     @DirtiesContext
     @Test
     public void storeAndRetrieve() throws MetadataServiceException {
         // WHEN:
-        distributionMetadataService.store(createExampleMetadata());
+        datasetMetadataService.store(createExampleMetadata());
 
         // THEN:
-        assertNotNull(distributionMetadataService.retrieve(exampleIRI()));
+        assertNotNull(datasetMetadataService.retrieve(exampleIRI()));
     }
 
     @DirtiesContext
@@ -101,9 +95,9 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithNoParentURI() throws Exception {
         assertThrows(IllegalStateException.class, () -> {
             // WHEN:
-            DistributionMetadata metadata = createExampleMetadata();
+            DatasetMetadata metadata = createExampleMetadata();
             metadata.setParentURI(null);
-            distributionMetadataService.store(metadata);
+            datasetMetadataService.store(metadata);
 
             // THEN:
             // Expect exception
@@ -112,11 +106,11 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
 
     @DirtiesContext
     @Test
-    public void storeWithWrongParentURI() throws Exception {
+    public void storeDatasetMetaDataWrongParentUri() throws Exception {
         assertThrows(IllegalStateException.class, () -> {
             // WHEN:
-            distributionMetadataService.store(MetadataFixtureFilesHelper.getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                    MetadataFixtureFilesHelper.CATALOG_URI));
+            datasetMetadataService.store(MetadataFixtureFilesHelper.getDatasetMetadata(TEST_DATASET_URI,
+                    MetadataFixtureFilesHelper.REPOSITORY_URI));
 
             // THEN:
             // Expect exception
@@ -127,12 +121,12 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoID() throws MetadataServiceException {
         // WHEN:
-        DistributionMetadata metadata = createExampleMetadata();
+        DatasetMetadata metadata = createExampleMetadata();
         metadata.setIdentifier(null);
-        distributionMetadataService.store(metadata);
+        datasetMetadataService.store(metadata);
 
         // THEN:
-        DistributionMetadata mdata = distributionMetadataService.retrieve(exampleIRI());
+        DatasetMetadata mdata = datasetMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getIdentifier());
     }
 
@@ -140,49 +134,62 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoPublisher() throws MetadataServiceException {
         // WHEN:
-        DistributionMetadata metadata = createExampleMetadata();
+        DatasetMetadata metadata = createExampleMetadata();
         metadata.setPublisher(null);
-        distributionMetadataService.store(metadata);
+        datasetMetadataService.store(metadata);
 
         // THEN:
-        DistributionMetadata mdata = distributionMetadataService.retrieve(exampleIRI());
+        DatasetMetadata mdata = datasetMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getPublisher());
-    }
-
-    @DirtiesContext
-    @Test
-    public void storeWithNoLicense() throws MetadataServiceException {
-        // WHEN:
-        DistributionMetadata metadata = createExampleMetadata();
-        metadata.setLicense(null);
-        distributionMetadataService.store(metadata);
-
-        // THEN:
-        DistributionMetadata mdata = distributionMetadataService.retrieve(exampleIRI());
-        assertNotNull(mdata.getLicense());
     }
 
     @DirtiesContext
     @Test
     public void storeWithNoLanguage() throws MetadataServiceException {
         // WHEN:
-        DistributionMetadata metadata = createExampleMetadata();
+        DatasetMetadata metadata = createExampleMetadata();
         metadata.setLanguage(null);
-        distributionMetadataService.store(metadata);
+        datasetMetadataService.store(metadata);
 
         // THEN:
-        DistributionMetadata mdata = distributionMetadataService.retrieve(exampleIRI());
+        DatasetMetadata mdata = datasetMetadataService.retrieve(exampleIRI());
         assertNotNull(mdata.getLanguage());
     }
 
     @DirtiesContext
     @Test
-    public void specsLink() throws Exception {
+    public void storeWithNoLicense() throws MetadataServiceException {
         // WHEN:
-        distributionMetadataService.store(createExampleMetadata());
+        DatasetMetadata metadata = createExampleMetadata();
+        metadata.setLicense(null);
+        datasetMetadataService.store(metadata);
 
         // THEN:
-        DistributionMetadata metadata = distributionMetadataService.retrieve(exampleIRI());
+        DatasetMetadata mdata = datasetMetadataService.retrieve(exampleIRI());
+        assertNotNull(mdata.getLicense());
+    }
+
+    @DirtiesContext
+    @Test
+    public void retrieveNonExitingMetadata() throws Exception {
+        assertThrows(ResourceNotFoundException.class, () -> {
+            // WHEN:
+            String uri = MetadataFixtureFilesHelper.CATALOG_URI + "/dummpID676";
+            datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(uri));
+
+            // THEN:
+            // Expect exception
+        });
+    }
+
+    @DirtiesContext
+    @Test
+    public void existenceDatasetMetaDataSpecsLink() throws Exception {
+        // WHEN:
+        datasetMetadataService.store(createExampleMetadata());
+
+        // THEN:
+        DatasetMetadata metadata = datasetMetadataService.retrieve(exampleIRI());
         assertNotNull(metadata.getSpecification());
     }
 
@@ -196,44 +203,34 @@ public class DistributionMetadataServiceTest extends BaseIntegrationTest {
                 MetadataFixtureFilesHelper.getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI,
                         MetadataFixtureFilesHelper.REPOSITORY_URI);
         catalogMetadataService.store(catalogMetadata);
+
+        // WHEN:
         DatasetMetadata datasetMetadata =
                 MetadataFixtureFilesHelper.getDatasetMetadata(MetadataFixtureFilesHelper.DATASET_URI,
                         MetadataFixtureFilesHelper.CATALOG_URI);
         datasetMetadataService.store(datasetMetadata);
-
-        // WHEN:
-        DistributionMetadata distributionMetadata =
-                MetadataFixtureFilesHelper.getDistributionMetadata(MetadataFixtureFilesHelper.DISTRIBUTION_URI,
-                        MetadataFixtureFilesHelper.DATASET_URI);
-        distributionMetadataService.store(distributionMetadata);
 
         // THEN:
         FDPMetadata updatedFdpMetadata =
                 repositoryMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.REPOSITORY_URI));
         CatalogMetadata updatedCatalogMetadata =
                 catalogMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.CATALOG_URI));
-        DatasetMetadata updatedDataset =
+        DatasetMetadata storedDataset =
                 datasetMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.DATASET_URI));
-        DistributionMetadata storedDistribution =
-                distributionMetadataService.retrieve(VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.DISTRIBUTION_URI));
 
         ZonedDateTime fdpModified = ZonedDateTime.parse(updatedFdpMetadata.getModified().stringValue());
         ZonedDateTime catalogModified = ZonedDateTime.parse(updatedCatalogMetadata.getModified().stringValue());
-        ZonedDateTime datasetModified = ZonedDateTime.parse(updatedDataset.getModified().stringValue());
-        ZonedDateTime distributionModified = ZonedDateTime.parse(storedDistribution.getModified().stringValue());
+        ZonedDateTime datasetModified = ZonedDateTime.parse(storedDataset.getModified().stringValue());
 
-        assertFalse("Dataset modified is not after Distribution modified",
-                datasetModified.isBefore(distributionModified));
-        assertFalse("Catalog modified is not after Dataset modified", catalogModified.isBefore(distributionModified));
-        assertFalse("FDP modified is not after Dataset modified", fdpModified.isBefore(distributionModified));
+        assertFalse("Catalog modified is not after Dataset modified", catalogModified.isBefore(datasetModified));
+        assertFalse("FDP modified is not after Dataset modified", fdpModified.isBefore(datasetModified));
     }
 
-    private static DistributionMetadata createExampleMetadata() {
-        return MetadataFixtureFilesHelper.getDistributionMetadata(TEST_DISTRIBUTION_URI,
-                MetadataFixtureFilesHelper.DATASET_URI);
+    private static DatasetMetadata createExampleMetadata() {
+        return MetadataFixtureFilesHelper.getDatasetMetadata(TEST_DATASET_URI, MetadataFixtureFilesHelper.CATALOG_URI);
     }
 
     private static IRI exampleIRI() {
-        return VALUE_FACTORY.createIRI(TEST_DISTRIBUTION_URI);
+        return VALUE_FACTORY.createIRI(TEST_DATASET_URI);
     }
 }

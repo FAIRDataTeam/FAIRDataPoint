@@ -1,0 +1,6 @@
+prefix dcat: <http://www.w3.org/ns/dcat#>
+
+SELECT ?theme WHERE {
+  ?catalog dcat:dataset ?dataset .
+  ?dataset dcat:theme ?theme .
+}

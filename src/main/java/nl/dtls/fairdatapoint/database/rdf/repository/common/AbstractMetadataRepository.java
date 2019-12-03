@@ -25,11 +25,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository;
+package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
+import nl.dtl.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -43,24 +44,23 @@ import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
-@Service
-public class MetadataRepositoryImpl implements MetadataRepository {
+import static java.lang.String.format;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataRepositoryImpl.class);
+public abstract class AbstractMetadataRepository<T extends Metadata> implements MetadataRepository<T> {
 
-    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractMetadataRepository.class);
 
-    private static final String GETFDPURIQUERY = "getFdpIri.sparql";
+    protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
-    private Repository repository;
+    protected Repository repository;
 
     public List<Statement> retrieveResource(@Nonnull IRI uri) throws MetadataRepositoryException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
@@ -108,28 +108,24 @@ public class MetadataRepositoryImpl implements MetadataRepository {
         removeStatement(uri, null, null);
     }
 
-    public IRI getRepositoryIri(IRI uri) throws MetadataRepositoryException {
-        Preconditions.checkNotNull(uri, "URI must not be null.");
-        LOGGER.info("Get repository uri for the given uri {}", uri.toString());
-
+    public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType, Map<String, Value> bindings) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-
-            URL fileURL = MetadataRepositoryImpl.class.getResource(GETFDPURIQUERY);
-            String queryString = Resources.toString(fileURL, Charsets.UTF_8);
+            String queryString = loadSparqlQuery(queryName, repositoryType);
             TupleQuery query = conn.prepareTupleQuery(queryString);
-            query.setBinding("iri", uri);
-
-            IRI repositoryIri = null;
-            List<BindingSet> resultSet = QueryResults.asList(query.evaluate());
-            for (BindingSet solution : resultSet) {
-                repositoryIri = VALUEFACTORY.createIRI(solution.getValue("fdp").stringValue());
-            }
-            return repositoryIri;
+            bindings.forEach(query::setBinding);
+            return QueryResults.asList(query.evaluate());
         } catch (RepositoryException e) {
             throw new MetadataRepositoryException("Error retrieve repository uri :" + e.getMessage());
         } catch (IOException e) {
-            throw new MetadataRepositoryException("Error reading getFdpIri.sparql file :" + e.getMessage());
+            throw new MetadataRepositoryException(format("Error reading %s.sparql file (error: %s)", queryName,
+                    e.getMessage()));
         }
     }
+
+    protected String loadSparqlQuery(String queryName, Class repositoryType) throws IOException {
+        URL fileURL = repositoryType.getResource(queryName);
+        return Resources.toString(fileURL, Charsets.UTF_8);
+    }
+
 
 }

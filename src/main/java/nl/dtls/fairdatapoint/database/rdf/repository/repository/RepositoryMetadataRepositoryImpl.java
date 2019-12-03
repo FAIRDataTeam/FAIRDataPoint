@@ -20,39 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.user;
+package nl.dtls.fairdatapoint.database.rdf.repository.repository;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.google.common.base.Preconditions;
+import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
+import org.eclipse.rdf4j.model.IRI;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import java.util.Map;
 
 @Service
-public class CurrentUserService {
+public class RepositoryMetadataRepositoryImpl extends AbstractMetadataRepository<FDPMetadata> implements RepositoryMetadataRepository {
 
-    @Autowired
-    private UserRepository userRepository;
+    private static final String GET_FDP_IRI = "getFdpIri.sparql";
 
-    public Optional<String> getCurrentUserUuid() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            Object principal = auth.getPrincipal();
-            if (principal instanceof org.springframework.security.core.userdetails.User) {
-                return of(((org.springframework.security.core.userdetails.User) principal).getUsername());
-            }
-        }
-        return empty();
-    }
-
-    public Optional<User> getCurrentUser() {
-        return getCurrentUserUuid().flatMap(userRepository::findByUuid);
+    public IRI getRepositoryIri(IRI iri) throws MetadataRepositoryException {
+        Preconditions.checkNotNull(iri, "URI must not be null.");
+        LOGGER.info("Get repository uri for the given uri {}", iri.toString());
+        return runSparqlQuery(GET_FDP_IRI, RepositoryMetadataRepositoryImpl.class, Map.of("iri", iri))
+                .stream()
+                .map(s -> VALUEFACTORY.createIRI(s.getValue("fdp").stringValue()))
+                .findFirst()
+                .orElse(null);
     }
 
 }
