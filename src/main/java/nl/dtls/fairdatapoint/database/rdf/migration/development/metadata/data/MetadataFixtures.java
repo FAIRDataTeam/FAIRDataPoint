@@ -20,100 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration;
+package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
 import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.DistributionMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 @Service
-@DependsOn("mongobee")
 public class MetadataFixtures {
-
-    @Autowired
-    protected MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
-
-    @Autowired
-    protected MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
-
-    @Autowired
-    protected MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
-
-    @Autowired
-    protected MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
 
     @Autowired
     protected MetadataFactory metadataFactory;
 
-    @Autowired
-    protected UserFixtures userFixtures;
-
-    @Autowired
-    protected MembershipFixtures membershipFixtures;
-
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
-
     @Value("${instance.url}")
     private String instanceUrl;
-
-    @PostConstruct
-    public void init() {
-        try {
-            // 1. Auth user
-            String albertUuid = userFixtures.albert().getUuid();
-            Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
-            SecurityContextHolder.getContext().setAuthentication(auth);
-
-            // 2. Load metadata fixtures
-            importDefaultFixtures(instanceUrl);
-        } catch (MetadataServiceException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void importDefaultFixtures(String repositoryUrl) throws MetadataServiceException {
-        FDPMetadata repository = repositoryMetadata(repositoryUrl);
-        repositoryMetadataService.store(repository);
-
-        CatalogMetadata catalog1 = catalog1(repositoryUrl, repository);
-        catalogMetadataService.store(catalog1);
-
-        CatalogMetadata catalog2 = catalog2(repositoryUrl, repository);
-        catalogMetadataService.store(catalog2);
-
-        DatasetMetadata dataset1 = dataset1(repositoryUrl, catalog1);
-        datasetMetadataService.store(dataset1);
-
-        DatasetMetadata dataset2 = dataset2(repositoryUrl, catalog1);
-        datasetMetadataService.store(dataset2);
-
-        DistributionMetadata distribution1 = distribution1(repositoryUrl, dataset1);
-        distributionMetadataService.store(distribution1);
-
-        DistributionMetadata distribution2 = distribution2(repositoryUrl, dataset1);
-        distributionMetadataService.store(distribution2);
-    }
-
 
     public FDPMetadata repositoryMetadata(String repositoryUrl) {
         return metadataFactory.createFDPMetadata(

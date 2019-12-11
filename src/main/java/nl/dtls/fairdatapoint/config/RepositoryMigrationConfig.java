@@ -22,34 +22,26 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import com.github.mongobee.Mongobee;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.rdf.migration.database.RdfMigrationRepository;
+import nl.dtls.rdf.migration.runner.RdfProductionMigrationRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
-@EnableMongoAuditing
-@EnableMongoRepositories(basePackages = {"nl.dtls.fairdatapoint", "nl.dtls.rdf.migration", "org.springframework" +
-        ".security.acls"})
-public class MongoConfig {
-
-    @Value("${spring.data.mongodb.uri}")
-    private String mongoUri;
-
-    @Autowired
-    private Environment environment;
+public class RepositoryMigrationConfig {
 
     @Bean
-    public Mongobee mongobee() throws Exception {
-        Mongobee runner = new Mongobee(mongoUri);
-        runner.setChangeLogsScanPackage("nl.dtls.fairdatapoint");
-        runner.setSpringEnvironment(environment);
-        runner.execute();
-        return runner;
+    @DependsOn("mongobee")
+    @Profile(Profiles.PRODUCTION)
+    public RdfProductionMigrationRunner rdfProductionMigrationRunner(RdfMigrationRepository rdfMigrationRepository,
+                                                                     ApplicationContext appContext) {
+        RdfProductionMigrationRunner mr = new RdfProductionMigrationRunner(rdfMigrationRepository, appContext);
+        mr.run();
+        return mr;
     }
 
 }

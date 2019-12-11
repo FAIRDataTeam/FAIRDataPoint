@@ -48,6 +48,7 @@
 
         <!-- Project related -->
         <fairmetadata.version>0.1-beta</fairmetadata.version>
+        <spring.rdf.migration.version>1.0.0</spring.rdf.migration.version>
 
         <!-- Spring -->
         <spring.boot.handlebars.version>0.3.0</spring.boot.handlebars.version>
@@ -85,6 +86,11 @@
             <groupId>nl.dtl</groupId>
             <artifactId>fairmetadata4j</artifactId>
             <version>${fairmetadata.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.dtls</groupId>
+            <artifactId>spring-rdf-migration</artifactId>
+            <version>${spring.rdf.migration.version}</version>
         </dependency>
 
         <!-- ////////////////// -->

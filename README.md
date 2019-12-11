@@ -91,7 +91,7 @@ fdp:
 
 **Stack:**
 
- - **Java** (recommended 1.8)
+ - **Java** (recommended JDK 11)
  - **Maven** (recommended 3.2.5 or higher)
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
 
@@ -104,7 +104,15 @@ fdp:
     $ cd fairmetadata4j
     $ mvn install
     ```
-2. Install `spring-security-acl-mongodb`
+2. Install `spring-rdf-migration`
+
+    ```
+    $ git clone https://github.com/FAIRDataTeam/spring-rdf-migration.git
+    $ cd spring-rdf-migration
+    $ mvn install
+    ```
+
+3. Install `spring-security-acl-mongodb`
 
     ```
     $ git clone https://github.com/FAIRDataTeam/spring-security-acl-mongodb

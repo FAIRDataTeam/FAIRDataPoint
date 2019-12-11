@@ -23,7 +23,8 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.acceptance.metadata.common.MetadataControllerTest;
-import nl.dtls.fairdatapoint.database.rdf.migration.MetadataFixtures;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.MetadataMigration;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.MetadataFixtures;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.apache.http.HttpHeaders;
@@ -54,6 +55,9 @@ public class CatalogControllerTest extends MetadataControllerTest {
 
     @Autowired
     private AclCache aclCache;
+
+    @Autowired
+    private MetadataMigration metadataMigration;
 
     @DirtiesContext
     @Test
@@ -188,7 +192,7 @@ public class CatalogControllerTest extends MetadataControllerTest {
         // We need to clear all permissions from default FDP fixtures
         aclRepository.deleteAll();
         aclCache.clearCache();
-        metadataFixtures.importDefaultFixtures("https://lorentz.fair-dtls.surf-hosted.nl/fdp");
+        metadataMigration.importDefaultFixtures("https://lorentz.fair-dtls.surf-hosted.nl/fdp");
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();

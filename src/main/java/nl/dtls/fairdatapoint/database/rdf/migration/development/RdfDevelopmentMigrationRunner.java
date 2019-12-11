@@ -20,36 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package nl.dtls.fairdatapoint.database.rdf.migration.development;
 
-import com.github.mongobee.Mongobee;
+import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.MetadataMigration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
-@Configuration
-@EnableMongoAuditing
-@EnableMongoRepositories(basePackages = {"nl.dtls.fairdatapoint", "nl.dtls.rdf.migration", "org.springframework" +
-        ".security.acls"})
-public class MongoConfig {
+import javax.annotation.PostConstruct;
 
-    @Value("${spring.data.mongodb.uri}")
-    private String mongoUri;
+@Service
+@DependsOn("mongobee")
+@Profile(Profiles.NON_PRODUCTION)
+public class RdfDevelopmentMigrationRunner {
 
     @Autowired
-    private Environment environment;
+    private MetadataMigration metadataMigration;
 
-    @Bean
-    public Mongobee mongobee() throws Exception {
-        Mongobee runner = new Mongobee(mongoUri);
-        runner.setChangeLogsScanPackage("nl.dtls.fairdatapoint");
-        runner.setSpringEnvironment(environment);
-        runner.execute();
-        return runner;
+    @PostConstruct
+    public void run() {
+        metadataMigration.runMigration();
     }
 
 }
