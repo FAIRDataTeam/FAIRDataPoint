@@ -27,15 +27,20 @@ jobs:
         - cd  ./fairmetadata4j
         - mvn --quiet --fail-fast install
         - cd ..
-        # 2. Install Spring Security ACL Mongo
+        # 2. Install Spring Rdf Migration
+        - git clone https://github.com/FAIRDataTeam/spring-rdf-migration.git
+        - cd spring-rdf-migration
+        - mvn --quiet --fail-fast -DskipTests install
+        - cd ..
+        # 3. Install Spring Security ACL Mongo
         - git clone https://github.com/FAIRDataTeam/spring-security-acl-mongodb
         - cd spring-security-acl-mongodb
         - mvn --quiet --fail-fast -DskipTests install
         - cd ..
-        # 3. Init and check testing Mongo Database
+        # 4. Init and check testing Mongo Database
         - mongo fdp-test --eval 'db.collection.find()'
       script:
-        # 4. Build FAIR Data Point
+        # 5. Build FAIR Data Point
         - mvn org.jacoco:jacoco-maven-plugin:prepare-agent test
         - mvn --quiet --fail-fast -DskipTests package
         - docker pull $IMAGE_TAG_DEVELOP

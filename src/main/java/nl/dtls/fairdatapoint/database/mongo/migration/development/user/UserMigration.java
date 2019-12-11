@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.user;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.common.Migration;
+import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
