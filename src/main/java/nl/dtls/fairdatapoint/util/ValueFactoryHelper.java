@@ -20,30 +20,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+package nl.dtls.fairdatapoint.util;
+
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+
+import java.time.LocalDateTime;
+
+/**
+ * Shortcuts to simplify code that needs to create IRIs, Literals, Statements, etc.
  */
-package nl.dtls.fairdatapoint.config.test;
+public class ValueFactoryHelper {
 
-import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import org.eclipse.rdf4j.repository.Repository;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
+    private static final ValueFactory VF = SimpleValueFactory.getInstance();
 
-import static org.junit.Assert.assertNotNull;
-
-@TestPropertySource(properties = {"repository.type=5"})
-public class BlazegraphStoreConfigTest extends BaseIntegrationTest {
-
-    @Autowired
-    private Repository repository;
-
-    @Test
-    public void checkBeans() {
-        assertNotNull(repository);
+    public static IRI i(String iri) {
+        return VF.createIRI(iri);
     }
 
+    public static Literal l(String literal) {
+        return VF.createLiteral(literal);
+    }
+
+    public static Literal l(float literal) {
+        return VF.createLiteral(literal);
+    }
+
+    public static Literal l(LocalDateTime literal) {
+        return VF.createLiteral(literal.toString(), XMLSchema.DATETIME);
+    }
+
+    public static Statement s(Resource subject, IRI predicate, Value object, Resource context) {
+        return VF.createStatement(subject, predicate, object, context);
+    }
 }

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -50,6 +51,7 @@ public class List_POST extends WebIntegrationTest {
         AuthDTO reqDto = new AuthDTO("albert.einstein@example.com", "password");
         RequestEntity<AuthDTO> request = RequestEntity
                 .post(URI.create("/tokens"))
+                .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
         ParameterizedTypeReference<TokenDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -69,6 +71,7 @@ public class List_POST extends WebIntegrationTest {
         AuthDTO reqDto = new AuthDTO("nonExistingUser@example.com", "badPassword");
         RequestEntity<AuthDTO> request = RequestEntity
                 .post(URI.create("/tokens"))
+                .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };

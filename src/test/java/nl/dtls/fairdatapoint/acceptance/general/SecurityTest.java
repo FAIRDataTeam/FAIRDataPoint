@@ -22,15 +22,20 @@
  */
 package nl.dtls.fairdatapoint.acceptance.general;
 
+import nl.dtl.fairmetadata4j.io.MetadataException;
+import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
+import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,11 +44,14 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class SecurityTest extends WebIntegrationTest {
 
+    @Autowired
+    private TestMetadataFixtures testMetadataFixtures;
+
     @Test
-    public void postRequestsAreSecured() {
-        // GIVEN:
-        String reqDto =
-                MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.DISTRIBUTION_METADATA_FILE);
+    public void postRequestsAreSecured() throws MetadataException, DatatypeConfigurationException {
+        // GIVEN: Prepare data
+        String reqDto = MetadataUtils.getString(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
+        // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .post(URI.create("/distribution"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
@@ -59,10 +67,10 @@ public class SecurityTest extends WebIntegrationTest {
     }
 
     @Test
-    public void patchRequestsAreSecured() {
-        // GIVEN:
-        String reqDto =
-                MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.REPOSITORY_METADATA_FILE);
+    public void patchRequestsAreSecured() throws MetadataException, DatatypeConfigurationException {
+        // GIVEN: Prepare data
+        String reqDto = MetadataUtils.getString(testMetadataFixtures.repositoryMetadata(), RDFFormat.TURTLE);
+        // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .patch(URI.create("/"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")

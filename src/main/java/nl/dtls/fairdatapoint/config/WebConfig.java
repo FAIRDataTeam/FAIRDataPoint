@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
+import nl.dtls.fairdatapoint.api.converter.ErrorConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,9 +47,13 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private List<AbstractMetadataMessageConverter<?>> metadataConverters;
 
+    @Autowired
+    private List<ErrorConverter> errorConverters;
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(metadataConverters);
+        converters.addAll(errorConverters);
         converters.add(new MappingJackson2HttpMessageConverter());
         converters.add(new StringHttpMessageConverter());
     }

@@ -36,7 +36,7 @@ import java.net.URI;
 import java.util.List;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -48,7 +48,7 @@ public class Detail_PUT extends WebIntegrationTest {
         return URI.create(format("/dataset/%s", id));
     }
 
-    private DatasetMetadataChangeDTO redDto() {
+    private DatasetMetadataChangeDTO reqDto() {
         return new DatasetMetadataChangeDTO(
                 "EDITED: Some title",
                 "EDITED: Some description",
@@ -77,7 +77,7 @@ public class Detail_PUT extends WebIntegrationTest {
         RequestEntity<DatasetMetadataChangeDTO> request = RequestEntity
                 .put(url("dataset-1"))
                 .header(HttpHeaders.AUTHORIZATION, token)
-                .body(redDto());
+                .body(reqDto());
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -95,7 +95,7 @@ public class Detail_PUT extends WebIntegrationTest {
         RequestEntity<DatasetMetadataChangeDTO> request = RequestEntity
                 .put(url("dataset-2"))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
-                .body(redDto());
+                .body(reqDto());
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 

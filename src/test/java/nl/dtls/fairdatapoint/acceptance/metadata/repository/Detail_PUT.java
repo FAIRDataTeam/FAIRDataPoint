@@ -45,7 +45,7 @@ public class Detail_PUT extends WebIntegrationTest {
         return URI.create("/");
     }
 
-    private RepositoryMetadataChangeDTO redDto() {
+    private RepositoryMetadataChangeDTO reqDto() {
         return new RepositoryMetadataChangeDTO(
                 "EDITED: Some title",
                 "EDITED: Some description",
@@ -62,7 +62,7 @@ public class Detail_PUT extends WebIntegrationTest {
         RequestEntity<RepositoryMetadataChangeDTO> request = RequestEntity
                 .put(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
-                .body(redDto());
+                .body(reqDto());
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -80,7 +80,7 @@ public class Detail_PUT extends WebIntegrationTest {
         RequestEntity<RepositoryMetadataChangeDTO> request = RequestEntity
                 .put(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .body(redDto());
+                .body(reqDto());
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 

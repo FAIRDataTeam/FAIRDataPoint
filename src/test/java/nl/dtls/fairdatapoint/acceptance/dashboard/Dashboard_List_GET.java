@@ -40,7 +40,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.acceptance.Common.createNoUserForbiddenTestGet;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

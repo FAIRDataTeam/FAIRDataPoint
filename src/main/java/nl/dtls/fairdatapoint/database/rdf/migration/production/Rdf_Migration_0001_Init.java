@@ -37,11 +37,11 @@ import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.eclipse.rdf4j.model.vocabulary.*;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -58,6 +58,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 
 @RdfMigrationAnnotation(
         number = 1,
@@ -66,8 +67,6 @@ import static java.lang.String.format;
 @Slf4j
 @Service
 public class Rdf_Migration_0001_Init implements RdfProductionMigration {
-
-    private static final ValueFactory VF = SimpleValueFactory.getInstance();
 
     @Autowired
     protected Repository repository;
@@ -130,7 +129,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             IRI pidIri = i(instanceUrl + "#" + i(instanceUrl).getLocalName());
             add(s, FDP.METADATAIDENTIFIER, pidIri);
             add(s, pidIri, RDF.TYPE, DATACITE.RESOURCEIDENTIFIER);
-            add(s, pidIri, DCTERMS.IDENTIFIER, VF.createLiteral(pidSystem.getId(pidIri), XMLSchema.STRING));
+            add(s, pidIri, DCTERMS.IDENTIFIER, l(pidSystem.getId(pidIri)));
             // Access Rights
             IRI arIri = i(instanceUrl + "#accessRights");
             add(s, DCTERMS.ACCESS_RIGHTS, arIri);
@@ -206,27 +205,11 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     }
 
     private void add(List<Statement> statements, IRI predicate, org.eclipse.rdf4j.model.Value object) {
-        statements.add(VF.createStatement(i(instanceUrl), predicate, object, i(instanceUrl)));
+        statements.add(s(i(instanceUrl), predicate, object, i(instanceUrl)));
     }
 
     private void add(List<Statement> statements, IRI subject, IRI predicate, org.eclipse.rdf4j.model.Value object) {
-        statements.add(VF.createStatement(subject, predicate, object, i(instanceUrl)));
-    }
-
-    private IRI i(String iri) {
-        return VF.createIRI(iri);
-    }
-
-    private Literal l(String literal) {
-        return VF.createLiteral(literal);
-    }
-
-    private Literal l(float literal) {
-        return VF.createLiteral(literal);
-    }
-
-    private Literal l(LocalDateTime literal) {
-        return VF.createLiteral(literal.toString(), XMLSchema.DATETIME);
+        statements.add(s(subject, predicate, object, i(instanceUrl)));
     }
 
 }

@@ -32,16 +32,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createNoUserForbiddenTestPost;
-import static nl.dtls.fairdatapoint.acceptance.Common.createUserForbiddenTestPost;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPost;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestPost;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -68,6 +65,7 @@ public class List_POST extends WebIntegrationTest {
         RequestEntity<UserCreateDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
         ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -90,6 +88,7 @@ public class List_POST extends WebIntegrationTest {
         RequestEntity<UserCreateDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };

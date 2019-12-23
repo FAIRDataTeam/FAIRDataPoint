@@ -53,6 +53,7 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+// TODO Get rid of DirtiesContext
 @DirtiesContext
 public class MetadataRepositoryTest extends WebIntegrationTest {
 

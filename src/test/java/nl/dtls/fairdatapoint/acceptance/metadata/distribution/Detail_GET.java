@@ -35,12 +35,12 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /distribution/:distributionId")
+@DisplayName("POST /distribution/:distributionId (RDF)")
 public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String id) {

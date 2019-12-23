@@ -22,11 +22,9 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtl.fairmetadata4j.model.*;
 
+import java.util.Date;
 import java.util.List;
 
 public interface MetadataFactory {
@@ -41,4 +39,9 @@ public interface MetadataFactory {
     DistributionMetadata createDistributionMetadata(String title, String description, String identifier,
                                                     String downloadUrl, String accessUrl, String mediaType,
                                                     String fdpUrl, DatasetMetadata dataset);
+
+    DataRecordMetadata createDatarecordMetadata(String title, String description, String identifier,
+                                                String rmlURI, String rmlInputSource,
+                                                Date dataRecordIssued, Date dataRecordModified, String repositoryUrl,
+                                                DatasetMetadata dataset);
 }

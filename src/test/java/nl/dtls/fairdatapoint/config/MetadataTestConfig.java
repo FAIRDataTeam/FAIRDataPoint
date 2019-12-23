@@ -36,30 +36,24 @@ import org.springframework.context.annotation.DependsOn;
 @TestConfiguration
 public class MetadataTestConfig {
 
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+    private final ValueFactory VF = SimpleValueFactory.getInstance();
 
     @Bean(name = "publisher")
     public Agent publisher() {
-
         Agent publisher = new Agent();
-        publisher.setUri(valueFactory.createIRI("https://www.dtls.nl"));
-        publisher.setName(valueFactory.createLiteral("DTLS"));
+        publisher.setUri(VF.createIRI("https://www.dtls.nl"));
+        publisher.setName(VF.createLiteral("DTLS"));
         return publisher;
     }
 
     @Bean(name = "language")
     public IRI language() {
-
-        IRI language = valueFactory.createIRI("http://id.loc.gov/vocabulary/iso639-1/en");
-        return language;
+        return VF.createIRI("http://id.loc.gov/vocabulary/iso639-1/en");
     }
 
     @Bean(name = "license")
     public IRI license() {
-
-        IRI license = valueFactory
-                .createIRI("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
-        return license;
+        return VF.createIRI("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
     }
 
     @Bean
@@ -75,7 +69,7 @@ public class MetadataTestConfig {
 
     @Bean
     public IRI purlBaseUrl() {
-        return valueFactory.createIRI("http://purl.org/biosemantics-lumc/fdp");
+        return VF.createIRI("http://purl.org/biosemantics-lumc/fdp");
     }
 
 }

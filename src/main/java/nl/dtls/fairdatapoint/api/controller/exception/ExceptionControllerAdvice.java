@@ -38,13 +38,12 @@ import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import javax.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice {
@@ -54,7 +53,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({MetadataException.class, ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorDTO handleBadRequest(Exception e, HttpServletResponse response) {
+    public ErrorDTO handleBadRequest(Exception e) {
         LOGGER.error(e.getMessage());
         return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
     }
@@ -62,15 +61,15 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({BadCredentialsException.class, UnauthorizedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public ErrorDTO handleUnauthorized(Exception e, HttpServletResponse response) {
+    public ErrorDTO handleUnauthorized(Exception e) {
         LOGGER.error(e.getMessage());
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
-    @ExceptionHandler({ForbiddenException.class})
+    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public ErrorDTO handleForbidden(Exception e, HttpServletResponse response) {
+    public ErrorDTO handleForbidden(Exception e) {
         LOGGER.error(e.getMessage());
         return new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage());
     }
@@ -78,7 +77,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorDTO handleResourceNotFound(ResourceNotFoundException e, HttpServletResponse response) {
+    public ErrorDTO handleResourceNotFound(ResourceNotFoundException e) {
         LOGGER.error(e.getMessage());
         return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -86,7 +85,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({MetadataServiceException.class, MetadataParserException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public ErrorDTO handleInternalServerError(Exception e, HttpServletResponse response) {
+    public ErrorDTO handleInternalServerError(Exception e) {
         LOGGER.error(e.getMessage());
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }

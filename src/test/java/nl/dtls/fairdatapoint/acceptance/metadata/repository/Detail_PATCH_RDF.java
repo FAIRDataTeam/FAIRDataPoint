@@ -20,11 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
+package nl.dtls.fairdatapoint.acceptance.metadata.repository;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,18 +41,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /dataset")
-public class Detail_POST_RDF extends WebIntegrationTest {
+@DisplayName("PUT /:repositoryId (RDF)")
+public class Detail_PATCH_RDF extends WebIntegrationTest {
 
     @Autowired
     private MetadataFixtureLoader metadataFixtureLoader;
 
     private URI url() {
-        return URI.create("/dataset");
+        return URI.create("/");
     }
 
     private String reqDto() {
-        return MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.DATASET_METADATA_FILE);
+        return "<> <http://purl.org/dc/terms/title> \"Test update\" .";
     }
 
     @BeforeEach
@@ -62,23 +61,23 @@ public class Detail_POST_RDF extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 201")
-    public void res201() {
+    @DisplayName("HTTP 204")
+    public void res204() {
         // GIVEN:
         RequestEntity<String> request = RequestEntity
-                .post(url())
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .patch(url())
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .header(HttpHeaders.ACCEPT, "text/turtle")
                 .body(reqDto());
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
+        ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
     }
 
     @Test
@@ -86,15 +85,16 @@ public class Detail_POST_RDF extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<String> request = RequestEntity
-                .post(url())
-                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .patch(url())
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
                 .body(reqDto());
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
+        ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));

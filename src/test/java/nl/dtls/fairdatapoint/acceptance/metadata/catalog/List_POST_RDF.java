@@ -20,21 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
+package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
+import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureLoader;
-import org.junit.jupiter.api.BeforeEach;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.MetadataMigration;
+import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.acls.dao.AclRepository;
+import org.springframework.security.acls.model.AclCache;
 
 import java.net.URI;
 
@@ -42,35 +47,53 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /distribution")
-public class Detail_POST_RDF extends WebIntegrationTest {
+@DisplayName("POST /catalog (RDF)")
+public class List_POST_RDF extends WebIntegrationTest {
+
+    private enum TestType {
+        STANDARD, WITHOUT_PARENT
+    }
 
     @Autowired
-    private MetadataFixtureLoader metadataFixtureLoader;
+    private TestMetadataFixtures testMetadataFixtures;
+
+    @Autowired
+    private AclRepository aclRepository;
+
+    @Autowired
+    private AclCache aclCache;
+
+    @Autowired
+    private MetadataMigration metadataMigration;
 
     private URI url() {
-        return URI.create("/distribution");
+        return URI.create("/catalog");
     }
 
-    private String reqDto() {
-        return MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.DISTRIBUTION_METADATA_FILE);
+    private String reqDto(TestType type) throws Exception {
+        switch (type) {
+            case STANDARD:
+                CatalogMetadata catalog3 = testMetadataFixtures.catalog3();
+                return MetadataUtils.getString(catalog3, RDFFormat.TURTLE);
+            case WITHOUT_PARENT:
+                CatalogMetadata catalog3WithoutParent = testMetadataFixtures.catalog3();
+                catalog3WithoutParent.setParentURI(null);
+                return MetadataUtils.getString(catalog3WithoutParent, RDFFormat.TURTLE);
+        }
+        return "";
     }
 
-    @BeforeEach
-    public void setupExampleMetadata() throws MetadataServiceException {
-        metadataFixtureLoader.storeExampleMetadata();
-    }
-
-    @Test
+    @ParameterizedTest
+    @EnumSource(TestType.class)
     @DisplayName("HTTP 201")
-    public void res201() {
+    public void res201(TestType testType) throws Exception {
         // GIVEN:
         RequestEntity<String> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .header(HttpHeaders.ACCEPT, "text/turtle")
-                .body(reqDto());
+                .body(reqDto(testType));
         ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -82,14 +105,25 @@ public class Detail_POST_RDF extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 403")
-    public void res403() {
-        // GIVEN:
+    @DisplayName("HTTP 201 (with rerouting)")
+    public void res201_withRerouting() throws Exception {
+        // GIVEN: We need to clear all permissions from default FDP fixtures
+        aclRepository.deleteAll();
+        aclCache.clearCache();
+        // AND: Prepare fixtures
+        metadataMigration.importDefaultFixtures(testMetadataFixtures.alternativeInstanceUrl);
+        CatalogMetadata catalog3 = testMetadataFixtures.alternative_catalog3();
+        String reqDto = MetadataUtils.getString(catalog3, RDFFormat.TURTLE);
+        // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .post(url())
-                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
-                .body(reqDto());
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .header("x-forwarded-host", "lorentz.fair-dtls.surf-hosted.nl")
+                .header("x-forwarded-proto", "https")
+                .header("x-forwarded-port", "443")
+                .body(reqDto);
         ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -97,7 +131,7 @@ public class Detail_POST_RDF extends WebIntegrationTest {
         ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
     }
 
 }

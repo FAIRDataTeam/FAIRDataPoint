@@ -26,6 +26,7 @@ import nl.dtl.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
 
 import javax.annotation.Nonnull;
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.List;
 
 public interface MetadataService<T extends Metadata, S> {
@@ -38,6 +39,8 @@ public interface MetadataService<T extends Metadata, S> {
     void update(IRI uri, T metadataUpdate) throws MetadataServiceException;
 
     void update(IRI uri, Class<T> entityType, S reqChangeDto) throws MetadataServiceException;
+
+    void enhance(T metadata) throws DatatypeConfigurationException;
 
     MetadataMapper<T, S> metadataMapper();
 }

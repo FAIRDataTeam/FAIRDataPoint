@@ -32,15 +32,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.Common.createUserNotFoundTestPut;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -79,6 +76,7 @@ public class Detail_PUT extends WebIntegrationTest {
         RequestEntity<MemberCreateDTO> request = RequestEntity
                 .put(url("dataset-1", userFixtures.nikola().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, token)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
         ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -97,6 +95,7 @@ public class Detail_PUT extends WebIntegrationTest {
         RequestEntity<MemberCreateDTO> request = RequestEntity
                 .put(url("dataset-1", "nonExisting"))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -116,6 +115,7 @@ public class Detail_PUT extends WebIntegrationTest {
         RequestEntity<MemberCreateDTO> request = RequestEntity
                 .put(url("dataset-2", userFixtures.nikola().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };
