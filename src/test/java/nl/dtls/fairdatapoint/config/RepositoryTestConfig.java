@@ -34,14 +34,12 @@ import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 
 @TestConfiguration
 public class RepositoryTestConfig {
 
     @Bean(initMethod = "initialize", destroyMethod = "shutDown")
-    public Repository repository(final Environment env) throws RepositoryException, RDFParseException {
-        // For tests we use only in memory
+    public Repository repository() throws RepositoryException, RDFParseException {
         return new SailRepository(new MemoryStore());
     }
 

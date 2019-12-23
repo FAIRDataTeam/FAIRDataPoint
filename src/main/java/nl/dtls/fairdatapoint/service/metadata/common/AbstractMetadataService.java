@@ -38,7 +38,6 @@ import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
-import nl.dtls.fairdatapoint.service.search.FairSearchClient;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.eclipse.rdf4j.model.IRI;
@@ -104,9 +103,6 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
     private FairMetadataMetricsService fmMetricsService;
 
     @Autowired
-    private FairSearchClient fseService;
-
-    @Autowired
     protected MetadataUpdateService metadataUpdateService;
 
     @Autowired
@@ -170,15 +166,12 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
                     metadata.getParentURI());
 
             checkPreconditions(metadata);
-            addDefaultValues(metadata);
-            setSpecification(metadata);
-            setTimestamps(metadata);
+            enhance(metadata);
 
             metadataRepository.storeStatements(MetadataUtils.getStatements(metadata), metadata.getUri());
 
             updateParent(metadata);
             addPermissions(metadata);
-            fseService.submitFdpUri(VALUE_FACTORY.createIRI(instanceUrl));
 
             getLogger().info("Stored {} - {}", metadata.getTitle(), metadata.getUri());
         } catch (DatatypeConfigurationException | MetadataException | MetadataRepositoryException e) {
@@ -206,6 +199,13 @@ public abstract class AbstractMetadataService<T extends Metadata, S> implements 
         T metadata = retrieve(uri);
         metadata = metadataMapper().fromChangeDTO(metadata, reqChangeDto);
         update(uri, metadata);
+    }
+
+    @Override
+    public void enhance(T metadata) throws DatatypeConfigurationException {
+        addDefaultValues(metadata);
+        setSpecification(metadata);
+        setTimestamps(metadata);
     }
 
     private List<Statement> retrieveStatements(@Nonnull IRI uri)

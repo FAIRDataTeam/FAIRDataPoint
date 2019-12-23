@@ -36,6 +36,26 @@ import org.springframework.context.annotation.Configuration;
 public class ConverterConfig {
 
     @Bean
+    public ErrorConverter turtleError() {
+        return new ErrorConverter(RDFFormat.TURTLE);
+    }
+
+    @Bean
+    public ErrorConverter jsonldError() {
+        return new ErrorConverter(RDFFormat.JSONLD);
+    }
+
+    @Bean
+    public ErrorConverter n3Error() {
+        return new ErrorConverter(RDFFormat.N3);
+    }
+
+    @Bean
+    public ErrorConverter rdfxmlError() {
+        return new ErrorConverter(RDFFormat.RDFXML);
+    }
+
+    @Bean
     public RepositoryMetadataConverter turtleRepositoryMetadata() {
         return new RepositoryMetadataConverter(RDFFormat.TURTLE);
     }

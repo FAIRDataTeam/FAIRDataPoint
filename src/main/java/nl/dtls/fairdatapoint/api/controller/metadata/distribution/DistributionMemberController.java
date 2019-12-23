@@ -31,7 +31,6 @@ import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +47,6 @@ public class DistributionMemberController extends MetadataController {
 
     @Autowired
     private MemberService memberService;
-
-    @Value("${instance.url}")
-    private String instanceUrl;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<MemberDTO>> getMembers(HttpServletRequest request) throws

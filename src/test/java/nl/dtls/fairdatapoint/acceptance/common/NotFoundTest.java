@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance;
+package nl.dtls.fairdatapoint.acceptance.common;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -37,68 +37,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class Common {
-
-    public static <T> void createForbiddenTest(TestRestTemplate client, RequestEntity<T> request) {
-        // GIVEN:
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-    }
-
-    public static <T> void createNoUserForbiddenTestGet(TestRestTemplate client, URI url) {
-        createForbiddenTest(
-                client,
-                RequestEntity.get(url).build()
-        );
-    }
-
-    public static <T> void createNoUserForbiddenTestPost(TestRestTemplate client, URI url, T object) {
-        createForbiddenTest(
-                client,
-                RequestEntity.post(url).body(object)
-        );
-    }
-
-    public static <T> void createNoUserForbiddenTestPut(TestRestTemplate client, URI url, T object) {
-        createForbiddenTest(
-                client,
-                RequestEntity.put(url).body(object)
-        );
-    }
-
-    public static <T> void createNoUserForbiddenTestDelete(TestRestTemplate client, URI url) {
-        createForbiddenTest(
-                client,
-                RequestEntity.delete(url).build()
-        );
-    }
-
-    public static <T> void createUserForbiddenTestPost(TestRestTemplate client, URI url, T object) {
-        createForbiddenTest(
-                client,
-                RequestEntity.post(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
-        );
-    }
-
-    public static <T> void createUserForbiddenTestPut(TestRestTemplate client, URI url, T object) {
-        createForbiddenTest(
-                client,
-                RequestEntity.put(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).body(object)
-        );
-    }
-
-    public static <T> void createUserForbiddenTestDelete(TestRestTemplate client, URI url) {
-        createForbiddenTest(
-                client,
-                RequestEntity.delete(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
-        );
-    }
+public class NotFoundTest {
 
     public static <T> void createNotFoundTest(TestRestTemplate client, RequestEntity<T> request) {
         // GIVEN:
@@ -116,6 +55,17 @@ public class Common {
         createNotFoundTest(
                 client,
                 RequestEntity.get(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
+        );
+    }
+
+    public static <T> void createUserNotFoundTestGetRDF(TestRestTemplate client, URI url) {
+        createNotFoundTest(
+                client,
+                RequestEntity
+                        .get(url)
+                        .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                        .header(HttpHeaders.ACCEPT, "text/turtle")
+                        .build()
         );
     }
 

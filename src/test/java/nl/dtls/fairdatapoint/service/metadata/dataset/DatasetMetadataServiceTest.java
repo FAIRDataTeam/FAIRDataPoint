@@ -20,12 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.catalog;
+package nl.dtls.fairdatapoint.service.metadata.dataset;
 
 import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtl.fairmetadata4j.model.DatasetMetadata;
 import nl.dtl.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
@@ -42,7 +44,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CatalogMetadataServiceTest extends BaseIntegrationTest {
+public class DatasetMetadataServiceTest extends BaseIntegrationTest {
 
     @Autowired
     private TestMetadataFixtures testMetadataFixtures;
@@ -53,15 +55,18 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     @Autowired
     private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
 
+    @Autowired
+    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
+
     @Test
     public void retrieveNonExitingMetadata() {
         assertThrows(ResourceNotFoundException.class, () -> {
             // GIVEN:
             IRI repositoryUri = testMetadataFixtures.repositoryMetadata().getUri();
-            IRI catalogUri = i(format("%s/non-existing", repositoryUri));
+            IRI datasetUri = i(format("%s/non-existing", repositoryUri));
 
             // WHEN:
-            catalogMetadataService.retrieve(catalogUri);
+            datasetMetadataService.retrieve(datasetUri);
 
             // THEN:
             // Expect exception
@@ -69,39 +74,55 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void specsLink() throws Exception {
+    public void existenceDatasetMetaDataSpecsLink() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalogMetadataService.store(catalog);
+        DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
 
         // WHEN:
-        CatalogMetadata metadata = catalogMetadataService.retrieve(catalog.getUri());
+        datasetMetadataService.store(dataset);
 
         // THEN:
+        DatasetMetadata metadata = datasetMetadataService.retrieve(dataset.getUri());
         assertNotNull(metadata.getSpecification());
     }
 
     @Test
     public void storeAndRetrieve() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
+        DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        datasetMetadataService.store(dataset);
 
         // THEN:
-        assertNotNull(catalogMetadataService.retrieve(catalog.getUri()));
+        assertNotNull(datasetMetadataService.retrieve(dataset.getUri()));
     }
 
     @Test
-    public void storeWithNoParentUri() {
+    public void storeWithNoParentURI() {
         assertThrows(IllegalStateException.class, () -> {
             // GIVEN:
-            CatalogMetadata catalog = testMetadataFixtures.catalog3();
-            catalog.setParentURI(null);
+            DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
+            dataset.setParentURI(null);
 
             // WHEN:
-            catalogMetadataService.store(catalog);
+            datasetMetadataService.store(dataset);
+
+            // THEN:
+            // Expect exception
+        });
+    }
+
+    @Test
+    public void storeDatasetMetaDataWrongParentUri() {
+        assertThrows(IllegalStateException.class, () -> {
+            // GIVEN:
+            FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
+            DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
+            dataset.setParentURI(repository.getUri());
+
+            // WHEN:
+            datasetMetadataService.store(dataset);
 
             // THEN:
             // Expect exception
@@ -111,56 +132,56 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoID() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setIdentifier(null);
+        DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
+        dataset.setIdentifier(null);
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        datasetMetadataService.store(dataset);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
+        DatasetMetadata result = datasetMetadataService.retrieve(dataset.getUri());
         assertNotNull(result.getIdentifier());
     }
 
     @Test
     public void storeWithNoPublisher() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setPublisher(null);
+        DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
+        dataset.setPublisher(null);
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        datasetMetadataService.store(dataset);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
+        DatasetMetadata result = datasetMetadataService.retrieve(dataset.getUri());
         assertNotNull(result.getPublisher());
     }
 
     @Test
     public void storeWithNoLanguage() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setLanguage(null);
+        DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
+        dataset.setLanguage(null);
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        datasetMetadataService.store(dataset);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
+        DatasetMetadata result = datasetMetadataService.retrieve(dataset.getUri());
         assertNotNull(result.getLanguage());
     }
 
     @Test
     public void storeWithNoLicense() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setLicense(null);
+        DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
+        dataset.setLicense(null);
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        datasetMetadataService.store(dataset);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
+        DatasetMetadata result = datasetMetadataService.retrieve(dataset.getUri());
         assertNotNull(result.getLicense());
     }
 
@@ -168,17 +189,21 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     public void updateParent() throws Exception {
         // GIVEN:
         FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
+        CatalogMetadata catalog = testMetadataFixtures.catalog1();
+        DatasetMetadata dataset = testMetadataFixtures.c1_dataset1();
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        datasetMetadataService.store(dataset);
 
         // THEN:
         FDPMetadata updatedRepository = repositoryMetadataService.retrieve(repository.getUri());
         CatalogMetadata updatedCatalog = catalogMetadataService.retrieve(catalog.getUri());
+        DatasetMetadata updatedDataset = datasetMetadataService.retrieve(dataset.getUri());
         ZonedDateTime repositoryModified = ZonedDateTime.parse(updatedRepository.getModified().stringValue());
         ZonedDateTime catalogModified = ZonedDateTime.parse(updatedCatalog.getModified().stringValue());
-        assertFalse("FDP modified is not after Catalog modified", repositoryModified.isBefore(catalogModified));
+        ZonedDateTime datasetModified = ZonedDateTime.parse(updatedDataset.getModified().stringValue());
+        assertFalse("Catalog modified is not after Dataset modified", catalogModified.isBefore(datasetModified));
+        assertFalse("FDP modified is not after Dataset modified", repositoryModified.isBefore(datasetModified));
     }
 
 }

@@ -22,14 +22,8 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
+import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.MetadataFixtures;
@@ -59,6 +53,9 @@ public class MetadataMigration implements Migration {
 
     @Autowired
     protected MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
+
+    @Autowired
+    private MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
 
     @Autowired
     protected UserFixtures userFixtures;
@@ -104,6 +101,9 @@ public class MetadataMigration implements Migration {
 
         DistributionMetadata distribution2 = metadataFixtures.distribution2(repositoryUrl, dataset1);
         distributionMetadataService.store(distribution2);
+
+        DataRecordMetadata datarecord1 = metadataFixtures.datarecord1(repositoryUrl, dataset1);
+        dataRecordMetadataService.store(datarecord1);
     }
 
 }

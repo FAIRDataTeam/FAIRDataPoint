@@ -20,10 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
+package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,32 +33,28 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
+import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGetRDF;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /catalog")
-public class Detail_POST_RDF extends WebIntegrationTest {
+@DisplayName("GET /distribution (RDF)")
+public class Detail_GET_RDF extends WebIntegrationTest {
 
-    private URI url() {
-        return URI.create("/catalog");
-    }
-
-    private String reqDto() {
-        return MetadataFixtureFilesHelper.getFileContentAsString(MetadataFixtureFilesHelper.CATALOG_METADATA_FILE);
+    private URI url(String id) {
+        return URI.create(format("/distribution/%s", id));
     }
 
     @Test
-    @DisplayName("HTTP 201")
-    public void res201() {
+    @DisplayName("HTTP 200")
+    public void res200() {
         // GIVEN:
-        RequestEntity<String> request = RequestEntity
-                .post(url())
+        RequestEntity<Void> request = RequestEntity
+                .get(url("distribution-1"))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
-//                .header(HttpHeaders.ACCEPT, "text/turtle")
                 .header(HttpHeaders.ACCEPT, "text/turtle")
-                .body(reqDto());
+                .build();
         ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -67,7 +62,13 @@ public class Detail_POST_RDF extends WebIntegrationTest {
         ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+    }
+
+    @Test
+    @DisplayName("HTTP 404")
+    public void res404() {
+        createUserNotFoundTestGetRDF(client, url("nonExisting"));
     }
 
 }

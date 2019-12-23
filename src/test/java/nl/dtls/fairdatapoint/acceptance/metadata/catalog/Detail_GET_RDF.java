@@ -20,30 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.general;
+package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
+import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGetRDF;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class ContentNegotiationTest extends WebIntegrationTest {
+@DisplayName("GET /catalog (RDF)")
+public class Detail_GET_RDF extends WebIntegrationTest {
+
+    private URI url(String id) {
+        return URI.create(format("/catalog/%s", id));
+    }
 
     @Test
-    public void getDefaultContentTypeForMetadata() {
+    @DisplayName("HTTP 200")
+    public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(URI.create("/"))
-                .header(HttpHeaders.ACCEPT, "*/*")
+                .get(url("catalog-1"))
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.ACCEPT, "text/turtle")
                 .build();
         ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
@@ -53,41 +63,12 @@ public class ContentNegotiationTest extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getHeaders().getContentType().toString(), is(equalTo("text/turtle")));
     }
 
     @Test
-    public void getContentAccordingToFormatQueryString() {
-        // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(URI.create("/?format=rdf"))
-                .build();
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getHeaders().getContentType().toString(), is(equalTo("application/rdf+xml")));
-    }
-
-    @Test
-    public void getNotAcceptableWhenUnsupportedAcceptHeaderIsSent() {
-        // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(URI.create("/"))
-                .header(HttpHeaders.ACCEPT, "application/trig")
-                .build();
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NOT_ACCEPTABLE)));
+    @DisplayName("HTTP 404")
+    public void res404() {
+        createUserNotFoundTestGetRDF(client, url("nonExisting"));
     }
 
 }

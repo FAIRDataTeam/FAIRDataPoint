@@ -20,10 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.catalog.member;
+package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
 
+import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureLoader;
+import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,72 +40,69 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("DELETE /catalog/:catalogId/members/:userUuid")
-public class Detail_DELETE extends WebIntegrationTest {
+@DisplayName("POST /dataset (RDF)")
+public class List_POST_RDF extends WebIntegrationTest {
 
     @Autowired
-    private UserFixtures userFixtures;
+    private MetadataFixtureLoader metadataFixtureLoader;
 
-    private URI url(String catalogId, String userUuid) {
-        return URI.create(format("/catalog/%s/members/%s", catalogId, userUuid));
+    @Autowired
+    private TestMetadataFixtures testMetadataFixtures;
+
+    private URI url() {
+        return URI.create("/dataset");
+    }
+
+    private String reqDto() throws Exception {
+        return MetadataUtils.getString(testMetadataFixtures.c2_dataset3(), RDFFormat.TURTLE);
+    }
+
+    @BeforeEach
+    public void setupExampleMetadata() throws MetadataServiceException {
+        metadataFixtureLoader.storeExampleMetadata();
     }
 
     @Test
-    @DisplayName("HTTP 204")
-    public void res204() {
-        create_res204(ALBERT_TOKEN);
-    }
-
-    @Test
-    @DisplayName("HTTP 204: User is an admin")
-    public void res204_admin() {
-        create_res204(ADMIN_TOKEN);
-    }
-
-    private void create_res204(String token) {
+    @DisplayName("HTTP 201")
+    public void res201() throws Exception {
         // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .delete(url("catalog-1", userFixtures.nikola().getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .build();
-        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
+        RequestEntity<String> request = RequestEntity
+                .post(url())
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .body(reqDto());
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<Void> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
     }
 
     @Test
-    @DisplayName("HTTP 403: Current user has to be an owner of the resource")
-    public void res403() {
+    @DisplayName("HTTP 403")
+    public void res403() throws Exception {
         // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .delete(url("catalog-1", userFixtures.nikola().getUuid()))
+        RequestEntity<String> request = RequestEntity
+                .post(url())
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
-                .build();
-        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .body(reqDto());
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<Void> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-    }
-
-    @Test
-    @DisplayName("HTTP 404: non-existing catalog")
-    public void res404_nonExistingCatalog() {
-        createUserNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
     }
 
 }

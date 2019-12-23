@@ -38,9 +38,6 @@ metadataProperties:
   license: http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0
   accessRightsDescription: This resource has no access restriction
 
-fairSearch:
-  fdpSubmitUrl: http://localhost:8080/fse/submitFdp
-
 threadPoolSize: 4
 
 metadataMetrics:

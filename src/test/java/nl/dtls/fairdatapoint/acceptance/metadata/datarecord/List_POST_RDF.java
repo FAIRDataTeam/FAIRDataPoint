@@ -20,12 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.general;
+package nl.dtls.fairdatapoint.acceptance.metadata.datarecord;
 
+import nl.dtl.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import org.apache.http.HttpHeaders;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.utils.MetadataFixtureLoader;
+import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -36,32 +44,38 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class ContentNegotiationTest extends WebIntegrationTest {
+@DisplayName("POST /datarecord (RDF)")
+public class List_POST_RDF extends WebIntegrationTest {
 
-    @Test
-    public void getDefaultContentTypeForMetadata() {
-        // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(URI.create("/"))
-                .header(HttpHeaders.ACCEPT, "*/*")
-                .build();
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
-        };
+    @Autowired
+    private MetadataFixtureLoader metadataFixtureLoader;
 
-        // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
+    @Autowired
+    private TestMetadataFixtures testMetadataFixtures;
 
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getHeaders().getContentType().toString(), is(equalTo("text/turtle")));
+    private URI url() {
+        return URI.create("/datarecord");
+    }
+
+    private String reqDto() throws Exception {
+        return MetadataUtils.getString(testMetadataFixtures.c1_d2_datarecord2(), RDFFormat.TURTLE);
+    }
+
+    @BeforeEach
+    public void setupExampleMetadata() throws MetadataServiceException {
+        metadataFixtureLoader.storeExampleMetadata();
     }
 
     @Test
-    public void getContentAccordingToFormatQueryString() {
+    @DisplayName("HTTP 201")
+    public void res201() throws Exception {
         // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(URI.create("/?format=rdf"))
-                .build();
+        RequestEntity<String> request = RequestEntity
+                .post(url())
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .body(reqDto());
         ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -69,25 +83,7 @@ public class ContentNegotiationTest extends WebIntegrationTest {
         ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getHeaders().getContentType().toString(), is(equalTo("application/rdf+xml")));
-    }
-
-    @Test
-    public void getNotAcceptableWhenUnsupportedAcceptHeaderIsSent() {
-        // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(URI.create("/"))
-                .header(HttpHeaders.ACCEPT, "application/trig")
-                .build();
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NOT_ACCEPTABLE)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
     }
 
 }

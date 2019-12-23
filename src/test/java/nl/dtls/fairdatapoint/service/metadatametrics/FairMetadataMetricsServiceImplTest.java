@@ -40,6 +40,7 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+// TODO What is purpose of this class
 public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();

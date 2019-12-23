@@ -28,6 +28,7 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,33 @@ public class MetadataFactoryImpl implements MetadataFactory {
         }
 
         metadata.setMediaType(valueFactory.createLiteral(mediaType));
+        return metadata;
+    }
+
+    public DataRecordMetadata createDatarecordMetadata(String title, String description, String identifier,
+                                                       String rmlURI, String rmlInputSource,
+                                                       Date dataRecordIssued, Date dataRecordModified,
+                                                       String repositoryUrl,
+                                                       DatasetMetadata dataset) {
+        DataRecordMetadata metadata = new DataRecordMetadata();
+        setCommonMetadata(metadata, repositoryUrl + "/datarecord/" + identifier, title, description, dataset);
+
+        if (rmlURI != null) {
+            metadata.setRmlURI(valueFactory.createIRI(rmlURI));
+        }
+
+        if (rmlInputSource != null) {
+            metadata.setRmlInputSourceURI(valueFactory.createIRI(rmlInputSource));
+        }
+
+        if (dataRecordIssued != null) {
+            metadata.setDataRecordIssued(valueFactory.createLiteral(dataRecordIssued));
+        }
+
+        if (dataRecordModified != null) {
+            metadata.setDataRecordModified(valueFactory.createLiteral(dataRecordModified));
+        }
+
         return metadata;
     }
 
