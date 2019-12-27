@@ -10,11 +10,11 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>0.1-beta</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
-    <description>A reference implementation of FAIRDataPoint api</description>
+    <description>A reference implementation of FAIRDataPoint API</description>
     <inceptionYear>2017</inceptionYear>
     <licenses>
         <license>
@@ -36,6 +36,10 @@
             <organization>DTLS</organization>
             <organizationUrl>http://www.dtls.nl/</organizationUrl>
         </developer>
+        <developer>
+            <name>Vojtech Knaisl</name>
+            <email>vknaisl@gmail.com</email>
+        </developer>
     </developers>
 
     <properties>
@@ -47,7 +51,7 @@
         <maven.compiler.target>11</maven.compiler.target>
 
         <!-- Project related -->
-        <fairmetadata.version>0.1-beta</fairmetadata.version>
+        <fairmetadata.version>1.0.0</fairmetadata.version>
         <spring.rdf.migration.version>1.0.0</spring.rdf.migration.version>
 
         <!-- Spring -->
