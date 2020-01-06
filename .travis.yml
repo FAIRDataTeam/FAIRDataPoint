@@ -83,7 +83,7 @@ jobs:
       if: (tag =~ ^v\d+\.\d+\.\d+$)
       install: false
       env:
-        - IMAGE="fairdata/fairdatapoint-client"
+        - IMAGE="fairdata/fairdatapoint"
         - IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT"
         - IMAGE_TAG_MAJOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
         - IMAGE_TAG_MINOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*/\1/g"`
@@ -101,7 +101,7 @@ jobs:
       if: (tag =~ ^v\d+\.\d+\.\d+-rc\.\d+$)
       install: false
       env:
-        - IMAGE="fairdata/fairdatapoint-client"
+        - IMAGE="fairdata/fairdatapoint"
         - IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT"
         - IMAGE_TAG_RC="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
       script:
