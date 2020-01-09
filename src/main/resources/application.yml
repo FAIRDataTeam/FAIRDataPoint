@@ -6,6 +6,14 @@ spring:
     mongodb:
       uri: mongodb://mongo:27017/fdp
 
+management:
+  health:
+    solr:
+      enabled:  false
+  info:
+    defaults:
+      enabled: false
+
 security:
   jwt:
     token:
