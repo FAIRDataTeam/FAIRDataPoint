@@ -27,6 +27,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Optional;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -35,12 +37,12 @@ public class RepositoryMetadataChangeDTO {
 
     protected String title;
 
-    protected String description;
+    protected Optional<String> description;
 
     protected String version;
 
-    protected String license;
+    protected Optional<String> license;
 
-    protected String language;
+    protected Optional<String> language;
 
 }

@@ -32,6 +32,7 @@ import nl.dtls.fairdatapoint.api.dto.uri.UriDTO;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,7 +46,7 @@ public class CatalogMetadataDTO {
 
     protected String title;
 
-    protected String description;
+    protected Optional<String> description;
 
     protected String issued;
 
@@ -53,13 +54,13 @@ public class CatalogMetadataDTO {
 
     protected String version;
 
-    protected UriDTO license;
+    protected Optional<UriDTO> license;
 
     protected String accessRights;
 
     protected UriDTO specification;
 
-    protected UriDTO language;
+    protected Optional<UriDTO> language;
 
     protected UriDTO publisher;
 

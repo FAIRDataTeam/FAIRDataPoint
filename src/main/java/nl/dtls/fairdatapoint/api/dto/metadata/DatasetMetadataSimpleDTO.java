@@ -29,6 +29,7 @@ import lombok.Setter;
 import nl.dtls.fairdatapoint.api.dto.uri.UriDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class DatasetMetadataSimpleDTO {
 
     protected String title;
 
-    protected String description;
+    protected Optional<String> description;
 
     protected List<UriDTO> themes;
 
