@@ -27,6 +27,7 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Shortcuts to simplify code that needs to create IRIs, Literals, Statements, etc.
@@ -39,8 +40,22 @@ public class ValueFactoryHelper {
         return VF.createIRI(iri);
     }
 
+    public static IRI i(Optional<String> oIri) {
+        if (oIri.isEmpty()) {
+            return null;
+        }
+        return i(oIri.get());
+    }
+
     public static Literal l(String literal) {
         return VF.createLiteral(literal);
+    }
+
+    public static Literal l(Optional<String> oLiteral) {
+        if (oLiteral.isEmpty()) {
+            return null;
+        }
+        return l(oLiteral.get());
     }
 
     public static Literal l(float literal) {

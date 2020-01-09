@@ -31,6 +31,7 @@ import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.api.dto.uri.UriDTO;
 
 import java.util.Map;
+import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,7 +45,7 @@ public class DistributionMetadataDTO {
 
     protected String title;
 
-    protected String description;
+    protected Optional<String> description;
 
     protected String issued;
 
@@ -58,7 +59,7 @@ public class DistributionMetadataDTO {
 
     protected UriDTO specification;
 
-    protected UriDTO language;
+    protected Optional<UriDTO> language;
 
     protected UriDTO publisher;
 

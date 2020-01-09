@@ -34,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
+import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -48,10 +49,10 @@ public class Detail_PUT extends WebIntegrationTest {
     private RepositoryMetadataChangeDTO reqDto() {
         return new RepositoryMetadataChangeDTO(
                 "EDITED: Some title",
-                "EDITED: Some description",
+                of("EDITED: Some description"),
                 "99.0",
-                "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED",
-                "http://id.loc.gov/vocabulary/iso639-1/en/EDITED"
+                of("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"),
+                of("http://id.loc.gov/vocabulary/iso639-1/en/EDITED")
         );
     }
 

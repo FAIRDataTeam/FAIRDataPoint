@@ -33,8 +33,8 @@ import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataSimpleDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import nl.dtls.fairdatapoint.service.metadata.dataset.DatasetMetadataMapper;
 import nl.dtls.fairdatapoint.service.uri.UriMapper;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
+import org.eclipse.rdf4j.model.Literal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,10 +43,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+
 @Service
 public class CatalogMetadataMapper implements MetadataMapper<CatalogMetadata, CatalogMetadataChangeDTO> {
-
-    private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
     private UriMapper uriMapper;
@@ -60,14 +62,14 @@ public class CatalogMetadataMapper implements MetadataMapper<CatalogMetadata, Ca
                 c.getIdentifier().getIdentifier().getLabel(),
                 c.getUri().toString(),
                 c.getTitle().getLabel(),
-                c.getDescription().getLabel(),
+                ofNullable(c.getDescription()).map(Literal::getLabel),
                 c.getIssued().getLabel(),
                 c.getModified().getLabel(),
                 c.getVersion().getLabel(),
-                uriMapper.toDTO(c.getLicense()),
+                ofNullable(c.getLicense()).map(uriMapper::toDTO),
                 c.getAccessRights().getDescription().getLabel(),
                 uriMapper.toDTO(c.getSpecification()),
-                uriMapper.toDTO(c.getLanguage()),
+                ofNullable(c.getLanguage()).map(uriMapper::toDTO),
                 uriMapper.toDTO(c.getPublisher().getUri()),
                 c.getThemeTaxonomys()
                         .stream()
@@ -90,7 +92,7 @@ public class CatalogMetadataMapper implements MetadataMapper<CatalogMetadata, Ca
                 c.getIdentifier().getIdentifier().getLabel(),
                 c.getUri().toString(),
                 c.getTitle().getLabel(),
-                c.getDescription().getLabel(),
+                ofNullable(c.getDescription()).map(Literal::getLabel),
                 c.getThemeTaxonomys().stream().map(uriMapper::toDTO).collect(Collectors.toList()),
                 c.getDatasets().size(),
                 c.getIssued().getLabel(),
@@ -99,14 +101,14 @@ public class CatalogMetadataMapper implements MetadataMapper<CatalogMetadata, Ca
     }
 
     public CatalogMetadata fromChangeDTO(CatalogMetadata metadata, CatalogMetadataChangeDTO reqDto) {
-        metadata.setTitle(VALUE_FACTORY.createLiteral(reqDto.getTitle()));
-        metadata.setDescription(VALUE_FACTORY.createLiteral(reqDto.getDescription()));
-        metadata.setVersion(VALUE_FACTORY.createLiteral(reqDto.getVersion()));
-        metadata.setLicense(VALUE_FACTORY.createIRI(reqDto.getLicense()));
-        metadata.setLanguage(VALUE_FACTORY.createIRI(reqDto.getLanguage()));
+        metadata.setTitle(l(reqDto.getTitle()));
+        metadata.setDescription(l(reqDto.getDescription()));
+        metadata.setVersion(l(reqDto.getVersion()));
+        metadata.setLicense(i(reqDto.getLicense()));
+        metadata.setLanguage(i(reqDto.getLanguage()));
         metadata.setThemeTaxonomys(reqDto.getThemeTaxonomies()
                 .stream()
-                .map(VALUE_FACTORY::createIRI)
+                .map(ValueFactoryHelper::i)
                 .collect(Collectors.toList()));
         return metadata;
     }

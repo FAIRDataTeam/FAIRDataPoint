@@ -27,6 +27,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Optional;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -39,7 +41,7 @@ public class DistributionMetadataSimpleDTO {
 
     protected String title;
 
-    protected String description;
+    protected Optional<String> description;
 
     protected String mediaType;
 

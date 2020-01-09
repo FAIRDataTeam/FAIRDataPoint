@@ -34,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 import java.util.List;
+import static java.util.Optional.of;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
@@ -51,10 +52,10 @@ public class Detail_PUT extends WebIntegrationTest {
     private CatalogMetadataChangeDTO reqDto() {
         return new CatalogMetadataChangeDTO(
                 "EDITED: Some title",
-                "EDITED: Some description",
+                of("EDITED: Some description"),
                 "99.0",
-                "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED",
-                "http://id.loc.gov/vocabulary/iso639-1/en/EDITED",
+                of("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"),
+                of("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"),
                 List.of("https://purl.org/example#theme/EDITED")
         );
     }
