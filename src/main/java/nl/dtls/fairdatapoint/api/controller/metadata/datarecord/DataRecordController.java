@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.metadata.datarecord;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
+import nl.dtls.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;

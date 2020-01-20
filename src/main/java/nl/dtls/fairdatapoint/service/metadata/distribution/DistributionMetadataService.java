@@ -22,8 +22,8 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.distribution;
 
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtls.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;

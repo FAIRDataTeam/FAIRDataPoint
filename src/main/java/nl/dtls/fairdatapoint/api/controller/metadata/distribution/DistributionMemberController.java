@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata.distribution;
 
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairmetadata4j.model.DistributionMetadata;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;

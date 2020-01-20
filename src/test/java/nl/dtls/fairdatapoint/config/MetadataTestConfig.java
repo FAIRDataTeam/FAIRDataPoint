@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtl.fairmetadata4j.model.Agent;
+import nl.dtls.fairmetadata4j.model.Agent;
 import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;

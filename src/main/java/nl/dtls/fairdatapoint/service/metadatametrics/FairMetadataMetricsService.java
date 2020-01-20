@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadatametrics;
 
-import nl.dtl.fairmetadata4j.model.Metric;
+import nl.dtls.fairmetadata4j.model.Metric;
 import org.eclipse.rdf4j.model.IRI;
 
 import javax.annotation.Nonnull;

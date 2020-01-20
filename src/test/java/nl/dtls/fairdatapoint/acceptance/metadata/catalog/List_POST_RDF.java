@@ -22,8 +22,8 @@
  */
 package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
+import nl.dtls.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.MetadataMigration;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;

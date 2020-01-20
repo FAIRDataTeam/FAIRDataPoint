@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.converter;
 
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtls.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

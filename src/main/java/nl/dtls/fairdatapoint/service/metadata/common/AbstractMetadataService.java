@@ -23,14 +23,14 @@
 package nl.dtls.fairdatapoint.service.metadata.common;
 
 import com.google.common.base.Preconditions;
-import nl.dtl.fairmetadata4j.io.MetadataException;
-import nl.dtl.fairmetadata4j.model.AccessRights;
-import nl.dtl.fairmetadata4j.model.Agent;
-import nl.dtl.fairmetadata4j.model.Identifier;
-import nl.dtl.fairmetadata4j.model.Metadata;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
-import nl.dtl.fairmetadata4j.utils.RDFUtils;
-import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
+import nl.dtls.fairmetadata4j.io.MetadataException;
+import nl.dtls.fairmetadata4j.model.AccessRights;
+import nl.dtls.fairmetadata4j.model.Agent;
+import nl.dtls.fairmetadata4j.model.Identifier;
+import nl.dtls.fairmetadata4j.model.Metadata;
+import nl.dtls.fairmetadata4j.utils.MetadataUtils;
+import nl.dtls.fairmetadata4j.utils.RDFUtils;
+import nl.dtls.fairmetadata4j.utils.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;

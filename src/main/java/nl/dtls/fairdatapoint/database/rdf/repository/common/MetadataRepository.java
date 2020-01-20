@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtls.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;

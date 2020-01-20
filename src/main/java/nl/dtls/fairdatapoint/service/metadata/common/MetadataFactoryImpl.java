@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairmetadata4j.model.*;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;

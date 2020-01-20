@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
-import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import org.eclipse.rdf4j.model.IRI;

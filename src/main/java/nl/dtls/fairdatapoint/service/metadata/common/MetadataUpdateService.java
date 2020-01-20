@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtl.fairmetadata4j.model.MetadataVisitor;
+import nl.dtls.fairmetadata4j.model.MetadataVisitor;
 
 public interface MetadataUpdateService extends MetadataVisitor {
 }

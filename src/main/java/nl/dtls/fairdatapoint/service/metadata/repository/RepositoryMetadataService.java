@@ -23,10 +23,10 @@
 package nl.dtls.fairdatapoint.service.metadata.repository;
 
 import com.google.common.base.Preconditions;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.model.Identifier;
-import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
-import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.model.Identifier;
+import nl.dtls.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtls.fairmetadata4j.utils.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;

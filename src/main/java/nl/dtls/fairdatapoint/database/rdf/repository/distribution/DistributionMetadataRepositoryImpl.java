@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.distribution;
 
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairmetadata4j.model.DistributionMetadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
 import org.springframework.stereotype.Service;
 

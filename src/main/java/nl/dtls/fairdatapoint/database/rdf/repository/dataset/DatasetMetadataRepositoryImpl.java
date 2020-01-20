@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.dataset;
 
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
+import nl.dtls.fairmetadata4j.model.DatasetMetadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
