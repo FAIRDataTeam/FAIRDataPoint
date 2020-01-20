@@ -28,25 +28,10 @@ jobs:
   include:
     - stage: build
       install:
-        # 1. Install fairmetadata4j
-        - git clone --depth 1 -b $TRAVIS_BRANCH https://github.com/DTL-FAIRData/fairmetadata4j ./fairmetadata4j || git clone --depth 1 -b develop https://github.com/DTL-FAIRData/fairmetadata4j ./fairmetadata4j
-        - cd  ./fairmetadata4j
-        - mvn --quiet --fail-fast install
-        - cd ..
-        # 2. Install Spring Rdf Migration
-        - git clone https://github.com/FAIRDataTeam/spring-rdf-migration.git
-        - cd spring-rdf-migration
-        - mvn --quiet --fail-fast -DskipTests install
-        - cd ..
-        # 3. Install Spring Security ACL Mongo
-        - git clone https://github.com/FAIRDataTeam/spring-security-acl-mongodb
-        - cd spring-security-acl-mongodb
-        - mvn --quiet --fail-fast -DskipTests install
-        - cd ..
-        # 4. Init and check testing Mongo Database
+        # 1. Init and check testing Mongo Database
         - mongo fdp-test --eval 'db.collection.find()'
       script:
-        # 5. Build FAIR Data Point
+        # 2. Build FAIR Data Point
         - mvn org.jacoco:jacoco-maven-plugin:prepare-agent test
         - mvn --quiet --fail-fast -DskipTests package
         - docker pull $IMAGE_TAG_DEVELOP
