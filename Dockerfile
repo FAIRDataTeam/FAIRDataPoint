@@ -26,6 +26,6 @@ FROM openjdk:11-jdk-slim
 WORKDIR /fdp
 
 ADD target/fdp-spring-boot.jar /fdp/app.jar
-ADD target/classes/application-production.yml /fdp/application-production.yml
+ADD target/classes/application-production.yml /fdp/application.yml
 
-ENTRYPOINT java -jar app.jar --spring.profiles.active=production --spring.config.location=classpath:/application.yml,file:/fdp/application-production.yml
+ENTRYPOINT java -jar app.jar --spring.profiles.active=production --spring.config.location=classpath:/application.yml,classpath:/application-production.yml,file:/fdp/application.yml
