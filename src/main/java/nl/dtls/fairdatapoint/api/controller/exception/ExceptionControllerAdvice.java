@@ -27,8 +27,8 @@
  */
 package nl.dtls.fairdatapoint.api.controller.exception;
 
-import nl.dtl.fairmetadata4j.io.MetadataException;
-import nl.dtl.fairmetadata4j.io.MetadataParserException;
+import nl.dtls.fairmetadata4j.io.MetadataException;
+import nl.dtls.fairmetadata4j.io.MetadataParserException;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;

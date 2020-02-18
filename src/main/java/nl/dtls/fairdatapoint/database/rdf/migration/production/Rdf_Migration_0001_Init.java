@@ -24,11 +24,11 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtl.fairmetadata4j.model.Agent;
-import nl.dtl.fairmetadata4j.utils.vocabulary.DATACITE;
-import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
-import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
-import nl.dtl.fairmetadata4j.utils.vocabulary.Sio;
+import nl.dtls.fairmetadata4j.model.Agent;
+import nl.dtls.fairmetadata4j.utils.vocabulary.DATACITE;
+import nl.dtls.fairmetadata4j.utils.vocabulary.FDP;
+import nl.dtls.fairmetadata4j.utils.vocabulary.R3D;
+import nl.dtls.fairmetadata4j.utils.vocabulary.Sio;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
 import nl.dtls.rdf.migration.runner.RdfProductionMigration;
@@ -166,7 +166,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
         String albertUuid = "7e64818d-6276-46fb-8bb1-732e6e09f7e9";
         BasicBSONObject owner = new BasicBSONObject().append("name", albertUuid).append("isPrincipal", true);
         Document acl = new Document();
-        acl.append("className", "nl.dtl.fairmetadata4j.model.FDPMetadata");
+        acl.append("className", "nl.dtls.fairmetadata4j.model.FDPMetadata");
         acl.append("instanceId", instanceUrl);
         acl.append("owner", owner);
         acl.append("inheritPermissions", true);

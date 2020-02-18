@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.datarecord;
 
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
+import nl.dtls.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtls.fairdatapoint.api.dto.metadata.DataRecordMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import org.springframework.stereotype.Service;

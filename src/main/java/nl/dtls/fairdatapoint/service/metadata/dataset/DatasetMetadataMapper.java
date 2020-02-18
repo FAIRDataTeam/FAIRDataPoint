@@ -22,10 +22,10 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.dataset;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairmetadata4j.model.DatasetMetadata;
+import nl.dtls.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.dto.common.BreadcrumbDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
@@ -35,9 +35,8 @@ import nl.dtls.fairdatapoint.api.dto.uri.UriDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import nl.dtls.fairdatapoint.service.metadata.distribution.DistributionMetadataMapper;
 import nl.dtls.fairdatapoint.service.uri.UriMapper;
+import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import org.eclipse.rdf4j.model.Literal;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,10 +45,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+
 @Service
 public class DatasetMetadataMapper implements MetadataMapper<DatasetMetadata, DatasetMetadataChangeDTO> {
-
-    private final static ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
     private UriMapper uriMapper;
@@ -63,14 +64,14 @@ public class DatasetMetadataMapper implements MetadataMapper<DatasetMetadata, Da
                 d.getIdentifier().getIdentifier().getLabel(),
                 d.getUri().toString(),
                 d.getTitle().getLabel(),
-                d.getDescription().getLabel(),
+                ofNullable(d.getDescription()).map(Literal::getLabel),
                 d.getIssued().getLabel(),
                 d.getModified().getLabel(),
                 d.getVersion().getLabel(),
-                uriMapper.toDTO(d.getLicense()),
+                ofNullable(d.getLicense()).map(uriMapper::toDTO),
                 d.getAccessRights().getDescription().getLabel(),
                 uriMapper.toDTO(d.getSpecification()),
-                uriMapper.toDTO(d.getLanguage()),
+                ofNullable(d.getLanguage()).map(uriMapper::toDTO),
                 uriMapper.toDTO(d.getPublisher().getUri()),
                 d.getThemes().stream().map(uriMapper::toDTO).collect(Collectors.toList()),
                 d.getKeywords().stream().map(Literal::getLabel).collect(Collectors.toList()),
@@ -93,7 +94,7 @@ public class DatasetMetadataMapper implements MetadataMapper<DatasetMetadata, Da
                 d.getIdentifier().getIdentifier().getLabel(),
                 d.getUri().toString(),
                 d.getTitle().getLabel(),
-                d.getDescription().getLabel(),
+                ofNullable(d.getDescription()).map(Literal::getLabel),
                 d.getThemes().stream().map(tt -> new UriDTO(tt.getLocalName(), tt.toString())).collect(Collectors.toList()),
                 d.getDistributions().size(),
                 d.getIssued().getLabel(),
@@ -102,19 +103,21 @@ public class DatasetMetadataMapper implements MetadataMapper<DatasetMetadata, Da
     }
 
     public DatasetMetadata fromChangeDTO(DatasetMetadata metadata, DatasetMetadataChangeDTO reqDto) {
-        metadata.setTitle(VALUE_FACTORY.createLiteral(reqDto.getTitle()));
-        metadata.setDescription(VALUE_FACTORY.createLiteral(reqDto.getDescription()));
-        metadata.setVersion(VALUE_FACTORY.createLiteral(reqDto.getVersion()));
-        metadata.setLicense(VALUE_FACTORY.createIRI(reqDto.getLicense()));
-        metadata.setLanguage(VALUE_FACTORY.createIRI(reqDto.getLanguage()));
+        metadata.setTitle(l(reqDto.getTitle()));
+        metadata.setDescription(l(reqDto.getDescription()));
+        metadata.setVersion(l(reqDto.getVersion()));
+        metadata.setLicense(i(reqDto.getLicense()));
+        metadata.setLanguage(i(reqDto.getLanguage()));
         metadata.setThemes(reqDto.getThemes()
                 .stream()
-                .map(VALUE_FACTORY::createIRI)
+                .map(ValueFactoryHelper::i)
                 .collect(Collectors.toList()));
-        metadata.setKeywords(reqDto.getKeywords()
-                .stream()
-                .map(VALUE_FACTORY::createLiteral)
-                .collect(Collectors.toList()));
+        if (reqDto.getKeywords() != null) {
+            metadata.setKeywords(reqDto.getKeywords()
+                    .stream()
+                    .map(ValueFactoryHelper::l)
+                    .collect(Collectors.toList()));
+        }
         return metadata;
     }
 }

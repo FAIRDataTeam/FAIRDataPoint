@@ -22,10 +22,10 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtl.fairmetadata4j.model.*;
-import nl.dtl.fairmetadata4j.utils.RDFUtils;
-import nl.dtl.fairmetadata4j.utils.vocabulary.FDP;
-import nl.dtl.fairmetadata4j.utils.vocabulary.R3D;
+import nl.dtls.fairmetadata4j.model.*;
+import nl.dtls.fairmetadata4j.utils.RDFUtils;
+import nl.dtls.fairmetadata4j.utils.vocabulary.FDP;
+import nl.dtls.fairmetadata4j.utils.vocabulary.R3D;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;

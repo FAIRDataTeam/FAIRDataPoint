@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
+import static java.util.Optional.of;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -50,10 +51,10 @@ public class Detail_PUT extends WebIntegrationTest {
     private DistributionMetadataChangeDTO reqDto() {
         return new DistributionMetadataChangeDTO(
                 "EDITED: Some title",
-                "EDITED: Some description",
+                of("EDITED: Some description"),
                 "99.0",
                 "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED",
-                "http://id.loc.gov/vocabulary/iso639-1/en/EDITED",
+                of("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"),
                 "text/edited",
                 "http://example.com/edited",
                 "http://example.com/edited"

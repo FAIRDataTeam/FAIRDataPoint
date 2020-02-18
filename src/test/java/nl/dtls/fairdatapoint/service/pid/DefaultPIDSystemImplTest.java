@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.service.pid;
 
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;

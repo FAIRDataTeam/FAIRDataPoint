@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import lombok.extern.log4j.Log4j2;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.config.RepositoryConfigException;
@@ -32,18 +33,17 @@ import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 
 @Configuration
+@Log4j2
 public class RepositoryConfig {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
     @Value("${repository.agraph.url:}")
     private String agraphUrl;
@@ -70,46 +70,71 @@ public class RepositoryConfig {
     private String nativeStoreDir;
 
     @Bean(initMethod = "initialize", destroyMethod = "shutDown")
-    public Repository repository(@Value("${repository.type:1}") int storeType)
+    public Repository repository(@Value("${repository.type:1}") int storeType, ApplicationContext context)
             throws RepositoryException {
 
         Repository repository = null;
-        if (storeType == 3) { // Allegrograph as a backend store
-            repository = getAgraphRepository();
-        } else if (storeType == 4) { // GraphDB as a backend store
-            repository = getGraphDBRepository();
-        } else if (storeType == 5) {    // Blazegraph as a backend store
-            repository = getBlazeGraphRepository();
-        } else if (storeType == 2 && !nativeStoreDir.isEmpty()) { // Native store
-            File dataDir = new File(nativeStoreDir);
-            LOGGER.info("Initializing native store");
-            repository = new SailRepository(new NativeStore(dataDir));
+        switch (storeType) {
+            case 1:
+                repository = getInMemoryStore();
+                break;
+            case 2:
+                repository = getNativeStore();
+                break;
+            case 3:
+                repository = getAgraphRepository();
+                break;
+            case 4:
+                repository = getGraphDBRepository();
+                break;
+            case 5:
+                repository = getBlazeGraphRepository();
+                break;
         }
-        // In memory is the default store
-        if (storeType == 1 || repository == null) {
-            Sail store = new MemoryStore();
-            repository = new SailRepository(store);
-            LOGGER.info("Initializing inmemory store");
+
+        if (repository == null) {
+            log.error("Failed to configure a RDF repository");
+            SpringApplication.exit(context);
+            System.exit(1);
+        } else {
+            log.info("Successfully configure a RDF repository");
         }
         return repository;
     }
 
-    private Repository getAgraphRepository() {
-        SPARQLRepository sRepository = null;
-        if (!agraphUrl.isEmpty()) {
-            LOGGER.info("Initializing allegrograph repository");
-            sRepository = new SPARQLRepository(agraphUrl);
-            if (!agraphUsername.isEmpty() && !agraphPassword.isEmpty()) {
-                sRepository.setUsernameAndPassword(agraphUsername, agraphPassword);
-            }
+    private Repository getInMemoryStore() {
+        log.info("Setting up InMemory Store");
+        Sail store = new MemoryStore();
+        SailRepository repository = new SailRepository(store);
+        return repository;
+    }
+
+    private Repository getNativeStore() {
+        log.info("Setting up Native Store");
+        if (!nativeStoreDir.isEmpty()) {
+            File dataDir = new File(nativeStoreDir);
+            return new SailRepository(new NativeStore(dataDir));
         }
-        return sRepository;
+        log.warn("'nativeStoreDir' is empty");
+        return null;
+    }
+
+    private Repository getAgraphRepository() {
+        log.info("Setting up Allegro Graph Store");
+        if (!agraphUrl.isEmpty()) {
+            SPARQLRepository repository = new SPARQLRepository(agraphUrl);
+            if (!agraphUsername.isEmpty() && !agraphPassword.isEmpty()) {
+                repository.setUsernameAndPassword(agraphUsername, agraphPassword);
+            }
+            return repository;
+        }
+        log.warn("'agraphUrl' is empty");
+        return null;
     }
 
     private Repository getBlazeGraphRepository() {
-        SPARQLRepository sRepository = null;
+        log.info("Setting up Blaze Graph Store");
         if (!blazegraphUrl.isEmpty()) {
-            LOGGER.info("Initializing blazegraph repository");
             if (blazegraphUrl.endsWith("/")) {
                 blazegraphUrl = blazegraphUrl.substring(0, blazegraphUrl.length() - 1);
             }
@@ -124,24 +149,24 @@ public class RepositoryConfig {
             }
             sb.append("/sparql");
             String url = sb.toString();
-            sRepository = new SPARQLRepository(url);
+            return new SPARQLRepository(url);
         }
-        return sRepository;
+        log.warn("'blazegraphUrl' is empty");
+        return null;
     }
 
     private Repository getGraphDBRepository() {
-        Repository repository = null;
+        log.info("Setting up GraphDB Store");
         try {
             if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
-                LOGGER.info("Initializing graphDB repository");
                 RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
                 repositoryManager.initialize();
-                repository = repositoryManager.getRepository(graphDbRepository);
+                return repositoryManager.getRepository(graphDbRepository);
             }
         } catch (RepositoryConfigException | RepositoryException e) {
-            LOGGER.error("Failed to connect to GraphDB");
+            log.error("Failed to connect to GraphDB");
         }
-        return repository;
+        return null;
     }
 
 }

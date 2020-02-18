@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
-import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.MetadataFixtures;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataFactory;

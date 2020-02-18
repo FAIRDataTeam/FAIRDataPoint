@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.acceptance.dashboard;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairmetadata4j.model.CatalogMetadata;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDatasetDTO;

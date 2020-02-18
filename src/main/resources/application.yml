@@ -6,6 +6,14 @@ spring:
     mongodb:
       uri: mongodb://mongo:27017/fdp
 
+management:
+  health:
+    solr:
+      enabled:  false
+  info:
+    defaults:
+      enabled: false
+
 security:
   jwt:
     token:
@@ -14,6 +22,8 @@ security:
 # valid repository type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph}
 repository:
   type: 1
+  native:
+    dir: /tmp/fdp-store/
   agraph:
     url: http://localhost:10035/repositories/fdp
     username: user
@@ -24,8 +34,6 @@ repository:
   blazegraph:
     url: http://localhost:8079/blazegraph
     repository: fdp
-  native:
-    dir: /tmp/fdp-store/
 
 metadataProperties:
   rootSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata

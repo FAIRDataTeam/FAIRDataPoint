@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata;
 
-import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;

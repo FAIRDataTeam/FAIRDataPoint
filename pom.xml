@@ -10,7 +10,7 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.0.0</version>
+    <version>${revision}${changelist}</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -51,12 +51,12 @@
         <maven.compiler.target>11</maven.compiler.target>
 
         <!-- Project related -->
-        <fairmetadata.version>1.0.0</fairmetadata.version>
-        <spring.rdf.migration.version>1.0.0</spring.rdf.migration.version>
+        <fairmetadata.version>${revision}${changelist}</fairmetadata.version>
+        <spring.rdf.migration.version>1.0.0.RELEASE</spring.rdf.migration.version>
+        <spring.security.acl.mongo.version>5.1.5.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Spring -->
         <spring.boot.handlebars.version>0.3.0</spring.boot.handlebars.version>
-        <spring.security.acl.mongo.version>5.1.5-SNAPSHOT</spring.security.acl.mongo.version>
 
         <!-- Core -->
         <mongobee.version>0.13</mongobee.version>
@@ -79,7 +79,16 @@
         <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
+        <plugin.git_commit_id.version>2.2.4</plugin.git_commit_id.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Releases</name>
+            <url>https://toolshed.fair-dtls.surf-hosted.nl/repository/maven-releases/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
 
@@ -87,7 +96,7 @@
         <!--   Project related  -->
         <!-- ////////////////// -->
         <dependency>
-            <groupId>nl.dtl</groupId>
+            <groupId>nl.dtls</groupId>
             <artifactId>fairmetadata4j</artifactId>
             <version>${fairmetadata.version}</version>
         </dependency>
@@ -129,6 +138,10 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-acl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -322,7 +335,29 @@
                             <mainClass>nl.dtls.fairdatapoint.Application</mainClass>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>${plugin.git_commit_id.version}</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <verbose>false</verbose>
+                </configuration>
             </plugin>
         </plugins>
     </build>

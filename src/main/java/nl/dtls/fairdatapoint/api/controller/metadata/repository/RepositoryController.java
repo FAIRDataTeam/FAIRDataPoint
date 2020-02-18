@@ -23,8 +23,8 @@
 package nl.dtls.fairdatapoint.api.controller.metadata.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataDTO;

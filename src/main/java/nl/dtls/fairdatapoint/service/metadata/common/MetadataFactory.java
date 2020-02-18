@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairmetadata4j.model.*;
 
 import java.util.Date;
 import java.util.List;

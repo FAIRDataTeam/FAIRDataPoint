@@ -30,7 +30,7 @@ package nl.dtls.fairdatapoint.database.rdf.repository.common;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtls.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;

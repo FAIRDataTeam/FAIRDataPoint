@@ -27,10 +27,10 @@
  */
 package nl.dtls.fairdatapoint.service.pid;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairmetadata4j.model.DatasetMetadata;
+import nl.dtls.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.database.rdf.repository.repository.RepositoryMetadataRepository;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;

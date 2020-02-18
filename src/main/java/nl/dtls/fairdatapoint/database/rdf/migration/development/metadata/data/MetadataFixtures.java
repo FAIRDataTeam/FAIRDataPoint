@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data;
 
-import nl.dtl.fairmetadata4j.model.*;
+import nl.dtls.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

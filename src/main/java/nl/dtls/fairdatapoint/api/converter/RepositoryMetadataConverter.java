@@ -24,12 +24,12 @@ package nl.dtls.fairdatapoint.api.converter;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
-import nl.dtl.fairmetadata4j.io.FDPMetadataParser;
-import nl.dtl.fairmetadata4j.io.MetadataException;
-import nl.dtl.fairmetadata4j.io.MetadataParserException;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
+import nl.dtls.fairmetadata4j.io.FDPMetadataParser;
+import nl.dtls.fairmetadata4j.io.MetadataException;
+import nl.dtls.fairmetadata4j.io.MetadataParserException;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtls.fairmetadata4j.utils.MetadataUtils;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;

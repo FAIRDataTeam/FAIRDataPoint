@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadatametrics;
 
-import nl.dtl.fairmetadata4j.model.Metric;
+import nl.dtls.fairmetadata4j.model.Metric;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.ValueFactory;

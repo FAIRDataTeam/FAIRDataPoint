@@ -28,7 +28,7 @@
 package nl.dtls.fairdatapoint.service.pid;
 
 import com.google.common.base.Preconditions;
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtls.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;

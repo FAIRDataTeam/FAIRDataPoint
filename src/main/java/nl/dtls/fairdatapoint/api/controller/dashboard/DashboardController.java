@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.dashboard;
 
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
 import nl.dtls.fairdatapoint.service.dashboard.DashboardService;

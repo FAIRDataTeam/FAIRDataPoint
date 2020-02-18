@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.datarecord;
 
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
+import nl.dtls.fairmetadata4j.model.DataRecordMetadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 
 public interface DataRecordMetadataRepository extends MetadataRepository<DataRecordMetadata> {

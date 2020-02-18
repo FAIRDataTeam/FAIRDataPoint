@@ -28,8 +28,8 @@
 package nl.dtls.fairdatapoint.service.pid;
 
 import com.google.common.base.Preconditions;
-import nl.dtl.fairmetadata4j.model.FDPMetadata;
-import nl.dtl.fairmetadata4j.model.Metadata;
+import nl.dtls.fairmetadata4j.model.FDPMetadata;
+import nl.dtls.fairmetadata4j.model.Metadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.repository.RepositoryMetadataRepository;
 import org.eclipse.rdf4j.model.IRI;

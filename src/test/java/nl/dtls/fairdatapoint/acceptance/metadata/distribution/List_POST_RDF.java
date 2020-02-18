@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
-import nl.dtl.fairmetadata4j.utils.MetadataUtils;
+import nl.dtls.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureLoader;

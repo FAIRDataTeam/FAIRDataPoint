@@ -1,0 +1,4 @@
+security:
+  jwt:
+    token:
+      expiration: 999

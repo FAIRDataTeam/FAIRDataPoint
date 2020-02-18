@@ -22,9 +22,9 @@
  */
 package nl.dtls.fairdatapoint.service.dashboard;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairmetadata4j.model.DatasetMetadata;
+import nl.dtls.fairmetadata4j.model.DistributionMetadata;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDatasetDTO;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDistributionDTO;

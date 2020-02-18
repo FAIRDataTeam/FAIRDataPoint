@@ -22,9 +22,9 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.acl;
 
-import nl.dtl.fairmetadata4j.model.CatalogMetadata;
-import nl.dtl.fairmetadata4j.model.DatasetMetadata;
-import nl.dtl.fairmetadata4j.model.DistributionMetadata;
+import nl.dtls.fairmetadata4j.model.CatalogMetadata;
+import nl.dtls.fairmetadata4j.model.DatasetMetadata;
+import nl.dtls.fairmetadata4j.model.DistributionMetadata;
 import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;

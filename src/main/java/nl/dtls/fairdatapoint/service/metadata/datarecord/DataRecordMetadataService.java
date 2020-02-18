@@ -22,8 +22,8 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.datarecord;
 
-import nl.dtl.fairmetadata4j.model.DataRecordMetadata;
-import nl.dtl.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtls.fairmetadata4j.model.DataRecordMetadata;
+import nl.dtls.fairmetadata4j.utils.MetadataParserUtils;
 import nl.dtls.fairdatapoint.api.dto.metadata.DataRecordMetadataChangeDTO;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
