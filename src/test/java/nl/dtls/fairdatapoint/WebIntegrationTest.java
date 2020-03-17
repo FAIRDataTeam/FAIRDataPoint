@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.database.mongo.migration.development.MigrationRunne
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -39,6 +40,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
         properties = {"spring.main.allow-bean-definition-overriding=true"})
+@AutoConfigureMockMvc
 public abstract class WebIntegrationTest {
 
     public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
