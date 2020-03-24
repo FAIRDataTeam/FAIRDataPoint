@@ -5,7 +5,7 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6)
 [![Coverage Status](https://coveralls.io/repos/github/DTL-FAIRData/FAIRDataPoint/badge.svg?branch=master)](https://coveralls.io/github/DTL-FAIRData/FAIRDataPoint?branch=master)
 
-`FAIRDataPoint` is a REST API for creating, storing, and serving `FAIR metadata`. The metadata contents are generated `semi-automatically` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document.
+`FAIR Data Point` (FDP) is a REST API for creating, storing, and serving `FAIR metadata`. This FDP implementation also presents a Web-based graphical user interface (GUI). The metadata contents are generated `semi-automatically` according to the [FAIR Data Point software specification](https://github.com/FAIRDataTeam/FAIRDataPoint-Spec) document.
 
 More information about FDP and how to deploy can be found at [FDP Public Documentation](https://fairdatapoint.readthedocs.io/).
 
