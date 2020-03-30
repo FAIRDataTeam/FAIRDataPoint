@@ -27,29 +27,19 @@
  */
 package nl.dtls.fairdatapoint.service.pid;
 
-import nl.dtls.fairmetadata4j.model.Metadata;
 import org.eclipse.rdf4j.model.IRI;
-
-import javax.annotation.Nonnull;
 
 /**
  * Persistence ID system interface
- *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @version 0.1
- * @since 2018-06-04
  */
 public interface PIDSystem {
 
     /**
      * This method returns PID uri of a given metadata
      *
-     * @param <T>
-     * @param metadata Subtype of Metadata object
      * @return PID uri as IRI
      */
-    <T extends Metadata> IRI getURI(@Nonnull T metadata);
+    IRI getURI(IRI uri);
 
     /**
      * This method returns identifier of a given iri
@@ -57,5 +47,5 @@ public interface PIDSystem {
      * @param iri PID uri
      * @return Identifier as String
      */
-    String getId(@Nonnull IRI iri);
+    String getId(IRI iri);
 }

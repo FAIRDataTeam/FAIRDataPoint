@@ -22,16 +22,19 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
-import nl.dtls.fairmetadata4j.model.*;
-import nl.dtls.fairdatapoint.api.dto.metadata.*;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import org.eclipse.rdf4j.model.Model;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataFixtureLoader {
@@ -39,54 +42,56 @@ public class MetadataFixtureLoader {
     public static final String TEST_REPOSITORY_PATH = "";
     public static final String TEST_CATALOG_PATH = format("/catalog/%s", MetadataFixtureFilesHelper.CATALOG_ID);
     public static final String TEST_DATASET_PATH = format("/dataset/%s", MetadataFixtureFilesHelper.DATASET_ID);
-    public static final String TEST_DATARECORD_PATH = format("/datarecord/%s",
-            MetadataFixtureFilesHelper.DATARECORD_ID);
     public static final String TEST_DISTRIBUTION_PATH = format("/distribution/%s",
             MetadataFixtureFilesHelper.DISTRIBUTION_ID);
 
     @Autowired
-    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
+    @Qualifier("repositoryMetadataService")
+    private MetadataService repositoryMetadataService;
 
     @Autowired
-    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
+    @Qualifier("catalogMetadataService")
+    private MetadataService catalogMetadataService;
 
     @Autowired
-    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
+    @Qualifier("genericMetadataService")
+    private MetadataService genericMetadataService;
 
     @Autowired
-    private MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
-
-    @Autowired
-    private MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
+    protected ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     public void storeExampleMetadata() throws MetadataServiceException {
+        ResourceDefinition repositoryRd = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition catalogRd = resourceDefinitionFixtures.catalogDefinition(repositoryRd);
+        ResourceDefinition datasetRd = resourceDefinitionFixtures.datasetDefinition(catalogRd);
+        ResourceDefinition distributionRd = resourceDefinitionFixtures.distributionDefinition(datasetRd);
+
         MockitoAnnotations.initMocks(this);
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         // Store repository metadata
         request.setRequestURI(TEST_REPOSITORY_PATH);
         String repositoryUri = request.getRequestURL().toString();
-        repositoryMetadataService.store(MetadataFixtureFilesHelper.getFDPMetadata(repositoryUri));
+        Model repository = MetadataFixtureFilesHelper.getFDPMetadata(repositoryUri);
+        repositoryMetadataService.store(repository, i(repositoryUri), repositoryRd);
 
         // Store catalog metadata
         request.setRequestURI(TEST_CATALOG_PATH);
-        String cUri = request.getRequestURL().toString();
-        catalogMetadataService.store(MetadataFixtureFilesHelper.getCatalogMetadata(cUri, repositoryUri));
+        String catalogUri = request.getRequestURL().toString();
+        Model catalog = MetadataFixtureFilesHelper.getCatalogMetadata(catalogUri, repositoryUri);
+        catalogMetadataService.store(catalog, i(catalogUri), catalogRd);
 
         // Store dataset metadata
         request.setRequestURI(TEST_DATASET_PATH);
-        String dUri = request.getRequestURL().toString();
-        datasetMetadataService.store(MetadataFixtureFilesHelper.getDatasetMetadata(dUri, cUri));
-
-        // Store datarecord metadata
-        request.setRequestURI(TEST_DATARECORD_PATH);
-        String dRecUri = request.getRequestURL().toString();
-        dataRecordMetadataService.store(MetadataFixtureFilesHelper.getDataRecordMetadata(dRecUri, dUri));
+        String datasetUri = request.getRequestURL().toString();
+        Model dataset = MetadataFixtureFilesHelper.getDatasetMetadata(datasetUri, catalogUri);
+        genericMetadataService.store(dataset, i(datasetUri), datasetRd);
 
         // Store distribution metadata
         request.setRequestURI(TEST_DISTRIBUTION_PATH);
-        String disUri = request.getRequestURL().toString();
-        distributionMetadataService.store(MetadataFixtureFilesHelper.getDistributionMetadata(disUri, dUri));
+        String distributionUri = request.getRequestURL().toString();
+        Model distribution = MetadataFixtureFilesHelper.getDistributionMetadata(distributionUri, datasetUri);
+        genericMetadataService.store(distribution, i(distributionUri), distributionRd);
     }
 
 

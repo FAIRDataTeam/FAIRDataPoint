@@ -22,48 +22,47 @@
  */
 package nl.dtls.fairdatapoint.service.dashboard;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairmetadata4j.model.DatasetMetadata;
-import nl.dtls.fairmetadata4j.model.DistributionMetadata;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDatasetDTO;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDistributionDTO;
+import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
+
 @Service
 public class DashboardMapper {
 
-    public DashboardCatalogDTO toCatalogDTO(CatalogMetadata c, List<DashboardDatasetDTO> datasets,
-                                            Optional<MembershipDTO> membership) {
-        return new DashboardCatalogDTO(
-                c.getIdentifier().getIdentifier().getLabel(),
-                c.getUri().toString(),
-                c.getTitle().getLabel(),
+    public DashboardItemDTO toCatalogDTO(Model c, List<DashboardItemDTO> datasets,
+                                         Optional<MembershipDTO> membership) {
+        return new DashboardItemDTO(
+                getIdentifier(c).getIdentifier().getLabel(),
+                getUri(c).toString(),
+                getTitle(c).getLabel(),
                 datasets,
                 membership
         );
     }
 
-    public DashboardDatasetDTO toDatasetDTO(DatasetMetadata d, List<DashboardDistributionDTO> datasets,
-                                            Optional<MembershipDTO> membership) {
-        return new DashboardDatasetDTO(
-                d.getIdentifier().getIdentifier().getLabel(),
-                d.getUri().toString(),
-                d.getTitle().getLabel(),
+    public DashboardItemDTO toDatasetDTO(Model d, List<DashboardItemDTO> datasets,
+                                         Optional<MembershipDTO> membership) {
+        return new DashboardItemDTO(
+                getIdentifier(d).getIdentifier().getLabel(),
+                getUri(d).toString(),
+                getTitle(d).getLabel(),
                 datasets,
                 membership
         );
     }
 
-    public DashboardDistributionDTO toDistributionDTO(DistributionMetadata d, Optional<MembershipDTO> membership) {
-        return new DashboardDistributionDTO(
-                d.getIdentifier().getIdentifier().getLabel(),
-                d.getUri().toString(),
-                d.getTitle().getLabel(),
+    public DashboardItemDTO toDistributionDTO(Model d, Optional<MembershipDTO> membership) {
+        return new DashboardItemDTO(
+                getIdentifier(d).getIdentifier().getLabel(),
+                getUri(d).toString(),
+                getTitle(d).getLabel(),
+                List.of(),
                 membership
         );
     }

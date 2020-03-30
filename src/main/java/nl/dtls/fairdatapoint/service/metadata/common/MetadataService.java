@@ -22,25 +22,22 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtls.fairmetadata4j.model.Metadata;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 
 import javax.annotation.Nonnull;
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.List;
 
-public interface MetadataService<T extends Metadata, S> {
-    T retrieve(@Nonnull IRI iri) throws MetadataServiceException;
+public interface MetadataService {
+    Model retrieve(@Nonnull IRI uri) throws MetadataServiceException, ResourceNotFoundException;
 
-    List<T> retrieve(List<IRI> iris);
+    List<Model> retrieve(@Nonnull List<IRI> uri) throws MetadataServiceException, ResourceNotFoundException;
 
-    void store(@Nonnull T metadata) throws MetadataServiceException;
+    void store(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException;
 
-    void update(IRI uri, T metadataUpdate) throws MetadataServiceException;
+    void update(Model model, IRI uri, ResourceDefinition rd) throws MetadataServiceException;
 
-    void update(IRI uri, Class<T> entityType, S reqChangeDto) throws MetadataServiceException;
-
-    void enhance(T metadata) throws DatatypeConfigurationException;
-
-    MetadataMapper<T, S> metadataMapper();
+    void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition);
 }

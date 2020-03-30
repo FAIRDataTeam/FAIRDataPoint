@@ -30,13 +30,10 @@ package nl.dtls.fairdatapoint.utils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import nl.dtls.fairmetadata4j.io.*;
-import nl.dtls.fairmetadata4j.model.*;
-import nl.dtls.fairmetadata4j.utils.MetadataParserUtils;
+import nl.dtls.fairmetadata4j.accessor.MetadataSetter;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.rio.Rio;
@@ -49,6 +46,8 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
 /**
  * Contains references to the example metadata rdf files which are used in the Junit tests.
@@ -79,9 +78,6 @@ public class MetadataFixtureFilesHelper {
     public static final String DISTRIBUTION_ID = "sparql";
     public static final String DISTRIBUTION_URI =
             "http://localhost/textmining/gene-disease-association_lumc/" + DISTRIBUTION_ID;
-    // - data record
-    public static final String DATARECORD_METADATA_FILE = "datarecord.ttl";
-    public static final String DATARECORD_ID = "datarecord";
 
     // Test RDF
     public static final String TEST_RDF_FILE = "test-rdf.ttl";
@@ -116,52 +112,35 @@ public class MetadataFixtureFilesHelper {
         return statements;
     }
 
-    public static FDPMetadata getFDPMetadata(String uri) {
-        LOGGER.info("Generating example FDP metadata object");
-        FDPMetadataParser parser = MetadataParserUtils.getFdpParser();
-        ValueFactory f = SimpleValueFactory.getInstance();
-        FDPMetadata metadata = parser.parse(getFileContentAsStatements(REPOSITORY_METADATA_FILE, uri),
-                f.createIRI(uri));
-        return metadata;
+    public static Model getFDPMetadata(String uri) {
+        List<Statement> statements = getFileContentAsStatements(REPOSITORY_METADATA_FILE, uri);
+        Model model = new LinkedHashModel();
+        model.addAll(statements);
+        return model;
     }
 
-    public static CatalogMetadata getCatalogMetadata(String uri, String parentURI) {
-        LOGGER.info("Generating example catalog metadata object");
-        CatalogMetadataParser parser = MetadataParserUtils.getCatalogParser();
-        ValueFactory f = SimpleValueFactory.getInstance();
-        CatalogMetadata metadata = parser.parse(getFileContentAsStatements(CATALOG_METADATA_FILE,
-                uri), f.createIRI(uri));
-        metadata.setParentURI(f.createIRI(parentURI));
-        return metadata;
+    public static Model getCatalogMetadata(String uri, String parentURI) {
+        List<Statement> statements = getFileContentAsStatements(CATALOG_METADATA_FILE, uri);
+        Model model = new LinkedHashModel();
+        model.addAll(statements);
+        MetadataSetter.setParent(model, i(uri), i(parentURI));
+        return model;
     }
 
-    public static DatasetMetadata getDatasetMetadata(String uri, String parentURI) {
-        LOGGER.info("Generating example dataset metadata object");
-        DatasetMetadataParser parser = MetadataParserUtils.getDatasetParser();
-        ValueFactory f = SimpleValueFactory.getInstance();
-        DatasetMetadata metadata = parser.parse(getFileContentAsStatements(DATASET_METADATA_FILE,
-                uri), f.createIRI(uri));
-        metadata.setParentURI(f.createIRI(parentURI));
-        return metadata;
+    public static Model getDatasetMetadata(String uri, String parentURI) {
+        List<Statement> statements = getFileContentAsStatements(DATASET_METADATA_FILE, uri);
+        Model model = new LinkedHashModel();
+        model.addAll(statements);
+        MetadataSetter.setParent(model, i(uri), i(parentURI));
+        return model;
     }
 
-    public static DistributionMetadata getDistributionMetadata(String uri, String parentURI) {
-        LOGGER.info("Generating example distribution metadata object");
-        DistributionMetadataParser parser = MetadataParserUtils.getDistributionParser();
-        ValueFactory f = SimpleValueFactory.getInstance();
-        DistributionMetadata metadata = parser.parse(getFileContentAsStatements(
-                DISTRIBUTION_METADATA_FILE, uri), f.createIRI(uri));
-        metadata.setParentURI(f.createIRI(parentURI));
-        return metadata;
+    public static Model getDistributionMetadata(String uri, String parentURI) {
+        List<Statement> statements = getFileContentAsStatements(DISTRIBUTION_METADATA_FILE, uri);
+        Model model = new LinkedHashModel();
+        model.addAll(statements);
+        MetadataSetter.setParent(model, i(uri), i(parentURI));
+        return model;
     }
 
-    public static DataRecordMetadata getDataRecordMetadata(String uri, String parentURI) {
-        LOGGER.info("Generating example datarecord metadata object");
-        DataRecordMetadataParser parser = MetadataParserUtils.getDataRecordParser();
-        ValueFactory f = SimpleValueFactory.getInstance();
-        DataRecordMetadata metadata = parser.parse(getFileContentAsStatements(
-                DATARECORD_METADATA_FILE, uri), f.createIRI(uri));
-        metadata.setParentURI(f.createIRI(parentURI));
-        return metadata;
-    }
 }

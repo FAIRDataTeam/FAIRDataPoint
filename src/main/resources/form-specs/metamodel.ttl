@@ -1,0 +1,334 @@
+@prefix :         <http://example.com/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dct:      <http://purl.org/dc/terms/> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+@prefix odrl:     <http://www.w3.org/ns/odrl/2/> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+@prefix skos:     <http://www.w3.org/2004/02/skos/core#> .
+@prefix vcard:    <http://www.w3.org/2006/vcard/ns#> .
+@prefix foaf:     <http://xmlns.com/foaf/0.1/> .
+@prefix r3d:      <http://www.re3data.org/schema/3-0#> .
+@prefix r3voc:    <http://www.re3data.org/vocab/> .
+@prefix lvont:    <http://lexvo.org/ontology#> .
+@prefix datacite: <http://purl.org/spar/datacite/> .
+@prefix r3common: <http://www.re3data.org/vocab/common#> .
+@prefix org:      <http://www.w3.org/ns/org#> .
+
+:ResourceShape
+    a              sh:NodeShape ;
+    sh:targetClass dcat:Resource ;
+    sh:property    [ sh:path dcat:contactPoint ;
+    sh:class                 vcard:Kind ;
+    sh:maxCount              1 ; ],
+                   [ sh:path       dct:title ;
+                       sh:datatype xsd:string ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:description ;
+                       sh:nodeKind sh:Literal ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:hasVersion ;
+                       sh:name     "version" ;
+                       sh:nodeKind sh:Literal ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:issued ;
+                       sh:datatype xsd:dateTime ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:modified ;
+                       sh:datatype xsd:dateTime ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:license ;
+                       sh:nodeKind sh:IRI ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:language ;
+                       sh:nodeKind sh:IRI ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:publisher ;
+                       sh:node     foaf:AgentShape ;
+                       sh:minCount 1 ; ],
+                   [ sh:path       dct:identifier ;
+                       sh:nodeKind sh:Literal ;
+                       sh:minCount 1 ; ],
+                   [ sh:path       dcat:theme ;
+                       sh:nodeKind sh:IRI ; ],
+                   [ sh:path       dct:type ;
+                       sh:nodeKind sh:IRI ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path    dct:relation ;
+                       sh:class :ResourceShape ; ],
+                   [ sh:path   dcat:qualifiedRelation ;
+                       sh:node :RelationshipShape ; ],
+                   [ sh:path       dcat:keyword ;
+                       sh:nodeKind sh:Literal ; ],
+                   [ sh:path       dcat:landingPage ;
+                       sh:nodeKind sh:IRI ;
+                       sh:minCount 0 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path    prov:qualifiedAttribution ;
+                       sh:class prov:Attribution ; ],
+                   [ sh:path       dct:rights ;
+                       sh:nodeKind sh:IRI ;
+                       sh:minCount 0 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       odrl:hasPolicy ;
+                       sh:class    odrl:Policy ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:isReferencedBy ;
+                       sh:nodeKind sh:IRI ; ] .
+
+:RelationshipShape
+    a              sh:NodeShape ;
+    sh:targetClass dcat:Relationship ;
+    sh:property    [ sh:path dct:relation ;
+    sh:minCount              1 ;
+    sh:maxCount              1 ; ],
+                   [ sh:path       dcat:hadRole ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ] .
+
+:RepositoryShape
+    a              sh:NodeShape ;
+    sh:targetClass r3d:Repository ;
+    sh:and         (
+                       :ResourceShape :R3DRepositoryShape ) .
+
+:DatasetShape
+    a              sh:NodeShape ;
+    sh:targetClass dcat:Dataset ;
+    sh:and         (
+                       :ResourceShape
+                       [ sh:path   dcat:distribution ;
+                           sh:node :DistributionShape ; ]
+                       [ sh:path       dcat:spatialResolutionInMeters ;
+                           sh:datatype xsd:decimal ;
+                           sh:maxCount 1 ; ]
+                       [ sh:path       dcat:temporalResolution ;
+                           sh:datatype xsd:duration ;
+                           sh:maxCount 1 ; ]
+                       [ sh:path       dct:accrualPeriodicity ;
+                           sh:class    dct:Frequency ;
+                           sh:maxCount 1 ; ]
+                       [ sh:path    dct:spatial ;
+                           sh:class dct:Location ; ]
+                       [ sh:path    dct:temporal ;
+                           sh:class dct:PeriodOfTime ; ]
+                       [ sh:path    prov:wasGeneratedBy ;
+                           sh:class prov:Activity ; ]
+                       [ sh:path       dct:isPartOf ;
+                           sh:nodeKind sh:IRI ;
+                           sh:minCount 1 ; ] ) .
+
+:CatalogShape
+    a              sh:NodeShape ;
+    sh:targetClass dcat:Catalog ;
+    sh:and         (
+                       :DatasetShape
+                       [ sh:path       foaf:homePage ;
+                           sh:minCount 1 ;
+                           sh:maxCount 1 ; ]
+                       [ sh:path    dcat:themeTaxonomy ;
+                           sh:class skos:ConceptScheme ; ]
+                       [ sh:path   dct:hasPart ;
+                           sh:node :ResourceShape ; ]
+                       [ sh:path   dcat:dataset ;
+                           sh:node :DatasetShape ; ]
+                       [ sh:path       dcat:service ;
+                           sh:node     :DataServiceShape ;
+                           sh:minCount 0 ; ]
+                       [ sh:path       dcat:catalog ;
+                           sh:node     :CatalogShape ;
+                           sh:minCount 0 ; ]
+                       [ sh:path       dcat:record ;
+                           sh:node     :CatalogRecordShape ;
+                           sh:maxCount 1 ; ] ) .
+
+:CatalogRecordShape
+    a              sh:NodeShape ;
+    sh:targetClass dcat:CatalogRecord ;
+    sh:property    [ sh:path dct:title ;
+    sh:nodeKind              sh:Literal ;
+    sh:uniqueLang            true ; ],
+                   [ sh:path         dct:description ;
+                       sh:nodeKind   sh:Literal ;
+                       sh:uniqueLang true ; ],
+                   [ sh:path       dct:issued ;
+                       sh:datatype xsd:dateTime ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:modified ;
+                       sh:datatype xsd:dateTime ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       foaf:primaryTopic ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ;
+                       sh:node     :ResourceShape ; ],
+                   [ sh:path       dct:conformsTo ;
+                       sh:class    dct:Standard ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ] .
+
+:DataServiceShape
+    a              sh:NodeShape ;
+    sh:targetClass dcat:DataService ;
+    sh:and         (
+                       :ResourceShape
+                       [ sh:path       dcat:endpointURL ;
+                           sh:nodeKind sh:IRI ;
+                           sh:minCount 1 ;
+                           sh:maxCount 1 ; ]
+                       [ sh:path       dcat:endpointDescription ;
+                           sh:nodeKind sh:IRI ; ]
+                       [ sh:path   dcat:servesDataset ;
+                           sh:node :DatasetShape ; ] ) .
+
+:DistributionShape
+    a              sh:NodeShape ;
+    sh:targetClass dcat:Distribution ;
+    sh:property    [ sh:path dct:title ;
+    sh:datatype              xsd:string ;
+    sh:minCount              1 ;
+    sh:maxCount              1 ; ],
+                   [ sh:path       dct:description ;
+                       sh:nodeKind sh:Literal ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:hasVersion ;
+                       sh:name     "version" ;
+                       sh:nodeKind sh:Literal ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:issued ;
+                       sh:datatype xsd:dateTime ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:modified ;
+                       sh:datatype xsd:dateTime ; ],
+                   [ sh:path       dct:license ;
+                       sh:class    dct:LicenseDocument ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:language ;
+                       sh:nodeKind sh:IRI ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:mediaType ;
+                       sh:datatype xsd:string ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:accessRights ;
+                       sh:class    dct:RightsStatement ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:rights ;
+                       sh:class    dct:RightsStatement ;
+                       sh:minCount 0 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       odrl:hasPolicy ;
+                       sh:class    odrl:Policy ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:accessURL ;
+                       sh:nodeKind sh:IRI ;
+                       sh:minCount 0 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:downloadURL ;
+                       sh:nodeKind sh:IRI ;
+                       sh:minCount 0 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:byteSize ;
+                       sh:datatype xsd:decimal ;
+                       sh:minCount 0 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:compressFormat ;
+                       sh:class    dct:MediaType ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:packageFormat ;
+                       sh:class    dct:MediaType ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:accessService ;
+                       sh:node     :DataServiceShape ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:spatialResolutionInMeters ;
+                       sh:datatype xsd:decimal ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dcat:temporalResolution ;
+                       sh:datatype xsd:duration ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:conformsTo ;
+                       sh:class    dct:Standard ;
+                       sh:minCount 1 ;
+                       sh:maxCount 1 ; ],
+                   [ sh:path       dct:isPartOf ;
+                       sh:nodeKind sh:IRI ;
+                       sh:minCount 1 ; ] .
+
+:AgentShape
+    a              sh:NodeShape ;
+    sh:targetClass foaf:Agent ;
+    sh:property    [ sh:path foaf:name ;
+    sh:datatype              xsd:string ;
+    sh:uniqueLang            true ;
+    sh:minCount              1 ; ] .
+
+
+:R3DRepositoryShape
+    a              sh:NodeShape ;
+    sh:targetClass r3d:Repository ;
+    sh:property    [ sh:path r3d:publicationSupport ;
+    sh:class                 r3d:PublicationSupport ; ],
+                   [ sh:path    r3d:dataAccess ;
+                       sh:class r3d:Access ; ],
+                   [ sh:path    r3d:dataUpload ;
+                       sh:class r3d:Access ; ],
+                   [ sh:path    r3d:databaseAccess ;
+                       sh:class r3d:Access ; ],
+                   [ sh:path    r3d:dataLicense ;
+                       sh:class r3d:License ; ],
+                   [ sh:path    r3d:dataUploadLicense ;
+                       sh:class r3d:License ; ],
+                   [ sh:path    r3d:databaseLicense ;
+                       sh:class r3d:License ; ],
+                   [ sh:path    r3d:policy ;
+                       sh:class r3d:Policy ; ],
+                   [ sh:path    r3d:api ;
+                       sh:class r3d:Api ; ],
+                   [ sh:path    r3d:metadataStandard ;
+                       sh:class foaf:Document ; ],
+                   [ sh:path    r3d:certificate ;
+                       sh:class foaf:Document ; ],
+                   [ sh:path    r3d:syndication ;
+                       sh:class r3d:ReferenceDocument ; ],
+                   [ sh:path    r3d:repositoryType ;
+                       sh:class r3voc:RepositoryType ; ],
+                   [ sh:path    r3d:providerType ;
+                       sh:class r3voc:ProviderType ; ],
+                   [ sh:path    r3d:repositoryLanguage ;
+                       sh:class lvont:Language ; ],
+                   [ sh:path    r3d:contentType ;
+                       sh:class r3voc:ContentType ; ],
+                   [ sh:path    r3d:re3data ;
+                       sh:class datacite:Identifier ; ],
+                   [ sh:path    r3d:subject ;
+                       sh:class r3common:ClassificationIdentifier ; ],
+                   [ sh:path    r3d:doi ;
+                       sh:class datacite:Identifier ; ],
+                   [ sh:path    r3d:repositoryPost ;
+                       sh:class org:Post ; ],
+                   [ sh:path    r3d:institution ;
+                       sh:class r3d:Institution ; ],
+                   [ sh:path       r3d:startDate ;
+                       sh:datatype xsd:date ; ],
+                   [ sh:path       r3d:entryDate ;
+                       sh:datatype xsd:date ; ],
+                   [ sh:path       r3d:closed ;
+                       sh:datatype xsd:date ; ],
+                   [ sh:path       r3d:offline ;
+                       sh:datatype xsd:date ; ],
+                   [ sh:path       r3d:metrics ;
+                       sh:nodeKind sh:Literal ; ],
+                   [ sh:path       r3d:size ;
+                       sh:nodeKind sh:Literal ; ],
+                   [ sh:path       r3d:software ;
+                       sh:nodeKind sh:Literal ; ],
+                   [ sh:path       r3d:hasVersioning ;
+                       sh:datatype xsd:boolean ; ],
+                   [ sh:path       r3d:hasQualityManagement ;
+                       sh:datatype xsd:boolean ; ] .

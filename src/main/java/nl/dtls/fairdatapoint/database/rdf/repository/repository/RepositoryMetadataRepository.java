@@ -22,12 +22,11 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.repository;
 
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 
-public interface RepositoryMetadataRepository extends MetadataRepository<FDPMetadata> {
+public interface RepositoryMetadataRepository extends MetadataRepository {
 
     IRI getRepositoryIri(IRI iri) throws MetadataRepositoryException;
 

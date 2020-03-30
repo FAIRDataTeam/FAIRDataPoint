@@ -22,9 +22,8 @@
  */
 package nl.dtls.fairdatapoint.acceptance.general;
 
-import nl.dtls.fairmetadata4j.io.MetadataException;
-import nl.dtls.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.service.rdf.RdfFileService;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,10 +45,13 @@ public class SecurityTest extends WebIntegrationTest {
     @Autowired
     private TestMetadataFixtures testMetadataFixtures;
 
+    @Autowired
+    private RdfFileService rdfFileService;
+
     @Test
-    public void postRequestsAreSecured() throws MetadataException, DatatypeConfigurationException {
+    public void postRequestsAreSecured() {
         // GIVEN: Prepare data
-        String reqDto = MetadataUtils.getString(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
+        String reqDto = rdfFileService.write(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
         // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .post(URI.create("/distribution"))
@@ -67,9 +68,9 @@ public class SecurityTest extends WebIntegrationTest {
     }
 
     @Test
-    public void patchRequestsAreSecured() throws MetadataException, DatatypeConfigurationException {
+    public void patchRequestsAreSecured() {
         // GIVEN: Prepare data
-        String reqDto = MetadataUtils.getString(testMetadataFixtures.repositoryMetadata(), RDFFormat.TURTLE);
+        String reqDto = rdfFileService.write(testMetadataFixtures.repositoryMetadata(), RDFFormat.TURTLE);
         // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .patch(URI.create("/"))

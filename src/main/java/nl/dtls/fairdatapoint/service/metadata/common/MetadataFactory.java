@@ -22,26 +22,22 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtls.fairmetadata4j.model.*;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MetadataFactory {
-    FDPMetadata createFDPMetadata(String title, String description, String fdpUrl);
+    Model createFDPMetadata(String title, String description, String fdpUrl);
 
-    CatalogMetadata createCatalogMetadata(String title, String description, String identifier,
-                                          List<String> themeTaxonomies, String repositoryUrl, FDPMetadata repository);
+    Model createCatalogMetadata(String title, String description, String identifier, List<String> themeTaxonomies,
+                                String repositoryUrl, IRI repository);
 
-    DatasetMetadata createDatasetMetadata(String title, String description, String identifier, List<String> themes,
-                                          List<String> keywords, String fdpUrl, CatalogMetadata catalog);
+    Model createDatasetMetadata(String title, String description, String identifier, List<String> themes,
+                                List<String> keywords, String fdpUrl, IRI catalog);
 
-    DistributionMetadata createDistributionMetadata(String title, String description, String identifier,
-                                                    String downloadUrl, String accessUrl, String mediaType,
-                                                    String fdpUrl, DatasetMetadata dataset);
+    Model createDistributionMetadata(String title, String description, String identifier, String downloadUrl,
+                                     String accessUrl, String mediaType, String fdpUrl, IRI dataset);
 
-    DataRecordMetadata createDatarecordMetadata(String title, String description, String identifier,
-                                                String rmlURI, String rmlInputSource,
-                                                Date dataRecordIssued, Date dataRecordModified, String repositoryUrl,
-                                                DatasetMetadata dataset);
 }

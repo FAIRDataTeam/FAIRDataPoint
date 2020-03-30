@@ -22,16 +22,20 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtls.fairmetadata4j.model.Agent;
 import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
+import nl.dtls.fairmetadata4j.model.Agent;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
 
 @Configuration
 public class MetadataConfig {
@@ -49,6 +53,19 @@ public class MetadataConfig {
             publisher.setName(VALUEFACTORY.createLiteral(publishername));
         }
         return publisher;
+    }
+
+    @Bean(name = "creator")
+    public Agent creator(@Value("${metadataProperties.creatorURI:}") String creatorURI,
+                           @Value("${metadataProperties.creatorName:}") String creatorName) {
+
+        Agent creator = null;
+        if (!creatorURI.isEmpty() && !creatorName.isEmpty()) {
+            creator = new Agent();
+            creator.setUri(i(creatorURI));
+            creator.setName(l(creatorName));
+        }
+        return creator;
     }
 
     @Bean(name = "language")
@@ -72,10 +89,11 @@ public class MetadataConfig {
     }
 
     @Bean
-    public PIDSystem pidSystem(@Value("${pidSystem.type:1}") int pidSystemtype) {
-
+    public PIDSystem pidSystem(@Value("${pidSystem.type:1}") int pidSystemtype,
+                               @Value("${instance.url}") String instanceUrl,
+                               @Qualifier("purlBaseUrl") IRI purlBaseUrl) {
         if (pidSystemtype == 2) {
-            return new PurlPIDSystemImpl();
+            return new PurlPIDSystemImpl(instanceUrl, purlBaseUrl);
         } else {
             return new DefaultPIDSystemImpl();
         }

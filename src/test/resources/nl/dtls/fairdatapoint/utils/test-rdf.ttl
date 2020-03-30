@@ -1,1 +1,2 @@
-<http://www.dtls.nl/test> <http://www.dtls.nl/testLabel> "Test".
+<http://www.dtls.nl/test>
+    <http://www.dtls.nl/testLabel> "Test" .

@@ -22,37 +22,39 @@
  */
 package nl.dtls.fairdatapoint.service.dashboard;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairmetadata4j.model.DatasetMetadata;
-import nl.dtls.fairmetadata4j.model.DistributionMetadata;
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDatasetDTO;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDistributionDTO;
+import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
+import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
+
 @Service
 public class DashboardService {
 
     @Autowired
-    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
+    @Qualifier("repositoryMetadataService")
+    private MetadataService repositoryMetadataService;
 
     @Autowired
-    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
+    @Qualifier("catalogMetadataService")
+    private MetadataService catalogMetadataService;
 
     @Autowired
-    private MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
+    @Qualifier("genericMetadataService")
+    private MetadataService genericMetadataService;
 
     @Autowired
     private MemberService memberService;
@@ -60,54 +62,52 @@ public class DashboardService {
     @Autowired
     private DashboardMapper dashboardMapper;
 
-    public List<DashboardCatalogDTO> getDashboard(FDPMetadata fdpMetadata) {
-        return getDashboardCatalogs(fdpMetadata);
+    public List<DashboardItemDTO> getDashboard(IRI repositoryUri) throws MetadataServiceException {
+        Model repository = repositoryMetadataService.retrieve(repositoryUri);
+        return getDashboardCatalogs(repository);
     }
 
-    private List<DashboardCatalogDTO> getDashboardCatalogs(FDPMetadata fdpMetadata) {
-        List<CatalogMetadata> catalogs = catalogMetadataService.retrieve(fdpMetadata.getCatalogs());
+    private List<DashboardItemDTO> getDashboardCatalogs(Model fdpMetadata) throws MetadataServiceException {
+        List<Model> catalogs = catalogMetadataService.retrieve(getCatalogs(fdpMetadata));
         return catalogs.stream()
-                .map(this::getDashboardCatalog)
-                .filter(c -> c.getMembership().isPresent() || c.getDatasets().size() > 0)
+                .map(suppress(this::getDashboardCatalog))
+                .filter(c -> c.getMembership().isPresent() || c.getChildren().size() > 0)
                 .collect(Collectors.toList());
     }
 
-    private DashboardCatalogDTO getDashboardCatalog(CatalogMetadata catalog) {
-        String catalogId = catalog.getIdentifier().getIdentifier().getLabel();
-        Optional<MemberDTO> oCatalogMember = memberService.getMemberForCurrentUser(catalogId,
-                CatalogMetadata.class);
-        List<DashboardDatasetDTO> datasetDtos = getDashboardDatasets(catalog);
+    private DashboardItemDTO getDashboardCatalog(Model catalog) throws MetadataServiceException {
+        String catalogId = getIdentifier(catalog).getIdentifier().getLabel();
+        Optional<MemberDTO> oCatalogMember = memberService.getMemberForCurrentUser(catalogId, Metadata.class);
+        List<DashboardItemDTO> datasetDtos = getDashboardDatasets(catalog);
         return dashboardMapper.toCatalogDTO(catalog, datasetDtos, oCatalogMember.map(MemberDTO::getMembership));
     }
 
-    private List<DashboardDatasetDTO> getDashboardDatasets(CatalogMetadata catalog) {
-        List<DatasetMetadata> datasets = datasetMetadataService.retrieve(catalog.getDatasets());
+    private List<DashboardItemDTO> getDashboardDatasets(Model catalog) throws MetadataServiceException {
+        List<Model> datasets = genericMetadataService.retrieve(getDatasets(catalog));
         return datasets.stream()
-                .map(this::getDashboardDataset)
-                .filter(d -> d.getMembership().isPresent() || d.getDistributions().size() > 0)
+                .map(suppress(this::getDashboardDataset))
+                .filter(d -> d.getMembership().isPresent() || d.getChildren().size() > 0)
                 .collect(Collectors.toList());
     }
 
-    private DashboardDatasetDTO getDashboardDataset(DatasetMetadata dataset) {
-        String datasetId = dataset.getIdentifier().getIdentifier().getLabel();
-        Optional<MemberDTO> oDatasetMember = memberService.getMemberForCurrentUser(datasetId,
-                DatasetMetadata.class);
-        List<DashboardDistributionDTO> distributionDtos = getDashboardDistributions(dataset);
+    private DashboardItemDTO getDashboardDataset(Model dataset) throws MetadataServiceException {
+        String datasetId = getIdentifier(dataset).getIdentifier().getLabel();
+        Optional<MemberDTO> oDatasetMember = memberService.getMemberForCurrentUser(datasetId, Metadata.class);
+        List<DashboardItemDTO> distributionDtos = getDashboardDistributions(dataset);
         return dashboardMapper.toDatasetDTO(dataset, distributionDtos, oDatasetMember.map(MemberDTO::getMembership));
     }
 
-    private List<DashboardDistributionDTO> getDashboardDistributions(DatasetMetadata dataset) {
-        List<DistributionMetadata> distributions = distributionMetadataService.retrieve(dataset.getDistributions());
+    private List<DashboardItemDTO> getDashboardDistributions(Model dataset) throws MetadataServiceException {
+        List<Model> distributions = genericMetadataService.retrieve(getDistributions(dataset));
         return distributions.stream()
                 .map(this::getDashboardDistribution)
                 .filter(d -> d.getMembership().isPresent())
                 .collect(Collectors.toList());
     }
 
-    private DashboardDistributionDTO getDashboardDistribution(DistributionMetadata distribution) {
-        String distributionId = distribution.getIdentifier().getIdentifier().getLabel();
-        Optional<MemberDTO> oDistributionMember = memberService.getMemberForCurrentUser(distributionId,
-                DistributionMetadata.class);
+    private DashboardItemDTO getDashboardDistribution(Model distribution) {
+        String distributionId = getIdentifier(distribution).getIdentifier().getLabel();
+        Optional<MemberDTO> oDistributionMember = memberService.getMemberForCurrentUser(distributionId, Metadata.class);
         return dashboardMapper.toDistributionDTO(distribution, oDistributionMember.map(MemberDTO::getMembership));
     }
 

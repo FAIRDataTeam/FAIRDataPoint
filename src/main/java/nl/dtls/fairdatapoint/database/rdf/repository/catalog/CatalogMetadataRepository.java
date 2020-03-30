@@ -22,14 +22,13 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 
 import java.util.List;
 
-public interface CatalogMetadataRepository extends MetadataRepository<CatalogMetadata> {
+public interface CatalogMetadataRepository extends MetadataRepository {
 
     List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRepositoryException;
 

@@ -22,8 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
 import static nl.dtls.fairdatapoint.config.CacheConfig.DATASET_THEMES_OF_CATALOG_CACHE;
 
 @Service
-public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository<CatalogMetadata> implements CatalogMetadataRepository {
+public class CatalogMetadataRepositoryImpl extends GenericMetadataRepository implements CatalogMetadataRepository {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "getDatasetThemesForCatalog.sparql";
 

@@ -28,47 +28,30 @@
 package nl.dtls.fairdatapoint.service.pid;
 
 import com.google.common.base.Preconditions;
-import nl.dtls.fairmetadata4j.model.Metadata;
+import lombok.extern.log4j.Log4j2;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
 /**
  * Implementation of default PID system
- *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @version 0.1
- * @since 2018-06-05
  */
+@Log4j2
 public class DefaultPIDSystemImpl implements PIDSystem {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPIDSystemImpl.class);
-
-    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     /**
      * Create a new PID uri for a given metadata
      *
-     * @param <T>
-     * @param metadata Subtype of Metadata object
      * @return PID uri as IRI
      * @throws NullPointerException exception if the metadata or the metadata URI is null
      */
     @Override
-    public <T extends Metadata> IRI getURI(@Nonnull T metadata) {
-
-        Preconditions.checkNotNull(metadata, "Metadata must not be null.");
-        Preconditions.checkNotNull(metadata.getUri(), "Metadata URI must not be null.");
-        LOGGER.info("Creating an new default PID");
-        String id = metadata.getUri().getLocalName();
-        String iri = String.join("#", metadata.getUri().stringValue(), id);
-        IRI pidIRI = VALUEFACTORY.createIRI(iri);
-        return pidIRI;
+    public IRI getURI(IRI uri) {
+        Preconditions.checkNotNull(uri, "URI must not be null.");
+        log.info("Creating an new default PID");
+        String id = uri.getLocalName();
+        String iri = String.join("#", uri.stringValue(), id);
+        return i(iri);
     }
 
     /**
@@ -80,14 +63,11 @@ public class DefaultPIDSystemImpl implements PIDSystem {
      * @throws IllegalStateException exception if the pid URI doesn't contain "#" character
      */
     @Override
-    public String getId(@Nonnull IRI iri) {
-
+    public String getId(IRI iri) {
         Preconditions.checkNotNull(iri, "Default pid uri must not be null.");
         Preconditions.checkState(iri.toString().contains("#"), "Not an valid default pid uri.");
-        String id = null;
         String uri = iri.toString();
-        id = uri.substring(uri.lastIndexOf('#') + 1);
-        return id;
+        return uri.substring(uri.lastIndexOf('#') + 1);
     }
 
 }

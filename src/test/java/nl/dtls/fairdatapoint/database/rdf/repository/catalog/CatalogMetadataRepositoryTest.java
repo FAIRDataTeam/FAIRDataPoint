@@ -25,8 +25,6 @@ package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
@@ -45,14 +43,13 @@ import java.util.Collections;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.DATASET_THEMES_OF_CATALOG_CACHE;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CatalogMetadataRepositoryTest {
 
-    private static final ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
-
-    private IRI catalogUri = VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.CATALOG_URI);
+    private IRI catalogUri = i(MetadataFixtureFilesHelper.CATALOG_URI);
 
     @Mock
     private Cache cache;

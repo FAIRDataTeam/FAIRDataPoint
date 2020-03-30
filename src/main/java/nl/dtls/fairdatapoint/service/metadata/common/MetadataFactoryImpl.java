@@ -22,99 +22,77 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import nl.dtls.fairmetadata4j.model.*;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import nl.dtls.fairmetadata4j.util.ValueFactoryHelper;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataFactoryImpl implements MetadataFactory {
 
-    private static final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-
-    public FDPMetadata createFDPMetadata(String title, String description, String repositoryUrl) {
-        FDPMetadata metadata = new FDPMetadata();
-        setCommonMetadata(metadata, repositoryUrl, title, description, null);
+    public Model createFDPMetadata(String title, String description, String repositoryUrl) {
+        Model metadata = new LinkedHashModel();
+        setCommonMetadata(metadata, i(repositoryUrl), title, description, null);
         return metadata;
     }
 
-    public CatalogMetadata createCatalogMetadata(String title, String description, String identifier,
-                                                 List<String> themeTaxonomies, String repositoryUrl,
-                                                 FDPMetadata repository) {
-        CatalogMetadata metadata = new CatalogMetadata();
-        setCommonMetadata(metadata, repositoryUrl + "/catalog/" + identifier, title, description, repository);
-        metadata.setThemeTaxonomys(themeTaxonomies.stream().map(valueFactory::createIRI).collect(Collectors.toList()));
+    public Model createCatalogMetadata(String title, String description, String identifier,
+                                       List<String> themeTaxonomies, String repositoryUrl,
+                                       IRI repository) {
+        Model metadata = new LinkedHashModel();
+        IRI catalogUri = i(repositoryUrl + "/catalog/" + identifier);
+        setCommonMetadata(metadata, catalogUri, title, description, repository);
+        setThemeTaxonomies(metadata, catalogUri,
+                themeTaxonomies.stream().map(ValueFactoryHelper::i).collect(Collectors.toList()));
         return metadata;
     }
 
-    public DatasetMetadata createDatasetMetadata(String title, String description, String identifier,
-                                                 List<String> themes, List<String> keywords, String repositoryUrl,
-                                                 CatalogMetadata catalog) {
-        DatasetMetadata metadata = new DatasetMetadata();
-        setCommonMetadata(metadata, repositoryUrl + "/dataset/" + identifier, title, description, catalog);
-        metadata.setThemes(themes.stream().map(valueFactory::createIRI).collect(Collectors.toList()));
-        metadata.setKeywords(keywords.stream().map(valueFactory::createLiteral).collect(Collectors.toList()));
+    public Model createDatasetMetadata(String title, String description, String identifier,
+                                       List<String> themes, List<String> keywords, String repositoryUrl,
+                                       IRI catalog) {
+        Model metadata = new LinkedHashModel();
+        IRI datasetUri = i(repositoryUrl + "/dataset/" + identifier);
+        setCommonMetadata(metadata, datasetUri, title, description, catalog);
+        setThemes(metadata, datasetUri, themes.stream().map(ValueFactoryHelper::i).collect(Collectors.toList()));
+        setKeywords(metadata, datasetUri, keywords.stream().map(ValueFactoryHelper::l).collect(Collectors.toList()));
         return metadata;
     }
 
-    public DistributionMetadata createDistributionMetadata(String title, String description, String identifier,
-                                                           String downloadUrl, String accessUrl, String mediaType,
-                                                           String repositoryUrl, DatasetMetadata dataset) {
-        DistributionMetadata metadata = new DistributionMetadata();
-        setCommonMetadata(metadata, repositoryUrl + "/distribution/" + identifier, title, description, dataset);
+    public Model createDistributionMetadata(String title, String description, String identifier,
+                                            String downloadUrl, String accessUrl, String mediaType,
+                                            String repositoryUrl, IRI dataset) {
+        Model metadata = new LinkedHashModel();
+        IRI distributionUri = i(repositoryUrl + "/distribution/" + identifier);
+        setCommonMetadata(metadata, distributionUri, title, description, dataset);
 
         if (downloadUrl != null) {
-            metadata.setDownloadURL(valueFactory.createIRI(downloadUrl));
+            setDownloadURL(metadata, distributionUri, i(downloadUrl));
         }
 
         if (accessUrl != null) {
-            metadata.setAccessURL(valueFactory.createIRI(accessUrl));
+            setAccessURL(metadata, distributionUri, i(accessUrl));
         }
 
-        metadata.setMediaType(valueFactory.createLiteral(mediaType));
+        setMediaType(metadata, distributionUri, l(mediaType));
         return metadata;
     }
 
-    public DataRecordMetadata createDatarecordMetadata(String title, String description, String identifier,
-                                                       String rmlURI, String rmlInputSource,
-                                                       Date dataRecordIssued, Date dataRecordModified,
-                                                       String repositoryUrl,
-                                                       DatasetMetadata dataset) {
-        DataRecordMetadata metadata = new DataRecordMetadata();
-        setCommonMetadata(metadata, repositoryUrl + "/datarecord/" + identifier, title, description, dataset);
-
-        if (rmlURI != null) {
-            metadata.setRmlURI(valueFactory.createIRI(rmlURI));
-        }
-
-        if (rmlInputSource != null) {
-            metadata.setRmlInputSourceURI(valueFactory.createIRI(rmlInputSource));
-        }
-
-        if (dataRecordIssued != null) {
-            metadata.setDataRecordIssued(valueFactory.createLiteral(dataRecordIssued));
-        }
-
-        if (dataRecordModified != null) {
-            metadata.setDataRecordModified(valueFactory.createLiteral(dataRecordModified));
-        }
-
-        return metadata;
-    }
-
-    private void setCommonMetadata(Metadata metadata, String uri, String title, String description, Metadata parent) {
-        metadata.setUri(valueFactory.createIRI(uri));
-        metadata.setTitle(valueFactory.createLiteral(title));
-        metadata.setDescription(valueFactory.createLiteral(description));
-        metadata.setVersion(valueFactory.createLiteral("1.0", XMLSchema.FLOAT));
+    private void setCommonMetadata(Model metadata, IRI uri, String title, String description, IRI parent) {
+        setTitle(metadata, uri, l(title));
+        setDescription(metadata, uri, l(description));
+        setVersion(metadata, uri, l(1.0f));
 
         if (parent != null) {
-            metadata.setParentURI(parent.getUri());
+            setParent(metadata, uri, parent);
         }
     }
 }
