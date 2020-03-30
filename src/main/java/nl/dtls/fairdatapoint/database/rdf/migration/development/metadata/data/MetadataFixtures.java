@@ -22,13 +22,14 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data;
 
-import nl.dtls.fairmetadata4j.model.*;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 
 @Service
 public class MetadataFixtures {
@@ -36,7 +37,7 @@ public class MetadataFixtures {
     @Autowired
     protected MetadataFactory metadataFactory;
 
-    public FDPMetadata repositoryMetadata(String repositoryUrl) {
+    public Model repositoryMetadata(String repositoryUrl) {
         return metadataFactory.createFDPMetadata(
                 "My FAIR Data Point",
                 "Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec ultricies augue turpis sed " +
@@ -52,7 +53,7 @@ public class MetadataFixtures {
         );
     }
 
-    public CatalogMetadata catalog1(String repositoryUrl, FDPMetadata repository) {
+    public Model catalog1(String repositoryUrl, IRI repository) {
         return metadataFactory.createCatalogMetadata(
                 "Bio Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -70,7 +71,7 @@ public class MetadataFixtures {
         );
     }
 
-    public CatalogMetadata catalog2(String repositoryUrl, FDPMetadata repository) {
+    public Model catalog2(String repositoryUrl, IRI repository) {
         return metadataFactory.createCatalogMetadata(
                 "Tech Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -88,7 +89,7 @@ public class MetadataFixtures {
         );
     }
 
-    public CatalogMetadata catalog3(String repositoryUrl, FDPMetadata repository) {
+    public Model catalog3(String repositoryUrl, IRI repository) {
         return metadataFactory.createCatalogMetadata(
                 "IT Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -106,7 +107,7 @@ public class MetadataFixtures {
         );
     }
 
-    public DatasetMetadata dataset1(String repositoryUrl, CatalogMetadata catalog) {
+    public Model dataset1(String repositoryUrl, IRI catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Cat Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -122,7 +123,7 @@ public class MetadataFixtures {
         );
     }
 
-    public DatasetMetadata dataset2(String repositoryUrl, CatalogMetadata catalog) {
+    public Model dataset2(String repositoryUrl, IRI catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Dog Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -137,7 +138,7 @@ public class MetadataFixtures {
         );
     }
 
-    public DatasetMetadata dataset3(String repositoryUrl, CatalogMetadata catalog) {
+    public Model dataset3(String repositoryUrl, IRI catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Pig Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -152,7 +153,7 @@ public class MetadataFixtures {
         );
     }
 
-    public DistributionMetadata distribution1(String repositoryUrl, DatasetMetadata dataset) {
+    public Model distribution1(String repositoryUrl, IRI dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Downloadable Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -173,7 +174,7 @@ public class MetadataFixtures {
         );
     }
 
-    public DistributionMetadata distribution2(String repositoryUrl, DatasetMetadata dataset) {
+    public Model distribution2(String repositoryUrl, IRI dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Accessible Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -194,7 +195,7 @@ public class MetadataFixtures {
         );
     }
 
-    public DistributionMetadata distribution3(String repositoryUrl, DatasetMetadata dataset) {
+    public Model distribution3(String repositoryUrl, IRI dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Nice Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -210,52 +211,6 @@ public class MetadataFixtures {
                 null,
                 "http://example.com",
                 "text/plain",
-                repositoryUrl,
-                dataset
-        );
-    }
-
-    public DataRecordMetadata datarecord1(String repositoryUrl, DatasetMetadata dataset) {
-        return metadataFactory.createDatarecordMetadata(
-                "My datarecord 1",
-                "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
-                        "cubilia Curae; Pellentesque pulvinar augue at ultricies placerat. Vestibulum faucibus sem " +
-                        "vel massa egestas consectetur at et nisi. Nullam consectetur, mi et lacinia commodo, arcu " +
-                        "eros tempus risus, nec porta justo metus in orci. Pellentesque mattis tortor a ultrices " +
-                        "pharetra. Phasellus tristique urna orci, ut vulputate tortor accumsan sit amet. Nulla sed " +
-                        "nunc varius, finibus sapien eget, venenatis tortor. Nam gravida diam ut sapien sodales, ut " +
-                        "sodales tellus feugiat. Duis auctor rutrum dictum. Phasellus facilisis, nibh at tempus " +
-                        "efficitur, odio sem molestie lectus, at bibendum metus orci in nibh. Mauris facilisis est " +
-                        "nibh, vitae iaculis risus lacinia at. Aliquam in lectus est.",
-                "datarecord-1",
-                "https://git.lumc.nl/biosemantics/ring14-fdp-metadata/raw/bd01b84fb792ae3860fdda646e9cb96a1a11205c" +
-                        "/rml/biobank/RING_14_biobank_mapping.ttl",
-                "http://localhost.com/an-example-distribution",
-                new Date(),
-                new Date(),
-                repositoryUrl,
-                dataset
-        );
-    }
-
-    public DataRecordMetadata datarecord2(String repositoryUrl, DatasetMetadata dataset) {
-        return metadataFactory.createDatarecordMetadata(
-                "My datarecord 2",
-                "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
-                        "cubilia Curae; Pellentesque pulvinar augue at ultricies placerat. Vestibulum faucibus sem " +
-                        "vel massa egestas consectetur at et nisi. Nullam consectetur, mi et lacinia commodo, arcu " +
-                        "eros tempus risus, nec porta justo metus in orci. Pellentesque mattis tortor a ultrices " +
-                        "pharetra. Phasellus tristique urna orci, ut vulputate tortor accumsan sit amet. Nulla sed " +
-                        "nunc varius, finibus sapien eget, venenatis tortor. Nam gravida diam ut sapien sodales, ut " +
-                        "sodales tellus feugiat. Duis auctor rutrum dictum. Phasellus facilisis, nibh at tempus " +
-                        "efficitur, odio sem molestie lectus, at bibendum metus orci in nibh. Mauris facilisis est " +
-                        "nibh, vitae iaculis risus lacinia at. Aliquam in lectus est.",
-                "datarecord-2",
-                "https://git.lumc.nl/biosemantics/ring14-fdp-metadata/raw/bd01b84fb792ae3860fdda646e9cb96a1a11205c" +
-                        "/rml/biobank/RING_14_biobank_mapping.ttl",
-                "http://localhost.com/an-example-distribution",
-                new Date(),
-                new Date(),
                 repositoryUrl,
                 dataset
         );

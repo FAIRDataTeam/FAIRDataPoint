@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.repository;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -52,12 +51,13 @@ public class Detail_GET extends WebIntegrationTest {
         RequestEntity<Void> request = RequestEntity
                 .get(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.ACCEPT, "text/turtle")
                 .build();
-        ParameterizedTypeReference<RepositoryMetadataDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<RepositoryMetadataDTO> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));

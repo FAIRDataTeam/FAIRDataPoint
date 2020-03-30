@@ -27,8 +27,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
-import nl.dtls.fairmetadata4j.model.*;
-import nl.dtls.fairdatapoint.api.dto.metadata.*;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -38,6 +37,7 @@ import org.eclipse.rdf4j.rio.RDFWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
@@ -53,19 +53,16 @@ public abstract class MetadataController {
     protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Autowired
-    protected MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
+    @Qualifier("repositoryMetadataService")
+    protected MetadataService repositoryMetadataService;
 
     @Autowired
-    protected MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
+    @Qualifier("catalogMetadataService")
+    protected MetadataService catalogMetadataService;
 
     @Autowired
-    protected MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
-
-    @Autowired
-    protected MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
-
-    @Autowired
-    protected MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
+    @Qualifier("genericMetadataService")
+    protected MetadataService genericMetadataService;
 
     protected String getRequestURL(HttpServletRequest request) {
 
@@ -134,5 +131,16 @@ public abstract class MetadataController {
         String requestedURL = getRequestURL(request);
         UUID uid = UUID.randomUUID();
         return VALUEFACTORY.createIRI(requestedURL + "/" + uid.toString());
+    }
+
+    protected MetadataService getMetadataServiceByUrlPrefix(String urlPrefix) {
+        switch (urlPrefix) {
+            case "catalog":
+                return catalogMetadataService;
+            case "":
+                return repositoryMetadataService;
+            default:
+                return genericMetadataService;
+        }
     }
 }

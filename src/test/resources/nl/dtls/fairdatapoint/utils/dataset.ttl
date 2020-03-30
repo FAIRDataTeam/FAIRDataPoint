@@ -1,30 +1,38 @@
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
 @prefix lang: <http://id.loc.gov/vocabulary/iso639-1/> .
 
-<> dct:publisher <http://biosemantics.humgen.nl> ;
-	dct:description "Gene disease association dataset from LUMC"@en ;
-	dct:hasVersion "1.0" ;
-	<http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier> <http://dev-vm.fair-dtls.surf-hosted.nl:8082/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> ;
-	dct:issued "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
-        dct:conformsTo <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
-	dct:language lang:en ;
-	dct:modified "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
-	dct:title "Gene disease association (LUMC)"@en ;
-	a dcat:Dataset ;
-	rdfs:label "Gene disease association (LUMC)"@en ;
-	dcat:keyword "GDA lumc" , "text mining" , "gene-disease association" ;
-	dcat:landingPage <http://rdf.biosemantics.org/> ;
-	dcat:theme <http://semanticscience.org/resource/statistical-association> , <http://dbpedia.org/resource/Text_mining> ;
-        dct:identifier "gene-disease-association-lumc-metadataID" ;
-        dct:isPartOf <http://localhost/catalog/textmining> .
+<>
+    dct:publisher    <http://biosemantics.humgen.nl> ;
+    dct:description  "Gene disease association dataset from LUMC"@en ;
+    dct:hasVersion   "1.0" ;
+    <http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier>
+                     <http://dev-vm.fair-dtls.surf-hosted.nl:8082/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> ;
+    dct:issued       "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
+    dct:conformsTo   <http://rdf.biosemantics.org/fdp/shex/dummySpecs> ;
+    dct:language     lang:en ;
+    dct:modified     "2016-10-27T10:53:09.317+02:00"^^xsd:dateTime ;
+    dct:title        "Gene disease association (LUMC)"@en ;
+    a                dcat:Dataset ,
+                     <http://www.w3.org/ns/dcat#Resource> ;
+    rdfs:label       "Gene disease association (LUMC)"@en ;
+    dcat:keyword     "GDA lumc",
+                     "text mining",
+                     "gene-disease association" ;
+    dcat:landingPage <http://rdf.biosemantics.org/> ;
+    dcat:theme       <http://semanticscience.org/resource/statistical-association>,
+                     <http://dbpedia.org/resource/Text_mining> ;
+    dct:identifier   "gene-disease-association-lumc-metadataID" ;
+    dct:isPartOf     <http://localhost/catalog/textmining> .
 
-<http://biosemantics.humgen.nl> a <http://xmlns.com/foaf/0.1/Organization> ;
-	<http://xmlns.com/foaf/0.1/name> "Biosemantics LUMC"@en .
+<http://biosemantics.humgen.nl>
+    a                                <http://xmlns.com/foaf/0.1/Organization> ;
+    <http://xmlns.com/foaf/0.1/name> "Biosemantics LUMC"@en .
 
-<http://dev-vm.fair-dtls.surf-hosted.nl:8082/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID> a <http://purl.org/spar/datacite/ResourceIdentifier> ;
-	dct:identifier "gene-disease-association-lumc-metadataID" .
+<http://dev-vm.fair-dtls.surf-hosted.nl:8082/textmining/gene-disease-association-lumc/gene-disease-association-lumc-metadataID>
+    a              <http://purl.org/spar/datacite/ResourceIdentifier> ;
+    dct:identifier "gene-disease-association-lumc-metadataID" .

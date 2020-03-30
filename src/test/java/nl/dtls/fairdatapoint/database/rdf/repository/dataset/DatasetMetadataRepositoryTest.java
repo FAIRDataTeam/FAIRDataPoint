@@ -27,8 +27,6 @@ import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,13 +42,12 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import java.util.Collections;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.DATASET_THEMES_OF_CATALOG_CACHE;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 import static org.mockito.Mockito.*;
 
 public class DatasetMetadataRepositoryTest {
 
-    private static final ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
-
-    private IRI catalogUri = VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.CATALOG_URI);
+    private IRI catalogUri = i(MetadataFixtureFilesHelper.CATALOG_URI);
 
     @Spy
     private Cache cache;

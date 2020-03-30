@@ -35,6 +35,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 
 import java.io.IOException;
 
@@ -68,6 +69,10 @@ public class ErrorConverter extends AbstractHttpMessageConverter<ErrorDTO> {
                 .stream()
                 .map(MediaType::parseMediaType)
                 .toArray(MediaType[]::new);
+    }
+
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.mediaType(format.getDefaultFileExtension(), MediaType.parseMediaType(format.getDefaultMIMEType()));
     }
 
 }

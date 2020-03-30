@@ -27,16 +27,16 @@
  */
 package nl.dtls.fairdatapoint.api.controller.exception;
 
-import nl.dtls.fairmetadata4j.io.MetadataException;
-import nl.dtls.fairmetadata4j.io.MetadataParserException;
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
+import nl.dtls.fairdatapoint.entity.exception.*;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import nl.dtls.fairmetadata4j.parser.exception.MetadataException;
+import nl.dtls.fairmetadata4j.parser.exception.MetadataParserException;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -45,24 +45,48 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ControllerAdvice
-public class ExceptionControllerAdvice {
+import java.io.StringWriter;
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ExceptionControllerAdvice.class);
+import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.service.rdf.RdfFileService.getWriterConfig;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+
+@ControllerAdvice
+@Slf4j
+public class ExceptionControllerAdvice {
 
     @ExceptionHandler({MetadataException.class, ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorDTO handleBadRequest(Exception e) {
-        LOGGER.error(e.getMessage());
+        log.warn(e.getMessage());
         return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler({RdfValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Model handleBadRequest(RdfValidationException e) {
+        Model validationReportModel = e.getModel();
+
+        // Log number of errors
+        IRI validationResultIri = i("http://www.w3.org/ns/shacl#ValidationResult");
+        int errorsCount = validationReportModel.filter(null, null, validationResultIri).size();
+        log.warn(format("Number of error: %s", errorsCount));
+
+        // Log validation errors
+        StringWriter serialized = new StringWriter();
+        Rio.write(validationReportModel, serialized, RDFFormat.TURTLE, getWriterConfig());
+        log.warn(serialized.toString());
+
+        return validationReportModel;
     }
 
     @ExceptionHandler({BadCredentialsException.class, UnauthorizedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public ErrorDTO handleUnauthorized(Exception e) {
-        LOGGER.error(e.getMessage());
+        log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
@@ -70,7 +94,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public ErrorDTO handleForbidden(Exception e) {
-        LOGGER.error(e.getMessage());
+        log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
@@ -78,7 +102,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorDTO handleResourceNotFound(ResourceNotFoundException e) {
-        LOGGER.error(e.getMessage());
+        log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
@@ -86,7 +110,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorDTO handleInternalServerError(Exception e) {
-        LOGGER.error(e.getMessage());
+        log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 

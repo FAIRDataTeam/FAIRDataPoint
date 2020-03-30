@@ -23,8 +23,7 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.repository;
 
 import com.google.common.base.Preconditions;
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class RepositoryMetadataRepositoryImpl extends AbstractMetadataRepository<FDPMetadata> implements RepositoryMetadataRepository {
+public class RepositoryMetadataRepositoryImpl extends GenericMetadataRepository implements RepositoryMetadataRepository {
 
     private static final String GET_FDP_IRI = "getFdpIri.sparql";
 

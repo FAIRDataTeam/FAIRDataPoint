@@ -22,87 +22,47 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.repository;
 
-import com.google.common.base.Preconditions;
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairmetadata4j.model.Identifier;
-import nl.dtls.fairmetadata4j.utils.MetadataParserUtils;
-import nl.dtls.fairmetadata4j.utils.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairmetadata4j.model.Identifier;
+import nl.dtls.fairmetadata4j.vocabulary.DATACITE;
+import nl.dtls.fairmetadata4j.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.UUID;
 
-@Service
-public class RepositoryMetadataService extends AbstractMetadataService<FDPMetadata, RepositoryMetadataChangeDTO> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(RepositoryMetadataService.class);
+import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.setRdfType;
+import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.setRepositoryIdentifier;
+import static nl.dtls.fairmetadata4j.util.RDFUtil.containsObject;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
 
-    @Autowired
-    private RepositoryMetadataMapper repositoryMetadataMapper;
+@Service("repositoryMetadataService")
+public class RepositoryMetadataService extends AbstractMetadataService {
 
-    public RepositoryMetadataService(@Value("${metadataProperties.rootSpecs:}") String specs) {
-        super();
-        this.specs = specs;
+    @Override
+    protected void checkParent(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+        // Nothing to check
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
-    public void update(IRI uri, FDPMetadata metadataUpdate) throws MetadataServiceException {
-        super.update(uri, metadataUpdate);
-    }
-
-    @Override
-    public MetadataMapper<FDPMetadata, RepositoryMetadataChangeDTO> metadataMapper() {
-        return repositoryMetadataMapper;
-    }
-
-    @Override
-    protected Logger getLogger() {
-        return LOGGER;
-    }
-
-    @Override
-    protected FDPMetadata parse(@Nonnull List<Statement> statements, @Nonnull IRI iri) {
-        return MetadataParserUtils.getFdpParser().parse(statements, iri);
-    }
-
-    @Override
-    protected void checkPreconditions(@Nonnull FDPMetadata metadata) {
-        Preconditions.checkNotNull(metadata, "FDPMetadata must not be null.");
-    }
-
-    @Override
-    protected void updateParent(FDPMetadata metadata) {
-        metadataUpdateService.visit(metadata);
-    }
-
-    protected void addDefaultValues(@Nonnull FDPMetadata metadata) {
-        super.addDefaultValues(metadata);
-
-        if (metadata.getRepostoryIdentifier() == null) {
-            LOGGER.info("Repository ID is null or empty, this field value will be generated automatically");
-            Identifier id = generateIdentifier(metadata.getUri());
-            metadata.setRepostoryIdentifier(id);
+    protected void addDefaultValues(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
+        super.addDefaultValues(metadata, uri, resourceDefinition);
+        if (!containsObject(metadata, uri.stringValue(), R3D.REPOSITORYIDENTIFIER.stringValue())) {
+            Identifier id = generateIdentifier(uri);
+            setRepositoryIdentifier(metadata, uri, id);
         }
     }
 
     private Identifier generateIdentifier(IRI iri) {
         Identifier id = new Identifier();
-        id.setUri(VALUE_FACTORY.createIRI(iri.stringValue() + "#repositoryID"));
+        id.setUri(i(iri.stringValue() + "#repositoryID"));
         UUID uid = UUID.randomUUID();
-        id.setIdentifier(VALUE_FACTORY.createLiteral(uid.toString(), XMLSchema.STRING));
+        id.setIdentifier(l(uid.toString()));
         id.setType(DATACITE.IDENTIFIER);
         return id;
     }

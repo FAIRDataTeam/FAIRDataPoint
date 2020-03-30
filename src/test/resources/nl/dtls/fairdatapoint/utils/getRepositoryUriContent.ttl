@@ -1,6 +1,13 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
-<http://localhost> a <http://www.re3data.org/schema/3-0#Repository> .
-<http://localhost/textmining> dcterms:isPartOf <http://localhost> .
-<http://localhost/textmining/gene-disease-association_lumc> dcterms:isPartOf <http://localhost/textmining> .
-<http://localhost/textmining/gene-disease-association_lumc/sparql> dcterms:isPartOf <http://localhost/textmining/gene-disease-association_lumc> .
+<http://localhost>
+    a <http://www.re3data.org/schema/3-0#Repository> .
+
+<http://localhost/textmining>
+    dcterms:isPartOf <http://localhost> .
+
+<http://localhost/textmining/gene-disease-association_lumc>
+    dcterms:isPartOf <http://localhost/textmining> .
+
+<http://localhost/textmining/gene-disease-association_lumc/sparql>
+    dcterms:isPartOf <http://localhost/textmining/gene-disease-association_lumc> .

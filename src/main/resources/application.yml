@@ -36,12 +36,10 @@ repository:
     repository: fdp
 
 metadataProperties:
-  rootSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata
-  catalogSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/catalogMetadata
-  datasetSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/datasetMetadata
-  distributionSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/distributionMetadata
   publisherURI: http://localhost
   publisherName: localhost
+  creatorURI: http://localhost
+  creatorName: localhost
   language: http://id.loc.gov/vocabulary/iso639-1/en
   license: http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0
   accessRightsDescription: This resource has no access restriction

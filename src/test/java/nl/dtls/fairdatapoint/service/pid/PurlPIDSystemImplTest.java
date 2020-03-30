@@ -27,27 +27,13 @@
  */
 package nl.dtls.fairdatapoint.service.pid;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairmetadata4j.model.DatasetMetadata;
-import nl.dtls.fairmetadata4j.model.DistributionMetadata;
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.database.rdf.repository.repository.RepositoryMetadataRepository;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 /**
  * PurlPIDSystemImplTest class unit tests
@@ -57,35 +43,13 @@ import static org.mockito.Mockito.when;
  * @version 0.1
  * @since 2018-06-05
  */
-public class PurlPIDSystemImplTest extends BaseIntegrationTest {
+public class PurlPIDSystemImplTest {
 
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    private final FDPMetadata fdpMetadata = MetadataFixtureFilesHelper
-            .getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI);
-    private final CatalogMetadata catalogMetadata = MetadataFixtureFilesHelper
-            .getCatalogMetadata(MetadataFixtureFilesHelper.CATALOG_URI, MetadataFixtureFilesHelper.REPOSITORY_URI);
-    private final DatasetMetadata datasetMetadata = MetadataFixtureFilesHelper
-            .getDatasetMetadata(MetadataFixtureFilesHelper.DATASET_URI, MetadataFixtureFilesHelper.CATALOG_URI);
-    private final DistributionMetadata distributionMetadata = MetadataFixtureFilesHelper
-            .getDistributionMetadata(MetadataFixtureFilesHelper.DISTRIBUTION_URI,
-                    MetadataFixtureFilesHelper.DATASET_URI);
+    private String instanceUrl = "http://example.org/biosemantics-lumc/fdp";
 
-    @Autowired
-    private PurlPIDSystemImpl test;
+    private IRI purlBaseUrl = i("http://purl.org/biosemantics-lumc/fdp");
 
-    @Mock
-    private RepositoryMetadataRepository repositoryMetadataRepository;
-
-    @Mock
-    private IRI purlBaseUrl;
-
-    @InjectMocks
-    private PurlPIDSystemImpl purlSys;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+    private PurlPIDSystemImpl pidSystem = new PurlPIDSystemImpl(instanceUrl, purlBaseUrl);
 
     /**
      * Test of null fdpMetadata, this test is excepted to throw error
@@ -93,77 +57,20 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     @Test
     public void testGetURIForNullMetadata() {
         assertThrows(NullPointerException.class, () -> {
-            test.getURI(null);
-        });
-    }
-
-    /**
-     * Test of null fdpMetadata uri, this test is excepted to throw error
-     */
-    @Test
-    public void testGetURIForNullMetadataUri() {
-        assertThrows(NullPointerException.class, () -> {
-            FDPMetadata metadataCopy = fdpMetadata;
-            metadataCopy.setUri(null);
-            test.getURI(metadataCopy);
-        });
-    }
-
-    /**
-     * Test of null repository uri, this test is excepted to throw error
-     */
-    @Test
-    public void testGetURIForNullFdpUri() {
-        assertThrows(NullPointerException.class, () -> {
-            test.getURI(catalogMetadata);
-        });
-    }
-
-    /**
-     * Test of null parent uri, this test is excepted to throw error
-     */
-    @Test
-    public void testGetURIForNullParentUri() {
-        assertThrows(NullPointerException.class, () -> {
-            CatalogMetadata mdata = catalogMetadata;
-            mdata.setParentURI(null);
-            test.getURI(mdata);
-        });
-    }
-
-    /**
-     * Test of null purl base uri, this test is excepted to throw error
-     */
-    @Test
-    public void testNullBaseUrl() throws Exception {
-        assertThrows(NullPointerException.class, () -> {
-            PurlPIDSystemImpl testInstance = new PurlPIDSystemImpl();
-            testInstance.getURI(fdpMetadata);
+            pidSystem.getURI(null);
         });
     }
 
     /**
      * Test of valid fdpMetadata uri, this test is excepted to pass
-     *
-     * @throws java.lang.NoSuchFieldException If the filed is not declared
      */
     @Test
-    public void testGetURIForValidMetadata() throws Exception {
+    public void testGetURIForValidMetadata() {
+        // WHEN:
+        IRI result = pidSystem.getURI(i(instanceUrl + "/my-metadata"));
 
-        // Setting up mock object
-
-        when(purlBaseUrl.toString()).thenReturn("http://purl.org/biosemantics-lumc/fdp");
-        when(repositoryMetadataRepository.getRepositoryIri(catalogMetadata.getParentURI()))
-                .thenReturn(fdpMetadata.getUri());
-        when(repositoryMetadataRepository.getRepositoryIri(datasetMetadata.getParentURI()))
-                .thenReturn(fdpMetadata.getUri());
-        when(repositoryMetadataRepository.getRepositoryIri(distributionMetadata.getParentURI()))
-                .thenReturn(fdpMetadata.getUri());
-
-        assertTrue(purlSys.getURI(fdpMetadata).toString().contains("purl.org"));
-        assertTrue(purlSys.getURI(catalogMetadata).toString().contains("purl.org"));
-        assertTrue(purlSys.getURI(datasetMetadata).toString().contains("purl.org"));
-        assertTrue(purlSys.getURI(distributionMetadata).toString().contains("purl.org"));
+        // THEN:
+        assertTrue(result.toString().contains("purl.org"));
     }
 
     /**
@@ -172,7 +79,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     @Test
     public void testGetIdForNullPIDIri() {
         assertThrows(NullPointerException.class, () -> {
-            test.getId(null);
+            pidSystem.getId(null);
         });
     }
 
@@ -182,7 +89,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     @Test
     public void testGetIdForInvalidPIDIri() {
         assertThrows(IllegalStateException.class, () -> {
-            test.getId(valueFactory.createIRI("http://example.com/fdp"));
+            pidSystem.getId(i("http://example.com/fdp"));
         });
     }
 
@@ -192,7 +99,7 @@ public class PurlPIDSystemImplTest extends BaseIntegrationTest {
     @Test
     public void testGetIdForValidPIDIri() {
         String id = "fdp";
-        String resultId = test.getId(valueFactory.createIRI("http://purl.org/lumc/" + id));
+        String resultId = pidSystem.getId(i("http://purl.org/lumc/" + id));
         assertEquals(resultId, id);
     }
 

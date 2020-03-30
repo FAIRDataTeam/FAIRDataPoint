@@ -28,75 +28,34 @@
 package nl.dtls.fairdatapoint.service.pid;
 
 import com.google.common.base.Preconditions;
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairmetadata4j.model.Metadata;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.database.rdf.repository.repository.RepositoryMetadataRepository;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
 /**
  * Implementation of purl.org PID system
- *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
- * @version 0.1
- * @since 2018-06-06
  */
 public class PurlPIDSystemImpl implements PIDSystem {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PurlPIDSystemImpl.class);
-    private static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+    private String instanceUrl;
 
-    @Autowired
-    @Qualifier("purlBaseUrl")
     private IRI purlBaseUrl;
 
-    @Autowired
-    private RepositoryMetadataRepository repositoryMetadataRepository;
+    public PurlPIDSystemImpl(@Value("${instance.url}") String instanceUrl, @Qualifier("purlBaseUrl") IRI purlBaseUrl) {
+        this.instanceUrl = instanceUrl;
+        this.purlBaseUrl = purlBaseUrl;
+    }
 
     /**
      * Create a new purl.org PID uri for a given metadata
      *
-     * @param <T>
-     * @param metadata Subtype of Metadata object
-     * @return purl.org uri as IRI
-     * @throws NullPointerException  exception if the metadata or the metadata URI is null
-     * @throws IllegalStateException exception if the base purl.org is empty
-     * @throws IllegalStateException exception if the repositoryUri is empty or null
+     * @return PID uri as IRI
      */
     @Override
-    public <T extends Metadata> IRI getURI(T metadata) throws IllegalStateException {
-        Preconditions.checkNotNull(metadata, "Metadata must not be null.");
-        Preconditions.checkNotNull(metadata.getUri(), "Metadata URI must not be null.");
-        Preconditions.checkNotNull(purlBaseUrl, "Purl base url can't be null.");
-
-        IRI repositoryUri = null;
-        try {
-            if (metadata instanceof FDPMetadata) {
-                repositoryUri = metadata.getUri();
-            } else {
-                Preconditions.checkNotNull(metadata.getParentURI(),
-                        "Metadata parent URI must not be null");
-                repositoryUri = repositoryMetadataRepository.getRepositoryIri(metadata.getParentURI());
-            }
-        } catch (MetadataRepositoryException ex) {
-            LOGGER.error("Error getting repository uri");
-        }
-
-        Preconditions.checkNotNull(repositoryUri, "FDP base url can't be null.");
-
-        LOGGER.info("Creating an new purl.org PID");
-        String purlIRI = metadata.getUri().toString().replace(repositoryUri.toString(),
-                purlBaseUrl.toString());
-
-        return VALUEFACTORY.createIRI(purlIRI);
-
+    public IRI getURI(IRI uri) throws IllegalStateException {
+        return i(uri.stringValue().replace(instanceUrl, purlBaseUrl.stringValue()));
     }
 
     /**
@@ -110,10 +69,8 @@ public class PurlPIDSystemImpl implements PIDSystem {
     @Override
     public String getId(IRI iri) {
         Preconditions.checkNotNull(iri, "Purl pid uri must not be null.");
-        Preconditions.checkState(iri.toString().contains("purl.org"),
-                "Not an valid default pid uri.");
-        String id = iri.getLocalName();
-        return id;
+        Preconditions.checkState(iri.toString().contains("purl.org"), "Not an valid default pid uri.");
+        return iri.getLocalName();
     }
 
 }

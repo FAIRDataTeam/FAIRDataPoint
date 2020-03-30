@@ -22,8 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.dataset;
 
-import nl.dtls.fairmetadata4j.model.DatasetMetadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 
-public interface DatasetMetadataRepository extends MetadataRepository<DatasetMetadata> {
+public interface DatasetMetadataRepository extends MetadataRepository {
 }

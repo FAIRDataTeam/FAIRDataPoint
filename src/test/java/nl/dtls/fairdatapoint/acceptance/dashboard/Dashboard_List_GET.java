@@ -22,12 +22,10 @@
  */
 package nl.dtls.fairdatapoint.acceptance.dashboard;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDatasetDTO;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardDistributionDTO;
+import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,14 +62,14 @@ public class Dashboard_List_GET extends WebIntegrationTest {
                 .get(url())
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
-        ParameterizedTypeReference<List<DashboardCatalogDTO>> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<List<DashboardItemDTO>> responseType = new ParameterizedTypeReference<>() {
         };
         String nikolaUuid = userFixtures.nikola().getUuid();
-        memberService.deleteMember("catalog-1", CatalogMetadata.class, nikolaUuid);
+        memberService.deleteMember("catalog-1", Metadata.class, nikolaUuid);
 
 
         // WHEN:
-        ResponseEntity<List<DashboardCatalogDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<DashboardItemDTO>> result = client.exchange(request, responseType);
 
         // THEN:
         // status
@@ -79,18 +77,18 @@ public class Dashboard_List_GET extends WebIntegrationTest {
 
         // catalog
         assertThat(result.getBody().size(), is(equalTo(1)));
-        DashboardCatalogDTO catalog = result.getBody().get(0);
-        assertThat(catalog.getDatasets().size(), is(equalTo(1)));
+        DashboardItemDTO catalog = result.getBody().get(0);
+        assertThat(catalog.getChildren().size(), is(equalTo(1)));
         assertThat(catalog.getMembership().isPresent(), is(false));
 
         // dataset
-        DashboardDatasetDTO dataset = catalog.getDatasets().get(0);
+        DashboardItemDTO dataset = catalog.getChildren().get(0);
         assertThat(dataset.getIdentifier(), is(equalTo("dataset-1")));
-        assertThat(dataset.getDistributions().size(), is(equalTo(1)));
+        assertThat(dataset.getChildren().size(), is(equalTo(1)));
         assertThat(dataset.getMembership().isPresent(), is(true));
 
         // distribution
-        DashboardDistributionDTO distribution = dataset.getDistributions().get(0);
+        DashboardItemDTO distribution = dataset.getChildren().get(0);
         assertThat(distribution.getIdentifier(), is(equalTo("distribution-1")));
         assertThat(distribution.getMembership().isPresent(), is(true));
     }

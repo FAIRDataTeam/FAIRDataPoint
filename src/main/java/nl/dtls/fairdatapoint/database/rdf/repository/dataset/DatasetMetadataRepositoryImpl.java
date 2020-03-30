@@ -22,8 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.dataset;
 
-import nl.dtls.fairmetadata4j.model.DatasetMetadata;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
@@ -39,7 +38,7 @@ import java.util.List;
 import static nl.dtls.fairdatapoint.config.CacheConfig.DATASET_THEMES_OF_CATALOG_CACHE;
 
 @Service
-public class DatasetMetadataRepositoryImpl extends AbstractMetadataRepository<DatasetMetadata> implements DatasetMetadataRepository {
+public class DatasetMetadataRepositoryImpl extends GenericMetadataRepository implements DatasetMetadataRepository {
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;

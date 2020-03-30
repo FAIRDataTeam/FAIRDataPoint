@@ -22,13 +22,15 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtls.fairmetadata4j.model.Agent;
 import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
+import nl.dtls.fairmetadata4j.model.Agent;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
@@ -63,8 +65,9 @@ public class MetadataTestConfig {
 
     @Bean
     @DependsOn({"purlBaseUrl"})
-    public PurlPIDSystemImpl purlPIDSystemImpl() {
-        return new PurlPIDSystemImpl();
+    public PurlPIDSystemImpl purlPIDSystemImpl(@Value("${instance.url}") String instanceUrl,
+                                               @Qualifier("purlBaseUrl") IRI purlBaseUrl) {
+        return new PurlPIDSystemImpl(instanceUrl, purlBaseUrl);
     }
 
     @Bean
