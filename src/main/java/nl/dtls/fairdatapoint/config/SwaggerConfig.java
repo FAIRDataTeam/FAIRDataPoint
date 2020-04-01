@@ -28,6 +28,7 @@
 package nl.dtls.fairdatapoint.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -52,6 +53,9 @@ public class SwaggerConfig {
     @Autowired
     private ServletContext servletContext;
 
+    @Value("${instance.url}")
+    private String instanceUrl;
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -60,6 +64,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
+                .host(instanceUrl)
                 .securitySchemes(List.of(apiKey()))
                 .securityContexts(List.of(securityContext()))
                 .pathProvider(new RelativePathProvider(servletContext) {
@@ -79,10 +84,11 @@ public class SwaggerConfig {
                         "       FAIR Data Point Specification" +
                         "   </a>" +
                         "   <br/>",
-                "0.1-beta",
+                "1.2.0",
                 "ATO",
-                new Contact("RR Kaliyaperumal", "https://github.com/FAIRDataTeam/FAIRDataPoint", "rr.kaliyaperumal" +
-                        "@gmail.com"),
+                new Contact("Luiz Bonino",
+                        "https://github.com/FAIRDataTeam/FAIRDataPoint",
+                        "luiz.bonino@go-fair.org"),
                 "The MIT License",
                 "https://opensource.org/licenses/MIT",
                 Collections.emptyList()
