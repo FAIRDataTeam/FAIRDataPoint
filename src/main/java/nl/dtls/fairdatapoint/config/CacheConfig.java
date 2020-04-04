@@ -29,6 +29,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class CacheConfig {
 
-    public static final String DATASET_THEMES_OF_CATALOG_CACHE = "DATASET_THEMES_OF_CATALOG_CACHE";
+    public static final String CATALOG_THEMES_CACHE = "CATALOG_THEMES_CACHE";
 
 }

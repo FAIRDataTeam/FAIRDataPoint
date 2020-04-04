@@ -22,76 +22,44 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.catalog;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairmetadata4j.utils.MetadataParserUtils;
-import nl.dtls.fairmetadata4j.utils.vocabulary.R3D;
-import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataMapper;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Statement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-@Service
-public class CatalogMetadataService extends AbstractMetadataService<CatalogMetadata, CatalogMetadataChangeDTO> {
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getThemeTaxonomies;
+import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.setThemeTaxonomies;
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(CatalogMetadataService.class);
+@Service("catalogMetadataService")
+@Slf4j
+public class CatalogMetadataService extends AbstractMetadataService {
 
     @Autowired
-    private CatalogMetadataRepository catalogMetadataRepository;
-
-    @Autowired
-    private CatalogMetadataMapper catalogMetadataMapper;
-
-    public CatalogMetadataService(@Value("${metadataProperties.catalogSpecs:}") String specs) {
-        super();
-        this.specs = specs;
-        this.parentType = R3D.REPOSITORY;
-    }
+    @Qualifier("catalogMetadataRepository")
+    protected CatalogMetadataRepository metadataRepository;
 
     @Override
-    public CatalogMetadata retrieve(@Nonnull IRI uri) throws MetadataServiceException {
-        CatalogMetadata catalog = super.retrieve(uri);
+    public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
+        Model catalog = super.retrieve(uri);
         try {
-            List<IRI> themes = catalogMetadataRepository.getDatasetThemesForCatalog(catalog.getUri());
+            List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
             Set<IRI> set = new TreeSet<>(Comparator.comparing(IRI::toString));
-            set.addAll(catalog.getThemeTaxonomys());
+            set.addAll(getThemeTaxonomies(catalog));
             set.addAll(themes);
-            catalog.setThemeTaxonomys(new ArrayList<>(set));
+            setThemeTaxonomies(catalog, uri, new ArrayList<>(set));
         } catch (MetadataRepositoryException ex) {
-            getLogger().error("Error retrieving the metadata");
+            log.error("Error retrieving the metadata");
             throw new MetadataServiceException(ex.getMessage());
         }
         return catalog;
-    }
-
-    @Override
-    public MetadataMapper<CatalogMetadata, CatalogMetadataChangeDTO> metadataMapper() {
-        return catalogMetadataMapper;
-    }
-
-    @Override
-    protected Logger getLogger() {
-        return LOGGER;
-    }
-
-    @Override
-    protected CatalogMetadata parse(@Nonnull List<Statement> statements, @Nonnull IRI iri) {
-        return MetadataParserUtils.getCatalogParser().parse(statements, iri);
-    }
-
-    @Override
-    protected void updateParent(CatalogMetadata metadata) {
-        metadataUpdateService.visit(metadata);
     }
 }

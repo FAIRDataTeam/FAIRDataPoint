@@ -29,6 +29,7 @@ import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
 import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserRole;
 import nl.dtls.fairdatapoint.service.membership.PermissionService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,6 +161,18 @@ public class MemberService {
             insertAce(acl, userUuid, permission);
             aclService.updateAcl(acl);
         }
+    }
+
+    public boolean checkRole(UserRole role) {
+        // 1. Get user
+        Optional<User> oUser = currentUserService.getCurrentUser();
+        if (oUser.isEmpty()) {
+            return false;
+        }
+        User user = oUser.get();
+
+        // 2. Validate
+        return user.getRole().equals(role);
     }
 
     public <T> boolean checkPermission(String entityId, Class<T> entityType, Permission permission) {

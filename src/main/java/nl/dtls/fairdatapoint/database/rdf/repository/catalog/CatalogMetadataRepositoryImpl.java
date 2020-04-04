@@ -22,9 +22,8 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -36,10 +35,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.DATASET_THEMES_OF_CATALOG_CACHE;
+import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
-@Service
-public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository<CatalogMetadata> implements CatalogMetadataRepository {
+@Service("catalogMetadataRepository")
+public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository implements CatalogMetadataRepository {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "getDatasetThemesForCatalog.sparql";
 
@@ -48,7 +48,7 @@ public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository<Ca
 
     @PostConstruct
     public void init() {
-        cacheManager.setCacheNames(List.of(DATASET_THEMES_OF_CATALOG_CACHE));
+        cacheManager.setCacheNames(List.of(CATALOG_THEMES_CACHE));
     }
 
     public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRepositoryException {
@@ -59,14 +59,14 @@ public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository<Ca
         result = runSparqlQuery(GET_DATASET_THEMES_FOR_CATALOG, CatalogMetadataRepository.class, Map.of(
                 "catalog", uri))
                 .stream()
-                .map(s -> VALUEFACTORY.createIRI(s.getValue("theme").stringValue()))
+                .map(s -> i(s.getValue("theme").stringValue()))
                 .collect(Collectors.toList());
         cache().put(uri.toString(), result);
         return result;
     }
 
     private Cache cache() {
-        return cacheManager.getCache(DATASET_THEMES_OF_CATALOG_CACHE);
+        return cacheManager.getCache(CATALOG_THEMES_CACHE);
     }
 
 }

@@ -23,8 +23,8 @@
 package nl.dtls.fairdatapoint.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtls.fairdatapoint.api.converter.AbstractMetadataMessageConverter;
 import nl.dtls.fairdatapoint.api.converter.ErrorConverter;
+import nl.dtls.fairdatapoint.api.converter.RdfConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,22 +45,25 @@ import static com.fasterxml.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHA
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
-    private List<AbstractMetadataMessageConverter<?>> metadataConverters;
+    private List<ErrorConverter> errorConverters;
 
     @Autowired
-    private List<ErrorConverter> errorConverters;
+    private List<RdfConverter> rdfConverters;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.addAll(metadataConverters);
         converters.addAll(errorConverters);
+        converters.addAll(rdfConverters);
         converters.add(new MappingJackson2HttpMessageConverter());
         converters.add(new StringHttpMessageConverter());
     }
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        for (AbstractMetadataMessageConverter<?> converter : metadataConverters) {
+        for (ErrorConverter converter : errorConverters) {
+            converter.configureContentNegotiation(configurer);
+        }
+        for (RdfConverter converter : rdfConverters) {
             converter.configureContentNegotiation(configurer);
         }
         configurer.favorPathExtension(false);

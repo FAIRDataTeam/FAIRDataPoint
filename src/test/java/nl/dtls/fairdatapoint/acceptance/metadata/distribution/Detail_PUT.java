@@ -23,9 +23,14 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.DistributionMetadataChangeDTO;
+import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,8 +40,12 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static java.util.Optional.of;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
+import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -44,41 +53,46 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("PUT /distribution/:distributionId")
 public class Detail_PUT extends WebIntegrationTest {
 
+    @Autowired
+    private TestMetadataFixtures testMetadataFixtures;
+
     private URI url(String id) {
         return URI.create(format("/distribution/%s", id));
     }
 
-    private DistributionMetadataChangeDTO reqDto() {
-        return new DistributionMetadataChangeDTO(
-                "EDITED: Some title",
-                of("EDITED: Some description"),
-                "99.0",
-                "http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED",
-                of("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"),
-                "text/edited",
-                "http://example.com/edited",
-                "http://example.com/edited"
-        );
+    private String reqDto(Model distribution) {
+        IRI uri = getUri(distribution);
+        setTitle(distribution, uri, l("EDITED: Some title"));
+        setDescription(distribution, uri, l("EDITED: Some description"));
+        setVersion(distribution, uri, l("99.0"));
+        setLicence(distribution, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
+        setLanguage(distribution, uri, i("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"));
+        setMediaType(distribution, uri, l("text/edited"));
+        setDownloadURL(distribution, uri, i("http://example.com/edited"));
+        setAccessURL(distribution, uri, i("http://example.com/edited"));
+        return RdfUtil.write(distribution, RDFFormat.TURTLE);
     }
 
     @Test
-    @DisplayName("HTTP 204")
-    public void res204() {
-        create_res204(ALBERT_TOKEN);
+    @DisplayName("HTTP 200")
+    public void res200() {
+        create_res200(ALBERT_TOKEN);
     }
 
     @Test
-    @DisplayName("HTTP 204: User is an admin")
-    public void res204_admin() {
-        create_res204(ADMIN_TOKEN);
+    @DisplayName("HTTP 200: User is an admin")
+    public void res200_admin() {
+        create_res200(ADMIN_TOKEN);
     }
 
-    private void create_res204(String token) {
+    private void create_res200(String token) {
         // GIVEN:
-        RequestEntity<DistributionMetadataChangeDTO> request = RequestEntity
+        RequestEntity<String> request = RequestEntity
                 .put(url("distribution-1"))
                 .header(HttpHeaders.AUTHORIZATION, token)
-                .body(reqDto());
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .body(reqDto(testMetadataFixtures.c1_d1_distribution1()));
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -86,17 +100,25 @@ public class Detail_PUT extends WebIntegrationTest {
         ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
     }
 
     @Test
-    @DisplayName("HTTP 403")
-    public void res403() {
+    @DisplayName("HTTP 403: Anonymous access")
+    public void res403_anonymous() {
+        createNoUserForbiddenTestPut(client, url("distribution-1"), reqDto(testMetadataFixtures.c1_d1_distribution1()));
+    }
+
+    @Test
+    @DisplayName("HTTP 403: User is not an owner")
+    public void res403_non_Owner() {
         // GIVEN:
-        RequestEntity<DistributionMetadataChangeDTO> request = RequestEntity
+        RequestEntity<String> request = RequestEntity
                 .put(url("distribution-2"))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
-                .body(reqDto());
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .body(reqDto(testMetadataFixtures.c1_d1_distribution2()));
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 

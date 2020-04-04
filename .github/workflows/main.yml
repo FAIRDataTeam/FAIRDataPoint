@@ -65,16 +65,16 @@ jobs:
 # (3) -> Test and build
     - name: Run tests
       run: |
-        mvn --quiet -B org.jacoco:jacoco-maven-plugin:prepare-agent test
+        mvn --quiet -U -B org.jacoco:jacoco-maven-plugin:prepare-agent test
 
     - name: Build package
       run: |
-        mvn --quiet -B --fail-fast -DskipTests package
+        mvn --quiet -B -U --fail-fast -DskipTests package
 
     - name: Report coverage
       continue-on-error: true
       run: |
-        mvn --quiet -B -DrepoToken=$COVERALLS_TOKEN org.jacoco:jacoco-maven-plugin:report coveralls:report
+        mvn --quiet -B -U -DrepoToken=$COVERALLS_TOKEN org.jacoco:jacoco-maven-plugin:report coveralls:report
         if [ $? -eq 0 ]; then
           echo "Coverage reported to Coveralls.io"
         fi

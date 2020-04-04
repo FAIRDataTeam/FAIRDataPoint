@@ -32,14 +32,10 @@ repository:
     url: http://localhost:7200
     repository: test
   blazegraph:
-    url: http://localhost:8079/blazegraph
-    repository: fdp
+    url: http://localhost:8888/blazegraph
+    repository:
 
 metadataProperties:
-  rootSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata
-  catalogSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/catalogMetadata
-  datasetSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/datasetMetadata
-  distributionSpecs: https://www.purl.org/fairtools/fdp/schema/0.1/distributionMetadata
   publisherURI: http://localhost
   publisherName: localhost
   language: http://id.loc.gov/vocabulary/iso639-1/en
