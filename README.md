@@ -9,6 +9,12 @@
 
 More information about FDP and how to deploy can be found at [FDP Deployment Documentation](https://fairdatapoint.readthedocs.io/).
 
+## Related projects
+- [FAIR Data Point Client](https://github.com/FAIRDataTeam/FAIRDataPoint-client)
+- [FAIR Data Point E2E Tests](https://github.com/FAIRDataTeam/FAIRDataPoint-E2E-Tests)
+- [FAIR Data Point Docs](https://github.com/FAIRDataTeam/FAIRDataPoint-Docs)
+- [OpenRefine Metadata Extension](https://github.com/FAIRDataTeam/OpenRefine-metadata-extension)
+
 ## How to contribute
 
 ### Install requirements
