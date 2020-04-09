@@ -22,12 +22,10 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.acl;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairmetadata4j.model.DatasetMetadata;
-import nl.dtls.fairmetadata4j.model.DistributionMetadata;
 import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,27 +69,27 @@ public class AclMigration implements Migration {
 
         // -- Catalog
         String catalog1Id = "catalog-1";
-        memberService.createOwner(catalog1Id, CatalogMetadata.class, albertUuid);
-        memberService.createOrUpdateMember(catalog1Id, CatalogMetadata.class, nicolaUuid, dataProviderUuid);
+        memberService.createOwner(catalog1Id, Metadata.class, albertUuid);
+        memberService.createOrUpdateMember(catalog1Id, Metadata.class, nicolaUuid, dataProviderUuid);
 
         String catalog2Id = "catalog-2";
-        memberService.createOwner(catalog2Id, CatalogMetadata.class, albertUuid);
+        memberService.createOwner(catalog2Id, Metadata.class, albertUuid);
 
         // -- Dataset
         String dataset1Id = "dataset-1";
-        memberService.createOwner(dataset1Id, DatasetMetadata.class, albertUuid);
-        memberService.createOrUpdateMember(dataset1Id, DatasetMetadata.class, nicolaUuid, ownerUuid);
+        memberService.createOwner(dataset1Id, Metadata.class, albertUuid);
+        memberService.createOrUpdateMember(dataset1Id, Metadata.class, nicolaUuid, ownerUuid);
 
         String dataset2Id = "dataset-2";
-        memberService.createOwner(dataset2Id, DatasetMetadata.class, albertUuid);
+        memberService.createOwner(dataset2Id, Metadata.class, albertUuid);
 
         // -- Distribution
         String distribution1Id = "distribution-1";
-        memberService.createOwner(distribution1Id, DistributionMetadata.class, albertUuid);
-        memberService.createOrUpdateMember(distribution1Id, DistributionMetadata.class, nicolaUuid, ownerUuid);
+        memberService.createOwner(distribution1Id, Metadata.class, albertUuid);
+        memberService.createOrUpdateMember(distribution1Id, Metadata.class, nicolaUuid, ownerUuid);
 
         String distribution2Id = "distribution-2";
-        memberService.createOwner(distribution2Id, DistributionMetadata.class, albertUuid);
+        memberService.createOwner(distribution2Id, Metadata.class, albertUuid);
     }
 
 }

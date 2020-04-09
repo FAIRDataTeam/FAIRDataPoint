@@ -27,9 +27,8 @@
  */
 package nl.dtls.fairdatapoint.service.metadatametrics;
 
-import nl.dtls.fairmetadata4j.model.Metric;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
+import nl.dtls.fairmetadata4j.model.Metric;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.jupiter.api.Test;
@@ -66,8 +65,7 @@ public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
 //        metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
 //        fmMetricsServiceImpl.setMetadataMetrics(metadataMetrics);
 
-        List<Metric> m = fmMetricsServiceImpl.getMetrics(valueFactory.createIRI(
-                MetadataFixtureFilesHelper.REPOSITORY_URI));
+        List<Metric> m = fmMetricsServiceImpl.getMetrics(valueFactory.createIRI("http://localhost"));
         assertTrue(m.size() > 0);
     }
 

@@ -24,12 +24,12 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairmetadata4j.model.Agent;
-import nl.dtls.fairmetadata4j.utils.vocabulary.DATACITE;
-import nl.dtls.fairmetadata4j.utils.vocabulary.FDP;
-import nl.dtls.fairmetadata4j.utils.vocabulary.R3D;
-import nl.dtls.fairmetadata4j.utils.vocabulary.Sio;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
+import nl.dtls.fairmetadata4j.model.Agent;
+import nl.dtls.fairmetadata4j.vocabulary.DATACITE;
+import nl.dtls.fairmetadata4j.vocabulary.FDP;
+import nl.dtls.fairmetadata4j.vocabulary.R3D;
+import nl.dtls.fairmetadata4j.vocabulary.Sio;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
 import nl.dtls.rdf.migration.runner.RdfProductionMigration;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -58,7 +58,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.*;
 
 @RdfMigrationAnnotation(
         number = 1,
@@ -73,9 +73,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
     @Value("${instance.url}")
     private String instanceUrl;
-
-    @Value("${metadataProperties.rootSpecs:}")
-    private String specs;
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
@@ -123,7 +120,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
                     "blandit venenatis. Cras ullamcorper, justo vitae feugiat commodo, orci metus suscipit purus, " +
                     "quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum " +
                     "euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at."));
-            add(s, DCTERMS.CONFORMS_TO, i(specs));
+            add(s, DCTERMS.CONFORMS_TO, i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"));
             add(s, DCTERMS.LANGUAGE, language);
             // Identifier
             IRI pidIri = i(instanceUrl + "#" + i(instanceUrl).getLocalName());

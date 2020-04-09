@@ -20,20 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
-import nl.dtls.fairmetadata4j.model.Metadata;
+import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.common.iteration.Iterations;
-import org.eclipse.rdf4j.model.*;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
@@ -41,8 +39,6 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
@@ -53,18 +49,15 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-public abstract class AbstractMetadataRepository<T extends Metadata> implements MetadataRepository<T> {
-
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractMetadataRepository.class);
-
-    protected static final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
+@Slf4j
+public abstract class AbstractMetadataRepository {
 
     @Autowired
     protected Repository repository;
 
     public List<Statement> retrieveResource(@Nonnull IRI uri) throws MetadataRepositoryException {
         Preconditions.checkNotNull(uri, "URI must not be null.");
-        LOGGER.info("Get statements for the URI {}", uri.toString());
+        log.info("Get statements for the URI {}", uri.toString());
 
         try (RepositoryConnection conn = repository.getConnection()) {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, null, null, uri);
@@ -76,7 +69,7 @@ public abstract class AbstractMetadataRepository<T extends Metadata> implements 
 
     public boolean isStatementExist(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            LOGGER.info("Check if statements exists");
+            log.info("Check if statements exists");
             return conn.hasStatement(rsrc, pred, value, false);
         } catch (RepositoryException e) {
             throw new MetadataRepositoryException("Error check statement existence :" + e.getMessage());
@@ -96,16 +89,16 @@ public abstract class AbstractMetadataRepository<T extends Metadata> implements 
         }
     }
 
-    public void removeStatement(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException {
+    public void removeStatement(Resource rsrc, IRI pred, Value value, IRI... contexts) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            conn.remove(rsrc, pred, value);
+            conn.remove(rsrc, pred, value, contexts);
         } catch (RepositoryException e) {
             throw (new MetadataRepositoryException("Error removing statement"));
         }
     }
 
     public void removeResource(IRI uri) throws MetadataRepositoryException {
-        removeStatement(uri, null, null);
+        removeStatement(null, null, null, uri);
     }
 
     public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType, Map<String, Value> bindings) throws MetadataRepositoryException {

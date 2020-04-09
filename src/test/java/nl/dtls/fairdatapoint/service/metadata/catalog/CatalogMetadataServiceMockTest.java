@@ -22,13 +22,12 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.catalog;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairmetadata4j.utils.MetadataUtils;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepositoryImpl;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,9 +38,12 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getThemeTaxonomies;
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -54,7 +56,7 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
     private TestMetadataFixtures testMetadataFixtures;
 
     @Mock
-    private MetadataRepository<CatalogMetadata> metadataRepository;
+    private GenericMetadataRepositoryImpl metadataRepository;
 
     @Mock
     private CatalogMetadataRepository catalogMetadataRepository;
@@ -70,26 +72,26 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
     @Test
     public void retrieve() throws Exception {
         // GIVEN: Retrieve catalog from Repository
-        CatalogMetadata catalog = testMetadataFixtures.catalog1();
-        List<Statement> catalogStatements = MetadataUtils.getStatements(catalog);
-        when(metadataRepository.retrieveResource(catalog.getUri())).thenReturn(catalogStatements);
+        Model catalog = testMetadataFixtures.catalog1();
+        List<Statement> catalogStatements = new ArrayList<>(catalog);
+        when(metadataRepository.retrieveResource(getUri(catalog))).thenReturn(catalogStatements);
 
         // AND: Retrieve themes from datasets
         IRI theme1 = i("http://localhost/my_theme_1");
         IRI theme2_duplicated = i("http://localhost/my_theme_2_duplicated");
         List<IRI> themes = List.of(theme1, theme2_duplicated, theme2_duplicated);
-        when(catalogMetadataRepository.getDatasetThemesForCatalog(catalog.getUri())).thenReturn(themes);
+        when(catalogMetadataRepository.getDatasetThemesForCatalog(getUri(catalog))).thenReturn(themes);
 
         // WHEN:
-        CatalogMetadata catalogMetadata = catalogMetadataService.retrieve(catalog.getUri());
+        Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
 
         // THEN:
-        List<IRI> themeTaxonomys = catalogMetadata.getThemeTaxonomys();
+        List<IRI> themeTaxonomys = getThemeTaxonomies(catalogMetadata);
         assertThat(themeTaxonomys.size(), is(equalTo(4)));
         assertThat(themeTaxonomys.get(0), is(equalTo(theme1)));
         assertThat(themeTaxonomys.get(1), is(equalTo(theme2_duplicated)));
-        assertThat(themeTaxonomys.get(2), is(equalTo(catalog.getThemeTaxonomys().get(1))));
-        assertThat(themeTaxonomys.get(3), is(equalTo(catalog.getThemeTaxonomys().get(0))));
+        assertThat(themeTaxonomys.get(2), is(equalTo(getThemeTaxonomies(catalog).get(1))));
+        assertThat(themeTaxonomys.get(3), is(equalTo(getThemeTaxonomies(catalog).get(0))));
     }
 
 }

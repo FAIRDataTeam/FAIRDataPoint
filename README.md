@@ -2,12 +2,17 @@
 
 [![Build Status](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint.svg?branch=master)](https://travis-ci.org/FAIRDataTeam/FAIRDataPoint.svg?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/61f029299b814ca8be2b8edbaab6ce50)](https://www.codacy.com/app/rajaram5/FAIRDataPoint?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DTL-FAIRData/FAIRDataPoint&amp;utm_campaign=Badge_Grade)
-[![Dependency Status](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/589dd946940b230031fbadd6)
 [![Coverage Status](https://coveralls.io/repos/github/DTL-FAIRData/FAIRDataPoint/badge.svg?branch=master)](https://coveralls.io/github/DTL-FAIRData/FAIRDataPoint?branch=master)
 
-`FAIRDataPoint` is a REST API for creating, storing, and serving `FAIR metadata`. The metadata contents are generated `semi-automatically` according to the [FAIR Data Point software specification](https://dtl-fair.atlassian.net/wiki/display/FDP/FAIR+Data+Point+software+specification) document.
+`FAIR Data Point` (FDP) is a REST API for creating, storing, and serving `FAIR metadata`. This FDP implementation also presents a Web-based graphical user interface (GUI). The metadata contents are generated `semi-automatically` according to the [FAIR Data Point software specification](https://github.com/FAIRDataTeam/FAIRDataPoint-Spec) document.
 
-More information about FDP and how to deploy can be found at [FDP Public Documentation](https://fairdatapoint.readthedocs.io/).
+More information about FDP and how to deploy can be found at [FDP Deployment Documentation](https://fairdatapoint.readthedocs.io/).
+
+## Related projects
+- [FAIR Data Point Client](https://github.com/FAIRDataTeam/FAIRDataPoint-client)
+- [FAIR Data Point E2E Tests](https://github.com/FAIRDataTeam/FAIRDataPoint-E2E-Tests)
+- [FAIR Data Point Docs](https://github.com/FAIRDataTeam/FAIRDataPoint-Docs)
+- [OpenRefine Metadata Extension](https://github.com/FAIRDataTeam/OpenRefine-metadata-extension)
 
 ## How to contribute
 

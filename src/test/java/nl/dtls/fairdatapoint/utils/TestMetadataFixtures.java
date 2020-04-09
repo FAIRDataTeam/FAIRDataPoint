@@ -22,22 +22,19 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
-import nl.dtls.fairmetadata4j.model.*;
-import nl.dtls.fairdatapoint.api.dto.metadata.*;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.MetadataFixtures;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataFactory;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.xml.datatype.DatatypeConfigurationException;
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
 
 @Service
 public class TestMetadataFixtures extends MetadataFixtures {
-
-    @Autowired
-    protected MetadataFactory metadataFactory;
 
     @Value("${instance.url}")
     private String instanceUrl;
@@ -45,96 +42,86 @@ public class TestMetadataFixtures extends MetadataFixtures {
     public String alternativeInstanceUrl = "https://lorentz.fair-dtls.surf-hosted.nl/fdp";
 
     @Autowired
-    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
+    private MetadataEnhancer metadataEnhancer;
 
     @Autowired
-    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
+    private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
-    @Autowired
-    private MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
-
-    @Autowired
-    private MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
-
-    @Autowired
-    private MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
-
-    public FDPMetadata repositoryMetadata() throws DatatypeConfigurationException {
-        FDPMetadata metadata = super.repositoryMetadata(instanceUrl);
-        repositoryMetadataService.enhance(metadata);
+    public Model repositoryMetadata() {
+        Model metadata = super.repositoryMetadata(instanceUrl);
+        ResourceDefinition rd = resourceDefinitionFixtures.repositoryDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public CatalogMetadata catalog1() throws DatatypeConfigurationException {
-        CatalogMetadata metadata = super.catalog1(instanceUrl, repositoryMetadata());
-        catalogMetadataService.enhance(metadata);
+    public Model catalog1() {
+        Model metadata = super.catalog1(instanceUrl, getUri(repositoryMetadata()));
+        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public CatalogMetadata catalog2() throws DatatypeConfigurationException {
-        CatalogMetadata metadata = super.catalog2(instanceUrl, repositoryMetadata());
-        catalogMetadataService.enhance(metadata);
+    public Model catalog2() {
+        Model metadata = super.catalog2(instanceUrl, getUri(repositoryMetadata()));
+        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public CatalogMetadata catalog3() throws DatatypeConfigurationException {
-        CatalogMetadata metadata = super.catalog3(instanceUrl, repositoryMetadata());
-        catalogMetadataService.enhance(metadata);
+    public Model catalog3() {
+        Model metadata = super.catalog3(instanceUrl, getUri(repositoryMetadata()));
+        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public CatalogMetadata alternative_catalog3() throws DatatypeConfigurationException {
-        CatalogMetadata metadata = super.catalog3(alternativeInstanceUrl,
-                super.repositoryMetadata(alternativeInstanceUrl));
-        catalogMetadataService.enhance(metadata);
+    public Model alternative_catalog3() {
+        Model metadata = super.catalog3(alternativeInstanceUrl,
+                getUri(super.repositoryMetadata(alternativeInstanceUrl)));
+        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public DatasetMetadata c1_dataset1() throws DatatypeConfigurationException {
-        DatasetMetadata metadata = super.dataset1(instanceUrl, catalog1());
-        datasetMetadataService.enhance(metadata);
+    public Model c1_dataset1() {
+        Model metadata = super.dataset1(instanceUrl, getUri(catalog1()));
+        ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public DatasetMetadata c1_dataset2() throws DatatypeConfigurationException {
-        DatasetMetadata metadata = super.dataset2(instanceUrl, catalog1());
-        datasetMetadataService.enhance(metadata);
+    public Model c1_dataset2() {
+        Model metadata = super.dataset2(instanceUrl, getUri(catalog1()));
+        ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public DatasetMetadata c2_dataset3() throws DatatypeConfigurationException {
-        DatasetMetadata metadata = super.dataset3(instanceUrl, catalog2());
-        datasetMetadataService.enhance(metadata);
+    public Model c2_dataset3() {
+        Model metadata = super.dataset3(instanceUrl, getUri(catalog2()));
+        ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public DistributionMetadata c1_d1_distribution1() throws DatatypeConfigurationException {
-        DistributionMetadata metadata = super.distribution1(instanceUrl, c1_dataset1());
-        distributionMetadataService.enhance(metadata);
+    public Model c1_d1_distribution1() {
+        Model metadata = super.distribution1(instanceUrl, getUri(c1_dataset1()));
+        ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public DistributionMetadata c1_d1_distribution2() throws DatatypeConfigurationException {
-        DistributionMetadata metadata = super.distribution2(instanceUrl, c1_dataset1());
-        distributionMetadataService.enhance(metadata);
+    public Model c1_d1_distribution2() {
+        Model metadata = super.distribution2(instanceUrl, getUri(c1_dataset1()));
+        ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
-    public DistributionMetadata c1_d2_distribution3() throws DatatypeConfigurationException {
-        DistributionMetadata metadata = super.distribution3(instanceUrl, c1_dataset2());
-        distributionMetadataService.enhance(metadata);
-        return metadata;
-    }
-
-    public DataRecordMetadata c1_d1_datarecord1() throws DatatypeConfigurationException {
-        DataRecordMetadata metadata = super.datarecord1(instanceUrl, c1_dataset1());
-        dataRecordMetadataService.enhance(metadata);
-        return metadata;
-    }
-
-    public DataRecordMetadata c1_d2_datarecord2() throws DatatypeConfigurationException {
-        DataRecordMetadata metadata = super.datarecord2(instanceUrl, c1_dataset2());
-        dataRecordMetadataService.enhance(metadata);
+    public Model c1_d2_distribution3() {
+        Model metadata = super.distribution3(instanceUrl, getUri(c1_dataset2()));
+        ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
+        metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 

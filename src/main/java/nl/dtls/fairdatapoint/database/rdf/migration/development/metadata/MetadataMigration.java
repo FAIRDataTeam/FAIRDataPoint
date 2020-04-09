@@ -22,19 +22,25 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata;
 
-import nl.dtls.fairmetadata4j.model.*;
-import nl.dtls.fairdatapoint.api.dto.metadata.*;
 import nl.dtls.fairdatapoint.database.common.migration.Migration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.MetadataFixtures;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataMigration implements Migration {
@@ -43,22 +49,18 @@ public class MetadataMigration implements Migration {
     protected MetadataFixtures metadataFixtures;
 
     @Autowired
-    protected MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
+    @Qualifier("catalogMetadataService")
+    protected MetadataService catalogMetadataService;
 
     @Autowired
-    protected MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
-
-    @Autowired
-    protected MetadataService<DatasetMetadata, DatasetMetadataChangeDTO> datasetMetadataService;
-
-    @Autowired
-    protected MetadataService<DistributionMetadata, DistributionMetadataChangeDTO> distributionMetadataService;
-
-    @Autowired
-    private MetadataService<DataRecordMetadata, DataRecordMetadataChangeDTO> dataRecordMetadataService;
+    @Qualifier("genericMetadataService")
+    protected MetadataService genericMetadataService;
 
     @Autowired
     protected UserFixtures userFixtures;
+
+    @Autowired
+    protected ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     @Autowired
     private MongoAuthenticationService mongoAuthenticationService;
@@ -81,29 +83,38 @@ public class MetadataMigration implements Migration {
     }
 
     public void importDefaultFixtures(String repositoryUrl) throws MetadataServiceException {
-        FDPMetadata repository = metadataFixtures.repositoryMetadata(repositoryUrl);
-        repositoryMetadataService.store(repository);
+        ResourceDefinition repositoryRd = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition catalogRd = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition datasetRd = resourceDefinitionFixtures.datasetDefinition();
+        ResourceDefinition distributionRd = resourceDefinitionFixtures.distributionDefinition();
 
-        CatalogMetadata catalog1 = metadataFixtures.catalog1(repositoryUrl, repository);
-        catalogMetadataService.store(catalog1);
+        Model repositoryM = metadataFixtures.repositoryMetadata(repositoryUrl);
+        IRI repositoryUri = getUri(repositoryM);
+        genericMetadataService.store(repositoryM, i(repositoryUrl), repositoryRd);
 
-        CatalogMetadata catalog2 = metadataFixtures.catalog2(repositoryUrl, repository);
-        catalogMetadataService.store(catalog2);
+        Model catalog1 = metadataFixtures.catalog1(repositoryUrl, i(repositoryUrl));
+        IRI catalog1Uri = getUri(catalog1);
+        catalogMetadataService.store(catalog1, catalog1Uri, catalogRd);
 
-        DatasetMetadata dataset1 = metadataFixtures.dataset1(repositoryUrl, catalog1);
-        datasetMetadataService.store(dataset1);
+        Model catalog2 = metadataFixtures.catalog2(repositoryUrl, repositoryUri);
+        IRI catalog2Uri = getUri(catalog2);
+        catalogMetadataService.store(catalog2, catalog2Uri, catalogRd);
 
-        DatasetMetadata dataset2 = metadataFixtures.dataset2(repositoryUrl, catalog1);
-        datasetMetadataService.store(dataset2);
+        Model dataset1 = metadataFixtures.dataset1(repositoryUrl, catalog1Uri);
+        IRI dataset1Uri = getUri(dataset1);
+        genericMetadataService.store(dataset1, dataset1Uri, datasetRd);
 
-        DistributionMetadata distribution1 = metadataFixtures.distribution1(repositoryUrl, dataset1);
-        distributionMetadataService.store(distribution1);
+        Model dataset2 = metadataFixtures.dataset2(repositoryUrl, catalog1Uri);
+        IRI dataset2Uri = getUri(dataset2);
+        genericMetadataService.store(dataset2, dataset2Uri, datasetRd);
 
-        DistributionMetadata distribution2 = metadataFixtures.distribution2(repositoryUrl, dataset1);
-        distributionMetadataService.store(distribution2);
+        Model distribution1 = metadataFixtures.distribution1(repositoryUrl, dataset1Uri);
+        IRI distribution1Uri = getUri(distribution1);
+        genericMetadataService.store(distribution1, distribution1Uri, distributionRd);
 
-        DataRecordMetadata datarecord1 = metadataFixtures.datarecord1(repositoryUrl, dataset1);
-        dataRecordMetadataService.store(datarecord1);
+        Model distribution2 = metadataFixtures.distribution2(repositoryUrl, dataset1Uri);
+        IRI distribution2Uri = getUri(distribution2);
+        genericMetadataService.store(distribution2, distribution2Uri, distributionRd);
     }
 
 }

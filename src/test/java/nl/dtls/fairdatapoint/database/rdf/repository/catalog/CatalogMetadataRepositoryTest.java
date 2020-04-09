@@ -22,11 +22,8 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
@@ -44,15 +41,14 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import java.util.Collections;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.DATASET_THEMES_OF_CATALOG_CACHE;
+import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CatalogMetadataRepositoryTest {
 
-    private static final ValueFactory VALUE_FACTORY = SimpleValueFactory.getInstance();
-
-    private IRI catalogUri = VALUE_FACTORY.createIRI(MetadataFixtureFilesHelper.CATALOG_URI);
+    private IRI catalogUri = i("http://localhost/textmining");
 
     @Mock
     private Cache cache;
@@ -80,7 +76,7 @@ public class CatalogMetadataRepositoryTest {
     @DisplayName("Themes for catalog are in cache (no query to triple store)")
     public void themesInCache() throws MetadataRepositoryException {
         // GIVEN:
-        when(cacheManager.getCache(DATASET_THEMES_OF_CATALOG_CACHE)).thenReturn(cache);
+        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
         when(cache.get(catalogUri.toString(), List.class)).thenReturn(Collections.emptyList());
 
         // WHEN:
@@ -94,7 +90,7 @@ public class CatalogMetadataRepositoryTest {
     @DisplayName("Themes for catalog are not in cache (we have to query to triple store)")
     public void themesNotInCache() throws MetadataRepositoryException {
         // GIVEN:
-        when(cacheManager.getCache(DATASET_THEMES_OF_CATALOG_CACHE)).thenReturn(cache);
+        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
         when(repository.getConnection()).thenReturn(repositoryConnection);
         when(repositoryConnection.prepareTupleQuery(any())).thenReturn(tupleQuery);
         when(tupleQuery.evaluate()).thenReturn(tupleQueryResult);

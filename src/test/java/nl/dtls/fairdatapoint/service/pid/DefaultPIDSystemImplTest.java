@@ -27,13 +27,12 @@
  */
 package nl.dtls.fairdatapoint.service.pid;
 
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.utils.MetadataFixtureFilesHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.jupiter.api.Test;
 
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,9 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DefaultPIDSystemImplTest {
 
     private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    private final DefaultPIDSystemImpl test = new DefaultPIDSystemImpl();
-    private final FDPMetadata metadata =
-            MetadataFixtureFilesHelper.getFDPMetadata(MetadataFixtureFilesHelper.REPOSITORY_URI);
+    private final DefaultPIDSystemImpl pidSystem = new DefaultPIDSystemImpl();
 
     /**
      * Test of null metadata, this test is excepted to throw error
@@ -59,29 +56,16 @@ public class DefaultPIDSystemImplTest {
     @Test
     public void testGetURIForNullMetadata() {
         assertThrows(NullPointerException.class, () -> {
-            test.getURI(null);
+            pidSystem.getURI(null);
         });
     }
-
-    /**
-     * Test of null metadata uri, this test is excepted to throw error
-     */
-    @Test
-    public void testGetURIForNullMetadataUri() {
-        assertThrows(NullPointerException.class, () -> {
-            FDPMetadata metadataCopy = metadata;
-            metadataCopy.setUri(null);
-            test.getURI(metadataCopy);
-        });
-    }
-
 
     /**
      * Test of valid metadata uri, this test is excepted to pass
      */
     @Test
     public void testGetURIForValidMetadata() {
-        IRI iri = test.getURI(metadata);
+        IRI iri = pidSystem.getURI(i("http://example.org/my-metadata"));
         assertTrue(iri.toString().contains("#"));
     }
 
@@ -91,7 +75,7 @@ public class DefaultPIDSystemImplTest {
     @Test
     public void testGetIdForNullPIDIri() {
         assertThrows(NullPointerException.class, () -> {
-            test.getId(null);
+            pidSystem.getId(null);
         });
     }
 
@@ -101,7 +85,7 @@ public class DefaultPIDSystemImplTest {
     @Test
     public void testGetIdForInvalidPIDIri() {
         assertThrows(IllegalStateException.class, () -> {
-            test.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
+            pidSystem.getId(valueFactory.createIRI("http://example.com/fdp/someid"));
         });
     }
 
@@ -111,7 +95,7 @@ public class DefaultPIDSystemImplTest {
     @Test
     public void testGetIdForValidPIDIri() {
         String id = "someId";
-        String resultId = test.getId(valueFactory.createIRI("http://example.com/fdp#" + id));
+        String resultId = pidSystem.getId(valueFactory.createIRI("http://example.com/fdp#" + id));
         assertEquals(resultId, id);
     }
 

@@ -22,22 +22,25 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.catalog;
 
-import nl.dtls.fairmetadata4j.model.CatalogMetadata;
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.CatalogMetadataChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
+import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,16 +51,28 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private TestMetadataFixtures testMetadataFixtures;
 
     @Autowired
-    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
+    @Qualifier("genericMetadataService")
+    private MetadataService genericMetadataService;
 
     @Autowired
-    private MetadataService<CatalogMetadata, CatalogMetadataChangeDTO> catalogMetadataService;
+    @Qualifier("catalogMetadataService")
+    private MetadataService catalogMetadataService;
+
+    @Autowired
+    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+
+    private ResourceDefinition catalogRd;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        catalogRd = resourceDefinitionFixtures.catalogDefinition();
+    }
 
     @Test
     public void retrieveNonExitingMetadata() {
         assertThrows(ResourceNotFoundException.class, () -> {
             // GIVEN:
-            IRI repositoryUri = testMetadataFixtures.repositoryMetadata().getUri();
+            IRI repositoryUri = getUri(testMetadataFixtures.repositoryMetadata());
             IRI catalogUri = i(format("%s/non-existing", repositoryUri));
 
             // WHEN:
@@ -71,113 +86,99 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void specsLink() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalogMetadataService.store(catalog);
+        Model catalog = testMetadataFixtures.catalog3();
+        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // WHEN:
-        CatalogMetadata metadata = catalogMetadataService.retrieve(catalog.getUri());
+        Model metadata = catalogMetadataService.retrieve(getUri(catalog));
 
         // THEN:
-        assertNotNull(metadata.getSpecification());
+        assertNotNull(getSpecification(metadata));
     }
 
     @Test
     public void storeAndRetrieve() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
+        Model catalog = testMetadataFixtures.catalog3();
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // THEN:
-        assertNotNull(catalogMetadataService.retrieve(catalog.getUri()));
-    }
-
-    @Test
-    public void storeWithNoParentUri() {
-        assertThrows(IllegalStateException.class, () -> {
-            // GIVEN:
-            CatalogMetadata catalog = testMetadataFixtures.catalog3();
-            catalog.setParentURI(null);
-
-            // WHEN:
-            catalogMetadataService.store(catalog);
-
-            // THEN:
-            // Expect exception
-        });
+        assertNotNull(catalogMetadataService.retrieve(getUri(catalog)));
     }
 
     @Test
     public void storeWithNoID() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setIdentifier(null);
+        Model catalog = testMetadataFixtures.catalog3();
+        setIdentifier(catalog, getUri(catalog), null);
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
-        assertNotNull(result.getIdentifier());
+        Model result = catalogMetadataService.retrieve(getUri(catalog));
+        assertNotNull(getIdentifier(result));
     }
 
     @Test
     public void storeWithNoPublisher() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setPublisher(null);
+        Model catalog = testMetadataFixtures.catalog3();
+        setPublisher(catalog, getUri(catalog), null);
+
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
-        assertNotNull(result.getPublisher());
+        Model result = catalogMetadataService.retrieve(getUri(catalog));
+        assertNotNull(getPublisher(result));
     }
 
     @Test
     public void storeWithNoLanguage() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setLanguage(null);
+        Model catalog = testMetadataFixtures.catalog3();
+        setLanguage(catalog, getUri(catalog), null);
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
-        assertNotNull(result.getLanguage());
+        Model result = catalogMetadataService.retrieve(getUri(catalog));
+        assertNotNull(getLanguage(result));
     }
 
     @Test
     public void storeWithNoLicense() throws Exception {
         // GIVEN:
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
-        catalog.setLicense(null);
+        Model catalog = testMetadataFixtures.catalog3();
+        setLicence(catalog, getUri(catalog), null);
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // THEN:
-        CatalogMetadata result = catalogMetadataService.retrieve(catalog.getUri());
-        assertNotNull(result.getLicense());
+        Model result = catalogMetadataService.retrieve(getUri(catalog));
+        assertNotNull(getLicence(result));
     }
 
     @Test
     public void updateParent() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        CatalogMetadata catalog = testMetadataFixtures.catalog3();
+        Model repository = testMetadataFixtures.repositoryMetadata();
+        Model catalog = testMetadataFixtures.catalog3();
 
         // WHEN:
-        catalogMetadataService.store(catalog);
+        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // THEN:
-        FDPMetadata updatedRepository = repositoryMetadataService.retrieve(repository.getUri());
-        CatalogMetadata updatedCatalog = catalogMetadataService.retrieve(catalog.getUri());
-        ZonedDateTime repositoryModified = ZonedDateTime.parse(updatedRepository.getModified().stringValue());
-        ZonedDateTime catalogModified = ZonedDateTime.parse(updatedCatalog.getModified().stringValue());
+        Model updatedRepository = genericMetadataService.retrieve(getUri(repository));
+        Model updatedCatalog = catalogMetadataService.retrieve(getUri(catalog));
+        LocalDateTime repositoryModified = getModified(updatedRepository);
+        LocalDateTime catalogModified = getModified(updatedCatalog);
         assertFalse("FDP modified is not after Catalog modified", repositoryModified.isBefore(catalogModified));
     }
 

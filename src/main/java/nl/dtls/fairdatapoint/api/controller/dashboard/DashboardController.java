@@ -22,11 +22,9 @@
  */
 package nl.dtls.fairdatapoint.api.controller.dashboard;
 
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
-import nl.dtls.fairdatapoint.api.controller.metadata.MetadataController;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardCatalogDTO;
+import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import nl.dtls.fairdatapoint.service.dashboard.DashboardService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,21 +36,22 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.util.IRIUtils.removeLastPartOfIRI;
+import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
+import static nl.dtls.fairmetadata4j.util.RDFUtil.removeLastPartOfIRI;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
 @RestController
 @RequestMapping("/dashboard")
-public class DashboardController extends MetadataController {
+public class DashboardController {
 
     @Autowired
     private DashboardService dashboardService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<DashboardCatalogDTO>> getDashboard(HttpServletRequest request) throws MetadataServiceException {
-        IRI uri = getRequestURLasIRI(request);
+    public ResponseEntity<List<DashboardItemDTO>> getDashboard(HttpServletRequest request) throws MetadataServiceException {
+        IRI uri = i(getRequestURL(request));
         IRI repositoryUri = removeLastPartOfIRI(uri);
-        FDPMetadata metadata = repositoryMetadataService.retrieve(repositoryUri);
-        List<DashboardCatalogDTO> dto = dashboardService.getDashboard(metadata);
+        List<DashboardItemDTO> dto = dashboardService.getDashboard(repositoryUri);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

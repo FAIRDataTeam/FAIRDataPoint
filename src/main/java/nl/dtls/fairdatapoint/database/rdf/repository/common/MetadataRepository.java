@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
-import nl.dtls.fairmetadata4j.model.Metadata;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -37,13 +37,13 @@ import org.eclipse.rdf4j.query.BindingSet;
 import java.util.List;
 import java.util.Map;
 
-public interface MetadataRepository<T extends Metadata> {
+public interface MetadataRepository {
 
     List<Statement> retrieveResource(IRI uri) throws MetadataRepositoryException;
 
     void storeStatements(List<Statement> statements, IRI... iri) throws MetadataRepositoryException;
 
-    void removeStatement(Resource rsrc, IRI uri, Value value) throws MetadataRepositoryException;
+    void removeStatement(Resource rsrc, IRI uri, Value value, IRI... contexts) throws MetadataRepositoryException;
 
     boolean isStatementExist(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException;
 

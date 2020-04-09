@@ -22,18 +22,23 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.repository;
 
-import nl.dtls.fairmetadata4j.model.FDPMetadata;
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.RepositoryMetadataChangeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.utils.AuthHelper;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Model;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
+import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -46,29 +51,42 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
     private AuthHelper authHelper;
 
     @Autowired
-    private MetadataService<FDPMetadata, RepositoryMetadataChangeDTO> repositoryMetadataService;
+    @Qualifier("genericMetadataService")
+    private MetadataService genericMetadataService;
+
+    @Autowired
+    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+
+    private ResourceDefinition repositoryRd;
+
+    @BeforeEach
+    public void before() {
+        authHelper.authenticateAsAlbert();
+        repositoryRd = resourceDefinitionFixtures.repositoryDefinition();
+    }
+
 
     @Test
     public void storeAndRetrieve() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
+        Model repository = testMetadataFixtures.repositoryMetadata();
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        assertNotNull(repositoryMetadataService.retrieve(repository.getUri()));
+        assertNotNull(genericMetadataService.retrieve(getUri(repository)));
     }
 
     @Test
     public void storeWithNoTitle() {
         assertThrows(Exception.class, () -> {
             // GIVEN:
-            FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-            repository.setTitle(null);
+            Model repository = testMetadataFixtures.repositoryMetadata();
+            setTitle(repository, getUri(repository), null);
 
             // WHEN:
-            repositoryMetadataService.store(repository);
+            genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
             // THEN:
             // Expect exception
@@ -78,71 +96,71 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoID() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        repository.setIdentifier(null);
+        Model repository = testMetadataFixtures.repositoryMetadata();
+        setIdentifier(repository, getUri(repository), null);
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertNotNull(result.getIdentifier());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertNotNull(getIdentifier(result));
     }
 
     @Test
     public void storeWithNoRepoID() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        repository.setRepostoryIdentifier(null);
+        Model repository = testMetadataFixtures.repositoryMetadata();
+        setRepositoryIdentifier(repository, getUri(repository), null);
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertNotNull(result.getRepostoryIdentifier());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertNotNull(getRepositoryIdentifier(result));
     }
 
     @Test
     public void storeWithNoPublisher() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        repository.setPublisher(null);
+        Model repository = testMetadataFixtures.repositoryMetadata();
+        setPublisher(repository, getUri(repository), null);
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertNotNull(result.getPublisher());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertNotNull(getPublisher(result));
     }
 
     @Test
     public void storeWithNoLanguage() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        repository.setLanguage(null);
+        Model repository = testMetadataFixtures.repositoryMetadata();
+        setLanguage(repository, getUri(repository), null);
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertNotNull(result.getLanguage());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertNotNull(getLanguage(result));
     }
 
     @Test
     public void storeWithNoLicense() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        repository.setLicense(null);
+        Model repository = testMetadataFixtures.repositoryMetadata();
+        setLicence(repository, getUri(repository), null);
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertNotNull(result.getLicense());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertNotNull(getLicence(result));
     }
 
     @Test
@@ -151,24 +169,24 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
         authHelper.authenticateAsAdmin();
 
         // AND: Prepare data
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
-        repositoryMetadataService.store(repository);
+        Model repository = testMetadataFixtures.repositoryMetadata();
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // WHEN:
         Literal title = l("New FDP title");
-        repository.setTitle(title);
-        repositoryMetadataService.update(repository.getUri(), repository);
+        setTitle(repository, getUri(repository), title);
+        genericMetadataService.update(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertEquals(title, result.getTitle());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertEquals(title, getTitle(result));
     }
 
     @Test
     public void nullFDPURI() {
         assertThrows(NullPointerException.class, () -> {
             // WHEN:
-            repositoryMetadataService.retrieve((IRI) null);
+            genericMetadataService.retrieve((IRI) null);
 
             // THEN:
             // Expect exception
@@ -178,40 +196,40 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void specsLink() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
+        Model repository = testMetadataFixtures.repositoryMetadata();
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertNotNull(result.getSpecification());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertNotNull(getSpecification(result));
     }
 
     @Test
     public void metrics() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
+        Model repository = testMetadataFixtures.repositoryMetadata();
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertFalse(result.getMetrics().isEmpty());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertFalse(getMetrics(result).isEmpty());
     }
 
     @Test
     public void accessRights() throws Exception {
         // GIVEN:
-        FDPMetadata repository = testMetadataFixtures.repositoryMetadata();
+        Model repository = testMetadataFixtures.repositoryMetadata();
 
         // WHEN:
-        repositoryMetadataService.store(repository);
+        genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
-        FDPMetadata result = repositoryMetadataService.retrieve(repository.getUri());
-        assertNotNull(result.getAccessRights().getDescription());
+        Model result = genericMetadataService.retrieve(getUri(repository));
+        assertNotNull(getAccessRights(result).getDescription());
     }
 
 }

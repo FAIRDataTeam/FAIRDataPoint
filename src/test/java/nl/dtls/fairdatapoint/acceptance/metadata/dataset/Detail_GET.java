@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.DatasetMetadataDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,12 +34,12 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGetRDF;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /dataset/:datasetId")
+@DisplayName("GET /dataset")
 public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String id) {
@@ -54,12 +53,13 @@ public class Detail_GET extends WebIntegrationTest {
         RequestEntity<Void> request = RequestEntity
                 .get(url("dataset-1"))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.ACCEPT, "text/turtle")
                 .build();
-        ParameterizedTypeReference<DatasetMetadataDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<DatasetMetadataDTO> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -68,7 +68,7 @@ public class Detail_GET extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createUserNotFoundTestGet(client, url("nonExisting"));
+        createUserNotFoundTestGetRDF(client, url("nonExisting"));
     }
 
 }
