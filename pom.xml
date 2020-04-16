@@ -94,7 +94,7 @@
         <repository>
             <id>nexus-releases</id>
             <name>Nexus Releases</name>
-            <url>https://toolshed.fair-dtls.surf-hosted.nl/repository/maven-releases/</url>
+            <url>https://nexus.internal.fairdatapoint.org/repository/maven-releases/</url>
         </repository>
     </repositories>
 
