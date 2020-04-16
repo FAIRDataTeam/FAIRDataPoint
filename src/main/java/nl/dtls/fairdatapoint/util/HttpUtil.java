@@ -23,82 +23,40 @@
 package nl.dtls.fairdatapoint.util;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFWriterRegistry;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static java.lang.String.format;
 import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 
 @Slf4j
 public class HttpUtil {
 
-    public static String getRequestURL(HttpServletRequest request) {
-        String url = request.getRequestURL().toString();
-        log.info("Original requesed url {}", url);
-
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-
-        List<String> rdfExt = RDFWriterRegistry.getInstance()
-                .getKeys()
-                .stream()
-                .map(RDFFormat::getDefaultFileExtension)
-                .collect(Collectors.toList());
-
-        for (String ext : rdfExt) {
-            String extension = "." + ext;
-            if (url.contains(extension)) {
-                log.info("Found RDF extension in url {}", ext);
-                url = url.replace(extension, "");
-                break;
-            }
-        }
+    public static String getRequestURL(HttpServletRequest request, String instanceUrl) {
+        String urlS = request.getRequestURL().toString();
+        log.info("Original requesed url {}", urlS);
         try {
-            URL requestedURL = new URL(url);
-            String host = request.getHeader("x-forwarded-host");
-            String proto = request.getHeader("x-forwarded-proto");
-            String port = request.getHeader("x-forwarded-port");
+            urlS = removeLastSlash(urlS);
+            instanceUrl = removeLastSlash(instanceUrl);
 
-            if (host != null && !host.isEmpty()) {
-                url = url.replace(requestedURL.getHost(), host);
-            }
+            URL url = new URL(urlS);
+            String modifiedUrl = instanceUrl + url.getPath();
+            log.info("Modified requesed url {}", modifiedUrl);
 
-            if (proto != null && !proto.isEmpty()) {
-                url = url.replace(requestedURL.getProtocol(), proto);
-            }
+            return modifiedUrl;
 
-            if (port != null && requestedURL.getPort() != -1) {
-                String val = ":" + requestedURL.getPort();
-                log.info("x-forwarded-port {}", port);
-                switch (port) {
-                    case "443":
-                        url = url.replace(val, "");
-                        break;
-                    case "80":
-                        url = url.replace(val, "");
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } catch (MalformedURLException ex) {
-            throw new IllegalStateException(format("Error creating url %s", ex.getMessage()));
+        } catch (MalformedURLException e) {
+            throw new ValidationException("URL was not in the right format");
         }
-        log.info("Modified requesed url {}", url);
-        return url;
     }
 
-    public static IRI generateNewIRI(HttpServletRequest request) {
-        String requestedURL = getRequestURL(request);
+    public static IRI generateNewIRI(HttpServletRequest request, String instanceUrl) {
+        String requestedURL = getRequestURL(request, instanceUrl);
         UUID uid = UUID.randomUUID();
         return i(requestedURL + "/" + uid.toString());
     }
@@ -120,6 +78,24 @@ public class HttpUtil {
                 return RDFFormat.N3;
             default:
                 return RDFFormat.TURTLE;
+        }
+    }
+
+    public static String removeLastSlash(String url) {
+        if (url.endsWith("/")) {
+            return url.substring(0, url.length() - 1);
+        } else {
+            return url;
+        }
+    }
+
+    public static String removeProtocol(String url) {
+        if (url.contains("http://")) {
+            return url.substring(7);
+        } else if (url.contains("https://")) {
+            return url.substring(8);
+        } else {
+            return url;
         }
     }
 
