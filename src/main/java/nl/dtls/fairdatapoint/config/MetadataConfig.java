@@ -27,17 +27,17 @@ import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
 import nl.dtls.fairmetadata4j.model.Agent;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
+
 @Configuration
 public class MetadataConfig {
-
-    private final ValueFactory VALUEFACTORY = SimpleValueFactory.getInstance();
 
     @Bean(name = "publisher")
     public Agent publisher(@Value("${metadataProperties.publisherURI:}") String publisherURI,
@@ -46,8 +46,8 @@ public class MetadataConfig {
         Agent publisher = null;
         if (!publisherURI.isEmpty() && !publishername.isEmpty()) {
             publisher = new Agent();
-            publisher.setUri(VALUEFACTORY.createIRI(publisherURI));
-            publisher.setName(VALUEFACTORY.createLiteral(publishername));
+            publisher.setUri(i(publisherURI));
+            publisher.setName(l(publishername));
         }
         return publisher;
     }
@@ -57,7 +57,7 @@ public class MetadataConfig {
 
         IRI language = null;
         if (!languageURI.isEmpty()) {
-            language = VALUEFACTORY.createIRI(languageURI);
+            language = i(languageURI);
         }
         return language;
     }
@@ -67,7 +67,7 @@ public class MetadataConfig {
 
         IRI license = null;
         if (!licenseURI.isEmpty()) {
-            license = VALUEFACTORY.createIRI(licenseURI);
+            license = i(licenseURI);
         }
         return license;
     }
@@ -85,11 +85,7 @@ public class MetadataConfig {
 
     @Bean
     public IRI purlBaseUrl(@Value("${pidSystem.purl.baseUrl:}") String url) {
-        String baseUrl = url;
-        if (baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-        }
-        return VALUEFACTORY.createIRI(baseUrl);
+        return i(removeLastSlash(url));
     }
 
 }

@@ -27,6 +27,7 @@ import nl.dtls.fairdatapoint.service.dashboard.DashboardService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,12 +45,16 @@ import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
 @RequestMapping("/dashboard")
 public class DashboardController {
 
+    @Value("${instance.url}")
+    private String instanceUrl;
+
+
     @Autowired
     private DashboardService dashboardService;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<DashboardItemDTO>> getDashboard(HttpServletRequest request) throws MetadataServiceException {
-        IRI uri = i(getRequestURL(request));
+        IRI uri = i(getRequestURL(request, instanceUrl));
         IRI repositoryUri = removeLastPartOfIRI(uri);
         List<DashboardItemDTO> dto = dashboardService.getDashboard(repositoryUri);
         return new ResponseEntity<>(dto, HttpStatus.OK);
