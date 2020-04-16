@@ -36,7 +36,6 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -44,7 +43,7 @@ import javax.servlet.ServletContext;
 import java.util.Collections;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.constant.EnvConstant.PUBLIC_PATH;
+import static nl.dtls.fairdatapoint.util.HttpUtil.removeProtocol;
 
 @Configuration
 @EnableSwagger2
@@ -64,16 +63,9 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .host(instanceUrl)
+                .host(removeProtocol(instanceUrl))
                 .securitySchemes(List.of(apiKey()))
-                .securityContexts(List.of(securityContext()))
-                .pathProvider(new RelativePathProvider(servletContext) {
-                    @Override
-                    public String getApplicationBasePath() {
-                        String publicPath = System.getenv(PUBLIC_PATH);
-                        return publicPath;
-                    }
-                });
+                .securityContexts(List.of(securityContext()));
     }
 
     private ApiInfo apiInfo() {

@@ -41,6 +41,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 
+import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
+
 @Configuration
 @Log4j2
 public class RepositoryConfig {
@@ -135,9 +137,7 @@ public class RepositoryConfig {
     private Repository getBlazeGraphRepository() {
         log.info("Setting up Blaze Graph Store");
         if (!blazegraphUrl.isEmpty()) {
-            if (blazegraphUrl.endsWith("/")) {
-                blazegraphUrl = blazegraphUrl.substring(0, blazegraphUrl.length() - 1);
-            }
+            blazegraphUrl = removeLastSlash(blazegraphUrl);
             // Build url for blazegraph (Eg: http://localhost:8079/bigdata/namespace/test1/sparql)
             StringBuilder sb = new StringBuilder();
             sb.append(blazegraphUrl);
