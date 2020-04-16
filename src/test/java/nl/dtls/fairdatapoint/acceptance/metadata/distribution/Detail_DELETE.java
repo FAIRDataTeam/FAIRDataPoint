@@ -39,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("DELETE /distribution")
+@DisplayName("DELETE /distribution/:distributionId")
 public class Detail_DELETE extends WebIntegrationTest {
 
     private URI url(String id) {

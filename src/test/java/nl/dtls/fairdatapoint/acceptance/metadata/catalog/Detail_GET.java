@@ -39,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /catalog")
+@DisplayName("GET /catalog/:catalogId")
 public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String id) {

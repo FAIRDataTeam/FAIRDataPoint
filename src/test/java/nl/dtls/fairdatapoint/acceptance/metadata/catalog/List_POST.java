@@ -49,10 +49,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("POST /catalog")
 public class List_POST extends WebIntegrationTest {
 
-    private enum TestType {
-        STANDARD, WITHOUT_PARENT
-    }
-
     @Autowired
     private TestMetadataFixtures testMetadataFixtures;
 

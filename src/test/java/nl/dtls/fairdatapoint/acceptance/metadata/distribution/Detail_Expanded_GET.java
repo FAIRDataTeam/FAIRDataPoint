@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,15 +34,16 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGetRDF;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /distribution/:distributionId/member")
-public class Detail_Member_GET extends WebIntegrationTest {
+@DisplayName("GET /distribution/:distributionId/expanded")
+public class Detail_Expanded_GET extends WebIntegrationTest {
 
     private URI url(String id) {
-        return URI.create(format("/distribution/%s/member", id));
+        return URI.create(format("/distribution/%s/expanded", id));
     }
 
     @Test
@@ -53,16 +53,22 @@ public class Detail_Member_GET extends WebIntegrationTest {
         RequestEntity<Void> request = RequestEntity
                 .get(url("distribution-1"))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .header(HttpHeaders.ACCEPT, "application/json")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
                 .build();
-        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+    }
+
+    @Test
+    @DisplayName("HTTP 404")
+    public void res404() {
+        createUserNotFoundTestGetRDF(client, url("nonExisting"));
     }
 
 }

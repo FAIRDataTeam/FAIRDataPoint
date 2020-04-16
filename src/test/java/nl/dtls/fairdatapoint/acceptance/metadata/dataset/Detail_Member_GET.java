@@ -39,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /dataset/member")
+@DisplayName("GET /dataset/:datasetId/member")
 public class Detail_Member_GET extends WebIntegrationTest {
 
     private URI url(String id) {

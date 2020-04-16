@@ -41,7 +41,7 @@ public class HttpUtil {
         String urlS = request.getRequestURL().toString();
         log.info("Original requesed url {}", urlS);
         try {
-            urlS = removeLastSlash(urlS);
+            urlS = removeLastSlash(urlS.replace("/expanded", ""));
             instanceUrl = removeLastSlash(instanceUrl);
 
             URL url = new URL(urlS);

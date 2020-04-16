@@ -72,10 +72,10 @@ public class GenericController {
     }
 
     @RequestMapping(
-            value = "**",
+            value = "**/expanded",
             method = RequestMethod.GET,
             produces = {"!application/json"})
-    public Model getMetaData(HttpServletRequest request) throws MetadataServiceException {
+    public Model getMetaDataExpanded(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
         String uri = getRequestURL(request, instanceUrl);
         Model resultRdf = new LinkedHashModel();
@@ -111,6 +111,26 @@ public class GenericController {
         }
 
         // 5. Create response
+        return resultRdf;
+    }
+
+    @RequestMapping(
+            value = "**",
+            method = RequestMethod.GET,
+            produces = {"!application/json"})
+    public Model getMetaData(HttpServletRequest request) throws MetadataServiceException {
+        // 1. Init
+        String uri = getRequestURL(request, instanceUrl);
+        Model resultRdf = new LinkedHashModel();
+        String urlPrefix = getResourceNameForDetail(uri);
+        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+
+        // 2. Get entity
+        IRI entityUri = i(getRequestURL(request, instanceUrl));
+        Model entity = metadataService.retrieve(entityUri);
+        resultRdf.addAll(entity);
+
+        // 3. Create response
         return resultRdf;
     }
 
