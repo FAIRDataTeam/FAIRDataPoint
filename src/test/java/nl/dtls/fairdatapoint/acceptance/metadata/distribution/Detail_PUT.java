@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -42,10 +42,10 @@ import java.net.URI;
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -70,7 +70,7 @@ public class Detail_PUT extends WebIntegrationTest {
         setMediaType(distribution, uri, l("text/edited"));
         setDownloadURL(distribution, uri, i("http://example.com/edited"));
         setAccessURL(distribution, uri, i("http://example.com/edited"));
-        return RdfUtil.write(distribution, RDFFormat.TURTLE);
+        return RdfIOUtil.write(distribution, RDFFormat.TURTLE);
     }
 
     @Test

@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
 import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
 
 @Service
 public class DashboardService {
@@ -72,7 +72,7 @@ public class DashboardService {
     }
 
     private DashboardItemDTO getDashboardCatalog(Model catalog) throws MetadataServiceException {
-        String catalogId = getIdentifier(catalog).getIdentifier().getLabel();
+        String catalogId = getMetadataIdentifier(catalog).getIdentifier().getLabel();
         Optional<MemberDTO> oCatalogMember = memberService.getMemberForCurrentUser(catalogId, Metadata.class);
         List<DashboardItemDTO> datasetDtos = getDashboardDatasets(catalog);
         return dashboardMapper.toCatalogDTO(catalog, datasetDtos, oCatalogMember.map(MemberDTO::getMembership));
@@ -87,7 +87,7 @@ public class DashboardService {
     }
 
     private DashboardItemDTO getDashboardDataset(Model dataset) throws MetadataServiceException {
-        String datasetId = getIdentifier(dataset).getIdentifier().getLabel();
+        String datasetId = getMetadataIdentifier(dataset).getIdentifier().getLabel();
         Optional<MemberDTO> oDatasetMember = memberService.getMemberForCurrentUser(datasetId, Metadata.class);
         List<DashboardItemDTO> distributionDtos = getDashboardDistributions(dataset);
         return dashboardMapper.toDatasetDTO(dataset, distributionDtos, oDatasetMember.map(MemberDTO::getMembership));
@@ -102,7 +102,7 @@ public class DashboardService {
     }
 
     private DashboardItemDTO getDashboardDistribution(Model distribution) {
-        String distributionId = getIdentifier(distribution).getIdentifier().getLabel();
+        String distributionId = getMetadataIdentifier(distribution).getIdentifier().getLabel();
         Optional<MemberDTO> oDistributionMember = memberService.getMemberForCurrentUser(distributionId, Metadata.class);
         return dashboardMapper.toDistributionDTO(distribution, oDistributionMember.map(MemberDTO::getMembership));
     }

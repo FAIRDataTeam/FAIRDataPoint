@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.MetadataMigration;
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -67,7 +67,7 @@ public class List_POST extends WebIntegrationTest {
 
     private String reqDto() {
         Model catalog3 = testMetadataFixtures.catalog3();
-        return RdfUtil.write(catalog3, RDFFormat.TURTLE);
+        return RdfIOUtil.write(catalog3, RDFFormat.TURTLE);
     }
 
     @DisplayName("HTTP 201")
@@ -98,7 +98,7 @@ public class List_POST extends WebIntegrationTest {
         // AND: Prepare fixtures
         metadataMigration.importDefaultFixtures(testMetadataFixtures.alternativeInstanceUrl);
         Model catalog3 = testMetadataFixtures.alternative_catalog3();
-        String reqDto = RdfUtil.write(catalog3, RDFFormat.TURTLE);
+        String reqDto = RdfIOUtil.write(catalog3, RDFFormat.TURTLE);
         // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .post(url())

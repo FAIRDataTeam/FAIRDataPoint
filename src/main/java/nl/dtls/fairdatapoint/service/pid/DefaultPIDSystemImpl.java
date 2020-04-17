@@ -31,7 +31,7 @@ import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 import org.eclipse.rdf4j.model.IRI;
 
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 /**
  * Implementation of default PID system

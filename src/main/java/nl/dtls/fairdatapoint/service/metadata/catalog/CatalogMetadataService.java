@@ -36,8 +36,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getThemeTaxonomies;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.setThemeTaxonomies;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getThemeTaxonomies;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.setThemeTaxonomies;
 
 @Service("catalogMetadataService")
 @Slf4j

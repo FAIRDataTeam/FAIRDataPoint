@@ -38,9 +38,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 import static nl.dtls.fairdatapoint.util.ResourceReader.loadResource;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getParent;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataValidator {

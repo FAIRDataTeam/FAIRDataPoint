@@ -38,12 +38,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.time.LocalDateTime;
 
 import static java.lang.String.format;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CatalogMetadataServiceTest extends BaseIntegrationTest {
 
@@ -112,29 +110,14 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithNoID() throws Exception {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog3();
-        setIdentifier(catalog, getUri(catalog), null);
+        setMetadataIdentifier(catalog, getUri(catalog), null);
 
         // WHEN:
         catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
 
         // THEN:
         Model result = catalogMetadataService.retrieve(getUri(catalog));
-        assertNotNull(getIdentifier(result));
-    }
-
-    @Test
-    public void storeWithNoPublisher() throws Exception {
-        // GIVEN:
-        Model catalog = testMetadataFixtures.catalog3();
-        setPublisher(catalog, getUri(catalog), null);
-
-
-        // WHEN:
-        catalogMetadataService.store(catalog, getUri(catalog), catalogRd);
-
-        // THEN:
-        Model result = catalogMetadataService.retrieve(getUri(catalog));
-        assertNotNull(getPublisher(result));
+        assertNotNull(getMetadataIdentifier(result));
     }
 
     @Test
@@ -179,7 +162,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         Model updatedCatalog = catalogMetadataService.retrieve(getUri(catalog));
         LocalDateTime repositoryModified = getModified(updatedRepository);
         LocalDateTime catalogModified = getModified(updatedCatalog);
-        assertFalse("FDP modified is not after Catalog modified", repositoryModified.isBefore(catalogModified));
+        assertFalse(repositoryModified.isBefore(catalogModified), "FDP modified is not after Catalog modified");
     }
 
 }

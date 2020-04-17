@@ -22,10 +22,10 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import nl.dtls.fairdatapoint.entity.metadata.Agent;
 import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
-import nl.dtls.fairmetadata4j.model.Agent;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,8 +33,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Configuration
 public class MetadataConfig {

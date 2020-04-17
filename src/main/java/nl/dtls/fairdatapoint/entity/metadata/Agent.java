@@ -25,22 +25,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service.metadatametrics;
+package nl.dtls.fairdatapoint.entity.metadata;
 
-import nl.dtls.fairdatapoint.entity.metadata.Metric;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
 
-import javax.annotation.Nonnull;
-import java.util.List;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Agent {
 
-public interface FairMetadataMetricsService {
+    private IRI uri;
 
-    /**
-     * This method returns list of fair metrics for the given metadata URI
-     *
-     * @param metadataURI metadata URI
-     * @return List of fair metrics
-     */
-    List<Metric> getMetrics(@Nonnull IRI metadataURI);
+    private IRI mbox;
+
+    private IRI type = FOAF.AGENT;
+
+    private Literal name;
 
 }

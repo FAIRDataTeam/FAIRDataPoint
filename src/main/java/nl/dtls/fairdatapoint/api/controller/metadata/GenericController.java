@@ -28,7 +28,7 @@ import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -44,11 +44,10 @@ import java.net.URI;
 
 import static nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator.SHACL_VALIDATION_FILE;
 import static nl.dtls.fairdatapoint.util.HttpUtil.*;
-import static nl.dtls.fairdatapoint.util.RdfUtil.changeBaseUri;
-import static nl.dtls.fairdatapoint.util.RdfUtil.read;
-import static nl.dtls.fairmetadata4j.util.RDFUtil.getObjectsBy;
-import static nl.dtls.fairmetadata4j.util.RDFUtil.getStringObjectBy;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.RdfIOUtil.changeBaseUri;
+import static nl.dtls.fairdatapoint.util.RdfIOUtil.read;
+import static nl.dtls.fairdatapoint.util.RdfUtil.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @RestController
 @RequestMapping("/")
@@ -68,7 +67,7 @@ public class GenericController {
             method = RequestMethod.GET,
             produces = {"!application/json"})
     public Model getFormMetadata() {
-        return RdfUtil.readFile(SHACL_VALIDATION_FILE, "http://fairdatapoint.org");
+        return RdfIOUtil.readFile(SHACL_VALIDATION_FILE, "http://fairdatapoint.org");
     }
 
     @RequestMapping(
@@ -189,7 +188,10 @@ public class GenericController {
         Model reqDto = read(reqBody, uri.stringValue(), rdfContentType);
         String child = rd.getChild();
         if (child != null) {
-            reqDto.remove(null, i(child), null);
+            org.eclipse.rdf4j.model.Value childEntity = getObjectBy(reqDto, null, i(child));
+            if (childEntity != null) {
+                reqDto.remove(i(childEntity.stringValue()), null, null);
+            }
         }
 
         // 4. Store metadata

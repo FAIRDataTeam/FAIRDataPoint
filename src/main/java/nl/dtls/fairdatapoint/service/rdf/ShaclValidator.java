@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class ShaclValidator {

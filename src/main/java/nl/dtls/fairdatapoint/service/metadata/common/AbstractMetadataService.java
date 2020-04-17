@@ -29,6 +29,7 @@ import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataGetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
@@ -37,8 +38,7 @@ import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException
 import nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
-import nl.dtls.fairmetadata4j.accessor.MetadataGetter;
-import nl.dtls.fairmetadata4j.vocabulary.FDP;
+import nl.dtls.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -54,10 +54,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getChildren;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getParent;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 
 @Slf4j
 public abstract class AbstractMetadataService implements MetadataService {

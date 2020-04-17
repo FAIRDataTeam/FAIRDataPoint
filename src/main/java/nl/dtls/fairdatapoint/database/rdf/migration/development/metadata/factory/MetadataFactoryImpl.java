@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory;
 
-import nl.dtls.fairmetadata4j.util.ValueFactoryHelper;
+import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -31,9 +31,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataFactoryImpl implements MetadataFactory {

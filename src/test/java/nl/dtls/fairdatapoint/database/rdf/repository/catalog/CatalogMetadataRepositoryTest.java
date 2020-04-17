@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

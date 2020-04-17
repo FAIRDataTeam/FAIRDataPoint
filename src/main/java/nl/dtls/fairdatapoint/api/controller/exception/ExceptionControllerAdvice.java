@@ -31,8 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.*;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairmetadata4j.parser.exception.MetadataException;
-import nl.dtls.fairmetadata4j.parser.exception.MetadataParserException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -48,14 +46,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.StringWriter;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.RdfUtil.getWriterConfig;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.RdfIOUtil.getWriterConfig;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @ControllerAdvice
 @Slf4j
 public class ExceptionControllerAdvice {
 
-    @ExceptionHandler({MetadataException.class, ValidationException.class})
+    @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorDTO handleBadRequest(Exception e) {
@@ -106,7 +104,7 @@ public class ExceptionControllerAdvice {
         return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
-    @ExceptionHandler({MetadataServiceException.class, MetadataParserException.class})
+    @ExceptionHandler({MetadataServiceException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorDTO handleInternalServerError(Exception e) {

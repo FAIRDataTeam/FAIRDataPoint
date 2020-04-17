@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -43,10 +43,10 @@ import java.util.List;
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -70,7 +70,7 @@ public class Detail_PUT extends WebIntegrationTest {
         setLicence(catalog, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
         setLanguage(catalog, uri, i("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"));
         setThemeTaxonomies(catalog, uri, List.of(i("https://purl.org/example#theme/EDITED")));
-        return RdfUtil.write(catalog, RDFFormat.TURTLE);
+        return RdfIOUtil.write(catalog, RDFFormat.TURTLE);
     }
 
     @Test

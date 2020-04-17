@@ -43,10 +43,10 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getIdentifier;
-import static nl.dtls.fairmetadata4j.util.RDFUtil.removeLastPartOfIRI;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @RestController
 public class GenericMemberController {
@@ -82,7 +82,7 @@ public class GenericMemberController {
         Model metadata = metadataService.retrieve(entityUri);
 
         // 3. Get members
-        String entityId = getIdentifier(metadata).getIdentifier().getLabel();
+        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         List<MemberDTO> dto = memberService.getMembers(entityId, Metadata.class);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -100,7 +100,7 @@ public class GenericMemberController {
         Model metadata = metadataService.retrieve(entityUri);
 
         // 3. Create / Update member
-        String entityId = getIdentifier(metadata).getIdentifier().getLabel();
+        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         MemberDTO dto = memberService.createOrUpdateMember(entityId, Metadata.class, userUuid,
                 reqBody.getMembershipUuid());
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -119,7 +119,7 @@ public class GenericMemberController {
         Model metadata = metadataService.retrieve(entityUri);
 
         // 3. Delete member
-        String entityId = getIdentifier(metadata).getIdentifier().getLabel();
+        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         memberService.deleteMember(entityId, Metadata.class, userUuid);
         return ResponseEntity.noContent().build();
     }

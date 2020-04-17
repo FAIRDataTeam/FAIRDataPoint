@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
 
 @Service
 public class DashboardMapper {
@@ -38,7 +38,7 @@ public class DashboardMapper {
     public DashboardItemDTO toCatalogDTO(Model c, List<DashboardItemDTO> datasets,
                                          Optional<MembershipDTO> membership) {
         return new DashboardItemDTO(
-                getIdentifier(c).getIdentifier().getLabel(),
+                getMetadataIdentifier(c).getIdentifier().getLabel(),
                 getUri(c).toString(),
                 getTitle(c).getLabel(),
                 datasets,
@@ -49,7 +49,7 @@ public class DashboardMapper {
     public DashboardItemDTO toDatasetDTO(Model d, List<DashboardItemDTO> datasets,
                                          Optional<MembershipDTO> membership) {
         return new DashboardItemDTO(
-                getIdentifier(d).getIdentifier().getLabel(),
+                getMetadataIdentifier(d).getIdentifier().getLabel(),
                 getUri(d).toString(),
                 getTitle(d).getLabel(),
                 datasets,
@@ -59,7 +59,7 @@ public class DashboardMapper {
 
     public DashboardItemDTO toDistributionDTO(Model d, Optional<MembershipDTO> membership) {
         return new DashboardItemDTO(
-                getIdentifier(d).getIdentifier().getLabel(),
+                getMetadataIdentifier(d).getIdentifier().getLabel(),
                 getUri(d).toString(),
                 getTitle(d).getLabel(),
                 List.of(),

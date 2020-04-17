@@ -51,8 +51,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 // TODO Get rid of DirtiesContext

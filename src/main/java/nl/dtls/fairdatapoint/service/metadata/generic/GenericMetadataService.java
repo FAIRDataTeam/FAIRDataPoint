@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getParent;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 
 @Service("genericMetadataService")
 public class GenericMetadataService extends AbstractMetadataService {

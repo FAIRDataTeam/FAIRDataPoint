@@ -32,7 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 public class HttpUtil {

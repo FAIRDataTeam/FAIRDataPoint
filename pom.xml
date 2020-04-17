@@ -10,7 +10,7 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -51,7 +51,6 @@
         <maven.compiler.target>11</maven.compiler.target>
 
         <!-- Project related -->
-        <fairmetadata.version>${revision}${changelist}</fairmetadata.version>
         <spring.rdf.migration.version>1.0.0.RELEASE</spring.rdf.migration.version>
         <spring.security.acl.mongo.version>5.1.5.RELEASE</spring.security.acl.mongo.version>
 
@@ -80,6 +79,7 @@
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
         <plugin.git_commit_id.version>2.2.4</plugin.git_commit_id.version>
+        <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
     </properties>
 
     <repositories>
@@ -103,11 +103,6 @@
         <!-- ////////////////// -->
         <!--   Project related  -->
         <!-- ////////////////// -->
-        <dependency>
-            <groupId>nl.dtls</groupId>
-            <artifactId>fairmetadata4j</artifactId>
-            <version>${fairmetadata.version}</version>
-        </dependency>
         <dependency>
             <groupId>nl.dtls</groupId>
             <artifactId>spring-rdf-migration</artifactId>
@@ -368,6 +363,41 @@
                 </executions>
                 <configuration>
                     <verbose>false</verbose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.kburger</groupId>
+                <artifactId>rdf4j-generator-maven-plugin</artifactId>
+                <version>${plugin.rdf4j_generator.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <package>nl.dtls.fairdatapoint.vocabulary</package>
+                    <addGeneratedAnnotation>false</addGeneratedAnnotation>
+                    <vocabularies>
+                        <vocabulary>
+                            <url>https://sparontologies.github.io/datacite/current/datacite.ttl</url>
+                            <prefix>datacite</prefix>
+                        </vocabulary>
+                        <vocabulary>
+                            <url>https://raw.githubusercontent.com/re3data/ontology/master/r3dOntology.ttl</url>
+                        </vocabulary>
+                        <vocabulary>
+                            <url>https://raw.githubusercontent.com/DTL-FAIRData/FDP-O/develop/fdp-ontology.owl</url>
+                            <namespace>http://rdf.biosemantics.org/ontologies/fdp-o#</namespace>
+                            <prefix>fdp</prefix>
+                        </vocabulary>
+                        <vocabulary>
+                            <url>https://raw.githubusercontent.com/schemaorg/schemaorg/master/data/releases/3.4/schema.ttl</url>
+                            <namespace>http://schema.org/</namespace>
+                            <prefix>schemaOrg</prefix>
+                        </vocabulary>
+                    </vocabularies>
                 </configuration>
             </plugin>
         </plugins>

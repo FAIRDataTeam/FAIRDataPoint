@@ -25,48 +25,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service.metadatametrics;
+package nl.dtls.fairdatapoint.vocabulary;
 
-import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.entity.metadata.Metric;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+/**
+ * Semanticscience Integrated Ontology. See {@link
+ * <a href="https://bioportal.bioontology.org/ontologies/SIO">Semanticscience Integrated Ontology</a>}.
+ *
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @version 0.1
+ * @since 2018-01-17
+ */
+public class Sio {
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-// TODO What is purpose of this class
-public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
-
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
-    @Autowired
-    private FairMetadataMetricsServiceImpl fmMetricsServiceImpl;
-
-    /**
-     * Test getMetrics with null uri, this test is excepted to throw error
-     */
-    @Test
-    public void nullMetadataUri() {
-        assertThrows(NullPointerException.class, () -> {
-            fmMetricsServiceImpl.getMetrics(null);
-        });
-    }
-
-    /**
-     * This test is excepted to pass
-     */
-    @Test
-    public void validMetadataUri() {
-//        Map<String, String> metadataMetrics = new HashMap<>();
-//        metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
-//        fmMetricsServiceImpl.setMetadataMetrics(metadataMetrics);
-
-        List<Metric> m = fmMetricsServiceImpl.getMetrics(valueFactory.createIRI("http://localhost"));
-        assertTrue(m.size() > 0);
-    }
+    private static final ValueFactory f = SimpleValueFactory.getInstance();
+    public static final String PREFIX = "sio";
+    public static final String NAMESPACE = "http://semanticscience.org/resource/";
+    public static final IRI REFERS_TO = f.createIRI(NAMESPACE + "SIO_000628");
+    public static final IRI IS_ABOUT = f.createIRI(NAMESPACE + "SIO_000332");
 
 }

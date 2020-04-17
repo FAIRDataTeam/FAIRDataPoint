@@ -39,8 +39,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataMigration implements Migration {

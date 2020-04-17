@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.repository;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -40,10 +40,10 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -66,7 +66,7 @@ public class Detail_PUT extends WebIntegrationTest {
         setVersion(repository, uri, l("99.0"));
         setLicence(repository, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
         setLanguage(repository, uri, i("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"));
-        return RdfUtil.write(repository, RDFFormat.TURTLE);
+        return RdfIOUtil.write(repository, RDFFormat.TURTLE);
     }
 
     @Test

@@ -30,10 +30,8 @@ package nl.dtls.fairdatapoint.service.pid;
 import org.eclipse.rdf4j.model.IRI;
 import org.junit.jupiter.api.Test;
 
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * PurlPIDSystemImplTest class unit tests

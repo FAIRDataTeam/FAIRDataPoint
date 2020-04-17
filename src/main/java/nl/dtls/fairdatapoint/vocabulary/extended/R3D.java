@@ -25,22 +25,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service.metadatametrics;
+package nl.dtls.fairdatapoint.vocabulary.extended;
 
-import nl.dtls.fairdatapoint.entity.metadata.Metric;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
-import javax.annotation.Nonnull;
-import java.util.List;
+/**
+ * Class contains missing Re3Data properties
+ *
+ * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
+ * @author Kees Burger <kees.burger@dtls.nl>
+ * @version 0.1
+ * @since 2017-04-28
+ */
+public class R3D {
 
-public interface FairMetadataMetricsService {
-
-    /**
-     * This method returns list of fair metrics for the given metadata URI
-     *
-     * @param metadataURI metadata URI
-     * @return List of fair metrics
-     */
-    List<Metric> getMetrics(@Nonnull IRI metadataURI);
+    public static IRI INSTITUTIONCOUNTRY = SimpleValueFactory.getInstance()
+            .createIRI(nl.dtls.fairdatapoint.vocabulary.R3D.NAMESPACE, "institutionCountry");
+    public static IRI LASTUPDATE = SimpleValueFactory.getInstance()
+            .createIRI(nl.dtls.fairdatapoint.vocabulary.R3D.NAMESPACE, "lastUpdate");
 
 }

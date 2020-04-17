@@ -41,9 +41,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getThemeTaxonomies;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getThemeTaxonomies;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

@@ -40,12 +40,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.time.LocalDateTime;
 
 import static java.lang.String.format;
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GenericMetadataServiceTest extends BaseIntegrationTest {
 
@@ -149,28 +147,14 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithNoID() throws Exception {
         // GIVEN:
         Model distribution = testMetadataFixtures.c1_d1_distribution1();
-        setIdentifier(distribution, getUri(distribution), null);
+        setMetadataIdentifier(distribution, getUri(distribution), null);
 
         // WHEN:
         genericMetadataService.store(distribution, getUri(distribution), distributionRd);
 
         // THEN:
         Model mdata = genericMetadataService.retrieve(getUri(distribution));
-        assertNotNull(getIdentifier(mdata));
-    }
-
-    @Test
-    public void storeWithNoPublisher() throws Exception {
-        // GIVEN:
-        Model distribution = testMetadataFixtures.c1_d1_distribution1();
-        setPublisher(distribution, getUri(distribution), null);
-
-        // WHEN:
-        genericMetadataService.store(distribution, getUri(distribution), distributionRd);
-
-        // THEN:
-        Model mdata = genericMetadataService.retrieve(getUri(distribution));
-        assertNotNull(getPublisher(mdata));
+        assertNotNull(getMetadataIdentifier(mdata));
     }
 
     @Test
@@ -221,10 +205,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         LocalDateTime catalogModified = getModified(updatedCatalog);
         LocalDateTime datasetModified = getModified(updatedDataset);
         LocalDateTime distributionModified = getModified(storedDistribution);
-        assertFalse("Dataset modified is not after Distribution modified",
-                datasetModified.isBefore(distributionModified));
-        assertFalse("Catalog modified is not after Dataset modified", catalogModified.isBefore(distributionModified));
-        assertFalse("FDP modified is not after Dataset modified", repositoryModified.isBefore(distributionModified));
+        assertFalse(datasetModified.isBefore(distributionModified), "Dataset modified is not after Distribution " +
+                "modified");
+        assertFalse(catalogModified.isBefore(distributionModified), "Catalog modified is not after Dataset modified");
+        assertFalse(repositoryModified.isBefore(distributionModified), "FDP modified is not after Dataset modified");
     }
 
 }

@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getUri;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 
 @Service
 public class TestMetadataFixtures extends MetadataFixtures {

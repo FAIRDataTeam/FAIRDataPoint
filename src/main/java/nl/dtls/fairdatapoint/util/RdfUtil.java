@@ -22,102 +22,87 @@
  */
 package nl.dtls.fairdatapoint.util;
 
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairmetadata4j.util.ValueFactoryHelper;
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.impl.LinkedHashModel;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.rio.*;
-import org.eclipse.rdf4j.rio.helpers.BasicWriterSettings;
+import org.eclipse.rdf4j.model.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairdatapoint.util.ResourceReader.getResource;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.setRdfTypes;
-import static nl.dtls.fairmetadata4j.util.RDFUtil.getSubjectBy;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.s;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 public class RdfUtil {
 
-    public static Model changeBaseUri(Model oldModel, String newBaseUri, List<String> rdfTypes) {
-        // - get baseUri
-        Resource oldBaseUri = rdfTypes
+    /****************************************************
+     *** Subject
+     ****************************************************/
+    public static List<Resource> getSubjectsBy(Model m, IRI predicate, Resource object) {
+        return m.filter(null, predicate, object)
                 .stream()
-                .map(rdfType -> getSubjectBy(oldModel, RDF.TYPE, i(rdfType)))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new ValidationException("Validation failed (no rdf:type was provided"));
-        // - sanitize statements
-        List<Statement> sanitizedStatements =
-                new ArrayList<>(oldModel.filter(oldBaseUri, null, null))
-                        .stream()
-                        .map(oldStatement -> s(i(newBaseUri), oldStatement.getPredicate(), oldStatement.getObject()))
-                        .collect(Collectors.toList());
-        Model model = new LinkedHashModel();
-        model.addAll(sanitizedStatements);
-        setRdfTypes(model, i(newBaseUri), rdfTypes.stream().map(ValueFactoryHelper::i).collect(Collectors.toList()));
-        return model;
+                .map(Statement::getSubject)
+                .collect(Collectors.toList());
     }
 
-    public static Model readFile(String name, String baseUri) {
-        return readFile(name, baseUri, RDFFormat.TURTLE);
+    public static Resource getSubjectBy(Model m, IRI predicate, Resource object) {
+        List<Resource> subjects = getSubjectsBy(m, predicate, object);
+        return subjects.size() > 0 ? subjects.get(0) : null;
     }
 
-    public static Model readFile(String name, String baseUri, RDFFormat format) {
-        try (InputStream inputStream = getResource(name).getInputStream()) {
-            return Rio.parse(inputStream, baseUri, format);
-        } catch (IOException e) {
-            throw new ValidationException("Unable to read RDF (IO exception)");
-        } catch (RDFParseException e) {
-            throw new ValidationException("Unable to read RDF (parse exception)");
-        } catch (RDFHandlerException e) {
-            throw new ValidationException("Unable to read RDF (handler exception)");
+    /****************************************************
+     *** Objects
+     ****************************************************/
+    public static List<Value> getObjectsBy(Model m, Resource subject, IRI predicate) {
+        return m.filter(subject, predicate, null)
+                .stream()
+                .map(Statement::getObject)
+                .collect(Collectors.toList());
+    }
+
+    public static List<Value> getObjectsBy(Model m, String subject, String predicate) {
+        return getObjectsBy(m, i(subject, m), i(predicate, m));
+    }
+
+    public static Value getObjectBy(Model m, Resource subject, IRI predicate) {
+        List<Value> objects = getObjectsBy(m, subject, predicate);
+        return objects.size() > 0 ? objects.get(0) : null;
+    }
+
+    public static String getStringObjectBy(Model m, Resource subject, IRI predicate) {
+        Value object = getObjectBy(m, subject, predicate);
+        return object != null ? object.stringValue() : null;
+    }
+
+    public static boolean containsObject(Model m, String subject, String predicate) {
+        return getObjectsBy(m, subject, predicate).size() > 0;
+    }
+
+    /****************************************************
+     *** Update
+     ****************************************************/
+    public static void update(Model m, Resource subj, IRI pred, Value obj, Resource... contexts) {
+        m.remove(subj, pred, null, contexts);
+        if (subj != null && pred != null && obj != null) {
+            m.add(subj, pred, obj, contexts);
         }
     }
 
-    public static Model read(String content, String baseUri) {
-        return read(content, baseUri, RDFFormat.TURTLE);
+    public static <T extends Value> void update(Model m, Resource subj, IRI pred, List<T> list, Resource... contexts) {
+        m.remove(subj, pred, null, contexts);
+        list.forEach(obj -> {
+            m.add(subj, pred, obj, contexts);
+        });
     }
 
-    public static Model read(String content, String baseUri, RDFFormat format) {
-        try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
-            return Rio.parse(inputStream, baseUri, format);
-        } catch (IOException e) {
-            throw new ValidationException("Unable to read RDF (IO exception)");
-        } catch (RDFParseException e) {
-            throw new ValidationException("Unable to read RDF (parse exception)");
-        } catch (RDFHandlerException e) {
-            throw new ValidationException("Unable to read RDF (handler exception)");
+    /****************************************************
+     *** Other
+     ****************************************************/
+    public static void checkNotLiteral(Value val) {
+        if (val instanceof Literal) {
+            throw new IllegalArgumentException("Objects of accessRights statements expected to be IRI");
         }
     }
 
-    public static String write(Model model) {
-        return write(model, RDFFormat.TURTLE);
-    }
-
-    public static String write(Model model, RDFFormat format) {
-        try (StringWriter out = new StringWriter()) {
-            Rio.write(model, out, format, getWriterConfig());
-            return out.toString();
-        } catch (IOException e) {
-            throw new ValidationException("Unable to write RDF (IO exception)");
-        }
-    }
-
-    public static WriterConfig getWriterConfig() {
-        WriterConfig config = new WriterConfig();
-        config.set(BasicWriterSettings.INLINE_BLANK_NODES, true);
-        return config;
+    public static IRI removeLastPartOfIRI(IRI uri) {
+        String uriWithoutLastPart = uri.getNamespace();
+        return i(uriWithoutLastPart.substring(0, uriWithoutLastPart.length() - 1));
     }
 
 }

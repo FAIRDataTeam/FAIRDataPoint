@@ -36,11 +36,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.*;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
 
@@ -97,14 +96,14 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithNoID() throws Exception {
         // GIVEN:
         Model repository = testMetadataFixtures.repositoryMetadata();
-        setIdentifier(repository, getUri(repository), null);
+        setMetadataIdentifier(repository, getUri(repository), null);
 
         // WHEN:
         genericMetadataService.store(repository, getUri(repository), repositoryRd);
 
         // THEN:
         Model result = genericMetadataService.retrieve(getUri(repository));
-        assertNotNull(getIdentifier(result));
+        assertNotNull(getMetadataIdentifier(result));
     }
 
     @Test
@@ -119,20 +118,6 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
         // THEN:
         Model result = genericMetadataService.retrieve(getUri(repository));
         assertNotNull(getRepositoryIdentifier(result));
-    }
-
-    @Test
-    public void storeWithNoPublisher() throws Exception {
-        // GIVEN:
-        Model repository = testMetadataFixtures.repositoryMetadata();
-        setPublisher(repository, getUri(repository), null);
-
-        // WHEN:
-        genericMetadataService.store(repository, getUri(repository), repositoryRd);
-
-        // THEN:
-        Model result = genericMetadataService.retrieve(getUri(repository));
-        assertNotNull(getPublisher(result));
     }
 
     @Test
@@ -206,30 +191,5 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
         assertNotNull(getSpecification(result));
     }
 
-    @Test
-    public void metrics() throws Exception {
-        // GIVEN:
-        Model repository = testMetadataFixtures.repositoryMetadata();
-
-        // WHEN:
-        genericMetadataService.store(repository, getUri(repository), repositoryRd);
-
-        // THEN:
-        Model result = genericMetadataService.retrieve(getUri(repository));
-        assertFalse(getMetrics(result).isEmpty());
-    }
-
-    @Test
-    public void accessRights() throws Exception {
-        // GIVEN:
-        Model repository = testMetadataFixtures.repositoryMetadata();
-
-        // WHEN:
-        genericMetadataService.store(repository, getUri(repository), repositoryRd);
-
-        // THEN:
-        Model result = genericMetadataService.retrieve(getUri(repository));
-        assertNotNull(getAccessRights(result).getDescription());
-    }
 
 }

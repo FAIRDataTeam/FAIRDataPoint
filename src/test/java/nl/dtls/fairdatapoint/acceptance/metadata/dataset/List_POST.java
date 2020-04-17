@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ public class List_POST extends WebIntegrationTest {
     }
 
     private String reqDto() {
-        return RdfUtil.write(testMetadataFixtures.c2_dataset3(), RDFFormat.TURTLE);
+        return RdfIOUtil.write(testMetadataFixtures.c2_dataset3(), RDFFormat.TURTLE);
     }
 
     @Test

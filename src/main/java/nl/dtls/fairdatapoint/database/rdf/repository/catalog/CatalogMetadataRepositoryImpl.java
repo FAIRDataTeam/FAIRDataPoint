@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service("catalogMetadataRepository")
 public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository implements CatalogMetadataRepository {

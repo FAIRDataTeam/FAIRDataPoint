@@ -27,7 +27,7 @@
  */
 package nl.dtls.fairdatapoint.api.converter;
 
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -64,7 +64,7 @@ public class RdfConverter extends AbstractHttpMessageConverter<Model> {
     @Override
     protected void writeInternal(Model model, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        String rdf = RdfUtil.write(model, format);
+        String rdf = RdfIOUtil.write(model, format);
         outputMessage.getBody().write(rdf.getBytes());
     }
 

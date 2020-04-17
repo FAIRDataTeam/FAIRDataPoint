@@ -22,14 +22,14 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.enhance;
 
+import nl.dtls.fairdatapoint.entity.metadata.Agent;
+import nl.dtls.fairdatapoint.entity.metadata.Identifier;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataSetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
-import nl.dtls.fairmetadata4j.accessor.MetadataSetter;
-import nl.dtls.fairmetadata4j.model.Agent;
-import nl.dtls.fairmetadata4j.model.Identifier;
-import nl.dtls.fairmetadata4j.vocabulary.DATACITE;
-import nl.dtls.fairmetadata4j.vocabulary.R3D;
+import nl.dtls.fairdatapoint.vocabulary.DATACITE;
+import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -41,11 +41,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static nl.dtls.fairmetadata4j.accessor.MetadataGetter.getIssued;
-import static nl.dtls.fairmetadata4j.accessor.MetadataSetter.*;
-import static nl.dtls.fairmetadata4j.util.RDFUtil.containsObject;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.l;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getIssued;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static nl.dtls.fairdatapoint.util.RdfUtil.containsObject;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataEnhancer {
@@ -91,8 +91,7 @@ public class MetadataEnhancer {
         setRdfTypes(metadata, uri, i(resourceDefinition.getRdfType()), i("http://www.w3.org/ns/dcat#Resource"));
 
         // Add PID
-        IRI pidIri = pidSystem.getURI(uri);
-        setPid(metadata, uri, pidIri, l(pidSystem.getId(pidIri)));
+        setMetadataIdentifier(metadata, uri, createMetadataIdentifier(uri));
 
         // Add default publisher
         if (!containsObject(metadata, uri.stringValue(), DCTERMS.PUBLISHER.stringValue()) && publisher != null) {
@@ -130,18 +129,22 @@ public class MetadataEnhancer {
 
     private void addRepositoryIdentifier(Model metadata, IRI uri) {
         if (!containsObject(metadata, uri.stringValue(), R3D.REPOSITORYIDENTIFIER.stringValue())) {
-            Identifier id = generateIdentifier(uri);
+            Identifier id = createRepositoryIdentifier(uri);
             setRepositoryIdentifier(metadata, uri, id);
         }
     }
 
-    private Identifier generateIdentifier(IRI iri) {
-        Identifier id = new Identifier();
-        id.setUri(i(iri.stringValue() + "#repositoryID"));
-        UUID uid = UUID.randomUUID();
-        id.setIdentifier(l(uid.toString()));
-        id.setType(DATACITE.IDENTIFIER);
-        return id;
+    private Identifier createMetadataIdentifier(IRI uri) {
+        IRI pidIri = pidSystem.getURI(uri);
+        return new Identifier(pidIri, DATACITE.IDENTIFIER, l(pidSystem.getId(pidIri)));
+    }
+
+    private Identifier createRepositoryIdentifier(IRI iri) {
+        return new Identifier(
+                i(iri.stringValue() + "#repositoryID"),
+                DATACITE.IDENTIFIER,
+                l(UUID.randomUUID().toString())
+        );
     }
 
 }

@@ -22,10 +22,10 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import nl.dtls.fairdatapoint.entity.metadata.Agent;
 import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
 import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
-import nl.dtls.fairmetadata4j.model.Agent;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;

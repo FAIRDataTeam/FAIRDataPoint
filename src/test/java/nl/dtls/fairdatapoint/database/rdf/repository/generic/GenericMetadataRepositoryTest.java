@@ -41,7 +41,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import java.util.Collections;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.mockito.Mockito.*;
 
 public class GenericMetadataRepositoryTest {

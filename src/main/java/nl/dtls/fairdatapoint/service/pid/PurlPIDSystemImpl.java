@@ -32,7 +32,7 @@ import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 /**
  * Implementation of purl.org PID system

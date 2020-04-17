@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.general;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.util.RdfUtil;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ public class SecurityTest extends WebIntegrationTest {
     @Test
     public void postRequestsAreSecured() {
         // GIVEN: Prepare data
-        String reqDto = RdfUtil.write(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
+        String reqDto = RdfIOUtil.write(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
         // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .post(URI.create("/distribution"))
@@ -67,7 +67,7 @@ public class SecurityTest extends WebIntegrationTest {
     @Test
     public void patchRequestsAreSecured() {
         // GIVEN: Prepare data
-        String reqDto = RdfUtil.write(testMetadataFixtures.repositoryMetadata(), RDFFormat.TURTLE);
+        String reqDto = RdfIOUtil.write(testMetadataFixtures.repositoryMetadata(), RDFFormat.TURTLE);
         // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .patch(URI.create("/"))

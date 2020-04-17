@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data;
 
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairmetadata4j.vocabulary.R3D;
+import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.stereotype.Service;
 

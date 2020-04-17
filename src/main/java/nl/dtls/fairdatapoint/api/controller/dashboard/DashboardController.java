@@ -38,8 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
-import static nl.dtls.fairmetadata4j.util.RDFUtil.removeLastPartOfIRI;
-import static nl.dtls.fairmetadata4j.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @RestController
 @RequestMapping("/dashboard")
