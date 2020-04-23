@@ -88,8 +88,10 @@ public class GenericMemberController {
     }
 
     @RequestMapping(value = "**/members/{userUuid}", method = RequestMethod.PUT)
-    public Object putMember(@PathVariable final String userUuid, HttpServletRequest request,
-                            @RequestBody @Valid MemberCreateDTO reqBody) throws MetadataServiceException {
+    public ResponseEntity<MemberDTO> putMember(@PathVariable final String userUuid,
+                                               HttpServletRequest request,
+                                               @RequestBody @Valid MemberCreateDTO reqBody)
+            throws MetadataServiceException {
         // 1. Init
         String urlPrefix = getResourceNameForDetail(getRequestURL(request, instanceUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
@@ -107,7 +109,7 @@ public class GenericMemberController {
     }
 
     @RequestMapping(value = "**/members/{userUuid}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteMember(@PathVariable final String userUuid, HttpServletRequest request)
+    public ResponseEntity<Void> deleteMember(@PathVariable final String userUuid, HttpServletRequest request)
             throws ResourceNotFoundException, MetadataServiceException {
         // 1. Init
         String urlPrefix = getResourceNameForDetail(getRequestURL(request, instanceUrl));

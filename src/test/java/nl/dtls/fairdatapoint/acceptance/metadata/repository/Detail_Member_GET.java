@@ -34,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
+import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyMember;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -62,6 +63,26 @@ public class Detail_Member_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertEmptyMember(result.getBody());
+    }
+
+    @Test
+    @DisplayName("HTTP 200: No user")
+    public void res200_no_user() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(url())
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .build();
+        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertEmptyMember(result.getBody());
     }
 
 }

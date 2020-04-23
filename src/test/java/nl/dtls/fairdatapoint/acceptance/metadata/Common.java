@@ -20,46 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.repository;
+package nl.dtls.fairdatapoint.acceptance.metadata;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
+import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /")
-public class Detail_GET extends WebIntegrationTest {
+public class Common {
 
-    private URI url() {
-        return URI.create("/");
+    public static void assertEmptyMember(MemberDTO dto) {
+        // Prepare expectation
+        MemberDTO expDto = new MemberDTO(null, null);
+
+        // Assert
+        assertThat(dto, is(equalTo(expDto)));
     }
-
-    @Test
-    @DisplayName("HTTP 200")
-    public void res200() {
-        // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(url())
-                .header(HttpHeaders.ACCEPT, "text/turtle")
-                .build();
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-    }
-
 }

@@ -20,23 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.user;
+package nl.dtls.fairdatapoint.api.dto.shape;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.shape.ShapeType;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-public class UserSimpleDTO {
+public class ShapeDTO {
 
-    protected String uuid;
+    private String uuid;
 
-    protected String firstName;
+    private String name;
 
-    protected String lastName;
+    private ShapeType type;
 
-    protected String email;
+    private String definition;
 
 }

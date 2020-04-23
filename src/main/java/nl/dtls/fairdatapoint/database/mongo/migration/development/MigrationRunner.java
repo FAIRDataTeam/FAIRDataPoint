@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.acl.AclMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.MembershipMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.ResourceDefinitionMigration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.ShapeMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -49,12 +50,16 @@ public class MigrationRunner {
     @Autowired
     private ResourceDefinitionMigration resourceDefinitionMigration;
 
+    @Autowired
+    private ShapeMigration shapeMigration;
+
     @PostConstruct
     public void run() {
         userMigration.runMigration();
         membershipMigration.runMigration();
         aclMigration.runMigration();
         resourceDefinitionMigration.runMigration();
+        shapeMigration.runMigration();
     }
 
 }

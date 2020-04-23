@@ -52,7 +52,6 @@ public class Detail_Expanded_GET extends WebIntegrationTest {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
                 .get(url("catalog-1"))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .header(HttpHeaders.ACCEPT, "text/turtle")
                 .build();
         ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {

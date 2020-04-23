@@ -28,6 +28,7 @@ import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.service.member.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class Detail_PUT extends WebIntegrationTest {
 
     @Autowired
     private MembershipFixtures membershipFixtures;
+
+    @Autowired
+    private MemberMapper memberMapper;
 
     private URI url(String distributionId, String userUuid) {
         return URI.create(format("/distribution/%s/members/%s", distributionId, userUuid));
@@ -81,11 +85,15 @@ public class Detail_PUT extends WebIntegrationTest {
         ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
+        // AND: prepare expectation
+        MemberDTO expDto = memberMapper.toDTO(userFixtures.nikola(), membershipFixtures.owner());
+
         // WHEN:
         ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getBody(), is(equalTo(expDto)));
     }
 
     @Test

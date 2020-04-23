@@ -22,10 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.dto.member;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserSimpleDTO;
 
@@ -33,6 +30,7 @@ import nl.dtls.fairdatapoint.api.dto.user.UserSimpleDTO;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class MemberDTO {
 
     private UserSimpleDTO user;

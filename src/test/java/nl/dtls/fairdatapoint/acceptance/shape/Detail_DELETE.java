@@ -20,11 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
+package nl.dtls.fairdatapoint.acceptance.shape;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
+import nl.dtls.fairdatapoint.entity.shape.Shape;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,40 +37,59 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGetRDF;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestDelete;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /catalog/:catalogId")
-public class Detail_GET extends WebIntegrationTest {
+@DisplayName("DELETE /shapes/:shapeUuid")
+public class Detail_DELETE extends WebIntegrationTest {
 
-    private URI url(String id) {
-        return URI.create(format("/catalog/%s", id));
+    private URI url(String uuid) {
+        return URI.create(format("/shapes/%s", uuid));
     }
 
+    @Autowired
+    private ShapeFixtures shapeFixtures;
+
     @Test
-    @DisplayName("HTTP 200")
-    public void res200() {
+    @DisplayName("HTTP 204")
+    public void res204() {
         // GIVEN:
+        Shape shape = shapeFixtures.repositoryShape();
         RequestEntity<Void> request = RequestEntity
-                .get(url("catalog-1"))
-                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .delete(url(shape.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
+        ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
+    }
+
+    @Test
+    @DisplayName("HTTP 403: Shape is not authenticated")
+    public void res403_notAuthenticated() {
+        Shape shape = shapeFixtures.repositoryShape();
+        createUserForbiddenTestDelete(client, url(shape.getUuid()));
+    }
+
+    @Test
+    @DisplayName("HTTP 403: Shape is not an admin")
+    public void res403_shape() {
+        Shape shape = shapeFixtures.repositoryShape();
+        createUserForbiddenTestDelete(client, url(shape.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createUserNotFoundTestGetRDF(client, url("nonExisting"));
+        createAdminNotFoundTestDelete(client, url("nonExisting"));
     }
 
 }

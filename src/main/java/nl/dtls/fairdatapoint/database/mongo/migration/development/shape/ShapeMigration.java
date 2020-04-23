@@ -20,23 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.user;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.shape;
 
-import lombok.*;
+import nl.dtls.fairdatapoint.database.common.migration.Migration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.ShapeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-public class UserSimpleDTO {
+@Service
+public class ShapeMigration implements Migration {
 
-    protected String uuid;
+    @Autowired
+    private ShapeFixtures shapeFixtures;
 
-    protected String firstName;
+    @Autowired
+    private ShapeRepository shapeRepository;
 
-    protected String lastName;
-
-    protected String email;
+    public void runMigration() {
+        shapeRepository.deleteAll();
+        shapeRepository.save(shapeFixtures.resourceShape());
+        shapeRepository.save(shapeFixtures.repositoryShape());
+        shapeRepository.save(shapeFixtures.catalogShape());
+        shapeRepository.save(shapeFixtures.datasetShape());
+        shapeRepository.save(shapeFixtures.distributionShape());
+    }
 
 }

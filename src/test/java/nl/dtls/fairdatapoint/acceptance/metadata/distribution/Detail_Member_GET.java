@@ -24,8 +24,12 @@ package nl.dtls.fairdatapoint.acceptance.metadata.distribution;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.service.member.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,12 +39,22 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyMember;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("GET /distribution/:distributionId/member")
 public class Detail_Member_GET extends WebIntegrationTest {
+
+    @Autowired
+    private UserFixtures userFixtures;
+
+    @Autowired
+    private MembershipFixtures membershipFixtures;
+
+    @Autowired
+    private MemberMapper memberMapper;
 
     private URI url(String id) {
         return URI.create(format("/distribution/%s/member", id));
@@ -58,11 +72,34 @@ public class Detail_Member_GET extends WebIntegrationTest {
         ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
+        // AND: prepare expectation
+        MemberDTO expDto = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
+
         // WHEN:
         ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getBody(), is(equalTo(expDto)));
+    }
+
+    @Test
+    @DisplayName("HTTP 200: No user")
+    public void res200_no_user() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(url("distribution-1"))
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .build();
+        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertEmptyMember(result.getBody());
     }
 
 }

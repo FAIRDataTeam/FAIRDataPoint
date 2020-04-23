@@ -29,6 +29,7 @@ import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
+import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
@@ -39,13 +40,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
-import static nl.dtls.fairdatapoint.util.ResourceReader.loadResource;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataValidator {
-
-    public static String SHACL_VALIDATION_FILE = "form-specs/metamodel.ttl";
 
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
@@ -57,6 +55,9 @@ public class MetadataValidator {
     @Autowired
     private ShaclValidator shaclValidator;
 
+    @Autowired
+    private ShapeService shapeService;
+
     public void validate(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         validateByShacl(metadata, uri);
         if (!rd.getName().equals("Repository")) {
@@ -65,7 +66,7 @@ public class MetadataValidator {
     }
 
     private void validateByShacl(Model metadata, IRI uri) {
-        String shacl = loadResource(SHACL_VALIDATION_FILE);
+        Model shacl = shapeService.getShaclFromShapes();
         shaclValidator.validate(shacl, metadata, uri.stringValue());
     }
 

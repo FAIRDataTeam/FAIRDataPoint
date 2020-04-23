@@ -65,12 +65,12 @@ public class SecurityTest extends WebIntegrationTest {
     }
 
     @Test
-    public void patchRequestsAreSecured() {
+    public void putRequestsAreSecured() {
         // GIVEN: Prepare data
-        String reqDto = RdfIOUtil.write(testMetadataFixtures.repositoryMetadata(), RDFFormat.TURTLE);
+        String reqDto = RdfIOUtil.write(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
         // AND: Prepare request
         RequestEntity<String> request = RequestEntity
-                .patch(URI.create("/"))
+                .put(URI.create("/distribution"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .body(reqDto);
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {

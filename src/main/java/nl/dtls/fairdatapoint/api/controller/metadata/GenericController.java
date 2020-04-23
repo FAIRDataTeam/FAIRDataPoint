@@ -28,7 +28,7 @@ import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import nl.dtls.fairdatapoint.util.RdfIOUtil;
+import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
-import static nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator.SHACL_VALIDATION_FILE;
 import static nl.dtls.fairdatapoint.util.HttpUtil.*;
 import static nl.dtls.fairdatapoint.util.RdfIOUtil.changeBaseUri;
 import static nl.dtls.fairdatapoint.util.RdfIOUtil.read;
@@ -62,12 +61,15 @@ public class GenericController {
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
+    @Autowired
+    private ShapeService shapeService;
+
     @RequestMapping(
             value = "**/spec",
             method = RequestMethod.GET,
             produces = {"!application/json"})
     public Model getFormMetadata() {
-        return RdfIOUtil.readFile(SHACL_VALIDATION_FILE, "http://fairdatapoint.org");
+        return shapeService.getShaclFromShapes();
     }
 
     @RequestMapping(

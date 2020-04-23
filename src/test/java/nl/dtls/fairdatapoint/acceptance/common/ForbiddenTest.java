@@ -78,6 +78,13 @@ public class ForbiddenTest {
         );
     }
 
+    public static void createUserForbiddenTestGet(TestRestTemplate client, URI url) {
+        createForbiddenTest(
+                client,
+                RequestEntity.get(url).header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN).build()
+        );
+    }
+
     public static <T> void createUserForbiddenTestPost(TestRestTemplate client, URI url, T object) {
         createForbiddenTest(
                 client,

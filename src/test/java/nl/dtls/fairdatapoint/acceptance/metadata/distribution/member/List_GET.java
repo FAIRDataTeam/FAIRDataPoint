@@ -25,7 +25,9 @@ package nl.dtls.fairdatapoint.acceptance.metadata.distribution.member;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.service.member.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,12 @@ public class List_GET extends WebIntegrationTest {
 
     @Autowired
     private UserFixtures userFixtures;
+
+    @Autowired
+    private MembershipFixtures membershipFixtures;
+
+    @Autowired
+    private MemberMapper memberMapper;
 
     private URI url(String id) {
         return URI.create(format("/distribution/%s/members", id));
@@ -75,14 +83,17 @@ public class List_GET extends WebIntegrationTest {
         ParameterizedTypeReference<List<MemberDTO>> responseType = new ParameterizedTypeReference<>() {
         };
 
+        // AND: prepare expectation
+        MemberDTO nikolaMember = memberMapper.toDTO(userFixtures.nikola(), membershipFixtures.owner());
+        MemberDTO albertMember = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
+        List<MemberDTO> expDto = List.of(nikolaMember, albertMember);
+
         // WHEN:
         ResponseEntity<List<MemberDTO>> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getBody().size(), is(equalTo(2)));
-        assertThat(result.getBody().get(0).getUser().getEmail(), is(equalTo(userFixtures.nikolaEmail)));
-        assertThat(result.getBody().get(1).getUser().getEmail(), is(equalTo(userFixtures.albertEmail)));
+        assertThat(result.getBody(), is(equalTo(expDto)));
     }
 
     @Test

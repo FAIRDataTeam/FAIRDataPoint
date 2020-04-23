@@ -20,23 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.user;
+package nl.dtls.fairdatapoint.database.mongo.repository;
 
-import lombok.*;
+import nl.dtls.fairdatapoint.entity.shape.Shape;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-public class UserSimpleDTO {
+import java.util.Optional;
 
-    protected String uuid;
+public interface ShapeRepository extends MongoRepository<Shape, String> {
 
-    protected String firstName;
-
-    protected String lastName;
-
-    protected String email;
+    Optional<Shape> findByUuid(String uuid);
 
 }

@@ -29,14 +29,11 @@ import org.eclipse.rdf4j.model.vocabulary.RDF4J;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.repository.sail.SailRepositoryConnection;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.eclipse.rdf4j.sail.shacl.ShaclSail;
 import org.eclipse.rdf4j.sail.shacl.ShaclSailValidationException;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
@@ -44,7 +41,7 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Service
 public class ShaclValidator {
 
-    public void validate(String shacl, Model data, String baseUri) {
+    public void validate(Model shacl, Model data, String baseUri) {
         // 1. Prepare repository
         ShaclSail shaclSail = new ShaclSail(new MemoryStore());
         shaclSail.setRdfsSubClassReasoning(true);
@@ -55,7 +52,7 @@ public class ShaclValidator {
         try (SailRepositoryConnection connection = sailRepository.getConnection()) {
             // 2. Save Shacl
             connection.begin();
-            connection.add(new StringReader(shacl), "", RDFFormat.TURTLE, RDF4J.SHACL_SHAPE_GRAPH);
+            connection.add(shacl, RDF4J.SHACL_SHAPE_GRAPH);
             connection.commit();
 
             // 3. Validate data
@@ -70,8 +67,6 @@ public class ShaclValidator {
                 throw new RdfValidationException(validationReportModel);
             }
             throw new ValidationException("Validation failed (unsupported exception");
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to create a connection to repository for a validation");
         }
     }
 

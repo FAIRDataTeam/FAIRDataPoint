@@ -20,13 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
+package nl.dtls.fairdatapoint.acceptance.shape;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
+import nl.dtls.fairdatapoint.entity.shape.Shape;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -34,40 +37,44 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGetRDF;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /catalog/:catalogId")
+@DisplayName("GET /shapes/:shapeUuid")
 public class Detail_GET extends WebIntegrationTest {
 
-    private URI url(String id) {
-        return URI.create(format("/catalog/%s", id));
+    private URI url(String uuid) {
+        return URI.create(format("/shapes/%s", uuid));
     }
+
+    @Autowired
+    private ShapeFixtures shapeFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
+        Shape shape = shapeFixtures.repositoryShape();
         RequestEntity<Void> request = RequestEntity
-                .get(url("catalog-1"))
-                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .get(url(shape.getUuid()))
                 .build();
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<ShapeDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
+        ResponseEntity<ShapeDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        Common.compare(shape, result.getBody());
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createUserNotFoundTestGetRDF(client, url("nonExisting"));
+        createUserNotFoundTestGet(client, url("nonExisting"));
     }
 
 }

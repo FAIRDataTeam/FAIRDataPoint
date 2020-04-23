@@ -22,15 +22,13 @@
  */
 package nl.dtls.fairdatapoint.api.dto.membership;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class MembershipPermissionDTO {
 
     protected int mask;
