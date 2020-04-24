@@ -20,19 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.configuration;
+package nl.dtls.fairdatapoint.api.controller.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
+import nl.dtls.fairdatapoint.service.config.ConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class ConfigurationDTO {
+@RestController
+@RequestMapping("/configs")
+public class ConfigController {
 
-    protected String instanceUrl;
+    @Autowired
+    private ConfigService configService;
+
+    @RequestMapping(value = "/bootstrap", method = RequestMethod.GET)
+    public ResponseEntity<BootstrapConfigDTO> getBootstrapConfig() {
+        BootstrapConfigDTO dto = configService.getBootstrapConfig();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 
 }

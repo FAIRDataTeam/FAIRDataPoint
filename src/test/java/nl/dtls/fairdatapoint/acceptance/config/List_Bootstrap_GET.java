@@ -20,28 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.configuration;
+package nl.dtls.fairdatapoint.acceptance.config;
 
-import nl.dtls.fairdatapoint.api.dto.configuration.ConfigurationDTO;
-import nl.dtls.fairdatapoint.service.configuration.ConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/configuration")
-public class ConfigurationController {
+import java.net.URI;
 
-    @Autowired
-    private ConfigurationService configurationService;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<ConfigurationDTO> getDashboard() {
-        ConfigurationDTO dto = configurationService.getConfiguration();
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+public class List_Bootstrap_GET extends WebIntegrationTest {
+
+    private URI url() {
+        return URI.create("/configs/bootstrap");
+    }
+
+    @Test
+    public void res200() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(url())
+                .build();
+        ParameterizedTypeReference<BootstrapConfigDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<BootstrapConfigDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
     }
 
 }

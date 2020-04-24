@@ -20,20 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.configuration;
+package nl.dtls.fairdatapoint.service.config;
 
-import nl.dtls.fairdatapoint.api.dto.configuration.ConfigurationDTO;
+import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConfigurationService {
+public class ConfigService {
 
     @Value("${instance.url}")
     private String instanceUrl;
 
-    public ConfigurationDTO getConfiguration() {
-        return new ConfigurationDTO(instanceUrl);
+    public BootstrapConfigDTO getBootstrapConfig() {
+        return new BootstrapConfigDTO(instanceUrl);
     }
 
 }
