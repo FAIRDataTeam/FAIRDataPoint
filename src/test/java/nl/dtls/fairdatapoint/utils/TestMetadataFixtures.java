@@ -28,7 +28,7 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
@@ -36,10 +36,11 @@ import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 @Service
 public class TestMetadataFixtures extends MetadataFixtures {
 
-    @Value("${instance.url}")
-    private String instanceUrl;
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
-    public String alternativeInstanceUrl = "https://lorentz.fair-dtls.surf-hosted.nl/fdp";
+    public String alternativePersistentUrl = "https://lorentz.fair-dtls.surf-hosted.nl/fdp";
 
     @Autowired
     private MetadataEnhancer metadataEnhancer;
@@ -48,78 +49,78 @@ public class TestMetadataFixtures extends MetadataFixtures {
     private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     public Model repositoryMetadata() {
-        Model metadata = super.repositoryMetadata(instanceUrl);
+        Model metadata = super.repositoryMetadata(persistentUrl);
         ResourceDefinition rd = resourceDefinitionFixtures.repositoryDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog1() {
-        Model metadata = super.catalog1(instanceUrl, getUri(repositoryMetadata()));
+        Model metadata = super.catalog1(persistentUrl, getUri(repositoryMetadata()));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog2() {
-        Model metadata = super.catalog2(instanceUrl, getUri(repositoryMetadata()));
+        Model metadata = super.catalog2(persistentUrl, getUri(repositoryMetadata()));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog3() {
-        Model metadata = super.catalog3(instanceUrl, getUri(repositoryMetadata()));
+        Model metadata = super.catalog3(persistentUrl, getUri(repositoryMetadata()));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model alternative_catalog3() {
-        Model metadata = super.catalog3(alternativeInstanceUrl,
-                getUri(super.repositoryMetadata(alternativeInstanceUrl)));
+        Model metadata = super.catalog3(alternativePersistentUrl,
+                getUri(super.repositoryMetadata(alternativePersistentUrl)));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_dataset1() {
-        Model metadata = super.dataset1(instanceUrl, getUri(catalog1()));
+        Model metadata = super.dataset1(persistentUrl, getUri(catalog1()));
         ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_dataset2() {
-        Model metadata = super.dataset2(instanceUrl, getUri(catalog1()));
+        Model metadata = super.dataset2(persistentUrl, getUri(catalog1()));
         ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c2_dataset3() {
-        Model metadata = super.dataset3(instanceUrl, getUri(catalog2()));
+        Model metadata = super.dataset3(persistentUrl, getUri(catalog2()));
         ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_d1_distribution1() {
-        Model metadata = super.distribution1(instanceUrl, getUri(c1_dataset1()));
+        Model metadata = super.distribution1(persistentUrl, getUri(c1_dataset1()));
         ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_d1_distribution2() {
-        Model metadata = super.distribution2(instanceUrl, getUri(c1_dataset1()));
+        Model metadata = super.distribution2(persistentUrl, getUri(c1_dataset1()));
         ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_d2_distribution3() {
-        Model metadata = super.distribution3(instanceUrl, getUri(c1_dataset2()));
+        Model metadata = super.distribution3(persistentUrl, getUri(c1_dataset2()));
         ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;

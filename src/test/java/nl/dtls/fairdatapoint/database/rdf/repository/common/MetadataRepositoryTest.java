@@ -45,7 +45,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
@@ -58,8 +58,9 @@ import static org.mockito.Mockito.when;
 @DirtiesContext
 public class MetadataRepositoryTest extends WebIntegrationTest {
 
-    @Value("${instance.url}")
-    private String instanceUrl;
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     private final ValueFactory f = SimpleValueFactory.getInstance();
 
@@ -87,7 +88,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
     public void storeExampleFile() throws MetadataRepositoryException {
         STATEMENTS = new ArrayList<>(testMetadataFixtures.repositoryMetadata());
 
-        metadataRepository.storeStatements(STATEMENTS, f.createIRI(instanceUrl));
+        metadataRepository.storeStatements(STATEMENTS, f.createIRI(persistentUrl));
         MockitoAnnotations.initMocks(this);
     }
 
@@ -149,7 +150,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
     public void retrieveExitingResource() throws Exception {
 
         List<Statement> statements = metadataRepository.retrieveResource(
-                f.createIRI(instanceUrl));
+                f.createIRI(persistentUrl));
         assertTrue(statements.size() > 0);
     }
 
@@ -162,7 +163,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         assertThrows(MetadataRepositoryException.class, () -> {
 
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockMetadataRepository.retrieveResource(f.createIRI(instanceUrl));
+            mockMetadataRepository.retrieveResource(f.createIRI(persistentUrl));
         });
     }
 
@@ -226,7 +227,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
     @Test
     public void checkExitingResource() throws Exception {
         boolean isStatementExist = metadataRepository.isStatementExist(
-                f.createIRI(instanceUrl), null, null);
+                f.createIRI(persistentUrl), null, null);
         assertTrue(isStatementExist);
     }
 
@@ -262,7 +263,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
     public void checkExceptionsIsStatementMethod() throws Exception {
         assertThrows(MetadataRepositoryException.class, () -> {
             when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockMetadataRepository.isStatementExist(f.createIRI(instanceUrl),
+            mockMetadataRepository.isStatementExist(f.createIRI(persistentUrl),
                     null, null);
         });
     }

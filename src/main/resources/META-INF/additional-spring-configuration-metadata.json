@@ -1,14 +1,14 @@
 {
   "properties": [
     {
-      "name": "scssDir",
+      "name": "instance.clientUrl",
       "type": "java.lang.String",
-      "description": "Path to the scssDir."
+      "description": "Client URL."
     },
     {
-      "name": "instance.url",
+      "name": "instance.persistentUrl",
       "type": "java.lang.String",
-      "description": "Instance URL."
+      "description": "Persistent URL."
     },
     {
       "name": "security.jwt.token.secret-key",

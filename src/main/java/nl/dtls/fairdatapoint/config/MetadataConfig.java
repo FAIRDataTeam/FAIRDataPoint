@@ -28,11 +28,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Configuration
 public class MetadataConfig {
+
+    @Value("${instance.clientUrl}")
+    private String clientUrl;
+
+    @Bean(name = "persistentUrl")
+    public String persistentUrl(@Value("${instance.persistentUrl:}") String persistentUrl) {
+        if (persistentUrl == null || persistentUrl.isEmpty()) {
+            return clientUrl;
+        }
+        return removeLastSlash(persistentUrl);
+    }
 
     @Bean(name = "publisher")
     public Agent publisher(@Value("${metadataProperties.publisherURI:}") String publisherURI,

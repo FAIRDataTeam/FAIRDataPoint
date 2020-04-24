@@ -1,5 +1,5 @@
 instance:
-  url: http://localhost
+  clientUrl: http://localhost
 
 server:
   port: 80

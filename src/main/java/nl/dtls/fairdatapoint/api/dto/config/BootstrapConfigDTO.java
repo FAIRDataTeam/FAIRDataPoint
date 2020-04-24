@@ -33,6 +33,6 @@ import lombok.Setter;
 @Setter
 public class BootstrapConfigDTO {
 
-    protected String instanceUrl;
+    protected String persistentUrl;
 
 }

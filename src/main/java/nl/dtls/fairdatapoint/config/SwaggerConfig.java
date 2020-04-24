@@ -27,7 +27,6 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +38,6 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.servlet.ServletContext;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,11 +47,8 @@ import static nl.dtls.fairdatapoint.util.HttpUtil.removeProtocol;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    @Autowired
-    private ServletContext servletContext;
-
-    @Value("${instance.url}")
-    private String instanceUrl;
+    @Value("${instance.clientUrl}")
+    private String clientUrl;
 
     @Bean
     public Docket api() {
@@ -63,7 +58,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .host(removeProtocol(instanceUrl))
+                .host(removeProtocol(clientUrl))
                 .securitySchemes(List.of(apiKey()))
                 .securityContexts(List.of(securityContext()));
     }

@@ -34,7 +34,6 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -65,8 +64,9 @@ public class MetadataMigration implements Migration {
     @Autowired
     private MongoAuthenticationService mongoAuthenticationService;
 
-    @Value("${instance.url}")
-    private String instanceUrl;
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     public void runMigration() {
         try {
@@ -76,7 +76,7 @@ public class MetadataMigration implements Migration {
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             // 2. Load metadata fixtures
-            importDefaultFixtures(instanceUrl);
+            importDefaultFixtures(persistentUrl);
         } catch (MetadataServiceException e) {
             e.printStackTrace();
         }

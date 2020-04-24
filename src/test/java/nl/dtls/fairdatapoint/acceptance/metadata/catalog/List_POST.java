@@ -96,7 +96,7 @@ public class List_POST extends WebIntegrationTest {
         aclRepository.deleteAll();
         aclCache.clearCache();
         // AND: Prepare fixtures
-        metadataMigration.importDefaultFixtures(testMetadataFixtures.alternativeInstanceUrl);
+        metadataMigration.importDefaultFixtures(testMetadataFixtures.alternativePersistentUrl);
         Model catalog3 = testMetadataFixtures.alternative_catalog3();
         String reqDto = RdfIOUtil.write(catalog3, RDFFormat.TURTLE);
         // AND: Prepare request

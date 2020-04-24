@@ -35,7 +35,7 @@ import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,8 +52,9 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @RequestMapping("/")
 public class GenericController {
 
-    @Value("${instance.url}")
-    private String instanceUrl;
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     @Autowired
     private MetadataServiceFactory metadataServiceFactory;
@@ -78,7 +79,7 @@ public class GenericController {
             produces = {"!application/json"})
     public Model getMetaDataExpanded(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
-        String uri = getRequestURL(request, instanceUrl);
+        String uri = getRequestURL(request, persistentUrl);
         Model resultRdf = new LinkedHashModel();
         String urlPrefix = getResourceNameForDetail(uri);
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
@@ -87,7 +88,7 @@ public class GenericController {
         ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
 
         // 3. Get entity
-        IRI entityUri = i(getRequestURL(request, instanceUrl));
+        IRI entityUri = i(getRequestURL(request, persistentUrl));
         Model entity = metadataService.retrieve(entityUri);
         resultRdf.addAll(entity);
 
@@ -121,13 +122,13 @@ public class GenericController {
             produces = {"!application/json"})
     public Model getMetaData(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
-        String uri = getRequestURL(request, instanceUrl);
+        String uri = getRequestURL(request, persistentUrl);
         Model resultRdf = new LinkedHashModel();
         String urlPrefix = getResourceNameForDetail(uri);
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get entity
-        IRI entityUri = i(getRequestURL(request, instanceUrl));
+        IRI entityUri = i(getRequestURL(request, persistentUrl));
         Model entity = metadataService.retrieve(entityUri);
         resultRdf.addAll(entity);
 
@@ -144,12 +145,12 @@ public class GenericController {
                                                @RequestHeader(value = "Content-Type", required = false) String contentType)
             throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForList(getRequestURL(request, instanceUrl));
+        String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
 
         // 2. Generate URI
-        IRI uri = generateNewIRI(request, instanceUrl);
+        IRI uri = generateNewIRI(request, persistentUrl);
 
         // 3. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
@@ -178,12 +179,12 @@ public class GenericController {
                                                 @RequestHeader(value = "Content-Type", required = false) String contentType)
             throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, instanceUrl));
+        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
 
         // 2. Extract URI
-        IRI uri = i(getRequestURL(request, instanceUrl));
+        IRI uri = i(getRequestURL(request, persistentUrl));
 
         // 3. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
@@ -207,7 +208,7 @@ public class GenericController {
     @RequestMapping(value = "**", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteMetadata(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, instanceUrl));
+        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
 
@@ -217,7 +218,7 @@ public class GenericController {
         }
 
         // 3. Extract URI
-        IRI uri = i(getRequestURL(request, instanceUrl));
+        IRI uri = i(getRequestURL(request, persistentUrl));
 
         // 4. Store metadata
         metadataService.delete(uri, rd);
@@ -227,8 +228,7 @@ public class GenericController {
     }
 
     private String getResourceNameForList(String url) {
-        instanceUrl = removeLastSlash(instanceUrl);
-        url = url.replace(instanceUrl, "");
+        url = url.replace(persistentUrl, "");
 
         String[] parts = url.split("/");
         if (parts.length != 2) {
@@ -238,8 +238,7 @@ public class GenericController {
     }
 
     private String getResourceNameForDetail(String url) {
-        instanceUrl = removeLastSlash(instanceUrl);
-        url = url.replace(instanceUrl, "");
+        url = url.replace(persistentUrl, "");
 
         // If URL is a repository -> return empty string
         if (url.equals("")) {

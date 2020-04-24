@@ -37,15 +37,15 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 public class HttpUtil {
 
-    public static String getRequestURL(HttpServletRequest request, String instanceUrl) {
+    public static String getRequestURL(HttpServletRequest request, String persistentUrl) {
         String urlS = request.getRequestURL().toString();
         log.info("Original requesed url {}", urlS);
         try {
             urlS = removeLastSlash(urlS.replace("/expanded", ""));
-            instanceUrl = removeLastSlash(instanceUrl);
+            persistentUrl = removeLastSlash(persistentUrl);
 
             URL url = new URL(urlS);
-            String modifiedUrl = instanceUrl + url.getPath();
+            String modifiedUrl = persistentUrl + url.getPath();
             log.info("Modified requesed url {}", modifiedUrl);
 
             return modifiedUrl;
@@ -55,8 +55,8 @@ public class HttpUtil {
         }
     }
 
-    public static IRI generateNewIRI(HttpServletRequest request, String instanceUrl) {
-        String requestedURL = getRequestURL(request, instanceUrl);
+    public static IRI generateNewIRI(HttpServletRequest request, String persistentUrl) {
+        String requestedURL = getRequestURL(request, persistentUrl);
         UUID uid = UUID.randomUUID();
         return i(requestedURL + "/" + uid.toString());
     }

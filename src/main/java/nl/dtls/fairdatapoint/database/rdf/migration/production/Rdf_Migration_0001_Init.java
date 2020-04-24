@@ -69,8 +69,9 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     @Autowired
     protected Repository repository;
 
-    @Value("${instance.url}")
-    private String instanceUrl;
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
@@ -118,12 +119,12 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, DCTERMS.CONFORMS_TO, i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"));
             add(s, DCTERMS.LANGUAGE, language);
             // Identifier
-            IRI identifierIri = i(instanceUrl + "#identifier");
+            IRI identifierIri = i(persistentUrl + "#identifier");
             add(s, DATACITE.HASIDENTIFIER, identifierIri);
             add(s, identifierIri, RDF.TYPE, DATACITE.IDENTIFIER);
-            add(s, identifierIri, DCTERMS.IDENTIFIER, l(instanceUrl));
+            add(s, identifierIri, DCTERMS.IDENTIFIER, l(persistentUrl));
             // Access Rights
-            IRI arIri = i(instanceUrl + "#accessRights");
+            IRI arIri = i(persistentUrl + "#accessRights");
             add(s, DCTERMS.ACCESS_RIGHTS, arIri);
             add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT);
             add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription));
@@ -133,7 +134,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, publisher.getUri(), FOAF.NAME, publisher.getName());
             // Metrics
             metadataMetrics.forEach((metric, metricValue) -> {
-                IRI metUri = i(format("%s/metrics/%s", instanceUrl, DigestUtils.md5Hex(metric)));
+                IRI metUri = i(format("%s/metrics/%s", persistentUrl, DigestUtils.md5Hex(metric)));
                 add(s, Sio.REFERS_TO, metUri);
                 add(s, metUri, Sio.IS_ABOUT, i(metric));
                 add(s, metUri, Sio.REFERS_TO, i(metricValue));
@@ -154,7 +155,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
         BasicBSONObject owner = new BasicBSONObject().append("name", albertUuid).append("isPrincipal", true);
         Document acl = new Document();
         acl.append("className", "nl.dtls.fairdatapoint.entity.metadata.FDPMetadata");
-        acl.append("instanceId", instanceUrl);
+        acl.append("instanceId", persistentUrl);
         acl.append("owner", owner);
         acl.append("inheritPermissions", true);
         BasicBSONList permissions = new BasicBSONList();
@@ -192,11 +193,11 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     }
 
     private void add(List<Statement> statements, IRI predicate, org.eclipse.rdf4j.model.Value object) {
-        statements.add(s(i(instanceUrl), predicate, object, i(instanceUrl)));
+        statements.add(s(i(persistentUrl), predicate, object, i(persistentUrl)));
     }
 
     private void add(List<Statement> statements, IRI subject, IRI predicate, org.eclipse.rdf4j.model.Value object) {
-        statements.add(s(subject, predicate, object, i(instanceUrl)));
+        statements.add(s(subject, predicate, object, i(persistentUrl)));
     }
 
 }

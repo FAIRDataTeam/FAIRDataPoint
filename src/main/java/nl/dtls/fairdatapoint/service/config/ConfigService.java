@@ -23,17 +23,19 @@
 package nl.dtls.fairdatapoint.service.config;
 
 import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ConfigService {
 
-    @Value("${instance.url}")
-    private String instanceUrl;
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     public BootstrapConfigDTO getBootstrapConfig() {
-        return new BootstrapConfigDTO(instanceUrl);
+        return new BootstrapConfigDTO(persistentUrl);
     }
 
 }
