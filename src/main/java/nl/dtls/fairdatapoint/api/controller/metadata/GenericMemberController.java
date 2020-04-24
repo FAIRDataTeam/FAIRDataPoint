@@ -54,7 +54,6 @@ public class GenericMemberController {
     @Value("${instance.url}")
     private String instanceUrl;
 
-
     @Autowired
     private MemberService memberService;
 
@@ -62,9 +61,18 @@ public class GenericMemberController {
     private MetadataServiceFactory metadataServiceFactory;
 
     @RequestMapping(value = "**/member", method = RequestMethod.GET)
-    public MemberDTO getMember(HttpServletRequest request) {
-        String uri = getRequestURL(request, instanceUrl);
-        String entityId = removeLastPartOfIRI(i(uri)).getLocalName();
+    public MemberDTO getMember(HttpServletRequest request) throws MetadataServiceException {
+        // 1. Init
+        String urlPrefix = getResourceNameForList(getRequestURL(request, instanceUrl));
+        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+
+        // 2. Get and check existence entity
+        IRI uri = i(getRequestURL(request, instanceUrl));
+        IRI entityUri = removeLastPartOfIRI(uri);
+        Model metadata = metadataService.retrieve(entityUri);
+
+        // 3. Get member
+        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(entityId, Metadata.class);
         return oMember.orElse(new MemberDTO(null, null));
     }
@@ -76,7 +84,7 @@ public class GenericMemberController {
         String urlPrefix = getResourceNameForList(getRequestURL(request, instanceUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
+        // 2. Get and check existence entity
         IRI uri = i(getRequestURL(request, instanceUrl));
         IRI entityUri = removeLastPartOfIRI(uri);
         Model metadata = metadataService.retrieve(entityUri);
@@ -96,7 +104,7 @@ public class GenericMemberController {
         String urlPrefix = getResourceNameForDetail(getRequestURL(request, instanceUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
+        // 2. Get and check existence entity
         IRI uri = i(getRequestURL(request, instanceUrl));
         IRI entityUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
         Model metadata = metadataService.retrieve(entityUri);
@@ -115,7 +123,7 @@ public class GenericMemberController {
         String urlPrefix = getResourceNameForDetail(getRequestURL(request, instanceUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
+        // 2. Get and check existence entity
         IRI uri = i(getRequestURL(request, instanceUrl));
         IRI entityUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
         Model metadata = metadataService.retrieve(entityUri);
@@ -128,7 +136,7 @@ public class GenericMemberController {
 
     private String getResourceNameForList(String url) throws MetadataServiceException {
         String[] parts = url.split("/");
-        if (parts.length != 6) {
+        if (!(parts.length == 4 || parts.length == 6)) {
             throw new MetadataServiceException("Unsupported URL");
         }
         return parts[3];

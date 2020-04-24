@@ -25,7 +25,6 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.entity.metadata.Agent;
-import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
@@ -55,7 +54,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
@@ -91,9 +89,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     private Map<String, String> metadataMetrics;
 
     @Autowired
-    private PIDSystem pidSystem;
-
-    @Autowired
     private MongoTemplate mongoTemplate;
 
     public void runMigration() {
@@ -123,10 +118,10 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, DCTERMS.CONFORMS_TO, i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"));
             add(s, DCTERMS.LANGUAGE, language);
             // Identifier
-            IRI pidIri = i(instanceUrl + "#" + i(instanceUrl).getLocalName());
-            add(s, FDP.METADATAIDENTIFIER, pidIri);
-            add(s, pidIri, RDF.TYPE, DATACITE.RESOURCEIDENTIFIER);
-            add(s, pidIri, DCTERMS.IDENTIFIER, l(pidSystem.getId(pidIri)));
+            IRI identifierIri = i(instanceUrl + "#identifier");
+            add(s, DATACITE.HASIDENTIFIER, identifierIri);
+            add(s, identifierIri, RDF.TYPE, DATACITE.IDENTIFIER);
+            add(s, identifierIri, DCTERMS.IDENTIFIER, l(instanceUrl));
             // Access Rights
             IRI arIri = i(instanceUrl + "#accessRights");
             add(s, DCTERMS.ACCESS_RIGHTS, arIri);
@@ -136,11 +131,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, DCTERMS.PUBLISHER, publisher.getUri());
             add(s, publisher.getUri(), RDF.TYPE, publisher.getType());
             add(s, publisher.getUri(), FOAF.NAME, publisher.getName());
-            // Repository ID
-            IRI repoIri = i(instanceUrl + "#repositoryID");
-            add(s, R3D.REPOSITORYIDENTIFIER, repoIri);
-            add(s, repoIri, RDF.TYPE, DATACITE.IDENTIFIER);
-            add(s, repoIri, DCTERMS.IDENTIFIER, l(UUID.randomUUID().toString()));
             // Metrics
             metadataMetrics.forEach((metric, metricValue) -> {
                 IRI metUri = i(format("%s/metrics/%s", instanceUrl, DigestUtils.md5Hex(metric)));

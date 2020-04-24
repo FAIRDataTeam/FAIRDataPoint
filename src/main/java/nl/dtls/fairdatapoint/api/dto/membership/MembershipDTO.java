@@ -22,16 +22,14 @@
  */
 package nl.dtls.fairdatapoint.api.dto.membership;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import nl.dtls.fairdatapoint.entity.membership.MembershipEntity;
 
 import java.util.List;
 
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
 public class MembershipDTO {
 
     private String uuid;

@@ -27,9 +27,7 @@ import nl.dtls.fairdatapoint.entity.metadata.Identifier;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataSetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
-import nl.dtls.fairdatapoint.service.pid.PIDSystem;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -39,7 +37,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getIssued;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
@@ -68,9 +65,6 @@ public class MetadataEnhancer {
     @Autowired
     private FairMetadataMetricsService fmMetricsService;
 
-    @Autowired
-    private PIDSystem pidSystem;
-
     public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition, Model oldMetadata) {
         enhance(metadata, uri, resourceDefinition);
         setIssued(metadata, uri, l(getIssued(oldMetadata)));
@@ -80,10 +74,6 @@ public class MetadataEnhancer {
         addDefaultValues(metadata, uri, resourceDefinition);
         setSpecification(metadata, uri, resourceDefinition);
         setTimestamps(metadata, uri);
-
-        if (resourceDefinition.getName().equals("Repository")) {
-            addRepositoryIdentifier(metadata, uri);
-        }
     }
 
     private void addDefaultValues(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
@@ -127,24 +117,9 @@ public class MetadataEnhancer {
         setModified(metadata, uri, l(LocalDateTime.now()));
     }
 
-    private void addRepositoryIdentifier(Model metadata, IRI uri) {
-        if (!containsObject(metadata, uri.stringValue(), R3D.REPOSITORYIDENTIFIER.stringValue())) {
-            Identifier id = createRepositoryIdentifier(uri);
-            setRepositoryIdentifier(metadata, uri, id);
-        }
-    }
-
     private Identifier createMetadataIdentifier(IRI uri) {
-        IRI pidIri = pidSystem.getURI(uri);
-        return new Identifier(pidIri, DATACITE.IDENTIFIER, l(pidSystem.getId(pidIri)));
-    }
-
-    private Identifier createRepositoryIdentifier(IRI iri) {
-        return new Identifier(
-                i(iri.stringValue() + "#repositoryID"),
-                DATACITE.IDENTIFIER,
-                l(UUID.randomUUID().toString())
-        );
+        IRI identifierUri = i(uri.stringValue() + "#identifier");
+        return new Identifier(identifierUri, DATACITE.IDENTIFIER, l(uri));
     }
 
 }

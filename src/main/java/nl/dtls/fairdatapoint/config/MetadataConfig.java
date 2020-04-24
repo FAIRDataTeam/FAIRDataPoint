@@ -23,16 +23,11 @@
 package nl.dtls.fairdatapoint.config;
 
 import nl.dtls.fairdatapoint.entity.metadata.Agent;
-import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
-import nl.dtls.fairdatapoint.service.pid.PIDSystem;
-import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
 import org.eclipse.rdf4j.model.IRI;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
@@ -70,22 +65,6 @@ public class MetadataConfig {
             license = i(licenseURI);
         }
         return license;
-    }
-
-    @Bean
-    public PIDSystem pidSystem(@Value("${pidSystem.type:1}") int pidSystemtype,
-                               @Value("${instance.url}") String instanceUrl,
-                               @Qualifier("purlBaseUrl") IRI purlBaseUrl) {
-        if (pidSystemtype == 2) {
-            return new PurlPIDSystemImpl(instanceUrl, purlBaseUrl);
-        } else {
-            return new DefaultPIDSystemImpl();
-        }
-    }
-
-    @Bean
-    public IRI purlBaseUrl(@Value("${pidSystem.purl.baseUrl:}") String url) {
-        return i(removeLastSlash(url));
     }
 
 }

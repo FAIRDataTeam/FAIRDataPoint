@@ -45,8 +45,7 @@ public class GenericMetadataService extends AbstractMetadataService {
         if (!rd.getName().equals("Repository")) {
             // 1. Check permissions
             String parentId = Optional.ofNullable(getParent(metadata))
-                    .orElseThrow(() -> new MetadataServiceException("Metadata has no parent"))
-                    .getLocalName();
+                    .orElseThrow(() -> new MetadataServiceException("Metadata has no parent")).stringValue();
             if (!(memberService.checkPermission(parentId, Metadata.class, BasePermission.CREATE) || memberService.checkRole(UserRole.ADMIN))) {
                 throw new ForbiddenException("You are not allow to add new entry");
             }

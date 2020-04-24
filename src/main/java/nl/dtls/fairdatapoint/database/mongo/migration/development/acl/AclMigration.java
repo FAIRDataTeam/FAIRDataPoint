@@ -29,14 +29,20 @@ import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import static java.lang.String.format;
+
 @Service
 public class AclMigration implements Migration {
+
+    @Value("${instance.url}")
+    private String instanceUrl;
 
     @Autowired
     private UserFixtures userFixtures;
@@ -68,27 +74,27 @@ public class AclMigration implements Migration {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         // -- Catalog
-        String catalog1Id = "catalog-1";
+        String catalog1Id = format("%s/catalog/catalog-1", instanceUrl);
         memberService.createOwner(catalog1Id, Metadata.class, albertUuid);
         memberService.createOrUpdateMember(catalog1Id, Metadata.class, nicolaUuid, dataProviderUuid);
 
-        String catalog2Id = "catalog-2";
+        String catalog2Id = format("%s/catalog/catalog-2", instanceUrl);
         memberService.createOwner(catalog2Id, Metadata.class, albertUuid);
 
         // -- Dataset
-        String dataset1Id = "dataset-1";
+        String dataset1Id = format("%s/dataset/dataset-1", instanceUrl);
         memberService.createOwner(dataset1Id, Metadata.class, albertUuid);
         memberService.createOrUpdateMember(dataset1Id, Metadata.class, nicolaUuid, ownerUuid);
 
-        String dataset2Id = "dataset-2";
+        String dataset2Id = format("%s/dataset/dataset-2", instanceUrl);
         memberService.createOwner(dataset2Id, Metadata.class, albertUuid);
 
         // -- Distribution
-        String distribution1Id = "distribution-1";
+        String distribution1Id = format("%s/distribution/distribution-1", instanceUrl);
         memberService.createOwner(distribution1Id, Metadata.class, albertUuid);
         memberService.createOrUpdateMember(distribution1Id, Metadata.class, nicolaUuid, ownerUuid);
 
-        String distribution2Id = "distribution-2";
+        String distribution2Id = format("%s/distribution/distribution-2", instanceUrl);
         memberService.createOwner(distribution2Id, Metadata.class, albertUuid);
     }
 

@@ -127,7 +127,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     }
 
     @Override
-    @PreAuthorize("hasPermission(#uri.getLocalName(), 'nl.dtls.fairdatapoint.entity.metadata.Metadata', 'WRITE') " +
+    @PreAuthorize("hasPermission(#uri.stringValue(), 'nl.dtls.fairdatapoint.entity.metadata.Metadata', 'WRITE') " +
             "or hasRole('ADMIN')")
     public Model update(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
         try {
@@ -207,7 +207,6 @@ public abstract class AbstractMetadataService implements MetadataService {
             return;
         }
         User user = oUser.get();
-        String entityId = uri.getLocalName();
-        memberService.createOwner(entityId, Metadata.class, user.getUuid());
+        memberService.createOwner(uri.stringValue(), Metadata.class, user.getUuid());
     }
 }

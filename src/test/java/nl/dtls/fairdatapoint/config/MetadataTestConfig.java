@@ -23,17 +23,11 @@
 package nl.dtls.fairdatapoint.config;
 
 import nl.dtls.fairdatapoint.entity.metadata.Agent;
-import nl.dtls.fairdatapoint.service.pid.DefaultPIDSystemImpl;
-import nl.dtls.fairdatapoint.service.pid.PIDSystem;
-import nl.dtls.fairdatapoint.service.pid.PurlPIDSystemImpl;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 
 @TestConfiguration
 public class MetadataTestConfig {
@@ -56,23 +50,6 @@ public class MetadataTestConfig {
     @Bean(name = "license")
     public IRI license() {
         return VF.createIRI("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
-    }
-
-    @Bean
-    public PIDSystem pidSystem() {
-        return new DefaultPIDSystemImpl();
-    }
-
-    @Bean
-    @DependsOn({"purlBaseUrl"})
-    public PurlPIDSystemImpl purlPIDSystemImpl(@Value("${instance.url}") String instanceUrl,
-                                               @Qualifier("purlBaseUrl") IRI purlBaseUrl) {
-        return new PurlPIDSystemImpl(instanceUrl, purlBaseUrl);
-    }
-
-    @Bean
-    public IRI purlBaseUrl() {
-        return VF.createIRI("http://purl.org/biosemantics-lumc/fdp");
     }
 
 }

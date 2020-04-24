@@ -29,6 +29,7 @@ import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,12 +39,16 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 import java.util.List;
 
+import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class Dashboard_List_GET extends WebIntegrationTest {
+
+    @Value("${instance.url}")
+    private String instanceUrl;
 
     private URI url() {
         return URI.create("/dashboard");
@@ -65,8 +70,7 @@ public class Dashboard_List_GET extends WebIntegrationTest {
         ParameterizedTypeReference<List<DashboardItemDTO>> responseType = new ParameterizedTypeReference<>() {
         };
         String nikolaUuid = userFixtures.nikola().getUuid();
-        memberService.deleteMember("catalog-1", Metadata.class, nikolaUuid);
-
+        memberService.deleteMember(format("%s/catalog/catalog-1", instanceUrl), Metadata.class, nikolaUuid);
 
         // WHEN:
         ResponseEntity<List<DashboardItemDTO>> result = client.exchange(request, responseType);
@@ -83,13 +87,13 @@ public class Dashboard_List_GET extends WebIntegrationTest {
 
         // dataset
         DashboardItemDTO dataset = catalog.getChildren().get(0);
-        assertThat(dataset.getIdentifier(), is(equalTo("dataset-1")));
+        assertThat(dataset.getIdentifier(), is(equalTo(format("%s/dataset/dataset-1", instanceUrl))));
         assertThat(dataset.getChildren().size(), is(equalTo(1)));
         assertThat(dataset.getMembership().isPresent(), is(true));
 
         // distribution
         DashboardItemDTO distribution = dataset.getChildren().get(0);
-        assertThat(distribution.getIdentifier(), is(equalTo("distribution-1")));
+        assertThat(distribution.getIdentifier(), is(equalTo(format("%s/distribution/distribution-1", instanceUrl))));
         assertThat(distribution.getMembership().isPresent(), is(true));
     }
 

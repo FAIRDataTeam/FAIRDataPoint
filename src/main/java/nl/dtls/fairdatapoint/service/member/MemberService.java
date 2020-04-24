@@ -116,8 +116,7 @@ public class MemberService {
     public <T> MemberDTO createOrUpdateMember(String entityId, Class<T> entityType, String userUuid,
                                               String membershipUuid) {
         // Get membership
-        Optional<Membership> oMembership =
-                membershipRepository.findByUuid(membershipUuid);
+        Optional<Membership> oMembership = membershipRepository.findByUuid(membershipUuid);
         if (oMembership.isEmpty()) {
             throw new ValidationException("Membership doesn't exist");
         }
@@ -210,18 +209,6 @@ public class MemberService {
                 acl.deleteAce(i);
             }
         }
-
-        // Remove old user's ace
-//        List<AccessControlEntry> aces = acl.getEntries()
-//                .stream()
-//                .filter(ace -> !ace.getSid().equals(new PrincipalSid(userUuid)))
-//                .collect(Collectors.toList());
-//        for (int i = acl.getEntries().size() - 1; i >= 0; i--) {
-//            acl.deleteAce(i);
-//        }
-//        for (AccessControlEntry ace : aces) {
-//            insertAce(acl, ace);
-//        }
         aclService.updateAcl(acl);
     }
 

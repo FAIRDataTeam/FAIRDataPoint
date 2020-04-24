@@ -107,20 +107,6 @@ public class RepositoryMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithNoRepoID() throws Exception {
-        // GIVEN:
-        Model repository = testMetadataFixtures.repositoryMetadata();
-        setRepositoryIdentifier(repository, getUri(repository), null);
-
-        // WHEN:
-        genericMetadataService.store(repository, getUri(repository), repositoryRd);
-
-        // THEN:
-        Model result = genericMetadataService.retrieve(getUri(repository));
-        assertNotNull(getRepositoryIdentifier(result));
-    }
-
-    @Test
     public void storeWithNoLanguage() throws Exception {
         // GIVEN:
         Model repository = testMetadataFixtures.repositoryMetadata();

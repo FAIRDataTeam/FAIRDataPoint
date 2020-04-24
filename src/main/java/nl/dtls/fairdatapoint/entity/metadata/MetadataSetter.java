@@ -22,8 +22,8 @@
  */
 package nl.dtls.fairdatapoint.entity.metadata;
 
+import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
 import nl.dtls.fairdatapoint.vocabulary.Sio;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
@@ -53,7 +53,7 @@ public class MetadataSetter {
     }
 
     public static void setMetadataIdentifier(Model metadata, IRI uri, Identifier identifier) {
-        setIdentifier(metadata, uri, identifier, FDP.METADATAIDENTIFIER);
+        setIdentifier(metadata, uri, identifier, DATACITE.HASIDENTIFIER);
     }
 
     public static void setParent(Model metadata, IRI uri, IRI parent) {
@@ -113,10 +113,6 @@ public class MetadataSetter {
     // ------------------------------------------------------------------------------------------------------------
     //  Custom
     // ------------------------------------------------------------------------------------------------------------
-
-    public static void setRepositoryIdentifier(Model metadata, IRI uri, Identifier id) {
-        setIdentifier(metadata, uri, id, R3D.REPOSITORYIDENTIFIER);
-    }
 
     public static void setPublisher(Model metadata, IRI uri, Agent publisher) {
         setAgent(metadata, uri, publisher, DCTERMS.PUBLISHER);

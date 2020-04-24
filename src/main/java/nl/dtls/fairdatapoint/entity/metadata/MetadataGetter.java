@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.entity.metadata;
 
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
+import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
@@ -51,7 +52,7 @@ public class MetadataGetter {
     }
 
     public static Identifier getMetadataIdentifier(Model metadata) {
-        return getIdentifier(metadata, FDP.METADATAIDENTIFIER);
+        return getIdentifier(metadata, DATACITE.HASIDENTIFIER);
     }
 
     public static IRI getParent(Model metadata) {
@@ -121,10 +122,6 @@ public class MetadataGetter {
     // ------------------------------------------------------------------------------------------------------------
     //  Custom
     // ------------------------------------------------------------------------------------------------------------
-    public static Identifier getRepositoryIdentifier(Model metadata) {
-        return getIdentifier(metadata, R3D.REPOSITORYIDENTIFIER);
-    }
-
     public static List<IRI> getThemeTaxonomies(Model metadata) {
         return getObjectsBy(metadata, null, DCAT.THEME_TAXONOMY)
                 .stream()

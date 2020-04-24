@@ -48,7 +48,6 @@ public class DashboardController {
     @Value("${instance.url}")
     private String instanceUrl;
 
-
     @Autowired
     private DashboardService dashboardService;
 
