@@ -52,8 +52,8 @@ public class Detail_PUT extends WebIntegrationTest {
         return URI.create(format("/shapes/%s", uuid));
     }
 
-    private ShapeChangeDTO reqDto() {
-        return new ShapeChangeDTO("EDITED: RepositoryShape", "Some SHACL");
+    private ShapeChangeDTO reqDto(Shape shape) {
+        return new ShapeChangeDTO(format("EDITED: %s", shape.getName()), shape.getDefinition());
     }
 
     @Autowired
@@ -65,13 +65,16 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
-        // GIVEN:
-        Shape shape = shapeFixtures.customShape();
+        // GIVEN: Prepare data
+        Shape shape = shapeFixtures.customShapeEdited();
+        ShapeChangeDTO reqDto = reqDto(shape);
+
+        // AND: Prepare request
         RequestEntity<ShapeChangeDTO> request = RequestEntity
                 .put(url(shape.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(reqDto());
+                .body(reqDto);
         ParameterizedTypeReference<ShapeDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -83,7 +86,35 @@ public class Detail_PUT extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(reqDto(), result.getBody());
+        Common.compare(reqDto, result.getBody());
+    }
+
+    @Test
+    @DisplayName("HTTP 400: Invalid SHACL Definition")
+    public void res400_invalidShacl() {
+        // GIVEN: Prepare data
+        Shape shape = shapeFixtures.customShapeEdited();
+        shape.setDefinition(shape.getDefinition() + "Some random text that will break the validity of SHACL");
+        ShapeChangeDTO reqDto = reqDto(shape);
+
+        // AND: Prepare request
+        RequestEntity<ShapeChangeDTO> request = RequestEntity
+                .put(url(shape.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // AND: Prepare DB
+        shapeRepository.save(shapeFixtures.customShape());
+
+        // WHEN:
+        ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+        assertThat(result.getBody().getMessage(), is("Unable to read SHACL definition"));
     }
 
     @Test
@@ -91,16 +122,14 @@ public class Detail_PUT extends WebIntegrationTest {
     public void res400() {
         // GIVEN:
         Shape shape = shapeFixtures.repositoryShape();
+        ShapeChangeDTO reqDto = reqDto(shape);
         RequestEntity<ShapeChangeDTO> request = RequestEntity
                 .put(url(shape.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(reqDto());
+                .body(reqDto);
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
         };
-
-        // AND: Prepare DB
-        shapeRepository.save(shapeFixtures.customShape());
 
         // WHEN:
         ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
@@ -113,20 +142,20 @@ public class Detail_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 403: Shape is not authenticated")
     public void res403_notAuthenticated() {
         Shape shape = shapeFixtures.repositoryShape();
-        createNoUserForbiddenTestPut(client, url(shape.getUuid()), reqDto());
+        createNoUserForbiddenTestPut(client, url(shape.getUuid()), reqDto(shape));
     }
 
     @Test
     @DisplayName("HTTP 403: Shape is not an admin")
     public void res403_shape() {
         Shape shape = shapeFixtures.repositoryShape();
-        createUserForbiddenTestPut(client, url(shape.getUuid()), reqDto());
+        createUserForbiddenTestPut(client, url(shape.getUuid()), reqDto(shape));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestPut(client, url("nonExisting"), reqDto());
+        createAdminNotFoundTestPut(client, url("nonExisting"), reqDto(shapeFixtures.customShape()));
     }
 
 }

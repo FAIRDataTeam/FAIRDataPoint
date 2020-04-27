@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.shape;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
@@ -51,20 +52,23 @@ public class List_POST extends WebIntegrationTest {
         return URI.create("/shapes");
     }
 
-    private ShapeChangeDTO reqDto() {
-        Shape shape = shapeFixtures.customShape();
+    private ShapeChangeDTO reqDto(Shape shape) {
         return new ShapeChangeDTO(shape.getName(), shape.getDefinition());
     }
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
-        // GIVEN:
+        // GIVEN: Prepare data
+        Shape shape = shapeFixtures.customShape();
+        ShapeChangeDTO reqDto = reqDto(shape);
+
+        // AND: Prepare request
         RequestEntity<ShapeChangeDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(reqDto());
+                .body(reqDto);
         ParameterizedTypeReference<ShapeDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -73,19 +77,44 @@ public class List_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(reqDto(), result.getBody());
+        Common.compare(reqDto, result.getBody());
+    }
+
+    @Test
+    @DisplayName("HTTP 400: Invalid SHACL Definition")
+    public void res400_invalidShacl() {
+        // GIVEN: Prepare data
+        Shape shape = shapeFixtures.customShape();
+        shape.setDefinition(shape.getDefinition() + "Some random text that will break the validity of SHACL");
+        ShapeChangeDTO reqDto = reqDto(shape);
+
+        // AND: Prepare request
+        RequestEntity<ShapeChangeDTO> request = RequestEntity
+                .post(url())
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+        assertThat(result.getBody().getMessage(), is("Unable to read SHACL definition"));
     }
 
     @Test
     @DisplayName("HTTP 403: Shape is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPost(client, url(), reqDto());
+        createNoUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
     }
 
     @Test
     @DisplayName("HTTP 403: Shape is not an admin")
     public void res403_shape() {
-        createUserForbiddenTestPost(client, url(), reqDto());
+        createUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
     }
 
 }

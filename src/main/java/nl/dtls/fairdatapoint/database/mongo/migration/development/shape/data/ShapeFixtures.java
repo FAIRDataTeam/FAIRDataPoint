@@ -271,7 +271,47 @@ public class ShapeFixtures {
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
                 "Custom Shape",
                 ShapeType.CUSTOM,
-                "Some Shacl"
+                "@prefix :         <http://fairdatapoint.org/> .\n" +
+                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
+                        "@prefix ex:     <http://example.org/> .\n" +
+                        "\n" +
+                        ":CustomShape a sh:NodeShape ;\n" +
+                        "  sh:targetClass ex:Dog ;\n" +
+                        "  sh:property [\n" +
+                        "      sh:path ex:identifier ;\n" +
+                        "      sh:nodeKind sh:IRI ;\n" +
+                        "      dash:editor dash:URIEditor ;\n" +
+                        "      dash:viewer dash:LabelViewer ;\n" +
+                        "    ] ."
+        );
+    }
+
+    public Shape customShapeEdited() {
+        return new Shape(
+                null,
+                customShape().getUuid(),
+                customShape().getName(),
+                customShape().getType(),
+                "@prefix :         <http://fairdatapoint.org/> .\n" +
+                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
+                        "@prefix ex:     <http://example.org/> .\n" +
+                        "\n" +
+                        ":CustomShape a sh:NodeShape ;\n" +
+                        "  sh:targetClass ex:Dog ;\n" +
+                        "  sh:property [\n" +
+                        "      sh:path ex:identifier ;\n" +
+                        "      sh:nodeKind sh:IRI ;\n" +
+                        "      dash:editor dash:URIEditor ;\n" +
+                        "      dash:viewer dash:LabelViewer ;\n" +
+                        "    ],\n" +
+                        "    [\n" +
+                        "      sh:path ex:name ;\n" +
+                        "      sh:nodeKind sh:Literal ;\n" +
+                        "      dash:editor dash:TextFieldEditor ;\n" +
+                        "      dash:viewer dash:LiteralViewer ;\n" +
+                        "    ] ."
         );
     }
 

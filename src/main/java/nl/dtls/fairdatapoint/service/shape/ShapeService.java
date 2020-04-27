@@ -53,6 +53,9 @@ public class ShapeService {
     @Autowired
     private ShapeMapper shapeMapper;
 
+    @Autowired
+    private ShapeValidator shapeValidator;
+
     public List<ShapeDTO> getShapes() {
         List<Shape> shapes = shapeRepository.findAll();
         return
@@ -71,6 +74,7 @@ public class ShapeService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public ShapeDTO createShape(ShapeChangeDTO reqDto) {
+        shapeValidator.validate(reqDto);
         String uuid = UUID.randomUUID().toString();
         Shape shape = shapeMapper.fromChangeDTO(reqDto, uuid);
         shapeRepository.save(shape);
@@ -79,6 +83,7 @@ public class ShapeService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<ShapeDTO> updateShape(String uuid, ShapeChangeDTO reqDto) {
+        shapeValidator.validate(reqDto);
         Optional<Shape> oShape = shapeRepository.findByUuid(uuid);
         if (oShape.isEmpty()) {
             return empty();
