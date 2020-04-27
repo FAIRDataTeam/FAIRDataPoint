@@ -37,8 +37,6 @@ import java.util.Optional;
 @Setter
 public class DashboardItemDTO {
 
-    protected String identifier;
-
     protected String uri;
 
     protected String title;

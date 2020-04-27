@@ -30,15 +30,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 
 @Service
 public class DashboardMapper {
 
-    public DashboardItemDTO toCatalogDTO(Model c, List<DashboardItemDTO> datasets,
-                                         Optional<MembershipDTO> membership) {
+    public DashboardItemDTO toCatalogDTO(Model c, List<DashboardItemDTO> datasets, Optional<MembershipDTO> membership) {
         return new DashboardItemDTO(
-                getMetadataIdentifier(c).getIdentifier().getLabel(),
                 getUri(c).toString(),
                 getTitle(c).getLabel(),
                 datasets,
@@ -46,10 +45,8 @@ public class DashboardMapper {
         );
     }
 
-    public DashboardItemDTO toDatasetDTO(Model d, List<DashboardItemDTO> datasets,
-                                         Optional<MembershipDTO> membership) {
+    public DashboardItemDTO toDatasetDTO(Model d, List<DashboardItemDTO> datasets, Optional<MembershipDTO> membership) {
         return new DashboardItemDTO(
-                getMetadataIdentifier(d).getIdentifier().getLabel(),
                 getUri(d).toString(),
                 getTitle(d).getLabel(),
                 datasets,
@@ -59,7 +56,6 @@ public class DashboardMapper {
 
     public DashboardItemDTO toDistributionDTO(Model d, Optional<MembershipDTO> membership) {
         return new DashboardItemDTO(
-                getMetadataIdentifier(d).getIdentifier().getLabel(),
                 getUri(d).toString(),
                 getTitle(d).getLabel(),
                 List.of(),
