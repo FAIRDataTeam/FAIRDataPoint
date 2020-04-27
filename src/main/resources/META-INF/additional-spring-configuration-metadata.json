@@ -19,6 +19,11 @@
       "name": "security.jwt.token.expiration",
       "type": "java.lang.Long",
       "description": "Number of days until a token expires."
+    },
+    {
+      "name": "ping.enabled",
+      "type": "java.lang.String",
+      "description": "States if 'Call home' feature should be enabled"
     }
   ]
 }
