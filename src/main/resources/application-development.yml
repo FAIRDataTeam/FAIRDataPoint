@@ -1,3 +1,6 @@
+ping:
+  enabled: false
+
 security:
   jwt:
     token:

@@ -20,39 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.actuator;
+package nl.dtls.fairdatapoint.service.ping;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.info.Info;
-import org.springframework.boot.actuate.info.InfoContributor;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import static java.lang.String.format;
+import java.util.Map;
 
-@Component
-public class AppInfoContributor implements InfoContributor {
+@Service
+@ConditionalOnProperty(name = "ping.enabled", havingValue = "true", matchIfMissing = true)
+public class PingService {
 
-    @Value("${git.branch}")
-    private String branch;
+    @Value("${instance.clientUrl}")
+    private String clientUrl;
 
-    @Value("${git.commit.id.abbrev}")
-    private String commitShort;
+    @Value("${ping.endpoint:https://home.fairdatapoint.org}")
+    private String endpoint;
 
-    @Value("${git.tags}")
-    private String tag;
+    @Autowired
+    private RestTemplate client;
 
-    @Value("${build.time}")
-    private String buildTime;
-
-    @Override
-    public void contribute(Info.Builder builder) {
-        builder.withDetail("name", "FAIR Data Point");
-        if (tag != null && !tag.isEmpty()) {
-            builder.withDetail("version", format("%s~%s", tag, commitShort));
-        } else {
-            builder.withDetail("version", format("%s~%s", branch, commitShort));
-        }
-        builder.withDetail("builtAt", buildTime);
+    @Scheduled(initialDelayString = "#{10*1000}", fixedRateString = "${ping.interval:#{7*24*60*60*1000}}")
+    public void ping() {
+        var request = Map.of("clientUrl", clientUrl);
+        client.postForEntity(endpoint, request, String.class);
     }
 
 }

@@ -20,39 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.actuator;
+package nl.dtls.fairdatapoint.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.info.Info;
-import org.springframework.boot.actuate.info.InfoContributor;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import static java.lang.String.format;
-
-@Component
-public class AppInfoContributor implements InfoContributor {
-
-    @Value("${git.branch}")
-    private String branch;
-
-    @Value("${git.commit.id.abbrev}")
-    private String commitShort;
-
-    @Value("${git.tags}")
-    private String tag;
-
-    @Value("${build.time}")
-    private String buildTime;
-
-    @Override
-    public void contribute(Info.Builder builder) {
-        builder.withDetail("name", "FAIR Data Point");
-        if (tag != null && !tag.isEmpty()) {
-            builder.withDetail("version", format("%s~%s", tag, commitShort));
-        } else {
-            builder.withDetail("version", format("%s~%s", branch, commitShort));
-        }
-        builder.withDetail("builtAt", buildTime);
-    }
+@Configuration
+@EnableScheduling
+public class WorkerConfig {
 
 }

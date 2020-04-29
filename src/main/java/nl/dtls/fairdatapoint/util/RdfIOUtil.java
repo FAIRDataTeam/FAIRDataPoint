@@ -58,9 +58,15 @@ public class RdfIOUtil {
                 .orElseThrow(() -> new ValidationException("Validation failed (no rdf:type was provided"));
         // - sanitize statements
         List<Statement> sanitizedStatements =
-                new ArrayList<>(oldModel.filter(oldBaseUri, null, null))
+                new ArrayList<>(oldModel)
                         .stream()
-                        .map(oldStatement -> s(i(newBaseUri), oldStatement.getPredicate(), oldStatement.getObject()))
+                        .map(oldStatement -> {
+                            if (oldStatement.getSubject().stringValue().equals(oldBaseUri.stringValue())) {
+                                return s(i(newBaseUri), oldStatement.getPredicate(), oldStatement.getObject());
+                            } else {
+                                return oldStatement;
+                            }
+                        })
                         .collect(Collectors.toList());
         Model model = new LinkedHashModel();
         model.addAll(sanitizedStatements);

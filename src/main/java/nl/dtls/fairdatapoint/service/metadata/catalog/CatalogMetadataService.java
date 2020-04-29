@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.service.metadata.catalog;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
@@ -34,9 +35,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.List;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getThemeTaxonomies;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.setThemeTaxonomies;
 
 @Service("catalogMetadataService")
@@ -52,14 +52,23 @@ public class CatalogMetadataService extends AbstractMetadataService {
         Model catalog = super.retrieve(uri);
         try {
             List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
-            Set<IRI> set = new TreeSet<>(Comparator.comparing(IRI::toString));
-            set.addAll(getThemeTaxonomies(catalog));
-            set.addAll(themes);
-            setThemeTaxonomies(catalog, uri, new ArrayList<>(set));
+            setThemeTaxonomies(catalog, uri, themes);
         } catch (MetadataRepositoryException ex) {
             log.error("Error retrieving the metadata");
             throw new MetadataServiceException(ex.getMessage());
         }
         return catalog;
+    }
+
+    @Override
+    public Model store(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+        setThemeTaxonomies(metadata, uri, null);
+        return super.store(metadata, uri, resourceDefinition);
+    }
+
+    @Override
+    public Model update(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+        setThemeTaxonomies(metadata, uri, null);
+        return super.update(metadata, uri, resourceDefinition);
     }
 }

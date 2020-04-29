@@ -28,6 +28,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Fetch all history for all tags and branches
+      run: git fetch --prune --unshallow
+
     - name: Prepare JDK folder
       run: mkdir -p ~/jdk
 
