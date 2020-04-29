@@ -48,7 +48,7 @@ public class AppInfoContributor implements InfoContributor {
     public void contribute(Info.Builder builder) {
         builder.withDetail("name", "FAIR Data Point");
         if (tag != null && !tag.isEmpty()) {
-            builder.withDetail("version", tag);
+            builder.withDetail("version", format("%s~%s", tag, commitShort));
         } else {
             builder.withDetail("version", format("%s~%s", branch, commitShort));
         }
