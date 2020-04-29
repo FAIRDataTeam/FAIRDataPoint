@@ -87,11 +87,9 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
 
         // THEN:
         List<IRI> themeTaxonomys = getThemeTaxonomies(catalogMetadata);
-        assertThat(themeTaxonomys.size(), is(equalTo(4)));
+        assertThat(themeTaxonomys.size(), is(equalTo(2)));
         assertThat(themeTaxonomys.get(0), is(equalTo(theme1)));
         assertThat(themeTaxonomys.get(1), is(equalTo(theme2_duplicated)));
-        assertThat(themeTaxonomys.get(2), is(equalTo(getThemeTaxonomies(catalog).get(1))));
-        assertThat(themeTaxonomys.get(3), is(equalTo(getThemeTaxonomies(catalog).get(0))));
     }
 
 }
