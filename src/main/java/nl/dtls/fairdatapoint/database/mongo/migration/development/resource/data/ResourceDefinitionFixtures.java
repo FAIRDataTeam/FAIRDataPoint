@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data;
 
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.resource.*;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.stereotype.Service;
@@ -40,31 +40,47 @@ public class ResourceDefinitionFixtures {
 
     public static String DISTRIBUTION_DEFINITION_UUID = "02c649de-c579-43bb-b470-306abdc808c7";
 
+    public static String ONTOLOGY_DEFINITION_UUID = "4bc19f45-845d-48d6-ade7-ac2664563f60";
+
     public ResourceDefinition repositoryDefinition() {
         return new ResourceDefinition(
                 REPOSITORY_DEFINITION_UUID,
                 "Repository",
                 "",
-                "http://www.re3data.org/schema/3-0#Repository",
                 "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.re3data.org/schema/3-0#Repository"),
-                R3D.DATACATALOG.stringValue(),
+                new ResourceDefinitionChild(
+                        CATALOG_DEFINITION_UUID,
+                        R3D.DATACATALOG.stringValue(),
+                        new ResourceDefinitionChildListView(
+                                "Catalogs",
+                                "http://www.w3.org/ns/dcat#themeTaxonomy",
+                                List.of()
+                        )
+                ),
                 null,
-                CATALOG_DEFINITION_UUID
+                List.of()
         );
     }
 
     public ResourceDefinition catalogDefinition() {
         return new ResourceDefinition(
-                "a0949e72-4466-4d53-8900-9436d1049a4b",
+                CATALOG_DEFINITION_UUID,
                 "Catalog",
                 "catalog",
-                "http://www.w3.org/ns/dcat#Catalog",
                 "https://www.purl.org/fairtools/fdp/schema/0.1/catalogMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Catalog"),
-                DCAT.HAS_DATASET.stringValue(),
-                REPOSITORY_DEFINITION_UUID,
-                DATASET_DEFINITION_UUID
+                new ResourceDefinitionChild(
+                        DATASET_DEFINITION_UUID,
+                        DCAT.HAS_DATASET.stringValue(),
+                        new ResourceDefinitionChildListView(
+                                "Datasets",
+                                "http://www.w3.org/ns/dcat#theme",
+                                List.of()
+                        )
+                ),
+                new ResourceDefinitionParent(REPOSITORY_DEFINITION_UUID),
+                List.of()
         );
     }
 
@@ -73,12 +89,20 @@ public class ResourceDefinitionFixtures {
                 DATASET_DEFINITION_UUID,
                 "Dataset",
                 "dataset",
-                "http://www.w3.org/ns/dcat#Dataset",
                 "https://www.purl.org/fairtools/fdp/schema/0.1/datasetMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Dataset"),
-                DCAT.HAS_DISTRIBUTION.stringValue(),
-                CATALOG_DEFINITION_UUID,
-                DISTRIBUTION_DEFINITION_UUID
+                new ResourceDefinitionChild(
+                        DISTRIBUTION_DEFINITION_UUID,
+                        DCAT.HAS_DISTRIBUTION.stringValue(),
+                        new ResourceDefinitionChildListView("Distributions", null, List.of(
+                                new ResourceDefinitionChildListViewMetadata(
+                                        "Media Type",
+                                        "http://www.w3.org/ns/dcat#mediaType"
+                                )
+                        ))
+                ),
+                new ResourceDefinitionParent(CATALOG_DEFINITION_UUID),
+                List.of()
         );
     }
 
@@ -87,12 +111,27 @@ public class ResourceDefinitionFixtures {
                 DISTRIBUTION_DEFINITION_UUID,
                 "Distribution",
                 "distribution",
-                "http://www.w3.org/ns/dcat#Distribution",
                 "https://www.purl.org/fairtools/fdp/schema/0.1/distributionMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Distribution"),
                 null,
-                DATASET_DEFINITION_UUID,
-                null
+                new ResourceDefinitionParent(DATASET_DEFINITION_UUID),
+                List.of(
+                        new ResourceDefinitionLink("Access online", "http://www.w3.org/ns/dcat#accessURL"),
+                        new ResourceDefinitionLink("Download", "http://www.w3.org/ns/dcat#downloadURL")
+                )
+        );
+    }
+
+    public ResourceDefinition ontologyDefinition() {
+        return new ResourceDefinition(
+                ONTOLOGY_DEFINITION_UUID,
+                "Ontology",
+                "ontology",
+                "https://www.purl.org/fairtools/fdp/schema/0.1/ontologyMetadata",
+                List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Ontology"),
+                null,
+                new ResourceDefinitionParent(DISTRIBUTION_DEFINITION_UUID),
+                List.of()
         );
     }
 

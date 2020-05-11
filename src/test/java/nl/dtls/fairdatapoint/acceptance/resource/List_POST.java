@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,54 +42,56 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("POST /shapes")
+@DisplayName("POST /resource-definitions")
 public class List_POST extends WebIntegrationTest {
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+
+    @Autowired
+    private ResourceDefinitionMapper resourceDefinitionMapper;
 
     private URI url() {
-        return URI.create("/shapes");
+        return URI.create("/resource-definitions");
     }
 
-    private ShapeChangeDTO reqDto(Shape shape) {
-        return new ShapeChangeDTO(shape.getName(), shape.getDefinition());
+    private ResourceDefinitionChangeDTO reqDto(ResourceDefinition resourceDefinition) {
+        return resourceDefinitionMapper.toChangeDTO(resourceDefinition);
     }
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        Shape shape = shapeFixtures.customShape();
-        ShapeChangeDTO reqDto = reqDto(shape);
+        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.ontologyDefinition();
+        ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
 
         // AND: Prepare request
-        RequestEntity<ShapeChangeDTO> request = RequestEntity
+        RequestEntity<ResourceDefinitionChangeDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
-        ParameterizedTypeReference<ShapeDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<ResourceDefinition> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<ShapeDTO> result = client.exchange(request, responseType);
+        ResponseEntity<ResourceDefinition> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(reqDto, result.getBody());
+        assertThat(result.getBody().getName(), is(equalTo(reqDto.getName())));
     }
 
     @Test
-    @DisplayName("HTTP 400: Invalid SHACL Definition")
+    @DisplayName("HTTP 400: Already used name")
     public void res400_invalidShacl() {
         // GIVEN: Prepare data
-        Shape shape = shapeFixtures.customShape();
-        shape.setDefinition(shape.getDefinition() + "Some random text that will break the validity of SHACL");
-        ShapeChangeDTO reqDto = reqDto(shape);
+        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
 
         // AND: Prepare request
-        RequestEntity<ShapeChangeDTO> request = RequestEntity
+        RequestEntity<ResourceDefinitionChangeDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
@@ -102,19 +104,19 @@ public class List_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
-        assertThat(result.getBody().getMessage(), is("Unable to read SHACL definition"));
+        assertThat(result.getBody().getMessage(), is("Name should be unique"));
     }
 
     @Test
-    @DisplayName("HTTP 403: User is not authenticated")
+    @DisplayName("HTTP 403: ResourceDefinition is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
+        createNoUserForbiddenTestPost(client, url(), reqDto(resourceDefinitionFixtures.ontologyDefinition()));
     }
 
     @Test
-    @DisplayName("HTTP 403: User is not an admin")
-    public void res403_shape() {
-        createUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
+    @DisplayName("HTTP 403: ResourceDefinition is not an admin")
+    public void res403_resourceDefinition() {
+        createUserForbiddenTestPost(client, url(), reqDto(resourceDefinitionFixtures.ontologyDefinition()));
     }
 
 }

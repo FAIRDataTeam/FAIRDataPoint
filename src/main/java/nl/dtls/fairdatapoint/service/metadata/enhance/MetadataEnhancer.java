@@ -27,6 +27,7 @@ import nl.dtls.fairdatapoint.entity.metadata.Identifier;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataSetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
+import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -37,6 +38,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getIssued;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
@@ -78,7 +81,11 @@ public class MetadataEnhancer {
 
     private void addDefaultValues(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
         // Add RDF Type
-        setRdfTypes(metadata, uri, i(resourceDefinition.getRdfType()), i("http://www.w3.org/ns/dcat#Resource"));
+        List<IRI> targetClassUris = resourceDefinition.getTargetClassUris()
+                .stream()
+                .map(ValueFactoryHelper::i)
+                .collect(Collectors.toList());
+        setRdfTypes(metadata, uri, targetClassUris);
 
         // Add PID
         setMetadataIdentifier(metadata, uri, createMetadataIdentifier(uri));

@@ -20,76 +20,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.List;
 
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestDelete;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("DELETE /shapes/:shapeUuid")
-public class Detail_DELETE extends WebIntegrationTest {
+@DisplayName("GET /resource-definitions")
+public class List_GET extends WebIntegrationTest {
 
-    private URI url(String uuid) {
-        return URI.create(format("/shapes/%s", uuid));
+    private URI url() {
+        return URI.create("/resource-definitions");
     }
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     @Test
-    @DisplayName("HTTP 204")
-    public void res204() {
+    @DisplayName("HTTP 200")
+    public void res200() {
         // GIVEN:
-        Shape shape = shapeFixtures.repositoryShape();
         RequestEntity<Void> request = RequestEntity
-                .delete(url(shape.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .get(url())
                 .build();
-        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<List<ResourceDefinition>> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<Void> result = client.exchange(request, responseType);
+        ResponseEntity<List<ResourceDefinition>> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
-    }
-
-    @Test
-    @DisplayName("HTTP 403: User is not authenticated")
-    public void res403_notAuthenticated() {
-        Shape shape = shapeFixtures.repositoryShape();
-        createUserForbiddenTestDelete(client, url(shape.getUuid()));
-    }
-
-    @Test
-    @DisplayName("HTTP 403: User is not an admin")
-    public void res403_shape() {
-        Shape shape = shapeFixtures.repositoryShape();
-        createUserForbiddenTestDelete(client, url(shape.getUuid()));
-    }
-
-    @Test
-    @DisplayName("HTTP 404")
-    public void res404() {
-        createAdminNotFoundTestDelete(client, url("nonExisting"));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        List<ResourceDefinition> body = result.getBody();
+        assertThat(body, is(equalTo(List.of(
+                resourceDefinitionFixtures.repositoryDefinition(),
+                resourceDefinitionFixtures.catalogDefinition(),
+                resourceDefinitionFixtures.datasetDefinition(),
+                resourceDefinitionFixtures.distributionDefinition()
+        ))));
     }
 
 }

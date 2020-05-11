@@ -79,13 +79,15 @@ public class MetadataValidator {
 
         // 2. Check correctness of parent type
         try {
-            String parentRdUuid = rd.getParentResourceDefinitionUuid();
-            if (parentRdUuid != null) {
+            if (rd.getParent() != null) {
+                String parentRdUuid = rd.getParent().getResourceDefinitionUuid();
                 Optional<ResourceDefinition> oParentDefinition = resourceDefinitionRepository.findByUuid(parentRdUuid);
                 if (oParentDefinition.isPresent()) {
                     ResourceDefinition parentDefinition = oParentDefinition.get();
-                    if (!metadataRepository.isStatementExist(parent, RDF.TYPE, i(parentDefinition.getRdfType()))) {
-                        throw new ValidationException("Parent is not of correct type");
+                    for (String rdfType : parentDefinition.getTargetClassUris()) {
+                        if (!metadataRepository.isStatementExist(parent, RDF.TYPE, i(rdfType))) {
+                            throw new ValidationException("Parent is not of correct type");
+                        }
                     }
                 }
             }

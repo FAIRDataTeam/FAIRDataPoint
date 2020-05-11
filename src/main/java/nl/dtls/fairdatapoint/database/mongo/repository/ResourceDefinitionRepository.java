@@ -31,8 +31,6 @@ public interface ResourceDefinitionRepository extends MongoRepository<ResourceDe
 
     Optional<ResourceDefinition> findByUuid(String uuid);
 
-    Optional<ResourceDefinition> findByName(String name);
-
-    Optional<ResourceDefinition> findByUriPrefix(String uriPrefix);
+    Optional<ResourceDefinition> findByUrlPrefix(String urlPrefix);
 
 }

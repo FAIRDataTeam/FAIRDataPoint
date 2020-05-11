@@ -22,53 +22,25 @@
  */
 package nl.dtls.fairdatapoint.entity.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-public class ResourceDefinition {
+public class ResourceDefinitionChildListView {
 
-    @Id
-    @JsonIgnore
-    protected ObjectId id;
+    @NotBlank
+    protected String title;
 
-    protected String uuid;
+    protected String tagsUri;
 
-    protected String name;
-
-    protected String urlPrefix;
-
-    protected String specs;
-
-    protected List<String> targetClassUris;
-
-    protected ResourceDefinitionChild child;
-
-    protected ResourceDefinitionParent parent;
-
-    protected List<ResourceDefinitionLink> externalLinks;
-
-    public ResourceDefinition(String uuid, String name, String urlPrefix, String specs, List<String> targetClassUris,
-                              ResourceDefinitionChild child, ResourceDefinitionParent parent,
-                              List<ResourceDefinitionLink> externalLinks) {
-        this.uuid = uuid;
-        this.name = name;
-        this.urlPrefix = urlPrefix;
-        this.specs = specs;
-        this.targetClassUris = targetClassUris;
-        this.child = child;
-        this.parent = parent;
-        this.externalLinks = externalLinks;
-    }
+    @Valid
+    protected List<ResourceDefinitionChildListViewMetadata> metadata;
 
 }

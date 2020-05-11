@@ -85,7 +85,7 @@ public class GenericController {
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get resource definition
-        ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get entity
         IRI entityUri = i(getRequestURL(request, persistentUrl));
@@ -94,7 +94,8 @@ public class GenericController {
 
         // 3. Get children
         if (rd.getChild() != null) {
-            for (org.eclipse.rdf4j.model.Value datasetUri : getObjectsBy(entity, entityUri, i(rd.getChild()))) {
+            IRI relationUri = i(rd.getChild().getRelationUri());
+            for (org.eclipse.rdf4j.model.Value datasetUri : getObjectsBy(entity, entityUri, relationUri)) {
                 Model dataset = metadataService.retrieve(i(datasetUri.stringValue()));
                 resultRdf.addAll(dataset);
             }
@@ -147,7 +148,7 @@ public class GenericController {
         // 1. Init
         String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-        ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Generate URI
         IRI uri = generateNewIRI(request, persistentUrl);
@@ -155,10 +156,9 @@ public class GenericController {
         // 3. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
         Model oldDto = read(reqBody, uri.stringValue(), rdfContentType);
-        Model reqDto = changeBaseUri(oldDto, uri.stringValue(), rd.getShaclTargetClasses());
-        String child = rd.getChild();
-        if (child != null) {
-            reqDto.remove(null, i(child), null);
+        Model reqDto = changeBaseUri(oldDto, uri.stringValue(), rd.getTargetClassUris());
+        if (rd.getChild() != null) {
+            reqDto.remove(null, i(rd.getChild().getRelationUri()), null);
         }
 
         // 4. Store metadata
@@ -181,7 +181,7 @@ public class GenericController {
         // 1. Init
         String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-        ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Extract URI
         IRI uri = i(getRequestURL(request, persistentUrl));
@@ -189,9 +189,8 @@ public class GenericController {
         // 3. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
         Model reqDto = read(reqBody, uri.stringValue(), rdfContentType);
-        String child = rd.getChild();
-        if (child != null) {
-            org.eclipse.rdf4j.model.Value childEntity = getObjectBy(reqDto, null, i(child));
+        if (rd.getChild() != null) {
+            org.eclipse.rdf4j.model.Value childEntity = getObjectBy(reqDto, null, i(rd.getChild().getRelationUri()));
             if (childEntity != null) {
                 reqDto.remove(i(childEntity.stringValue()), null, null);
             }
@@ -210,7 +209,7 @@ public class GenericController {
         // 1. Init
         String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-        ResourceDefinition rd = resourceDefinitionService.getByUriPrefix(urlPrefix);
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Skip if Repository (we don't support delete for repository)
         if (rd.getName().equals("Repository")) {

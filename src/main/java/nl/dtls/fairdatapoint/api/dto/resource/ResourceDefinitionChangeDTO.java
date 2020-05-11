@@ -20,55 +20,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.resource;
+package nl.dtls.fairdatapoint.api.dto.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionLink;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionParent;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-public class ResourceDefinition {
+public class ResourceDefinitionChangeDTO {
 
-    @Id
-    @JsonIgnore
-    protected ObjectId id;
-
-    protected String uuid;
-
+    @NotBlank
     protected String name;
 
+    @NotNull
     protected String urlPrefix;
 
+    @NotBlank
     protected String specs;
 
     protected List<String> targetClassUris;
 
+    @Valid
     protected ResourceDefinitionChild child;
 
+    @Valid
     protected ResourceDefinitionParent parent;
 
+    @Valid
     protected List<ResourceDefinitionLink> externalLinks;
-
-    public ResourceDefinition(String uuid, String name, String urlPrefix, String specs, List<String> targetClassUris,
-                              ResourceDefinitionChild child, ResourceDefinitionParent parent,
-                              List<ResourceDefinitionLink> externalLinks) {
-        this.uuid = uuid;
-        this.name = name;
-        this.urlPrefix = urlPrefix;
-        this.specs = specs;
-        this.targetClassUris = targetClassUris;
-        this.child = child;
-        this.parent = parent;
-        this.externalLinks = externalLinks;
-    }
-
 }

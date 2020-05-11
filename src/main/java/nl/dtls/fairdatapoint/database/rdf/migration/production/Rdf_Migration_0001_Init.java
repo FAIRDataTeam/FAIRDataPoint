@@ -37,10 +37,7 @@ import org.bson.Document;
 import org.bson.types.BasicBSONList;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.eclipse.rdf4j.model.vocabulary.FOAF;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.model.vocabulary.*;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -101,6 +98,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
         try (RepositoryConnection conn = repository.getConnection()) {
             List<Statement> s = new ArrayList<>();
             add(s, RDF.TYPE, R3D.REPOSITORY);
+            add(s, RDF.TYPE, i("http://www.w3.org/ns/dcat#Resource"));
             add(s, DCTERMS.TITLE, l("My FAIR Data Point"));
             add(s, RDFS.LABEL, l("My FAIR Data Point"));
             add(s, DCTERMS.HAS_VERSION, l(1.0f));

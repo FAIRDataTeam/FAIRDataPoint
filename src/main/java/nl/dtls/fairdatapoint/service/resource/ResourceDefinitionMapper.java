@@ -20,24 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.service.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+@Service
+public class ResourceDefinitionMapper {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+    public ResourceDefinition fromChangeDTO(ResourceDefinitionChangeDTO dto, String uuid) {
+        return new ResourceDefinition(
+                uuid,
+                dto.getName(),
+                dto.getUrlPrefix(),
+                dto.getSpecs(),
+                dto.getTargetClassUris(),
+                dto.getChild(),
+                dto.getParent(),
+                dto.getExternalLinks());
+    }
 
-    protected String persistentUrl;
-
-    protected List<ResourceDefinition> resourceDefinitions;
-
+    public ResourceDefinitionChangeDTO toChangeDTO(ResourceDefinition rd) {
+        return new ResourceDefinitionChangeDTO(
+                rd.getName(),
+                rd.getUrlPrefix(),
+                rd.getSpecs(),
+                rd.getTargetClassUris(),
+                rd.getChild(),
+                rd.getParent(),
+                rd.getExternalLinks());
+    }
 }

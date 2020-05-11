@@ -22,12 +22,17 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
@@ -37,24 +42,66 @@ public class ResourceDefinitionService {
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
 
+    @Autowired
+    private ResourceDefinitionValidator resourceDefinitionValidator;
+
+    @Autowired
+    private ResourceDefinitionMapper resourceDefinitionMapper;
+
+    public List<ResourceDefinition> getAll() {
+        return resourceDefinitionRepository.findAll();
+    }
+
     public ResourceDefinition getByUuid(String uuid) {
         Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
         if (oRd.isEmpty()) {
-            throw new IllegalStateException(
+            throw new ResourceNotFoundException(
                     format("Resource with provided uuid ('%s') is not defined", uuid)
             );
         }
         return oRd.get();
     }
 
-    public ResourceDefinition getByUriPrefix(String uriPrefix) {
-        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUriPrefix(uriPrefix);
+    public ResourceDefinition getByUrlPrefix(String urlPrefix) {
+        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUrlPrefix(urlPrefix);
         if (oRd.isEmpty()) {
-            throw new IllegalStateException(
-                    format("Resource with provided uri prefix ('%s') is not defined", uriPrefix)
+            throw new ResourceNotFoundException(
+                    format("Resource with provided uri prefix ('%s') is not defined", urlPrefix)
             );
         }
         return oRd.get();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResourceDefinition create(ResourceDefinitionChangeDTO reqDto) {
+        String uuid = UUID.randomUUID().toString();
+        ResourceDefinition rd = resourceDefinitionMapper.fromChangeDTO(reqDto, uuid);
+
+        resourceDefinitionValidator.validate(rd);
+        resourceDefinitionRepository.save(rd);
+        return rd;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResourceDefinition update(String uuid, ResourceDefinitionChangeDTO reqDto) {
+        ResourceDefinition rd = getByUuid(uuid);
+        ResourceDefinition updatedRd = resourceDefinitionMapper.fromChangeDTO(reqDto, rd.getUuid());
+        updatedRd.setId(rd.getId());
+
+        resourceDefinitionValidator.validate(updatedRd);
+        resourceDefinitionRepository.save(updatedRd);
+        return updatedRd;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public boolean deleteByUuid(String uuid) {
+        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
+        if (oRd.isEmpty()) {
+            return false;
+        }
+        ResourceDefinition rd = oRd.get();
+        resourceDefinitionRepository.delete(rd);
+        return true;
     }
 
 }
