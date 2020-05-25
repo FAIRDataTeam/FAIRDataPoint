@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.metadata.generic;
 
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
+import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
@@ -45,7 +46,7 @@ public class GenericMetadataService extends AbstractMetadataService {
         if (!rd.getName().equals("Repository")) {
             // 1. Check permissions
             String parentId = Optional.ofNullable(getParent(metadata))
-                    .orElseThrow(() -> new MetadataServiceException("Metadata has no parent")).stringValue();
+                    .orElseThrow(() -> new ValidationException("Metadata has no parent")).stringValue();
             if (!(memberService.checkPermission(parentId, Metadata.class, BasePermission.CREATE) || memberService.checkRole(UserRole.ADMIN))) {
                 throw new ForbiddenException("You are not allow to add new entry");
             }

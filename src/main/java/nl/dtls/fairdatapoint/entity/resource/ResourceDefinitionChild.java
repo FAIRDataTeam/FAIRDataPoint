@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.entity.resource;
 
 import lombok.*;
+import nl.dtls.fairdatapoint.api.validator.ValidIri;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -38,6 +39,7 @@ public class ResourceDefinitionChild {
     protected String resourceDefinitionUuid;
 
     @NotBlank
+    @ValidIri
     protected String relationUri;
 
     @Valid

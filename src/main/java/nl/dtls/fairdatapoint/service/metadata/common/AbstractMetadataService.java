@@ -22,9 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
-import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -32,13 +30,12 @@ import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataGetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionParent;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
@@ -56,6 +53,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
@@ -75,31 +73,28 @@ public abstract class AbstractMetadataService implements MetadataService {
     private CurrentUserService currentUserService;
 
     @Autowired
-    protected ResourceDefinitionRepository resourceDefinitionRepository;
-
-    @Autowired
-    protected ResourceDefinitionService resourceDefinitionService;
-
-    @Autowired
     protected MetadataEnhancer metadataEnhancer;
 
     @Autowired
     protected MetadataValidator metadataValidator;
 
+    @Autowired
+    private ResourceDefinitionCache resourceDefinitionCache;
+
     @Override
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
-        Model metadata = new LinkedHashModel();
         try {
-            Preconditions.checkNotNull(uri, "Resource uri not be null.");
-            List<Statement> statements = metadataRepository.retrieveResource(uri);
+            // 1. Get metadata
+            List<Statement> statements = metadataRepository.find(uri);
             if (statements.isEmpty()) {
-                String msg = ("No metadata found for the uri : " + uri);
-                throw new ResourceNotFoundException(msg);
+                throw new ResourceNotFoundException(format("No metadata found for the uri '%s'", uri));
             }
+
+            // 2. Convert to model
+            Model metadata = new LinkedHashModel();
             metadata.addAll(statements);
             return metadata;
         } catch (MetadataRepositoryException ex) {
-            log.error("Error retrieving the metadata");
             throw new MetadataServiceException(ex.getMessage());
         }
     }
@@ -118,12 +113,11 @@ public abstract class AbstractMetadataService implements MetadataService {
         try {
             metadataValidator.validate(metadata, uri, resourceDefinition);
             metadataEnhancer.enhance(metadata, uri, resourceDefinition);
-            metadataRepository.storeStatements(new ArrayList<>(metadata), uri);
+            metadataRepository.save(new ArrayList<>(metadata), uri);
             updateParent(metadata, uri, resourceDefinition);
             addPermissions(uri);
             return metadata;
         } catch (MetadataRepositoryException e) {
-            log.error("Error storing distribution metadata");
             throw new MetadataServiceException(e.getMessage());
         }
     }
@@ -131,76 +125,79 @@ public abstract class AbstractMetadataService implements MetadataService {
     @Override
     @PreAuthorize("hasPermission(#uri.stringValue(), 'nl.dtls.fairdatapoint.entity.metadata.Metadata', 'WRITE') " +
             "or hasRole('ADMIN')")
-    public Model update(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+    public Model update(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         try {
-            metadataValidator.validate(metadata, uri, resourceDefinition);
+            metadataValidator.validate(metadata, uri, rd);
             Model oldMetadata = retrieve(uri);
-            metadataEnhancer.enhance(metadata, uri, resourceDefinition, oldMetadata);
-            metadataRepository.removeResource(uri);
-            metadataRepository.storeStatements(new ArrayList<>(metadata), uri);
-            updateParent(metadata, uri, resourceDefinition);
+            metadataEnhancer.enhance(metadata, uri, rd, oldMetadata);
+            metadataRepository.remove(uri);
+            metadataRepository.save(new ArrayList<>(metadata), uri);
+            updateParent(metadata, uri, rd);
             return metadata;
         } catch (MetadataRepositoryException | MetadataServiceException e) {
-            log.error("Error updating metadata");
             throw (new MetadataServiceException(e.getMessage()));
         }
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    public void delete(IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+    public void delete(IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         try {
             Model metadata = retrieve(uri);
 
             // Delete all children
-            ResourceDefinitionChild child = resourceDefinition.getChild();
-            if (child != null) {
+            for (ResourceDefinitionChild child : rd.getChildren()) {
                 String childRdUuid = child.getResourceDefinitionUuid();
-                ResourceDefinition childRd = resourceDefinitionService.getByUuid(childRdUuid);
-                List<IRI> children = getChildren(metadata, i(child.getRelationUri()));
-                for (IRI childUri : children) {
-                    delete(childUri, childRd);
+                ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childRdUuid);
+                if (rdChild != null) {
+                    List<IRI> children = getChildren(metadata, i(child.getRelationUri()));
+                    for (IRI childUri : children) {
+                        delete(childUri, rdChild);
+                    }
                 }
             }
 
             // Remove reference at parent
-            ResourceDefinitionParent parent = resourceDefinition.getParent();
-            if (parent != null) {
-                ResourceDefinition parentRd = resourceDefinitionService.getByUuid(parent.getResourceDefinitionUuid());
+            ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
+            if (rdParent != null) {
                 IRI parentUri = getParent(metadata);
                 Model parentMetadata = retrieve(parentUri);
-                parentMetadata.remove(null, i(parentRd.getChild().getRelationUri()), uri);
-                update(parentMetadata, parentUri, parentRd);
+                for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
+                    if (rdChild.getResourceDefinitionUuid().equals(rd.getUuid())) {
+                        parentMetadata.remove(null, i(rdChild.getRelationUri()), uri);
+                        update(parentMetadata, parentUri, rdParent);
+                    }
+                }
             }
 
             // Delete itself
-            metadataRepository.removeResource(uri);
+            metadataRepository.remove(uri);
 
         } catch (MetadataRepositoryException | MetadataServiceException e) {
-            log.error("Error updating metadata");
             throw (new MetadataServiceException(e.getMessage()));
         }
     }
 
-    protected void updateParent(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+    protected void updateParent(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         IRI parent = MetadataGetter.getParent(metadata);
         if (parent != null) {
-            if (resourceDefinition.getParent() != null) {
-                String parentRdUuid = resourceDefinition.getParent().getResourceDefinitionUuid();
-                ResourceDefinition parentResourceDefinition = resourceDefinitionService.getByUuid(parentRdUuid);
+            ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
+            if (rdParent != null) {
                 try {
                     List<Statement> statements = new ArrayList<>();
-                    if (parentResourceDefinition.getChild() != null) {
-                        statements.add(s(parent, i(parentResourceDefinition.getChild().getRelationUri()), uri));
+                    for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
+                        if (rdChild.getResourceDefinitionUuid().equals(rd.getUuid())) {
+                            statements.add(s(parent, i(rdChild.getRelationUri()), uri));
+                        }
                     }
-                    metadataRepository.removeStatement(parent, FDP.METADATAMODIFIED, null);
+                    metadataRepository.removeStatement(parent, FDP.METADATAMODIFIED, null, parent);
                     statements.add(s(parent, FDP.METADATAMODIFIED, l(LocalDateTime.now())));
-                    metadataRepository.storeStatements(statements, parent);
+                    metadataRepository.save(statements, parent);
                 } catch (MetadataRepositoryException e) {
                     throw new MetadataServiceException("Problem with updating parent timestamp");
                 }
                 Model parentMetadata = retrieve(parent);
-                updateParent(parentMetadata, parent, parentResourceDefinition);
+                updateParent(parentMetadata, parent, rdParent);
             }
         }
     }

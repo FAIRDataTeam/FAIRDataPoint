@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.util;
 
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -99,7 +100,10 @@ public class ValueFactoryHelper {
     }
 
     public static Literal l(LocalDateTime literal) {
-        return VF.createLiteral(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(literal));
+        if (literal == null) {
+            return null;
+        }
+        return VF.createLiteral(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(literal), XMLSchema.DATETIME);
     }
 
     public static Literal l(Value value) {

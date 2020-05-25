@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.metadata;
 
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
@@ -93,11 +94,11 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 3. Get children
-        if (rd.getChild() != null) {
-            IRI relationUri = i(rd.getChild().getRelationUri());
-            for (org.eclipse.rdf4j.model.Value datasetUri : getObjectsBy(entity, entityUri, relationUri)) {
-                Model dataset = metadataService.retrieve(i(datasetUri.stringValue()));
-                resultRdf.addAll(dataset);
+        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
+            IRI relationUri = i(rdChild.getRelationUri());
+            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
+                Model childMetadata = metadataService.retrieve(i(childUri.stringValue()));
+                resultRdf.addAll(childMetadata);
             }
         }
 
@@ -157,8 +158,8 @@ public class GenericController {
         RDFFormat rdfContentType = getRdfContentType(contentType);
         Model oldDto = read(reqBody, uri.stringValue(), rdfContentType);
         Model reqDto = changeBaseUri(oldDto, uri.stringValue(), rd.getTargetClassUris());
-        if (rd.getChild() != null) {
-            reqDto.remove(null, i(rd.getChild().getRelationUri()), null);
+        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
+            reqDto.remove(null, i(rdChild.getRelationUri()), null);
         }
 
         // 4. Store metadata
@@ -189,8 +190,8 @@ public class GenericController {
         // 3. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
         Model reqDto = read(reqBody, uri.stringValue(), rdfContentType);
-        if (rd.getChild() != null) {
-            org.eclipse.rdf4j.model.Value childEntity = getObjectBy(reqDto, null, i(rd.getChild().getRelationUri()));
+        for (ResourceDefinitionChild child : rd.getChildren()) {
+            org.eclipse.rdf4j.model.Value childEntity = getObjectBy(reqDto, null, i(child.getRelationUri()));
             if (childEntity != null) {
                 reqDto.remove(i(childEntity.stringValue()), null, null);
             }

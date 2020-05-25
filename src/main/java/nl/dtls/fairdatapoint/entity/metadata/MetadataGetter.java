@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.entity.metadata;
 
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
-import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
@@ -32,6 +31,7 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,7 +52,7 @@ public class MetadataGetter {
     }
 
     public static Identifier getMetadataIdentifier(Model metadata) {
-        return getIdentifier(metadata, DATACITE.HASIDENTIFIER);
+        return getIdentifier(metadata, FDP.METADATAIDENTIFIER);
     }
 
     public static IRI getParent(Model metadata) {
@@ -77,6 +77,10 @@ public class MetadataGetter {
         return l(getObjectBy(metadata, null, DCTERMS.TITLE));
     }
 
+    public static Literal getLabel(Model metadata) {
+        return l(getObjectBy(metadata, null, RDFS.LABEL));
+    }
+
     public static Literal getDescription(Model metadata) {
         return l(getObjectBy(metadata, null, DCTERMS.DESCRIPTION));
     }
@@ -96,6 +100,11 @@ public class MetadataGetter {
 
     public static LocalDateTime getModified(Model metadata) {
         String result = getStringObjectBy(metadata, null, FDP.METADATAMODIFIED);
+        return result != null ? parseDateTimeLiteral(result) : null;
+    }
+
+    public static LocalDateTime getMetadataIssued(Model metadata) {
+        String result = getStringObjectBy(metadata, null, DCTERMS.ISSUED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 

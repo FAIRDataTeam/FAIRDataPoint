@@ -22,10 +22,12 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory;
 
+import nl.dtls.fairdatapoint.entity.metadata.Agent;
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,6 +91,11 @@ public class MetadataFactoryImpl implements MetadataFactory {
         setTitle(metadata, uri, l(title));
         setDescription(metadata, uri, l(description));
         setVersion(metadata, uri, l(1.0f));
+        setPublisher(metadata, uri, new Agent(
+                i("http://example.com/publisher"),
+                i("http://example.com/publisher/mbox"),
+                i(FOAF.AGENT),
+                l("Publisher")));
 
         if (parent != null) {
             setParent(metadata, uri, parent);

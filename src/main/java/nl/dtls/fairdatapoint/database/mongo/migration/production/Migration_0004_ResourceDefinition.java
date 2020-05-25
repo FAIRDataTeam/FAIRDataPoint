@@ -27,7 +27,9 @@ import com.github.mongobee.changeset.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
+import org.bson.BasicBSONObject;
 import org.bson.Document;
+import org.bson.types.BasicBSONList;
 import org.springframework.context.annotation.Profile;
 
 import java.util.List;
@@ -48,6 +50,11 @@ public class Migration_0004_ResourceDefinition {
         rdCol.insertOne(catalogDefinition());
         rdCol.insertOne(datasetDefinition());
         rdCol.insertOne(distributionDefinition());
+
+        MongoCollection<Document> membershipCol = db.getCollection("membership");
+        membershipCol.deleteMany(new Document());
+        membershipCol.insertOne(membershipOwner());
+        membershipCol.insertOne(membershipDataProvider());
     }
 
     private Document repositoryDefinition() {
@@ -55,7 +62,6 @@ public class Migration_0004_ResourceDefinition {
         definition.append("uuid", "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c");
         definition.append("name", "Repository");
         definition.append("urlPrefix", "");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
                 "http://www.re3data.org/schema/3-0#Repository"));
 
@@ -68,10 +74,7 @@ public class Migration_0004_ResourceDefinition {
         listView.append("tagsUri", "http://www.w3.org/ns/dcat#themeTaxonomy");
         listView.append("metadata", List.of());
         child.append("listView", listView);
-        definition.append("child", child);
-
-        // Parent
-        definition.append("parent", null);
+        definition.append("children", List.of(child));
 
         // External Links
         definition.append("externalLinks", List.of());
@@ -85,7 +88,6 @@ public class Migration_0004_ResourceDefinition {
         definition.append("uuid", "a0949e72-4466-4d53-8900-9436d1049a4b");
         definition.append("name", "Catalog");
         definition.append("urlPrefix", "catalog");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/catalogMetadata");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
                 "http://www.w3.org/ns/dcat#Catalog"));
 
@@ -98,12 +100,7 @@ public class Migration_0004_ResourceDefinition {
         listView.append("tagsUri", "http://www.w3.org/ns/dcat#theme");
         listView.append("metadata", List.of());
         child.append("listView", listView);
-        definition.append("child", child);
-
-        // Parent
-        Document parent = new Document();
-        parent.append("resourceDefinitionUuid", "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c");
-        definition.append("parent", parent);
+        definition.append("children", List.of(child));
 
         // External Links
         definition.append("externalLinks", List.of());
@@ -117,7 +114,6 @@ public class Migration_0004_ResourceDefinition {
         definition.append("uuid", "2f08228e-1789-40f8-84cd-28e3288c3604");
         definition.append("name", "Dataset");
         definition.append("urlPrefix", "dataset");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/datasetMetadata");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
                 "http://www.w3.org/ns/dcat#Dataset"));
 
@@ -135,12 +131,7 @@ public class Migration_0004_ResourceDefinition {
         metadata.append("propertyUri", "http://www.w3.org/ns/dcat#mediaType");
         listView.append("metadata", List.of(metadata));
         child.append("listView", listView);
-        definition.append("child", child);
-
-        // Parent
-        Document parent = new Document();
-        parent.append("resourceDefinitionUuid", "a0949e72-4466-4d53-8900-9436d1049a4b");
-        definition.append("parent", parent);
+        definition.append("children", List.of(child));
 
         // External Links
         definition.append("externalLinks", List.of());
@@ -154,17 +145,11 @@ public class Migration_0004_ResourceDefinition {
         definition.append("uuid", "02c649de-c579-43bb-b470-306abdc808c7");
         definition.append("name", "Distribution");
         definition.append("urlPrefix", "distribution");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/distributionMetadata");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
                 "http://www.w3.org/ns/dcat#Distribution"));
 
         // Child
-        definition.append("child", null);
-
-        // Parent
-        Document parent = new Document();
-        parent.append("resourceDefinitionUuid", "2f08228e-1789-40f8-84cd-28e3288c3604");
-        definition.append("parent", parent);
+        definition.append("children", List.of());
 
         // External Links
         Document accessLink = new Document();
@@ -177,6 +162,39 @@ public class Migration_0004_ResourceDefinition {
 
         definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
+    }
+
+    private Document membershipOwner() {
+        Document user = new Document();
+        user.append("uuid", "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8");
+        user.append("name", "Owner");
+        BasicBSONList permissions = new BasicBSONList();
+        permissions.add(new BasicBSONObject().append("mask", 2).append("code", "W"));
+        permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));
+        permissions.add(new BasicBSONObject().append("mask", 8).append("code", "D"));
+        permissions.add(new BasicBSONObject().append("mask", 16).append("code", "A"));
+        user.append("permissions", permissions);
+        BasicBSONList allowedEntities = new BasicBSONList();
+        allowedEntities.add("a0949e72-4466-4d53-8900-9436d1049a4b");
+        allowedEntities.add("2f08228e-1789-40f8-84cd-28e3288c3604");
+        allowedEntities.add("02c649de-c579-43bb-b470-306abdc808c7");
+        user.append("allowedEntities", allowedEntities);
+        user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
+        return user;
+    }
+
+    private Document membershipDataProvider() {
+        Document user = new Document();
+        user.append("uuid", "87a2d984-7db2-43f6-805c-6b0040afead5");
+        user.append("name", "Data Provider");
+        BasicBSONList permissions = new BasicBSONList();
+        permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));
+        user.append("permissions", permissions);
+        BasicBSONList allowedEntities = new BasicBSONList();
+        allowedEntities.add("a0949e72-4466-4d53-8900-9436d1049a4b");
+        user.append("allowedEntities", allowedEntities);
+        user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
+        return user;
     }
 
 }

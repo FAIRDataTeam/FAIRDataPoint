@@ -48,26 +48,19 @@ public class ResourceDefinition {
 
     protected String urlPrefix;
 
-    protected String specs;
-
     protected List<String> targetClassUris;
 
-    protected ResourceDefinitionChild child;
-
-    protected ResourceDefinitionParent parent;
+    protected List<ResourceDefinitionChild> children;
 
     protected List<ResourceDefinitionLink> externalLinks;
 
-    public ResourceDefinition(String uuid, String name, String urlPrefix, String specs, List<String> targetClassUris,
-                              ResourceDefinitionChild child, ResourceDefinitionParent parent,
-                              List<ResourceDefinitionLink> externalLinks) {
+    public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> targetClassUris,
+                              List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks) {
         this.uuid = uuid;
         this.name = name;
         this.urlPrefix = urlPrefix;
-        this.specs = specs;
         this.targetClassUris = targetClassUris;
-        this.child = child;
-        this.parent = parent;
+        this.children = children;
         this.externalLinks = externalLinks;
     }
 

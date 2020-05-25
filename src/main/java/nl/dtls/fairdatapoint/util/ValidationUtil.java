@@ -20,27 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package nl.dtls.fairdatapoint.service.metadatametrics;
+package nl.dtls.fairdatapoint.util;
 
-import nl.dtls.fairdatapoint.entity.metadata.Metric;
-import org.eclipse.rdf4j.model.IRI;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
 
-import javax.annotation.Nonnull;
-import java.util.List;
+public class ValidationUtil {
 
-public interface FairMetadataMetricsService {
+    public static <T> void validationFailed(String field, String code, String defaultMessage, T reqDto) throws BindException {
+        BeanPropertyBindingResult error = new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
+        error.rejectValue(field, code, defaultMessage);
+        throw new BindException(error);
+    }
 
-    /**
-     * This method returns list of fair metrics for the given metadata URI
-     *
-     * @param metadataURI metadata URI
-     * @return List of fair metrics
-     */
-    List<Metric> getMetrics(@Nonnull IRI metadataURI);
+    public static <T> void uniquenessValidationFailed(String field, T reqDto) throws BindException {
+        BeanPropertyBindingResult error = new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
+        error.rejectValue(field, "Uniqueness", "must be unique");
+        throw new BindException(error);
+    }
 
 }

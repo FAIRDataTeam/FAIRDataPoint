@@ -26,9 +26,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.dtls.fairdatapoint.api.validator.ValidIri;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionLink;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionParent;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -47,17 +47,14 @@ public class ResourceDefinitionChangeDTO {
     @NotNull
     protected String urlPrefix;
 
-    @NotBlank
-    protected String specs;
+    @NotNull
+    protected List<@ValidIri String> targetClassUris;
 
-    protected List<String> targetClassUris;
-
+    @NotNull
     @Valid
-    protected ResourceDefinitionChild child;
+    protected List<ResourceDefinitionChild> children;
 
-    @Valid
-    protected ResourceDefinitionParent parent;
-
+    @NotNull
     @Valid
     protected List<ResourceDefinitionLink> externalLinks;
 }

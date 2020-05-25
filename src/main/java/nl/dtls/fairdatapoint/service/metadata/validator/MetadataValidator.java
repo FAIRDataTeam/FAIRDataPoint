@@ -22,13 +22,13 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.validator;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -37,16 +37,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataValidator {
-
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
 
     @Autowired
     @Qualifier("genericMetadataRepository")
@@ -57,6 +52,9 @@ public class MetadataValidator {
 
     @Autowired
     private ShapeService shapeService;
+
+    @Autowired
+    private ResourceDefinitionCache resourceDefinitionCache;
 
     public void validate(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         validateByShacl(metadata, uri);
@@ -79,15 +77,11 @@ public class MetadataValidator {
 
         // 2. Check correctness of parent type
         try {
-            if (rd.getParent() != null) {
-                String parentRdUuid = rd.getParent().getResourceDefinitionUuid();
-                Optional<ResourceDefinition> oParentDefinition = resourceDefinitionRepository.findByUuid(parentRdUuid);
-                if (oParentDefinition.isPresent()) {
-                    ResourceDefinition parentDefinition = oParentDefinition.get();
-                    for (String rdfType : parentDefinition.getTargetClassUris()) {
-                        if (!metadataRepository.isStatementExist(parent, RDF.TYPE, i(rdfType))) {
-                            throw new ValidationException("Parent is not of correct type");
-                        }
+            ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
+            if (rdParent != null) {
+                for (String rdfType : rdParent.getTargetClassUris()) {
+                    if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
+                        throw new ValidationException("Parent is not of correct type");
                     }
                 }
             }

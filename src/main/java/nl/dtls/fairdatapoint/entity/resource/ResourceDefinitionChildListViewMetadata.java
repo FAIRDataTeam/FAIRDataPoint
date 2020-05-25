@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.entity.resource;
 
 import lombok.*;
+import nl.dtls.fairdatapoint.api.validator.ValidIri;
 
 import javax.validation.constraints.NotBlank;
 
@@ -37,6 +38,7 @@ public class ResourceDefinitionChildListViewMetadata {
     protected String title;
 
     @NotBlank
+    @ValidIri
     protected String propertyUri;
 
 }

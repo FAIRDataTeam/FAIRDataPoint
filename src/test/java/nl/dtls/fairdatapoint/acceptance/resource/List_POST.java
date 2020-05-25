@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -81,30 +80,6 @@ public class List_POST extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getName(), is(equalTo(reqDto.getName())));
-    }
-
-    @Test
-    @DisplayName("HTTP 400: Already used name")
-    public void res400_invalidShacl() {
-        // GIVEN: Prepare data
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.catalogDefinition();
-        ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
-
-        // AND: Prepare request
-        RequestEntity<ResourceDefinitionChangeDTO> request = RequestEntity
-                .post(url())
-                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(reqDto);
-        ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
-        assertThat(result.getBody().getMessage(), is("Name should be unique"));
     }
 
     @Test

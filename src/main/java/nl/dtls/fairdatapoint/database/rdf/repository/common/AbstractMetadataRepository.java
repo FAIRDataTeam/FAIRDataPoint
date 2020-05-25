@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
@@ -38,10 +37,8 @@ import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -55,50 +52,61 @@ public abstract class AbstractMetadataRepository {
     @Autowired
     protected Repository repository;
 
-    public List<Statement> retrieveResource(@Nonnull IRI uri) throws MetadataRepositoryException {
-        Preconditions.checkNotNull(uri, "URI must not be null.");
-        log.info("Get statements for the URI {}", uri.toString());
-
+    public List<Resource> findResources() throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            RepositoryResult<Statement> queryResult = conn.getStatements(null, null, null, uri);
-            return Iterations.asList(queryResult);
+
+            return Iterations.asList(
+                    conn.getContextIDs()
+            );
         } catch (RepositoryException e) {
             throw new MetadataRepositoryException("Error retrieve resource :" + e.getMessage());
         }
     }
 
-    public boolean isStatementExist(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException {
+    public List<Statement> find(IRI context) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            log.info("Check if statements exists");
-            return conn.hasStatement(rsrc, pred, value, false);
+            return Iterations.asList(
+                    conn.getStatements(null, null, null, context)
+            );
+        } catch (RepositoryException e) {
+            throw new MetadataRepositoryException("Error retrieve resource :" + e.getMessage());
+        }
+    }
+
+    public boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException {
+        try (RepositoryConnection conn = repository.getConnection()) {
+            return conn.hasStatement(subject, predicate, object, false);
         } catch (RepositoryException e) {
             throw new MetadataRepositoryException("Error check statement existence :" + e.getMessage());
         }
     }
 
-    public void storeStatements(List<Statement> statements, IRI... cntx) throws MetadataRepositoryException {
+    public void save(List<Statement> statements, IRI context) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            if (cntx != null) {
-                conn.add(statements, cntx);
-            } else {
-                conn.add(statements);
-            }
-
+            conn.add(statements, context);
         } catch (RepositoryException e) {
             throw new MetadataRepositoryException("Error storing statements :" + e.getMessage());
         }
     }
 
-    public void removeStatement(Resource rsrc, IRI pred, Value value, IRI... contexts) throws MetadataRepositoryException {
+    public void removeAll() throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            conn.remove(rsrc, pred, value, contexts);
+            conn.clear();
         } catch (RepositoryException e) {
-            throw (new MetadataRepositoryException("Error removing statement"));
+            throw new MetadataRepositoryException("Error remove all :" + e.getMessage());
         }
     }
 
-    public void removeResource(IRI uri) throws MetadataRepositoryException {
+    public void remove(IRI uri) throws MetadataRepositoryException {
         removeStatement(null, null, null, uri);
+    }
+
+    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context) throws MetadataRepositoryException {
+        try (RepositoryConnection conn = repository.getConnection()) {
+            conn.remove(subject, predicate, object, context);
+        } catch (RepositoryException e) {
+            throw (new MetadataRepositoryException("Error removing statement"));
+        }
     }
 
     public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType, Map<String, Value> bindings) throws MetadataRepositoryException {

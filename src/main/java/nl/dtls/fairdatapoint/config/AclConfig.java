@@ -43,14 +43,12 @@ import org.springframework.security.acls.mongodb.BasicLookupStrategy;
 import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.List;
-
 import static java.lang.String.format;
 
 @Configuration
 public class AclConfig {
 
-    private static final String CACHE_NAME = "ACL_CACHE";
+    public static final String ACL_CACHE = "ACL_CACHE";
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -60,8 +58,7 @@ public class AclConfig {
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
-        cacheManager.setCacheNames(List.of(CACHE_NAME));
-        Cache springCache = cacheManager.getCache(CACHE_NAME);
+        Cache springCache = cacheManager.getCache(ACL_CACHE);
         return new SpringCacheBasedAclCache(springCache, permissionGrantingStrategy(), aclAuthorizationStrategy());
     }
 

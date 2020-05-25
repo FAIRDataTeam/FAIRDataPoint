@@ -23,12 +23,34 @@
 package nl.dtls.fairdatapoint.config;
 
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
+import static nl.dtls.fairdatapoint.config.AclConfig.ACL_CACHE;
 
 @Configuration
 @EnableCaching
 public class CacheConfig {
 
     public static final String CATALOG_THEMES_CACHE = "CATALOG_THEMES_CACHE";
+
+    public static final String RESOURCE_DEFINITION_CACHE = "RESOURCE_DEFINITION_CACHE";
+
+    public static final String RESOURCE_DEFINITION_PARENT_CACHE = "RESOURCE_DEFINITION_PARENT_CACHE";
+
+    @Bean
+    public ConcurrentMapCacheManager cacheManager() {
+        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+        cacheManager.setCacheNames(List.of(
+                ACL_CACHE,
+                CATALOG_THEMES_CACHE,
+                RESOURCE_DEFINITION_CACHE,
+                RESOURCE_DEFINITION_PARENT_CACHE
+        ));
+        return cacheManager;
+    }
 
 }

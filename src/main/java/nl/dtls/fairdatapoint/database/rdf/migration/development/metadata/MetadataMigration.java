@@ -26,6 +26,8 @@ import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.MetadataFixtures;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -43,6 +45,9 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataMigration implements Migration {
+
+    @Autowired
+    private GenericMetadataRepository metadataRepository;
 
     @Autowired
     protected MetadataFixtures metadataFixtures;
@@ -70,14 +75,17 @@ public class MetadataMigration implements Migration {
 
     public void runMigration() {
         try {
-            // 1. Auth user
-            String albertUuid = userFixtures.albert().getUuid();
-            Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+            // 1. Remove all previous metadata
+            metadataRepository.removeAll();
+
+            // 2. Auth user
+            String adminUuid = userFixtures.admin().getUuid();
+            Authentication auth = mongoAuthenticationService.getAuthentication(adminUuid);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-            // 2. Load metadata fixtures
+            // 3. Load metadata fixtures
             importDefaultFixtures(persistentUrl);
-        } catch (MetadataServiceException e) {
+        } catch (MetadataServiceException | MetadataRepositoryException e) {
             e.printStackTrace();
         }
     }

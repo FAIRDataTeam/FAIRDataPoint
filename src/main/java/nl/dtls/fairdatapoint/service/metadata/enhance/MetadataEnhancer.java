@@ -22,11 +22,9 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.enhance;
 
-import nl.dtls.fairdatapoint.entity.metadata.Agent;
 import nl.dtls.fairdatapoint.entity.metadata.Identifier;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataSetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.metadatametrics.FairMetadataMetricsService;
+import nl.dtls.fairdatapoint.service.metadata.metric.MetricsMetadataService;
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import org.eclipse.rdf4j.model.IRI;
@@ -41,7 +39,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getIssued;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
 import static nl.dtls.fairdatapoint.util.RdfUtil.containsObject;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
@@ -62,37 +60,36 @@ public class MetadataEnhancer {
     private IRI license;
 
     @Autowired
-    @Qualifier("publisher")
-    private Agent publisher;
+    private MetricsMetadataService metricsMetadataService;
 
-    @Autowired
-    private FairMetadataMetricsService fmMetricsService;
+    public void enhance(Model metadata, IRI uri, ResourceDefinition rd, Model oldMetadata) {
+        enhance(metadata, uri, rd);
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition, Model oldMetadata) {
-        enhance(metadata, uri, resourceDefinition);
+        // Populate with current data from the triple store
         setIssued(metadata, uri, l(getIssued(oldMetadata)));
+        if (rd.getUrlPrefix().equals("catalog")) {
+            setMetadataIssued(metadata, uri, l(getMetadataIssued(oldMetadata)));
+        }
     }
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
-        addDefaultValues(metadata, uri, resourceDefinition);
-        setSpecification(metadata, uri, resourceDefinition);
-        setTimestamps(metadata, uri);
-    }
-
-    private void addDefaultValues(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
+    public void enhance(Model metadata, IRI uri, ResourceDefinition rd) {
         // Add RDF Type
-        List<IRI> targetClassUris = resourceDefinition.getTargetClassUris()
+        List<IRI> targetClassUris = rd.getTargetClassUris()
                 .stream()
                 .map(ValueFactoryHelper::i)
                 .collect(Collectors.toList());
         setRdfTypes(metadata, uri, targetClassUris);
 
-        // Add PID
-        setMetadataIdentifier(metadata, uri, createMetadataIdentifier(uri));
+        // Add identifiers
+        Identifier identifier = createMetadataIdentifier(uri);
+        setMetadataIdentifier(metadata, uri, identifier);
+        if (rd.getUrlPrefix().equals("")) {
+            setRepositoryIdentifier(metadata, uri, identifier);
+        }
 
-        // Add default publisher
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.PUBLISHER.stringValue()) && publisher != null) {
-            setPublisher(metadata, uri, publisher);
+        // Add label
+        if (containsObject(metadata, uri.stringValue(), DCTERMS.TITLE.stringValue())) {
+            setLabel(metadata, uri, getTitle(metadata));
         }
 
         // Add default language
@@ -112,16 +109,16 @@ public class MetadataEnhancer {
         }
 
         // Add FAIR metrics
-        setMetrics(metadata, uri, fmMetricsService.getMetrics(uri));
-    }
+        setMetrics(metadata, uri, metricsMetadataService.generateMetrics(uri));
 
-    private void setSpecification(Model metadata, IRI uri, ResourceDefinition rd) {
-        MetadataSetter.setSpecification(metadata, uri, i(rd.getSpecs()));
-    }
-
-    private void setTimestamps(Model metadata, IRI uri) {
-        setIssued(metadata, uri, l(LocalDateTime.now()));
-        setModified(metadata, uri, l(LocalDateTime.now()));
+        // Add timestamps
+        LocalDateTime timestamp = LocalDateTime.now();
+        setIssued(metadata, uri, l(timestamp));
+        setModified(metadata, uri, l(timestamp));
+        if (rd.getUrlPrefix().equals("catalog")) {
+            setMetadataIssued(metadata, uri, l(timestamp));
+            setMetadataModified(metadata, uri, l(timestamp));
+        }
     }
 
     private Identifier createMetadataIdentifier(IRI uri) {

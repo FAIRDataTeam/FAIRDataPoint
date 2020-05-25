@@ -26,13 +26,16 @@ import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.service.membership.MembershipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -48,18 +51,18 @@ public class ResourceDefinitionService {
     @Autowired
     private ResourceDefinitionMapper resourceDefinitionMapper;
 
+    @Autowired
+    private ResourceDefinitionCache resourceDefinitionCache;
+
+    @Autowired
+    private MembershipService membershipService;
+
     public List<ResourceDefinition> getAll() {
         return resourceDefinitionRepository.findAll();
     }
 
-    public ResourceDefinition getByUuid(String uuid) {
-        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
-        if (oRd.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    format("Resource with provided uuid ('%s') is not defined", uuid)
-            );
-        }
-        return oRd.get();
+    public Optional<ResourceDefinition> getByUuid(String uuid) {
+        return resourceDefinitionRepository.findByUuid(uuid);
     }
 
     public ResourceDefinition getByUrlPrefix(String urlPrefix) {
@@ -73,34 +76,64 @@ public class ResourceDefinitionService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ResourceDefinition create(ResourceDefinitionChangeDTO reqDto) {
+    public ResourceDefinition create(ResourceDefinitionChangeDTO reqDto) throws BindException {
         String uuid = UUID.randomUUID().toString();
         ResourceDefinition rd = resourceDefinitionMapper.fromChangeDTO(reqDto, uuid);
 
         resourceDefinitionValidator.validate(rd);
         resourceDefinitionRepository.save(rd);
+        resourceDefinitionCache.computeCache();
+
+        membershipService.addToMembership(rd);
         return rd;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ResourceDefinition update(String uuid, ResourceDefinitionChangeDTO reqDto) {
-        ResourceDefinition rd = getByUuid(uuid);
+    public Optional<ResourceDefinition> update(String uuid, ResourceDefinitionChangeDTO reqDto) throws BindException {
+        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
+        if (oRd.isEmpty()) {
+            return Optional.empty();
+        }
+        ResourceDefinition rd = oRd.get();
         ResourceDefinition updatedRd = resourceDefinitionMapper.fromChangeDTO(reqDto, rd.getUuid());
         updatedRd.setId(rd.getId());
 
         resourceDefinitionValidator.validate(updatedRd);
         resourceDefinitionRepository.save(updatedRd);
-        return updatedRd;
+        resourceDefinitionCache.computeCache();
+        return Optional.of(updatedRd);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteByUuid(String uuid) {
+        // 1. Get resource definition
         Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
         if (oRd.isEmpty()) {
             return false;
         }
         ResourceDefinition rd = oRd.get();
+
+        // 2. Delete from parent resource definition
+        ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
+        if (rdParent != null) {
+            rdParent = resourceDefinitionRepository.findByUuid(rdParent.getUuid()).get();
+            rdParent.setChildren(
+                    rdParent.getChildren()
+                            .stream()
+                            .filter(x -> !x.getResourceDefinitionUuid().equals(rd.getUuid()))
+                            .collect(Collectors.toList())
+            );
+            resourceDefinitionRepository.save(rdParent);
+        }
+
+        // 3. Delete resource definition
         resourceDefinitionRepository.delete(rd);
+
+        // 4. Delete entity from membership
+        membershipService.removeFromMembership(rd);
+
+        // 4. Recompute cache
+        resourceDefinitionCache.computeCache();
         return true;
     }
 

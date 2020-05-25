@@ -29,10 +29,12 @@ import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.format;
 
@@ -50,7 +52,7 @@ public class ResourceDefinitionController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<ResourceDefinition> createResourceDefinitions(@RequestBody @Valid ResourceDefinitionChangeDTO reqDto) {
+    public ResponseEntity<ResourceDefinition> createResourceDefinitions(@RequestBody @Valid ResourceDefinitionChangeDTO reqDto) throws BindException {
         ResourceDefinition dto = resourceDefinitionService.create(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -58,16 +60,24 @@ public class ResourceDefinitionController {
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
     public ResponseEntity<ResourceDefinition> getResourceDefinition(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        ResourceDefinition dto = resourceDefinitionService.getByUuid(uuid);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        Optional<ResourceDefinition> oDto = resourceDefinitionService.getByUuid(uuid);
+        if (oDto.isPresent()) {
+            return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
+        } else {
+            throw new ResourceNotFoundException(format("Resource Definition '%s' doesn't exist", uuid));
+        }
     }
 
     @RequestMapping(value = "/{uuid}", method = RequestMethod.PUT)
     public ResponseEntity<ResourceDefinition> putResourceDefinitions(@PathVariable final String uuid,
                                                                      @RequestBody @Valid ResourceDefinitionChangeDTO reqDto)
-            throws ResourceNotFoundException {
-        ResourceDefinition dto = resourceDefinitionService.update(uuid, reqDto);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+            throws ResourceNotFoundException, BindException {
+        Optional<ResourceDefinition> oDto = resourceDefinitionService.update(uuid, reqDto);
+        if (oDto.isPresent()) {
+            return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
+        } else {
+            throw new ResourceNotFoundException(format("Resource Definition '%s' doesn't exist", uuid));
+        }
     }
 
     @RequestMapping(value = "/{uuid}", method = RequestMethod.DELETE)

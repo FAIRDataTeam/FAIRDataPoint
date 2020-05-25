@@ -20,17 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.resource;
+package nl.dtls.fairdatapoint.api.validator;
 
-import lombok.*;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-public class ResourceDefinitionParent {
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
-    protected String resourceDefinitionUuid;
+public class IriValidator implements ConstraintValidator<ValidIri, String> {
+
+    @Override
+    public void initialize(ValidIri text) {
+    }
+
+    @Override
+    public boolean isValid(String text, ConstraintValidatorContext cxt) {
+        try {
+            i(text);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 }

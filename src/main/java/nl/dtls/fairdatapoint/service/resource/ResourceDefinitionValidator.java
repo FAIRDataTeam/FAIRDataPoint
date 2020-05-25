@@ -25,10 +25,15 @@ package nl.dtls.fairdatapoint.service.resource;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindException;
 
 import java.util.List;
+import java.util.Optional;
+
+import static nl.dtls.fairdatapoint.util.ValidationUtil.uniquenessValidationFailed;
 
 @Service
 public class ResourceDefinitionValidator {
@@ -36,72 +41,45 @@ public class ResourceDefinitionValidator {
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
 
-    public void validate(ResourceDefinition reqDto) {
+    @Autowired
+    private ResourceDefinitionCache resourceDefinitionCache;
+
+    public void validate(ResourceDefinition reqDto) throws BindException {
         // Check uniqueness
-        List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
-        for (ResourceDefinition rd : rds) {
-            if (!rd.getUuid().equals(reqDto.getUuid()) && rd.getName().equals(reqDto.getName())) {
-                throw new ValidationException("Name should be unique");
-            }
-            if (!rd.getUuid().equals(reqDto.getUuid()) && rd.getUrlPrefix().equals(reqDto.getUrlPrefix())) {
-                throw new ValidationException("Url Prefix should be unique");
-            }
+        Optional<ResourceDefinition> oRdByName = resourceDefinitionRepository.findByName(reqDto.getName());
+        if (oRdByName.isPresent() && !oRdByName.get().getUuid().equals(reqDto.getUuid())) {
+            uniquenessValidationFailed("name", reqDto);
+        }
+        Optional<ResourceDefinition> oRdByUrlPrefix =
+                resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix());
+        if (oRdByUrlPrefix.isPresent() && !oRdByUrlPrefix.get().getUuid().equals(reqDto.getUuid())) {
+            uniquenessValidationFailed("urlPrefix", reqDto);
         }
 
         // Check existence of connected entities
-        if (reqDto.getChild() != null) {
-            if (resourceDefinitionRepository.findByUuid(reqDto.getChild().getResourceDefinitionUuid()).isEmpty()) {
+        for (ResourceDefinitionChild child : reqDto.getChildren()) {
+            if (resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid()) == null) {
                 throw new ValidationException("Child doesn't exist");
-            }
-        }
-        if (reqDto.getParent() != null) {
-            if (resourceDefinitionRepository.findByUuid(reqDto.getParent().getResourceDefinitionUuid()).isEmpty()) {
-                throw new ValidationException("Parent doesn't exist");
             }
         }
 
         // Check existence of dependency cycles
-        if (reqDto.getParent() != null) {
-            String parentUuid = reqDto.getParent().getResourceDefinitionUuid();
-            while (true) {
-                if (reqDto.getUuid().equals(parentUuid)) {
-                    throw new ValidationException("Detect dependency cycle through parent");
-                }
-
-                ResourceDefinition rd = getResourceDefinition(rds, parentUuid);
-                if (rd.getParent() == null) {
-                    break;
-                }
-                parentUuid = rd.getParent().getResourceDefinitionUuid();
-            }
-        }
-        if (reqDto.getChild() != null) {
-            String childUuid = reqDto.getChild().getResourceDefinitionUuid();
-            while (true) {
-                if (reqDto.getUuid().equals(childUuid)) {
-                    throw new ValidationException("Detect dependency cycle through child");
-                }
-
-                ResourceDefinition rd = getResourceDefinition(rds, childUuid);
-                if (rd.getChild() == null) {
-                    break;
-                }
-                childUuid = rd.getChild().getResourceDefinitionUuid();
-            }
-        }
-
-        // Check if parent already has some other child
-        if (reqDto.getParent() != null) {
-            ResourceDefinition parentRd = getResourceDefinition(rds, reqDto.getParent().getResourceDefinitionUuid());
-            if (parentRd.getChild() != null && !parentRd.getChild().getResourceDefinitionUuid().equals(reqDto.getUuid())) {
-                throw new ValidationException("Parent already has some other child");
-            }
-        }
-
+        validateDependencyCycles(reqDto, reqDto.getChildren());
     }
 
-    private ResourceDefinition getResourceDefinition(List<ResourceDefinition> resourceDefinitions, String uuid) {
-        return resourceDefinitions.stream().filter(rd -> rd.getUuid().equals(uuid)).findAny().get();
+    private void validateDependencyCycles(ResourceDefinition reqDto, List<ResourceDefinitionChild> children) {
+        for (ResourceDefinitionChild child : children) {
+            String childUuid = child.getResourceDefinitionUuid();
+            if (reqDto.getUuid().equals(childUuid)) {
+                throw new ValidationException("Detect dependency cycle through child");
+            }
+
+            ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childUuid);
+            if (rdChild.getChildren().isEmpty()) {
+                return;
+            }
+            validateDependencyCycles(reqDto, rdChild.getChildren());
+        }
     }
 
 }

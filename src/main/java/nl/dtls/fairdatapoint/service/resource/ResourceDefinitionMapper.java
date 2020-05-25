@@ -34,10 +34,8 @@ public class ResourceDefinitionMapper {
                 uuid,
                 dto.getName(),
                 dto.getUrlPrefix(),
-                dto.getSpecs(),
                 dto.getTargetClassUris(),
-                dto.getChild(),
-                dto.getParent(),
+                dto.getChildren(),
                 dto.getExternalLinks());
     }
 
@@ -45,10 +43,8 @@ public class ResourceDefinitionMapper {
         return new ResourceDefinitionChangeDTO(
                 rd.getName(),
                 rd.getUrlPrefix(),
-                rd.getSpecs(),
                 rd.getTargetClassUris(),
-                rd.getChild(),
-                rd.getParent(),
+                rd.getChildren(),
                 rd.getExternalLinks());
     }
 }

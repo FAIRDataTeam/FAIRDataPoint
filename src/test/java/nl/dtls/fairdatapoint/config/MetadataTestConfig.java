@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.entity.metadata.Agent;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -33,14 +32,6 @@ import org.springframework.context.annotation.Bean;
 public class MetadataTestConfig {
 
     private final ValueFactory VF = SimpleValueFactory.getInstance();
-
-    @Bean(name = "publisher")
-    public Agent publisher() {
-        Agent publisher = new Agent();
-        publisher.setUri(VF.createIRI("https://www.dtls.nl"));
-        publisher.setName(VF.createLiteral("DTLS"));
-        return publisher;
-    }
 
     @Bean(name = "language")
     public IRI language() {

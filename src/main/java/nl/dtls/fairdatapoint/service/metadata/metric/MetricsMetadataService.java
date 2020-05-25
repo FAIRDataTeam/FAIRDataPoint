@@ -25,23 +25,40 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.config;
+package nl.dtls.fairdatapoint.service.metadata.metric;
 
-import org.springframework.beans.factory.config.YamlMapFactoryBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.entity.metadata.Metric;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.eclipse.rdf4j.model.IRI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@Configuration
-public class MetricsValueConfig {
+import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
-    @Bean(name = "metadataMetrics")
-    public Map<String, String> metadataMetrics() {
-        YamlMapFactoryBean yamlFactory = new YamlMapFactoryBean();
-        yamlFactory.setResources(new ClassPathResource("application.yml"));
-        return (Map<String, String>) yamlFactory.getObject().get("metadataMetrics");
+@Slf4j
+@Service
+public class MetricsMetadataService {
+
+    @Autowired
+    @Qualifier("metadataMetrics")
+    private Map<String, String> metadataMetrics;
+
+    public List<Metric> generateMetrics(@Nonnull IRI metadataURI) {
+        return metadataMetrics.entrySet().stream()
+                .map(entry ->
+                        new Metric(
+                                i(format("%s/metrics/%s", metadataURI.toString(), DigestUtils.md5Hex(entry.getKey()))),
+                                i(entry.getValue()),
+                                i(entry.getValue())))
+                .collect(Collectors.toList());
     }
 
 }

@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.service.membership;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,4 +50,50 @@ public class MembershipService {
                         .map(membershipMapper::toDTO)
                         .collect(toList());
     }
+
+    public void addToMembership(ResourceDefinition resourceDefinition) {
+        String rdUuid = resourceDefinition.getUuid();
+
+        // Add to owner
+        Membership owner = membershipRepository.findByUuid("49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8").get();
+        addEntityIfMissing(owner, rdUuid);
+        membershipRepository.save(owner);
+
+        // Add to data provider
+        if (resourceDefinition.getUrlPrefix().equals("catalog")) {
+            Membership dataProvider = membershipRepository.findByUuid("87a2d984-7db2-43f6-805c-6b0040afead5").get();
+            addEntityIfMissing(dataProvider, rdUuid);
+            membershipRepository.save(dataProvider);
+        }
+    }
+
+    public void removeFromMembership(ResourceDefinition resourceDefinition) {
+        String rdUuid = resourceDefinition.getUuid();
+
+        // Add to owner
+        Membership owner = membershipRepository.findByUuid("49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8").get();
+        removeEntityIfPresent(owner, rdUuid);
+        membershipRepository.save(owner);
+
+        // Add to data provider
+        if (resourceDefinition.getUrlPrefix().equals("catalog")) {
+            Membership dataProvider = membershipRepository.findByUuid("87a2d984-7db2-43f6-805c-6b0040afead5").get();
+            removeEntityIfPresent(dataProvider, rdUuid);
+            membershipRepository.save(dataProvider);
+        }
+    }
+
+    private void addEntityIfMissing(Membership membership, String rdUuid) {
+        if (!membership.getAllowedEntities().contains(rdUuid)) {
+            membership.getAllowedEntities().add(rdUuid);
+        }
+    }
+
+    private void removeEntityIfPresent(Membership membership, String rdUuid) {
+        int index = membership.getAllowedEntities().indexOf(rdUuid);
+        if (index != -1) {
+            membership.getAllowedEntities().remove(index);
+        }
+    }
+
 }

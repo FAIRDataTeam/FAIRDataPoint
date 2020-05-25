@@ -24,7 +24,6 @@ package nl.dtls.fairdatapoint.api.dto.membership;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import nl.dtls.fairdatapoint.entity.membership.MembershipEntity;
 
 import java.util.List;
 
@@ -38,6 +37,6 @@ public class MembershipDTO {
 
     private List<MembershipPermissionDTO> permissions;
 
-    private List<MembershipEntity> allowedEntities;
+    private List<String> allowedEntities;
 
 }

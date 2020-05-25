@@ -24,7 +24,6 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.entity.metadata.Agent;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
@@ -37,7 +36,10 @@ import org.bson.Document;
 import org.bson.types.BasicBSONList;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.vocabulary.*;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -80,9 +82,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     private IRI language;
 
     @Autowired
-    private Agent publisher;
-
-    @Autowired
     @Qualifier("metadataMetrics")
     private Map<String, String> metadataMetrics;
 
@@ -118,18 +117,21 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, DCTERMS.LANGUAGE, language);
             // Identifier
             IRI identifierIri = i(persistentUrl + "#identifier");
-            add(s, DATACITE.HASIDENTIFIER, identifierIri);
+            add(s, FDP.METADATAIDENTIFIER, identifierIri);
             add(s, identifierIri, RDF.TYPE, DATACITE.IDENTIFIER);
             add(s, identifierIri, DCTERMS.IDENTIFIER, l(persistentUrl));
+            // Repository Identifier
+            add(s, R3D.REPOSITORYIDENTIFIER, identifierIri);
             // Access Rights
             IRI arIri = i(persistentUrl + "#accessRights");
             add(s, DCTERMS.ACCESS_RIGHTS, arIri);
             add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT);
             add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription));
             // Publisher
-            add(s, DCTERMS.PUBLISHER, publisher.getUri());
-            add(s, publisher.getUri(), RDF.TYPE, publisher.getType());
-            add(s, publisher.getUri(), FOAF.NAME, publisher.getName());
+            IRI publisherIri = i(persistentUrl + "#publisher");
+            add(s, DCTERMS.PUBLISHER, publisherIri);
+            add(s, publisherIri, RDF.TYPE, FOAF.AGENT);
+            add(s, publisherIri, FOAF.NAME, l("Default Publisher"));
             // Metrics
             metadataMetrics.forEach((metric, metricValue) -> {
                 IRI metUri = i(format("%s/metrics/%s", persistentUrl, DigestUtils.md5Hex(metric)));

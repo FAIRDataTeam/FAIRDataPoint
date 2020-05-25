@@ -47,9 +47,8 @@ public class ResourceDefinitionFixtures {
                 REPOSITORY_DEFINITION_UUID,
                 "Repository",
                 "",
-                "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.re3data.org/schema/3-0#Repository"),
-                new ResourceDefinitionChild(
+                List.of(new ResourceDefinitionChild(
                         CATALOG_DEFINITION_UUID,
                         R3D.DATACATALOG.stringValue(),
                         new ResourceDefinitionChildListView(
@@ -57,8 +56,7 @@ public class ResourceDefinitionFixtures {
                                 "http://www.w3.org/ns/dcat#themeTaxonomy",
                                 List.of()
                         )
-                ),
-                null,
+                )),
                 List.of()
         );
     }
@@ -68,9 +66,8 @@ public class ResourceDefinitionFixtures {
                 CATALOG_DEFINITION_UUID,
                 "Catalog",
                 "catalog",
-                "https://www.purl.org/fairtools/fdp/schema/0.1/catalogMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Catalog"),
-                new ResourceDefinitionChild(
+                List.of(new ResourceDefinitionChild(
                         DATASET_DEFINITION_UUID,
                         DCAT.HAS_DATASET.stringValue(),
                         new ResourceDefinitionChildListView(
@@ -78,8 +75,7 @@ public class ResourceDefinitionFixtures {
                                 "http://www.w3.org/ns/dcat#theme",
                                 List.of()
                         )
-                ),
-                new ResourceDefinitionParent(REPOSITORY_DEFINITION_UUID),
+                )),
                 List.of()
         );
     }
@@ -89,9 +85,8 @@ public class ResourceDefinitionFixtures {
                 DATASET_DEFINITION_UUID,
                 "Dataset",
                 "dataset",
-                "https://www.purl.org/fairtools/fdp/schema/0.1/datasetMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Dataset"),
-                new ResourceDefinitionChild(
+                List.of(new ResourceDefinitionChild(
                         DISTRIBUTION_DEFINITION_UUID,
                         DCAT.HAS_DISTRIBUTION.stringValue(),
                         new ResourceDefinitionChildListView("Distributions", null, List.of(
@@ -100,8 +95,7 @@ public class ResourceDefinitionFixtures {
                                         "http://www.w3.org/ns/dcat#mediaType"
                                 )
                         ))
-                ),
-                new ResourceDefinitionParent(CATALOG_DEFINITION_UUID),
+                )),
                 List.of()
         );
     }
@@ -111,10 +105,8 @@ public class ResourceDefinitionFixtures {
                 DISTRIBUTION_DEFINITION_UUID,
                 "Distribution",
                 "distribution",
-                "https://www.purl.org/fairtools/fdp/schema/0.1/distributionMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Distribution"),
-                null,
-                new ResourceDefinitionParent(DATASET_DEFINITION_UUID),
+                List.of(),
                 List.of(
                         new ResourceDefinitionLink("Access online", "http://www.w3.org/ns/dcat#accessURL"),
                         new ResourceDefinitionLink("Download", "http://www.w3.org/ns/dcat#downloadURL")
@@ -127,10 +119,8 @@ public class ResourceDefinitionFixtures {
                 ONTOLOGY_DEFINITION_UUID,
                 "Ontology",
                 "ontology",
-                "https://www.purl.org/fairtools/fdp/schema/0.1/ontologyMetadata",
                 List.of("http://www.w3.org/ns/dcat#Resource", "http://www.w3.org/ns/dcat#Ontology"),
-                null,
-                new ResourceDefinitionParent(DISTRIBUTION_DEFINITION_UUID),
+                List.of(),
                 List.of()
         );
     }

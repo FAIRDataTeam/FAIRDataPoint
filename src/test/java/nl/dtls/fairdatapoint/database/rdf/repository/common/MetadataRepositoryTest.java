@@ -28,256 +28,113 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepositoryImpl;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryException;
-import org.junit.jupiter.api.BeforeEach;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getLanguage;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
-// TODO Get rid of DirtiesContext
-@DirtiesContext
 public class MetadataRepositoryTest extends WebIntegrationTest {
-
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
-
-    private final ValueFactory f = SimpleValueFactory.getInstance();
-
-    private List<Statement> STATEMENTS;
-
-    private final IRI TESTSUB = f.createIRI("http://www.dtls.nl/testSub");
-
-    private final IRI TESTOBJ = f.createIRI("http://www.dtls.nl/testObj");
-
-    private final Statement TESTSTMT = f.createStatement(TESTSUB, RDF.TYPE, TESTOBJ);
 
     @Autowired
     private GenericMetadataRepository metadataRepository;
 
-    @Mock
-    private Repository repository;
-
-    @InjectMocks
-    private GenericMetadataRepositoryImpl mockMetadataRepository;
-
     @Autowired
     private TestMetadataFixtures testMetadataFixtures;
 
-    @BeforeEach
-    public void storeExampleFile() throws MetadataRepositoryException {
-        STATEMENTS = new ArrayList<>(testMetadataFixtures.repositoryMetadata());
+    @Test
+    public void findWorks() throws Exception {
+        // GIVEN:
+        IRI context = getUri(testMetadataFixtures.catalog1());
 
-        metadataRepository.storeStatements(STATEMENTS, f.createIRI(persistentUrl));
-        MockitoAnnotations.initMocks(this);
+        // WHEN:
+        List<Statement> result = metadataRepository.find(context);
+
+        // THEN:
+        assertThat(result.size(), is(equalTo(30)));
     }
 
-    /**
-     * The URI of a RDF resource can't be NULL, this test is excepted to throw
-     * IllegalArgumentException
-     */
-    @DirtiesContext
     @Test
-    public void nullURI() throws MetadataRepositoryException {
-        assertThrows(NullPointerException.class, () -> {
-            metadataRepository.retrieveResource(null);
-        });
+    public void findNonExistingResource() throws Exception {
+        // GIVEN:
+        IRI context = i("http://localhost/non-existing");
+
+        // WHEN:
+        List<Statement> result = metadataRepository.find(context);
+
+        // THEN:
+        assertThat(result.size(), is(equalTo(0)));
     }
 
-    /**
-     * The URI of a RDF resource can't be EMPTY, this test is excepted to throw
-     * IllegalArgumentException
-     */
-    @DirtiesContext
     @Test
-    public void emptyURI() throws MetadataRepositoryException {
-        assertThrows(IllegalArgumentException.class, () -> {
+    public void checkExistenceWorks() throws Exception {
+        // GIVEN:
+        Model metadata = testMetadataFixtures.catalog1();
 
-            String uri = "";
-            metadataRepository.retrieveResource(f.createIRI(uri));
-        });
+        // WHEN:
+        boolean result = metadataRepository.checkExistence(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata));
+
+        // THEN:
+        assertThat(result, is(equalTo(true)));
     }
 
-    /**
-     * This test is excepted to throw execption
-     */
-    @DirtiesContext
     @Test
-    public void emptyInvalidURI() throws MetadataRepositoryException {
-        assertThrows(IllegalArgumentException.class, () -> {
-            String uri = "...";
-            metadataRepository.retrieveResource(f.createIRI(uri));
-        });
+    public void saveWorks() throws Exception {
+        // GIVEN:
+        Model metadata = testMetadataFixtures.c1_d2_distribution3();
+        IRI context = getUri(metadata);
+        ArrayList<Statement> statements = new ArrayList<>(metadata);
+
+        // WHEN:
+        metadataRepository.save(statements, context);
+
+        // THEN:
+        assertThat(metadataRepository.find(context).size(), is(equalTo(28)));
     }
 
-    /**
-     * The test is excepted to retrieve ZERO statements
-     */
-    @DirtiesContext
     @Test
-    public void retrieveNonExitingResource() throws Exception {
+    public void removeWorks() throws Exception {
+        // GIVEN:
+        Model metadata = testMetadataFixtures.catalog1();
+        IRI context = getUri(metadata);
 
-        String uri = "http://localhost/dummy";
-        List<Statement> statements = metadataRepository.retrieveResource(f.createIRI(uri));
-        assertTrue(statements.isEmpty());
+        // AND: Check existence before delete
+        assertThat(metadataRepository.find(context).size(), is(equalTo(30)));
+
+        // WHEN:
+        metadataRepository.remove(context);
+
+        // THEN:
+        assertThat(metadataRepository.find(context).size(), is(equalTo(0)));
     }
 
-    /**
-     * The test is excepted retrieve to retrieve one or more statements
-     */
-    @DirtiesContext
     @Test
-    public void retrieveExitingResource() throws Exception {
+    public void removeStatementWorks() throws Exception {
+        // GIVEN:
+        Model metadata = testMetadataFixtures.catalog1();
+        IRI context = getUri(metadata);
 
-        List<Statement> statements = metadataRepository.retrieveResource(
-                f.createIRI(persistentUrl));
-        assertTrue(statements.size() > 0);
-    }
+        // AND: Check existence before delete
+        assertThat(metadataRepository.find(context).size(), is(equalTo(30)));
 
-    /**
-     * The test is excepted to throw error
-     */
-    @DirtiesContext
-    @Test
-    public void retrieveResourceCatchBlock() throws Exception {
-        assertThrows(MetadataRepositoryException.class, () -> {
+        // WHEN:
+        metadataRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
 
-            when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockMetadataRepository.retrieveResource(f.createIRI(persistentUrl));
-        });
-    }
-
-    /**
-     * The test is excepted to pass
-     */
-    @DirtiesContext
-    @Test
-    public void storeResource() {
-        try {
-            metadataRepository.storeStatements(STATEMENTS);
-        } catch (MetadataRepositoryException ex) {
-            fail("The test is not excepted to throw MetadataRepositoryException");
-        }
-    }
-
-    /**
-     * The test is excepted to pass
-     */
-    @DirtiesContext
-    @Test
-    public void deleteRource() {
-        try {
-            List<Statement> sts = new ArrayList<>();
-            sts.add(TESTSTMT);
-            metadataRepository.storeStatements(sts);
-            metadataRepository.removeStatement(TESTSUB, RDF.TYPE, null);
-        } catch (MetadataRepositoryException ex) {
-            fail("The test is not excepted to throw MetadataRepositoryException");
-        }
-    }
-
-    /**
-     * The test is excepted to pass
-     */
-    @DirtiesContext
-    @Test
-    public void storeStatement() {
-        try {
-            metadataRepository.storeStatements(STATEMENTS, TESTSUB);
-        } catch (MetadataRepositoryException ex) {
-            fail("The test is not excepted to throw MetadataRepositoryException");
-        }
-    }
-
-    /**
-     * The test is excepted to retrieve return false
-     */
-    @DirtiesContext
-    @Test
-    public void checkNonExitingResource() throws Exception {
-        String uri = "http://localhost/dummy";
-        boolean isStatementExist = metadataRepository.isStatementExist(f.createIRI(uri), null, null);
-        assertFalse(isStatementExist);
-    }
-
-    /**
-     * The test is excepted to retrieve return true
-     */
-    @DirtiesContext
-    @Test
-    public void checkExitingResource() throws Exception {
-        boolean isStatementExist = metadataRepository.isStatementExist(
-                f.createIRI(persistentUrl), null, null);
-        assertTrue(isStatementExist);
-    }
-
-    /**
-     * Check exception handling of delete resource method
-     */
-    @DirtiesContext
-    @Test
-    public void checkExceptionsDeleteResourceMethod() throws Exception {
-        assertThrows(MetadataRepositoryException.class, () -> {
-            when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockMetadataRepository.removeResource(null);
-        });
-    }
-
-    /**
-     * Check exception handling of remove statement method
-     */
-    @DirtiesContext
-    @Test
-    public void checkExceptionsRemoveStatementMethod() throws Exception {
-        assertThrows(MetadataRepositoryException.class, () -> {
-            when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockMetadataRepository.removeStatement(null, null, null);
-        });
-    }
-
-    /**
-     * Check exception handling of isStatementExist method
-     */
-    @DirtiesContext
-    @Test
-    public void checkExceptionsIsStatementMethod() throws Exception {
-        assertThrows(MetadataRepositoryException.class, () -> {
-            when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockMetadataRepository.isStatementExist(f.createIRI(persistentUrl),
-                    null, null);
-        });
-    }
-
-    /**
-     * Check exception handling of storeStatement method
-     */
-    @DirtiesContext
-    @Test
-    public void checkExceptionsStoreStatementMethod() throws Exception {
-        assertThrows(MetadataRepositoryException.class, () -> {
-            when(repository.getConnection()).thenThrow(RepositoryException.class);
-            mockMetadataRepository.storeStatements(STATEMENTS);
-        });
+        // THEN:
+        assertThat(metadataRepository.find(context).size(), is(equalTo(29)));
     }
 
 }

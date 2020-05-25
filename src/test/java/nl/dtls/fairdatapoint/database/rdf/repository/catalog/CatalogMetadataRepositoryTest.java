@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CatalogMetadataRepositoryTest {
 
-    private IRI catalogUri = i("http://localhost/textmining");
+    private final IRI catalogUri = i("http://localhost/textmining");
 
     @Mock
     private Cache cache;
