@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,9 @@ public class ResourceDefinitionMigration implements Migration {
 
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
+
+    @Autowired
+    private ResourceDefinitionCache resourceDefinitionCache;
 
     public void runMigration() {
         resourceDefinitionRepository.deleteAll();
@@ -52,6 +56,8 @@ public class ResourceDefinitionMigration implements Migration {
 
         ResourceDefinition distributionDef = resourceDefinitionFixtures.distributionDefinition();
         resourceDefinitionRepository.save(distributionDef);
+
+        resourceDefinitionCache.computeCache();
     }
 
 }

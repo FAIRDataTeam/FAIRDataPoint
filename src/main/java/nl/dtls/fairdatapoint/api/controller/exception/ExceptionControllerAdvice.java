@@ -112,4 +112,29 @@ public class ExceptionControllerAdvice {
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ResponseBody
+//    public ErrorDTO processValidationError(MethodArgumentNotValidException ex) {
+//        BindingResult result = ex.getBindingResult();
+//        FieldError error = result.getFieldError();
+//        return processFieldError(error);
+//    }
+//
+//    private ErrorDTO processFieldError(FieldError error) {
+//        ErrorResponse errorResponse = new ErrorResponse();
+//        if (error != null) {
+//            Locale currentLocale = LocaleContextHolder.getLocale();
+////            errorResponse.setMessage(error.getDefaultMessage());
+//        }
+//        return new ErrorDTO(HttpStatus.BAD_REQUEST, error.getDefaultMessage());
+//    }
+//
+//    @ExceptionHandler(JsonMappingException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ResponseBody
+//    public ErrorDTO processValidationError(JsonMappingException ex) {
+//        return null;
+//    }
+
 }

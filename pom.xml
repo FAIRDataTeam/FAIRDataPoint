@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.10.RELEASE</version>
+        <version>2.2.7.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -25,20 +25,14 @@
 
     <developers>
         <developer>
-            <name>Rajaram Kaliyaperumal</name>
-            <email>rr.kaliyaperumal@gmail.com</email>
-            <organization>LUMC</organization>
-            <organizationUrl>https://www.lumc.nl/</organizationUrl>
+            <name>Vojtech Knaisl</name>
+            <email>vknaisl@gmail.com</email>
         </developer>
         <developer>
             <name>Kees Burger</name>
             <email>kees.burger@dtls.nl</email>
             <organization>DTLS</organization>
             <organizationUrl>http://www.dtls.nl/</organizationUrl>
-        </developer>
-        <developer>
-            <name>Vojtech Knaisl</name>
-            <email>vknaisl@gmail.com</email>
         </developer>
     </developers>
 
@@ -47,31 +41,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Maven -->
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>14</maven.compiler.source>
+        <maven.compiler.target>14</maven.compiler.target>
 
         <!-- Project related -->
-        <spring.rdf.migration.version>1.0.0.RELEASE</spring.rdf.migration.version>
-        <spring.security.acl.mongo.version>5.1.5.RELEASE</spring.security.acl.mongo.version>
-
-        <!-- Spring -->
-        <spring.boot.handlebars.version>0.3.0</spring.boot.handlebars.version>
+        <spring.rdf.migration.version>1.1.0.RELEASE</spring.rdf.migration.version>
+        <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Core -->
         <mongobee.version>0.13</mongobee.version>
         <springfox.swagger.version>2.9.1</springfox.swagger.version>
         <logback.version>1.2.3</logback.version>
-        <jackson.version>2.10.3</jackson.version>
         <rdf4j.version>3.0.0</rdf4j.version>
-        <velocity.version>1.7</velocity.version>
         <unirest.version>1.4.9</unirest.version>
-        <sass.version>5.3.0</sass.version>
         <jwt.version>0.10.5</jwt.version>
         <lombok.version>1.18.10</lombok.version>
-
-        <!-- Test -->
-        <junit-jupiter.version>5.3.2</junit-jupiter.version>
-        <mockito.version>2.23.0</mockito.version>
 
         <!-- Plugins -->
         <plugin.license.version>3.0</plugin.license.version>
@@ -192,16 +176,6 @@
             <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>
             <version>${unirest.version}</version>
@@ -241,39 +215,11 @@
                     <groupId>com.vaadin.external.google</groupId>
                     <artifactId>android-json</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit-jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit-jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

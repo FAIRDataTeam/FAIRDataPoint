@@ -20,27 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package nl.dtls.fairdatapoint.service.metadatametrics;
+package nl.dtls.fairdatapoint.entity.resource;
 
-import nl.dtls.fairdatapoint.entity.metadata.Metric;
-import org.eclipse.rdf4j.model.IRI;
+import lombok.*;
+import nl.dtls.fairdatapoint.api.validator.ValidIri;
 
-import javax.annotation.Nonnull;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
 
-public interface FairMetadataMetricsService {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+public class ResourceDefinitionChildListViewMetadata {
 
-    /**
-     * This method returns list of fair metrics for the given metadata URI
-     *
-     * @param metadataURI metadata URI
-     * @return List of fair metrics
-     */
-    List<Metric> getMetrics(@Nonnull IRI metadataURI);
+    @NotBlank
+    protected String title;
+
+    @NotBlank
+    @ValidIri
+    protected String propertyUri;
 
 }

@@ -106,13 +106,13 @@ public class List_POST extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 403: Shape is not authenticated")
+    @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
         createNoUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
     }
 
     @Test
-    @DisplayName("HTTP 403: Shape is not an admin")
+    @DisplayName("HTTP 403: User is not an admin")
     public void res403_shape() {
         createUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
     }

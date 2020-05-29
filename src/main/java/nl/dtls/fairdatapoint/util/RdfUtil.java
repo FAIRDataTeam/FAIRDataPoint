@@ -77,18 +77,18 @@ public class RdfUtil {
     /****************************************************
      *** Update
      ****************************************************/
-    public static void update(Model m, Resource subj, IRI pred, Value obj, Resource... contexts) {
-        m.remove(subj, pred, null, contexts);
+    public static void update(Model m, Resource subj, IRI pred, Value obj) {
+        m.remove(subj, pred, null);
         if (subj != null && pred != null && obj != null) {
-            m.add(subj, pred, obj, contexts);
+            m.add(subj, pred, obj);
         }
     }
 
-    public static <T extends Value> void update(Model m, Resource subj, IRI pred, List<T> list, Resource... contexts) {
-        m.remove(subj, pred, null, contexts);
+    public static <T extends Value> void update(Model m, Resource subj, IRI pred, List<T> list) {
+        m.remove(subj, pred, null);
         if (list != null) {
             list.forEach(obj -> {
-                m.add(subj, pred, obj, contexts);
+                m.add(subj, pred, obj);
             });
         }
     }

@@ -71,7 +71,7 @@ public class SwaggerConfig {
                         "       FAIR Data Point Specification" +
                         "   </a>" +
                         "   <br/>",
-                "1.4.0",
+                "1.5.0",
                 "ATO",
                 new Contact("Luiz Bonino",
                         "https://github.com/FAIRDataTeam/FAIRDataPoint",

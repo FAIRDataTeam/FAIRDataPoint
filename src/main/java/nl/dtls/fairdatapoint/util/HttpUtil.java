@@ -65,20 +65,14 @@ public class HttpUtil {
         if (name == null) {
             return RDFFormat.TURTLE;
         }
-        switch (name) {
-            case "text/plain":
-                return RDFFormat.TURTLE;
-            case "text/turtle":
-                return RDFFormat.TURTLE;
-            case "application/ld+json":
-                return RDFFormat.JSONLD;
-            case "application/rdf+xml":
-                return RDFFormat.RDFXML;
-            case "text/n3":
-                return RDFFormat.N3;
-            default:
-                return RDFFormat.TURTLE;
-        }
+        return switch (name) {
+            case "text/plain" -> RDFFormat.TURTLE;
+            case "text/turtle" -> RDFFormat.TURTLE;
+            case "application/ld+json" -> RDFFormat.JSONLD;
+            case "application/rdf+xml" -> RDFFormat.RDFXML;
+            case "text/n3" -> RDFFormat.N3;
+            default -> RDFFormat.TURTLE;
+        };
     }
 
     public static String removeLastSlash(String url) {

@@ -75,24 +75,14 @@ public class RepositoryConfig {
     public Repository repository(@Value("${repository.type:1}") int storeType, ApplicationContext context)
             throws RepositoryException {
 
-        Repository repository = null;
-        switch (storeType) {
-            case 1:
-                repository = getInMemoryStore();
-                break;
-            case 2:
-                repository = getNativeStore();
-                break;
-            case 3:
-                repository = getAgraphRepository();
-                break;
-            case 4:
-                repository = getGraphDBRepository();
-                break;
-            case 5:
-                repository = getBlazeGraphRepository();
-                break;
-        }
+        Repository repository = switch (storeType) {
+            case 1 -> getInMemoryStore();
+            case 2 -> getNativeStore();
+            case 3 -> getAgraphRepository();
+            case 4 -> getGraphDBRepository();
+            case 5 -> getBlazeGraphRepository();
+            default -> null;
+        };
 
         if (repository == null) {
             log.error("Failed to configure a RDF repository");

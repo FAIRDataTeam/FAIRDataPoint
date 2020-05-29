@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.api.converter.ErrorConverter;
 import nl.dtls.fairdatapoint.api.converter.RdfConverter;
@@ -39,7 +40,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static com.fasterxml.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -54,7 +54,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.addAll(errorConverters);
         converters.addAll(rdfConverters);
-        converters.add(new MappingJackson2HttpMessageConverter());
+        converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
         converters.add(new StringHttpMessageConverter());
     }
 
@@ -85,7 +85,7 @@ public class WebConfig implements WebMvcConfigurer {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         mapper.setSerializationInclusion(NON_NULL);
-        mapper.enable(SORT_PROPERTIES_ALPHABETICALLY);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return mapper;
     }
 

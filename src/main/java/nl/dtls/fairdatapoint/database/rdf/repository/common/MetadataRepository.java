@@ -39,15 +39,19 @@ import java.util.Map;
 
 public interface MetadataRepository {
 
-    List<Statement> retrieveResource(IRI uri) throws MetadataRepositoryException;
+    List<Resource> findResources() throws MetadataRepositoryException;
 
-    void storeStatements(List<Statement> statements, IRI... iri) throws MetadataRepositoryException;
+    List<Statement> find(IRI context) throws MetadataRepositoryException;
 
-    void removeStatement(Resource rsrc, IRI uri, Value value, IRI... contexts) throws MetadataRepositoryException;
+    boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException;
 
-    boolean isStatementExist(Resource rsrc, IRI pred, Value value) throws MetadataRepositoryException;
+    void save(List<Statement> statements, IRI context) throws MetadataRepositoryException;
 
-    void removeResource(IRI uri) throws MetadataRepositoryException;
+    void removeAll() throws MetadataRepositoryException;
+
+    void remove(IRI uri) throws MetadataRepositoryException;
+
+    void removeStatement(Resource subject, IRI predicate, Value object, IRI context) throws MetadataRepositoryException;
 
     List<BindingSet> runSparqlQuery(String queryName, Class repositoryType, Map<String, Value> bindings) throws MetadataRepositoryException;
 

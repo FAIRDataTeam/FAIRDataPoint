@@ -22,99 +22,108 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.generic;
 
+import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.junit.jupiter.api.BeforeEach;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 
-import java.util.Collections;
+import java.util.ArrayList;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.mockito.Mockito.*;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getLanguage;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 
-public class GenericMetadataRepositoryTest {
+public class GenericMetadataRepositoryTest extends WebIntegrationTest {
 
-    private IRI catalogUri = i("http://localhost/textmining");
-
-    @Spy
-    private Cache cache;
-
-    @Mock
-    private Repository repository;
-
-    @Mock
-    private RepositoryConnection repositoryConnection;
-
-    @Mock
-    private Resource resource;
-
-    @Mock
-    private Value value;
-
-    @Mock
+    @Autowired
     private ConcurrentMapCacheManager cacheManager;
 
-    @InjectMocks
-    @Spy
-    private GenericMetadataRepositoryImpl metadataRepository;
+    @Autowired
+    private TestMetadataFixtures testMetadataFixtures;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+    @Autowired
+    private GenericMetadataRepository metadataRepository;
+
+    @Autowired
+    private CatalogMetadataRepository catalogMetadataRepository;
 
     @Test
-    @DisplayName("'storeStatements' should evict cache")
-    public void storeStatementsEvictsCache() throws MetadataRepositoryException {
+    @DisplayName("'save' should evict cache")
+    public void saveEvictsCache() throws MetadataRepositoryException {
         // GIVEN:
-        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
-        when(repository.getConnection()).thenReturn(repositoryConnection);
+        Model catalog = testMetadataFixtures.catalog1();
+        IRI catalogUri = getUri(catalog);
+        Model dataset = testMetadataFixtures.c1_dataset1();
+
+        // AND: Compute cache
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+
+        // AND: Check if cache is full
+        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
 
         // WHEN:
-        metadataRepository.storeStatements(Collections.emptyList(), catalogUri);
+        metadataRepository.save(new ArrayList<>(dataset), getUri(dataset));
 
         // THEN:
-        verify(cache, times(1)).evict(catalogUri.toString());
+        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
     }
 
     @Test
     @DisplayName("'removeStatement' should evict cache")
     public void removeStatementEvictsCache() throws MetadataRepositoryException {
         // GIVEN:
-        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
-        when(repository.getConnection()).thenReturn(repositoryConnection);
+        Model catalog = testMetadataFixtures.catalog1();
+        IRI catalogUri = getUri(catalog);
+        Model dataset = testMetadataFixtures.c1_dataset1();
+
+        // AND: Compute cache
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+
+        // AND: Check if cache is full
+        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
 
         // WHEN:
-        metadataRepository.removeStatement(resource, catalogUri, value);
+        metadataRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
 
         // THEN:
-        verify(cache, times(1)).evict(catalogUri.toString());
+        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
     }
 
     @Test
-    @DisplayName("'removeResource' should evict cache")
-    public void removeResourceEvictsCache() throws MetadataRepositoryException {
+    @DisplayName("'remove' should evict cache")
+    public void removeEvictsCache() throws MetadataRepositoryException {
         // GIVEN:
-        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
-        when(repository.getConnection()).thenReturn(repositoryConnection);
+        Model catalog = testMetadataFixtures.catalog1();
+        IRI catalogUri = getUri(catalog);
+        Model dataset = testMetadataFixtures.c1_dataset1();
+
+        // AND: Compute cache
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+
+        // AND: Check if cache is full
+        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
 
         // WHEN:
-        metadataRepository.removeResource(catalogUri);
+        metadataRepository.remove(getUri(dataset));
 
         // THEN:
-        verify(cache, times(1)).evict(catalogUri.toString());
+        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+    }
+
+    private Cache getCache() {
+        return cacheManager.getCache(CATALOG_THEMES_CACHE);
     }
 
 }

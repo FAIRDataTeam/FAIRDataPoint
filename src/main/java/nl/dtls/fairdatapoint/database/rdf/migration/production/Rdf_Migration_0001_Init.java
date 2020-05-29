@@ -24,7 +24,6 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.entity.metadata.Agent;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
@@ -50,7 +49,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,9 +82,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     private IRI language;
 
     @Autowired
-    private Agent publisher;
-
-    @Autowired
     @Qualifier("metadataMetrics")
     private Map<String, String> metadataMetrics;
 
@@ -101,11 +97,12 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
         try (RepositoryConnection conn = repository.getConnection()) {
             List<Statement> s = new ArrayList<>();
             add(s, RDF.TYPE, R3D.REPOSITORY);
+            add(s, RDF.TYPE, i("http://www.w3.org/ns/dcat#Resource"));
             add(s, DCTERMS.TITLE, l("My FAIR Data Point"));
             add(s, RDFS.LABEL, l("My FAIR Data Point"));
             add(s, DCTERMS.HAS_VERSION, l(1.0f));
-            add(s, FDP.METADATAISSUED, l(LocalDateTime.now()));
-            add(s, FDP.METADATAMODIFIED, l(LocalDateTime.now()));
+            add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()));
+            add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()));
             add(s, DCTERMS.LICENSE, license);
             add(s, DCTERMS.DESCRIPTION, l("Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec " +
                     "ultricies augue turpis sed velit. Donec id consectetur ligula. Suspendisse pharetra egestas " +
@@ -120,18 +117,21 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, DCTERMS.LANGUAGE, language);
             // Identifier
             IRI identifierIri = i(persistentUrl + "#identifier");
-            add(s, DATACITE.HASIDENTIFIER, identifierIri);
+            add(s, FDP.METADATAIDENTIFIER, identifierIri);
             add(s, identifierIri, RDF.TYPE, DATACITE.IDENTIFIER);
             add(s, identifierIri, DCTERMS.IDENTIFIER, l(persistentUrl));
+            // Repository Identifier
+            add(s, R3D.REPOSITORYIDENTIFIER, identifierIri);
             // Access Rights
             IRI arIri = i(persistentUrl + "#accessRights");
             add(s, DCTERMS.ACCESS_RIGHTS, arIri);
             add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT);
             add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription));
             // Publisher
-            add(s, DCTERMS.PUBLISHER, publisher.getUri());
-            add(s, publisher.getUri(), RDF.TYPE, publisher.getType());
-            add(s, publisher.getUri(), FOAF.NAME, publisher.getName());
+            IRI publisherIri = i(persistentUrl + "#publisher");
+            add(s, DCTERMS.PUBLISHER, publisherIri);
+            add(s, publisherIri, RDF.TYPE, FOAF.AGENT);
+            add(s, publisherIri, FOAF.NAME, l("Default Publisher"));
             // Metrics
             metadataMetrics.forEach((metric, metricValue) -> {
                 IRI metUri = i(format("%s/metrics/%s", persistentUrl, DigestUtils.md5Hex(metric)));

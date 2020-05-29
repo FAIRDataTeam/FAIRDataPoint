@@ -43,7 +43,7 @@ import java.io.IOException;
 
 public class RdfConverter extends AbstractHttpMessageConverter<Model> {
 
-    private RDFFormat format;
+    private final RDFFormat format;
 
     public RdfConverter(RDFFormat format) {
         super(getMediaTypes(format));

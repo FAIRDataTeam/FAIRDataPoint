@@ -33,6 +33,6 @@ public interface ResourceDefinitionRepository extends MongoRepository<ResourceDe
 
     Optional<ResourceDefinition> findByName(String name);
 
-    Optional<ResourceDefinition> findByUriPrefix(String uriPrefix);
+    Optional<ResourceDefinition> findByUrlPrefix(String urlPrefix);
 
 }

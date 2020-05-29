@@ -22,13 +22,12 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data;
 
+import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-
-import static nl.dtls.fairdatapoint.entity.membership.MembershipEntity.*;
 
 @Service
 public class MembershipFixtures {
@@ -50,9 +49,9 @@ public class MembershipFixtures {
                     add(ADMINISTRATION);
                 }},
                 new ArrayList<>() {{
-                    add(CATALOG);
-                    add(DATASET);
-                    add(DISTRIBUTION);
+                    add(ResourceDefinitionFixtures.CATALOG_DEFINITION_UUID);
+                    add(ResourceDefinitionFixtures.DATASET_DEFINITION_UUID);
+                    add(ResourceDefinitionFixtures.DISTRIBUTION_DEFINITION_UUID);
                 }}
         );
     }
@@ -65,7 +64,7 @@ public class MembershipFixtures {
                     add(CREATE);
                 }},
                 new ArrayList<>() {{
-                    add(CATALOG);
+                    add(ResourceDefinitionFixtures.CATALOG_DEFINITION_UUID);
                 }}
         );
     }

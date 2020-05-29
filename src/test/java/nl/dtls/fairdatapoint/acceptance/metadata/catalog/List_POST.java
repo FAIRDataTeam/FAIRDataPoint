@@ -90,36 +90,6 @@ public class List_POST extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 201 (with rerouting)")
-    public void res201_withRerouting() throws Exception {
-        // GIVEN: We need to clear all permissions from default FDP fixtures
-        aclRepository.deleteAll();
-        aclCache.clearCache();
-        // AND: Prepare fixtures
-        metadataMigration.importDefaultFixtures(testMetadataFixtures.alternativePersistentUrl);
-        Model catalog3 = testMetadataFixtures.alternative_catalog3();
-        String reqDto = RdfIOUtil.write(catalog3, RDFFormat.TURTLE);
-        // AND: Prepare request
-        RequestEntity<String> request = RequestEntity
-                .post(url())
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
-                .header(HttpHeaders.ACCEPT, "text/turtle")
-                .header("x-forwarded-host", "lorentz.fair-dtls.surf-hosted.nl")
-                .header("x-forwarded-proto", "https")
-                .header("x-forwarded-port", "443")
-                .body(reqDto);
-        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<String> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
-    }
-
-    @Test
     @DisplayName("HTTP 403: Anonymous access")
     public void res403_anonymous() {
         createNoUserForbiddenTestPost(client, url(), reqDto());

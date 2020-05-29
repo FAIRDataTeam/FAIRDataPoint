@@ -139,14 +139,14 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 403: Shape is not authenticated")
+    @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
         Shape shape = shapeFixtures.repositoryShape();
         createNoUserForbiddenTestPut(client, url(shape.getUuid()), reqDto(shape));
     }
 
     @Test
-    @DisplayName("HTTP 403: Shape is not an admin")
+    @DisplayName("HTTP 403: User is not an admin")
     public void res403_shape() {
         Shape shape = shapeFixtures.repositoryShape();
         createUserForbiddenTestPut(client, url(shape.getUuid()), reqDto(shape));

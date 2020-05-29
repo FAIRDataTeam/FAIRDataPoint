@@ -25,48 +25,40 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service.metadatametrics;
+package nl.dtls.fairdatapoint.service.metadata.metric;
 
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.entity.metadata.Metric;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.IRI;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
-// TODO What is purpose of this class
-public class FairMetadataMetricsServiceImplTest extends BaseIntegrationTest {
+public class MetricsMetadataServiceTest extends BaseIntegrationTest {
 
-    private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
     @Autowired
-    private FairMetadataMetricsServiceImpl fmMetricsServiceImpl;
+    private MetricsMetadataService metricsMetadataService;
 
-    /**
-     * Test getMetrics with null uri, this test is excepted to throw error
-     */
     @Test
-    public void nullMetadataUri() {
-        assertThrows(NullPointerException.class, () -> {
-            fmMetricsServiceImpl.getMetrics(null);
-        });
-    }
+    public void generateMetricsWorks() {
+        // GIVEN:
+        IRI entityUri = i("http://localhost");
 
-    /**
-     * This test is excepted to pass
-     */
-    @Test
-    public void validMetadataUri() {
-//        Map<String, String> metadataMetrics = new HashMap<>();
-//        metadataMetrics.put("https://purl.org/fair-metrics/FM_F1A", "http://example.com/f1a");
-//        fmMetricsServiceImpl.setMetadataMetrics(metadataMetrics);
+        // WHEN:
+        List<Metric> result = metricsMetadataService.generateMetrics(entityUri);
 
-        List<Metric> m = fmMetricsServiceImpl.getMetrics(valueFactory.createIRI("http://localhost"));
-        assertTrue(m.size() > 0);
+        // THEN:
+        assertThat(result.size(), is(equalTo(2)));
+        assertThat(result.get(0).getValue(), is(equalTo(i("https://www.ietf.org/rfc/rfc3986.txt"))));
+        assertThat(result.get(0).getMetricType(), is(equalTo(i("https://www.ietf.org/rfc/rfc3986.txt"))));
+        assertThat(result.get(1).getValue(), is(equalTo(i("https://www.wikidata.org/wiki/Q8777"))));
+        assertThat(result.get(1).getMetricType(), is(equalTo(i("https://www.wikidata.org/wiki/Q8777"))));
     }
 
 }

@@ -33,6 +33,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @AllArgsConstructor
 public class RdfValidationException extends RuntimeException {
 
-    private Model model;
+    private final Model model;
 
 }

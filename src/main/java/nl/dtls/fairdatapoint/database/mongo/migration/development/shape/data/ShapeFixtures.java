@@ -36,11 +36,12 @@ public class ShapeFixtures {
                 "Resource",
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
                         "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
                         "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
+                        "@prefix foaf:     <http://xmlns.com/foaf/0.1/>.\n" +
+                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
                         "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
                         "\n" +
                         ":ResourceShape a sh:NodeShape ;\n" +
                         "  sh:targetClass dcat:Resource ;\n" +
@@ -56,6 +57,12 @@ public class ShapeFixtures {
                         "    sh:maxCount 1 ;\n" +
                         "    dash:editor dash:TextAreaEditor ;\n" +
                         "  ], [\n" +
+                        "    sh:path dct:publisher ;\n" +
+                        "    sh:node :AgentShape ;\n" +
+                        "    sh:minCount 1 ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:BlankNodeEditor ;\n" +
+                        "  ], [\n" +
                         "    sh:path dct:hasVersion ;\n" +
                         "    sh:name \"version\" ;\n" +
                         "    sh:nodeKind sh:Literal ;\n" +
@@ -64,19 +71,13 @@ public class ShapeFixtures {
                         "    dash:editor dash:TextFieldEditor ;\n" +
                         "    dash:viewer dash:LiteralViewer ;\n" +
                         "  ], [\n" +
-                        "    sh:path dct:license ;\n" +
+                        "    sh:path dct:language ;\n" +
                         "    sh:nodeKind sh:IRI ;\n" +
                         "    sh:maxCount 1 ;\n" +
                         "    dash:editor dash:URIEditor ;\n" +
                         "    dash:viewer dash:LabelViewer ;\n" +
                         "  ], [\n" +
-                        "    sh:path dct:conformsTo ;\n" +
-                        "    sh:name \"specification\" ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:language ;\n" +
+                        "    sh:path dct:license ;\n" +
                         "    sh:nodeKind sh:IRI ;\n" +
                         "    sh:maxCount 1 ;\n" +
                         "    dash:editor dash:URIEditor ;\n" +
@@ -85,14 +86,18 @@ public class ShapeFixtures {
                         "    sh:path dct:rights ;\n" +
                         "    sh:nodeKind sh:IRI ;\n" +
                         "    sh:maxCount 1 ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:issued ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:modified ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ] .\n" +
+                        "\n" +
+                        ":AgentShape a sh:NodeShape ;\n" +
+                        "  sh:targetClass foaf:Agent ;\n" +
+                        "  sh:property [\n" +
+                        "    sh:path foaf:name;\n" +
+                        "    sh:nodeKind sh:Literal ;\n" +
+                        "    sh:minCount 1 ;\n" +
+                        "    sh:maxCount  1 ;\n" +
+                        "    dash:editor dash:TextFieldEditor ;\n" +
                         "  ] ."
         );
     }
@@ -104,32 +109,45 @@ public class ShapeFixtures {
                 "Repository",
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
+                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
+                        "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
+                        "@prefix r3d:      <http://www.re3data.org/schema/3-0#> .\n" +
                         "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
                         "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
-                        "@prefix r3d:      <http://www.re3data.org/schema/3-0#> .\n" +
                         "\n" +
                         ":RepositoryShape a sh:NodeShape ;\n" +
                         "  sh:targetClass r3d:Repository ;\n" +
                         "  sh:property [\n" +
-                        "      sh:path r3d:startDate ;\n" +
-                        "      sh:datatype xsd:date ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ] ,\n" +
-                        "    [\n" +
-                        "      sh:path r3d:lastUpdate ;\n" +
-                        "      sh:datatype xsd:date ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ] ,\n" +
-                        "    [\n" +
-                        "      sh:path r3d:institution ;\n" +
-                        "      sh:class r3d:Institution ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ] ,\n" +
-                        "    [\n" +
-                        "      sh:path r3d:institutionCountry ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ] ."
+                        "    sh:path dct:references ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path r3d:institution ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path r3d:startDate ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:DatePickerEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path r3d:lastUpdate ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:DatePickerEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path r3d:institutionCountry ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ] .\n"
         );
     }
 
@@ -140,29 +158,35 @@ public class ShapeFixtures {
                 "Catalog",
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
                         "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
                         "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
                         "@prefix foaf:     <http://xmlns.com/foaf/0.1/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
+                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
                         "\n" +
                         ":CatalogShape a sh:NodeShape ;\n" +
                         "  sh:targetClass dcat:Catalog ;\n" +
                         "  sh:property [\n" +
-                        "      sh:path dct:isPartOf ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      sh:minCount 1 ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path foaf:homePage ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:themeTaxonomy ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      dash:viewer dash:LabelViewer ;\n" +
-                        "    ] ."
+                        "    sh:path dct:issued ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dct:modified ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path foaf:homePage ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:themeTaxonomy ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ] .\n"
         );
     }
 
@@ -173,41 +197,49 @@ public class ShapeFixtures {
                 "Dataset",
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
                         "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
                         "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
+                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
                         "\n" +
                         ":DatasetShape a sh:NodeShape ;\n" +
                         "  sh:targetClass dcat:Dataset ;\n" +
                         "  sh:property [\n" +
-                        "      sh:path dct:isPartOf ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      sh:minCount 1 ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:landingPage ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:theme ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      dash:editor dash:URIEditor ;\n" +
-                        "      dash:viewer dash:LabelViewer ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:keyword ;\n" +
-                        "      sh:nodeKind sh:Literal ;\n" +
-                        "      dash:editor dash:TextFieldEditor ;\n" +
-                        "      dash:viewer dash:LiteralViewer ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:contactPoint ;\n" +
-                        "       sh:nodeKind sh:IRI ;\n" +
-                        "       sh:maxCount 1 ;\n" +
-                        "    ] ."
+                        "    sh:path dct:issued ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:DatePickerEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dct:modified ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:DatePickerEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ],  [\n" +
+                        "    sh:path dcat:theme ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:minCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:contactPoint ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:keyword ;\n" +
+                        "    sh:nodeKind sh:Literal ;\n" +
+                        "    dash:editor dash:TextFieldEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:landingPage ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "    dash:viewer dash:LabelViewer ;\n" +
+                        "  ] .\n"
         );
     }
 
@@ -218,50 +250,55 @@ public class ShapeFixtures {
                 "Distribution",
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
                         "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
                         "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
+                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
                         "\n" +
                         ":DistributionShape a sh:NodeShape ;\n" +
                         "  sh:targetClass dcat:Distribution ;\n" +
                         "  sh:property [\n" +
-                        "      sh:path dct:isPartOf ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      sh:minCount 1 ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:accessURL ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "      dash:editor dash:URIEditor ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:downloadURL ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "      dash:editor dash:URIEditor ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:mediaType ;\n" +
-                        "      sh:nodeKind sh:Literal ;\n" +
-                        "      sh:minCount 1 ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "      dash:editor dash:TextFieldEditor ;\n" +
-                        "      dash:viewer dash:LiteralViewer ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:format ;\n" +
-                        "      sh:nodeKind sh:Literal ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "      dash:editor dash:TextFieldEditor ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path dcat:byteSize ;\n" +
-                        "      sh:nodeKind sh:Literal ;\n" +
-                        "      sh:maxCount 1 ;\n" +
-                        "    ] ."
+                        "    sh:path dct:issued ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:DatePickerEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dct:modified ;\n" +
+                        "    sh:datatype xsd:dateTime ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:DatePickerEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:accessURL ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:downloadURL ;\n" +
+                        "    sh:nodeKind sh:IRI ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:URIEditor ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:mediaType ;\n" +
+                        "    sh:nodeKind sh:Literal ;\n" +
+                        "    sh:minCount 1 ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:TextFieldEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:format ;\n" +
+                        "    sh:nodeKind sh:Literal ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:TextFieldEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ], [\n" +
+                        "    sh:path dcat:byteSize ;\n" +
+                        "    sh:nodeKind sh:Literal ;\n" +
+                        "    sh:maxCount 1 ;\n" +
+                        "    dash:editor dash:TextFieldEditor ;\n" +
+                        "    dash:viewer dash:LiteralViewer ;\n" +
+                        "  ] ."
         );
     }
 

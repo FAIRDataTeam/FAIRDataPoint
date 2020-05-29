@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.entity.metadata;
 
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
-import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
@@ -32,8 +31,9 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,7 +52,7 @@ public class MetadataGetter {
     }
 
     public static Identifier getMetadataIdentifier(Model metadata) {
-        return getIdentifier(metadata, DATACITE.HASIDENTIFIER);
+        return getIdentifier(metadata, FDP.METADATAIDENTIFIER);
     }
 
     public static IRI getParent(Model metadata) {
@@ -77,6 +77,10 @@ public class MetadataGetter {
         return l(getObjectBy(metadata, null, DCTERMS.TITLE));
     }
 
+    public static Literal getLabel(Model metadata) {
+        return l(getObjectBy(metadata, null, RDFS.LABEL));
+    }
+
     public static Literal getDescription(Model metadata) {
         return l(getObjectBy(metadata, null, DCTERMS.DESCRIPTION));
     }
@@ -89,17 +93,22 @@ public class MetadataGetter {
         return i(getObjectBy(metadata, null, DCTERMS.LICENSE));
     }
 
-    public static LocalDateTime getIssued(Model metadata) {
+    public static OffsetDateTime getIssued(Model metadata) {
         String result = getStringObjectBy(metadata, null, FDP.METADATAISSUED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
-    public static LocalDateTime getModified(Model metadata) {
+    public static OffsetDateTime getModified(Model metadata) {
         String result = getStringObjectBy(metadata, null, FDP.METADATAMODIFIED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
-    public static LocalDateTime getMetadataModified(Model metadata) {
+    public static OffsetDateTime getMetadataIssued(Model metadata) {
+        String result = getStringObjectBy(metadata, null, DCTERMS.ISSUED);
+        return result != null ? parseDateTimeLiteral(result) : null;
+    }
+
+    public static OffsetDateTime getMetadataModified(Model metadata) {
         String result = getStringObjectBy(metadata, null, DCTERMS.MODIFIED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
@@ -132,8 +141,8 @@ public class MetadataGetter {
     // ------------------------------------------------------------------------------------------------------------
     //  Utils
     // ------------------------------------------------------------------------------------------------------------
-    private static LocalDateTime parseDateTimeLiteral(String literal) {
-        return LocalDateTime.parse(literal, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    private static OffsetDateTime parseDateTimeLiteral(String literal) {
+        return OffsetDateTime.parse(literal, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
     public static Identifier getIdentifier(Model metadata, IRI pred) {

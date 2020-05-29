@@ -74,7 +74,7 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
         // GIVEN: Retrieve catalog from Repository
         Model catalog = testMetadataFixtures.catalog1();
         List<Statement> catalogStatements = new ArrayList<>(catalog);
-        when(metadataRepository.retrieveResource(getUri(catalog))).thenReturn(catalogStatements);
+        when(metadataRepository.find(getUri(catalog))).thenReturn(catalogStatements);
 
         // AND: Retrieve themes from datasets
         IRI theme1 = i("http://localhost/my_theme_1");

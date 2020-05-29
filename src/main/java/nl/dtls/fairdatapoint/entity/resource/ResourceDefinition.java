@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.entity.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -34,41 +35,33 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder(toBuilder = true)
+@EqualsAndHashCode
 public class ResourceDefinition {
 
     @Id
+    @JsonIgnore
     protected ObjectId id;
 
     protected String uuid;
 
     protected String name;
 
-    protected String uriPrefix;
+    protected String urlPrefix;
 
-    protected String rdfType;
+    protected List<String> targetClassUris;
 
-    protected String specs;
+    protected List<ResourceDefinitionChild> children;
 
-    protected List<String> shaclTargetClasses;
+    protected List<ResourceDefinitionLink> externalLinks;
 
-    protected String child;
-
-    protected String parentResourceDefinitionUuid;
-
-    protected String childResourceDefinitionUuid;
-
-    public ResourceDefinition(String uuid, String name, String uriPrefix, String rdfType, String specs,
-                              List<String> shaclTargetClasses, String child, String parentResourceDefinitionUuid,
-                              String childResourceDefinitionUuid) {
+    public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> targetClassUris,
+                              List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks) {
         this.uuid = uuid;
         this.name = name;
-        this.uriPrefix = uriPrefix;
-        this.rdfType = rdfType;
-        this.specs = specs;
-        this.shaclTargetClasses = shaclTargetClasses;
-        this.child = child;
-        this.parentResourceDefinitionUuid = parentResourceDefinitionUuid;
-        this.childResourceDefinitionUuid = childResourceDefinitionUuid;
+        this.urlPrefix = urlPrefix;
+        this.targetClassUris = targetClassUris;
+        this.children = children;
+        this.externalLinks = externalLinks;
     }
+
 }

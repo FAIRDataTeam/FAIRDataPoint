@@ -23,12 +23,12 @@
 package nl.dtls.fairdatapoint.service.security;
 
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
+import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
 import nl.dtls.fairdatapoint.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,10 +43,10 @@ public class MongoUserDetailsService implements UserDetailsService {
     private UserRepository repository;
 
     @Override
-    public UserDetails loadUserByUsername(String uuid) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String uuid) {
         Optional<User> oUser = repository.findByUuid(uuid);
         if (oUser.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UnauthorizedException("User not found");
         }
         User user = oUser.get();
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(format("ROLE_%s",

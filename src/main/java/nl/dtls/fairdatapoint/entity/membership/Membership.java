@@ -46,10 +46,9 @@ public class Membership {
 
     protected List<MembershipPermission> permissions;
 
-    protected List<MembershipEntity> allowedEntities;
+    protected List<String> allowedEntities;
 
-    public Membership(String uuid, String name, List<MembershipPermission> permissions,
-                      List<MembershipEntity> allowedEntities) {
+    public Membership(String uuid, String name, List<MembershipPermission> permissions, List<String> allowedEntities) {
         this.uuid = uuid;
         this.name = name;
         this.permissions = permissions;
