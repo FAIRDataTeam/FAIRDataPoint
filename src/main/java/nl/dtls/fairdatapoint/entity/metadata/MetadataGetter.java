@@ -33,7 +33,7 @@ import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -93,22 +93,22 @@ public class MetadataGetter {
         return i(getObjectBy(metadata, null, DCTERMS.LICENSE));
     }
 
-    public static LocalDateTime getIssued(Model metadata) {
+    public static OffsetDateTime getIssued(Model metadata) {
         String result = getStringObjectBy(metadata, null, FDP.METADATAISSUED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
-    public static LocalDateTime getModified(Model metadata) {
+    public static OffsetDateTime getModified(Model metadata) {
         String result = getStringObjectBy(metadata, null, FDP.METADATAMODIFIED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
-    public static LocalDateTime getMetadataIssued(Model metadata) {
+    public static OffsetDateTime getMetadataIssued(Model metadata) {
         String result = getStringObjectBy(metadata, null, DCTERMS.ISSUED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
-    public static LocalDateTime getMetadataModified(Model metadata) {
+    public static OffsetDateTime getMetadataModified(Model metadata) {
         String result = getStringObjectBy(metadata, null, DCTERMS.MODIFIED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
@@ -141,8 +141,8 @@ public class MetadataGetter {
     // ------------------------------------------------------------------------------------------------------------
     //  Utils
     // ------------------------------------------------------------------------------------------------------------
-    private static LocalDateTime parseDateTimeLiteral(String literal) {
-        return LocalDateTime.parse(literal, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    private static OffsetDateTime parseDateTimeLiteral(String literal) {
+        return OffsetDateTime.parse(literal, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
     public static Identifier getIdentifier(Model metadata, IRI pred) {

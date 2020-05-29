@@ -26,7 +26,7 @@ import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -99,11 +99,11 @@ public class ValueFactoryHelper {
         return VF.createLiteral(literal);
     }
 
-    public static Literal l(LocalDateTime literal) {
+    public static Literal l(OffsetDateTime literal) {
         if (literal == null) {
             return null;
         }
-        return VF.createLiteral(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(literal), XMLSchema.DATETIME);
+        return VF.createLiteral(DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(literal), XMLSchema.DATETIME);
     }
 
     public static Literal l(Value value) {

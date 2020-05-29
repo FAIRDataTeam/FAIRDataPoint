@@ -46,7 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -191,7 +191,7 @@ public abstract class AbstractMetadataService implements MetadataService {
                         }
                     }
                     metadataRepository.removeStatement(parent, FDP.METADATAMODIFIED, null, parent);
-                    statements.add(s(parent, FDP.METADATAMODIFIED, l(LocalDateTime.now())));
+                    statements.add(s(parent, FDP.METADATAMODIFIED, l(OffsetDateTime.now())));
                     metadataRepository.save(statements, parent);
                 } catch (MetadataRepositoryException e) {
                     throw new MetadataServiceException("Problem with updating parent timestamp");

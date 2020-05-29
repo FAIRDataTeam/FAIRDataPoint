@@ -49,7 +49,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -101,8 +101,8 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, DCTERMS.TITLE, l("My FAIR Data Point"));
             add(s, RDFS.LABEL, l("My FAIR Data Point"));
             add(s, DCTERMS.HAS_VERSION, l(1.0f));
-            add(s, FDP.METADATAISSUED, l(LocalDateTime.now()));
-            add(s, FDP.METADATAMODIFIED, l(LocalDateTime.now()));
+            add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()));
+            add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()));
             add(s, DCTERMS.LICENSE, license);
             add(s, DCTERMS.DESCRIPTION, l("Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec " +
                     "ultricies augue turpis sed velit. Donec id consectetur ligula. Suspendisse pharetra egestas " +

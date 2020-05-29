@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,7 +112,7 @@ public class MetadataEnhancer {
         setMetrics(metadata, uri, metricsMetadataService.generateMetrics(uri));
 
         // Add timestamps
-        LocalDateTime timestamp = LocalDateTime.now();
+        OffsetDateTime timestamp = OffsetDateTime.now();
         setIssued(metadata, uri, l(timestamp));
         setModified(metadata, uri, l(timestamp));
         if (rd.getUrlPrefix().equals("catalog")) {

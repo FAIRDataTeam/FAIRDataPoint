@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
@@ -199,10 +199,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         Model updatedCatalog = catalogMetadataService.retrieve(getUri(catalog));
         Model updatedDataset = genericMetadataService.retrieve(getUri(dataset));
         Model storedDistribution = genericMetadataService.retrieve(getUri(distribution));
-        LocalDateTime repositoryModified = getModified(updatedRepository);
-        LocalDateTime catalogModified = getModified(updatedCatalog);
-        LocalDateTime datasetModified = getModified(updatedDataset);
-        LocalDateTime distributionModified = getModified(storedDistribution);
+        OffsetDateTime repositoryModified = getModified(updatedRepository);
+        OffsetDateTime catalogModified = getModified(updatedCatalog);
+        OffsetDateTime datasetModified = getModified(updatedDataset);
+        OffsetDateTime distributionModified = getModified(storedDistribution);
         assertFalse(datasetModified.isBefore(distributionModified), "Dataset modified is not after Distribution " +
                 "modified");
         assertFalse(catalogModified.isBefore(distributionModified), "Catalog modified is not after Dataset modified");
