@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.api.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
+import nl.dtls.fairdatapoint.service.apikey.ApiKeyService;
 import nl.dtls.fairdatapoint.service.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,11 +41,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static nl.dtls.fairdatapoint.util.HttpUtil.getToken;
+
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private ApiKeyService apiKeyService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -53,18 +59,38 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     public void doFilterInternal(final HttpServletRequest request,
                                  final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
+        String token = getToken(request);
+        if (tryWithUser(token) || tryWithApiKey(token)) {
+            fc.doFilter(request, response);
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON.toString());
+            ErrorDTO error = new ErrorDTO(HttpStatus.UNAUTHORIZED, "You have to be log in");
+            objectMapper.writeValue(response.getWriter(), error);
+        }
+    }
+
+    private boolean tryWithUser(String token) {
         try {
-            String token = jwtService.resolveToken(request);
             if (token != null && jwtService.validateToken(token)) {
                 Authentication auth = jwtService.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-            fc.doFilter(request, response);
+            return true;
         } catch (UnauthorizedException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType(MediaType.APPLICATION_JSON.toString());
-            ErrorDTO error = new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
-            objectMapper.writeValue(response.getWriter(), error);
+            return false;
+        }
+    }
+
+    private boolean tryWithApiKey(String token) {
+        try {
+            if (token != null) {
+                Authentication auth = apiKeyService.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+            return true;
+        } catch (UnauthorizedException e) {
+            return false;
         }
     }
 

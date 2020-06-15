@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.database.mongo.migration.development;
 
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.acl.AclMigration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.ApiKeyMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.MembershipMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.ResourceDefinitionMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.ShapeMigration;
@@ -53,6 +54,9 @@ public class MigrationRunner {
     @Autowired
     private ShapeMigration shapeMigration;
 
+    @Autowired
+    private ApiKeyMigration apiKeyMigration;
+
     @PostConstruct
     public void run() {
         userMigration.runMigration();
@@ -60,6 +64,7 @@ public class MigrationRunner {
         aclMigration.runMigration();
         resourceDefinitionMigration.runMigration();
         shapeMigration.runMigration();
+        apiKeyMigration.runMigration();
     }
 
 }

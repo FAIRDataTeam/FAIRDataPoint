@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.general;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -36,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -44,6 +46,9 @@ public class SecurityTest extends WebIntegrationTest {
 
     @Autowired
     private TestMetadataFixtures testMetadataFixtures;
+
+    @Autowired
+    private ApiKeyFixtures apiKeyFixtures;
 
     @Test
     public void postRequestsAreSecured() {
@@ -81,6 +86,27 @@ public class SecurityTest extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
+    }
+
+    @Test
+    public void apiKeyIsWorking() {
+        // GIVEN: Prepare data
+        String reqDto = RdfIOUtil.write(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
+        // AND: Prepare request
+        RequestEntity<String> request = RequestEntity
+                .post(URI.create("/distribution"))
+                .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", apiKeyFixtures.ALBERT_API_KEY))
+                .body(reqDto);
+        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<Void> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
     }
 
 }
