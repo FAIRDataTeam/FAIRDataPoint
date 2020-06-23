@@ -30,7 +30,6 @@ import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,13 +37,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
-
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
 
 @Component
 public class JwtService {
@@ -86,13 +81,6 @@ public class JwtService {
 
     public String getUserUuid(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    public String resolveToken(HttpServletRequest req) {
-        return ofNullable(req.getHeader(HttpHeaders.AUTHORIZATION))
-                .filter(h -> h.startsWith("Bearer "))
-                .flatMap(h -> of(h.substring(7)))
-                .orElse(null);
     }
 
     public boolean validateToken(String token) {

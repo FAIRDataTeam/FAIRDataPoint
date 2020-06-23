@@ -22,14 +22,20 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
+import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
+import nl.dtls.fairdatapoint.entity.metadata.Metadata;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
+import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
+import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -42,6 +48,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.Optional;
 
 import static nl.dtls.fairdatapoint.util.HttpUtil.*;
 import static nl.dtls.fairdatapoint.util.RdfIOUtil.changeBaseUri;
@@ -65,6 +72,12 @@ public class GenericController {
 
     @Autowired
     private ShapeService shapeService;
+
+    @Autowired
+    private MetadataStateService metadataStateService;
+
+    @Autowired
+    private CurrentUserService currentUserService;
 
     @RequestMapping(
             value = "**/spec",
@@ -93,16 +106,28 @@ public class GenericController {
         Model entity = metadataService.retrieve(entityUri);
         resultRdf.addAll(entity);
 
-        // 3. Get children
+        // 4. Check if it is draft
+        Metadata state = metadataStateService.get(entityUri);
+        Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
+            throw new ForbiddenException("You are not allow to view this record in state DRAFT");
+        }
+
+        // 5. Get children
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             IRI relationUri = i(rdChild.getRelationUri());
             for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
                 Model childMetadata = metadataService.retrieve(i(childUri.stringValue()));
-                resultRdf.addAll(childMetadata);
+                Metadata childState = metadataStateService.get(i(childUri.stringValue()));
+                if (childState.getState().equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent()) {
+                    resultRdf.addAll(childMetadata);
+                } else {
+                    resultRdf.remove(entityUri, relationUri, childUri);
+                }
             }
         }
 
-        // 4. Get parent
+        // 6. Get parent
         while (true) {
             IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
             if (parentUri == null) {
@@ -114,7 +139,7 @@ public class GenericController {
             entityUri = parentUri;
         }
 
-        // 5. Create response
+        // 7. Create response
         return resultRdf;
     }
 
@@ -129,12 +154,33 @@ public class GenericController {
         String urlPrefix = getResourceNameForDetail(uri);
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
+        // 2. Get resource definition
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+
+        // 3. Get entity
         IRI entityUri = i(getRequestURL(request, persistentUrl));
         Model entity = metadataService.retrieve(entityUri);
         resultRdf.addAll(entity);
 
-        // 3. Create response
+        // 4. Check if it is DRAFT
+        Metadata state = metadataStateService.get(entityUri);
+        Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
+            throw new ForbiddenException("You are not allow to view this record in state DRAFT");
+        }
+
+        // 5. Filter children
+        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
+            IRI relationUri = i(rdChild.getRelationUri());
+            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
+                Metadata childState = metadataStateService.get(i(childUri.stringValue()));
+                if (!(childState.getState().equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent())) {
+                    resultRdf.remove(entityUri, relationUri, childUri);
+                }
+            }
+        }
+
+        // 6. Create response
         return resultRdf;
     }
 

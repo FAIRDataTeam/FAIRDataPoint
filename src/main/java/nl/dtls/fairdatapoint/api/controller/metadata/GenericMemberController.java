@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
@@ -60,23 +59,6 @@ public class GenericMemberController {
 
     @Autowired
     private MetadataServiceFactory metadataServiceFactory;
-
-    @RequestMapping(value = "**/member", method = RequestMethod.GET)
-    public MemberDTO getMember(HttpServletRequest request) throws MetadataServiceException {
-        // 1. Init
-        String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
-        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-
-        // 2. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(uri);
-        Model metadata = metadataService.retrieve(entityUri);
-
-        // 3. Get member
-        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
-        Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(entityId, Metadata.class);
-        return oMember.orElse(new MemberDTO(null, null));
-    }
 
     @RequestMapping(value = "**/members", method = RequestMethod.GET)
     public ResponseEntity<List<MemberDTO>> getMembers(HttpServletRequest request)

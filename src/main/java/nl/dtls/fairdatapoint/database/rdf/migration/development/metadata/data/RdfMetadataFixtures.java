@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 
 @Service
-public class MetadataFixtures {
+public class RdfMetadataFixtures {
 
     @Autowired
     protected MetadataFactory metadataFactory;

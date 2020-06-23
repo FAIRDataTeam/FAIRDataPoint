@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
-import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -55,7 +55,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class Detail_PUT extends WebIntegrationTest {
 
     @Autowired
-    private TestMetadataFixtures testMetadataFixtures;
+    private TestRdfMetadataFixtures testMetadataFixtures;
 
     private URI url(String id) {
         return URI.create(format("/dataset/%s", id));

@@ -23,9 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.MetadataMigration;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
-import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +50,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_POST extends WebIntegrationTest {
 
     @Autowired
-    private TestMetadataFixtures testMetadataFixtures;
+    private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
     private AclRepository aclRepository;
@@ -59,7 +59,7 @@ public class List_POST extends WebIntegrationTest {
     private AclCache aclCache;
 
     @Autowired
-    private MetadataMigration metadataMigration;
+    private RdfMetadataMigration rdfMetadataMigration;
 
     private URI url() {
         return URI.create("/catalog");

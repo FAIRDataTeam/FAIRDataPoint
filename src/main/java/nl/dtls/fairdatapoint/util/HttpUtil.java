@@ -26,12 +26,15 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
@@ -73,6 +76,13 @@ public class HttpUtil {
             case "text/n3" -> RDFFormat.N3;
             default -> RDFFormat.TURTLE;
         };
+    }
+
+    public static String getToken(HttpServletRequest req) {
+        return ofNullable(req.getHeader(HttpHeaders.AUTHORIZATION))
+                .filter(h -> h.startsWith("Bearer "))
+                .flatMap(h -> of(h.substring(7)))
+                .orElse(null);
     }
 
     public static String removeLastSlash(String url) {

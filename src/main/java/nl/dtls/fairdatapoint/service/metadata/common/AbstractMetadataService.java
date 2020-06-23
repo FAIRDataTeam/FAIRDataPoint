@@ -34,6 +34,7 @@ import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
@@ -81,6 +82,9 @@ public abstract class AbstractMetadataService implements MetadataService {
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
 
+    @Autowired
+    private MetadataStateService metadataStateService;
+
     @Override
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
         try {
@@ -116,6 +120,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             metadataRepository.save(new ArrayList<>(metadata), uri);
             updateParent(metadata, uri, resourceDefinition);
             addPermissions(uri);
+            addState(uri);
             return metadata;
         } catch (MetadataRepositoryException e) {
             throw new MetadataServiceException(e.getMessage());
@@ -210,4 +215,9 @@ public abstract class AbstractMetadataService implements MetadataService {
         User user = oUser.get();
         memberService.createOwner(uri.stringValue(), Metadata.class, user.getUuid());
     }
+
+    private void addState(IRI uri) {
+        metadataStateService.initState(uri);
+    }
+
 }

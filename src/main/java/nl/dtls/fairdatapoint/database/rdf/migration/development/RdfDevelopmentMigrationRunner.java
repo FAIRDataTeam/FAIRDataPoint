@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.database.rdf.migration.development;
 
 import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.MetadataMigration;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
@@ -37,11 +37,11 @@ import javax.annotation.PostConstruct;
 public class RdfDevelopmentMigrationRunner {
 
     @Autowired
-    private MetadataMigration metadataMigration;
+    private RdfMetadataMigration rdfMetadataMigration;
 
     @PostConstruct
     public void run() {
-        metadataMigration.runMigration();
+        rdfMetadataMigration.runMigration();
     }
 
 }

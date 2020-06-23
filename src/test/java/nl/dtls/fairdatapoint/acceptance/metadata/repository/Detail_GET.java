@@ -45,7 +45,7 @@ public class Detail_GET extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 200")
+    @DisplayName("HTTP 200: Published")
     public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity

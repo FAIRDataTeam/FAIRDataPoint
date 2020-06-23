@@ -20,13 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
+package nl.dtls.fairdatapoint.acceptance.apikey;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.service.member.MemberMapper;
+import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,69 +35,48 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.List;
 
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyMember;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /dataset/:datasetId/member")
-public class Detail_Member_GET extends WebIntegrationTest {
+@DisplayName("GET /api-keys")
+public class List_GET extends WebIntegrationTest {
 
-    @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
-
-    @Autowired
-    private MemberMapper memberMapper;
-
-    private URI url(String id) {
-        return URI.create(format("/dataset/%s/member", id));
+    private URI url() {
+        return URI.create("/api-keys");
     }
+
+    @Autowired
+    private ApiKeyFixtures apikeyFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(url("dataset-1"))
+                .get(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .header(HttpHeaders.ACCEPT, "application/json")
                 .build();
-        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<List<ApiKeyDTO>> responseType = new ParameterizedTypeReference<>() {
         };
 
-        // AND: prepare expectation
-        MemberDTO expDto = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
-
         // WHEN:
-        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+        ResponseEntity<List<ApiKeyDTO>> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getBody(), is(equalTo(expDto)));
+        List<ApiKeyDTO> body = result.getBody();
+        assertThat(body.size(), is(equalTo(1)));
+        body.get(0).equals(apikeyFixtures.albertApiKey());
     }
 
     @Test
-    @DisplayName("HTTP 200: No user")
-    public void res200_no_user() {
-        // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(url("dataset-1"))
-                .header(HttpHeaders.ACCEPT, "application/json")
-                .build();
-        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
-        };
-
-        // WHEN:
-        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
-
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertEmptyMember(result.getBody());
+    @DisplayName("HTTP 403: User is not authenticated")
+    public void res403_notAuthenticated() {
+        createNoUserForbiddenTestGet(client, url());
     }
 
 }

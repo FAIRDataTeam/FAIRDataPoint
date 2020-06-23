@@ -20,12 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.repository;
+package nl.dtls.fairdatapoint.acceptance.apikey;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
+import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,55 +36,61 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyMember;
+import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestDelete;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestDelete;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /member")
-public class Detail_Member_GET extends WebIntegrationTest {
+@DisplayName("DELETE /api-keys/:apikeyUuid")
+public class Detail_DELETE extends WebIntegrationTest {
 
-    private URI url() {
-        return URI.create("/member");
+    private URI url(String uuid) {
+        return URI.create(format("/api-keys/%s", uuid));
     }
 
+    @Autowired
+    private ApiKeyFixtures apikeyFixtures;
+
     @Test
-    @DisplayName("HTTP 200")
-    public void res200() {
+    @DisplayName("HTTP 204")
+    public void res204() {
         // GIVEN:
+        ApiKey apikey = apikeyFixtures.albertApiKey();
         RequestEntity<Void> request = RequestEntity
-                .get(url())
+                .delete(url(apikey.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .header(HttpHeaders.ACCEPT, "application/json")
                 .build();
-        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+        ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertEmptyMember(result.getBody());
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
     }
 
     @Test
-    @DisplayName("HTTP 200: No user")
-    public void res200_no_user() {
-        // GIVEN:
-        RequestEntity<Void> request = RequestEntity
-                .get(url())
-                .header(HttpHeaders.ACCEPT, "application/json")
-                .build();
-        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
-        };
+    @DisplayName("HTTP 403: User is not authenticated")
+    public void res403_notAuthenticated() {
+        ApiKey apikey = apikeyFixtures.albertApiKey();
+        createNoUserForbiddenTestDelete(client, url(apikey.getUuid()));
+    }
 
-        // WHEN:
-        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+    @Test
+    @DisplayName("HTTP 403: User is not an owner")
+    public void res403_apikey() {
+        ApiKey apikey = apikeyFixtures.nikolaApiKey();
+        createUserForbiddenTestDelete(client, url(apikey.getUuid()));
+    }
 
-        // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertEmptyMember(result.getBody());
+    @Test
+    @DisplayName("HTTP 404")
+    public void res404() {
+        createAdminNotFoundTestDelete(client, url("nonExisting"));
     }
 
 }
