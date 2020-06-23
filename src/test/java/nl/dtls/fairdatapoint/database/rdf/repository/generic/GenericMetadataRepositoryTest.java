@@ -25,7 +25,7 @@ package nl.dtls.fairdatapoint.database.rdf.repository.generic;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -51,7 +51,7 @@ public class GenericMetadataRepositoryTest extends WebIntegrationTest {
     private ConcurrentMapCacheManager cacheManager;
 
     @Autowired
-    private TestMetadataFixtures testMetadataFixtures;
+    private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
     private GenericMetadataRepository metadataRepository;

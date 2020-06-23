@@ -20,13 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.dataset;
+package nl.dtls.fairdatapoint.acceptance.metadata.repository.meta;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.service.member.MemberMapper;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,27 +36,22 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.Map;
 
-import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyMember;
+import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyState;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /dataset/:datasetId/member")
-public class Detail_Member_GET extends WebIntegrationTest {
+@DisplayName("GET /meta")
+public class List_GET extends WebIntegrationTest {
 
     @Autowired
-    private UserFixtures userFixtures;
+    private MetadataFixtures metadataFixtures;
 
-    @Autowired
-    private MembershipFixtures membershipFixtures;
-
-    @Autowired
-    private MemberMapper memberMapper;
-
-    private URI url(String id) {
-        return URI.create(format("/dataset/%s/member", id));
+    private URI url() {
+        return URI.create("/meta");
     }
 
     @Test
@@ -65,22 +59,26 @@ public class Detail_Member_GET extends WebIntegrationTest {
     public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(url("dataset-1"))
+                .get(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .build();
-        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<MetaDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
-        // AND: prepare expectation
-        MemberDTO expDto = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
-
         // WHEN:
-        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+        ResponseEntity<MetaDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getBody(), is(equalTo(expDto)));
+        assertEmptyMember(result.getBody().getMember());
+        assertThat(result.getBody().getState(), is(equalTo(new MetaStateDTO(
+                metadataFixtures.repositoryMetadata().getState(),
+                Map.of(
+                        metadataFixtures.catalog1().getUri(), metadataFixtures.catalog1().getState(),
+                        metadataFixtures.catalog2().getUri(), metadataFixtures.catalog2().getState()
+                )
+        ))));
     }
 
     @Test
@@ -88,18 +86,19 @@ public class Detail_Member_GET extends WebIntegrationTest {
     public void res200_no_user() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(url("dataset-1"))
+                .get(url())
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .build();
-        ParameterizedTypeReference<MemberDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<MetaDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
+        ResponseEntity<MetaDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertEmptyMember(result.getBody());
+        assertEmptyMember(result.getBody().getMember());
+        assertEmptyState(result.getBody().getState());
     }
 
 }

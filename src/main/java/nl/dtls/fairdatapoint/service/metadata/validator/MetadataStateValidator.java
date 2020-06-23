@@ -20,28 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.development;
+package nl.dtls.fairdatapoint.service.metadata.validator;
 
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Profile;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import nl.dtls.fairdatapoint.entity.exception.ValidationException;
+import nl.dtls.fairdatapoint.entity.metadata.Metadata;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-
 @Service
-@DependsOn("mongobee")
-@Profile(Profiles.NON_PRODUCTION)
-public class RdfDevelopmentMigrationRunner {
+public class MetadataStateValidator {
 
-    @Autowired
-    private RdfMetadataMigration rdfMetadataMigration;
+    public void validate(MetaStateChangeDTO reqDto, Metadata metadata) {
+        if (reqDto.getCurrent().equals(MetadataState.DRAFT)) {
+            throw new ValidationException("You can not change state to DRAFT");
+        }
 
-    @PostConstruct
-    public void run() {
-        rdfMetadataMigration.runMigration();
+        if (metadata.getState().equals(MetadataState.PUBLISHED)) {
+            throw new ValidationException("Metadata is already published");
+        }
     }
 
 }

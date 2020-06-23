@@ -20,28 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.development;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.metadata;
 
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
+import nl.dtls.fairdatapoint.database.common.migration.Migration;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-
 @Service
-@DependsOn("mongobee")
-@Profile(Profiles.NON_PRODUCTION)
-public class RdfDevelopmentMigrationRunner {
+public class MetadataMigration implements Migration {
 
     @Autowired
-    private RdfMetadataMigration rdfMetadataMigration;
+    private MetadataRepository metadataRepository;
 
-    @PostConstruct
-    public void run() {
-        rdfMetadataMigration.runMigration();
+    public void runMigration() {
+        metadataRepository.deleteAll();
     }
 
 }

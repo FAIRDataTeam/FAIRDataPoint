@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.utils;
 
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.MetadataFixtures;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import org.eclipse.rdf4j.model.Model;
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 
 @Service
-public class TestMetadataFixtures extends MetadataFixtures {
+public class TestRdfMetadataFixtures extends RdfMetadataFixtures {
 
     @Autowired
     @Qualifier("persistentUrl")

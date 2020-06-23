@@ -47,7 +47,7 @@ public class Detail_Expanded_GET extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 200")
+    @DisplayName("HTTP 200: Published")
     public void res200() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
@@ -62,6 +62,44 @@ public class Detail_Expanded_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+    }
+
+    @Test
+    @DisplayName("HTTP 200: Draft (User is logged in)")
+    public void res200_draft() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(url("catalog-2"))
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .build();
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<String> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+    }
+
+    @Test
+    @DisplayName("HTTP 403: Draft (User is not logged in)")
+    public void res403_draft() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(url("catalog-2"))
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .build();
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<String> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
+        assertThat(result.getBody(), is(equalTo("You are not allow to view this record in state DRAFT")));
     }
 
     @Test

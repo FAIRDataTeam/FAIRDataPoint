@@ -22,25 +22,30 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
-import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
+import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Optional;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
@@ -48,7 +53,7 @@ import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @RestController
-public class GenericMemberController {
+public class GenericMetaController {
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -60,80 +65,67 @@ public class GenericMemberController {
     @Autowired
     private MetadataServiceFactory metadataServiceFactory;
 
-    @RequestMapping(value = "**/members", method = RequestMethod.GET)
-    public ResponseEntity<List<MemberDTO>> getMembers(HttpServletRequest request)
-            throws ResourceNotFoundException, MetadataServiceException {
+    @Autowired
+    private MetadataStateService metadataStateService;
+
+    @Autowired
+    private ResourceDefinitionService resourceDefinitionService;
+
+    @RequestMapping(value = "**/meta", method = RequestMethod.GET)
+    public MetaDTO getMeta(HttpServletRequest request) throws MetadataServiceException {
+        // 1. Init
+        String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
+        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+
+        // 2. Get resource definition
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+
+        // 3. Get and check existence entity
+        IRI uri = i(getRequestURL(request, persistentUrl));
+        IRI entityUri = removeLastPartOfIRI(uri);
+        Model model = metadataService.retrieve(entityUri);
+
+        // 4. Get member
+        String entityId = getMetadataIdentifier(model).getIdentifier().getLabel();
+        Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(entityId, Metadata.class);
+        MemberDTO member = oMember.orElse(new MemberDTO(null, null));
+
+        // 5. Get state
+        MetaStateDTO state = metadataStateService.getState(model, rd);
+
+        return new MetaDTO(member, state);
+    }
+
+    @RequestMapping(value = "**/meta/state", method = RequestMethod.PUT)
+    public MetaStateChangeDTO putMetaState(HttpServletRequest request, @RequestBody @Valid MetaStateChangeDTO reqDto) throws MetadataServiceException {
         // 1. Init
         String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
         IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(uri);
-        Model metadata = metadataService.retrieve(entityUri);
-
-        // 3. Get members
-        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
-        List<MemberDTO> dto = memberService.getMembers(entityId, Metadata.class);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "**/members/{userUuid}", method = RequestMethod.PUT)
-    public ResponseEntity<MemberDTO> putMember(@PathVariable final String userUuid,
-                                               HttpServletRequest request,
-                                               @RequestBody @Valid MemberCreateDTO reqBody)
-            throws MetadataServiceException {
-        // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
-        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-
-        // 2. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
         IRI entityUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
-        Model metadata = metadataService.retrieve(entityUri);
+        Model model = metadataService.retrieve(entityUri);
 
-        // 3. Create / Update member
-        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
-        MemberDTO dto = memberService.createOrUpdateMember(entityId, Metadata.class, userUuid,
-                reqBody.getMembershipUuid());
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
+        // 3. Get state
+        metadataStateService.modifyState(entityUri, reqDto);
 
-    @RequestMapping(value = "**/members/{userUuid}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteMember(@PathVariable final String userUuid, HttpServletRequest request)
-            throws ResourceNotFoundException, MetadataServiceException {
-        // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
-        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-
-        // 2. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
-        Model metadata = metadataService.retrieve(entityUri);
-
-        // 3. Delete member
-        String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
-        memberService.deleteMember(entityId, Metadata.class, userUuid);
-        return ResponseEntity.noContent().build();
+        return reqDto;
     }
 
     private String getResourceNameForList(String url) throws MetadataServiceException {
-        url = url.replace(persistentUrl, "");
+        url = url.replace(persistentUrl, "")
+                .replace("/meta", "")
+                .replace("/state", "");
 
         String[] parts = url.split("/");
-        if (!(parts.length == 2 || parts.length == 4)) {
+        if (parts.length == 1) {
+            return "";
+        }
+
+        if (parts.length != 3) {
             throw new MetadataServiceException("Unsupported URL");
         }
         return parts[1];
-    }
-
-    private String getResourceNameForDetail(String url) throws MetadataServiceException {
-        url = url.replace(persistentUrl, "");
-
-        String[] parts = url.split("/");
-        if (parts.length != 5) {
-            throw new MetadataServiceException("Unsupported URL");
-        }
-        return parts[parts.length - 4];
     }
 }

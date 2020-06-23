@@ -29,7 +29,7 @@ package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -53,7 +53,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
     private GenericMetadataRepository metadataRepository;
 
     @Autowired
-    private TestMetadataFixtures testMetadataFixtures;
+    private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Test
     public void findWorks() throws Exception {

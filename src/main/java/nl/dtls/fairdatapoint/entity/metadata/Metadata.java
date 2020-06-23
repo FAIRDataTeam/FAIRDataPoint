@@ -22,5 +22,23 @@
  */
 package nl.dtls.fairdatapoint.entity.metadata;
 
+import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
 public class Metadata {
+
+    @Id
+    protected ObjectId id;
+
+    protected String uri;
+
+    protected MetadataState state;
 }

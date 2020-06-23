@@ -22,9 +22,23 @@
  */
 package nl.dtls.fairdatapoint.acceptance.metadata;
 
+import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
+
+import static nl.dtls.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -37,4 +51,45 @@ public class Common {
         // Assert
         assertThat(dto, is(equalTo(expDto)));
     }
+
+    public static void assertEmptyState(MetaStateDTO dto) {
+        assertThat(dto, is(nullValue()));
+    }
+
+    public static void createMetadataStateAlreadyPublished(TestRestTemplate client, URI url) {
+        // GIVEN:
+        RequestEntity<MetaStateChangeDTO> request = RequestEntity
+                .put(url)
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .body(new MetaStateChangeDTO(MetadataState.PUBLISHED));
+        ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+        assertThat(result.getBody().getMessage(), is(equalTo("Metadata is already published")));
+    }
+
+    public static void createMetadataStateChangeToDraft(TestRestTemplate client, URI url) {
+        // GIVEN:
+        RequestEntity<MetaStateChangeDTO> request = RequestEntity
+                .put(url)
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .body(new MetaStateChangeDTO(MetadataState.DRAFT));
+        ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<ErrorDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+        assertThat(result.getBody().getMessage(), is(equalTo("You can not change state to DRAFT")));
+    }
+
 }

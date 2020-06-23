@@ -25,7 +25,7 @@ package nl.dtls.fairdatapoint.acceptance.general;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
-import nl.dtls.fairdatapoint.utils.TestMetadataFixtures;
+import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class SecurityTest extends WebIntegrationTest {
 
     @Autowired
-    private TestMetadataFixtures testMetadataFixtures;
+    private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
     private ApiKeyFixtures apiKeyFixtures;

@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,5 +45,7 @@ public class DashboardItemDTO {
     protected List<DashboardItemDTO> children;
 
     protected Optional<MembershipDTO> membership;
+
+    protected MetadataState state;
 
 }
