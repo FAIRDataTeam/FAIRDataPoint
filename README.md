@@ -20,34 +20,9 @@ More information about FDP and how to deploy can be found at [FDP Deployment Doc
 
 **Stack:**
 
- - **Java** (recommended JDK 11)
+ - **Java** (recommended JDK 14)
  - **Maven** (recommended 3.2.5 or higher)
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
-
-**Additional libraries:**
-
-1. Install `fairmetadata4j`
-
-    ```bash
-    $ git clone https://github.com/FAIRDataTeam/fairmetadata4j
-    $ cd fairmetadata4j
-    $ mvn install
-    ```
-2. Install `spring-rdf-migration`
-
-    ```
-    $ git clone https://github.com/FAIRDataTeam/spring-rdf-migration.git
-    $ cd spring-rdf-migration
-    $ mvn install
-    ```
-
-3. Install `spring-security-acl-mongodb`
-
-    ```
-    $ git clone https://github.com/FAIRDataTeam/spring-security-acl-mongodb
-    $ cd spring-security-acl-mongodb
-    $ mvn install
-    ```
 
 ### Build & Run
 

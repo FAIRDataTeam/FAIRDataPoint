@@ -339,7 +339,7 @@
                             <prefix>fdp</prefix>
                         </vocabulary>
                         <vocabulary>
-                            <url>https://raw.githubusercontent.com/schemaorg/schemaorg/master/data/releases/3.4/schema.ttl</url>
+                            <url>https://raw.githubusercontent.com/schemaorg/schemaorg/main/data/releases/3.4/schema.ttl</url>
                             <namespace>http://schema.org/</namespace>
                             <prefix>schemaOrg</prefix>
                         </vocabulary>
