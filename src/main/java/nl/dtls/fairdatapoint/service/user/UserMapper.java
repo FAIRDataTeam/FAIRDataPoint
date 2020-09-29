@@ -75,6 +75,16 @@ public class UserMapper {
                         .build();
     }
 
+    public User fromProfileChangeDTO(UserProfileChangeDTO dto, User user) {
+        return
+                user
+                        .toBuilder()
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .email(dto.getEmail())
+                        .build();
+    }
+
     public User fromPasswordDTO(UserPasswordDTO reqDto, User user) {
         return
                 user

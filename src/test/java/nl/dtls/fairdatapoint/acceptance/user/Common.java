@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.acceptance.user;
 import nl.dtls.fairdatapoint.api.dto.user.UserChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
+import nl.dtls.fairdatapoint.api.dto.user.UserProfileChangeDTO;
 import nl.dtls.fairdatapoint.entity.user.User;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,6 +41,12 @@ public class Common {
     }
 
     public static void compare(UserChangeDTO entity, UserDTO dto) {
+        assertThat(dto.getFirstName(), is(equalTo(entity.getFirstName())));
+        assertThat(dto.getLastName(), is(equalTo(entity.getLastName())));
+        assertThat(dto.getEmail(), is(equalTo(entity.getEmail())));
+    }
+
+    public static void compare(UserProfileChangeDTO entity, UserDTO dto) {
         assertThat(dto.getFirstName(), is(equalTo(entity.getFirstName())));
         assertThat(dto.getLastName(), is(equalTo(entity.getLastName())));
         assertThat(dto.getEmail(), is(equalTo(entity.getEmail())));
