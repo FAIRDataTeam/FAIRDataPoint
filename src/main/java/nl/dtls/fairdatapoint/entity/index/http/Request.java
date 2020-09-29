@@ -20,26 +20,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.http;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.springframework.http.HttpEntity;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpRequest;
 import java.util.List;
+import java.util.Map;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+public class Request {
+    private String method;
+    private String url;
 
-    protected String persistentUrl;
+    private Map<String, List<String>> headers;
+    private String body;
 
-    protected List<ResourceDefinition> resourceDefinitions;
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
 
-    protected boolean index;
+    public void setHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
+    }
 
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setFromHttpEntity(HttpEntity<String> httpEntity) {
+        body = httpEntity.getBody();
+        headers = httpEntity.getHeaders();
+    }
+
+    public void setFromHttpServletRequest(HttpServletRequest request) {
+        method = request.getMethod();
+        url = request.getRequestURI();
+    }
+
+    public void setFromHttpRequest(HttpRequest request) {
+        method = request.method();
+        url = request.uri().toString();
+        body = request.bodyPublisher().map(Object::toString).orElse(null);
+        headers = request.headers().map();
+    }
 }

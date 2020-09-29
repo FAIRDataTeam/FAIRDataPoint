@@ -20,26 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.Profiles;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.util.List;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
-
-    protected String persistentUrl;
-
-    protected List<ResourceDefinition> resourceDefinitions;
-
-    protected boolean index;
-
+@Configuration
+@EnableAsync
+@Profile(Profiles.NON_TESTING)
+public class AsyncConfig {
 }

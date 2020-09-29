@@ -20,26 +20,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.webhook;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+@Document(collection = "webhook")
+public class Webhook {
+    @Id
+    protected ObjectId id;
 
-    protected String persistentUrl;
+    @Indexed(unique = true)
+    @NotNull
+    private UUID uuid = UUID.randomUUID();
 
-    protected List<ResourceDefinition> resourceDefinitions;
+    private String payloadUrl;
 
-    protected boolean index;
+    private String secret;
 
+    private boolean allEvents;
+
+    private List<WebhookEvent> events = new ArrayList<>();
+
+    private boolean allEntries;
+
+    private List<String> entries = new ArrayList<>();
+
+    private boolean enabled;
 }

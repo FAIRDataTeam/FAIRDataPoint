@@ -20,26 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.event;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 
-import java.util.List;
+import java.util.UUID;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
-
-    protected String persistentUrl;
-
-    protected List<ResourceDefinition> resourceDefinitions;
-
-    protected boolean index;
-
+public class WebhookPing {
+    private String remoteAddr;
+    private String tokenName;
+    private UUID webhookUuid;
 }

@@ -20,26 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.database.mongo.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
+import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.entity.index.event.EventType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.time.Instant;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+public interface EventRepository extends MongoRepository<Event, String> {
 
-    protected String persistentUrl;
+    List<Event> getAllByType(EventType type);
 
-    protected List<ResourceDefinition> resourceDefinitions;
+    List<Event> getAllByFinishedIsNull();
 
-    protected boolean index;
+    Page<Event> getAllByRelatedTo(IndexEntry indexEntry, Pageable pageable);
 
+    List<Event> findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(String remoteAddr, Instant after);
 }

@@ -20,26 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.http;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 
-import java.util.List;
-
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+public class Exchange {
+    private ExchangeDirection direction;
+    private ExchangeState state = ExchangeState.Prepared;
+    private String remoteAddr;
+    private String error;
 
-    protected String persistentUrl;
+    private Request request = new Request();
+    private Response response = new Response();
 
-    protected List<ResourceDefinition> resourceDefinitions;
+    public Exchange(ExchangeDirection direction, String remoteAddr) {
+        this.direction = direction;
+        this.remoteAddr = remoteAddr;
+    }
 
-    protected boolean index;
-
+    public Exchange(ExchangeDirection direction) {
+        this.direction = direction;
+    }
 }

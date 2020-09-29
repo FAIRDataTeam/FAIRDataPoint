@@ -20,26 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.springframework.http.HttpStatus;
 
-import java.util.List;
+public class IncorrectPingFormatException extends IndexException {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
-
-    protected String persistentUrl;
-
-    protected List<ResourceDefinition> resourceDefinitions;
-
-    protected boolean index;
-
+    public IncorrectPingFormatException(String message) {
+        super(message, HttpStatus.BAD_REQUEST);
+    }
 }

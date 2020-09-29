@@ -30,12 +30,14 @@ package nl.dtls.fairdatapoint.api.controller.exception;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.*;
+import nl.dtls.fairdatapoint.entity.index.exception.IndexException;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -112,29 +114,9 @@ public class ExceptionControllerAdvice {
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ResponseBody
-//    public ErrorDTO processValidationError(MethodArgumentNotValidException ex) {
-//        BindingResult result = ex.getBindingResult();
-//        FieldError error = result.getFieldError();
-//        return processFieldError(error);
-//    }
-//
-//    private ErrorDTO processFieldError(FieldError error) {
-//        ErrorResponse errorResponse = new ErrorResponse();
-//        if (error != null) {
-//            Locale currentLocale = LocaleContextHolder.getLocale();
-////            errorResponse.setMessage(error.getDefaultMessage());
-//        }
-//        return new ErrorDTO(HttpStatus.BAD_REQUEST, error.getDefaultMessage());
-//    }
-//
-//    @ExceptionHandler(JsonMappingException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ResponseBody
-//    public ErrorDTO processValidationError(JsonMappingException ex) {
-//        return null;
-//    }
+    @ExceptionHandler(IndexException.class)
+    public ResponseEntity<ErrorDTO> handleIndexException(IndexException exception) {
+        return new ResponseEntity<>(exception.getErrorDTO(), exception.getStatus());
+    }
 
 }

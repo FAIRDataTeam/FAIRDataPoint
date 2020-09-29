@@ -20,26 +20,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CustomPageImpl<T> {
 
-    protected String persistentUrl;
+    private int totalPages;
+    private long totalElements;
+    private boolean first;
+    private CustomSort sort;
+    private CustomPageable pageable;
+    private int number;
+    private int numberOfElements;
+    private boolean last;
+    private int size;
+    private List<T> content;
+    private boolean empty;
 
-    protected List<ResourceDefinition> resourceDefinitions;
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CustomPageable {
+        private int page;
+        private int size;
+        private CustomSort sort;
+    }
 
-    protected boolean index;
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CustomSort {
+        private boolean sorted;
+        private boolean unsorted;
+        private boolean empty;
+    }
 
 }

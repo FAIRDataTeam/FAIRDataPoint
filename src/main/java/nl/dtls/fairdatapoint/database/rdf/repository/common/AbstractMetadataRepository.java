@@ -26,11 +26,10 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.entity.search.SearchResult;
+import nl.dtls.fairdatapoint.entity.search.SearchResultRelation;
 import org.eclipse.rdf4j.common.iteration.Iterations;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
@@ -45,9 +44,12 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 public abstract class AbstractMetadataRepository {
+
+    private static final String FIND_ENTITY_BY_LITERAL = "findEntityByLiteral.sparql";
 
     @Autowired
     protected Repository repository;
@@ -71,6 +73,22 @@ public abstract class AbstractMetadataRepository {
         } catch (RepositoryException e) {
             throw new MetadataRepositoryException("Error retrieve resource :" + e.getMessage());
         }
+    }
+
+    public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
+        return runSparqlQuery(FIND_ENTITY_BY_LITERAL, AbstractMetadataRepository.class, Map.of(
+                "query", query))
+                .stream()
+                .map(s -> new SearchResult(
+                                s.getValue("entity").stringValue(),
+                                s.getValue("title").stringValue(),
+                                s.getValue("description").stringValue(),
+                                new SearchResultRelation(
+                                        s.getValue("relationPredicate").stringValue(),
+                                        s.getValue("relationObject").stringValue())
+                        )
+                )
+                .collect(toList());
     }
 
     public boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException {

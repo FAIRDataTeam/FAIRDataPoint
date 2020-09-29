@@ -28,10 +28,8 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
+import nl.dtls.fairdatapoint.entity.search.SearchResult;
+import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 
 import java.util.List;
@@ -42,6 +40,8 @@ public interface MetadataRepository {
     List<Resource> findResources() throws MetadataRepositoryException;
 
     List<Statement> find(IRI context) throws MetadataRepositoryException;
+
+    List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException;
 
     boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException;
 

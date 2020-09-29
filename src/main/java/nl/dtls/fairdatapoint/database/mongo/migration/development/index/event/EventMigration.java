@@ -20,26 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.index.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+@Service
+public class EventMigration {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+    @Autowired
+    private EventRepository eventRepository;
 
-    protected String persistentUrl;
-
-    protected List<ResourceDefinition> resourceDefinitions;
-
-    protected boolean index;
+    public void runMigration() {
+        eventRepository.deleteAll();
+    }
 
 }

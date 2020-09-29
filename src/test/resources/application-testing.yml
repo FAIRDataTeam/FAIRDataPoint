@@ -13,3 +13,12 @@ security:
   jwt:
     token:
       expiration: 9999
+
+
+fdp-index:
+  events:
+    retrieval:
+      rateLimitWait: PT10M # 10 minutes (ISO 8601)
+      timeout: PT1M # 1 minute (ISO 8601)
+    ping:
+      validDuration: P7D # 7 days (ISO 8601)

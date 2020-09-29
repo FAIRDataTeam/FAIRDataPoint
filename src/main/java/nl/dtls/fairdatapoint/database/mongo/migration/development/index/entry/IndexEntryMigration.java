@@ -20,34 +20,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.config;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.index.entry;
 
-import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.database.common.migration.Migration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.index.entry.data.IndexEntryFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class ConfigService {
+public class IndexEntryMigration implements Migration {
 
     @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
-
-    @Value("${instance.index:false}")
-    private boolean index;
+    private IndexEntryFixtures indexEntryFixtures;
 
     @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private IndexEntryRepository indexEntryRepository;
 
-    public BootstrapConfigDTO getBootstrapConfig() {
-        List<ResourceDefinition> resourceDefinitions = resourceDefinitionRepository.findAll();
-        return new BootstrapConfigDTO(persistentUrl, resourceDefinitions, index);
+    public void runMigration() {
+        indexEntryRepository.deleteAll();
+
+        indexEntryRepository.save(indexEntryFixtures.entryActive());
+        indexEntryRepository.save(indexEntryFixtures.entryActive2());
+        indexEntryRepository.save(indexEntryFixtures.entryInactive());
+        indexEntryRepository.save(indexEntryFixtures.entryUnreachable());
+        indexEntryRepository.save(indexEntryFixtures.entryInvalid());
+        indexEntryRepository.save(indexEntryFixtures.entryUnknown());
     }
 
 }

@@ -20,26 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.entry;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+public enum IndexEntryState {
 
-import java.util.List;
+    Unknown,
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+    Valid, // Active / Inactive based on timestamps
 
-    protected String persistentUrl;
+    Unreachable,
 
-    protected List<ResourceDefinition> resourceDefinitions;
-
-    protected boolean index;
+    Invalid
 
 }

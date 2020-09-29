@@ -20,26 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
+import org.springframework.http.HttpStatus;
 
-import java.util.List;
+public abstract class IndexException extends RuntimeException {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+    protected final HttpStatus status;
 
-    protected String persistentUrl;
+    public IndexException(String message, HttpStatus status) {
+        super(message);
+        this.status = status;
+    }
 
-    protected List<ResourceDefinition> resourceDefinitions;
+    public HttpStatus getStatus() {
+        return status;
+    }
 
-    protected boolean index;
-
+    public ErrorDTO getErrorDTO() {
+        return new ErrorDTO(getStatus(), getMessage());
+    }
 }

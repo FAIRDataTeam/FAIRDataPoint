@@ -20,26 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.http;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 
+import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Map;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+public class Response {
+    private Integer code;
+    private String url;
+    private String origin;
 
-    protected String persistentUrl;
+    private Map<String, List<String>> headers;
+    private String body;
 
-    protected List<ResourceDefinition> resourceDefinitions;
-
-    protected boolean index;
-
+    public void setFromHttpResponse(HttpResponse<String> response) {
+        code = response.statusCode();
+        url = response.uri().toString();
+        headers = response.headers().map();
+        body = response.body();
+    }
 }

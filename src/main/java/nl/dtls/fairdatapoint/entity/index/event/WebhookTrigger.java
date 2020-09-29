@@ -20,26 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.entity.index.event;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.index.http.Exchange;
+import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
+import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import java.util.List;
-
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+public class WebhookTrigger {
+    @DBRef
+    private Webhook webhook;
 
-    protected String persistentUrl;
+    private WebhookEvent matchedEvent;
 
-    protected List<ResourceDefinition> resourceDefinitions;
-
-    protected boolean index;
-
+    private Exchange exchange;
 }
