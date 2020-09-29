@@ -31,7 +31,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -50,14 +49,11 @@ public class List_POST extends WebIntegrationTest {
     @Autowired
     private IndexEntryRepository indexEntryRepository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
     private final ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
     };
 
     private URI url() {
-        return URI.create("/index");
+        return URI.create("/");
     }
 
     private PingDTO reqDTO(String clientUrl) {
@@ -76,6 +72,7 @@ public class List_POST extends WebIntegrationTest {
         // AND: prepare request
         RequestEntity<PingDTO> request = RequestEntity
                 .post(url())
+                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
 

@@ -59,11 +59,11 @@ public class SecurityTest extends WebIntegrationTest {
                 .post(URI.create("/distribution"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .body(reqDto);
-        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<Void> result = client.exchange(request, responseType);
+        ResponseEntity<String> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));

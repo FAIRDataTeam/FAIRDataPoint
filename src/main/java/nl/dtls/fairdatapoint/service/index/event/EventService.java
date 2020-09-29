@@ -37,6 +37,7 @@ import nl.dtls.fairdatapoint.entity.index.exception.IncorrectPingFormatException
 import nl.dtls.fairdatapoint.entity.index.exception.RateLimitException;
 import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
+import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
 import org.eclipse.rdf4j.util.iterators.EmptyIterator;
@@ -93,10 +94,12 @@ public class EventService {
                 "created")));
     }
 
+    @RequiredEnabledIndexFeature
     public Iterable<Event> getEvents(String indexEntryUuid) {
         return indexEntryService.getEntry(indexEntryUuid).map(this::getEvents).orElse(EmptyIterator::new);
     }
 
+    @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
         var remoteAddr = request.getRemoteAddr();
@@ -179,6 +182,7 @@ public class EventService {
     }
 
     @Async
+    @RequiredEnabledIndexFeature
     public void triggerMetadataRetrieval(Event triggerEvent) {
         logger.info("Initiating metadata retrieval triggered by {}", triggerEvent.getUuid());
         Iterable<Event> events = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
@@ -219,6 +223,7 @@ public class EventService {
         executor.submit(this::resumeUnfinishedEvents);
     }
 
+    @RequiredEnabledIndexFeature
     public Event acceptAdminTrigger(HttpServletRequest request, String indexEntryUuid) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Event event = eventMapper.toAdminTriggerEvent(request, authentication, indexEntryUuid);

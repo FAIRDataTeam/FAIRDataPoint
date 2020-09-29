@@ -192,15 +192,22 @@ public class GenericController {
                                                @RequestBody String reqBody,
                                                @RequestHeader(value = "Content-Type", required = false) String contentType)
             throws MetadataServiceException {
-        // 1. Init
+        // 1. Check if user is authenticated
+        //     - it can't be in SecurityConfig because the authentication is done based on content-type
+        Optional<User> oUser = currentUserService.getCurrentUser();
+        if (oUser.isEmpty()) {
+            throw new ForbiddenException("You have to be login at first");
+        }
+
+        // 2. Init
         String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
-        // 2. Generate URI
+        // 3. Generate URI
         IRI uri = generateNewIRI(request, persistentUrl);
 
-        // 3. Parse reqDto
+        // 4. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
         Model oldDto = read(reqBody, uri.stringValue(), rdfContentType);
         Model reqDto = changeBaseUri(oldDto, uri.stringValue(), rd.getTargetClassUris());
@@ -208,10 +215,10 @@ public class GenericController {
             reqDto.remove(null, i(rdChild.getRelationUri()), null);
         }
 
-        // 4. Store metadata
+        // 5. Store metadata
         Model metadata = metadataService.store(reqDto, uri, rd);
 
-        // 5. Create response
+        // 6. Create response
         return ResponseEntity
                 .created(URI.create(uri.stringValue()))
                 .body(metadata);

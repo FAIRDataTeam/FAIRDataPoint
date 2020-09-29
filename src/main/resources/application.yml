@@ -15,7 +15,7 @@ spring:
         core-size: 2
         max-size: 5
         queue-capacity: 5000
-      thread-name-prefix: fdpindex-task-
+      thread-name-prefix: fdp-task-
 
 management:
   health:
@@ -58,6 +58,7 @@ metadataMetrics:
   https://purl.org/fair-metrics/FM_A1.1: https://www.wikidata.org/wiki/Q8777
 
 fdp-index:
+  enabled: false
   events:
     retrieval:
       rateLimitWait: PT10M # 10 minutes (ISO 8601)

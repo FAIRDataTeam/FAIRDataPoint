@@ -30,6 +30,7 @@ import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.entity.index.config.EventsConfig;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
+import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +61,7 @@ public class IndexEntryService {
         return repository.findAll();
     }
 
+    @RequiredEnabledIndexFeature
     public Page<IndexEntry> getEntriesPage(Pageable pageable, String state) {
         if (state.equalsIgnoreCase(ACTIVE.name())) {
             return repository.findAllByStateEqualsAndLastRetrievalTimeAfter(pageable, IndexEntryState.Valid,
@@ -81,10 +83,12 @@ public class IndexEntryService {
         return repository.findAll(pageable);
     }
 
+    @RequiredEnabledIndexFeature
     public Optional<IndexEntry> getEntry(String uuid) {
         return repository.findByUuid(uuid);
     }
 
+    @RequiredEnabledIndexFeature
     public IndexEntryInfoDTO getEntriesInfo() {
         Map<String, Long> entriesCount = new HashMap<>();
         entriesCount.put("ALL", repository.count());
@@ -98,6 +102,7 @@ public class IndexEntryService {
         return new IndexEntryInfoDTO(entriesCount);
     }
 
+    @RequiredEnabledIndexFeature
     public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
         var clientUrl = pingDTO.getClientUrl();
         var entity = repository.findByClientUrl(clientUrl);

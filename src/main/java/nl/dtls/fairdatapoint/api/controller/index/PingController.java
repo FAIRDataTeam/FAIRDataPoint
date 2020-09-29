@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/index")
+@RequestMapping("/")
 public class PingController {
     private static final Logger logger = LoggerFactory.getLogger(PingController.class);
 
@@ -52,7 +52,7 @@ public class PingController {
             notes = "Inform about running FAIR Data Point. It is expected to send pings regularly (at least weekly). " +
                     "There is a rate limit set both per single IP within a period of time and per URL in message."
     )
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) {
         logger.info("Received ping from {}", request.getRemoteAddr());

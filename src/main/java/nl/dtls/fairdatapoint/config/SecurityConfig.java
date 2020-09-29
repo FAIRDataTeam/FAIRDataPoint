@@ -63,7 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/index/admin**").authenticated()
                 .antMatchers("/index**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .apply(filterConfigurer);

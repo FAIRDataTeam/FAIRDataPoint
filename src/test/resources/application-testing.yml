@@ -16,6 +16,7 @@ security:
 
 
 fdp-index:
+  enabled: true
   events:
     retrieval:
       rateLimitWait: PT10M # 10 minutes (ISO 8601)

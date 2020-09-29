@@ -32,6 +32,7 @@ import nl.dtls.fairdatapoint.entity.index.config.EventsConfig;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
 import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,7 @@ public class WebhookService {
 
     private static final String SECRET_PLACEHOLDER = "*** HIDDEN ***";
 
+    @RequiredEnabledIndexFeature
     public void processWebhookTrigger(Event event) {
         event.execute();
         eventRepository.save(event);
@@ -87,17 +89,20 @@ public class WebhookService {
     }
 
     @Async
+    @RequiredEnabledIndexFeature
     public void triggerWebhook(Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent) {
         Event event = webhookMapper.toTriggerEvent(webhook, webhookEvent, triggerEvent);
         processWebhookTrigger(event);
     }
 
     @Async
+    @RequiredEnabledIndexFeature
     public void triggerWebhooks(WebhookEvent webhookEvent, Event triggerEvent) {
         logger.info("Triggered webhook event {} by event {}", webhookEvent, triggerEvent.getUuid());
         WebhookUtils.filterMatching(webhookRepository.findAll(), webhookEvent, triggerEvent).forEach(webhook -> triggerWebhook(webhook, webhookEvent, triggerEvent));
     }
 
+    @RequiredEnabledIndexFeature
     public Event handleWebhookPing(HttpServletRequest request, UUID webhookUuid) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<Webhook> webhook = webhookRepository.findByUuid(webhookUuid);
@@ -109,6 +114,7 @@ public class WebhookService {
     }
 
     @Async
+    @RequiredEnabledIndexFeature
     public void triggerWebhooks(Event triggerEvent) {
         switch (triggerEvent.getType()) {
             case AdminTrigger:
