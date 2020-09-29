@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
@@ -82,7 +83,7 @@ public abstract class AbstractMetadataRepository {
                 .map(s -> new SearchResult(
                                 s.getValue("entity").stringValue(),
                                 s.getValue("title").stringValue(),
-                                s.getValue("description").stringValue(),
+                                ofNullable(s.getValue("description")).map(Value::stringValue).orElse(""),
                                 new SearchResultRelation(
                                         s.getValue("relationPredicate").stringValue(),
                                         s.getValue("relationObject").stringValue())
