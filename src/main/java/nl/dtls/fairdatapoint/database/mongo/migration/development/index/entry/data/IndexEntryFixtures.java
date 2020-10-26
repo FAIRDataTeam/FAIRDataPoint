@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.index.entry.data;
 
-import nl.dtls.fairdatapoint.entity.index.config.EventsConfig;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.springframework.stereotype.Service;
@@ -34,8 +33,6 @@ import static nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState.*;
 
 @Service
 public class IndexEntryFixtures {
-
-    private EventsConfig eventsConfig;
 
     public IndexEntry entryActive() {
         String clientUri = "https://example.com/my-valid-fairdatapoint";

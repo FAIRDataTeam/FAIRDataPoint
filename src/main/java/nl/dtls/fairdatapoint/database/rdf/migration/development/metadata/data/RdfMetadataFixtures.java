@@ -33,8 +33,12 @@ import java.util.Arrays;
 @Service
 public class RdfMetadataFixtures {
 
-    @Autowired
     protected MetadataFactory metadataFactory;
+
+    @Autowired
+    public RdfMetadataFixtures(MetadataFactory metadataFactory) {
+        this.metadataFactory = metadataFactory;
+    }
 
     public Model repositoryMetadata(String repositoryUrl) {
         return metadataFactory.createFDPMetadata(

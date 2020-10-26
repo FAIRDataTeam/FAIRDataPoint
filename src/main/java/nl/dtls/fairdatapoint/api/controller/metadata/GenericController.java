@@ -30,6 +30,7 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
@@ -75,6 +76,9 @@ public class GenericController {
 
     @Autowired
     private MetadataStateService metadataStateService;
+
+    @Autowired
+    private MetadataEnhancer metadataEnhancer;
 
     @Autowired
     private CurrentUserService currentUserService;
@@ -180,7 +184,10 @@ public class GenericController {
             }
         }
 
-        // 6. Create response
+        // 6. Add links
+        metadataEnhancer.enhanceWithLinks(entityUri, entity, rd, persistentUrl, resultRdf);
+
+        // 7. Create response
         return resultRdf;
     }
 

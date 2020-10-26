@@ -25,7 +25,6 @@ package nl.dtls.fairdatapoint.entity.index.entry;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -43,7 +42,6 @@ public class IndexEntry {
     @Id
     protected ObjectId id;
 
-    @Indexed(unique = true)
     private String uuid;
 
     private String clientUrl;

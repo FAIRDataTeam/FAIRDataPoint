@@ -24,8 +24,10 @@ package nl.dtls.fairdatapoint.api.controller.index;
 
 import io.swagger.annotations.ApiOperation;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
+import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +49,9 @@ public class PingController {
     @Autowired
     private WebhookService webhookService;
 
+    @Autowired
+    private HarvesterService harvesterService;
+
     @ApiOperation(
             value = "Ping payload with FAIR Data Point info",
             notes = "Inform about running FAIR Data Point. It is expected to send pings regularly (at least weekly). " +
@@ -54,11 +59,12 @@ public class PingController {
     )
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) {
+    public void receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) throws MetadataRepositoryException {
         logger.info("Received ping from {}", request.getRemoteAddr());
         final Event event = eventService.acceptIncomingPing(reqDto, request);
         logger.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
+        harvesterService.harvest(reqDto.getClientUrl());
         webhookService.triggerWebhooks(event);
     }
 }

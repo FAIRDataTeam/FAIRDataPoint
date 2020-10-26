@@ -1,0 +1,34 @@
+@prefix :         <http://fairdatapoint.org/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix r3d:      <http://www.re3data.org/schema/3-0#> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dct:      <http://purl.org/dc/terms/> .
+
+:repoNavShape a sh:NodeShape ;
+    sh:targetClass r3d:Repository ;
+    sh:property [
+                    sh:path r3d:dataCatalog ;
+                    sh:node :catNavShape ;
+                ] .
+
+:catNavShape a sh:NodeShape ;
+    sh:targetClass dcat:Catalog ;
+    sh:property [
+                    sh:path dcat:dataset ;
+                    sh:node :datasetNavShape ;
+                ] ;
+    sh:property [
+                    sh:path dct:isPartOf ;
+                    sh:node :repoNavShape ;
+                ] .
+
+:datasetNavShape a sh:NodeShape ;
+    sh:targetClass dcat:Dataset ;
+    sh:property [
+                    sh:path dcat:distribution ;
+                    sh:node :distNavShape ;
+                ] ;
+    sh:property [
+                    sh:path dct:isPartOf ;
+                    sh:node :catNavShape ;
+                ] .

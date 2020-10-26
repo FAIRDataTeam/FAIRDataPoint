@@ -23,11 +23,10 @@
 package nl.dtls.fairdatapoint.api.controller.index;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,10 +35,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @RequestMapping("/index/admin")
 public class AdminController {
-    private static final Logger logger = LoggerFactory.getLogger(PingController.class);
 
     @Autowired
     private EventService eventService;
@@ -52,7 +51,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerMetadataRetrieve(@RequestParam(required = false) String clientUrl, HttpServletRequest request) {
-        logger.info("Received ping from {}", request.getRemoteAddr());
+        log.info("Received ping from {}", request.getRemoteAddr());
         final Event event = eventService.acceptAdminTrigger(request, clientUrl);
         webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
@@ -63,7 +62,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void webhookPing(@RequestParam(required = true) UUID webhook, HttpServletRequest request) {
-        logger.info("Received webhook {} ping trigger from {}", webhook, request.getRemoteAddr());
+        log.info("Received webhook {} ping trigger from {}", webhook, request.getRemoteAddr());
         final Event event = webhookService.handleWebhookPing(request, webhook);
         webhookService.triggerWebhooks(event);
     }

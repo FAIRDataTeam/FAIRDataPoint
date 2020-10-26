@@ -24,12 +24,16 @@ package nl.dtls.fairdatapoint.service.metadata.enhance;
 
 import nl.dtls.fairdatapoint.entity.metadata.Identifier;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import nl.dtls.fairdatapoint.service.metadata.metric.MetricsMetadataService;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.LDP;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,9 +43,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
 import static nl.dtls.fairdatapoint.util.RdfUtil.containsObject;
+import static nl.dtls.fairdatapoint.util.RdfUtil.getObjectsBy;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
@@ -61,6 +67,9 @@ public class MetadataEnhancer {
 
     @Autowired
     private MetricsMetadataService metricsMetadataService;
+
+    @Autowired
+    private ResourceDefinitionCache resourceDefinitionCache;
 
     public void enhance(Model metadata, IRI uri, ResourceDefinition rd, Model oldMetadata) {
         enhance(metadata, uri, rd);
@@ -118,6 +127,22 @@ public class MetadataEnhancer {
         if (rd.getUrlPrefix().equals("catalog")) {
             setMetadataIssued(metadata, uri, l(timestamp));
             setMetadataModified(metadata, uri, l(timestamp));
+        }
+    }
+
+    public void enhanceWithLinks(IRI entityUri, Model entity, ResourceDefinition rd, String persistentUrl,
+                                 Model resultRdf) {
+        for (ResourceDefinitionChild child : rd.getChildren()) {
+            ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid());
+            IRI container = i(format("%s/%s/", persistentUrl, rdChild.getUrlPrefix()));
+
+            resultRdf.add(container, RDF.TYPE, LDP.DIRECT_CONTAINER);
+            resultRdf.add(container, DCTERMS.TITLE, l(child.getListView().getTitle()));
+            resultRdf.add(container, LDP.MEMBERSHIP_RESOURCE, entityUri);
+            resultRdf.add(container, LDP.HAS_MEMBER_RELATION, i(child.getRelationUri()));
+            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, i(child.getRelationUri()))) {
+                resultRdf.add(container, LDP.CONTAINS, i(childUri.stringValue()));
+            }
         }
     }
 

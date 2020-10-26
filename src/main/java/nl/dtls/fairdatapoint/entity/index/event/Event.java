@@ -28,7 +28,6 @@ import lombok.NoArgsConstructor;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -44,7 +43,6 @@ import java.util.UUID;
 public class Event {
     @Id
     protected ObjectId id;
-    @Indexed(unique = true)
     @NotNull
     private UUID uuid = UUID.randomUUID();
     @NotNull
