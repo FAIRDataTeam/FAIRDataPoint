@@ -24,19 +24,30 @@ package nl.dtls.fairdatapoint.service.shape;
 
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
+import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
+import org.eclipse.rdf4j.model.Model;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ShapeValidator {
-
+	@Autowired
+	private ShaclValidator validator;
+	
     public void validate(ShapeChangeDTO reqDto) {
         // Try to parse SHACL definition
+    	final Model data;
         try {
-            RdfIOUtil.read(reqDto.getDefinition(), "");
+            data = RdfIOUtil.read(reqDto.getDefinition(), "");
         } catch (ValidationException e) {
             throw new ValidationException("Unable to read SHACL definition");
         }
+        
+        var shsh = RdfIOUtil.readFile("/shapes/shacl-shacl.ttl", "http://www.w3.org/ns/shacl-shacl#");
+        
+        // using a dummy base uri
+        validator.validate(shsh, data, "http://fairdatapoint.org/");
     }
 
 }

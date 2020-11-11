@@ -67,6 +67,8 @@ public class ShaclValidator {
                 throw new RdfValidationException(validationReportModel);
             }
             throw new ValidationException("Validation failed (unsupported exception");
+        } finally {
+        	sailRepository.shutDown();
         }
     }
 
