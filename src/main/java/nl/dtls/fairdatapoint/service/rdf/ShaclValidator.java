@@ -68,7 +68,7 @@ public class ShaclValidator {
             }
             throw new ValidationException("Validation failed (unsupported exception");
         } finally {
-        	sailRepository.shutDown();
+            sailRepository.shutDown();
         }
     }
 

@@ -32,12 +32,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ShapeValidator {
-	@Autowired
-	private ShaclValidator validator;
-	
+    @Autowired
+    private ShaclValidator validator;
+    
     public void validate(ShapeChangeDTO reqDto) {
         // Try to parse SHACL definition
-    	final Model data;
+        final Model data;
         try {
             data = RdfIOUtil.read(reqDto.getDefinition(), "");
         } catch (ValidationException e) {

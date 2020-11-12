@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 public class ShapeFixtures {
 
     public Shape resourceShape() {
-    	return new Shape(
+        return new Shape(
                 null,
                 "6a668323-3936-4b53-8380-a4fd2ed082ee",
                 "Resource",
