@@ -61,6 +61,12 @@ public class RepositoryConfig {
 
     @Value("${repository.graphDb.repository:}")
     private String graphDbRepository;
+    
+    @Value("${repository.graphDb.username:}")
+    private String graphDbUsername;
+    
+    @Value("${repository.graphDb.password:}")
+    private String graphDbPassword;
 
     @Value("${repository.blazegraph.url:}")
     private String blazegraphUrl;
@@ -149,8 +155,13 @@ public class RepositoryConfig {
         log.info("Setting up GraphDB Store");
         try {
             if (!graphDbUrl.isEmpty() && !graphDbRepository.isEmpty()) {
-                RepositoryManager repositoryManager = new RemoteRepositoryManager(graphDbUrl);
-                repositoryManager.initialize();
+                final RepositoryManager repositoryManager;
+                if (!graphDbUsername.isEmpty() && !graphDbPassword.isEmpty()) {
+                    repositoryManager = RemoteRepositoryManager.getInstance(graphDbUrl, graphDbUsername, graphDbPassword);
+                } else {
+                    repositoryManager = RemoteRepositoryManager.getInstance(graphDbUrl);
+                }
+                
                 return repositoryManager.getRepository(graphDbRepository);
             }
         } catch (RepositoryConfigException | RepositoryException e) {
