@@ -5,3 +5,8 @@ security:
   jwt:
     token:
       expiration: 999
+
+spring:
+  data:
+    mongodb:
+      uri: http://localhost:27017/fdp
