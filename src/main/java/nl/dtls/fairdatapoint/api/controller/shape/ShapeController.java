@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,10 +57,21 @@ public class ShapeController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET, produces = {"application/json"})
     public ResponseEntity<ShapeDTO> getShape(@PathVariable final String uuid)
             throws ResourceNotFoundException {
         Optional<ShapeDTO> oDto = shapeService.getShapeByUuid(uuid);
+        if (oDto.isPresent()) {
+            return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
+        } else {
+            throw new ResourceNotFoundException(format("Shape '%s' doesn't exist", uuid));
+        }
+    }
+
+    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET, produces = {"!application/json"})
+    public ResponseEntity<Model> getShapeContent(@PathVariable final String uuid)
+            throws ResourceNotFoundException {
+        Optional<Model> oDto = shapeService.getShapeContentByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {

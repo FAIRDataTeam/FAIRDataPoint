@@ -72,6 +72,13 @@ public class ShapeService {
                         .map(shapeMapper::toDTO);
     }
 
+    public Optional<Model> getShapeContentByUuid(String uuid) {
+        return
+                shapeRepository
+                        .findByUuid(uuid)
+                        .map(shape -> RdfIOUtil.read(shape.getDefinition(), ""));
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     public ShapeDTO createShape(ShapeChangeDTO reqDto) {
         shapeValidator.validate(reqDto);
