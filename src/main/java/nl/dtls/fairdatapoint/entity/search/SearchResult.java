@@ -35,6 +35,8 @@ public class SearchResult {
 
     private String uri;
 
+    private String type;
+
     private String title;
 
     private String description;

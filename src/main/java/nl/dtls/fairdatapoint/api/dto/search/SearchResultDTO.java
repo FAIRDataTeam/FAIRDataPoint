@@ -38,6 +38,8 @@ public class SearchResultDTO {
 
     private String uri;
 
+    private List<String> types;
+
     private String title;
 
     private String description;

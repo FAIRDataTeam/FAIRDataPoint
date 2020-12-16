@@ -64,10 +64,19 @@ public class SearchService {
                 })
                 .map(entry -> new SearchResultDTO(
                         entry.getKey(),
+                        entry.getValue()
+                                .stream()
+                                .map(SearchResult::getType)
+                                .distinct()
+                                .filter(t -> !t.equals("http://www.w3.org/ns/dcat#Resource"))
+                                .collect(Collectors.toList()),
                         entry.getValue().get(0).getTitle(),
                         entry.getValue().get(0).getDescription(),
-                        entry.getValue().stream()
-                                .map(SearchResult::getRelation).collect(Collectors.toList())
+                        entry.getValue()
+                                .stream()
+                                .map(SearchResult::getRelation)
+                                .distinct()
+                                .collect(Collectors.toList())
                 ))
                 .collect(toList());
     }

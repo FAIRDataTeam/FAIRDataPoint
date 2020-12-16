@@ -82,6 +82,7 @@ public abstract class AbstractMetadataRepository {
                 .stream()
                 .map(s -> new SearchResult(
                                 s.getValue("entity").stringValue(),
+                                s.getValue("rdfType").stringValue(),
                                 s.getValue("title").stringValue(),
                                 ofNullable(s.getValue("description")).map(Value::stringValue).orElse(""),
                                 new SearchResultRelation(
