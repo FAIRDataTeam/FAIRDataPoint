@@ -143,7 +143,7 @@ The first release of reference FAIR Data Point implementation.
 
 [Client]: https://github.com/FAIRDataTeam/FAIRDataPoint-client
 
-[Unreleased]: /../../compare/v1.6.0...develop
+[Unreleased]: /../../compare/master...develop
 [0.1-beta]: /../../tree/0.1-beta
 [1.0.0]: /../../tree/v1.0.0
 [1.1.0]: /../../tree/v1.1.0
