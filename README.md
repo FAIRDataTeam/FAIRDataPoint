@@ -20,16 +20,22 @@ More information about FDP and how to deploy can be found at [FDP Deployment Doc
 
 **Stack:**
 
- - **Java** (recommended JDK 14)
+ - **Java** (minimally JDK 14, or higher)
  - **Maven** (recommended 3.2.5 or higher)
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
 
 ### Build & Run
 
-Run these commands from the root of the project
+To run the application, a mongodb instance is required to be running. To configure the mongodb address, instruct spring-boot to use the `development` profile. Run these commands from the root of the project.
 
 ```bash
-$ mvn spring-boot:start
+$ mvn spring-boot:run -Dspring-boot.run.profiles=development
+```
+
+Alternatively, create an `application.yml` file in the project root and [configure the mongodb address](https://fairdatapoint.readthedocs.io/en/latest/deployment/advanced-configuration.html#mongo-db), and then run these commands from the root of the project.
+
+```bash
+$ mvn spring-boot:run
 ```
 
 ### Run tests
