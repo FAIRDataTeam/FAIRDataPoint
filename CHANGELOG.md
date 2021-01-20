@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0]
+
 ### Added
 
 - Possibility to change profile and password for current user
@@ -153,3 +155,4 @@ The first release of reference FAIR Data Point implementation.
 [1.4.0]: /../../tree/v1.4.0
 [1.5.0]: /../../tree/v1.5.0
 [1.6.0]: /../../tree/v1.6.0
+[1.7.0]: /../../tree/v1.7.0
