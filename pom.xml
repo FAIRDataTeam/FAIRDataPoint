@@ -10,7 +10,7 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -129,6 +129,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -339,7 +343,7 @@
                             <prefix>fdp</prefix>
                         </vocabulary>
                         <vocabulary>
-                            <url>https://raw.githubusercontent.com/schemaorg/schemaorg/master/data/releases/3.4/schema.ttl</url>
+                            <url>https://raw.githubusercontent.com/schemaorg/schemaorg/main/data/releases/3.4/schema.ttl</url>
                             <namespace>http://schema.org/</namespace>
                             <prefix>schemaOrg</prefix>
                         </vocabulary>

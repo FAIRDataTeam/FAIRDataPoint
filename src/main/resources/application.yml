@@ -5,6 +5,17 @@ spring:
   data:
     mongodb:
       uri: mongodb://mongo:27017/fdp
+    web:
+      pageable:
+        default-page-size: 50
+        qualifier-delimiter: _
+  task:
+    execution:
+      pool:
+        core-size: 2
+        max-size: 5
+        queue-capacity: 5000
+      thread-name-prefix: fdp-task-
 
 management:
   health:
@@ -45,3 +56,14 @@ threadPoolSize: 4
 metadataMetrics:
   https://purl.org/fair-metrics/FM_F1A: https://www.ietf.org/rfc/rfc3986.txt
   https://purl.org/fair-metrics/FM_A1.1: https://www.wikidata.org/wiki/Q8777
+
+fdp-index:
+  enabled: false
+  events:
+    retrieval:
+      rateLimitWait: PT10M # 10 minutes (ISO 8601)
+      timeout: PT1M # 1 minute (ISO 8601)
+    ping:
+      validDuration: P7D # 7 days (ISO 8601)
+      rateLimitDuration: PT6H
+      rateLimitHits: 10

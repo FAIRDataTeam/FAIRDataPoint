@@ -20,41 +20,22 @@ More information about FDP and how to deploy can be found at [FDP Deployment Doc
 
 **Stack:**
 
- - **Java** (recommended JDK 11)
+ - **Java** (minimally JDK 14, or higher)
  - **Maven** (recommended 3.2.5 or higher)
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
 
-**Additional libraries:**
-
-1. Install `fairmetadata4j`
-
-    ```bash
-    $ git clone https://github.com/FAIRDataTeam/fairmetadata4j
-    $ cd fairmetadata4j
-    $ mvn install
-    ```
-2. Install `spring-rdf-migration`
-
-    ```
-    $ git clone https://github.com/FAIRDataTeam/spring-rdf-migration.git
-    $ cd spring-rdf-migration
-    $ mvn install
-    ```
-
-3. Install `spring-security-acl-mongodb`
-
-    ```
-    $ git clone https://github.com/FAIRDataTeam/spring-security-acl-mongodb
-    $ cd spring-security-acl-mongodb
-    $ mvn install
-    ```
-
 ### Build & Run
 
-Run these commands from the root of the project
+To run the application, a mongodb instance is required to be running. To configure the mongodb address, instruct spring-boot to use the `development` profile. Run these commands from the root of the project.
 
 ```bash
-$ mvn spring-boot:start
+$ mvn spring-boot:run -Dspring-boot.run.profiles=development
+```
+
+Alternatively, create an `application.yml` file in the project root and [configure the mongodb address](https://fairdatapoint.readthedocs.io/en/latest/deployment/advanced-configuration.html#mongo-db), and then run these commands from the root of the project.
+
+```bash
+$ mvn spring-boot:run
 ```
 
 ### Run tests

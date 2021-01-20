@@ -22,12 +22,8 @@
  */
 package nl.dtls.fairdatapoint.service.user;
 
-import nl.dtls.fairdatapoint.api.dto.user.UserChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
+import nl.dtls.fairdatapoint.api.dto.user.*;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +35,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
@@ -52,6 +47,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private UserValidator userValidator;
 
     @Autowired
     private MemberService memberService;
@@ -87,10 +85,7 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserDTO createUser(UserCreateDTO reqDto) {
-        Optional<User> oUser = userRepository.findByEmail(reqDto.getEmail());
-        if (oUser.isPresent()) {
-            throw new ValidationException(format("Email '%s' is already taken", reqDto.getEmail()));
-        }
+        userValidator.validateEmail(null, reqDto.getEmail());
         String uuid = UUID.randomUUID().toString();
         User user = userMapper.fromCreateDTO(reqDto, uuid);
         userRepository.save(user);
@@ -99,16 +94,25 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<UserDTO> updateUser(String uuid, UserChangeDTO reqDto) {
-        Optional<User> oUserEmail = userRepository.findByEmail(reqDto.getEmail());
-        if (oUserEmail.isPresent() && !uuid.equals(oUserEmail.get().getUuid())) {
-            throw new ValidationException(format("Email '%s' is already taken", reqDto.getEmail()));
-        }
         Optional<User> oUser = userRepository.findByUuid(uuid);
         if (oUser.isEmpty()) {
             return empty();
         }
         User user = oUser.get();
+        userValidator.validateEmail(uuid, reqDto.getEmail());
         User updatedUser = userMapper.fromChangeDTO(reqDto, user);
+        userRepository.save(updatedUser);
+        return of(userMapper.toDTO(updatedUser));
+    }
+
+    public Optional<UserDTO> updateCurrentUser(UserProfileChangeDTO reqDto) {
+        Optional<User> oUser = getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
+        if (oUser.isEmpty()) {
+            return empty();
+        }
+        User user = oUser.get();
+        userValidator.validateEmail(user.getUuid(), reqDto.getEmail());
+        User updatedUser = userMapper.fromProfileChangeDTO(reqDto, user);
         userRepository.save(updatedUser);
         return of(userMapper.toDTO(updatedUser));
     }
@@ -116,6 +120,17 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<UserDTO> updatePassword(String uuid, UserPasswordDTO reqDto) {
         Optional<User> oUser = userRepository.findByUuid(uuid);
+        if (oUser.isEmpty()) {
+            return empty();
+        }
+        User user = oUser.get();
+        User updatedUser = userMapper.fromPasswordDTO(reqDto, user);
+        userRepository.save(updatedUser);
+        return of(userMapper.toDTO(updatedUser));
+    }
+
+    public Optional<UserDTO> updatePasswordForCurrentUser(UserPasswordDTO reqDto) {
+        Optional<User> oUser = getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
         if (oUser.isEmpty()) {
             return empty();
         }

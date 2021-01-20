@@ -22,10 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.user;
 
-import nl.dtls.fairdatapoint.api.dto.user.UserChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
+import nl.dtls.fairdatapoint.api.dto.user.*;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.user.UserService;
@@ -61,8 +58,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/current", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUserCurrent()
-            throws ResourceNotFoundException {
+    public ResponseEntity<UserDTO> getUserCurrent() throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.getCurrentUser();
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
@@ -72,13 +68,22 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUser(@PathVariable final String uuid)
-            throws ResourceNotFoundException {
+    public ResponseEntity<UserDTO> getUser(@PathVariable final String uuid) throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.getUserByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {
             throw new ResourceNotFoundException(format("User '%s' doesn't exist", uuid));
+        }
+    }
+
+    @RequestMapping(value = "/current", method = RequestMethod.PUT)
+    public ResponseEntity<UserDTO> putUserCurrent(@RequestBody @Valid UserProfileChangeDTO reqDto) throws ResourceNotFoundException {
+        Optional<UserDTO> oDto = userService.updateCurrentUser(reqDto);
+        if (oDto.isPresent()) {
+            return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
+        } else {
+            throw new ForbiddenException("You have to be login at first");
         }
     }
 
@@ -90,6 +95,17 @@ public class UserController {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {
             throw new ResourceNotFoundException(format("User '%s' doesn't exist", uuid));
+        }
+    }
+
+    @RequestMapping(value = "/current/password", method = RequestMethod.PUT)
+    public ResponseEntity<UserDTO> putUserCurrentPassword(@RequestBody @Valid UserPasswordDTO reqDto)
+            throws ResourceNotFoundException {
+        Optional<UserDTO> oDto = userService.updatePasswordForCurrentUser(reqDto);
+        if (oDto.isPresent()) {
+            return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
+        } else {
+            throw new ForbiddenException("You have to be login at first");
         }
     }
 

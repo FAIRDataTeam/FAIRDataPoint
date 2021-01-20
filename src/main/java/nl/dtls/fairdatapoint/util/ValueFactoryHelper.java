@@ -120,4 +120,8 @@ public class ValueFactoryHelper {
     public static Statement s(Resource subject, IRI predicate, Value object, Resource context) {
         return VF.createStatement(subject, predicate, object, context);
     }
+
+    public static Resource bn() {
+        return VF.createBNode();
+    }
 }

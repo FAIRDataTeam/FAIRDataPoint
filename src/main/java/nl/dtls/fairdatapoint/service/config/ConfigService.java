@@ -27,6 +27,7 @@ import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionReposit
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,12 +39,15 @@ public class ConfigService {
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
+    @Value("${instance.index:false}")
+    private boolean index;
+
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
 
     public BootstrapConfigDTO getBootstrapConfig() {
         List<ResourceDefinition> resourceDefinitions = resourceDefinitionRepository.findAll();
-        return new BootstrapConfigDTO(persistentUrl, resourceDefinitions);
+        return new BootstrapConfigDTO(persistentUrl, resourceDefinitions, index);
     }
 
 }

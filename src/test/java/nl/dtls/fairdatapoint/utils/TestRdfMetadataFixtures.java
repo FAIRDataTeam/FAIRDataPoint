@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.utils;
 
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactory;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import org.eclipse.rdf4j.model.Model;
@@ -36,17 +37,24 @@ import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 @Service
 public class TestRdfMetadataFixtures extends RdfMetadataFixtures {
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
-
     public String alternativePersistentUrl = "https://lorentz.fair-dtls.surf-hosted.nl/fdp";
 
-    @Autowired
-    private MetadataEnhancer metadataEnhancer;
+    private final String persistentUrl;
+
+    private final MetadataEnhancer metadataEnhancer;
+
+    private final ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+    public TestRdfMetadataFixtures(MetadataFactory metadataFactory,
+                                   @Qualifier("persistentUrl") String persistentUrl,
+                                   MetadataEnhancer metadataEnhancer,
+                                   ResourceDefinitionFixtures resourceDefinitionFixtures) {
+        super(metadataFactory);
+        this.persistentUrl = persistentUrl;
+        this.metadataEnhancer = metadataEnhancer;
+        this.resourceDefinitionFixtures = resourceDefinitionFixtures;
+    }
 
     public Model repositoryMetadata() {
         Model metadata = super.repositoryMetadata(persistentUrl);

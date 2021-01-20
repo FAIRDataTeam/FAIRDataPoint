@@ -40,4 +40,6 @@ public class BootstrapConfigDTO {
 
     protected List<ResourceDefinition> resourceDefinitions;
 
+    protected boolean index;
+
 }

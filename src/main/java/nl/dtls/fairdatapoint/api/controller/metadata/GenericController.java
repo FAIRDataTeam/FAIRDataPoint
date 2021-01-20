@@ -30,6 +30,7 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
@@ -75,6 +76,9 @@ public class GenericController {
 
     @Autowired
     private MetadataStateService metadataStateService;
+
+    @Autowired
+    private MetadataEnhancer metadataEnhancer;
 
     @Autowired
     private CurrentUserService currentUserService;
@@ -180,7 +184,10 @@ public class GenericController {
             }
         }
 
-        // 6. Create response
+        // 6. Add links
+        metadataEnhancer.enhanceWithLinks(entityUri, entity, rd, persistentUrl, resultRdf);
+
+        // 7. Create response
         return resultRdf;
     }
 
@@ -192,15 +199,22 @@ public class GenericController {
                                                @RequestBody String reqBody,
                                                @RequestHeader(value = "Content-Type", required = false) String contentType)
             throws MetadataServiceException {
-        // 1. Init
+        // 1. Check if user is authenticated
+        //     - it can't be in SecurityConfig because the authentication is done based on content-type
+        Optional<User> oUser = currentUserService.getCurrentUser();
+        if (oUser.isEmpty()) {
+            throw new ForbiddenException("You have to be login at first");
+        }
+
+        // 2. Init
         String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
-        // 2. Generate URI
+        // 3. Generate URI
         IRI uri = generateNewIRI(request, persistentUrl);
 
-        // 3. Parse reqDto
+        // 4. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
         Model oldDto = read(reqBody, uri.stringValue(), rdfContentType);
         Model reqDto = changeBaseUri(oldDto, uri.stringValue(), rd.getTargetClassUris());
@@ -208,10 +222,10 @@ public class GenericController {
             reqDto.remove(null, i(rdChild.getRelationUri()), null);
         }
 
-        // 4. Store metadata
+        // 5. Store metadata
         Model metadata = metadataService.store(reqDto, uri, rd);
 
-        // 5. Create response
+        // 6. Create response
         return ResponseEntity
                 .created(URI.create(uri.stringValue()))
                 .body(metadata);

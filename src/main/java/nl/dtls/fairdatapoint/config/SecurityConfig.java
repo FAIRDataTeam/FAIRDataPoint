@@ -59,8 +59,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/**").authenticated()
                 .antMatchers("/memberships**").authenticated()
                 .antMatchers("/tokens").permitAll()
+                .antMatchers("/search**").permitAll()
+                .antMatchers("/index/admin**").authenticated()
+                .antMatchers("/index**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .apply(filterConfigurer);
