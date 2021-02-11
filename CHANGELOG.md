@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Denylist for FDP Index pings
+
 ### Changed
 
 - Upgrade Java JDK from 14 to 15
