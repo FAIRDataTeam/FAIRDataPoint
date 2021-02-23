@@ -72,17 +72,18 @@ public class DashboardService {
     public List<DashboardItemDTO> getDashboard(IRI repositoryUri) throws MetadataServiceException {
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix("");
         Model repository = metadataService.retrieve(repositoryUri);
-        return getDashboardItem(repository, rd).getChildren();
+        return getDashboardItem(repositoryUri, repository, rd).getChildren();
     }
 
-    private DashboardItemDTO getDashboardItem(Model model, ResourceDefinition rd) throws MetadataServiceException {
-        IRI metadataUri = getUri(model);
+    private DashboardItemDTO getDashboardItem(IRI metadataUri, Model model, ResourceDefinition rd) throws MetadataServiceException {
         List<DashboardItemDTO> children = new ArrayList<>();
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             IRI relationUri = i(rdChild.getRelationUri());
             for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(model, metadataUri, relationUri)) {
+                IRI childIri = i(childUri.stringValue());
                 DashboardItemDTO child = getDashboardItem(
-                        metadataService.retrieve(i(childUri.stringValue())),
+                        childIri,
+                        metadataService.retrieve(childIri),
                         resourceDefinitionCache.getByUuid(rdChild.getResourceDefinitionUuid())
                 );
                 children.add(child);

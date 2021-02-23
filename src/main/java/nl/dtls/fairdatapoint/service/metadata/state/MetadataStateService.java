@@ -68,14 +68,13 @@ public class MetadataStateService {
         return oMetadata.get();
     }
 
-    public MetaStateDTO getState(Model model, ResourceDefinition rd) {
+    public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition rd) {
         // 1. Return null if user is not log in
         if (currentUserService.getCurrentUser().isEmpty()) {
             return null;
         }
 
         // 2. Get metadata info for current
-        IRI metadataUri = getUri(model);
         Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
             throw new ResourceNotFoundException(format("Metadata info '%s' was not found", metadataUri));
