@@ -14,7 +14,7 @@ jobs:
       PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint
       TAG_DEVELOP: develop
       TAG_LATEST: latest
-      JDK_VERSION: 11
+      JDK_VERSION: 14
       JDK_FILE: openjdk-14.0.1_linux-x64_bin.tar.gz
       JDK_URL: https://download.java.net/java/GA/jdk14.0.1/664493ef4a6946b186ff29eb326336a2/7/GPL/openjdk-14.0.1_linux-x64_bin.tar.gz
 
@@ -48,7 +48,7 @@ jobs:
         key: ${{ env.JDK_FILE }}
 
 # (2) -> Prepare Java
-    - name: Download Oracle JDK
+    - name: Download JDK
       run: |
         if [ ! -f ~/jdk/$JDK_FILE ]; then
           wget --quiet $JDK_URL -O ~/jdk/$JDK_FILE
@@ -56,9 +56,9 @@ jobs:
         cp ~/jdk/$JDK_FILE .
 
     - name: Setup Java
-      uses: actions/setup-java@master
+      uses: actions/setup-java@v1
       with:
-        version: ${{ env.JDK_VERSION }}
+        java-version: ${{ env.JDK_VERSION }}
         jdkFile: ${{ env.JDK_FILE }}
 
     - name: Verify Maven and Java

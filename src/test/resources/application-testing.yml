@@ -1,8 +1,8 @@
 instance:
-  clientUrl: http://localhost:8084
+  clientUrl: http://localhost:8088
 
 server:
-  port: 8084
+  port: 8088
 
 spring:
   data:
