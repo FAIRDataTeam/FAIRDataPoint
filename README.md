@@ -20,9 +20,9 @@ More information about FDP and how to deploy can be found at [FDP Deployment Doc
 
 **Stack:**
 
- - **Java** (minimally JDK 14, or higher)
- - **Maven** (recommended 3.2.5 or higher)
- - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
+ - **Java** (minimal: JDK 15)
+ - **Maven** (recommended: 3.2.5 or higher)
+ - **Docker** (recommended: 17.09.0-ce or higher) - *for build of production image*
 
 ### Build & Run
 
