@@ -54,7 +54,7 @@
         <logback.version>1.2.3</logback.version>
         <rdf4j.version>3.0.0</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
-        <jwt.version>0.10.5</jwt.version>
+        <jwt.version>0.11.2</jwt.version>
         <lombok.version>1.18.10</lombok.version>
 
         <!-- Plugins -->
