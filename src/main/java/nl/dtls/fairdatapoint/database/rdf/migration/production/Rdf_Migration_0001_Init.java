@@ -30,7 +30,6 @@ import nl.dtls.fairdatapoint.vocabulary.R3D;
 import nl.dtls.fairdatapoint.vocabulary.Sio;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
 import nl.dtls.rdf.migration.runner.RdfProductionMigration;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
@@ -48,6 +47,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             add(s, publisherIri, FOAF.NAME, l("Default Publisher"));
             // Metrics
             metadataMetrics.forEach((metric, metricValue) -> {
-                IRI metUri = i(format("%s/metrics/%s", persistentUrl, DigestUtils.md5Hex(metric)));
+                IRI metUri = i(format("%s/metrics/%s", persistentUrl, DigestUtils.md5DigestAsHex(metric.getBytes())));
                 add(s, Sio.REFERS_TO, metUri);
                 add(s, metUri, Sio.IS_ABOUT, i(metric));
                 add(s, metUri, Sio.REFERS_TO, i(metricValue));

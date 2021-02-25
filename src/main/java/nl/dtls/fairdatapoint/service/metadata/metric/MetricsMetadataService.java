@@ -29,11 +29,11 @@ package nl.dtls.fairdatapoint.service.metadata.metric;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.entity.metadata.Metric;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -55,7 +55,7 @@ public class MetricsMetadataService {
         return metadataMetrics.entrySet().stream()
                 .map(entry ->
                         new Metric(
-                                i(format("%s/metrics/%s", metadataURI.toString(), DigestUtils.md5Hex(entry.getKey()))),
+                                i(format("%s/metrics/%s", metadataURI.toString(), DigestUtils.md5DigestAsHex(entry.getKey().getBytes()))),
                                 i(entry.getValue()),
                                 i(entry.getValue())))
                 .collect(Collectors.toList());
