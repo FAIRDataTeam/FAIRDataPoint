@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Upgrade Java JDK from 14 to 15
+- Rate limits use forwarded IP by proxy based on config
 
 ### Fixed
 

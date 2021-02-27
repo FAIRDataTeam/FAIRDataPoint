@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.api.controller.index;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ import java.util.UUID;
 public class AdminController {
 
     @Autowired
+    private UtilityService utilityService;
+
+    @Autowired
     private EventService eventService;
 
     @Autowired
@@ -51,7 +55,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerMetadataRetrieve(@RequestParam(required = false) String clientUrl, HttpServletRequest request) {
-        log.info("Received ping from {}", request.getRemoteAddr());
+        log.info("Received ping from {}", utilityService.getRemoteAddr(request));
         final Event event = eventService.acceptAdminTrigger(request, clientUrl);
         webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
@@ -62,7 +66,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void webhookPing(@RequestParam(required = true) UUID webhook, HttpServletRequest request) {
-        log.info("Received webhook {} ping trigger from {}", webhook, request.getRemoteAddr());
+        log.info("Received webhook {} ping trigger from {}", webhook, utilityService.getRemoteAddr(request));
         final Event event = webhookService.handleWebhookPing(request, webhook);
         webhookService.triggerWebhooks(event);
     }

@@ -59,6 +59,11 @@
       "name": "fdp-index.api.contactName",
       "type": "java.lang.String",
       "description": "Contact name/label for OpenAPI docs"
+    },
+    {
+      "name": "instance.behindProxy",
+      "type": "java.lang.String",
+      "description": "If FDP is running behind reverse HTTP proxy"
     }
   ]
 }

@@ -32,6 +32,7 @@ import nl.dtls.fairdatapoint.entity.index.config.EventsConfig;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
 import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,9 @@ public class WebhookService {
 
     @Autowired
     private EventsConfig eventsConfig;
+
+    @Autowired
+    private UtilityService utilityService;
 
     private static final String SECRET_PLACEHOLDER = "*** HIDDEN ***";
 
@@ -106,7 +110,7 @@ public class WebhookService {
     public Event handleWebhookPing(HttpServletRequest request, UUID webhookUuid) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<Webhook> webhook = webhookRepository.findByUuid(webhookUuid);
-        Event event = eventRepository.save(webhookMapper.toPingEvent(request, authentication, webhookUuid));
+        Event event = eventRepository.save(webhookMapper.toPingEvent(request, authentication, webhookUuid, utilityService.getRemoteAddr(request)));
         if (webhook.isEmpty()) {
             throw new ResourceNotFoundException("There is no such webhook: " + webhookUuid);
         }
