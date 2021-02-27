@@ -1,5 +1,6 @@
 instance:
   clientUrl: http://localhost:8080
+  behindProxy: true
 
 spring:
   data:

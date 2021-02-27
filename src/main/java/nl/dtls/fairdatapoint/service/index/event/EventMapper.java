@@ -45,9 +45,9 @@ public class EventMapper {
         );
     }
 
-    public Event toAdminTriggerEvent(HttpServletRequest request, Authentication authentication, String clientUrl) {
+    public Event toAdminTriggerEvent(HttpServletRequest request, Authentication authentication, String clientUrl, String remoteAddr) {
         var adminTrigger = new AdminTrigger();
-        adminTrigger.setRemoteAddr(request.getRemoteAddr());
+        adminTrigger.setRemoteAddr(remoteAddr);
         adminTrigger.setTokenName(authentication.getName());
         adminTrigger.setClientUrl(clientUrl);
         return new Event(VERSION, adminTrigger);

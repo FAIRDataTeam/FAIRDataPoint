@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
@@ -56,6 +57,9 @@ public class PingController {
 
     @Autowired
     private IndexSettingsService indexSettingsService;
+    
+    @Autowired
+    private UtilityService utilityService;
 
     @ApiOperation(
             value = "Ping payload with FAIR Data Point info",
@@ -65,7 +69,7 @@ public class PingController {
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) throws MetadataRepositoryException {
-        logger.info("Received ping from {}", request.getRemoteAddr());
+        logger.info("Received ping from {}", utilityService.getRemoteAddr(request));
         if (indexSettingsService.isPingDenied(reqDto)) {
             logger.info("Received ping is denied");
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

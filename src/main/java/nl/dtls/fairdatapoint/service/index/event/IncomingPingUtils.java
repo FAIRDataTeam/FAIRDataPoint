@@ -43,9 +43,9 @@ public class IncomingPingUtils {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public Event prepareEvent(PingDTO reqDto, HttpServletRequest request) {
+    public Event prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
         var incomingPing = new IncomingPing();
-        var ex = new Exchange(ExchangeDirection.INCOMING, request.getRemoteAddr());
+        var ex = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
         incomingPing.setExchange(ex);
 
         ex.getRequest().setHeaders(getHeaders(request));

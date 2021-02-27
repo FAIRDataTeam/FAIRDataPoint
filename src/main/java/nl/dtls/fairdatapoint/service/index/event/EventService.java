@@ -37,9 +37,11 @@ import nl.dtls.fairdatapoint.entity.index.exception.IncorrectPingFormatException
 import nl.dtls.fairdatapoint.entity.index.exception.RateLimitException;
 import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
+import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
+import nl.dtls.fairdatapoint.util.HttpUtil;
 import org.eclipse.rdf4j.util.iterators.EmptyIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +88,9 @@ public class EventService {
     private EventMapper eventMapper;
 
     @Autowired
+    private UtilityService utilityService;
+
+    @Autowired
     private IncomingPingUtils incomingPingUtils;
 
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
@@ -102,7 +107,7 @@ public class EventService {
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
-        var remoteAddr = request.getRemoteAddr();
+        var remoteAddr = utilityService.getRemoteAddr(request);
         var rateLimitSince = Instant.now().minus(eventsConfig.getPingRateLimitDuration());
         var previousPings = eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(remoteAddr,
                 rateLimitSince);
@@ -114,7 +119,7 @@ public class EventService {
             );
         }
 
-        var event = incomingPingUtils.prepareEvent(reqDto, request);
+        var event = incomingPingUtils.prepareEvent(reqDto, request, remoteAddr);
         eventRepository.save(event);
         event.execute();
         try {
@@ -226,7 +231,7 @@ public class EventService {
     @RequiredEnabledIndexFeature
     public Event acceptAdminTrigger(HttpServletRequest request, String indexEntryUuid) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Event event = eventMapper.toAdminTriggerEvent(request, authentication, indexEntryUuid);
+        Event event = eventMapper.toAdminTriggerEvent(request, authentication, indexEntryUuid, utilityService.getRemoteAddr(request));
         if (indexEntryUuid != null) {
             Optional<IndexEntry> entry = indexEntryService.getEntry(indexEntryUuid);
             if (entry.isEmpty()) {
