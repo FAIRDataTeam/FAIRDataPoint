@@ -20,19 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.config;
+package nl.dtls.fairdatapoint.api.dto.index.settings;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.Duration;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-@Builder
-@Data
-public class EventsConfig {
-    private final Duration retrievalRateLimitWait;
-    private final Duration retrievalTimeout;
-    private final Duration pingValidDuration;
-    private final Duration pingRateLimitDuration;
-    private final int pingRateLimitHits;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class IndexSettingsUpdateDTO {
+    @Valid
+    @NotNull
+    private IndexSettingsRetrievalDTO retrieval;
+
+    @Valid
+    @NotNull
+    private IndexSettingsPingDTO ping;
 }

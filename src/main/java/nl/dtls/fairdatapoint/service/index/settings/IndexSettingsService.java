@@ -23,8 +23,11 @@
 package nl.dtls.fairdatapoint.service.index.settings;
 
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
+import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
+import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
-import nl.dtls.fairdatapoint.entity.index.IndexSettings;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
+import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +40,34 @@ public class IndexSettingsService {
     private static final Logger logger = LoggerFactory.getLogger(IndexSettingsService.class);
 
     @Autowired
-    private IndexSettingsRepository indexSettingsRepository;
+    private IndexSettingsRepository repository;
 
+    @Autowired
+    private IndexSettingsMapper mapper;
+
+    @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
         logger.info("Checking if ping.clientUrl is on deny list: " + ping.getClientUrl());
-        IndexSettings indexSettings = indexSettingsRepository.findFirstBy().orElse(IndexSettings.getDefault());
-        return indexSettings.getDenyList().parallelStream().anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
+        return getOrDefaults().getPing().getDenyList().parallelStream().anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
+    }
+
+    @RequiredEnabledIndexFeature
+    public IndexSettings getOrDefaults() {
+        return repository.findFirstBy().orElse(IndexSettings.getDefault());
+    }
+
+    @RequiredEnabledIndexFeature
+    public IndexSettingsDTO getCurrentSettings() {
+        return mapper.toDTO(getOrDefaults());
+    }
+
+    @RequiredEnabledIndexFeature
+    public IndexSettingsDTO updateSettings(IndexSettingsUpdateDTO dto) {
+        return mapper.toDTO(repository.save(mapper.fromUpdateDTO(dto, getOrDefaults())));
+    }
+
+    @RequiredEnabledIndexFeature
+    public IndexSettingsDTO resetSettings() {
+        return updateSettings(mapper.toUpdateDTO(IndexSettings.getDefault()));
     }
 }

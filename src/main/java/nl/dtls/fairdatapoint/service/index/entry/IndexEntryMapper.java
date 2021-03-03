@@ -25,7 +25,6 @@ package nl.dtls.fairdatapoint.service.index.entry;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO;
-import nl.dtls.fairdatapoint.entity.index.config.EventsConfig;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
@@ -41,26 +40,23 @@ import java.util.stream.StreamSupport;
 public class IndexEntryMapper {
 
     @Autowired
-    private EventsConfig eventsConfig;
-
-    @Autowired
     private EventMapper eventMapper;
 
-    public IndexEntryDTO toDTO(IndexEntry indexEntry) {
+    public IndexEntryDTO toDTO(IndexEntry indexEntry, Instant validThreshold) {
         return new IndexEntryDTO(
                 indexEntry.getUuid(),
                 indexEntry.getClientUrl(),
-                toStateDTO(indexEntry.getState(), indexEntry.getLastRetrievalTime()),
+                toStateDTO(indexEntry.getState(), indexEntry.getLastRetrievalTime(), validThreshold),
                 indexEntry.getRegistrationTime().toString(),
                 indexEntry.getModificationTime().toString()
         );
     }
 
-    public IndexEntryDetailDTO toDetailDTO(IndexEntry indexEntry, Iterable<Event> events) {
+    public IndexEntryDetailDTO toDetailDTO(IndexEntry indexEntry, Iterable<Event> events, Instant validThreshold) {
         return new IndexEntryDetailDTO(
                 indexEntry.getUuid(),
                 indexEntry.getClientUrl(),
-                toStateDTO(indexEntry.getState(), indexEntry.getLastRetrievalTime()),
+                toStateDTO(indexEntry.getState(), indexEntry.getLastRetrievalTime(), validThreshold),
                 indexEntry.getCurrentMetadata(),
                 StreamSupport.stream(events.spliterator(), false)
                         .map(eventMapper::toDTO)
@@ -71,10 +67,10 @@ public class IndexEntryMapper {
         );
     }
 
-    public IndexEntryStateDTO toStateDTO(IndexEntryState state, Instant lastRetrievalTime) {
+    public IndexEntryStateDTO toStateDTO(IndexEntryState state, Instant lastRetrievalTime, Instant validThreshold) {
         return switch (state) {
             case Unknown -> IndexEntryStateDTO.UNKNOWN;
-            case Valid -> lastRetrievalTime.isAfter(Instant.now().minus(eventsConfig.getPingValidDuration()))
+            case Valid -> lastRetrievalTime.isAfter(validThreshold)
                     ? IndexEntryStateDTO.ACTIVE
                     : IndexEntryStateDTO.INACTIVE;
             case Invalid -> IndexEntryStateDTO.INVALID;

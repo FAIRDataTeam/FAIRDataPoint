@@ -20,29 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index;
+package nl.dtls.fairdatapoint.entity.index.settings;
 
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
-@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder(toBuilder = true)
 @EqualsAndHashCode
-public class IndexSettings {
-    @Id
-    protected ObjectId id;
+public class IndexSettingsPing {
+    @NotNull
+    private Duration validDuration;
 
+    @NotNull
+    private Duration rateLimitDuration;
+
+    @NotNull
+    private Integer rateLimitHits;
+
+    @NotNull
     private List<String> denyList;
 
-    public static IndexSettings getDefault() {
-        return new IndexSettings(ObjectId.get(), new ArrayList<>());
+    public static IndexSettingsPing getDefault() {
+        IndexSettingsPing ping = new IndexSettingsPing();
+        ping.setValidDuration(Duration.ofDays(7));
+        ping.setRateLimitDuration(Duration.ofHours(6));
+        ping.setRateLimitHits(10);
+        ping.setDenyList(Collections.singletonList("^(http|https)://localhost(:[0-9]+){0,1}.*$"));
+        return ping;
     }
 }

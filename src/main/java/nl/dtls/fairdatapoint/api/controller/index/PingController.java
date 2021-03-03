@@ -29,7 +29,6 @@ import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
-import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +53,6 @@ public class PingController {
 
     @Autowired
     private HarvesterService harvesterService;
-
-    @Autowired
-    private IndexSettingsService indexSettingsService;
     
     @Autowired
     private UtilityService utilityService;
@@ -70,10 +66,6 @@ public class PingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) throws MetadataRepositoryException {
         logger.info("Received ping from {}", utilityService.getRemoteAddr(request));
-        if (indexSettingsService.isPingDenied(reqDto)) {
-            logger.info("Received ping is denied");
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
         final Event event = eventService.acceptIncomingPing(reqDto, request);
         logger.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);

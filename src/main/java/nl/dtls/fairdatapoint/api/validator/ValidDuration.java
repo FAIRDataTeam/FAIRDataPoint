@@ -20,14 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.repository;
+package nl.dtls.fairdatapoint.api.validator;
 
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Component;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
 
-import java.util.Optional;
+@Documented
+@Constraint(validatedBy = DurationValidator.class)
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE_USE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidDuration {
 
-public interface IndexSettingsRepository  extends MongoRepository<IndexSettings, String> {
-    Optional<IndexSettings> findFirstBy();
+    String message() default "Invalid ISO-8601 duration";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }
