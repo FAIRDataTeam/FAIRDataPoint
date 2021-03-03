@@ -10,11 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Denylist for FDP Index pings
+- Endpoints for managing Index settings from [Client]
 
 ### Changed
 
 - Upgrade Java JDK from 14 to 15
 - Rate limits use forwarded IP by proxy based on config
+- Index settings are moved to the database
+- Admin trigger now accepts the same DTO as ping
 
 ### Fixed
 

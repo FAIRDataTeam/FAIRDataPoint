@@ -20,14 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.repository;
+package nl.dtls.fairdatapoint.entity.index.settings;
 
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Component;
+import lombok.*;
 
-import java.util.Optional;
+import javax.validation.constraints.NotNull;
+import java.time.Duration;
 
-public interface IndexSettingsRepository  extends MongoRepository<IndexSettings, String> {
-    Optional<IndexSettings> findFirstBy();
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@EqualsAndHashCode
+public class IndexSettingsRetrieval {
+    @NotNull
+    private Duration rateLimitWait;
+
+    @NotNull
+    private Duration timeout;
+
+    public static IndexSettingsRetrieval getDefault() {
+        IndexSettingsRetrieval retrieval = new IndexSettingsRetrieval();
+        retrieval.setRateLimitWait(Duration.ofMinutes(10));
+        retrieval.setTimeout(Duration.ofMinutes(1));
+        return retrieval;
+    }
 }

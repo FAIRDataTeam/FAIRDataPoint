@@ -20,14 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.repository;
+package nl.dtls.fairdatapoint.entity.index.exception;
 
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 
-import java.util.Optional;
+public class PingDeniedException extends IndexException {
 
-public interface IndexSettingsRepository  extends MongoRepository<IndexSettings, String> {
-    Optional<IndexSettings> findFirstBy();
+    public PingDeniedException(String clientUrl) {
+        super("Client URL is denied: " + clientUrl, HttpStatus.FORBIDDEN);
+    }
 }

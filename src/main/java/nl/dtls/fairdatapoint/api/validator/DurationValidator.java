@@ -20,14 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.repository;
+package nl.dtls.fairdatapoint.api.validator;
 
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Component;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-import java.util.Optional;
+import java.time.Duration;
 
-public interface IndexSettingsRepository  extends MongoRepository<IndexSettings, String> {
-    Optional<IndexSettings> findFirstBy();
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+
+public class DurationValidator implements ConstraintValidator<ValidDuration, String> {
+
+    @Override
+    public void initialize(ValidDuration text) {
+    }
+
+    @Override
+    public boolean isValid(String text, ConstraintValidatorContext cxt) {
+        try {
+            Duration.parse(text);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
