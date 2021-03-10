@@ -20,12 +20,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+################################################################################
+# BUILD STAGE
+FROM maven:3-openjdk-15 as builder
 
+WORKDIR /builder
+
+ADD . /builder
+
+RUN mvn --quiet -B -U --fail-fast -DskipTests package
+
+################################################################################
+# RUN STAGE
 FROM openjdk:15-jdk-slim
 
 WORKDIR /fdp
 
-ADD target/fdp-spring-boot.jar /fdp/app.jar
-ADD target/classes/application-production.yml /fdp/application.yml
+COPY --from=builder /builder/target/fdp-spring-boot.jar /fdp/app.jar
+COPY --from=builder /builder/target/classes/application-production.yml /fdp/application.yml
 
 ENTRYPOINT java -jar app.jar --spring.profiles.active=production --spring.config.location=classpath:/application.yml,classpath:/application-production.yml,file:/fdp/application.yml

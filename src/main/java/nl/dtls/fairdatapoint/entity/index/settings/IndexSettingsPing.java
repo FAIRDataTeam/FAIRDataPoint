@@ -20,37 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.event;
+package nl.dtls.fairdatapoint.entity.index.settings;
 
+import lombok.*;
 
-import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
-import nl.dtls.fairdatapoint.entity.index.event.AdminTrigger;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
+import javax.validation.constraints.NotNull;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@EqualsAndHashCode
+public class IndexSettingsPing {
+    @NotNull
+    private Duration validDuration;
 
-@Service
-public class EventMapper {
+    @NotNull
+    private Duration rateLimitDuration;
 
-    private static final Integer VERSION = 1;
+    @NotNull
+    private Integer rateLimitHits;
 
-    public EventDTO toDTO(Event event) {
-        return new EventDTO(
-                event.getUuid(),
-                event.getType(),
-                event.getCreated().toString(),
-                event.getFinished().toString()
-        );
+    @NotNull
+    private List<String> denyList;
+
+    public static IndexSettingsPing getDefault() {
+        IndexSettingsPing ping = new IndexSettingsPing();
+        ping.setValidDuration(Duration.ofDays(7));
+        ping.setRateLimitDuration(Duration.ofHours(6));
+        ping.setRateLimitHits(10);
+        ping.setDenyList(Collections.singletonList("^(http|https)://localhost(:[0-9]+){0,1}.*$"));
+        return ping;
     }
-
-    public Event toAdminTriggerEvent(HttpServletRequest request, Authentication authentication, String clientUrl, String remoteAddr) {
-        var adminTrigger = new AdminTrigger();
-        adminTrigger.setRemoteAddr(remoteAddr);
-        adminTrigger.setTokenName(authentication.getName());
-        adminTrigger.setClientUrl(clientUrl);
-        return new Event(VERSION, adminTrigger);
-    }
-
 }

@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +53,9 @@ public class PingController {
 
     @Autowired
     private HarvesterService harvesterService;
+    
+    @Autowired
+    private UtilityService utilityService;
 
     @ApiOperation(
             value = "Ping payload with FAIR Data Point info",
@@ -59,12 +64,13 @@ public class PingController {
     )
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) throws MetadataRepositoryException {
-        logger.info("Received ping from {}", request.getRemoteAddr());
+    public ResponseEntity<Void> receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) throws MetadataRepositoryException {
+        logger.info("Received ping from {}", utilityService.getRemoteAddr(request));
         final Event event = eventService.acceptIncomingPing(reqDto, request);
         logger.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
         harvesterService.harvest(reqDto.getClientUrl());
         webhookService.triggerWebhooks(event);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

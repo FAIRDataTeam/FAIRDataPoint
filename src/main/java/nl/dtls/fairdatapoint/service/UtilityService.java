@@ -20,37 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.event;
+package nl.dtls.fairdatapoint.service;
 
-
-import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
-import nl.dtls.fairdatapoint.entity.index.event.AdminTrigger;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import org.springframework.security.core.Authentication;
+import nl.dtls.fairdatapoint.util.HttpUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Service
-public class EventMapper {
+public class UtilityService {
+    
+    @Value("${instance.behindProxy:true}")
+    private Boolean behindProxy;
 
-    private static final Integer VERSION = 1;
-
-    public EventDTO toDTO(Event event) {
-        return new EventDTO(
-                event.getUuid(),
-                event.getType(),
-                event.getCreated().toString(),
-                event.getFinished().toString()
-        );
+    public String getRemoteAddr(HttpServletRequest request) {
+        return HttpUtil.getClientIpAddress(request, behindProxy);
     }
-
-    public Event toAdminTriggerEvent(HttpServletRequest request, Authentication authentication, String clientUrl, String remoteAddr) {
-        var adminTrigger = new AdminTrigger();
-        adminTrigger.setRemoteAddr(remoteAddr);
-        adminTrigger.setTokenName(authentication.getName());
-        adminTrigger.setClientUrl(clientUrl);
-        return new Event(VERSION, adminTrigger);
-    }
-
 }

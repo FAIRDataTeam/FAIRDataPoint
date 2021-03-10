@@ -20,37 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.event;
+package nl.dtls.fairdatapoint.api.dto.index.settings;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
-import nl.dtls.fairdatapoint.entity.index.event.AdminTrigger;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
+import javax.validation.constraints.NotNull;
 
-import javax.servlet.http.HttpServletRequest;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class IndexSettingsDTO {
+    @NotNull
+    private IndexSettingsRetrievalDTO retrieval;
 
-@Service
-public class EventMapper {
+    @NotNull
+    private IndexSettingsPingDTO ping;
 
-    private static final Integer VERSION = 1;
-
-    public EventDTO toDTO(Event event) {
-        return new EventDTO(
-                event.getUuid(),
-                event.getType(),
-                event.getCreated().toString(),
-                event.getFinished().toString()
-        );
-    }
-
-    public Event toAdminTriggerEvent(HttpServletRequest request, Authentication authentication, String clientUrl, String remoteAddr) {
-        var adminTrigger = new AdminTrigger();
-        adminTrigger.setRemoteAddr(remoteAddr);
-        adminTrigger.setTokenName(authentication.getName());
-        adminTrigger.setClientUrl(clientUrl);
-        return new Event(VERSION, adminTrigger);
-    }
-
+    @NotNull
+    private Boolean isDefault;
 }

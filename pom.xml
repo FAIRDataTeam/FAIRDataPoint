@@ -10,7 +10,7 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -41,8 +41,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Maven -->
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
 
         <!-- Project related -->
         <spring.rdf.migration.version>1.1.0.RELEASE</spring.rdf.migration.version>
@@ -54,15 +54,15 @@
         <logback.version>1.2.3</logback.version>
         <rdf4j.version>3.0.0</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
-        <jwt.version>0.10.5</jwt.version>
-        <lombok.version>1.18.10</lombok.version>
+        <jwt.version>0.11.2</jwt.version>
+        <lombok.version>1.18.18</lombok.version>
 
         <!-- Plugins -->
         <plugin.license.version>3.0</plugin.license.version>
         <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
-        <plugin.git_commit_id.version>2.2.4</plugin.git_commit_id.version>
+        <plugin.git_commit_id.version>4.0.3</plugin.git_commit_id.version>
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
     </properties>
 
@@ -313,6 +313,21 @@
                 </executions>
                 <configuration>
                     <verbose>false</verbose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*Fixtures.java</exclude>
+                        <exclude>**/*Config.java</exclude>
+                        <exclude>**/Common.java</exclude>
+                        <exclude>**/common/*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>

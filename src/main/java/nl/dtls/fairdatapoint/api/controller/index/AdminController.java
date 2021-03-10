@@ -24,7 +24,9 @@ package nl.dtls.fairdatapoint.api.controller.index;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +35,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.UUID;
 
 @Log4j2
 @RestController
 @RequestMapping("/index/admin")
 public class AdminController {
+
+    @Autowired
+    private UtilityService utilityService;
 
     @Autowired
     private EventService eventService;
@@ -50,9 +56,20 @@ public class AdminController {
     @PostMapping("/trigger")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void triggerMetadataRetrieve(@RequestParam(required = false) String clientUrl, HttpServletRequest request) {
-        log.info("Received ping from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTrigger(request, clientUrl);
+    public void triggerMetadataRetrieve(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) {
+        log.info("Received ping from {}", utilityService.getRemoteAddr(request));
+        final Event event = eventService.acceptAdminTrigger(request, reqDto);
+        webhookService.triggerWebhooks(event);
+        eventService.triggerMetadataRetrieval(event);
+    }
+
+    @ApiOperation(value = "trigger-all", hidden = true)
+    @PostMapping("/trigger-all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void triggerMetadataRetrieveAll(HttpServletRequest request) {
+        log.info("Received ping from {}", utilityService.getRemoteAddr(request));
+        final Event event = eventService.acceptAdminTriggerAll(request);
         webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
     }
@@ -62,7 +79,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void webhookPing(@RequestParam(required = true) UUID webhook, HttpServletRequest request) {
-        log.info("Received webhook {} ping trigger from {}", webhook, request.getRemoteAddr());
+        log.info("Received webhook {} ping trigger from {}", webhook, utilityService.getRemoteAddr(request));
         final Event event = webhookService.handleWebhookPing(request, webhook);
         webhookService.triggerWebhooks(event);
     }

@@ -20,13 +20,13 @@ More information about FDP and how to deploy can be found at [FDP Deployment Doc
 
 **Stack:**
 
- - **Java** (minimally JDK 14, or higher)
- - **Maven** (recommended 3.2.5 or higher)
- - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
+ - **Java** (minimal: JDK 15)
+ - **Maven** (recommended: 3.2.5 or higher)
+ - **Docker** (recommended: 17.09.0-ce or higher) - *for build of production image*
 
 ### Build & Run
 
-To run the application, a mongodb instance is required to be running. To configure the mongodb address, instruct spring-boot to use the `development` profile. Run these commands from the root of the project.
+To run the application, a MongoDB instance is required to be running. To configure the mongodb address, instruct spring-boot to use the `development` profile. Run these commands from the root of the project.
 
 ```bash
 $ mvn spring-boot:run -Dspring-boot.run.profiles=development
@@ -40,7 +40,7 @@ $ mvn spring-boot:run
 
 ### Run tests
 
-Run these commands from the root of the project
+Run these commands from the root of the project:
 
 ```bash
 $ mvn test
@@ -48,7 +48,7 @@ $ mvn test
 
 ### Package the application
 
-Run these commands from the root of the project
+Run these commands from the root of the project:
 
 ```bash
 $ mvn package
@@ -56,10 +56,18 @@ $ mvn package
 
 ### Create a Docker image
 
-Run these commands from the root of the project
+Run these commands from the root of the project (requires building jar file using `mvn package`):
 
 ```bash
-$ docker build -t fairdata/fairdatapoint .
+$ docker build -t fairdatapoint:local .
+```
+
+### Build using Docker
+
+If you do not have Java and Maven locally, you can build the Docker image using Docker (instead of using locally built jar file):
+
+```bash
+$ docker build -f Dockefile.build -t fairdatapoint:local .
 ```
 
 ## Security

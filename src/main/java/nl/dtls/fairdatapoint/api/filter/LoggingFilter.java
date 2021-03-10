@@ -27,7 +27,9 @@
  */
 package nl.dtls.fairdatapoint.api.filter;
 
+import nl.dtls.fairdatapoint.service.UtilityService;
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -41,12 +43,15 @@ import java.io.IOException;
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
 
+    @Autowired
+    private UtilityService utilityService;
+
     @Override
     public void doFilterInternal(final HttpServletRequest request,
                                  final HttpServletResponse response, final FilterChain fc)
             throws IOException, ServletException {
 
-        ThreadContext.put("ipAddress", request.getRemoteAddr());
+        ThreadContext.put("ipAddress", utilityService.getRemoteAddr(request));
         ThreadContext.put("responseStatus", String.valueOf(response.getStatus()));
         ThreadContext.put("requestMethod", request.getMethod());
         ThreadContext.put("requestURI", request.getRequestURI());

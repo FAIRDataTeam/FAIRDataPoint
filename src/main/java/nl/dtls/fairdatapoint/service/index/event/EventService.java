@@ -28,24 +28,30 @@ import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.index.config.EventsConfig;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.entity.index.event.EventType;
 import nl.dtls.fairdatapoint.entity.index.exception.IncorrectPingFormatException;
+import nl.dtls.fairdatapoint.entity.index.exception.PingDeniedException;
 import nl.dtls.fairdatapoint.entity.index.exception.RateLimitException;
 import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
+import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
+import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
+import nl.dtls.fairdatapoint.util.HttpUtil;
 import org.eclipse.rdf4j.util.iterators.EmptyIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.Authentication;
@@ -74,19 +80,23 @@ public class EventService {
     private IndexEntryRepository indexEntryRepository;
 
     @Autowired
+    @Lazy
     private IndexEntryService indexEntryService;
 
     @Autowired
     private WebhookService webhookService;
 
     @Autowired
-    private EventsConfig eventsConfig;
-
-    @Autowired
     private EventMapper eventMapper;
 
     @Autowired
+    private UtilityService utilityService;
+
+    @Autowired
     private IncomingPingUtils incomingPingUtils;
+
+    @Autowired
+    private IndexSettingsService indexSettingsService;
 
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
         // TODO: make events pagination in the future
@@ -102,19 +112,26 @@ public class EventService {
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
-        var remoteAddr = request.getRemoteAddr();
-        var rateLimitSince = Instant.now().minus(eventsConfig.getPingRateLimitDuration());
+        var remoteAddr = utilityService.getRemoteAddr(request);
+        var pingSettings = indexSettingsService.getOrDefaults().getPing();
+
+        if (indexSettingsService.isPingDenied(reqDto)) {
+            logger.info("Received ping is denied");
+            throw new PingDeniedException(reqDto.getClientUrl());
+        }
+
+        var rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
         var previousPings = eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(remoteAddr,
                 rateLimitSince);
-        if (previousPings.size() > eventsConfig.getPingRateLimitHits()) {
+        if (previousPings.size() > pingSettings.getRateLimitHits()) {
             logger.warn("Rate limit for PING reached by {}", remoteAddr);
             throw new RateLimitException(String.format(
                     "Rate limit reached for %s (max. %d per %s) - PING ignored",
-                    remoteAddr, eventsConfig.getPingRateLimitHits(), eventsConfig.getPingRateLimitDuration().toString())
+                    remoteAddr, pingSettings.getRateLimitHits(), pingSettings.getRateLimitDuration().toString())
             );
         }
 
-        var event = incomingPingUtils.prepareEvent(reqDto, request);
+        var event = incomingPingUtils.prepareEvent(reqDto, request, remoteAddr);
         eventRepository.save(event);
         event.execute();
         try {
@@ -137,14 +154,15 @@ public class EventService {
     }
 
     private void processMetadataRetrieval(Event event) {
-        String clientUrl = event.getRelatedTo().getClientUrl();
-        if (MetadataRetrievalUtils.shouldRetrieve(event, eventsConfig.getRetrievalRateLimitWait())) {
+        var retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
+        var clientUrl = event.getRelatedTo().getClientUrl();
+        if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
             indexEntryRepository.save(event.getRelatedTo());
             eventRepository.save(event);
             event.execute();
 
             logger.info("Retrieving metadata for {}", clientUrl);
-            MetadataRetrievalUtils.retrieveRepositoryMetadata(event, eventsConfig.getRetrievalTimeout());
+            MetadataRetrievalUtils.retrieveRepositoryMetadata(event, retrievalSettings.getTimeout());
             Exchange ex = event.getMetadataRetrieval().getExchange();
             if (ex.getState() == ExchangeState.Retrieved) {
                 try {
@@ -224,16 +242,19 @@ public class EventService {
     }
 
     @RequiredEnabledIndexFeature
-    public Event acceptAdminTrigger(HttpServletRequest request, String indexEntryUuid) {
+    public Event acceptAdminTrigger(HttpServletRequest request, PingDTO pingDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Event event = eventMapper.toAdminTriggerEvent(request, authentication, indexEntryUuid);
-        if (indexEntryUuid != null) {
-            Optional<IndexEntry> entry = indexEntryService.getEntry(indexEntryUuid);
-            if (entry.isEmpty()) {
-                throw new ResourceNotFoundException("There is no such entry: " + indexEntryUuid);
-            }
-            event.setRelatedTo(entry.get());
-        }
+        Event event = eventMapper.toAdminTriggerEvent(request, authentication, pingDTO.getClientUrl(), utilityService.getRemoteAddr(request));
+        IndexEntry entry = indexEntryService.storeEntry(pingDTO);
+        event.setRelatedTo(entry);
+        event.finish();
+        return eventRepository.save(event);
+    }
+
+    @RequiredEnabledIndexFeature
+    public Event acceptAdminTriggerAll(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Event event = eventMapper.toAdminTriggerEvent(request, authentication, null, utilityService.getRemoteAddr(request));
         event.finish();
         return eventRepository.save(event);
     }

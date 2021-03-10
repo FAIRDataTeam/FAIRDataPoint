@@ -91,7 +91,7 @@ public class GenericMetaController {
         MemberDTO member = oMember.orElse(new MemberDTO(null, null));
 
         // 5. Get state
-        MetaStateDTO state = metadataStateService.getState(model, rd);
+        MetaStateDTO state = metadataStateService.getState(entityUri, model, rd);
 
         return new MetaDTO(member, state);
     }

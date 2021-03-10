@@ -20,19 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.config;
+package nl.dtls.fairdatapoint.database.mongo.repository;
 
-import lombok.Builder;
-import lombok.Data;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Component;
 
-import java.time.Duration;
+import java.util.Optional;
 
-@Builder
-@Data
-public class EventsConfig {
-    private final Duration retrievalRateLimitWait;
-    private final Duration retrievalTimeout;
-    private final Duration pingValidDuration;
-    private final Duration pingRateLimitDuration;
-    private final int pingRateLimitHits;
+public interface IndexSettingsRepository  extends MongoRepository<IndexSettings, String> {
+    Optional<IndexSettings> findFirstBy();
 }

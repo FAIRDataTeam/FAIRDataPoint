@@ -20,37 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.event;
+package nl.dtls.fairdatapoint.api.validator;
 
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
 
-import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
-import nl.dtls.fairdatapoint.entity.index.event.AdminTrigger;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
+@Documented
+@Constraint(validatedBy = DurationValidator.class)
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE_USE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidDuration {
 
-import javax.servlet.http.HttpServletRequest;
+    String message() default "Invalid ISO-8601 duration";
 
-@Service
-public class EventMapper {
+    Class<?>[] groups() default {};
 
-    private static final Integer VERSION = 1;
-
-    public EventDTO toDTO(Event event) {
-        return new EventDTO(
-                event.getUuid(),
-                event.getType(),
-                event.getCreated().toString(),
-                event.getFinished().toString()
-        );
-    }
-
-    public Event toAdminTriggerEvent(HttpServletRequest request, Authentication authentication, String clientUrl, String remoteAddr) {
-        var adminTrigger = new AdminTrigger();
-        adminTrigger.setRemoteAddr(remoteAddr);
-        adminTrigger.setTokenName(authentication.getName());
-        adminTrigger.setClientUrl(clientUrl);
-        return new Event(VERSION, adminTrigger);
-    }
-
+    Class<? extends Payload>[] payload() default {};
 }

@@ -1,8 +1,8 @@
 instance:
-  clientUrl: http://localhost:8084
+  clientUrl: http://localhost:8088
 
 server:
-  port: 8084
+  port: 8088
 
 spring:
   data:
@@ -14,12 +14,5 @@ security:
     token:
       expiration: 9999
 
-
 fdp-index:
   enabled: true
-  events:
-    retrieval:
-      rateLimitWait: PT10M # 10 minutes (ISO 8601)
-      timeout: PT1M # 1 minute (ISO 8601)
-    ping:
-      validDuration: P7D # 7 days (ISO 8601)

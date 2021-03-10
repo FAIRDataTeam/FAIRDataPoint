@@ -47,10 +47,10 @@ public class WebhookMapper {
         return new Event(VERSION, webhookTrigger, triggerEvent);
     }
 
-    public Event toPingEvent(HttpServletRequest request, Authentication authentication, UUID webhookUuid) {
+    public Event toPingEvent(HttpServletRequest request, Authentication authentication, UUID webhookUuid, String remoteAddr) {
         var webhookPing = new WebhookPing();
         webhookPing.setWebhookUuid(webhookUuid);
-        webhookPing.setRemoteAddr(request.getRemoteAddr());
+        webhookPing.setRemoteAddr(remoteAddr);
         webhookPing.setTokenName(authentication.getName());
         return new Event(VERSION, webhookPing);
     }
