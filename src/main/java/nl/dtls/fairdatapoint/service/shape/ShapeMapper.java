@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.service.shape;
 
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
+import nl.dtls.fairdatapoint.api.dto.shape.ShapeRemoteDTO;
 import nl.dtls.fairdatapoint.entity.shape.Shape;
 import nl.dtls.fairdatapoint.entity.shape.ShapeType;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class ShapeMapper {
                 new ShapeDTO(
                         shape.getUuid(),
                         shape.getName(),
+                        shape.isPublished(),
                         shape.getType(),
                         shape.getDefinition());
     }
@@ -46,6 +48,7 @@ public class ShapeMapper {
                         null,
                         uuid,
                         dto.getName(),
+                        dto.isPublished(),
                         ShapeType.CUSTOM,
                         dto.getDefinition());
 
@@ -56,7 +59,27 @@ public class ShapeMapper {
                 shape
                         .toBuilder()
                         .name(dto.getName())
+                        .published(dto.isPublished())
                         .definition(dto.getDefinition())
                         .build();
+    }
+
+    public ShapeRemoteDTO toRemoteDTO(String fdpUrl, ShapeDTO shape) {
+        return
+                new ShapeRemoteDTO(
+                        fdpUrl,
+                        shape.getUuid(),
+                        shape.getName(),
+                        shape.getDefinition()
+                );
+    }
+
+    public ShapeChangeDTO fromRemoteDTO(ShapeRemoteDTO shape) {
+        return
+                new ShapeChangeDTO(
+                        shape.getName(),
+                        false,
+                        shape.getDefinition()
+                );
     }
 }
