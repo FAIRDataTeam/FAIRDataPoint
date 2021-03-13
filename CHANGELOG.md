@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Publishing and sharing SHACL shapes between FDPs
+
 ## [1.8.0]
 
 ### Added

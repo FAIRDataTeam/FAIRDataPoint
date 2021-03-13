@@ -34,6 +34,7 @@ public class ShapeFixtures {
                 null,
                 "6a668323-3936-4b53-8380-a4fd2ed082ee",
                 "Resource",
+                false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
@@ -107,6 +108,7 @@ public class ShapeFixtures {
                 null,
                 "a92958ab-a414-47e6-8e17-68ba96ba3a2b",
                 "Repository",
+                false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
@@ -156,6 +158,7 @@ public class ShapeFixtures {
                 null,
                 "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660",
                 "Catalog",
+                false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
@@ -195,6 +198,7 @@ public class ShapeFixtures {
                 null,
                 "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3",
                 "Dataset",
+                false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
@@ -248,6 +252,7 @@ public class ShapeFixtures {
                 null,
                 "ebacbf83-cd4f-4113-8738-d73c0735b0ab",
                 "Distribution",
+                false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
@@ -307,6 +312,7 @@ public class ShapeFixtures {
                 null,
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
                 "Custom Shape",
+                false,
                 ShapeType.CUSTOM,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
@@ -329,6 +335,7 @@ public class ShapeFixtures {
                 null,
                 customShape().getUuid(),
                 customShape().getName(),
+                false,
                 customShape().getType(),
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
