@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Publishing and sharing SHACL shapes between FDPs
 
+### Changed
+
+- Migrated API Docs to SpringDoc OpenAPI
+
 ## [1.8.0]
 
 ### Added

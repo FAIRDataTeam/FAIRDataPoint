@@ -60,3 +60,18 @@ metadataMetrics:
 
 fdp-index:
   enabled: false
+
+openapi:
+  title: FAIR Data Point API
+  description: "The reference implementation of the metadata registration service: A service implementing the API specification. It contains an authentication system to allow maintainers to define and update metadata. Read-only access to the data is public."
+  contact:
+    name: Luiz Bonino
+    email: luiz.bonino@go-fair.org
+    url: https://github.com/FAIRDataTeam/FAIRDataPoint
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+
+server:
+  forward-headers-strategy: framework

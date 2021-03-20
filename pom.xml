@@ -50,7 +50,7 @@
 
         <!-- Core -->
         <mongobee.version>0.13</mongobee.version>
-        <springfox.swagger.version>2.9.1</springfox.swagger.version>
+        <springdoc.version>1.5.2</springdoc.version>
         <logback.version>1.2.3</logback.version>
         <rdf4j.version>3.0.0</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
@@ -149,14 +149,9 @@
             <version>${mongobee.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.swagger.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
