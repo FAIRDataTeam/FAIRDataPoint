@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.dashboard;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import nl.dtls.fairdatapoint.service.dashboard.DashboardService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -41,6 +42,7 @@ import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
 import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
+@Tag(name = "Client")
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController {

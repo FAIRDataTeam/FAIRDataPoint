@@ -72,6 +72,7 @@ openapi:
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true
+    operationsSorter: alpha
 
 server:
   forward-headers-strategy: framework
