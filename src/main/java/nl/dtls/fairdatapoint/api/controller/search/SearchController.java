@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.search;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.search.SearchQueryDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Metadata")
 @RestController
 @RequestMapping("/search")
 public class SearchController {

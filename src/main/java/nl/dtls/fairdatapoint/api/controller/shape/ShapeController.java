@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.shape;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeRemoteDTO;
@@ -40,6 +41,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
+@Tag(name = "Metadata Model")
 @RestController
 @RequestMapping("/shapes")
 public class ShapeController {

@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.index;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Index")
 @RestController
 @RequestMapping("/index/entries")
 public class IndexEntryController {

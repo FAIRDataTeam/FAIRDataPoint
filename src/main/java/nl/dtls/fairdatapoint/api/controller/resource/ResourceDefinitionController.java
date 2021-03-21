@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.resource;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -38,6 +39,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
+@Tag(name = "Metadata Model")
 @RestController
 @RequestMapping("/resource-definitions")
 public class ResourceDefinitionController {

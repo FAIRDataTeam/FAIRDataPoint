@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.user;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.user.*;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -38,6 +39,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
+@Tag(name = "User Management")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -57,6 +59,7 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @Tag(name = "Authentication and Authorization")
     @RequestMapping(value = "/current", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserCurrent() throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.getCurrentUser();

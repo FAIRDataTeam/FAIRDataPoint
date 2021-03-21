@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
@@ -57,6 +58,7 @@ import static nl.dtls.fairdatapoint.util.RdfIOUtil.read;
 import static nl.dtls.fairdatapoint.util.RdfUtil.*;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
+@Tag(name = "Metadata")
 @RestController
 @RequestMapping("/")
 public class GenericController {

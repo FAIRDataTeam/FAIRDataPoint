@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
@@ -52,6 +53,7 @@ import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
 import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
+@Tag(name = "Metadata")
 @RestController
 public class GenericMetaController {
 

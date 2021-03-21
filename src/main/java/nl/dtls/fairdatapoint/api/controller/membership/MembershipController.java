@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.membership;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.service.membership.MembershipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Tag(name = "Authentication and Authorization")
 @RestController
 @RequestMapping("/memberships")
 public class MembershipController {

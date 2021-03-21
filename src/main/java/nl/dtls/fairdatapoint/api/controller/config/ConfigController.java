@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.config;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
 import nl.dtls.fairdatapoint.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Client")
 @RestController
 @RequestMapping("/configs")
 public class ConfigController {

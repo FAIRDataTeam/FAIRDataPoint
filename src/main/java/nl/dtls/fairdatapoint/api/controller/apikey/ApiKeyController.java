@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.apikey;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.apikey.ApiKeyService;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
+@Tag(name = "Authentication and Authorization")
 @RestController
 @RequestMapping("/api-keys")
 public class ApiKeyController {
