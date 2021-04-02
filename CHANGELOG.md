@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Migrated API Docs to SpringDoc OpenAPI
+- Allow to configure multiple ping endpoints
 
 ## [1.8.0]
 
