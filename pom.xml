@@ -50,7 +50,7 @@
 
         <!-- Core -->
         <mongobee.version>0.13</mongobee.version>
-        <springdoc.version>1.5.2</springdoc.version>
+        <springdoc.version>1.5.6</springdoc.version>
         <logback.version>1.2.3</logback.version>
         <rdf4j.version>3.0.0</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
