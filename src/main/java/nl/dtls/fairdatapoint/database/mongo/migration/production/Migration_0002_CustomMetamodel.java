@@ -22,8 +22,8 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.production;
 
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
@@ -37,7 +37,7 @@ import static com.mongodb.client.model.Updates.set;
 
 @ChangeLog(order = "0002")
 @Profile(Profiles.PRODUCTION)
-public class Migration_0002_Custom_metamodel {
+public class Migration_0002_CustomMetamodel {
 
     @ChangeSet(order = "0002", id = "0002_Custom_metamodel", author = "migrationBot")
     public void run(MongoDatabase db) {
