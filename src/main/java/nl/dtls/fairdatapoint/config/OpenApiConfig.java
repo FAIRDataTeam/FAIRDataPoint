@@ -45,16 +45,13 @@ import java.util.stream.Stream;
 @Configuration
 public class OpenApiConfig {
 
-    @Autowired
-    BuildProperties buildProperties;
-
     @Bean
     public OpenAPI customOpenAPI(@Value("${instance.clientUrl:#{null}}") String serverUrl,
+                                 @Value("${openapi.version:#{null}}") String version,
                                  @Value("${openapi.title:#{null}}") String title,
                                  @Value("${openapi.description:#{null}}") String description,
                                  @Value("${openapi.contact.url:#{null}}") String contactUrl,
                                  @Value("${openapi.contact.name:#{null}}") String contactName) {
-        String version = buildProperties.getVersion();
         OpenAPI openAPI = new OpenAPI()
                 .servers(Collections.singletonList(new Server().url(serverUrl)))
                 .components(new Components()

@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Service
-@DependsOn("mongobee")
+@DependsOn("mongockRunner")
 @Profile(Profiles.NON_PRODUCTION)
 public class RdfDevelopmentMigrationRunner {
 
