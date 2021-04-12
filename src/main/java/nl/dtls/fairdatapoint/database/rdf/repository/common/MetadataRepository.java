@@ -43,6 +43,8 @@ public interface MetadataRepository {
 
     List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException;
 
+    Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRepositoryException;
+
     boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException;
 
     void save(List<Statement> statements, IRI context) throws MetadataRepositoryException;

@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Publishing and sharing SHACL shapes between FDPs
+- Pagination for child resources
 
 ### Changed
 

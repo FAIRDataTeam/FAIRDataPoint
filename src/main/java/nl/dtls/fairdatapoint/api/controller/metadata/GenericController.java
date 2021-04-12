@@ -23,6 +23,8 @@
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
@@ -40,18 +42,22 @@ import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.LinkedList;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static nl.dtls.fairdatapoint.util.HttpUtil.*;
 import static nl.dtls.fairdatapoint.util.RdfIOUtil.changeBaseUri;
 import static nl.dtls.fairdatapoint.util.RdfIOUtil.read;
@@ -85,6 +91,9 @@ public class GenericController {
     @Autowired
     private CurrentUserService currentUserService;
 
+    @Autowired
+    private GenericMetadataRepository metadataRepository;
+
     @RequestMapping(
             value = "**/spec",
             method = RequestMethod.GET,
@@ -104,36 +113,19 @@ public class GenericController {
         String urlPrefix = getResourceNameForDetail(uri);
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get resource definition
-        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
-
-        // 3. Get entity
+        // 2. Get entity
         IRI entityUri = i(getRequestURL(request, persistentUrl));
         Model entity = metadataService.retrieve(entityUri);
         resultRdf.addAll(entity);
 
-        // 4. Check if it is draft
+        // 3. Check if it is draft
         Metadata state = metadataStateService.get(entityUri);
         Optional<User> oCurrentUser = currentUserService.getCurrentUser();
         if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException("You are not allow to view this record in state DRAFT");
         }
 
-        // 5. Get children
-        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            IRI relationUri = i(rdChild.getRelationUri());
-            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
-                Model childMetadata = metadataService.retrieve(i(childUri.stringValue()));
-                Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                if (childState.getState().equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent()) {
-                    resultRdf.addAll(childMetadata);
-                } else {
-                    resultRdf.remove(entityUri, relationUri, childUri);
-                }
-            }
-        }
-
-        // 6. Get parent
+        // 4. Get parent
         while (true) {
             IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
             if (parentUri == null) {
@@ -145,7 +137,7 @@ public class GenericController {
             entityUri = parentUri;
         }
 
-        // 7. Create response
+        // 5. Create response
         return resultRdf;
     }
 
@@ -289,6 +281,78 @@ public class GenericController {
         return ResponseEntity.noContent().build();
     }
 
+    @RequestMapping(
+            value = "**/page/{childPrefix}",
+            method = RequestMethod.GET
+    )
+    public ResponseEntity<Model> getMetaDataChildren(
+            @PathVariable final String childPrefix,
+            @RequestParam(defaultValue = "0") final int page,
+            @RequestParam(defaultValue = "10") final int size,
+            HttpServletRequest request
+    ) throws MetadataServiceException, MetadataRepositoryException {
+        // 1. Init
+        String requestUrl = getRequestURL(request, persistentUrl);
+        Model resultRdf = new LinkedHashModel();
+        String urlPrefix = getResourceNameForChild(requestUrl);
+        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+
+        // 2. Get entity
+        IRI entityUri = getEntityIriForPagination(requestUrl);
+        Model entity = metadataService.retrieve(entityUri);
+
+        // 3. Check if it is draft
+        Metadata state = metadataStateService.get(entityUri);
+        Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
+            throw new ForbiddenException("You are not allow to view this record in state DRAFT");
+        }
+
+        // 4. Get Children
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+        ResourceDefinition currentChildRd = resourceDefinitionService.getByUrlPrefix(childPrefix);
+        MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
+
+        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
+            if (rdChild.getResourceDefinitionUuid().equals(currentChildRd.getUuid())) {
+                IRI relationUri = i(rdChild.getRelationUri());
+
+                // 4.1 Get all titles for sort
+                var titles = metadataRepository.findChildTitles(entityUri, relationUri);
+
+                // 4.2 Get all children sorted
+                var children = getObjectsBy(entity, entityUri, relationUri)
+                        .stream()
+                        .filter((childUri) -> {
+                            if (oCurrentUser.isPresent()) return true;
+                            Metadata childState = metadataStateService.get(i(childUri.stringValue()));
+                            return childState.getState().equals(MetadataState.PUBLISHED);
+                        })
+                        .sorted((v1, v2) -> {
+                            var title1 = titles.get(v1.toString());
+                            var title2 = titles.get(v2.toString());
+                            return title1.compareTo(title2);
+                        })
+                        .collect(toList());
+
+                // 4.3 Retrieve children metadata only for requested page
+                var childrenCount = children.size();
+                children.stream().skip(page * size).limit(size)
+                        .map((childUri) -> retrieveChildModel(childMetadataService, childUri))
+                        .flatMap(Optional::stream)
+                        .forEach(resultRdf::addAll);
+
+                // 4.4 Set Link headers and send response
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set("Link", createLinkHeader(requestUrl, childrenCount, page, size));
+                return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
+            }
+        }
+
+        // Send empty response in case nothing was found
+        return ResponseEntity.ok(resultRdf);
+    }
+
     private String getResourceNameForList(String url) {
         url = url.replace(persistentUrl, "");
 
@@ -314,4 +378,61 @@ public class GenericController {
         return parts[1];
     }
 
+    private String getResourceNameForChild(String url) {
+        url = url.replace(persistentUrl, "");
+        String[] parts = url.split("/");
+
+        if (parts.length < 2) {
+            throw new ValidationException("Unsupported URL");
+        }
+
+        // If URL is a repository -> return empty string
+        if (parts[1].equals("page")) {
+            return "";
+        }
+
+        return parts[1];
+    }
+
+    private IRI getEntityIriForPagination(String url) {
+        String[] parts = url.split("/");
+
+        StringBuilder sb = new StringBuilder(parts[0]);
+        for (int i = 1; i < parts.length - 2; i++) {
+            sb.append("/");
+            sb.append(parts[i]);
+        }
+        return i(sb.toString());
+    }
+
+    private String createLinkHeader(String requestUrl, int childrenCount, int page, int size) {
+        var links = new LinkedList<String>();
+        var lastPage = (int) Math.ceil((float) childrenCount / size) - 1;
+
+        links.add(createLink(requestUrl, 0, size, "first"));
+        links.add(createLink(requestUrl, lastPage, size, "last"));
+
+        if (page > 0 && page <= lastPage) {
+            links.add(createLink(requestUrl, page - 1, size, "prev"));
+        }
+
+        if (page < lastPage && page >= 0) {
+            links.add(createLink(requestUrl, page + 1, size, "next"));
+        }
+
+        return String.join(", ", links);
+    }
+
+    private Optional<Model> retrieveChildModel(MetadataService childMetadataService, Value childUri) {
+        try {
+            Model childModel = childMetadataService.retrieve(i(childUri.stringValue()));
+            return Optional.of(childModel);
+        } catch (MetadataServiceException e) {
+            return Optional.empty();
+        }
+    }
+
+    private String createLink(String requestUrl, int page, int size, String rel) {
+        return "<" + requestUrl + "/?page=" + page + "&size=" + size + ">; rel=\"" + rel + "\"";
+    }
 }
