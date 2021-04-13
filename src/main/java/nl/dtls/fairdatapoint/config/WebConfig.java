@@ -36,7 +36,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.resource.WebJarsResourceResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
@@ -70,7 +69,6 @@ public class WebConfig implements WebMvcConfigurer {
         for (RdfConverter converter : rdfConverters) {
             converter.configureContentNegotiation(configurer);
         }
-        configurer.favorPathExtension(false);
         configurer.favorParameter(true);
     }
 
