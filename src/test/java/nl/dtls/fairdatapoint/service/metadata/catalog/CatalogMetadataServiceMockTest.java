@@ -65,8 +65,8 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
     private CatalogMetadataService catalogMetadataService;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
     }
 
     @Test

@@ -28,6 +28,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document
@@ -48,11 +49,11 @@ public class ResourceDefinition {
 
     protected String urlPrefix;
 
-    protected List<String> targetClassUris;
+    protected List<String> targetClassUris = new ArrayList<>();
 
-    protected List<ResourceDefinitionChild> children;
+    protected List<ResourceDefinitionChild> children = new ArrayList<>();
 
-    protected List<ResourceDefinitionLink> externalLinks;
+    protected List<ResourceDefinitionLink> externalLinks = new ArrayList<>();
 
     public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> targetClassUris,
                               List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks) {
