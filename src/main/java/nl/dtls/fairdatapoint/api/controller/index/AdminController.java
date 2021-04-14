@@ -24,7 +24,6 @@ package nl.dtls.fairdatapoint.api.controller.index;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.extern.log4j.Log4j2;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
