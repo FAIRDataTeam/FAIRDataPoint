@@ -281,6 +281,9 @@
                     <properties>
                         <owner>DTL</owner>
                     </properties>
+                    <mapping>
+                        <java>JAVADOC_STYLE</java>
+                    </mapping>
                     <excludes>
                         <exclude>pom.xml</exclude>
                         <exclude>**/maven.config</exclude>
@@ -290,8 +293,10 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>**/*.xml</exclude>
                         <exclude>**/*.json</exclude>
+                        <exclude>**/*.json</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>.dockerignore</exclude>
+                        <exclude>Dockerfile.build</exclude>
                     </excludes>
                 </configuration>
                 <executions>
