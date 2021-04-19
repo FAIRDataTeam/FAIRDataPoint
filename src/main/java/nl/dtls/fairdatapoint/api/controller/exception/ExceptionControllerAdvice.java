@@ -27,6 +27,9 @@
  */
 package nl.dtls.fairdatapoint.api.controller.exception;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.*;
@@ -37,6 +40,7 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -57,7 +61,15 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
+    @ResponseBody()
+    @ApiResponse(
+        responseCode = "400",
+        description = "Bad request",
+        content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = ErrorDTO.class)
+        )
+    )
     public ErrorDTO handleBadRequest(Exception e) {
         log.warn(e.getMessage());
         return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -66,6 +78,14 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({RdfValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
+    @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
     public Model handleBadRequest(RdfValidationException e) {
         Model validationReportModel = e.getModel();
 
@@ -85,6 +105,14 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({BadCredentialsException.class, UnauthorizedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
+    @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
     public ErrorDTO handleUnauthorized(Exception e) {
         log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
@@ -93,6 +121,14 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
+    @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
     public ErrorDTO handleForbidden(Exception e) {
         log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage());
@@ -101,6 +137,14 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
+    @ApiResponse(
+            responseCode = "404",
+            description = "Resource Not Found",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
     public ErrorDTO handleResourceNotFound(ResourceNotFoundException e) {
         log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
@@ -109,6 +153,14 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({MetadataServiceException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
+    @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
     public ErrorDTO handleInternalServerError(Exception e) {
         log.error(e.getMessage());
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

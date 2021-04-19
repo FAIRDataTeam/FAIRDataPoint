@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,29 +45,29 @@ public class IndexEntryController {
     @Autowired
     private IndexEntryService service;
 
-    @GetMapping("")
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<IndexEntryDTO> getEntriesPage(Pageable pageable,
                                               @RequestParam(required = false, defaultValue = "") String state) {
         return service.getEntriesPageDTOs(pageable, state);
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
+    @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Optional<IndexEntryDetailDTO> getEntry(@PathVariable final String uuid) {
         return service.getEntryDetailDTO(uuid);
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.DELETE)
+    @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEntry(@PathVariable final String uuid) {
         service.deleteEntry(uuid);
     }
 
-    @GetMapping("/all")
+    @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<IndexEntryDTO> getEntriesAll() {
         return service.getAllEntriesAsDTOs();
     }
 
-    @GetMapping("/info")
+    @GetMapping(path = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
     public IndexEntryInfoDTO getEntriesInfo() {
         return service.getEntriesInfo();
     }

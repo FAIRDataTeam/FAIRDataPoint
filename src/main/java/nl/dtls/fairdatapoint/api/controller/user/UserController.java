@@ -30,6 +30,7 @@ import nl.dtls.fairdatapoint.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,20 +48,20 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserDTO>> getUsers() {
         List<UserDTO> dto = userService.getUsers();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserCreateDTO reqDto) {
         UserDTO dto = userService.createUser(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Tag(name = "Authentication and Authorization")
-    @RequestMapping(value = "/current", method = RequestMethod.GET)
+    @GetMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUserCurrent() throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.getCurrentUser();
         if (oDto.isPresent()) {
@@ -70,7 +71,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
+    @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUser(@PathVariable final String uuid) throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.getUserByUuid(uuid);
         if (oDto.isPresent()) {
@@ -80,7 +81,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/current", method = RequestMethod.PUT)
+    @PutMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> putUserCurrent(@RequestBody @Valid UserProfileChangeDTO reqDto) throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.updateCurrentUser(reqDto);
         if (oDto.isPresent()) {
@@ -90,7 +91,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.PUT)
+    @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> putUser(@PathVariable final String uuid,
                                            @RequestBody @Valid UserChangeDTO reqDto) throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.updateUser(uuid, reqDto);
@@ -101,7 +102,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/current/password", method = RequestMethod.PUT)
+    @PutMapping(path = "/current/password", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> putUserCurrentPassword(@RequestBody @Valid UserPasswordDTO reqDto)
             throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.updatePasswordForCurrentUser(reqDto);
@@ -112,7 +113,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/{uuid}/password", method = RequestMethod.PUT)
+    @PutMapping(path = "/{uuid}/password", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> putUserPassword(@PathVariable final String uuid,
                                                    @RequestBody @Valid UserPasswordDTO reqDto) throws ResourceNotFoundException {
         Optional<UserDTO> oDto = userService.updatePassword(uuid, reqDto);
@@ -123,8 +124,9 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.DELETE)
-    public HttpEntity deleteUser(@PathVariable final String uuid)
+    @DeleteMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteUser(@PathVariable final String uuid)
             throws ResourceNotFoundException {
         boolean result = userService.deleteUser(uuid);
         if (result) {
