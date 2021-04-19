@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
@@ -31,6 +32,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import nl.dtls.fairdatapoint.service.openapi.OpenApiTagsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
@@ -39,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,13 +77,16 @@ public class OpenApiConfig {
                         )
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearer-jwt", Arrays.asList("read", "write")))
-                .tags(Stream.of("Metadata", "Metadata Model", "Client", "Index", "Authentication and Authorization", "User Management").map(name -> new Tag().name(name)).collect(Collectors.toList()));
+                .tags(OpenApiTagsUtils.STATIC_TAGS);
         if (contactUrl != null) {
             openAPI.getInfo().contact(new Contact().url(contactUrl).name(contactName).email(contactName));
         }
         if (serverUrl != null) {
             openAPI.servers(Collections.singletonList(new Server().url(serverUrl)));
         }
+        openAPI.setExtensions(new LinkedHashMap<>());
+        openAPI.getExtensions().put("fdpGenericPaths", new Paths());
+        openAPI.setPaths(new Paths());
         return openAPI;
     }
 }

@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
@@ -73,7 +74,8 @@ public class GenericMetaController {
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
-    @RequestMapping(value = "**/meta", method = RequestMethod.GET)
+    @Operation(hidden = true)
+    @RequestMapping(path = "**/meta", method = RequestMethod.GET)
     public MetaDTO getMeta(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
         String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
@@ -98,7 +100,8 @@ public class GenericMetaController {
         return new MetaDTO(member, state);
     }
 
-    @RequestMapping(value = "**/meta/state", method = RequestMethod.PUT)
+    @Operation(hidden = true)
+    @RequestMapping(path = "**/meta/state", method = RequestMethod.PUT)
     public MetaStateChangeDTO putMetaState(HttpServletRequest request, @RequestBody @Valid MetaStateChangeDTO reqDto) throws MetadataServiceException {
         // 1. Init
         String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
