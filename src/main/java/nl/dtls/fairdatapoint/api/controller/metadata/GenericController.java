@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
@@ -37,6 +38,7 @@ import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
+import nl.dtls.fairdatapoint.service.openapi.OpenApiService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
@@ -49,6 +51,7 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,18 +97,14 @@ public class GenericController {
     @Autowired
     private GenericMetadataRepository metadataRepository;
 
-    @RequestMapping(
-            value = "**/spec",
-            method = RequestMethod.GET,
-            produces = {"!application/json"})
+    @Operation(hidden = true)
+    @GetMapping(path = "**/spec", produces = {"!application/json"})
     public Model getFormMetadata() {
         return shapeService.getShaclFromShapes();
     }
 
-    @RequestMapping(
-            value = "**/expanded",
-            method = RequestMethod.GET,
-            produces = {"!application/json"})
+    @Operation(hidden = true)
+    @GetMapping(path = "**/expanded", produces = {"!application/json"})
     public Model getMetaDataExpanded(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
         String uri = getRequestURL(request, persistentUrl);
@@ -141,10 +140,8 @@ public class GenericController {
         return resultRdf;
     }
 
-    @RequestMapping(
-            value = "**",
-            method = RequestMethod.GET,
-            produces = {"!application/json"})
+    @Operation(hidden = true)
+    @GetMapping(path = "**", produces = {"!application/json"})
     public Model getMetaData(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
         String uri = getRequestURL(request, persistentUrl);
@@ -185,10 +182,8 @@ public class GenericController {
         return resultRdf;
     }
 
-    @RequestMapping(
-            value = "**",
-            method = RequestMethod.POST,
-            produces = {"!application/json"})
+    @Operation(hidden = true)
+    @PostMapping(path = "**", produces = {"!application/json"})
     public ResponseEntity<Model> storeMetaData(HttpServletRequest request,
                                                @RequestBody String reqBody,
                                                @RequestHeader(value = "Content-Type", required = false) String contentType)
@@ -225,10 +220,8 @@ public class GenericController {
                 .body(metadata);
     }
 
-    @RequestMapping(
-            value = "**",
-            method = RequestMethod.PUT,
-            produces = {"!application/json"})
+    @Operation(hidden = true)
+    @PutMapping(path = "**", produces = {"!application/json"})
     public ResponseEntity<Model> updateMetaData(HttpServletRequest request,
                                                 @RequestBody String reqBody,
                                                 @RequestHeader(value = "Content-Type", required = false) String contentType)
@@ -259,7 +252,9 @@ public class GenericController {
                 .ok(metadata);
     }
 
-    @RequestMapping(value = "**", method = RequestMethod.DELETE)
+    @Operation(hidden = true)
+    @DeleteMapping(path = "**")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteMetadata(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
         String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
@@ -281,10 +276,8 @@ public class GenericController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(
-            value = "**/page/{childPrefix}",
-            method = RequestMethod.GET
-    )
+    @Operation(hidden = true)
+    @GetMapping(path = "**/page/{childPrefix}", produces = {"!application/json"})
     public ResponseEntity<Model> getMetaDataChildren(
             @PathVariable final String childPrefix,
             @RequestParam(defaultValue = "0") final int page,
