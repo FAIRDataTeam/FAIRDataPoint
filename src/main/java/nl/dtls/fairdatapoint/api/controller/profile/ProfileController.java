@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.profile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nl.dtls.fairdatapoint.config.ConverterConfig;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import org.eclipse.rdf4j.model.IRI;
@@ -52,7 +53,16 @@ public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET, produces = {"!application/json"})
+    @GetMapping(path = "/{uuid}", produces = {
+            "text/turtle",
+            "application/x-turtle",
+            "text/n3",
+            "text/rdf+n3",
+            "application/ld+json",
+            "application/rdf+xml",
+            "application/xml",
+            "text/xml",
+    })
     public ResponseEntity<Model> getShapeContent(HttpServletRequest request, @PathVariable final String uuid)
             throws ResourceNotFoundException {
         IRI uri = i(getRequestURL(request, persistentUrl));

@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Migrated API Docs to SpringDoc OpenAPI
 - Generating OpenAPI based on resource definitions
+- Explicit content types for responses in OpenAPI
 - Allow to configure multiple ping endpoints
 - Upgrade to Spring Boot 2.4.5
 - Migrated from Mongobee to Mongock
