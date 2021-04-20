@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.9.0]
+
 ### Added
 
 - Publishing and sharing SHACL shapes between FDPs
@@ -20,6 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Allow to configure multiple ping endpoints
 - Upgrade to Spring Boot 2.4.5
 - Migrated from Mongobee to Mongock
+- Several minor dependencies updates
 
 ## [1.8.0]
 
@@ -187,7 +190,6 @@ The first release of reference FAIR Data Point implementation.
 [1.4.0]: /../../tree/v1.4.0
 [1.5.0]: /../../tree/v1.5.0
 [1.6.0]: /../../tree/v1.6.0
-
 [1.7.0]: /../../tree/v1.7.0
-
 [1.8.0]: /../../tree/v1.8.0
+[1.9.0]: /../../tree/v1.9.0
