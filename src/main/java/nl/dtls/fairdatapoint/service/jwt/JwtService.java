@@ -69,7 +69,7 @@ public class JwtService {
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
-        parser = Jwts.parserBuilder().setSigningKey(secretKey).build();
+        parser = Jwts.parserBuilder().setSigningKey(key).build();
     }
 
     public String createToken(AuthDTO authDTO) {
@@ -89,7 +89,6 @@ public class JwtService {
 
     public String getUserUuid(String token) {
         return parser.parseClaimsJws(token).getBody().getSubject();
-
     }
 
     public boolean validateToken(String token) {
@@ -97,6 +96,7 @@ public class JwtService {
             Jws<Claims> claims = parser.parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println(e);
             throw new UnauthorizedException("Expired or invalid JWT token");
         }
     }

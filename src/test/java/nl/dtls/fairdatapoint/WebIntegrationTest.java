@@ -41,17 +41,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureMockMvc
 public abstract class WebIntegrationTest {
 
-    public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
-            ".eyJzdWIiOiI5NTU4OWU1MC1kMjYxLTQ5MmItODg1Mi05MzI0ZTlhNjZhNDIiLCJpYXQiOjE1NzQyNTE5OTAsImV4cCI6MjQzODE2NTU5MH0" +
-            ".KHcGQqqTOzC9Xqzj07PRuTDa__c1BDC9obb-DKsSaQo";
+    public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
+            ".eyJzdWIiOiI5NTU4OWU1MC1kMjYxLTQ5MmItODg1Mi05MzI0ZTlhNjZhNDIiLCJpYXQiOjE2MTg5MDkxOTMsImV4cCI6MTYyMDExODc5M30" +
+            ".0DOeuM1pUmMFfmW6L5hpOGLCHcW5_Zi4THtguF0UtWISeKO5nqrEvSYbH3cuWvq3AeyZ7hpKd9umzaopYCQIzw";
 
-    public static final String ALBERT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
-            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE1NzI0NDczNTksImV4cCI6MjQzNjM2MDk1OX0" +
-            ".yGZthRlVezhbKk1gDymW6pZfbCoxxqJda6md9btp00w";
+    public static final String ALBERT_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
+            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE2MTg5MDkxMzYsImV4cCI6MTYyMDExODczNn0" +
+            ".gnJlJZxdSAHlqdQebCUPqCK9LSF1hzPufNTuQO4U7TuiSLdSnY1xnv4EPIFxkyQXPVHnwNodwC5nZqGEXO_pBg";
 
-    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
-            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE1NzI5NjU2NTksImV4cCI6MjQzNjg3OTI1OX0" +
-            ".f-nAX35Ob392xzerVqN9j34kCorZ0Lu6I18OgflHROs";
+    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
+            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE2MTg5MDkyNDQsImV4cCI6MTYyMDExODg0NH0" +
+            ".fC35q2Jj_2j7R_66WT4F0xLQY8gbVns7Hm8j7lbasEvAHPrucpsI3LdpxOILNY-GMTH1HpSp4divsGnbbfLLfA";
 
     @Autowired
     protected TestRestTemplate client;
