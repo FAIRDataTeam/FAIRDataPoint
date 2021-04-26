@@ -65,7 +65,7 @@
         <lombok.version>1.18.20</lombok.version>
 
         <!-- Plugins -->
-        <plugin.license.version>4.0</plugin.license.version>
+        <plugin.license.version>4.1</plugin.license.version>
         <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
