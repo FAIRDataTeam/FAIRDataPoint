@@ -53,7 +53,7 @@ public class List_POST extends WebIntegrationTest {
     }
 
     private ShapeChangeDTO reqDto(Shape shape) {
-        return new ShapeChangeDTO(shape.getName(), shape.getDefinition());
+        return new ShapeChangeDTO(shape.getName(), false, shape.getDefinition());
     }
 
     @Test

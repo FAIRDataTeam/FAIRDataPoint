@@ -22,14 +22,18 @@
  */
 package nl.dtls.fairdatapoint.api.controller.shape;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
+import nl.dtls.fairdatapoint.api.dto.shape.ShapeRemoteDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,6 +42,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
+@Tag(name = "Metadata Model")
 @RestController
 @RequestMapping("/shapes")
 public class ShapeController {
@@ -45,19 +50,40 @@ public class ShapeController {
     @Autowired
     private ShapeService shapeService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ShapeDTO>> getShapes() {
         List<ShapeDTO> dto = shapeService.getShapes();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @GetMapping(path = "/public", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ShapeDTO>> getPublishedShapes() {
+        List<ShapeDTO> dto = shapeService.getPublishedShapes();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ShapeRemoteDTO>> getImportableShapes(@RequestParam(name = "from") String fdpUrl) {
+        List<ShapeRemoteDTO> dto = shapeService.getRemoteShapes(fdpUrl);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ShapeDTO>> importShapes(@RequestBody @Valid List<ShapeRemoteDTO> reqDtos) {
+        List<ShapeDTO> dto = shapeService.importShapes(reqDtos);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ShapeDTO> createShape(@RequestBody @Valid ShapeChangeDTO reqDto) {
         ShapeDTO dto = shapeService.createShape(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET, produces = {"application/json"})
+    @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ShapeDTO> getShape(@PathVariable final String uuid)
             throws ResourceNotFoundException {
         Optional<ShapeDTO> oDto = shapeService.getShapeByUuid(uuid);
@@ -68,7 +94,16 @@ public class ShapeController {
         }
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.GET, produces = {"!application/json"})
+    @GetMapping(path = "/{uuid}", produces = {
+            "text/turtle",
+            "application/x-turtle",
+            "text/n3",
+            "text/rdf+n3",
+            "application/ld+json",
+            "application/rdf+xml",
+            "application/xml",
+            "text/xml",
+    })
     public ResponseEntity<Model> getShapeContent(@PathVariable final String uuid)
             throws ResourceNotFoundException {
         Optional<Model> oDto = shapeService.getShapeContentByUuid(uuid);
@@ -79,7 +114,8 @@ public class ShapeController {
         }
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ShapeDTO> putShape(@PathVariable final String uuid,
                                              @RequestBody @Valid ShapeChangeDTO reqDto) throws ResourceNotFoundException {
         Optional<ShapeDTO> oDto = shapeService.updateShape(uuid, reqDto);
@@ -90,7 +126,9 @@ public class ShapeController {
         }
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteShape(@PathVariable final String uuid)
             throws ResourceNotFoundException {
         boolean result = shapeService.deleteShape(uuid);

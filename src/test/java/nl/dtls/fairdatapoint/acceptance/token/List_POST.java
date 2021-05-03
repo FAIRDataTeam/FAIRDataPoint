@@ -23,21 +23,22 @@
 package nl.dtls.fairdatapoint.acceptance.token;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.acceptance.user.Common;
 import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
 import nl.dtls.fairdatapoint.api.dto.auth.TokenDTO;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
+import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
+import nl.dtls.fairdatapoint.entity.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -45,8 +46,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_POST extends WebIntegrationTest {
 
     @Test
-    @DisplayName("HTTP 200")
-    public void res200() {
+    @DisplayName("HTTP 200: login")
+    public void res200_login() {
         // GIVEN:
         AuthDTO reqDto = new AuthDTO("albert.einstein@example.com", "password");
         RequestEntity<AuthDTO> request = RequestEntity
@@ -61,6 +62,7 @@ public class List_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getBody(), is(notNullValue()));
         assertThat(result.getBody().getToken(), is(anything()));
     }
 
@@ -81,7 +83,44 @@ public class List_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.UNAUTHORIZED)));
+        assertThat(result.getBody(), is(notNullValue()));
         assertThat(result.getBody().getMessage(), is("Invalid username/password supplied"));
     }
 
+    @Test
+    @DisplayName("HTTP 200: login and get current")
+    public void res200() {
+        //= Login (get token)
+        // GIVEN:
+        AuthDTO reqDto = new AuthDTO("albert.einstein@example.com", "password");
+        RequestEntity<AuthDTO> request1 = RequestEntity
+                .post(URI.create("/tokens"))
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<TokenDTO> responseType1 = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<TokenDTO> result1 = client.exchange(request1, responseType1);
+
+        // THEN:
+        assertThat(result1.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result1.getBody(), is(notNullValue()));
+        assertThat(result1.getBody().getToken(), is(anything()));
+
+        //= Get current user with the token
+        // GIVEN:
+        RequestEntity<Void> request2 = RequestEntity
+                .get(URI.create("/users/current"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + result1.getBody().getToken())
+                .build();
+        ParameterizedTypeReference<UserDTO> responseType2 = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<UserDTO> result2 = client.exchange(request2, responseType2);
+
+        // THEN:
+        assertThat(result2.getStatusCode(), is(equalTo(HttpStatus.OK)));
+    }
 }

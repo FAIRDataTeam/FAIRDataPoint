@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.7.RELEASE</version>
+        <version>2.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.8.0</version>
+    <version>1.9.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -27,12 +27,18 @@
         <developer>
             <name>Vojtech Knaisl</name>
             <email>vknaisl@gmail.com</email>
+            <url>https://github.com/vknaisl</url>
+        </developer>
+        <developer>
+            <name>Marek Suchánek</name>
+            <url>https://github.com/MarekSuchanek</url>
         </developer>
         <developer>
             <name>Kees Burger</name>
             <email>kees.burger@dtls.nl</email>
             <organization>DTLS</organization>
             <organizationUrl>http://www.dtls.nl/</organizationUrl>
+            <url>https://github.com/kburger</url>
         </developer>
     </developers>
 
@@ -49,20 +55,21 @@
         <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Core -->
-        <mongobee.version>0.13</mongobee.version>
-        <springfox.swagger.version>2.9.1</springfox.swagger.version>
-        <logback.version>1.2.3</logback.version>
+        <springdoc.version>1.5.2</springdoc.version>
+        <mongock.version>4.3.8</mongock.version>
+        <mongodb.driver-sync.version>4.1.2</mongodb.driver-sync.version>
+        <mongodb.spring-data.v3.version>3.2.0</mongodb.spring-data.v3.version>
         <rdf4j.version>3.0.0</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
         <jwt.version>0.11.2</jwt.version>
-        <lombok.version>1.18.18</lombok.version>
+        <lombok.version>1.18.20</lombok.version>
 
         <!-- Plugins -->
-        <plugin.license.version>3.0</plugin.license.version>
+        <plugin.license.version>4.0</plugin.license.version>
         <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
-        <plugin.git_commit_id.version>4.0.3</plugin.git_commit_id.version>
+        <plugin.git_commit_id.version>4.0.4</plugin.git_commit_id.version>
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
     </properties>
 
@@ -72,8 +79,14 @@
             <name>Central Repository</name>
             <url>https://repo.maven.apache.org/maven2</url>
             <layout>default</layout>
-            <releases><enabled>true</enabled><updatePolicy>always</updatePolicy></releases>
-            <snapshots><enabled>true</enabled><updatePolicy>always</updatePolicy></snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
         <repository>
             <id>nexus-releases</id>
@@ -81,6 +94,18 @@
             <url>https://nexus.internal.fairdatapoint.org/repository/maven-releases/</url>
         </repository>
     </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.cloudyrock.mongock</groupId>
+                <artifactId>mongock-bom</artifactId>
+                <version>${mongock.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
@@ -135,28 +160,44 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-acl-mongodb</artifactId>
             <version>${spring.security.acl.mongo.version}</version>
         </dependency>
 
         <!-- ////////////////// -->
+        <!--   Mongock          -->
+        <!-- ////////////////// -->
+        <dependency>
+            <groupId>com.github.cloudyrock.mongock</groupId>
+            <artifactId>mongock-spring-v5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cloudyrock.mongock</groupId>
+            <artifactId>mongodb-springdata-v3-driver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>${mongodb.driver-sync.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>${mongodb.spring-data.v3.version}</version>
+        </dependency>
+
+        <!-- ////////////////// -->
         <!--   Core             -->
         <!-- ////////////////// -->
         <dependency>
-            <groupId>com.github.mongobee</groupId>
-            <artifactId>mongobee</artifactId>
-            <version>${mongobee.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.swagger.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
@@ -240,6 +281,9 @@
                     <properties>
                         <owner>DTL</owner>
                     </properties>
+                    <mapping>
+                        <java>JAVADOC_STYLE</java>
+                    </mapping>
                     <excludes>
                         <exclude>pom.xml</exclude>
                         <exclude>**/maven.config</exclude>
@@ -249,8 +293,10 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>**/*.xml</exclude>
                         <exclude>**/*.json</exclude>
+                        <exclude>**/*.json</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>.dockerignore</exclude>
+                        <exclude>Dockerfile.build</exclude>
                     </excludes>
                 </configuration>
                 <executions>

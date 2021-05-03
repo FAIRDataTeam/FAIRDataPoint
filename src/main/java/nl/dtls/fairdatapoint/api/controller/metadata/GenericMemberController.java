@@ -22,6 +22,8 @@
  */
 package nl.dtls.fairdatapoint.api.controller.metadata;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -35,6 +37,7 @@ import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +50,7 @@ import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
 import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
+@Tag(name = "Authentication and Authorization")
 @RestController
 public class GenericMemberController {
 
@@ -60,7 +64,8 @@ public class GenericMemberController {
     @Autowired
     private MetadataServiceFactory metadataServiceFactory;
 
-    @RequestMapping(value = "**/members", method = RequestMethod.GET)
+    @Operation(hidden = true)
+    @GetMapping(path = "**/members", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MemberDTO>> getMembers(HttpServletRequest request)
             throws ResourceNotFoundException, MetadataServiceException {
         // 1. Init
@@ -78,7 +83,8 @@ public class GenericMemberController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "**/members/{userUuid}", method = RequestMethod.PUT)
+    @Operation(hidden = true)
+    @PutMapping(path = "**/members/{userUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MemberDTO> putMember(@PathVariable final String userUuid,
                                                HttpServletRequest request,
                                                @RequestBody @Valid MemberCreateDTO reqBody)
@@ -99,7 +105,9 @@ public class GenericMemberController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "**/members/{userUuid}", method = RequestMethod.DELETE)
+    @Operation(hidden = true)
+    @DeleteMapping(path = "**/members/{userUuid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteMember(@PathVariable final String userUuid, HttpServletRequest request)
             throws ResourceNotFoundException, MetadataServiceException {
         // 1. Init

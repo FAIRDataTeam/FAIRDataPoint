@@ -53,7 +53,7 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     private ShapeChangeDTO reqDto(Shape shape) {
-        return new ShapeChangeDTO(format("EDITED: %s", shape.getName()), shape.getDefinition());
+        return new ShapeChangeDTO(format("EDITED: %s", shape.getName()), false, shape.getDefinition());
     }
 
     @Autowired
@@ -68,6 +68,34 @@ public class Detail_PUT extends WebIntegrationTest {
         // GIVEN: Prepare data
         Shape shape = shapeFixtures.customShapeEdited();
         ShapeChangeDTO reqDto = reqDto(shape);
+
+        // AND: Prepare request
+        RequestEntity<ShapeChangeDTO> request = RequestEntity
+                .put(url(shape.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<ShapeDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // AND: Prepare DB
+        shapeRepository.save(shape);
+
+        // WHEN:
+        ResponseEntity<ShapeDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        Common.compare(reqDto, result.getBody());
+    }
+
+    @Test
+    @DisplayName("HTTP 200: Published")
+    public void res200_published() {
+        // GIVEN: Prepare data
+        Shape shape = shapeFixtures.customShapeEdited();
+        ShapeChangeDTO reqDto = reqDto(shape);
+        reqDto.setPublished(true);
 
         // AND: Prepare request
         RequestEntity<ShapeChangeDTO> request = RequestEntity

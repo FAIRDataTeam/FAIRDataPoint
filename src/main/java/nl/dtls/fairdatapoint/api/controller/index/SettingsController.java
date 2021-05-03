@@ -22,18 +22,18 @@
  */
 package nl.dtls.fairdatapoint.api.controller.index;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Tag(name = "Index")
 @RestController
 @RequestMapping("/index/settings")
 public class SettingsController {
@@ -41,19 +41,19 @@ public class SettingsController {
     @Autowired
     private IndexSettingsService indexSettingsService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public IndexSettingsDTO getIndexSettings() {
         return indexSettingsService.getCurrentSettings();
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public IndexSettingsDTO updateIndexSettings(@RequestBody @Valid IndexSettingsUpdateDTO reqDto) {
         return indexSettingsService.updateSettings(reqDto);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public IndexSettingsDTO resetIndexSettings() {
         return indexSettingsService.resetSettings();

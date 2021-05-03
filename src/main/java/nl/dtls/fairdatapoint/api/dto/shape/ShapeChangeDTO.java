@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,6 +38,8 @@ public class ShapeChangeDTO {
 
     @NotBlank
     private String name;
+
+    private boolean published;
 
     private String definition;
 

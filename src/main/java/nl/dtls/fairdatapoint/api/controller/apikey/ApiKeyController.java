@@ -23,21 +23,21 @@
 package nl.dtls.fairdatapoint.api.controller.apikey;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.apikey.ApiKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static java.lang.String.format;
 
+@Tag(name = "Authentication and Authorization")
 @RestController
 @RequestMapping("/api-keys")
 public class ApiKeyController {
@@ -45,19 +45,20 @@ public class ApiKeyController {
     @Autowired
     private ApiKeyService apiKeyService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ApiKeyDTO>> getApiKeys() {
         List<ApiKeyDTO> dto = apiKeyService.getAll();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiKeyDTO> createApiKey() {
         ApiKeyDTO dto = apiKeyService.create();
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{uuid}", method = RequestMethod.DELETE)
+    @DeleteMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteShape(@PathVariable final String uuid) throws ResourceNotFoundException {
         boolean result = apiKeyService.delete(uuid);
         if (result) {

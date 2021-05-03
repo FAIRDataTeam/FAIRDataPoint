@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,7 @@ import static java.util.stream.Collectors.toList;
 public abstract class AbstractMetadataRepository {
 
     private static final String FIND_ENTITY_BY_LITERAL = "findEntityByLiteral.sparql";
+    private static final String FIND_CHILD_TITLES = "findChildTitles.sparql";
 
     @Autowired
     protected Repository repository;
@@ -91,6 +93,23 @@ public abstract class AbstractMetadataRepository {
                         )
                 )
                 .collect(toList());
+    }
+
+    public Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRepositoryException {
+        Map<String, String> titles = new HashMap<>();
+
+        var results = runSparqlQuery(FIND_CHILD_TITLES, AbstractMetadataRepository.class, Map.of(
+            "parent", parent,
+            "relation", relation
+        ));
+
+        for (var result : results) {
+            var childUri = result.getValue("child").stringValue();
+            var title = result.getValue("title").stringValue();
+            titles.put(childUri, title);
+        }
+
+        return titles;
     }
 
     public boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException {
@@ -147,6 +166,4 @@ public abstract class AbstractMetadataRepository {
         URL fileURL = repositoryType.getResource(queryName);
         return Resources.toString(fileURL, Charsets.UTF_8);
     }
-
-
 }

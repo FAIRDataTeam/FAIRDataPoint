@@ -7,6 +7,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.9.0]
+
+### Added
+
+- Publishing and sharing SHACL shapes between FDPs
+- Pagination for child resources
+
+### Changed
+
+- Migrated API Docs to SpringDoc OpenAPI
+- Generating OpenAPI based on resource definitions
+- Explicit content types for responses in OpenAPI
+- Allow to configure multiple ping endpoints
+- Upgrade to Spring Boot 2.4.5
+- Migrated from Mongobee to Mongock
+- Several minor dependencies updates
+
 ## [1.8.0]
 
 ### Added
@@ -173,7 +190,6 @@ The first release of reference FAIR Data Point implementation.
 [1.4.0]: /../../tree/v1.4.0
 [1.5.0]: /../../tree/v1.5.0
 [1.6.0]: /../../tree/v1.6.0
-
 [1.7.0]: /../../tree/v1.7.0
-
 [1.8.0]: /../../tree/v1.8.0
+[1.9.0]: /../../tree/v1.9.0

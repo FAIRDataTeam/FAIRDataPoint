@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.api.converter.ErrorConverter;
 import nl.dtls.fairdatapoint.api.converter.RdfConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -37,10 +36,13 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.WebJarsResourceResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.springdoc.core.Constants.CLASSPATH_RESOURCE_LOCATION;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -53,10 +55,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new StringHttpMessageConverter());
         converters.addAll(errorConverters);
         converters.addAll(rdfConverters);
         converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
-        converters.add(new StringHttpMessageConverter());
     }
 
     @Override
@@ -67,17 +69,16 @@ public class WebConfig implements WebMvcConfigurer {
         for (RdfConverter converter : rdfConverters) {
             converter.configureContentNegotiation(configurer);
         }
-        configurer.favorPathExtension(false);
         configurer.favorParameter(true);
     }
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         // Swagger
-        registry.setOrder(Integer.MIN_VALUE + 1).addResourceHandler("/swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-        registry.setOrder(Integer.MIN_VALUE + 2).addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.setOrder(Integer.MIN_VALUE + 1).addResourceHandler("/webjars/**")
+                .addResourceLocations(CLASSPATH_RESOURCE_LOCATION+"/webjars/")
+                .resourceChain(true)
+                .addResolver(new WebJarsResourceResolver());
     }
 
     @Bean
@@ -88,5 +89,10 @@ public class WebConfig implements WebMvcConfigurer {
         mapper.setSerializationInclusion(NON_NULL);
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return mapper;
+    }
+
+    @Bean
+    public InternalResourceViewResolver defaultViewResolver() {
+        return new InternalResourceViewResolver();
     }
 }

@@ -55,7 +55,8 @@ public class CORSFilter extends OncePerRequestFilter {
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
                 format("%s,%s,%s,%s", HttpHeaders.ORIGIN, HttpHeaders.AUTHORIZATION, HttpHeaders.ACCEPT,
                         HttpHeaders.CONTENT_TYPE));
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, format("%s", HttpHeaders.LOCATION));
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, format("%s,%s", HttpHeaders.LOCATION,
+                HttpHeaders.LINK));
         response.setHeader(HttpHeaders.ALLOW, allowedMtds);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMtds);
 

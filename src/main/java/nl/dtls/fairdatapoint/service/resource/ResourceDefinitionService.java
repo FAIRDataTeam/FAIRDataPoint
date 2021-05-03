@@ -27,6 +27,7 @@ import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionReposit
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.membership.MembershipService;
+import nl.dtls.fairdatapoint.service.openapi.OpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,9 @@ public class ResourceDefinitionService {
     @Autowired
     private MembershipService membershipService;
 
+    @Autowired
+    private OpenApiService openApiService;
+
     public List<ResourceDefinition> getAll() {
         return resourceDefinitionRepository.findAll();
     }
@@ -85,6 +89,7 @@ public class ResourceDefinitionService {
         resourceDefinitionCache.computeCache();
 
         membershipService.addToMembership(rd);
+        openApiService.updateGenericPaths(rd);
         return rd;
     }
 
@@ -101,6 +106,7 @@ public class ResourceDefinitionService {
         resourceDefinitionValidator.validate(updatedRd);
         resourceDefinitionRepository.save(updatedRd);
         resourceDefinitionCache.computeCache();
+        openApiService.updateGenericPaths(updatedRd);
         return Optional.of(updatedRd);
     }
 
@@ -132,8 +138,11 @@ public class ResourceDefinitionService {
         // 4. Delete entity from membership
         membershipService.removeFromMembership(rd);
 
-        // 4. Recompute cache
+        // 5. Recompute cache
         resourceDefinitionCache.computeCache();
+
+        // 6. Delete from OpenAPI docs
+        openApiService.removeGenericPaths(rd);
         return true;
     }
 

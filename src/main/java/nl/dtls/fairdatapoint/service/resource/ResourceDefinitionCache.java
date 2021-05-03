@@ -37,7 +37,7 @@ import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
 
 @Service
-@DependsOn("mongobee")
+@DependsOn("mongockRunner")
 public class ResourceDefinitionCache {
 
     @Autowired

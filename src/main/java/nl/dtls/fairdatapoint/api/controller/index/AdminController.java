@@ -22,7 +22,8 @@
  */
 package nl.dtls.fairdatapoint.api.controller.index;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
@@ -38,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.UUID;
 
+@Tag(name = "Index")
 @Log4j2
 @RestController
 @RequestMapping("/index/admin")
@@ -52,7 +54,7 @@ public class AdminController {
     @Autowired
     private WebhookService webhookService;
 
-    @ApiOperation(value = "trigger", hidden = true)
+    @Operation(hidden = true)
     @PostMapping("/trigger")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -63,7 +65,7 @@ public class AdminController {
         eventService.triggerMetadataRetrieval(event);
     }
 
-    @ApiOperation(value = "trigger-all", hidden = true)
+    @Operation(hidden = true)
     @PostMapping("/trigger-all")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -74,7 +76,7 @@ public class AdminController {
         eventService.triggerMetadataRetrieval(event);
     }
 
-    @ApiOperation(value = "ping webhook", hidden = true)
+    @Operation(hidden = true)
     @PostMapping("/ping-webhook")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)

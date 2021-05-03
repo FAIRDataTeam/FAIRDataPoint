@@ -25,10 +25,13 @@ package nl.dtls.fairdatapoint.database.mongo.repository;
 import nl.dtls.fairdatapoint.entity.shape.Shape;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ShapeRepository extends MongoRepository<Shape, String> {
 
     Optional<Shape> findByUuid(String uuid);
+
+    List<Shape> findAllByPublishedIsTrue();
 
 }

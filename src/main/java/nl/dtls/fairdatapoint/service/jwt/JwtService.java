@@ -37,6 +37,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
@@ -59,9 +61,15 @@ public class JwtService {
     @Autowired
     private MongoAuthenticationService mongoAuthenticationService;
 
+    private JwtParser parser;
+
+    private Key key;
+
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+        parser = Jwts.parserBuilder().setSigningKey(key).build();
     }
 
     public String createToken(AuthDTO authDTO) {
@@ -80,14 +88,15 @@ public class JwtService {
     }
 
     public String getUserUuid(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return parser.parseClaimsJws(token).getBody().getSubject();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jws<Claims> claims = parser.parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println(e);
             throw new UnauthorizedException("Expired or invalid JWT token");
         }
     }
@@ -100,7 +109,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(key)
                 .compact();
     }
 }
