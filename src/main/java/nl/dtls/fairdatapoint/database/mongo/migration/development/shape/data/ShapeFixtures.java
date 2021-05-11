@@ -199,7 +199,7 @@ public class ShapeFixtures {
                 "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3",
                 "Dataset",
                 false,
-                ShapeType.INTERNAL,
+                ShapeType.CUSTOM,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
                         "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
@@ -253,7 +253,7 @@ public class ShapeFixtures {
                 "ebacbf83-cd4f-4113-8738-d73c0735b0ab",
                 "Distribution",
                 false,
-                ShapeType.INTERNAL,
+                ShapeType.CUSTOM,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
                         "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
