@@ -42,16 +42,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public abstract class WebIntegrationTest {
 
     public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
-            ".eyJzdWIiOiI5NTU4OWU1MC1kMjYxLTQ5MmItODg1Mi05MzI0ZTlhNjZhNDIiLCJpYXQiOjE2MTg5MDkxOTMsImV4cCI6MTYyMDExODc5M30" +
-            ".0DOeuM1pUmMFfmW6L5hpOGLCHcW5_Zi4THtguF0UtWISeKO5nqrEvSYbH3cuWvq3AeyZ7hpKd9umzaopYCQIzw";
+            ".eyJzdWIiOiI5NTU4OWU1MC1kMjYxLTQ5MmItODg1Mi05MzI0ZTlhNjZhNDIiLCJpYXQiOjE2MjA4Mzg3NjUsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
+            ".hF8SnFH_1m00bjQOja77OzPgpPbX-wJH8RUdcOOR7F-QrTRCqwOdrqDfgN1lFW0XrrIljIvYqCo20pcYTvh2Dw";
 
     public static final String ALBERT_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
-            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE2MTg5MDkxMzYsImV4cCI6MTYyMDExODczNn0" +
-            ".gnJlJZxdSAHlqdQebCUPqCK9LSF1hzPufNTuQO4U7TuiSLdSnY1xnv4EPIFxkyQXPVHnwNodwC5nZqGEXO_pBg";
+            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE2MjA4Mzg3NDUsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
+            ".jLq89vH-YVPzKDSe44dV8CA2jpb8Or_xPf2gboiwaMTZwF_riNaVGJaziw8uYHRAIMb4bFBBd6MHbDiwrLlZZg";
 
     public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
-            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE2MTg5MDkyNDQsImV4cCI6MTYyMDExODg0NH0" +
-            ".fC35q2Jj_2j7R_66WT4F0xLQY8gbVns7Hm8j7lbasEvAHPrucpsI3LdpxOILNY-GMTH1HpSp4divsGnbbfLLfA";
+            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE2MjA4Mzg3MDgsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
+            ".U3mPUE0fREeVlresvl6uHR-aTj3ATFYn7CsAJ0cyOhqvaICTvURewF8QPfw2WVZ4GGc8Ej46BqHI9rpwKqRxpQ";
 
     @Autowired
     protected TestRestTemplate client;
