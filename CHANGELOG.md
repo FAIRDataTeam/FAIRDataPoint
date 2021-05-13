@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade Java JDK from 15 to 16
+
 ## [1.9.0]
 
 ### Added

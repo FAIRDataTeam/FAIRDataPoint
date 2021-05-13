@@ -14,9 +14,9 @@ jobs:
       PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint
       TAG_DEVELOP: develop
       TAG_LATEST: latest
-      JDK_VERSION: 15
-      JDK_FILE: openjdk-15.0.2_linux-x64_bin.tar.gz
-      JDK_URL: https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz
+      JDK_VERSION: 16
+      JDK_FILE: openjdk-16.0.1_linux-x64_bin.tar.gz
+      JDK_URL: https://download.java.net/java/GA/jdk16.0.1/7147401fd7354114ac51ef3e1328291f/9/GPL/openjdk-16.0.1_linux-x64_bin.tar.gz
 
     services:
       mongo:

@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 #
 
-FROM openjdk:15-jdk-slim
+FROM openjdk:16-jdk-slim
 
 WORKDIR /fdp
 

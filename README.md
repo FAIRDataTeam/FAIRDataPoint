@@ -39,7 +39,7 @@ e.g. [app.fairdatapoint.org/swagger-ui.html](https://app.fairdatapoint.org/swagg
 
 ### Technology Stack
 
-- **Java** (JDK 15)
+- **Java** (JDK 16)
 - **MongoDB** (4.2)
 - **Maven** (3.2.5 or higher)
 - **Docker** (17.09.0-ce or higher) - *for building Docker image only*
