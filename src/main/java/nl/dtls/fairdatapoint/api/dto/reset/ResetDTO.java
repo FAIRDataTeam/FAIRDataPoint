@@ -20,30 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.resource;
+package nl.dtls.fairdatapoint.api.dto.reset;
 
-import lombok.*;
-import nl.dtls.fairdatapoint.api.validator.ValidIri;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class ResourceDefinitionChild {
+public class ResetDTO {
 
-    @NotBlank
-    protected String resourceDefinitionUuid;
+    private boolean users;
 
-    @NotBlank
-    @ValidIri
-    protected String relationUri;
+    private boolean metadata;
 
-    @Valid
-    protected ResourceDefinitionChildListView listView;
-
+    private boolean resourceDefinitions;
 }
