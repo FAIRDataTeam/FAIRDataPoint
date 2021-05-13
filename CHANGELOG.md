@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Allow to change internal shapes
+- Reset to "factory defaults" (users, resource definitions, metadata)
 
 ### Changed
 
