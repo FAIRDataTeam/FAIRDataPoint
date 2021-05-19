@@ -27,6 +27,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
@@ -39,8 +40,9 @@ import java.util.List;
 public class Migration_0004_ResourceDefinition {
 
     @ChangeSet(order = "0004", id = "Migration_0004_ResourceDefinition", author = "migrationBot")
-    public void run(MongoDatabase db) {
+    public void run(MongoDatabase db, ResourceDefinitionCache resourceDefinitionCache) {
         migrateResourceDefinitions(db);
+        resourceDefinitionCache.computeCache();
     }
 
     private void migrateResourceDefinitions(MongoDatabase db) {

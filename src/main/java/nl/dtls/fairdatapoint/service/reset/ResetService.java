@@ -171,7 +171,6 @@ public class ResetService {
     private void clearResourceDefinitions() {
         log.debug("Clearing resource definitions");
         resourceDefinitionRepository.deleteAll();
-        resourceDefinitionCache.computeCache();
     }
 
     private void clearMetadata() throws MetadataServiceException {
@@ -230,5 +229,6 @@ public class ResetService {
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_CATALOG);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DATASET);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DISTRIBUTION);
+        resourceDefinitionCache.computeCache();
     }
 }

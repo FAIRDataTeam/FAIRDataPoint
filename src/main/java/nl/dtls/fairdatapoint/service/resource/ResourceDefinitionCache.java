@@ -27,7 +27,6 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -37,7 +36,6 @@ import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
 
 @Service
-@DependsOn("mongockRunner")
 public class ResourceDefinitionCache {
 
     @Autowired
