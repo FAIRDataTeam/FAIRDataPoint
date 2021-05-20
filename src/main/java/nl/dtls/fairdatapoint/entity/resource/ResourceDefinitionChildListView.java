@@ -34,6 +34,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder(toBuilder = true)
 public class ResourceDefinitionChildListView {
 
     @NotBlank

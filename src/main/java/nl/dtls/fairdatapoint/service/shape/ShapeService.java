@@ -108,10 +108,6 @@ public class ShapeService {
             return empty();
         }
         Shape shape = oShape.get();
-        if (shape.getType() == ShapeType.INTERNAL) {
-            throw new ValidationException("You can't edit INTERNAL Shape");
-        }
-
         Shape updatedShape = shapeMapper.fromChangeDTO(reqDto, shape);
         shapeRepository.save(updatedShape);
         return of(shapeMapper.toDTO(updatedShape));
@@ -124,6 +120,9 @@ public class ShapeService {
             return false;
         }
         Shape shape = oShape.get();
+        if (shape.getType() == ShapeType.INTERNAL) {
+            throw new ValidationException("You can't delete INTERNAL Shape");
+        }
         shapeRepository.delete(shape);
         return true;
     }

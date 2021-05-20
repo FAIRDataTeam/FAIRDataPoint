@@ -20,30 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.resource;
+package nl.dtls.fairdatapoint.api.controller.reset;
 
-import lombok.*;
-import nl.dtls.fairdatapoint.api.validator.ValidIri;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import nl.dtls.fairdatapoint.api.dto.reset.ResetDTO;
+import nl.dtls.fairdatapoint.service.reset.ResetService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class ResourceDefinitionChild {
+@Tag(name = "Client")
+@RestController
+public class ResetController {
 
-    @NotBlank
-    protected String resourceDefinitionUuid;
+    @Autowired
+    private ResetService resetService;
 
-    @NotBlank
-    @ValidIri
-    protected String relationUri;
-
-    @Valid
-    protected ResourceDefinitionChildListView listView;
+    @PostMapping("/reset")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> postResetFactoryDefaults(@RequestBody @Valid ResetDTO reqDto) throws Exception {
+        resetService.resetToFactoryDefaults(reqDto);
+        return ResponseEntity.noContent().build();
+    }
 
 }

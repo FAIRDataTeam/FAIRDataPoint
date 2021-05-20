@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.10.0]
+
+### Added
+
+- Allow to change internal shapes
+- Reset to "factory defaults" (users, resource definitions, metadata)
+
+### Changed
+
+- Upgrade Java JDK from 15 to 16
+
 ## [1.9.0]
 
 ### Added
@@ -193,3 +204,4 @@ The first release of reference FAIR Data Point implementation.
 [1.7.0]: /../../tree/v1.7.0
 [1.8.0]: /../../tree/v1.8.0
 [1.9.0]: /../../tree/v1.9.0
+[1.10.0]: /../../tree/v1.10.0

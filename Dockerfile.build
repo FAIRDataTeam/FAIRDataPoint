@@ -22,7 +22,7 @@
 #
 ################################################################################
 # BUILD STAGE
-FROM maven:3-openjdk-15 as builder
+FROM maven:3-openjdk-16 as builder
 
 WORKDIR /builder
 
@@ -32,7 +32,7 @@ RUN mvn --quiet -B -U --fail-fast -DskipTests package
 
 ################################################################################
 # RUN STAGE
-FROM openjdk:15-jdk-slim
+FROM openjdk:16-jdk-slim
 
 WORKDIR /fdp
 
