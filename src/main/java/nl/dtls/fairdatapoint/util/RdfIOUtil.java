@@ -27,7 +27,12 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.FOAF;
+import org.eclipse.rdf4j.model.vocabulary.LDP;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.eclipse.rdf4j.rio.*;
 import org.eclipse.rdf4j.rio.helpers.BasicWriterSettings;
 
@@ -111,6 +116,12 @@ public class RdfIOUtil {
     }
 
     public static String write(Model model, RDFFormat format) {
+        model.setNamespace(DCTERMS.NS);
+        model.setNamespace(DCAT.NS);
+        model.setNamespace(FOAF.NS);
+        model.setNamespace(XMLSchema.NS);
+        model.setNamespace(LDP.NS);
+
         try (StringWriter out = new StringWriter()) {
             Rio.write(model, out, format, getWriterConfig());
             return out.toString();
