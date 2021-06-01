@@ -40,8 +40,9 @@ public class LabelController {
     private LabelService labelService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LabelDTO> getLabel(@RequestParam String iri) {
-        var label = labelService.getLabel(iri);
+    public ResponseEntity<LabelDTO> getLabel(@RequestParam String iri,
+            @RequestParam(required = false, defaultValue = "en") String lang) {
+        var label = labelService.getLabel(iri, lang);
 
         if (label.isPresent()) {
             return new ResponseEntity<>(label.get(), HttpStatus.OK);

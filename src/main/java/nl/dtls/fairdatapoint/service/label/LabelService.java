@@ -55,15 +55,15 @@ public class LabelService {
         this.resolver = resolver;
     }
 
-    public Optional<LabelDTO> getLabel(String iri) {
     @Cacheable
+    public Optional<LabelDTO> getLabel(String iri, String lang) {
         try {
             var subject = i(iri);
 
             return resolver.resolveResource(iri)
-                    .flatMap(model -> resolvePrefLabelByLanguage(model, subject, "en")
+                    .flatMap(model -> resolvePrefLabelByLanguage(model, subject, lang)
                             .or(() -> resolvePrefLabel(model, subject))
-                            .or(() -> resolveLabelByLanguage(model, subject, "en"))
+                            .or(() -> resolveLabelByLanguage(model, subject, lang))
                             .or(() -> resolveLabel(model, subject))
                     )
                     .map(literal -> new LabelDTO(literal.getLabel(), literal.getLanguage().orElse("")));
