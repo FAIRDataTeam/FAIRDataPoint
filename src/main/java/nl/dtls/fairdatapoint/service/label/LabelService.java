@@ -61,10 +61,10 @@ public class LabelService {
             var subject = i(iri);
 
             return resolver.resolveResource(iri)
-                    .flatMap(model -> resolvePrefLabelByLanguage(model, subject, lang)
-                            .or(() -> resolvePrefLabel(model, subject))
-                            .or(() -> resolveLabelByLanguage(model, subject, lang))
-                            .or(() -> resolveLabel(model, subject))
+                    .flatMap(model -> getPropertyLiteralByLanguage(model, subject, SKOS.PREF_LABEL, lang)
+                            .or(() -> getPropertyLiteralWithoutLanguage(model, subject, SKOS.PREF_LABEL))
+                            .or(() -> getPropertyLiteralByLanguage(model, subject, RDFS.LABEL, lang))
+                            .or(() -> getPropertyLiteralWithoutLanguage(model, subject, RDFS.LABEL))
                     )
                     .map(literal -> new LabelDTO(literal.getLabel(), literal.getLanguage().orElse("")));
         } catch (IOException e) {
@@ -72,26 +72,17 @@ public class LabelService {
         }
     }
 
-    private Optional<Literal> resolvePrefLabelByLanguage(Model model, IRI iri, String lang) {
-        return getPropertyLiteralByLanguage(model, iri, SKOS.PREF_LABEL, lang);
-    }
-
-    private Optional<Literal> resolvePrefLabel(Model model, IRI iri) {
-        return Models.getPropertyLiteral(model, iri, SKOS.PREF_LABEL);
-    }
-
-    private Optional<Literal> resolveLabelByLanguage(Model model, IRI iri, String lang) {
-        return getPropertyLiteralByLanguage(model, iri, RDFS.LABEL, lang);
-    }
-
-    private Optional<Literal> resolveLabel(Model model, IRI iri) {
-        return Models.getPropertyLiteral(model, iri, RDFS.LABEL);
-    }
-
     private static Optional<Literal> getPropertyLiteralByLanguage(Model model, IRI subject, IRI predicate, String lang) {
         return Models.getPropertyLiterals(model, subject, predicate)
                 .stream()
                 .filter(literal -> literal.getLanguage().filter(isEqual(lang)).isPresent())
+                .findFirst();
+    }
+
+    private static Optional<Literal> getPropertyLiteralWithoutLanguage(Model model, IRI subject, IRI predicate) {
+        return Models.getPropertyLiterals(model, subject, predicate)
+                .stream()
+                .filter(literal -> literal.getLanguage().isEmpty())
                 .findFirst();
     }
 }
