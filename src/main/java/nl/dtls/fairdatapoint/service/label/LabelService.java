@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.label;
 
 import static java.util.function.Predicate.isEqual;
+import static nl.dtls.fairdatapoint.config.CacheConfig.LABEL_CACHE;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import com.github.fairdevkit.rdf.resolver.api.ResourceResolver;
 import com.github.fairdevkit.rdf.resolver.core.ContentNegotiationStrategy;
@@ -37,9 +38,12 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.Models;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.model.vocabulary.SKOS;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
+@CacheConfig(cacheNames = LABEL_CACHE)
 public class LabelService {
     private ResourceResolver resolver;
 
@@ -52,6 +56,7 @@ public class LabelService {
     }
 
     public Optional<LabelDTO> getLabel(String iri) {
+    @Cacheable
         try {
             var subject = i(iri);
 
