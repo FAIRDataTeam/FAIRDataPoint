@@ -13,10 +13,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Allow to change internal shapes
 - Reset to "factory defaults" (users, resource definitions, metadata)
+- All metadata have dct:conformsTo with profile based on resource definition
 
 ### Changed
 
 - Upgrade Java JDK from 15 to 16
+- Resource definitions are related directly to shapes
 
 ## [1.9.0]
 

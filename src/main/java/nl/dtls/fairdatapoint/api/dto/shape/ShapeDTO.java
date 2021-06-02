@@ -28,6 +28,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.entity.shape.ShapeType;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -44,4 +46,5 @@ public class ShapeDTO {
 
     private String definition;
 
+    private List<String> targetClasses;
 }

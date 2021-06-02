@@ -20,27 +20,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.api.dto.resource;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionLink;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class BootstrapConfigDTO {
+public class ResourceDefinitionDTO {
 
-    protected String persistentUrl;
+    @NotBlank
+    private String uuid;
 
-    protected List<ResourceDefinitionDTO> resourceDefinitions;
+    @NotBlank
+    protected String name;
 
-    protected boolean index;
+    @NotNull
+    protected String urlPrefix;
 
+    @NotNull
+    protected List<String> shapeUuids;
+
+    @NotNull
+    protected List<String> targetClassUris;
+
+    @NotNull
+    @Valid
+    protected List<ResourceDefinitionChild> children;
+
+    @NotNull
+    @Valid
+    protected List<ResourceDefinitionLink> externalLinks;
 }

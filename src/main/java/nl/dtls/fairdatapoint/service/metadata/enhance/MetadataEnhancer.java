@@ -26,14 +26,14 @@ import nl.dtls.fairdatapoint.entity.metadata.Identifier;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import nl.dtls.fairdatapoint.service.metadata.metric.MetricsMetadataService;
+import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.eclipse.rdf4j.model.vocabulary.LDP;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,7 +69,13 @@ public class MetadataEnhancer {
     private MetricsMetadataService metricsMetadataService;
 
     @Autowired
+    private ProfileService profileService;
+
+    @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
+
+    @Autowired
+    private ResourceDefinitionService resourceDefinitionService;
 
     public void enhance(Model metadata, IRI uri, ResourceDefinition rd, Model oldMetadata) {
         enhance(metadata, uri, rd);
@@ -83,7 +89,7 @@ public class MetadataEnhancer {
 
     public void enhance(Model metadata, IRI uri, ResourceDefinition rd) {
         // Add RDF Type
-        List<IRI> targetClassUris = rd.getTargetClassUris()
+        List<IRI> targetClassUris = resourceDefinitionService.getTargetClassUris(rd)
                 .stream()
                 .map(ValueFactoryHelper::i)
                 .collect(Collectors.toList());
@@ -144,6 +150,11 @@ public class MetadataEnhancer {
                 resultRdf.add(container, LDP.CONTAINS, i(childUri.stringValue()));
             }
         }
+    }
+
+    public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition rd, Model resultRdf) {
+        resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(rd));
+        resultRdf.add(profileService.getProfileUri(rd), RDFS.LABEL, l(format("%s Profile", rd.getName())));
     }
 
     private Identifier createMetadataIdentifier(IRI uri) {
