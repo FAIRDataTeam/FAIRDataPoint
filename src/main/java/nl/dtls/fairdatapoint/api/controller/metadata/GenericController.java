@@ -111,6 +111,7 @@ public class GenericController {
         Model resultRdf = new LinkedHashModel();
         String urlPrefix = getResourceNameForDetail(uri);
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Get entity
         IRI entityUri = i(getRequestURL(request, persistentUrl));
@@ -124,7 +125,10 @@ public class GenericController {
             throw new ForbiddenException("You are not allow to view this record in state DRAFT");
         }
 
-        // 4. Get parent
+        // 4. Enhance
+        metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
+
+        // 5. Get parent
         while (true) {
             IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
             if (parentUri == null) {
@@ -177,6 +181,7 @@ public class GenericController {
 
         // 6. Add links
         metadataEnhancer.enhanceWithLinks(entityUri, entity, rd, persistentUrl, resultRdf);
+        metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
 
         // 7. Create response
         return resultRdf;
@@ -206,7 +211,7 @@ public class GenericController {
         // 4. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
         Model oldDto = read(reqBody, uri.stringValue(), rdfContentType);
-        Model reqDto = changeBaseUri(oldDto, uri.stringValue(), rd.getTargetClassUris());
+        Model reqDto = changeBaseUri(oldDto, uri.stringValue(), resourceDefinitionService.getTargetClassUris(rd));
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             reqDto.remove(null, i(rdChild.getRelationUri()), null);
         }

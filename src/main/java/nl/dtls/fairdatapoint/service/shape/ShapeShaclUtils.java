@@ -20,27 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.service.shape;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.util.RdfIOUtil;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.vocabulary.SHACL;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class BootstrapConfigDTO {
+public class ShapeShaclUtils {
 
-    protected String persistentUrl;
-
-    protected List<ResourceDefinitionDTO> resourceDefinitions;
-
-    protected boolean index;
-
+    public static Set<String> extractTargetClasses(String definition) {
+        return RdfIOUtil
+                .read(definition, "")
+                .filter(null, SHACL.TARGET_CLASS, null)
+                .objects()
+                .stream()
+                .map(Value::stringValue)
+                .collect(Collectors.toSet());
+    }
 }

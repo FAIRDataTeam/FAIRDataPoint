@@ -33,6 +33,7 @@ import nl.dtls.fairdatapoint.entity.shape.Shape;
 import nl.dtls.fairdatapoint.entity.shape.ShapeType;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
+import nl.dtls.fairdatapoint.service.shape.ShapeShaclUtils;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
@@ -108,15 +109,26 @@ public class FactoryDefaults {
             ))
             .build();
 
+    //== SHAPE UUIDS
+    private static final String SHAPE_RESOURCE_UUID = "6a668323-3936-4b53-8380-a4fd2ed082ee";
+
+    private static final String SHAPE_REPOSITORY_UUID = "a92958ab-a414-47e6-8e17-68ba96ba3a2b";
+
+    private static final String SHAPE_CATALOG_UUID = "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660";
+
+    private static final String SHAPE_DATASET_UUID = "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3";
+
+    private static final String SHAPE_DISTRIBUTION_UUID = "ebacbf83-cd4f-4113-8738-d73c0735b0ab";
+
     //== RESOURCE DEFINITIONS
     // Changes: Migration_0002_CustomMetamodel, Migration_0004_ResourceDefinition
     public static final ResourceDefinition RESOURCE_DEFINITION_REPOSITORY = ResourceDefinition.builder()
             .uuid("77aaad6a-0136-4c6e-88b9-07ffccd0ee4c")
             .name("Repository")
             .urlPrefix("")
-            .targetClassUris(List.of(
-                    "http://www.w3.org/ns/dcat#Resource",
-                    "http://www.re3data.org/schema/3-0#Repository"
+            .shapeUuids(List.of(
+                    SHAPE_RESOURCE_UUID,
+                    SHAPE_REPOSITORY_UUID
             ))
             .children(List.of(
                     ResourceDefinitionChild.builder()
@@ -138,9 +150,9 @@ public class FactoryDefaults {
             .uuid("a0949e72-4466-4d53-8900-9436d1049a4b")
             .name("Catalog")
             .urlPrefix("catalog")
-            .targetClassUris(List.of(
-                    "http://www.w3.org/ns/dcat#Resource",
-                    "http://www.w3.org/ns/dcat#Catalog"
+            .shapeUuids(List.of(
+                    SHAPE_RESOURCE_UUID,
+                    SHAPE_CATALOG_UUID
             ))
             .children(List.of(
                     ResourceDefinitionChild.builder()
@@ -162,9 +174,9 @@ public class FactoryDefaults {
             .uuid("2f08228e-1789-40f8-84cd-28e3288c3604")
             .name("Dataset")
             .urlPrefix("dataset")
-            .targetClassUris(List.of(
-                    "http://www.w3.org/ns/dcat#Resource",
-                    "http://www.w3.org/ns/dcat#Dataset"
+            .shapeUuids(List.of(
+                    SHAPE_RESOURCE_UUID,
+                    SHAPE_DATASET_UUID
             ))
             .children(List.of(
                     ResourceDefinitionChild.builder()
@@ -187,13 +199,13 @@ public class FactoryDefaults {
             .externalLinks(List.of())
             .build();
 
-    public static final ResourceDefinition RESOURCE_DEFINITION_DISTRIBUTION = ResourceDefinition.builder()
+    public static ResourceDefinition RESOURCE_DEFINITION_DISTRIBUTION = ResourceDefinition.builder()
             .uuid("02c649de-c579-43bb-b470-306abdc808c7")
             .name("Distribution")
             .urlPrefix("distribution")
-            .targetClassUris(List.of(
-                    "http://www.w3.org/ns/dcat#Resource",
-                    "http://www.w3.org/ns/dcat#Distribution"
+            .shapeUuids(List.of(
+                    SHAPE_RESOURCE_UUID,
+                    SHAPE_DISTRIBUTION_UUID
             ))
             .children(List.of())
             .externalLinks(List.of(
@@ -211,52 +223,62 @@ public class FactoryDefaults {
     //== SHAPES
     //== Changes: Migration_0003_ShapeDefinition, Migration_0005_UpdateShapeDefinition, Migration_0006_ShapesSharing
     public static Shape shapeResource() throws Exception {
+        String definition = loadShape("shape-resource.ttl");
         return Shape.builder()
-                .uuid("6a668323-3936-4b53-8380-a4fd2ed082ee")
+                .uuid(SHAPE_RESOURCE_UUID)
                 .name("Resource")
                 .type(ShapeType.INTERNAL)
                 .published(false)
-                .definition(loadShape("shape-resource.ttl"))
+                .definition(definition)
+                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
     public static Shape shapeRepository() throws Exception {
+        String definition = loadShape("shape-repository.ttl");
         return Shape.builder()
-                .uuid("a92958ab-a414-47e6-8e17-68ba96ba3a2b")
+                .uuid(SHAPE_REPOSITORY_UUID)
                 .name("Repository")
                 .type(ShapeType.INTERNAL)
                 .published(false)
-                .definition(loadShape("shape-repository.ttl"))
+                .definition(definition)
+                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
     public static Shape shapeCatalog() throws Exception {
+        String definition = loadShape("shape-catalog.ttl");
         return Shape.builder()
-                .uuid("2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660")
+                .uuid(SHAPE_CATALOG_UUID)
                 .name("Catalog")
                 .type(ShapeType.INTERNAL)
                 .published(false)
-                .definition(loadShape("shape-catalog.ttl"))
+                .definition(definition)
+                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
     public static Shape shapeDataset() throws Exception {
+        String definition = loadShape("shape-dataset.ttl");
         return Shape.builder()
-                .uuid("866d7fb8-5982-4215-9c7c-18d0ed1bd5f3")
+                .uuid(SHAPE_DATASET_UUID)
                 .name("Dataset")
                 .type(ShapeType.CUSTOM)
                 .published(false)
-                .definition(loadShape("shape-dataset.ttl"))
+                .definition(definition)
+                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
     public static Shape shapeDistribution() throws Exception {
+        String definition = loadShape("shape-distribution.ttl");
         return Shape.builder()
-                .uuid("ebacbf83-cd4f-4113-8738-d73c0735b0ab")
+                .uuid(SHAPE_DISTRIBUTION_UUID)
                 .name("Distribution")
                 .type(ShapeType.CUSTOM)
                 .published(false)
-                .definition(loadShape("shape-distribution.ttl"))
+                .definition(definition)
+                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 

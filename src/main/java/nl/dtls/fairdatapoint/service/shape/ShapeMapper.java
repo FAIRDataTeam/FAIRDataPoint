@@ -39,7 +39,9 @@ public class ShapeMapper {
                         shape.getName(),
                         shape.isPublished(),
                         shape.getType(),
-                        shape.getDefinition());
+                        shape.getDefinition(),
+                        shape.getTargetClasses().stream().sorted().toList()
+                );
     }
 
     public Shape fromChangeDTO(ShapeChangeDTO dto, String uuid) {
@@ -50,7 +52,9 @@ public class ShapeMapper {
                         dto.getName(),
                         dto.isPublished(),
                         ShapeType.CUSTOM,
-                        dto.getDefinition());
+                        dto.getDefinition(),
+                        ShapeShaclUtils.extractTargetClasses(dto.getDefinition())
+                );
 
     }
 
@@ -61,6 +65,7 @@ public class ShapeMapper {
                         .name(dto.getName())
                         .published(dto.isPublished())
                         .definition(dto.getDefinition())
+                        .targetClasses(ShapeShaclUtils.extractTargetClasses(dto.getDefinition()))
                         .build();
     }
 

@@ -29,6 +29,7 @@ import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositor
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
+import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.Model;
@@ -84,8 +85,6 @@ public class HarvesterServiceTest {
     private void setup() {
         // Setup resource definition;
         ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();
-        when(resourceDefinitionCache.getByUuid(resourceDefinitionFixtures.catalogDefinition().getUuid()))
-                .thenReturn(resourceDefinitionFixtures.catalogDefinition());
 
         // Setup RDF fixtures
         RdfMetadataFixtures fixtures = new RdfMetadataFixtures(new MetadataFactoryImpl());
@@ -97,9 +96,6 @@ public class HarvesterServiceTest {
         // Create catalog
         catalog = fixtures.catalog1(repositoryUrl, getUri(repository));
         repository.add(i(repositoryUrl), R3D.DATACATALOG, i(catalogUrl));
-
-        // Enhance repository with links
-        metadataEnhancer.enhanceWithLinks(i(repositoryUrl), repository, rdRepository, repositoryUrl, repository);
     }
 
     @Test

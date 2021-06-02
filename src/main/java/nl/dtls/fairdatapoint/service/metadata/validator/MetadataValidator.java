@@ -29,6 +29,7 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -56,6 +57,9 @@ public class MetadataValidator {
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
 
+    @Autowired
+    private ResourceDefinitionService resourceDefinitionService;
+
     public void validate(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         validateByShacl(metadata, uri);
         if (!rd.getName().equals("Repository")) {
@@ -79,7 +83,7 @@ public class MetadataValidator {
         try {
             ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
             if (rdParent != null) {
-                for (String rdfType : rdParent.getTargetClassUris()) {
+                for (String rdfType : resourceDefinitionService.getTargetClassUris(rdParent)) {
                     if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
                         throw new ValidationException("Parent is not of correct type");
                     }
