@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Resolving labels for RDF resources
+- Registration of standard namespaces in RDF output
+
 ## [1.10.0]
 
 ### Added
