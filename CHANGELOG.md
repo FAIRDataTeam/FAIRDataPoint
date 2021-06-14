@@ -7,18 +7,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- All metadata have dct:conformsTo with profile based on resource definition
+- Resolving labels for RDF resources
+- Registration of standard namespaces in RDF output
+
+### Changed
+
+- Resource definitions are related directly to shapes
+
 ## [1.10.0]
 
 ### Added
 
 - Allow to change internal shapes
 - Reset to "factory defaults" (users, resource definitions, metadata)
-- All metadata have dct:conformsTo with profile based on resource definition
 
 ### Changed
 
 - Upgrade Java JDK from 15 to 16
-- Resource definitions are related directly to shapes
 
 ## [1.9.0]
 
