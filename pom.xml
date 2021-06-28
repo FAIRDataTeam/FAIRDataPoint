@@ -70,7 +70,7 @@
         <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
-        <plugin.git_commit_id.version>4.0.4</plugin.git_commit_id.version>
+        <plugin.git_commit_id.version>4.0.5</plugin.git_commit_id.version>
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
     </properties>
 
