@@ -7,6 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.11.0]
+
+### Added
+
+- All metadata have dct:conformsTo with profile based on resource definition
+- Resolving labels for RDF resources
+- Registration of standard namespaces in RDF output
+
+### Changed
+
+- Resource definitions are related directly to shapes
+
 ## [1.10.0]
 
 ### Added
@@ -205,3 +217,4 @@ The first release of reference FAIR Data Point implementation.
 [1.8.0]: /../../tree/v1.8.0
 [1.9.0]: /../../tree/v1.9.0
 [1.10.0]: /../../tree/v1.10.0
+[1.11.0]: /../../tree/v1.11.0

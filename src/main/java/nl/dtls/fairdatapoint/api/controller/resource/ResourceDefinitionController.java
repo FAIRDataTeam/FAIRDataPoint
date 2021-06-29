@@ -24,8 +24,8 @@ package nl.dtls.fairdatapoint.api.controller.resource;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,21 +49,21 @@ public class ResourceDefinitionController {
     private ResourceDefinitionService resourceDefinitionService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ResourceDefinition>> getResourceDefinitions() {
-        List<ResourceDefinition> dto = resourceDefinitionService.getAll();
+    public ResponseEntity<List<ResourceDefinitionDTO>> getResourceDefinitions() {
+        List<ResourceDefinitionDTO> dto = resourceDefinitionService.getAll();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResourceDefinition> createResourceDefinitions(@RequestBody @Valid ResourceDefinitionChangeDTO reqDto) throws BindException {
-        ResourceDefinition dto = resourceDefinitionService.create(reqDto);
+    public ResponseEntity<ResourceDefinitionDTO> createResourceDefinitions(@RequestBody @Valid ResourceDefinitionChangeDTO reqDto) throws BindException {
+        ResourceDefinitionDTO dto = resourceDefinitionService.create(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResourceDefinition> getResourceDefinition(@PathVariable final String uuid)
+    public ResponseEntity<ResourceDefinitionDTO> getResourceDefinition(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        Optional<ResourceDefinition> oDto = resourceDefinitionService.getByUuid(uuid);
+        Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.getDTOByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {
@@ -72,10 +72,10 @@ public class ResourceDefinitionController {
     }
 
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResourceDefinition> putResourceDefinitions(@PathVariable final String uuid,
+    public ResponseEntity<ResourceDefinitionDTO> putResourceDefinitions(@PathVariable final String uuid,
                                                                      @RequestBody @Valid ResourceDefinitionChangeDTO reqDto)
             throws ResourceNotFoundException, BindException {
-        Optional<ResourceDefinition> oDto = resourceDefinitionService.update(uuid, reqDto);
+        Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.update(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {

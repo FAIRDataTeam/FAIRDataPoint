@@ -10,7 +10,7 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -58,18 +58,19 @@
         <springdoc.version>1.5.2</springdoc.version>
         <mongock.version>4.3.8</mongock.version>
         <mongodb.driver-sync.version>4.1.2</mongodb.driver-sync.version>
-        <mongodb.spring-data.v3.version>3.2.1</mongodb.spring-data.v3.version>
-        <rdf4j.version>3.0.0</rdf4j.version>
+        <mongodb.spring-data.v3.version>3.2.2</mongodb.spring-data.v3.version>
+        <rdf4j.version>3.7.1</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
         <jwt.version>0.11.2</jwt.version>
         <lombok.version>1.18.20</lombok.version>
+        <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
 
         <!-- Plugins -->
         <plugin.license.version>4.1</plugin.license.version>
         <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
-        <plugin.git_commit_id.version>4.0.4</plugin.git_commit_id.version>
+        <plugin.git_commit_id.version>4.0.5</plugin.git_commit_id.version>
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
     </properties>
 
@@ -92,6 +93,11 @@
             <id>nexus-releases</id>
             <name>Nexus Releases</name>
             <url>https://nexus.internal.fairdatapoint.org/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>nexus-snapshots</id>
+            <name>Nexus Snapshots</name>
+            <url>https://nexus.internal.fairdatapoint.org/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 
@@ -203,6 +209,7 @@
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-runtime</artifactId>
             <version>${rdf4j.version}</version>
+            <type>pom</type>
             <exclusions>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>
@@ -246,6 +253,16 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.fairdevkit</groupId>
+            <artifactId>rdf-resource-resolver-core</artifactId>
+            <version>${rdf-resolver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.fairdevkit</groupId>
+            <artifactId>rdf-resource-resolver-api</artifactId>
+            <version>${rdf-resolver.version}</version>
         </dependency>
 
         <!-- ////////////////// -->

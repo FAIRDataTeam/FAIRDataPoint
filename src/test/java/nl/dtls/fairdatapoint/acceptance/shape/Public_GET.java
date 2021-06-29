@@ -38,6 +38,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -68,6 +69,7 @@ public class Public_GET extends WebIntegrationTest {
                 .name(shapeFixtures.customShape().getName())
                 .definition(shapeFixtures.customShape().getDefinition())
                 .published(published)
+                .targetClasses(Set.of())
                 .build();
     }
 

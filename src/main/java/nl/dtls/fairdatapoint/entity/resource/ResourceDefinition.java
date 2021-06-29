@@ -50,18 +50,18 @@ public class ResourceDefinition {
 
     protected String urlPrefix;
 
-    protected List<String> targetClassUris = new ArrayList<>();
+    protected List<String> shapeUuids = new ArrayList<>();
 
     protected List<ResourceDefinitionChild> children = new ArrayList<>();
 
     protected List<ResourceDefinitionLink> externalLinks = new ArrayList<>();
 
-    public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> targetClassUris,
+    public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> shapeUuids,
                               List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks) {
         this.uuid = uuid;
         this.name = name;
         this.urlPrefix = urlPrefix;
-        this.targetClassUris = targetClassUris;
+        this.shapeUuids = shapeUuids;
         this.children = children;
         this.externalLinks = externalLinks;
     }

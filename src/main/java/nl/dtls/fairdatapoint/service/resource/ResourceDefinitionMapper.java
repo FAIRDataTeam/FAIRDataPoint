@@ -23,8 +23,11 @@
 package nl.dtls.fairdatapoint.service.resource;
 
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ResourceDefinitionMapper {
@@ -34,7 +37,7 @@ public class ResourceDefinitionMapper {
                 uuid,
                 dto.getName(),
                 dto.getUrlPrefix(),
-                dto.getTargetClassUris(),
+                dto.getShapeUuids(),
                 dto.getChildren(),
                 dto.getExternalLinks());
     }
@@ -43,8 +46,20 @@ public class ResourceDefinitionMapper {
         return new ResourceDefinitionChangeDTO(
                 rd.getName(),
                 rd.getUrlPrefix(),
-                rd.getTargetClassUris(),
+                rd.getShapeUuids(),
                 rd.getChildren(),
                 rd.getExternalLinks());
+    }
+
+    public ResourceDefinitionDTO toDTO(ResourceDefinition rd, List<String> targetClassUris) {
+        return new ResourceDefinitionDTO(
+                rd.getUuid(),
+                rd.getName(),
+                rd.getUrlPrefix(),
+                rd.getShapeUuids(),
+                targetClassUris,
+                rd.getChildren(),
+                rd.getExternalLinks()
+        );
     }
 }

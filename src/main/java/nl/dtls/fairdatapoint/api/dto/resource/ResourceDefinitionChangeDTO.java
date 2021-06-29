@@ -48,7 +48,7 @@ public class ResourceDefinitionChangeDTO {
     protected String urlPrefix;
 
     @NotNull
-    protected List<@ValidIri String> targetClassUris;
+    protected List<String> shapeUuids;
 
     @NotNull
     @Valid

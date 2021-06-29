@@ -20,27 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package nl.dtls.fairdatapoint.api.dto.label;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-
-import java.util.List;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class BootstrapConfigDTO {
-
-    protected String persistentUrl;
-
-    protected List<ResourceDefinitionDTO> resourceDefinitions;
-
-    protected boolean index;
-
+@EqualsAndHashCode
+public class LabelDTO {
+    private String label;
+    private String lang;
 }

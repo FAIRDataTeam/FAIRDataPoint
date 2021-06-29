@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.database.mongo.repository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ResourceDefinitionRepository extends MongoRepository<ResourceDefinition, String> {
@@ -34,5 +35,7 @@ public interface ResourceDefinitionRepository extends MongoRepository<ResourceDe
     Optional<ResourceDefinition> findByName(String name);
 
     Optional<ResourceDefinition> findByUrlPrefix(String urlPrefix);
+
+    List<ResourceDefinition> findByShapeUuidsIsContaining(String shapeUuid);
 
 }
