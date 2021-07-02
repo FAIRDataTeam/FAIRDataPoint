@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- New endpoints for settings (metrics and ping)
+
+### Changed
+
+- Reset to defaults works with settings as well
+
 ## [1.11.0]
 
 ### Added

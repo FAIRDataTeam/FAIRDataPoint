@@ -36,7 +36,7 @@ import javax.validation.Valid;
 @Tag(name = "Index")
 @RestController
 @RequestMapping("/index/settings")
-public class SettingsController {
+public class IndexSettingsController {
 
     @Autowired
     private IndexSettingsService indexSettingsService;

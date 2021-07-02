@@ -20,24 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.reset;
+package nl.dtls.fairdatapoint.config.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResetDTO {
-
-    private boolean users;
-
-    private boolean metadata;
-
-    private boolean resourceDefinitions;
-
-    private boolean settings;
+@ConfigurationProperties(prefix = "openapi")
+public class OpenApiProperties {
+    private String title;
+    private String version;
+    private String description;
+    private OpenApiContactProperties contact;
 }

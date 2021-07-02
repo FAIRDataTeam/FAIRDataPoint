@@ -1,4 +1,5 @@
 instance:
+  index: false
   clientUrl: http://localhost:8080
   behindProxy: true
 
@@ -51,15 +52,6 @@ metadataProperties:
   language: http://id.loc.gov/vocabulary/iso639-1/en
   license: http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0
   accessRightsDescription: This resource has no access restriction
-
-threadPoolSize: 4
-
-metadataMetrics:
-  https://purl.org/fair-metrics/FM_F1A: https://www.ietf.org/rfc/rfc3986.txt
-  https://purl.org/fair-metrics/FM_A1.1: https://www.wikidata.org/wiki/Q8777
-
-fdp-index:
-  enabled: false
 
 openapi:
   title: FAIR Data Point API

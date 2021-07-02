@@ -20,24 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.reset;
+package nl.dtls.fairdatapoint.config.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResetDTO {
+@ConfigurationProperties(prefix = "instance")
+public class InstanceProperties {
+    private String clientUrl = "http://localhost:8080";
+    private String persistentUrl = null;
+    private boolean behindProxy = true;
+    private boolean index = false;
 
-    private boolean users;
-
-    private boolean metadata;
-
-    private boolean resourceDefinitions;
-
-    private boolean settings;
+    public String getUrl() {
+        if (persistentUrl == null || persistentUrl.isBlank()) {
+            return clientUrl;
+        }
+        return persistentUrl;
+    }
 }

@@ -20,24 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.reset;
+package nl.dtls.fairdatapoint.entity.settings;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResetDTO {
+@EqualsAndHashCode
+@Builder(toBuilder = true)
+public class SettingsMetricsEntry {
 
-    private boolean users;
+    private String metricUri;
 
-    private boolean metadata;
+    private String resourceUri;
 
-    private boolean resourceDefinitions;
-
-    private boolean settings;
 }

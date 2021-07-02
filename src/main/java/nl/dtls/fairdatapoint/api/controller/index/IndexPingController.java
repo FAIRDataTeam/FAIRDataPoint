@@ -49,8 +49,8 @@ import javax.validation.Valid;
 @Tag(name = "Index")
 @RestController
 @RequestMapping("/")
-public class PingController {
-    private static final Logger logger = LoggerFactory.getLogger(PingController.class);
+public class IndexPingController {
+    private static final Logger logger = LoggerFactory.getLogger(IndexPingController.class);
 
     @Autowired
     private EventService eventService;

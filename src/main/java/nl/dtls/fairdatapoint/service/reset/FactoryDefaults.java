@@ -337,7 +337,7 @@ public class FactoryDefaults {
             "quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum " +
             "euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at.";
 
-    public static List<Statement> repositoryStatements(String persistentUrl, Map<String, String> metadataMetrics, IRI license, IRI language, String accessRightsDescription) {
+    public static List<Statement> repositoryStatements(String persistentUrl, IRI license, IRI language, String accessRightsDescription) {
         List<Statement> s = new ArrayList<>();
         IRI baseUrl = i(persistentUrl);
         FactoryDefaults.add(s, RDF.TYPE, R3D.REPOSITORY, baseUrl);
@@ -368,13 +368,6 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCTERMS.PUBLISHER, publisherIri, baseUrl);
         FactoryDefaults.add(s, publisherIri, RDF.TYPE, FOAF.AGENT, baseUrl);
         FactoryDefaults.add(s, publisherIri, FOAF.NAME, l("Default Publisher"), baseUrl);
-        // Metrics
-        metadataMetrics.forEach((metric, metricValue) -> {
-            IRI metUri = i(format("%s/metrics/%s", persistentUrl, DigestUtils.md5Hex(metric)));
-            FactoryDefaults.add(s, Sio.REFERS_TO, metUri, baseUrl);
-            FactoryDefaults.add(s, metUri, Sio.IS_ABOUT, i(metric), baseUrl);
-            FactoryDefaults.add(s, metUri, Sio.REFERS_TO, i(metricValue), baseUrl);
-        });
         return s;
     }
 

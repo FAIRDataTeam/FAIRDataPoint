@@ -20,24 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.reset;
+package nl.dtls.fairdatapoint.api.dto.settings;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResetDTO {
+public class SettingsPingDTO {
 
-    private boolean users;
+    @NotNull
+    private Boolean enabled;
 
-    private boolean metadata;
+    @NotNull
+    private List<String> endpoints;
 
-    private boolean resourceDefinitions;
-
-    private boolean settings;
+    @NotNull
+    private String interval;
 }

@@ -20,23 +20,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service;
+package nl.dtls.fairdatapoint.service.settings;
 
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.util.HttpUtil;
+import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
+import nl.dtls.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
+import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
+import nl.dtls.fairdatapoint.entity.settings.Settings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Service
-public class UtilityService {
+public class SettingsService {
 
     @Autowired
-    private InstanceProperties instanceProperties;
+    private SettingsRepository repository;
 
-    public String getRemoteAddr(HttpServletRequest request) {
-        return HttpUtil.getClientIpAddress(request, instanceProperties.isBehindProxy());
+    @Autowired
+    private SettingsMapper mapper;
+
+    @Autowired
+    private SettingsCache cache;
+
+    public Settings getOrDefaults() {
+        return cache.getOrDefaults();
     }
+
+    public SettingsDTO getCurrentSettings() {
+        return mapper.toDTO(getOrDefaults());
+    }
+
+    public SettingsDTO updateSettings(SettingsUpdateDTO dto) {
+        Settings settings = repository.save(mapper.fromUpdateDTO(dto, getOrDefaults()));
+        cache.updateCachedSettings(settings);
+        return mapper.toDTO(settings);
+    }
+
+    public SettingsDTO resetSettings() {
+        return updateSettings(mapper.toUpdateDTO(Settings.getDefault()));
+    }
+
 }
