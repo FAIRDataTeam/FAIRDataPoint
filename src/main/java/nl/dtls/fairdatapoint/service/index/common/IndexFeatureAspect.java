@@ -22,10 +22,12 @@
  */
 package nl.dtls.fairdatapoint.service.index.common;
 
+import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.entity.exception.FeatureDisabledException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +35,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class IndexFeatureAspect {
 
-    @Value("${fdp-index.enabled:false}")
-    private boolean fdpIndexEnabled;
+    @Autowired
+    private InstanceProperties instanceProperties;
 
     @Around("@annotation(nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature)")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        if (!fdpIndexEnabled) {
+        if (!instanceProperties.isIndex()) {
             throw new FeatureDisabledException("Index functionality is turn off");
         }
         return joinPoint.proceed();

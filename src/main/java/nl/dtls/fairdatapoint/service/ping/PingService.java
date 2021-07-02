@@ -24,6 +24,10 @@ package nl.dtls.fairdatapoint.service.ping;
 
 
 import lombok.extern.log4j.Log4j2;
+import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
+import nl.dtls.fairdatapoint.config.properties.PingProperties;
+import nl.dtls.fairdatapoint.entity.settings.Settings;
+import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,19 +44,26 @@ import java.util.Map;
 @ConditionalOnProperty(name = "ping.enabled", havingValue = "true", matchIfMissing = true)
 public class PingService {
 
-    @Value("${instance.clientUrl}")
-    private String clientUrl;
+    @Autowired
+    private PingProperties pingProperties;
 
-    @Value("#{'${ping.endpoint:https://home.fairdatapoint.org}'.split('[, ]')}")
-    private List<String> endpoints;
+    @Autowired
+    private InstanceProperties instanceProperties;
+
+    @Autowired
+    private SettingsService settingsService;
 
     @Autowired
     private RestTemplate client;
 
-    @Scheduled(initialDelayString = "${ping.initDelay:#{10*1000}}", fixedRateString = "${ping.interval:#{7*24*60*60*1000}}")
+    @Scheduled(initialDelayString = "${ping.initDelay:#{10*1000}}", fixedRateString = "${ping.interval:P7D}")
     public void ping() {
-        var request = Map.of("clientUrl", clientUrl);
-        for (String endpoint : endpoints) {
+        Settings settings = settingsService.getOrDefaults();
+        if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
+            return;
+        }
+        var request = Map.of("clientUrl", instanceProperties.getClientUrl());
+        for (String endpoint : settings.getPing().getEndpoints()) {
             pingEndpoint(endpoint.trim(), request);
         }
     }

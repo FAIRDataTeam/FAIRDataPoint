@@ -43,7 +43,7 @@ import java.util.UUID;
 @Log4j2
 @RestController
 @RequestMapping("/index/admin")
-public class AdminController {
+public class IndexAdminController {
 
     @Autowired
     private UtilityService utilityService;

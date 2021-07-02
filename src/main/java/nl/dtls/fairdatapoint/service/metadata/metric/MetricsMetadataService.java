@@ -29,6 +29,8 @@ package nl.dtls.fairdatapoint.service.metadata.metric;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.entity.metadata.Metric;
+import nl.dtls.fairdatapoint.entity.settings.Settings;
+import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,16 +50,16 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 public class MetricsMetadataService {
 
     @Autowired
-    @Qualifier("metadataMetrics")
-    private Map<String, String> metadataMetrics;
+    private SettingsService settingsService;
 
     public List<Metric> generateMetrics(@Nonnull IRI metadataURI) {
-        return metadataMetrics.entrySet().stream()
+        Settings settings = settingsService.getOrDefaults();
+        return settings.getMetadataMetrics().stream()
                 .map(entry ->
                         new Metric(
-                                i(format("%s/metrics/%s", metadataURI.toString(), DigestUtils.md5Hex(entry.getKey()))),
-                                i(entry.getValue()),
-                                i(entry.getValue())))
+                                i(format("%s/metrics/%s", metadataURI.toString(), DigestUtils.md5Hex(entry.getMetricUri()))),
+                                i(entry.getResourceUri()),
+                                i(entry.getResourceUri())))
                 .collect(Collectors.toList());
     }
 

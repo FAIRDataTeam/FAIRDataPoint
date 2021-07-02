@@ -20,24 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.reset;
+package nl.dtls.fairdatapoint.database.mongo.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.settings.Settings;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class ResetDTO {
+import java.util.Optional;
 
-    private boolean users;
-
-    private boolean metadata;
-
-    private boolean resourceDefinitions;
-
-    private boolean settings;
+public interface SettingsRepository extends MongoRepository<Settings, String> {
+    Optional<Settings> findFirstBy();
 }

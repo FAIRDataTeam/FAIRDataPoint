@@ -20,23 +20,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service;
+package nl.dtls.fairdatapoint.service.settings;
 
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.util.HttpUtil;
+import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
+import nl.dtls.fairdatapoint.entity.settings.Settings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.PostConstruct;
+import java.util.List;
+
+import static nl.dtls.fairdatapoint.config.CacheConfig.SETTINGS_CACHE;
 
 @Service
-public class UtilityService {
+public class SettingsCache {
 
     @Autowired
-    private InstanceProperties instanceProperties;
+    private ConcurrentMapCacheManager cacheManager;
 
-    public String getRemoteAddr(HttpServletRequest request) {
-        return HttpUtil.getClientIpAddress(request, instanceProperties.isBehindProxy());
+    @Autowired
+    private SettingsRepository settingsRepository;
+
+    private static final String SETTINGS_KEY = "settings";
+
+    @PostConstruct
+    public void updateCachedSettings() {
+        updateCachedSettings(settingsRepository.findFirstBy().orElse(Settings.getDefault()));
+    }
+
+    public void updateCachedSettings(Settings settings) {
+        // Get cache
+        Cache cache = cache();
+
+        // Clear cache
+        cache.clear();
+
+        // Add to cache
+        cache.put(SETTINGS_KEY, settings);
+    }
+
+    public Settings getOrDefaults() {
+        return cache().get(SETTINGS_KEY, Settings.class);
+    }
+
+    private Cache cache() {
+        return cacheManager.getCache(SETTINGS_CACHE);
     }
 }

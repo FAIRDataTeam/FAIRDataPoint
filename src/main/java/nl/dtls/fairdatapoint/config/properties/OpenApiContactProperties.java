@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.reset;
+package nl.dtls.fairdatapoint.config.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,13 +31,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResetDTO {
-
-    private boolean users;
-
-    private boolean metadata;
-
-    private boolean resourceDefinitions;
-
-    private boolean settings;
+public class OpenApiContactProperties {
+    private String name;
+    private String email;
+    private String url;
 }

@@ -20,24 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.reset;
+package nl.dtls.fairdatapoint.config.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.time.Duration;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResetDTO {
-
-    private boolean users;
-
-    private boolean metadata;
-
-    private boolean resourceDefinitions;
-
-    private boolean settings;
+@ConfigurationProperties(prefix = "ping")
+public class PingProperties {
+    private boolean enabled = true;
+    private String initDelay = "10000";
+    private Duration interval = Duration.ofDays(7);
 }

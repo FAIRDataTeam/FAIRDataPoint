@@ -22,14 +22,12 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import org.eclipse.rdf4j.model.IRI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-
-import java.util.Map;
 
 import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
@@ -37,15 +35,12 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Configuration
 public class MetadataConfig {
 
-    @Value("${instance.clientUrl}")
-    private String clientUrl;
+    @Autowired
+    private InstanceProperties instanceProperties;
 
     @Bean(name = "persistentUrl")
-    public String persistentUrl(@Value("${instance.persistentUrl:}") String persistentUrl) {
-        if (persistentUrl == null || persistentUrl.isEmpty()) {
-            return clientUrl;
-        }
-        return removeLastSlash(persistentUrl);
+    public String persistentUrl() {
+        return removeLastSlash(instanceProperties.getUrl());
     }
 
     @Bean(name = "language")
@@ -67,12 +62,4 @@ public class MetadataConfig {
         }
         return license;
     }
-
-    @Bean(name = "metadataMetrics")
-    public Map<String, String> metadataMetrics() {
-        YamlMapFactoryBean yamlFactory = new YamlMapFactoryBean();
-        yamlFactory.setResources(new ClassPathResource("application.yml"));
-        return (Map<String, String>) yamlFactory.getObject().get("metadataMetrics");
-    }
-
 }
