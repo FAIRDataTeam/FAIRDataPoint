@@ -103,7 +103,7 @@ public class GenericController {
         return shapeService.getShaclFromShapes();
     }
 
-    @Operation(hidden = true)
+    @Operation(hidden = true, deprecated = true)
     @GetMapping(path = "**/expanded", produces = {"!application/json"})
     public Model getMetaDataExpanded(HttpServletRequest request) throws MetadataServiceException {
         // 1. Init
@@ -321,6 +321,7 @@ public class GenericController {
                 // 4.2 Get all children sorted
                 var children = getObjectsBy(entity, entityUri, relationUri)
                         .stream()
+                        .filter((childUri) -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
                         .filter((childUri) -> {
                             if (oCurrentUser.isPresent()) return true;
                             Metadata childState = metadataStateService.get(i(childUri.stringValue()));
