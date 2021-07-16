@@ -20,6 +20,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Multiple children resource definitions with the same child relation
 
+### Fixed
+
+- Creating metadata of a resource definition that has multiple parents
+
 ## [1.11.0]
 
 ### Added
