@@ -34,10 +34,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -142,9 +139,9 @@ public class ResourceDefinitionService {
         }
         ResourceDefinition rd = oRd.get();
 
-        // 2. Delete from parent resource definition
-        ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
-        if (rdParent != null) {
+        // 2. Delete from parent resource definitions
+        Set<ResourceDefinition> rdParents = resourceDefinitionCache.getParentsByUuid(rd.getUuid());
+        rdParents.forEach(rdParent -> {
             rdParent = resourceDefinitionRepository.findByUuid(rdParent.getUuid()).get();
             rdParent.setChildren(
                     rdParent.getChildren()
@@ -153,7 +150,7 @@ public class ResourceDefinitionService {
                             .collect(Collectors.toList())
             );
             resourceDefinitionRepository.save(rdParent);
-        }
+        });
 
         // 3. Delete resource definition
         resourceDefinitionRepository.delete(rd);

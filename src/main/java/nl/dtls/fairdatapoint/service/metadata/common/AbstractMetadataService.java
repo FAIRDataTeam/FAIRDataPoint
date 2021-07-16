@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataGetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -37,6 +38,7 @@ import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
@@ -48,10 +50,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -84,6 +83,9 @@ public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
     private MetadataStateService metadataStateService;
+
+    @Autowired
+    private ResourceDefinitionService resourceDefinitionService;
 
     @Override
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
@@ -163,8 +165,9 @@ public abstract class AbstractMetadataService implements MetadataService {
             }
 
             // Remove reference at parent
-            ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
-            if (rdParent != null) {
+            Set<ResourceDefinition> rdParents = resourceDefinitionCache.getParentsByUuid(rd.getUuid());
+            // select parent based on URI prefix
+            for (ResourceDefinition rdParent : rdParents) {
                 IRI parentUri = getParent(metadata);
                 Model parentMetadata = retrieve(parentUri);
                 for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
@@ -186,7 +189,12 @@ public abstract class AbstractMetadataService implements MetadataService {
     protected void updateParent(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         IRI parent = MetadataGetter.getParent(metadata);
         if (parent != null) {
-            ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
+            String[] parts = parent.toString().split("/");
+            if (parts.length < 3) {
+                throw new ValidationException("Invalid parent uri");
+            }
+            String parentPrefix = parts[parts.length-2];
+            ResourceDefinition rdParent = resourceDefinitionService.getByUrlPrefix(parentPrefix);
             if (rdParent != null) {
                 try {
                     List<Statement> statements = new ArrayList<>();
