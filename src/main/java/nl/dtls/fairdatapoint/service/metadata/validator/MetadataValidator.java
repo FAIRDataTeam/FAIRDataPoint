@@ -28,7 +28,6 @@ import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import org.eclipse.rdf4j.model.IRI;
@@ -38,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
@@ -55,14 +55,11 @@ public class MetadataValidator {
     private ShapeService shapeService;
 
     @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
-
-    @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
     public void validate(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         validateByShacl(metadata, uri);
-        if (!rd.getName().equals("Repository")) {
+        if (!rd.getUrlPrefix().isEmpty()) {
             validateParent(metadata, rd);
         }
     }
@@ -79,14 +76,23 @@ public class MetadataValidator {
             throw new ValidationException("Not parent uri");
         }
 
-        // 2. Check correctness of parent type
+        // 2. Get parent resource definition
+        String[] parts = parent.toString().split("/");
+        if (parts.length < 3) {
+            throw new ValidationException("Invalid parent uri");
+        }
+        String parentPrefix = parts[parts.length-2];
+        ResourceDefinition rdParent = resourceDefinitionService.getByUrlPrefix(parentPrefix);
+        if (rdParent.getChildren().stream().noneMatch(rdChild -> rdChild.getResourceDefinitionUuid().equals(rd.getUuid()))) {
+            throw new ValidationException(format("Parent is not of correct type (RD: %s)", rdParent.getName()));
+        }
+
+        // 3. Check correctness of parent type
         try {
-            ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
-            if (rdParent != null) {
-                for (String rdfType : resourceDefinitionService.getTargetClassUris(rdParent)) {
-                    if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
-                        throw new ValidationException("Parent is not of correct type");
-                    }
+            // select parent based on URI prefix
+            for (String rdfType : resourceDefinitionService.getTargetClassUris(rdParent)) {
+                if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
+                    throw new ValidationException(format("Parent is not of type (missing type: %s)", rdfType));
                 }
             }
         } catch (MetadataRepositoryException e) {

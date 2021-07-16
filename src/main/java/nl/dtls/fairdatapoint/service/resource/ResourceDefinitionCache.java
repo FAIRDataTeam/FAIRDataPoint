@@ -22,6 +22,8 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
+import lombok.Getter;
+import lombok.Setter;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +32,25 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
 
 @Service
 public class ResourceDefinitionCache {
+
+    @Getter
+    private static class ResourceDefinitionParents {
+        private final HashSet<ResourceDefinition> parents = new HashSet<>();
+
+        public void add(ResourceDefinition rdParent) {
+            parents.add(rdParent);
+        }
+    }
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
@@ -57,8 +71,11 @@ public class ResourceDefinitionCache {
         // Add to cache
         List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
         rds.forEach(rd -> {
+            parentCache.put(rd.getUuid(), new ResourceDefinitionParents());
+        });
+        rds.forEach(rd -> {
             cache.put(rd.getUuid(), rd);
-            rd.getChildren().forEach(c -> parentCache.put(c.getResourceDefinitionUuid(), rd));
+            rd.getChildren().forEach(c -> parentCache.get(c.getResourceDefinitionUuid(), ResourceDefinitionParents.class).add(rd));
         });
     }
 
@@ -66,8 +83,8 @@ public class ResourceDefinitionCache {
         return cache().get(uuid, ResourceDefinition.class);
     }
 
-    public ResourceDefinition getParentByUuid(String uuid) {
-        return parentCache().get(uuid, ResourceDefinition.class);
+    public Set<ResourceDefinition> getParentsByUuid(String uuid) {
+        return parentCache().get(uuid, ResourceDefinitionParents.class).getParents();
     }
 
     private Cache cache() {
