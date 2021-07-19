@@ -22,71 +22,54 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
+import nl.dtls.fairdatapoint.BaseIntegrationTest;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cache.Cache;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
-import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
-import static org.mockito.Mockito.*;
+public class ResourceDefinitionCacheTest extends BaseIntegrationTest {
 
-@ExtendWith(MockitoExtension.class)
-public class ResourceDefinitionCacheTest {
-
-    @Mock
-    private ConcurrentMapCacheManager concurrentMapCacheManager;
-
-    @Mock
+    @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @InjectMocks
+    @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
 
-    @InjectMocks
+    @Autowired
     private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
-    @Spy
-    private Cache cache;
-
-    @Spy
-    private Cache parentCache;
 
     @Test
     public void computeCacheWorks() {
-        // GIVEN: Prepare cache
-        when(concurrentMapCacheManager.getCache(RESOURCE_DEFINITION_CACHE)).thenReturn(cache);
-        when(concurrentMapCacheManager.getCache(RESOURCE_DEFINITION_PARENT_CACHE)).thenReturn(parentCache);
-
-        // AND: Prepare resource definitions
+        // GIVEN: Resource definitions
         ResourceDefinition rdRepository = resourceDefinitionFixtures.repositoryDefinition();
         ResourceDefinition rdCatalog = resourceDefinitionFixtures.catalogDefinition();
         ResourceDefinition rdDataset = resourceDefinitionFixtures.datasetDefinition();
         ResourceDefinition rdDistribution = resourceDefinitionFixtures.distributionDefinition();
-        when(resourceDefinitionRepository.findAll())
-                .thenReturn(List.of(rdRepository, rdCatalog, rdDataset, rdDistribution));
 
         // WHEN:
         resourceDefinitionCache.computeCache();
 
-        // THEN:
-        verify(cache, times(1)).put(rdRepository.getUuid(), rdRepository);
-        verify(cache, times(1)).put(rdCatalog.getUuid(), rdCatalog);
-        verify(cache, times(1)).put(rdDataset.getUuid(), rdDataset);
-        verify(cache, times(1)).put(rdDistribution.getUuid(), rdDistribution);
+        // THEN: caches by UUID
+        assertThat(resourceDefinitionCache.getByUuid(rdRepository.getUuid()).getName(), is(equalTo(rdRepository.getName())));
+        assertThat(resourceDefinitionCache.getByUuid(rdCatalog.getUuid()).getName(), is(equalTo(rdCatalog.getName())));
+        assertThat(resourceDefinitionCache.getByUuid(rdDataset.getUuid()).getName(), is(equalTo(rdDataset.getName())));
+        assertThat(resourceDefinitionCache.getByUuid(rdDistribution.getUuid()).getName(), is(equalTo(rdDistribution.getName())));
 
-        verify(parentCache, times(1)).put(rdCatalog.getUuid(), rdRepository);
-        verify(parentCache, times(1)).put(rdDataset.getUuid(), rdCatalog);
-        verify(parentCache, times(1)).put(rdDistribution.getUuid(), rdDataset);
+        // AND: caches parents
+        assertThat(resourceDefinitionCache.getParentsByUuid(rdRepository.getUuid()).isEmpty(), is(true));
+        assertThat(resourceDefinitionCache.getParentsByUuid(rdCatalog.getUuid()).size(), is(equalTo(1)));
+        assertThat(resourceDefinitionCache.getParentsByUuid(rdCatalog.getUuid()).stream().toList().get(0).getUuid(), is(equalTo(rdRepository.getUuid())));
+        assertThat(resourceDefinitionCache.getParentsByUuid(rdDataset.getUuid()).size(), is(equalTo(1)));
+        assertThat(resourceDefinitionCache.getParentsByUuid(rdDataset.getUuid()).stream().toList().get(0).getUuid(), is(equalTo(rdCatalog.getUuid())));
+        assertThat(resourceDefinitionCache.getParentsByUuid(rdDistribution.getUuid()).size(), is(equalTo(1)));
+        assertThat(resourceDefinitionCache.getParentsByUuid(rdDistribution.getUuid()).stream().toList().get(0).getUuid(), is(equalTo(rdDataset.getUuid())));
     }
 
 }
