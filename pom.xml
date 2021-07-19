@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.5</version>
+        <version>2.5.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.dtls</groupId>
@@ -57,7 +57,7 @@
         <!-- Core -->
         <springdoc.version>1.5.2</springdoc.version>
         <mongock.version>4.3.8</mongock.version>
-        <mongodb.driver-sync.version>4.1.2</mongodb.driver-sync.version>
+        <mongodb.driver-sync.version>4.2.3</mongodb.driver-sync.version>
         <mongodb.spring-data.v3.version>3.2.3</mongodb.spring-data.v3.version>
         <rdf4j.version>3.7.1</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
