@@ -14,6 +14,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Reset to defaults works with settings as well
+- Metadata endpoint `**/expanded` is marked as *Deprecated*
+
+### Fixed
+
+- Multiple children resource definitions with the same child relation
 
 ## [1.11.0]
 
