@@ -29,6 +29,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.service.shape.ShapeShaclUtils;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
@@ -40,8 +42,10 @@ import java.util.*;
 public class Migration_0009_ShapeTargetClasses {
 
     @ChangeSet(order = "0009", id = "Migration_0009_ShapeTargetClasses", author = "migrationBot")
-    public void run(MongoDatabase db) {
+    public void run(MongoDatabase db, ResourceDefinitionCache resourceDefinitionCache, ResourceDefinitionTargetClassesCache targetClassesCache) {
         updateShapesAndResources(db);
+        resourceDefinitionCache.computeCache();
+        targetClassesCache.computeCache();
     }
 
     private void updateShapesAndResources(MongoDatabase db) {

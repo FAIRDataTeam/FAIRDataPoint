@@ -31,6 +31,7 @@ import nl.dtls.fairdatapoint.entity.settings.Settings;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.generic.GenericMetadataService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
@@ -111,6 +112,9 @@ public class ResetService {
     private ResourceDefinitionCache resourceDefinitionCache;
 
     @Autowired
+    private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
+
+    @Autowired
     private MetadataRepository metadataRepository;
 
     @Autowired
@@ -147,6 +151,8 @@ public class ResetService {
             restoreDefaultShapes();
             restoreDefaultResourceDefinitions();
         }
+        resourceDefinitionCache.computeCache();
+        resourceDefinitionTargetClassesCache.computeCache();
     }
 
     private void clearApiKeys() {
@@ -232,6 +238,5 @@ public class ResetService {
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_CATALOG);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DATASET);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DISTRIBUTION);
-        resourceDefinitionCache.computeCache();
     }
 }
