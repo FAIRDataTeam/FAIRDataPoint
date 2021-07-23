@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Multiple children resource definitions with the same child relation
+- Ordering of target classes
+- Computing cache on DB migration and reset to defaults
 
 ### Fixed
 

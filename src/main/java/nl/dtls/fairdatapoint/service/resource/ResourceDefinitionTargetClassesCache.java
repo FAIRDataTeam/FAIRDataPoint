@@ -68,7 +68,7 @@ public class ResourceDefinitionTargetClassesCache {
                     targetClassUris.addAll(shapes.get(shapeUuid).getTargetClasses());
                 }
             });
-            cache.put(rd.getUuid(), targetClassUris.stream().sorted().toList());
+            cache.put(rd.getUuid(), targetClassUris.stream().toList());
         });
     }
 
