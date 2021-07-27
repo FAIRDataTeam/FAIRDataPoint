@@ -37,20 +37,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("DELETE /")
-public class Detail_DELETE extends WebIntegrationTest {
+@DisplayName("POST /")
+public class Detail_POST extends WebIntegrationTest {
 
     private URI url() {
         return URI.create("/");
     }
 
     @Test
-    @DisplayName("HTTP 405")
-    public void res405() {
-        // Repository metadata exist but cannot be deleted (only updated and retrieved)
+    @DisplayName("HTTP 415")
+    public void res415() {
+        // POST / is used for pinging that expects JSON data
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url())
+                .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .header(HttpHeaders.ACCEPT, "text/turtle")
@@ -62,7 +62,7 @@ public class Detail_DELETE extends WebIntegrationTest {
         ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.METHOD_NOT_ALLOWED)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE)));
     }
 
 }

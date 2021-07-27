@@ -11,6 +11,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Profile resources contain `rdfs:label` with Shape name
 
+### Changed
+
+- Replaced `**` wildcards with safer pattern
+- Added restriction to URL prefixes of Resource Definitions (`[a-zA-Z_-]*`)
+
 ## [1.12.0]
 
 ### Added

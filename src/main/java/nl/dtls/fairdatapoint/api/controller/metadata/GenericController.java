@@ -38,7 +38,6 @@ import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
-import nl.dtls.fairdatapoint.service.openapi.OpenApiService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.shape.ShapeService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
@@ -55,11 +54,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static nl.dtls.fairdatapoint.util.HttpUtil.*;
 import static nl.dtls.fairdatapoint.util.RdfIOUtil.changeBaseUri;
@@ -98,27 +97,32 @@ public class GenericController {
     private GenericMetadataRepository metadataRepository;
 
     @Operation(hidden = true)
-    @GetMapping(path = "**/spec", produces = {"!application/json"})
-    public Model getFormMetadata() {
+    @GetMapping(path = {"/spec", "{oUrlPrefix:[^.]+}/spec"}, produces = {"!application/json"})
+    public Model getFormMetadata(
+            @PathVariable final Optional<String> oUrlPrefix
+    ) {
         return shapeService.getShaclFromShapes();
     }
 
     @Operation(hidden = true, deprecated = true)
-    @GetMapping(path = "**/expanded", produces = {"!application/json"})
-    public Model getMetaDataExpanded(HttpServletRequest request) throws MetadataServiceException {
+    @GetMapping(path = {"/expanded", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/expanded"}, produces = {"!application/json"})
+    public Model getMetaDataExpanded(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId
+    ) throws MetadataServiceException {
         // 1. Init
-        String uri = getRequestURL(request, persistentUrl);
         Model resultRdf = new LinkedHashModel();
-        String urlPrefix = getResourceNameForDetail(uri);
+        String urlPrefix = oUrlPrefix.orElse("");
+        String recordId = oRecordId.orElse("");
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Get entity
-        IRI entityUri = i(getRequestURL(request, persistentUrl));
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model entity = metadataService.retrieve(entityUri);
         resultRdf.addAll(entity);
 
-        // 3. Check if it is draft
+        // 3. Check if it is DRAFT
         Metadata state = metadataStateService.get(entityUri);
         Optional<User> oCurrentUser = currentUserService.getCurrentUser();
         if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
@@ -145,19 +149,22 @@ public class GenericController {
     }
 
     @Operation(hidden = true)
-    @GetMapping(path = "**", produces = {"!application/json"})
-    public Model getMetaData(HttpServletRequest request) throws MetadataServiceException {
+    @GetMapping(path = {"", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}"}, produces = {"!application/json"})
+    public Model getMetaData(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId
+    ) throws MetadataServiceException {
         // 1. Init
-        String uri = getRequestURL(request, persistentUrl);
         Model resultRdf = new LinkedHashModel();
-        String urlPrefix = getResourceNameForDetail(uri);
+        String urlPrefix = oUrlPrefix.orElse("");
+        String recordId = oRecordId.orElse("");
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get resource definition
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get entity
-        IRI entityUri = i(getRequestURL(request, persistentUrl));
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model entity = metadataService.retrieve(entityUri);
         resultRdf.addAll(entity);
 
@@ -188,11 +195,12 @@ public class GenericController {
     }
 
     @Operation(hidden = true)
-    @PostMapping(path = "**", produces = {"!application/json"})
-    public ResponseEntity<Model> storeMetaData(HttpServletRequest request,
-                                               @RequestBody String reqBody,
-                                               @RequestHeader(value = "Content-Type", required = false) String contentType)
-            throws MetadataServiceException {
+    @PostMapping(path = "{urlPrefix:[^.]+}", produces = {"!application/json"})
+    public ResponseEntity<Model> storeMetaData(
+            @PathVariable final String urlPrefix,
+            @RequestBody String reqBody,
+            @RequestHeader(value = "Content-Type", required = false) String contentType
+    ) throws MetadataServiceException {
         // 1. Check if user is authenticated
         //     - it can't be in SecurityConfig because the authentication is done based on content-type
         Optional<User> oUser = currentUserService.getCurrentUser();
@@ -201,12 +209,12 @@ public class GenericController {
         }
 
         // 2. Init
-        String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
+        //String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Generate URI
-        IRI uri = generateNewIRI(request, persistentUrl);
+        IRI uri = generateNewMetadataIRI(persistentUrl, urlPrefix);
 
         // 4. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
@@ -226,18 +234,21 @@ public class GenericController {
     }
 
     @Operation(hidden = true)
-    @PutMapping(path = "**", produces = {"!application/json"})
-    public ResponseEntity<Model> updateMetaData(HttpServletRequest request,
-                                                @RequestBody String reqBody,
-                                                @RequestHeader(value = "Content-Type", required = false) String contentType)
-            throws MetadataServiceException {
+    @PutMapping(path = {"", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}"}, produces = {"!application/json"})
+    public ResponseEntity<Model> updateMetaData(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId,
+            @RequestBody String reqBody,
+            @RequestHeader(value = "Content-Type", required = false) String contentType
+    ) throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
+        String urlPrefix = oUrlPrefix.orElse("");
+        String recordId = oRecordId.orElse("");
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Extract URI
-        IRI uri = i(getRequestURL(request, persistentUrl));
+        IRI uri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
 
         // 3. Parse reqDto
         RDFFormat rdfContentType = getRdfContentType(contentType);
@@ -258,11 +269,14 @@ public class GenericController {
     }
 
     @Operation(hidden = true)
-    @DeleteMapping(path = "**")
+    @DeleteMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteMetadata(HttpServletRequest request) throws MetadataServiceException {
+    public ResponseEntity<Void> deleteMetadata(
+            @PathVariable final String urlPrefix,
+            @PathVariable final String recordId
+    ) throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
+        //String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
@@ -272,7 +286,7 @@ public class GenericController {
         }
 
         // 3. Extract URI
-        IRI uri = i(getRequestURL(request, persistentUrl));
+        IRI uri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
 
         // 4. Store metadata
         metadataService.delete(uri, rd);
@@ -282,21 +296,22 @@ public class GenericController {
     }
 
     @Operation(hidden = true)
-    @GetMapping(path = "**/page/{childPrefix}", produces = {"!application/json"})
+    @GetMapping(path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"}, produces = {"!application/json"})
     public ResponseEntity<Model> getMetaDataChildren(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId,
             @PathVariable final String childPrefix,
             @RequestParam(defaultValue = "0") final int page,
-            @RequestParam(defaultValue = "10") final int size,
-            HttpServletRequest request
+            @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRepositoryException {
         // 1. Init
-        String requestUrl = getRequestURL(request, persistentUrl);
         Model resultRdf = new LinkedHashModel();
-        String urlPrefix = getResourceNameForChild(requestUrl);
+        String urlPrefix = oUrlPrefix.orElse("");
+        String recordId = oRecordId.orElse("");
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get entity
-        IRI entityUri = getEntityIriForPagination(requestUrl);
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model entity = metadataService.retrieve(entityUri);
 
         // 3. Check if it is draft
@@ -343,38 +358,13 @@ public class GenericController {
 
                 // 4.4 Set Link headers and send response
                 HttpHeaders responseHeaders = new HttpHeaders();
-                responseHeaders.set("Link", createLinkHeader(requestUrl, childrenCount, page, size));
+                responseHeaders.set("Link", createLinkHeader(entityUri.stringValue(), childPrefix, childrenCount, page, size));
                 return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
             }
         }
 
         // Send empty response in case nothing was found
         return ResponseEntity.ok(resultRdf);
-    }
-
-    private String getResourceNameForList(String url) {
-        url = url.replace(persistentUrl, "");
-
-        String[] parts = url.split("/");
-        if (parts.length != 2) {
-            throw new ValidationException("Unsupported URL");
-        }
-        return parts[1];
-    }
-
-    private String getResourceNameForDetail(String url) {
-        url = url.replace(persistentUrl, "");
-
-        // If URL is a repository -> return empty string
-        if (url.equals("")) {
-            return "";
-        }
-
-        String[] parts = url.split("/");
-        if (parts.length != 3) {
-            throw new ValidationException("Unsupported URL");
-        }
-        return parts[1];
     }
 
     private String getResourceNameForChild(String url) {
@@ -393,30 +383,19 @@ public class GenericController {
         return parts[1];
     }
 
-    private IRI getEntityIriForPagination(String url) {
-        String[] parts = url.split("/");
-
-        StringBuilder sb = new StringBuilder(parts[0]);
-        for (int i = 1; i < parts.length - 2; i++) {
-            sb.append("/");
-            sb.append(parts[i]);
-        }
-        return i(sb.toString());
-    }
-
-    private String createLinkHeader(String requestUrl, int childrenCount, int page, int size) {
+    private String createLinkHeader(String entityUrl, String childPrefix, int childrenCount, int page, int size) {
         var links = new LinkedList<String>();
         var lastPage = (int) Math.ceil((float) childrenCount / size) - 1;
 
-        links.add(createLink(requestUrl, 0, size, "first"));
-        links.add(createLink(requestUrl, lastPage, size, "last"));
+        links.add(createLink(entityUrl, childPrefix, 0, size, "first"));
+        links.add(createLink(entityUrl, childPrefix, lastPage, size, "last"));
 
         if (page > 0 && page <= lastPage) {
-            links.add(createLink(requestUrl, page - 1, size, "prev"));
+            links.add(createLink(entityUrl, childPrefix, page - 1, size, "prev"));
         }
 
         if (page < lastPage && page >= 0) {
-            links.add(createLink(requestUrl, page + 1, size, "next"));
+            links.add(createLink(entityUrl, childPrefix, page + 1, size, "next"));
         }
 
         return String.join(", ", links);
@@ -431,7 +410,7 @@ public class GenericController {
         }
     }
 
-    private String createLink(String requestUrl, int page, int size, String rel) {
-        return "<" + requestUrl + "/?page=" + page + "&size=" + size + ">; rel=\"" + rel + "\"";
+    private String createLink(String entityUrl, String childPrefix, int page, int size, String rel) {
+        return format("<%s/page/%s?page=%d&size=%d>; rel=\"%s\"", entityUrl, childPrefix, page, size, rel);
     }
 }

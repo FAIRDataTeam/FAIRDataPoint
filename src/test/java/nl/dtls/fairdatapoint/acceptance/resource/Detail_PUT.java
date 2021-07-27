@@ -56,7 +56,7 @@ public class Detail_PUT extends WebIntegrationTest {
 
     private ResourceDefinitionChangeDTO reqDto(ResourceDefinition rd) {
         rd.setName(format("EDITED: %s", rd.getName()));
-        rd.setUrlPrefix(format("%s-edited", rd.getName()));
+        rd.setUrlPrefix(format("%s-edited", rd.getUrlPrefix()));
         return resourceDefinitionMapper.toChangeDTO(rd);
     }
 
