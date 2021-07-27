@@ -41,14 +41,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
-import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
-import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static nl.dtls.fairdatapoint.util.HttpUtil.getMetadataIRI;
 
 @Tag(name = "Authentication and Authorization")
 @RestController
@@ -65,16 +62,16 @@ public class GenericMemberController {
     private MetadataServiceFactory metadataServiceFactory;
 
     @Operation(hidden = true)
-    @GetMapping(path = "**/members", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MemberDTO>> getMembers(HttpServletRequest request)
-            throws ResourceNotFoundException, MetadataServiceException {
+    @GetMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}/members", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<MemberDTO>> getMembers(
+            @PathVariable final String urlPrefix,
+            @PathVariable final String recordId
+    ) throws ResourceNotFoundException, MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(uri);
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model metadata = metadataService.retrieve(entityUri);
 
         // 3. Get members
@@ -84,18 +81,18 @@ public class GenericMemberController {
     }
 
     @Operation(hidden = true)
-    @PutMapping(path = "**/members/{userUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MemberDTO> putMember(@PathVariable final String userUuid,
-                                               HttpServletRequest request,
-                                               @RequestBody @Valid MemberCreateDTO reqBody)
-            throws MetadataServiceException {
+    @PutMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}/members/{userUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberDTO> putMember(
+            @PathVariable final String urlPrefix,
+            @PathVariable final String recordId,
+            @PathVariable final String userUuid,
+            @RequestBody @Valid MemberCreateDTO reqBody
+    ) throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model metadata = metadataService.retrieve(entityUri);
 
         // 3. Create / Update member
@@ -106,42 +103,23 @@ public class GenericMemberController {
     }
 
     @Operation(hidden = true)
-    @DeleteMapping(path = "**/members/{userUuid}")
+    @DeleteMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}/members/{userUuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteMember(@PathVariable final String userUuid, HttpServletRequest request)
-            throws ResourceNotFoundException, MetadataServiceException {
+    public ResponseEntity<Void> deleteMember(
+            @PathVariable final String urlPrefix,
+            @PathVariable final String recordId,
+            @PathVariable final String userUuid
+    ) throws ResourceNotFoundException, MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model metadata = metadataService.retrieve(entityUri);
 
         // 3. Delete member
         String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         memberService.deleteMember(entityId, Metadata.class, userUuid);
         return ResponseEntity.noContent().build();
-    }
-
-    private String getResourceNameForList(String url) throws MetadataServiceException {
-        url = url.replace(persistentUrl, "");
-
-        String[] parts = url.split("/");
-        if (!(parts.length == 2 || parts.length == 4)) {
-            throw new MetadataServiceException("Unsupported URL");
-        }
-        return parts[1];
-    }
-
-    private String getResourceNameForDetail(String url) throws MetadataServiceException {
-        url = url.replace(persistentUrl, "");
-
-        String[] parts = url.split("/");
-        if (parts.length != 5) {
-            throw new MetadataServiceException("Unsupported URL");
-        }
-        return parts[parts.length - 4];
     }
 }
