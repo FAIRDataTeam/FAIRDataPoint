@@ -20,39 +20,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.actuator;
+package nl.dtls.fairdatapoint.acceptance.actuator;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.info.Info;
-import org.springframework.boot.actuate.info.InfoContributor;
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import static java.lang.String.format;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-@Component
-public class AppInfoContributor implements InfoContributor {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ActuatorInfoDTO {
+    @NotNull
+    @NotBlank
+    private String name;
 
-    @Value("${git.branch}")
-    private String branch;
+    @NotNull
+    @NotBlank
+    private String version;
 
-    @Value("${git.commit.id.abbrev}")
-    private String commitShort;
-
-    @Value("${git.tags}")
-    private String tag;
-
-    @Value("${build.time}")
-    private String buildTime;
-
-    @Override
-    public void contribute(Info.Builder builder) {
-        builder.withDetail("name", "FAIR Data Point");
-        if (tag == null || tag.isEmpty()) {
-            builder.withDetail("version", format("%s~%s", branch, commitShort));
-        } else {
-            builder.withDetail("version", format("%s~%s", tag, commitShort));
-        }
-        builder.withDetail("builtAt", buildTime);
-    }
-
+    @NotNull
+    @NotBlank
+    private String builtAt;
 }

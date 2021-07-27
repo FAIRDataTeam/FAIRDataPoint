@@ -20,17 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.actuator;
+package nl.dtls.fairdatapoint.acceptance.actuator;
 
+import nl.dtls.fairdatapoint.WebIntegrationTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.info.Info;
-import org.springframework.boot.actuate.info.InfoContributor;
-import org.springframework.stereotype.Component;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+
+import java.net.URI;
 
 import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 
-@Component
-public class AppInfoContributor implements InfoContributor {
+public class List_Info_GET extends WebIntegrationTest {
 
     @Value("${git.branch}")
     private String branch;
@@ -44,15 +52,31 @@ public class AppInfoContributor implements InfoContributor {
     @Value("${build.time}")
     private String buildTime;
 
-    @Override
-    public void contribute(Info.Builder builder) {
-        builder.withDetail("name", "FAIR Data Point");
+    private URI url() {
+        return URI.create("/actuator/info");
+    }
+
+    @Test
+    public void res200() {
+        // GIVEN:
+        RequestEntity<Void> request = RequestEntity
+                .get(url())
+                .build();
+        ParameterizedTypeReference<ActuatorInfoDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<ActuatorInfoDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getBody(), is(notNullValue()));
         if (tag == null || tag.isEmpty()) {
-            builder.withDetail("version", format("%s~%s", branch, commitShort));
+            assertThat(result.getBody().getVersion(), is(equalTo((format("%s~%s", branch, commitShort)))));
         } else {
-            builder.withDetail("version", format("%s~%s", tag, commitShort));
+            assertThat(result.getBody().getVersion(), is(equalTo((format("%s~%s", tag, commitShort)))));
         }
-        builder.withDetail("builtAt", buildTime);
+        assertThat(result.getBody().getBuiltAt(), is(equalTo(buildTime)));
     }
 
 }

@@ -26,6 +26,10 @@ management:
   info:
     defaults:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health, info
 
 security:
   jwt:
