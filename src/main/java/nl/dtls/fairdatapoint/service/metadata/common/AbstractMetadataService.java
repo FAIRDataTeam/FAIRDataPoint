@@ -189,12 +189,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     protected void updateParent(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         IRI parent = MetadataGetter.getParent(metadata);
         if (parent != null) {
-            String[] parts = parent.toString().split("/");
-            if (parts.length < 3) {
-                throw new ValidationException("Invalid parent uri");
-            }
-            String parentPrefix = parts[parts.length-2];
-            ResourceDefinition rdParent = resourceDefinitionService.getByUrlPrefix(parentPrefix);
+            ResourceDefinition rdParent = resourceDefinitionService.getByUrl(parent.toString());
             if (rdParent != null) {
                 try {
                     List<Statement> statements = new ArrayList<>();

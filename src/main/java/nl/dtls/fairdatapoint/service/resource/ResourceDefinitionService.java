@@ -30,6 +30,7 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.membership.MembershipService;
 import nl.dtls.fairdatapoint.service.openapi.OpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
@@ -41,6 +42,10 @@ import static java.lang.String.format;
 
 @Service
 public class ResourceDefinitionService {
+
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
@@ -81,6 +86,18 @@ public class ResourceDefinitionService {
 
     public Optional<ResourceDefinitionDTO> getDTOByUuid(String uuid) {
         return getByUuid(uuid).map(this::toDTO);
+    }
+
+    public ResourceDefinition getByUrl(String url) {
+        String[] parts = url.replace(persistentUrl, "").split("/");
+        System.out.println(Arrays.stream(parts).toList());
+        String parentPrefix = ""; // Repository
+        if (parts.length > 1 && parts[0].isEmpty()) {
+            parentPrefix = parts[1]; // Other prefix (first empty caused by leading /)
+        } else if (parts.length > 0) {
+            parentPrefix = parts[0]; // Other prefix
+        }
+        return getByUrlPrefix(parentPrefix);
     }
 
     public ResourceDefinition getByUrlPrefix(String urlPrefix) {

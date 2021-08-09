@@ -77,12 +77,7 @@ public class MetadataValidator {
         }
 
         // 2. Get parent resource definition
-        String[] parts = parent.toString().split("/");
-        if (parts.length < 3) {
-            throw new ValidationException("Invalid parent uri");
-        }
-        String parentPrefix = parts[parts.length-2];
-        ResourceDefinition rdParent = resourceDefinitionService.getByUrlPrefix(parentPrefix);
+        ResourceDefinition rdParent = resourceDefinitionService.getByUrl(parent.toString());
         if (rdParent.getChildren().stream().noneMatch(rdChild -> rdChild.getResourceDefinitionUuid().equals(rd.getUuid()))) {
             throw new ValidationException(format("Parent is not of correct type (RD: %s)", rdParent.getName()));
         }
