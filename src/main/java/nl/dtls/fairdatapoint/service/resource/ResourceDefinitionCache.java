@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,7 +85,15 @@ public class ResourceDefinitionCache {
     }
 
     public Set<ResourceDefinition> getParentsByUuid(String uuid) {
-        return parentCache().get(uuid, ResourceDefinitionParents.class).getParents();
+        var parents = parentCache().get(uuid, ResourceDefinitionParents.class);
+        if (parents == null) {
+            computeCache(); // Try to recompute cache (the object should be there)
+            parents = parentCache().get(uuid, ResourceDefinitionParents.class);
+            if (parents == null) {
+                return Collections.emptySet();
+            }
+        }
+        return parents.getParents();
     }
 
     private Cache cache() {
