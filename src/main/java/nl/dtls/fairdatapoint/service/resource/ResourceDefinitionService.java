@@ -90,7 +90,6 @@ public class ResourceDefinitionService {
 
     public ResourceDefinition getByUrl(String url) {
         String[] parts = url.replace(persistentUrl, "").split("/");
-        System.out.println(Arrays.stream(parts).toList());
         String parentPrefix = ""; // Repository
         if (parts.length > 1 && parts[0].isEmpty()) {
             parentPrefix = parts[1]; // Other prefix (first empty caused by leading /)
