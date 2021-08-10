@@ -72,7 +72,7 @@ public class ProfileService {
             modelBuilder.add(RDF.TYPE, i(format("%s#ResourceDescriptor", PROFILE_PREFIX)));
             modelBuilder.add(DCTERMS.FORMAT, i("https://w3id.org/mediatype/text/turtle"));
             modelBuilder.add(DCTERMS.CONFORMS_TO, i("https://www.w3.org/TR/shacl/"));
-            modelBuilder.add(i(format("%shasRole", PROFILE_PREFIX)), i(format("%s/role/Validation",
+            modelBuilder.add(i(format("%shasRole", PROFILE_PREFIX)), i(format("%srole/Validation",
                     PROFILE_PREFIX)));
             modelBuilder.add(i(format("%shasArtifact", PROFILE_PREFIX)), i(format("%s/shapes/%s",
                     persistentUrl, shapeUuid)));
