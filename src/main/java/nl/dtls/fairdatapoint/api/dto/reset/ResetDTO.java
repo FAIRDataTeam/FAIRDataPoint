@@ -38,4 +38,6 @@ public class ResetDTO {
     private boolean metadata;
 
     private boolean resourceDefinitions;
+
+    private boolean settings;
 }

@@ -31,32 +31,32 @@
       "description": "States if 'Call home' feature should be enabled"
     },
     {
-      "name": "fdp-index.enabled",
-      "type": "java.lang.Boolean",
-      "description": "States if 'index' functionality should be enabled"
-    },
-    {
-      "name": "fdp-index.api.url",
+      "name": "openapi.url",
       "type": "java.lang.String",
       "description": "Server URL where API is running"
     },
     {
-      "name": "fdp-index.api.title",
+      "name": "openapi.title",
       "type": "java.lang.String",
       "description": "Title for OpenAPI docs"
     },
     {
-      "name": "fdp-index.api.description",
+      "name": "openapi.description",
       "type": "java.lang.String",
       "description": "Description for OpenAPI docs"
     },
     {
-      "name": "fdp-index.api.contactUrl",
+      "name": "openapi.contact.url",
       "type": "java.lang.String",
       "description": "Contact URL for OpenAPI docs"
     },
     {
-      "name": "fdp-index.api.contactName",
+      "name": "openapi.contact.email",
+      "type": "java.lang.String",
+      "description": "Contact email for OpenAPI docs"
+    },
+    {
+      "name": "openapi.contact.name",
       "type": "java.lang.String",
       "description": "Contact name/label for OpenAPI docs"
     },

@@ -1,4 +1,5 @@
 instance:
+  index: false
   clientUrl: http://localhost:8080
   behindProxy: true
 
@@ -25,6 +26,10 @@ management:
   info:
     defaults:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health, info
 
 security:
   jwt:
@@ -52,18 +57,9 @@ metadataProperties:
   license: http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0
   accessRightsDescription: This resource has no access restriction
 
-threadPoolSize: 4
-
-metadataMetrics:
-  https://purl.org/fair-metrics/FM_F1A: https://www.ietf.org/rfc/rfc3986.txt
-  https://purl.org/fair-metrics/FM_A1.1: https://www.wikidata.org/wiki/Q8777
-
-fdp-index:
-  enabled: false
-
 openapi:
   title: FAIR Data Point API
-  version: 1.11.0
+  version: 1.12.0
   description: "The reference implementation of the metadata registration service: A service implementing the API specification. It contains an authentication system to allow maintainers to define and update metadata. Read-only access to the data is public."
   contact:
     name: Luiz Bonino

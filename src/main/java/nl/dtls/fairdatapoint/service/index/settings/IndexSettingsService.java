@@ -22,22 +22,21 @@
  */
 package nl.dtls.fairdatapoint.service.index.settings;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
 
 @Service
+@Slf4j
 public class IndexSettingsService {
-    private static final Logger logger = LoggerFactory.getLogger(IndexSettingsService.class);
 
     @Autowired
     private IndexSettingsRepository repository;
@@ -47,7 +46,7 @@ public class IndexSettingsService {
 
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
-        logger.info("Checking if ping.clientUrl is on deny list: " + ping.getClientUrl());
+        log.info("Checking if ping.clientUrl is on deny list: " + ping.getClientUrl());
         return getOrDefaults().getPing().getDenyList().parallelStream().anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
     }
 

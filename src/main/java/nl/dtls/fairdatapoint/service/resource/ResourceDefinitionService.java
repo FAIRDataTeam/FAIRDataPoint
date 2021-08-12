@@ -30,20 +30,22 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.membership.MembershipService;
 import nl.dtls.fairdatapoint.service.openapi.OpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
 @Service
 public class ResourceDefinitionService {
+
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
@@ -84,6 +86,17 @@ public class ResourceDefinitionService {
 
     public Optional<ResourceDefinitionDTO> getDTOByUuid(String uuid) {
         return getByUuid(uuid).map(this::toDTO);
+    }
+
+    public ResourceDefinition getByUrl(String url) {
+        String[] parts = url.replace(persistentUrl, "").split("/");
+        String parentPrefix = ""; // Repository
+        if (parts.length > 1 && parts[0].isEmpty()) {
+            parentPrefix = parts[1]; // Other prefix (first empty caused by leading /)
+        } else if (parts.length > 0) {
+            parentPrefix = parts[0]; // Other prefix
+        }
+        return getByUrlPrefix(parentPrefix);
     }
 
     public ResourceDefinition getByUrlPrefix(String urlPrefix) {
@@ -142,9 +155,9 @@ public class ResourceDefinitionService {
         }
         ResourceDefinition rd = oRd.get();
 
-        // 2. Delete from parent resource definition
-        ResourceDefinition rdParent = resourceDefinitionCache.getParentByUuid(rd.getUuid());
-        if (rdParent != null) {
+        // 2. Delete from parent resource definitions
+        Set<ResourceDefinition> rdParents = resourceDefinitionCache.getParentsByUuid(rd.getUuid());
+        rdParents.forEach(rdParent -> {
             rdParent = resourceDefinitionRepository.findByUuid(rdParent.getUuid()).get();
             rdParent.setChildren(
                     rdParent.getChildren()
@@ -153,7 +166,7 @@ public class ResourceDefinitionService {
                             .collect(Collectors.toList())
             );
             resourceDefinitionRepository.save(rdParent);
-        }
+        });
 
         // 3. Delete resource definition
         resourceDefinitionRepository.delete(rd);

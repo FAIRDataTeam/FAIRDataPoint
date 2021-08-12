@@ -28,7 +28,9 @@
 package nl.dtls.fairdatapoint.service.metadata.metric;
 
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.metadata.Metric;
+import nl.dtls.fairdatapoint.service.settings.SettingsCache;
 import org.eclipse.rdf4j.model.IRI;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

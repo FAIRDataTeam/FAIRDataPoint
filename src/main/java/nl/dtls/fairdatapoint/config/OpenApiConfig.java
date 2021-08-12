@@ -32,6 +32,8 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
+import nl.dtls.fairdatapoint.config.properties.OpenApiProperties;
 import nl.dtls.fairdatapoint.service.openapi.OpenApiTagsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,14 +51,9 @@ import java.util.stream.Stream;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI customOpenAPI(@Value("${instance.clientUrl:#{null}}") String serverUrl,
-                                 @Value("${openapi.version:#{null}}") String version,
-                                 @Value("${openapi.title:#{null}}") String title,
-                                 @Value("${openapi.description:#{null}}") String description,
-                                 @Value("${openapi.contact.url:#{null}}") String contactUrl,
-                                 @Value("${openapi.contact.name:#{null}}") String contactName) {
+    public OpenAPI customOpenAPI(InstanceProperties instanceProperties, OpenApiProperties openApiProperties) {
         OpenAPI openAPI = new OpenAPI()
-                .servers(Collections.singletonList(new Server().url(serverUrl)))
+                .servers(Collections.singletonList(new Server().url(instanceProperties.getUrl())))
                 .components(new Components()
                         .addSecuritySchemes("bearer-jwt", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
@@ -67,23 +64,27 @@ public class OpenApiConfig {
                         )
                 )
                 .info(new Info()
-                        .title(title)
-                        .description(description)
-                        .version(version)
+                        .title(openApiProperties.getTitle())
+                        .description(openApiProperties.getDescription())
+                        .version(openApiProperties.getVersion())
                         .license(
                                 new License()
                                         .name("The MIT License")
                                         .url("https://opensource.org/licenses/MIT")
                         )
                 )
-                .addSecurityItem(new SecurityRequirement().addList("bearer-jwt", Arrays.asList("read", "write")))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("bearer-jwt", Arrays.asList("read", "write"))
+                )
                 .tags(OpenApiTagsUtils.STATIC_TAGS);
-        if (contactUrl != null) {
-            openAPI.getInfo().contact(new Contact().url(contactUrl).name(contactName).email(contactName));
+        if (openApiProperties.getContact().getUrl() != null) {
+            openAPI.getInfo().contact(new Contact()
+                    .url(openApiProperties.getContact().getUrl())
+                    .name(openApiProperties.getContact().getName())
+                    .email(openApiProperties.getContact().getEmail())
+            );
         }
-        if (serverUrl != null) {
-            openAPI.servers(Collections.singletonList(new Server().url(serverUrl)));
-        }
+        openAPI.servers(Collections.singletonList(new Server().url(instanceProperties.getUrl())));
         openAPI.setExtensions(new LinkedHashMap<>());
         openAPI.getExtensions().put("fdpGenericPaths", new Paths());
         openAPI.setPaths(new Paths());

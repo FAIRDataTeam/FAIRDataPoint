@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
+import nl.dtls.fairdatapoint.api.dto.metadata.MetaPathDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
@@ -38,6 +39,7 @@ import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,10 +49,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
+import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
+import static nl.dtls.fairdatapoint.util.RdfUtil.getStringObjectBy;
 import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
@@ -87,17 +92,35 @@ public class GenericMetaController {
         // 3. Get and check existence entity
         IRI uri = i(getRequestURL(request, persistentUrl));
         IRI entityUri = removeLastPartOfIRI(uri);
-        Model model = metadataService.retrieve(entityUri);
+        Model entity = metadataService.retrieve(entityUri);
 
         // 4. Get member
-        String entityId = getMetadataIdentifier(model).getIdentifier().getLabel();
+        String entityId = getMetadataIdentifier(entity).getIdentifier().getLabel();
         Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(entityId, Metadata.class);
         MemberDTO member = oMember.orElse(new MemberDTO(null, null));
 
         // 5. Get state
-        MetaStateDTO state = metadataStateService.getState(entityUri, model, rd);
+        MetaStateDTO state = metadataStateService.getState(entityUri, entity, rd);
 
-        return new MetaDTO(member, state);
+        // 6. Make path map
+        HashMap<String, MetaPathDTO> pathMap = new HashMap<>();
+        while (true) {
+            MetaPathDTO entry = new MetaPathDTO();
+            entry.setResourceDefinitionUuid(rd.getUuid());
+            entry.setTitle(getTitle(entity).stringValue());
+            IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
+            Optional.ofNullable(parentUri).map(IRI::toString).ifPresent(entry::setParent);
+            pathMap.put(entityUri.toString(), entry);
+            if (parentUri == null) {
+                break;
+            }
+            entity = metadataService.retrieve(parentUri);
+            entityUri = parentUri;
+            urlPrefix = getResourceNameForList(parentUri.toString());
+            rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+        }
+
+        return new MetaDTO(member, state, pathMap);
     }
 
     @Operation(hidden = true)

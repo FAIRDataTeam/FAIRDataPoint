@@ -83,10 +83,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     private IRI language;
 
     @Autowired
-    @Qualifier("metadataMetrics")
-    private Map<String, String> metadataMetrics;
-
-    @Autowired
     private MongoTemplate mongoTemplate;
 
     public void runMigration() {
@@ -98,7 +94,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
         try (RepositoryConnection conn = repository.getConnection()) {
             List<Statement> s = FactoryDefaults.repositoryStatements(
                     persistentUrl,
-                    metadataMetrics,
                     license,
                     language,
                     accessRightsDescription

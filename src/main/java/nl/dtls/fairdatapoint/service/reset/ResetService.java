@@ -27,9 +27,12 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.reset.ResetDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.*;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.settings.Settings;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.generic.GenericMetadataService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
@@ -82,10 +85,6 @@ public class ResetService {
     private IRI language;
 
     @Autowired
-    @Qualifier("metadataMetrics")
-    private Map<String, String> metadataMetrics;
-
-    @Autowired
     protected Repository repository;
 
     @Autowired
@@ -113,10 +112,16 @@ public class ResetService {
     private ResourceDefinitionCache resourceDefinitionCache;
 
     @Autowired
+    private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
+
+    @Autowired
     private MetadataRepository metadataRepository;
 
     @Autowired
     private GenericMetadataService genericMetadataService;
+
+    @Autowired
+    private SettingsService settingsService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -124,6 +129,9 @@ public class ResetService {
     @PreAuthorize("hasRole('ADMIN')")
     public void resetToFactoryDefaults(ResetDTO reqDto) throws Exception {
         log.info("Resetting to factory defaults");
+        if (reqDto.isSettings()) {
+            settingsService.resetSettings();
+        }
         if (reqDto.isUsers() || reqDto.isMetadata()) {
             clearMemberships();
             restoreDefaultMemberships();
@@ -143,6 +151,8 @@ public class ResetService {
             restoreDefaultShapes();
             restoreDefaultResourceDefinitions();
         }
+        resourceDefinitionCache.computeCache();
+        resourceDefinitionTargetClassesCache.computeCache();
     }
 
     private void clearApiKeys() {
@@ -202,7 +212,6 @@ public class ResetService {
         try (RepositoryConnection conn = repository.getConnection()) {
             List<Statement> s = FactoryDefaults.repositoryStatements(
                     persistentUrl,
-                    metadataMetrics,
                     license,
                     language,
                     accessRightsDescription
@@ -229,6 +238,5 @@ public class ResetService {
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_CATALOG);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DATASET);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DISTRIBUTION);
-        resourceDefinitionCache.computeCache();
     }
 }

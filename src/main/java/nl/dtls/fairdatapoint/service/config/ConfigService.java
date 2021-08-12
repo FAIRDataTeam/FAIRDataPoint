@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.service.config;
 
 import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
+import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,15 +40,15 @@ public class ConfigService {
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
-    @Value("${instance.index:false}")
-    private boolean index;
+    @Autowired
+    private InstanceProperties instanceProperties;
 
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
     public BootstrapConfigDTO getBootstrapConfig() {
         List<ResourceDefinitionDTO> resourceDefinitions = resourceDefinitionService.getAll();
-        return new BootstrapConfigDTO(persistentUrl, resourceDefinitions, index);
+        return new BootstrapConfigDTO(persistentUrl, resourceDefinitions, instanceProperties.isIndex());
     }
 
 }

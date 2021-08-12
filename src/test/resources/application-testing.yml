@@ -1,4 +1,5 @@
 instance:
+  index: true
   clientUrl: http://localhost:8088
 
 server:
@@ -13,6 +14,3 @@ security:
   jwt:
     token:
       expiration: 9999
-
-fdp-index:
-  enabled: true

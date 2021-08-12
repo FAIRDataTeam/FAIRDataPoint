@@ -47,10 +47,10 @@ public class AppInfoContributor implements InfoContributor {
     @Override
     public void contribute(Info.Builder builder) {
         builder.withDetail("name", "FAIR Data Point");
-        if (tag != null && !tag.isEmpty()) {
-            builder.withDetail("version", format("%s~%s", tag, commitShort));
-        } else {
+        if (tag == null || tag.isEmpty()) {
             builder.withDetail("version", format("%s~%s", branch, commitShort));
+        } else {
+            builder.withDetail("version", format("%s~%s", tag, commitShort));
         }
         builder.withDetail("builtAt", buildTime);
     }

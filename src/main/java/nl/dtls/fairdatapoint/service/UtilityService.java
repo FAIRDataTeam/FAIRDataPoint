@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,11 +32,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class UtilityService {
-    
-    @Value("${instance.behindProxy:true}")
-    private Boolean behindProxy;
+
+    @Autowired
+    private InstanceProperties instanceProperties;
 
     public String getRemoteAddr(HttpServletRequest request) {
-        return HttpUtil.getClientIpAddress(request, behindProxy);
+        return HttpUtil.getClientIpAddress(request, instanceProperties.isBehindProxy());
     }
 }

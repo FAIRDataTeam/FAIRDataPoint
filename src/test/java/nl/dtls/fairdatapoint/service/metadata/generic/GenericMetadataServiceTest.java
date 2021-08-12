@@ -134,7 +134,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         );
 
         // THEN:
-        assertThat(exception.getMessage(), is(equalTo("Parent is not of correct type")));
+        assertThat(exception.getMessage(), is(equalTo("Parent is not of correct type (RD: Repository)")));
     }
 
     @Test
