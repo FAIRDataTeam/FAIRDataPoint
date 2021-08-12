@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.12.0]
+
 ### Added
 
 - New endpoints for settings (metrics and ping)
@@ -15,15 +17,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Reset to defaults works with settings as well
 - Metadata endpoint `**/expanded` is marked as *Deprecated*
+- Several dependencies updated (including Spring Boot 2.5.3)
 
 ### Fixed
 
 - Multiple children resource definitions with the same child relation
 - Ordering of target classes
 - Computing cache on DB migration and reset to defaults
-
-### Fixed
-
+- Profile namespace `/` vs `#`
 - Creating metadata of a resource definition that has multiple parents
 
 ## [1.11.0]
