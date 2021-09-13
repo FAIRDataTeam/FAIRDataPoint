@@ -58,7 +58,7 @@
         <springdoc.version>1.5.2</springdoc.version>
         <mongock.version>4.3.8</mongock.version>
         <mongodb.driver-sync.version>4.2.3</mongodb.driver-sync.version>
-        <mongodb.spring-data.v3.version>3.2.3</mongodb.spring-data.v3.version>
+        <mongodb.spring-data.v3.version>3.2.4</mongodb.spring-data.v3.version>
         <rdf4j.version>3.7.2</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
         <jwt.version>0.11.2</jwt.version>
