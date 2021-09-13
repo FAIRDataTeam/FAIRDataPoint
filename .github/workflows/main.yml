@@ -12,6 +12,8 @@ jobs:
     env:
       PUBLIC_IMAGE: fairdata/fairdatapoint
       PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
       TAG_DEVELOP: develop
       TAG_LATEST: latest
       JDK_VERSION: 16
@@ -88,28 +90,33 @@ jobs:
     - name: Docker build
       run: |
         docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
-        docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
+        docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t ${PRIVATE_IMAGE#/}:$GITHUB_SHA .
 
 # (5) -> Docker image tagging
-    - name: Docker login
-      if: github.event_name == 'push'
+    - name: Docker login (private)
+      if: github.event_name == 'push' && env.PRIVATE_REGISTRY_URL != ''
       run: |
-        docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"
         docker login -u "$PRIVATE_REGISTRY_USERNAME" -p "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
       env:
-        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-        DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
         PRIVATE_REGISTRY_USERNAME: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
         PRIVATE_REGISTRY_PASSWORD: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
 
+    - name: Docker login (public)
+      if: github.event_name == 'push' && env.DOCKER_HUB_USERNAME != ''
+      run: |
+        docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"
+      env:
+        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
     - name: Docker push - commit SHA (private)
-      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') && env.PRIVATE_REGISTRY_URL != ''
       run: |
         docker push $PRIVATE_IMAGE:$GITHUB_SHA
 
     - name: Docker tag and push - branch (private)
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release')
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release') && env.PRIVATE_REGISTRY_URL != ''
       run: |
         GITHUB_BRANCH=`echo $GITHUB_REF | cut -d/ -f3- | sed 's#/#-#g'`
         docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PRIVATE_IMAGE:$GITHUB_BRANCH
