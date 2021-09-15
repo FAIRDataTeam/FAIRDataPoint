@@ -76,7 +76,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataRepository.findByUri(metadataFixtures.repositoryMetadata().getUri()).get();
+        Metadata metadata = metadataRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).get();
         metadata.setState(MetadataState.DRAFT);
         metadataRepository.save(metadata);
 

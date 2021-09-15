@@ -48,7 +48,7 @@ public class ResourceDefinitionCacheTest extends BaseIntegrationTest {
     @Test
     public void computeCacheWorks() {
         // GIVEN: Resource definitions
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
         ResourceDefinition rdCatalog = resourceDefinitionFixtures.catalogDefinition();
         ResourceDefinition rdDataset = resourceDefinitionFixtures.datasetDefinition();
         ResourceDefinition rdDistribution = resourceDefinitionFixtures.distributionDefinition();

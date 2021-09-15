@@ -62,12 +62,12 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void nameUniqueness() throws BindException {
         // GIVEN: Prepare reqDto
-        ResourceDefinition reqDto = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition reqDto = resourceDefinitionFixtures.fdpDefinition();
         reqDto.setChildren(List.of());
 
         // AND: Prepare database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.repositoryDefinition()));
+                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
 
         // WHEN:
         resourceDefinitionValidator.validate(reqDto);
@@ -83,7 +83,7 @@ public class ResourceDefinitionValidatorTest {
 
         // AND: Prepare database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.repositoryDefinition()));
+                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
 
         // WHEN:
         BindException exception = assertThrows(
@@ -98,14 +98,14 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void urlPrefixUniqueness() throws BindException {
         // GIVEN: Prepare reqDto
-        ResourceDefinition reqDto = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition reqDto = resourceDefinitionFixtures.fdpDefinition();
         reqDto.setChildren(List.of());
 
         // AND: Prepare database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
                 .thenReturn(Optional.empty());
         when(resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.repositoryDefinition()));
+                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
 
         // WHEN:
         resourceDefinitionValidator.validate(reqDto);
@@ -123,7 +123,7 @@ public class ResourceDefinitionValidatorTest {
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
                 .thenReturn(Optional.empty());
         when(resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.repositoryDefinition()));
+                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
 
         // WHEN:
         BindException exception = assertThrows(
@@ -163,7 +163,7 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void existingDependencyCycle() {
         // GIVEN: Prepare reqDto and resource definitions
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
         ResourceDefinition reqDto = resourceDefinitionFixtures.catalogDefinition();
         ResourceDefinition rdDataset = resourceDefinitionFixtures.datasetDefinition();
 

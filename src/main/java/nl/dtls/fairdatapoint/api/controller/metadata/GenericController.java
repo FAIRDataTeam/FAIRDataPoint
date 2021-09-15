@@ -281,7 +281,7 @@ public class GenericController {
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Skip if Repository (we don't support delete for repository)
-        if (rd.getName().equals("Repository")) {
+        if (rd.isRoot()) {
             return ResponseEntity.notFound().build();
         }
 

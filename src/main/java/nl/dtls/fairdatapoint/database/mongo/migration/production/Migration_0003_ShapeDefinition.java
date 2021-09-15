@@ -27,6 +27,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
@@ -50,7 +51,7 @@ public class Migration_0003_ShapeDefinition {
 
     private Document resourceDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "6a668323-3936-4b53-8380-a4fd2ed082ee");
+        definition.append("uuid", KnownUUIDs.SHAPE_RESOURCE_UUID);
         definition.append("name", "Resource");
         definition.append("type", "INTERNAL");
         definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -119,7 +120,7 @@ public class Migration_0003_ShapeDefinition {
 
     private Document repositoryDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "a92958ab-a414-47e6-8e17-68ba96ba3a2b");
+        definition.append("uuid", KnownUUIDs.SHAPE_REPOSITORY_UUID);
         definition.append("name", "Repository");
         definition.append("type", "INTERNAL");
         definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -155,7 +156,7 @@ public class Migration_0003_ShapeDefinition {
 
     private Document catalogDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660");
+        definition.append("uuid", KnownUUIDs.SHAPE_CATALOG_UUID);
         definition.append("name", "Catalog");
         definition.append("type", "INTERNAL");
         definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -188,7 +189,7 @@ public class Migration_0003_ShapeDefinition {
 
     private Document datasetDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3");
+        definition.append("uuid", KnownUUIDs.SHAPE_DATASET_UUID);
         definition.append("name", "Dataset");
         definition.append("type", "INTERNAL");
         definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -233,7 +234,7 @@ public class Migration_0003_ShapeDefinition {
 
     private Document distributionDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "ebacbf83-cd4f-4113-8738-d73c0735b0ab");
+        definition.append("uuid", KnownUUIDs.SHAPE_DISTRIBUTION_UUID);
         definition.append("name", "Distribution");
         definition.append("type", "INTERNAL");
         definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +

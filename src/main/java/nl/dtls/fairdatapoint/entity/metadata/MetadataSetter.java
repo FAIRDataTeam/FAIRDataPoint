@@ -117,10 +117,6 @@ public class MetadataSetter {
     //  Custom
     // ------------------------------------------------------------------------------------------------------------
 
-    public static void setRepositoryIdentifier(Model metadata, IRI uri, Identifier identifier) {
-        setIdentifier(metadata, uri, identifier, R3D.REPOSITORYIDENTIFIER);
-    }
-
     public static void setPublisher(Model metadata, IRI uri, Agent publisher) {
         setAgent(metadata, uri, publisher, DCTERMS.PUBLISHER);
     }

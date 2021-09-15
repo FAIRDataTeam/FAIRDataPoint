@@ -55,7 +55,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
         RequestEntity<Void> request = RequestEntity
                 .get(url(resourceDefinition.getUuid()))
                 .build();
