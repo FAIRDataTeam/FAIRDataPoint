@@ -40,7 +40,7 @@ public class RdfMetadataFixtures {
         this.metadataFactory = metadataFactory;
     }
 
-    public Model repositoryMetadata(String repositoryUrl) {
+    public Model fdpMetadata(String fdpUrl) {
         return metadataFactory.createFDPMetadata(
                 "My FAIR Data Point",
                 "Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec ultricies augue turpis sed " +
@@ -52,11 +52,11 @@ public class RdfMetadataFixtures {
                         "blandit venenatis. Cras ullamcorper, justo vitae feugiat commodo, orci metus suscipit purus," +
                         " quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum" +
                         " euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at.",
-                repositoryUrl
+                fdpUrl
         );
     }
 
-    public Model catalog1(String repositoryUrl, IRI repository) {
+    public Model catalog1(String fdpUrl, IRI fdp) {
         return metadataFactory.createCatalogMetadata(
                 "Bio Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -69,12 +69,12 @@ public class RdfMetadataFixtures {
                         "Aenean dapibus tellus ipsum.",
                 "catalog-1",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27317", "https://purl.org/example#theme"),
-                repositoryUrl,
-                repository
+                fdpUrl,
+                fdp
         );
     }
 
-    public Model catalog2(String repositoryUrl, IRI repository) {
+    public Model catalog2(String fdpUrl, IRI fdp) {
         return metadataFactory.createCatalogMetadata(
                 "Tech Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -87,12 +87,12 @@ public class RdfMetadataFixtures {
                         "Aenean dapibus tellus ipsum.",
                 "catalog-2",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
-                repositoryUrl,
-                repository
+                fdpUrl,
+                fdp
         );
     }
 
-    public Model catalog3(String repositoryUrl, IRI repository) {
+    public Model catalog3(String fdpUrl, IRI fdp) {
         return metadataFactory.createCatalogMetadata(
                 "IT Catalog",
                 "Nam eget lorem rhoncus, porta odio at, pretium tortor. Morbi dapibus urna magna, at mollis neque " +
@@ -105,12 +105,12 @@ public class RdfMetadataFixtures {
                         "Aenean dapibus tellus ipsum.",
                 "catalog-3",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
-                repositoryUrl,
-                repository
+                fdpUrl,
+                fdp
         );
     }
 
-    public Model dataset1(String repositoryUrl, IRI catalog) {
+    public Model dataset1(String fdpUrl, IRI catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Cat Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -121,12 +121,12 @@ public class RdfMetadataFixtures {
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://www.wikidata.org/wiki/Q27319", "https" +
                         "://purl.org/example#theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
-                repositoryUrl,
+                fdpUrl,
                 catalog
         );
     }
 
-    public Model dataset2(String repositoryUrl, IRI catalog) {
+    public Model dataset2(String fdpUrl, IRI catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Dog Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -136,12 +136,12 @@ public class RdfMetadataFixtures {
                 "dataset-2",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
-                repositoryUrl,
+                fdpUrl,
                 catalog
         );
     }
 
-    public Model dataset3(String repositoryUrl, IRI catalog) {
+    public Model dataset3(String fdpUrl, IRI catalog) {
         return metadataFactory.createDatasetMetadata(
                 "Pig Dataset",
                 "Sed hendrerit accumsan velit, ut eleifend lorem rhoncus a. Curabitur auctor euismod risus lobortis " +
@@ -151,12 +151,12 @@ public class RdfMetadataFixtures {
                 "dataset-3",
                 Arrays.asList("https://www.wikidata.org/wiki/Q27318", "https://purl.org/example#theme"),
                 Arrays.asList("Text Mining", "Natural Language Processing"),
-                repositoryUrl,
+                fdpUrl,
                 catalog
         );
     }
 
-    public Model distribution1(String repositoryUrl, IRI dataset) {
+    public Model distribution1(String fdpUrl, IRI dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Downloadable Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -172,12 +172,12 @@ public class RdfMetadataFixtures {
                 "http://example.com",
                 null,
                 "text/plain",
-                repositoryUrl,
+                fdpUrl,
                 dataset
         );
     }
 
-    public Model distribution2(String repositoryUrl, IRI dataset) {
+    public Model distribution2(String fdpUrl, IRI dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Accessible Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -193,12 +193,12 @@ public class RdfMetadataFixtures {
                 null,
                 "http://example.com",
                 "text/plain",
-                repositoryUrl,
+                fdpUrl,
                 dataset
         );
     }
 
-    public Model distribution3(String repositoryUrl, IRI dataset) {
+    public Model distribution3(String fdpUrl, IRI dataset) {
         return metadataFactory.createDistributionMetadata(
                 "Nice Distribution",
                 "Maecenas et mollis purus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
@@ -214,7 +214,7 @@ public class RdfMetadataFixtures {
                 null,
                 "http://example.com",
                 "text/plain",
-                repositoryUrl,
+                fdpUrl,
                 dataset
         );
     }

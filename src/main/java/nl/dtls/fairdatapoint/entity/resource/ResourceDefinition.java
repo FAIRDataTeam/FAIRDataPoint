@@ -40,6 +40,8 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class ResourceDefinition {
 
+    private static final String CATALOG_PREFIX = "catalog";
+
     @Id
     @JsonIgnore
     protected ObjectId id;
@@ -66,4 +68,11 @@ public class ResourceDefinition {
         this.externalLinks = externalLinks;
     }
 
+    public boolean isRoot() {
+        return urlPrefix.isEmpty();
+    }
+
+    public boolean isCatalog() {
+        return name.equals(CATALOG_PREFIX);
+    }
 }

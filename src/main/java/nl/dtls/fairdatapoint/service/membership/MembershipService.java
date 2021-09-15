@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,13 +56,13 @@ public class MembershipService {
         String rdUuid = resourceDefinition.getUuid();
 
         // Add to owner
-        Membership owner = membershipRepository.findByUuid("49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8").get();
+        Membership owner = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
         addEntityIfMissing(owner, rdUuid);
         membershipRepository.save(owner);
 
         // Add to data provider
-        if (resourceDefinition.getUrlPrefix().equals("catalog")) {
-            Membership dataProvider = membershipRepository.findByUuid("87a2d984-7db2-43f6-805c-6b0040afead5").get();
+        if (resourceDefinition.isCatalog()) {
+            Membership dataProvider = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
             addEntityIfMissing(dataProvider, rdUuid);
             membershipRepository.save(dataProvider);
         }
@@ -71,13 +72,13 @@ public class MembershipService {
         String rdUuid = resourceDefinition.getUuid();
 
         // Add to owner
-        Membership owner = membershipRepository.findByUuid("49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8").get();
+        Membership owner = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
         removeEntityIfPresent(owner, rdUuid);
         membershipRepository.save(owner);
 
         // Add to data provider
-        if (resourceDefinition.getUrlPrefix().equals("catalog")) {
-            Membership dataProvider = membershipRepository.findByUuid("87a2d984-7db2-43f6-805c-6b0040afead5").get();
+        if (resourceDefinition.isCatalog()) {
+            Membership dataProvider = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
             removeEntityIfPresent(dataProvider, rdUuid);
             membershipRepository.save(dataProvider);
         }

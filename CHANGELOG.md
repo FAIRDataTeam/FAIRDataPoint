@@ -17,6 +17,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added restriction to URL prefixes of Resource Definitions (`[a-zA-Z_-]*`)
 - Upgrade Java JDK from 16 to 17
 - Updated SpringDoc OpenAPI UI and several other dependencies
+- Compliance with FDP-O ontology (`fdp-o:FAIRDataPoint`)
+
+### Fixed
+
+- Missing `xsd` prefix in some default shapes
 
 ## [1.12.0]
 

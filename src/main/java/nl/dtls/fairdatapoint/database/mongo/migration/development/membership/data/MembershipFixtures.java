@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.database.mongo.migration.development.membership.da
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class MembershipFixtures {
 
     public Membership owner() {
         return new Membership(
-                "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8",
+                KnownUUIDs.MEMBERSHIP_OWNER_UUID,
                 "Owner",
                 new ArrayList<>() {{
                     add(WRITE);
@@ -49,22 +50,22 @@ public class MembershipFixtures {
                     add(ADMINISTRATION);
                 }},
                 new ArrayList<>() {{
-                    add(ResourceDefinitionFixtures.CATALOG_DEFINITION_UUID);
-                    add(ResourceDefinitionFixtures.DATASET_DEFINITION_UUID);
-                    add(ResourceDefinitionFixtures.DISTRIBUTION_DEFINITION_UUID);
+                    add(KnownUUIDs.RD_CATALOG_UUID);
+                    add(KnownUUIDs.RD_DATASET_UUID);
+                    add(KnownUUIDs.RD_DISTRIBUTION_UUID);
                 }}
         );
     }
 
     public Membership dataProvider() {
         return new Membership(
-                "87a2d984-7db2-43f6-805c-6b0040afead5",
+                KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID,
                 "Data Provider",
                 new ArrayList<>() {{
                     add(CREATE);
                 }},
                 new ArrayList<>() {{
-                    add(ResourceDefinitionFixtures.CATALOG_DEFINITION_UUID);
+                    add(KnownUUIDs.RD_CATALOG_UUID);
                 }}
         );
     }
