@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 ### Added
 
 - Profile resources contain `rdfs:label` with Shape name
@@ -15,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Replaced `**` wildcards with safer pattern
 - Added restriction to URL prefixes of Resource Definitions (`[a-zA-Z_-]*`)
+- Upgrade Java JDK from 16 to 17
 
 ## [1.12.0]
 
