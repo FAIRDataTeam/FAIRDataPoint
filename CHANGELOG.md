@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Profile resources contain `rdfs:label` with Shape name
+
 ## [1.12.0]
 
 ### Added
