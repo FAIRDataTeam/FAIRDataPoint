@@ -62,7 +62,7 @@
         <rdf4j.version>3.7.3</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
         <jwt.version>0.11.2</jwt.version>
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
 
         <!-- Plugins -->
