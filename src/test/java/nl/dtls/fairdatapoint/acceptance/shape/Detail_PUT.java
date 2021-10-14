@@ -53,7 +53,12 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     private ShapeChangeDTO reqDto(Shape shape) {
-        return new ShapeChangeDTO(format("EDITED: %s", shape.getName()), false, shape.getDefinition());
+        return new ShapeChangeDTO(
+                format("EDITED: %s", shape.getName()),
+                shape.getDescription(),
+                false,
+                shape.getDefinition()
+        );
     }
 
     @Autowired

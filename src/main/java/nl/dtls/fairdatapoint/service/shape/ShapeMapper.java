@@ -29,6 +29,8 @@ import nl.dtls.fairdatapoint.entity.shape.Shape;
 import nl.dtls.fairdatapoint.entity.shape.ShapeType;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Service
 public class ShapeMapper {
 
@@ -37,10 +39,13 @@ public class ShapeMapper {
                 new ShapeDTO(
                         shape.getUuid(),
                         shape.getName(),
+                        shape.getDescription(),
                         shape.isPublished(),
                         shape.getType(),
                         shape.getDefinition(),
-                        shape.getTargetClasses().stream().sorted().toList()
+                        shape.getTargetClasses().stream().sorted().toList(),
+                        shape.getCreatedAt(),
+                        shape.getUpdatedAt()
                 );
     }
 
@@ -50,10 +55,13 @@ public class ShapeMapper {
                         null,
                         uuid,
                         dto.getName(),
+                        dto.getDescription(),
                         dto.isPublished(),
                         ShapeType.CUSTOM,
                         dto.getDefinition(),
-                        ShapeShaclUtils.extractTargetClasses(dto.getDefinition())
+                        ShapeShaclUtils.extractTargetClasses(dto.getDefinition()),
+                        Instant.now(),
+                        Instant.now()
                 );
 
     }
@@ -63,9 +71,11 @@ public class ShapeMapper {
                 shape
                         .toBuilder()
                         .name(dto.getName())
+                        .description(dto.getDescription())
                         .published(dto.isPublished())
                         .definition(dto.getDefinition())
                         .targetClasses(ShapeShaclUtils.extractTargetClasses(dto.getDefinition()))
+                        .updatedAt(Instant.now())
                         .build();
     }
 
@@ -75,7 +85,10 @@ public class ShapeMapper {
                         fdpUrl,
                         shape.getUuid(),
                         shape.getName(),
-                        shape.getDefinition()
+                        shape.getDescription(),
+                        shape.getDefinition(),
+                        shape.getCreatedAt(),
+                        shape.getUpdatedAt()
                 );
     }
 
@@ -83,6 +96,7 @@ public class ShapeMapper {
         return
                 new ShapeChangeDTO(
                         shape.getName(),
+                        shape.getDescription(),
                         false,
                         shape.getDefinition()
                 );

@@ -66,7 +66,10 @@ public class Import_POST extends WebIntegrationTest {
                 "http://example.com",
                 UUID.randomUUID().toString(),
                 shapeFixtures.customShape().getName(),
-                shapeFixtures.customShape().getDefinition()
+                shapeFixtures.customShape().getDescription(),
+                shapeFixtures.customShape().getDefinition(),
+                shapeFixtures.customShape().getCreatedAt(),
+                shapeFixtures.customShape().getUpdatedAt()
         );
     }
 
@@ -75,7 +78,10 @@ public class Import_POST extends WebIntegrationTest {
                 "http://example.com",
                 UUID.randomUUID().toString(),
                 shapeFixtures.customShapeEdited().getName(),
-                shapeFixtures.customShapeEdited().getDefinition()
+                shapeFixtures.customShapeEdited().getDescription(),
+                shapeFixtures.customShapeEdited().getDefinition(),
+                shapeFixtures.customShapeEdited().getCreatedAt(),
+                shapeFixtures.customShapeEdited().getUpdatedAt()
         );
     }
 

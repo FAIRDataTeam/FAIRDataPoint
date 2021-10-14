@@ -101,6 +101,7 @@ public class GenericController {
     public Model getFormMetadata(
             @PathVariable final Optional<String> oUrlPrefix
     ) {
+        // TODO filter shapes, cache it
         return shapeService.getShaclFromShapes();
     }
 

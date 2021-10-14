@@ -52,12 +52,14 @@ public class ShapeController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ShapeDTO>> getShapes() {
+        // TODO filter if logged in
         List<ShapeDTO> dto = shapeService.getShapes();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping(path = "/public", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ShapeDTO>> getPublishedShapes() {
+        // TODO deprecate
         List<ShapeDTO> dto = shapeService.getPublishedShapes();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

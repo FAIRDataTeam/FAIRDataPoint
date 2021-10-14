@@ -27,6 +27,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -38,5 +40,11 @@ public class ShapeRemoteDTO {
 
     private String name;
 
+    private String description;
+
     private String definition;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 }

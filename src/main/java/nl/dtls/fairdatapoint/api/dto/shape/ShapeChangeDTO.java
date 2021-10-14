@@ -39,6 +39,9 @@ public class ShapeChangeDTO {
     @NotBlank
     private String name;
 
+    @NotNull
+    private String description;
+
     private boolean published;
 
     private String definition;

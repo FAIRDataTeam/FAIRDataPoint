@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.entity.shape.Shape;
 import nl.dtls.fairdatapoint.entity.shape.ShapeType;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Set;
 
 @Service
@@ -46,6 +47,7 @@ public class ShapeFixtures {
                 null,
                 "6a668323-3936-4b53-8380-a4fd2ed082ee",
                 "Resource",
+                "",
                 false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -112,7 +114,9 @@ public class ShapeFixtures {
                         "    sh:maxCount  1 ;\n" +
                         "    dash:editor dash:TextFieldEditor ;\n" +
                         "  ] .",
-                Set.of("http://www.w3.org/ns/dcat#Resource")
+                Set.of("http://www.w3.org/ns/dcat#Resource"),
+                Instant.now(),
+                Instant.now()
         );
     }
 
@@ -121,6 +125,7 @@ public class ShapeFixtures {
                 null,
                 "a92958ab-a414-47e6-8e17-68ba96ba3a2b",
                 "Repository",
+                "",
                 false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -163,7 +168,9 @@ public class ShapeFixtures {
                         "    dash:editor dash:URIEditor ;\n" +
                         "    dash:viewer dash:LabelViewer ;\n" +
                         "  ] .\n",
-                Set.of("http://www.w3.org/ns/dcat#Repository")
+                Set.of("http://www.w3.org/ns/dcat#Repository"),
+                Instant.now(),
+                Instant.now()
         );
     }
 
@@ -172,6 +179,7 @@ public class ShapeFixtures {
                 null,
                 "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660",
                 "Catalog",
+                "",
                 false,
                 ShapeType.INTERNAL,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -204,7 +212,9 @@ public class ShapeFixtures {
                         "    sh:nodeKind sh:IRI ;\n" +
                         "    dash:viewer dash:LabelViewer ;\n" +
                         "  ] .\n",
-                Set.of("http://www.w3.org/ns/dcat#Catalog")
+                Set.of("http://www.w3.org/ns/dcat#Catalog"),
+                Instant.now(),
+                Instant.now()
         );
     }
 
@@ -213,6 +223,7 @@ public class ShapeFixtures {
                 null,
                 "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3",
                 "Dataset",
+                "",
                 false,
                 ShapeType.CUSTOM,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -259,7 +270,9 @@ public class ShapeFixtures {
                         "    dash:editor dash:URIEditor ;\n" +
                         "    dash:viewer dash:LabelViewer ;\n" +
                         "  ] .\n",
-                Set.of("http://www.w3.org/ns/dcat#Dataset")
+                Set.of("http://www.w3.org/ns/dcat#Dataset"),
+                Instant.now(),
+                Instant.now()
         );
     }
 
@@ -268,6 +281,7 @@ public class ShapeFixtures {
                 null,
                 "ebacbf83-cd4f-4113-8738-d73c0735b0ab",
                 "Distribution",
+                "",
                 false,
                 ShapeType.CUSTOM,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -320,7 +334,9 @@ public class ShapeFixtures {
                         "    dash:editor dash:TextFieldEditor ;\n" +
                         "    dash:viewer dash:LiteralViewer ;\n" +
                         "  ] .",
-                Set.of("http://www.w3.org/ns/dcat#Distribution")
+                Set.of("http://www.w3.org/ns/dcat#Distribution"),
+                Instant.now(),
+                Instant.now()
         );
     }
 
@@ -329,6 +345,7 @@ public class ShapeFixtures {
                 null,
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
                 "Custom Shape",
+                "",
                 false,
                 ShapeType.CUSTOM,
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
@@ -344,17 +361,21 @@ public class ShapeFixtures {
                         "      dash:editor dash:URIEditor ;\n" +
                         "      dash:viewer dash:LabelViewer ;\n" +
                         "    ] .",
-                Set.of("http://example.org/Dog")
+                Set.of("http://example.org/Dog"),
+                Instant.now(),
+                Instant.now()
         );
     }
 
     public Shape customShapeEdited() {
+        var shape = customShape();
         return new Shape(
                 null,
-                customShape().getUuid(),
-                customShape().getName(),
+                shape.getUuid(),
+                shape.getName(),
+                shape.getDescription(),
                 false,
-                customShape().getType(),
+                shape.getType(),
                 "@prefix :         <http://fairdatapoint.org/> .\n" +
                         "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
                         "@prefix dash:     <http://datashapes.org/dash#> .\n" +
@@ -374,7 +395,9 @@ public class ShapeFixtures {
                         "      dash:editor dash:TextFieldEditor ;\n" +
                         "      dash:viewer dash:LiteralViewer ;\n" +
                         "    ] .",
-                Set.of("http://example.org/Dog")
+                Set.of("http://example.org/Dog"),
+                shape.getCreatedAt(),
+                Instant.now()
         );
     }
 

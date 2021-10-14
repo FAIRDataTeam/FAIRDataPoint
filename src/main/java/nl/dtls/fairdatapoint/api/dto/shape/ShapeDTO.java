@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.entity.shape.ShapeType;
 
+import java.time.Instant;
 import java.util.List;
 
 @NoArgsConstructor
@@ -40,6 +41,8 @@ public class ShapeDTO {
 
     private String name;
 
+    private String description;
+
     private boolean published;
 
     private ShapeType type;
@@ -47,4 +50,8 @@ public class ShapeDTO {
     private String definition;
 
     private List<String> targetClasses;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 }
