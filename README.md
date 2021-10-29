@@ -17,7 +17,7 @@ the [FAIR Data Point software specification](https://github.com/FAIRDataTeam/FAI
 ## Usage
 
 More information about FDP, how to deploy it and use it can be found in
-the [FDP Deployment Documentation](https://fairdatapoint.readthedocs.io/).
+the [FDP Deployment and REST API usage Documentation](https://fairdatapoint.readthedocs.io/).
 
 ## Related GitHub Projects
 
@@ -33,7 +33,7 @@ details of API calls can be found there. It also allows trying out API calls dir
 document please visit the following url via web
 browser [localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) (for local deployment)
 or `https://your.domain.tld/swagger-ui.html` for your deployment (
-e.g. [app.fairdatapoint.org/swagger-ui.html](https://app.fairdatapoint.org/swagger-ui.html)).
+e.g. [app.fairdatapoint.org/swagger-ui.html](https://app.fairdatapoint.org/swagger-ui.html)).  More detailed descriptions and examples of these API calls is available in the [Deployment and Usage instructions](https://fairdatapoint.readthedocs.io/)
 
 ## Development
 
