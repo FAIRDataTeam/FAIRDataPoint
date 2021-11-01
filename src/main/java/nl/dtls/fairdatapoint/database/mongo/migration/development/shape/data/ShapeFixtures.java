@@ -180,6 +180,7 @@ public class ShapeFixtures {
                         "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
                         "@prefix foaf:     <http://xmlns.com/foaf/0.1/> .\n" +
                         "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
                         "\n" +
                         ":CatalogShape a sh:NodeShape ;\n" +
                         "  sh:targetClass dcat:Catalog ;\n" +
@@ -220,6 +221,7 @@ public class ShapeFixtures {
                         "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
                         "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
                         "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
+                        "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
                         "\n" +
                         ":DatasetShape a sh:NodeShape ;\n" +
                         "  sh:targetClass dcat:Dataset ;\n" +
