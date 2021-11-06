@@ -22,8 +22,6 @@
  */
 package nl.dtls.fairdatapoint.service.reset;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
@@ -49,6 +47,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 
 public class FactoryDefaults {
@@ -207,7 +206,7 @@ public class FactoryDefaults {
     //== SHAPES
     //== Changes: Migration_0003_ShapeDefinition, Migration_0005_UpdateShapeDefinition, Migration_0006_ShapesSharing, Migration_0010_ComplyFDPO
     public static Shape shapeResource() throws Exception {
-        String definition = loadShape("shape-resource.ttl");
+        String definition = loadClassResource("shape-resource.ttl", FactoryDefaults.class);
         return Shape.builder()
                 .uuid(KnownUUIDs.SHAPE_RESOURCE_UUID)
                 .name("Resource")
@@ -219,7 +218,7 @@ public class FactoryDefaults {
     }
 
     public static Shape shapeFDP() throws Exception {
-        String definition = loadShape("shape-fdp.ttl");
+        String definition = loadClassResource("shape-fdp.ttl", FactoryDefaults.class);
         return Shape.builder()
                 .uuid(KnownUUIDs.SHAPE_FDP_UUID)
                 .name("FAIR Data Point")
@@ -231,7 +230,7 @@ public class FactoryDefaults {
     }
 
     public static Shape shapeDataService() throws Exception {
-        String definition = loadShape("shape-data-service.ttl");
+        String definition = loadClassResource("shape-data-service.ttl", FactoryDefaults.class);
         return Shape.builder()
                 .uuid(KnownUUIDs.SHAPE_DATASERVICE_UUID)
                 .name("Data Service")
@@ -243,7 +242,7 @@ public class FactoryDefaults {
     }
 
     public static Shape shapeMetadataService() throws Exception {
-        String definition = loadShape("shape-metadata-service.ttl");
+        String definition = loadClassResource("shape-metadata-service.ttl", FactoryDefaults.class);
         return Shape.builder()
                 .uuid(KnownUUIDs.SHAPE_METADATASERVICE_UUID)
                 .name("Metadata Service")
@@ -255,7 +254,7 @@ public class FactoryDefaults {
     }
 
     public static Shape shapeCatalog() throws Exception {
-        String definition = loadShape("shape-catalog.ttl");
+        String definition = loadClassResource("shape-catalog.ttl", FactoryDefaults.class);
         return Shape.builder()
                 .uuid(KnownUUIDs.SHAPE_CATALOG_UUID)
                 .name("Catalog")
@@ -267,7 +266,7 @@ public class FactoryDefaults {
     }
 
     public static Shape shapeDataset() throws Exception {
-        String definition = loadShape("shape-dataset.ttl");
+        String definition = loadClassResource("shape-dataset.ttl", FactoryDefaults.class);
         return Shape.builder()
                 .uuid(KnownUUIDs.SHAPE_DATASET_UUID)
                 .name("Dataset")
@@ -279,7 +278,7 @@ public class FactoryDefaults {
     }
 
     public static Shape shapeDistribution() throws Exception {
-        String definition = loadShape("shape-distribution.ttl");
+        String definition = loadClassResource("shape-distribution.ttl", FactoryDefaults.class);
         return Shape.builder()
                 .uuid(KnownUUIDs.SHAPE_DISTRIBUTION_UUID)
                 .name("Distribution")
@@ -417,13 +416,6 @@ public class FactoryDefaults {
                 .uri(persistentUrl)
                 .state(MetadataState.PUBLISHED)
                 .build();
-    }
-
-    private static String loadShape(String name) throws Exception {
-        return Resources.toString(
-                FactoryDefaults.class.getResource(name),
-                Charsets.UTF_8
-        );
     }
 
     private static void add(List<Statement> statements, IRI predicate, org.eclipse.rdf4j.model.Value object, IRI base) {

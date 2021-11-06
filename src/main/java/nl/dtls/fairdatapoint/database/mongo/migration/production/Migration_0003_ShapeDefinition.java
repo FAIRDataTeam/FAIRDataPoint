@@ -31,16 +31,18 @@ import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
+import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
+
 @ChangeLog(order = "0003")
 @Profile(Profiles.PRODUCTION)
 public class Migration_0003_ShapeDefinition {
 
     @ChangeSet(order = "0003", id = "Migration_0003_ShapeDefinition", author = "migrationBot")
-    public void run(MongoDatabase db) {
+    public void run(MongoDatabase db) throws Exception {
         addShapeDefinitions(db);
     }
 
-    private void addShapeDefinitions(MongoDatabase db) {
+    private void addShapeDefinitions(MongoDatabase db) throws Exception {
         MongoCollection<Document> shapeCol = db.getCollection("shape");
         shapeCol.insertOne(resourceDefinition());
         shapeCol.insertOne(repositoryDefinition());
@@ -49,239 +51,58 @@ public class Migration_0003_ShapeDefinition {
         shapeCol.insertOne(distributionDefinition());
     }
 
-    private Document resourceDefinition() {
+    private Document resourceDefinition() throws Exception {
+        String shaclDefinition = loadClassResource("0003_shape-resource.ttl", getClass());
         Document definition = new Document();
         definition.append("uuid", KnownUUIDs.SHAPE_RESOURCE_UUID);
         definition.append("name", "Resource");
         definition.append("type", "INTERNAL");
-        definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
-                "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
-                "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                "\n" +
-                ":ResourceShape a sh:NodeShape ;\n" +
-                "  sh:targetClass dcat:Resource ;\n" +
-                "  sh:property [\n" +
-                "    sh:path dct:title ;\n" +
-                "    sh:nodeKind sh:Literal ;\n" +
-                "    sh:minCount 1 ;\n" +
-                "    sh:maxCount  1 ;\n" +
-                "    dash:editor dash:TextFieldEditor ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:description ;\n" +
-                "    sh:nodeKind sh:Literal ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "    dash:editor dash:TextAreaEditor ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:hasVersion ;\n" +
-                "    sh:name \"version\" ;\n" +
-                "    sh:nodeKind sh:Literal ;\n" +
-                "    sh:minCount 1 ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "    dash:editor dash:TextFieldEditor ;\n" +
-                "    dash:viewer dash:LiteralViewer ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:license ;\n" +
-                "    sh:nodeKind sh:IRI ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "    dash:editor dash:URIEditor ;\n" +
-                "    dash:viewer dash:LabelViewer ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:conformsTo ;\n" +
-                "    sh:name \"specification\" ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "    sh:nodeKind sh:IRI ;\n" +
-                "    dash:viewer dash:LabelViewer ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:language ;\n" +
-                "    sh:nodeKind sh:IRI ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "    dash:editor dash:URIEditor ;\n" +
-                "    dash:viewer dash:LabelViewer ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:rights ;\n" +
-                "    sh:nodeKind sh:IRI ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:issued ;\n" +
-                "    sh:datatype xsd:dateTime ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "  ], [\n" +
-                "    sh:path dct:modified ;\n" +
-                "    sh:datatype xsd:dateTime ;\n" +
-                "    sh:maxCount 1 ;\n" +
-                "  ] .");
+        definition.append("definition", shaclDefinition);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
         return definition;
     }
 
 
-    private Document repositoryDefinition() {
+    private Document repositoryDefinition() throws Exception {
+        String shaclDefinition = loadClassResource("0003_shape-repository.ttl", getClass());
         Document definition = new Document();
         definition.append("uuid", KnownUUIDs.SHAPE_REPOSITORY_UUID);
         definition.append("name", "Repository");
         definition.append("type", "INTERNAL");
-        definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
-                "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
-                "@prefix r3d:      <http://www.re3data.org/schema/3-0#> .\n" +
-                "\n" +
-                ":RepositoryShape a sh:NodeShape ;\n" +
-                "  sh:targetClass r3d:Repository ;\n" +
-                "  sh:property [\n" +
-                "      sh:path r3d:startDate ;\n" +
-                "      sh:datatype xsd:date ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ] ,\n" +
-                "    [\n" +
-                "      sh:path r3d:lastUpdate ;\n" +
-                "      sh:datatype xsd:date ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ] ,\n" +
-                "    [\n" +
-                "      sh:path r3d:institution ;\n" +
-                "      sh:class r3d:Institution ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ] ,\n" +
-                "    [\n" +
-                "      sh:path r3d:institutionCountry ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ] .");
+        definition.append("definition", shaclDefinition);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
         return definition;
     }
 
-    private Document catalogDefinition() {
+    private Document catalogDefinition() throws Exception {
+        String shaclDefinition = loadClassResource("0003_shape-catalog.ttl", getClass());
         Document definition = new Document();
         definition.append("uuid", KnownUUIDs.SHAPE_CATALOG_UUID);
         definition.append("name", "Catalog");
         definition.append("type", "INTERNAL");
-        definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
-                "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                "@prefix foaf:     <http://xmlns.com/foaf/0.1/> .\n" +
-                "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                "\n" +
-                ":CatalogShape a sh:NodeShape ;\n" +
-                "  sh:targetClass dcat:Catalog ;\n" +
-                "  sh:property [\n" +
-                "      sh:path dct:isPartOf ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      sh:minCount 1 ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path foaf:homePage ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:themeTaxonomy ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      dash:viewer dash:LabelViewer ;\n" +
-                "    ] .");
+        definition.append("definition", shaclDefinition);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
         return definition;
     }
 
-    private Document datasetDefinition() {
+    private Document datasetDefinition() throws Exception {
+        String shaclDefinition = loadClassResource("0003_shape-dataset.ttl", getClass());
         Document definition = new Document();
         definition.append("uuid", KnownUUIDs.SHAPE_DATASET_UUID);
         definition.append("name", "Dataset");
         definition.append("type", "INTERNAL");
-        definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
-                "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                "\n" +
-                ":DatasetShape a sh:NodeShape ;\n" +
-                "  sh:targetClass dcat:Dataset ;\n" +
-                "  sh:property [\n" +
-                "      sh:path dct:isPartOf ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      sh:minCount 1 ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:landingPage ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:theme ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      dash:editor dash:URIEditor ;\n" +
-                "      dash:viewer dash:LabelViewer ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:keyword ;\n" +
-                "      sh:nodeKind sh:Literal ;\n" +
-                "      dash:editor dash:TextFieldEditor ;\n" +
-                "      dash:viewer dash:LiteralViewer ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:contactPoint ;\n" +
-                "       sh:nodeKind sh:IRI ;\n" +
-                "       sh:maxCount 1 ;\n" +
-                "    ] .");
+        definition.append("definition", shaclDefinition);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
         return definition;
     }
 
-    private Document distributionDefinition() {
+    private Document distributionDefinition() throws Exception {
+        String shaclDefinition = loadClassResource("0003_shape-distribution.ttl", getClass());
         Document definition = new Document();
         definition.append("uuid", KnownUUIDs.SHAPE_DISTRIBUTION_UUID);
         definition.append("name", "Distribution");
         definition.append("type", "INTERNAL");
-        definition.append("definition", "@prefix :         <http://fairdatapoint.org/> .\n" +
-                "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                "\n" +
-                ":DistributionShape a sh:NodeShape ;\n" +
-                "  sh:targetClass dcat:Distribution ;\n" +
-                "  sh:property [\n" +
-                "      sh:path dct:isPartOf ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      sh:minCount 1 ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:accessURL ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "      dash:editor dash:URIEditor ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:downloadURL ;\n" +
-                "      sh:nodeKind sh:IRI ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "      dash:editor dash:URIEditor ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:mediaType ;\n" +
-                "      sh:nodeKind sh:Literal ;\n" +
-                "      sh:minCount 1 ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "      dash:editor dash:TextFieldEditor ;\n" +
-                "      dash:viewer dash:LiteralViewer ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:format ;\n" +
-                "      sh:nodeKind sh:Literal ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "      dash:editor dash:TextFieldEditor ;\n" +
-                "    ],\n" +
-                "    [\n" +
-                "      sh:path dcat:byteSize ;\n" +
-                "      sh:nodeKind sh:Literal ;\n" +
-                "      sh:maxCount 1 ;\n" +
-                "    ] .");
+        definition.append("definition", shaclDefinition);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
         return definition;
     }
