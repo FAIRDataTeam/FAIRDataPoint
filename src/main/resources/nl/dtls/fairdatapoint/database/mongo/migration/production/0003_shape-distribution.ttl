@@ -1,0 +1,45 @@
+@prefix :         <http://fairdatapoint.org/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dct:      <http://purl.org/dc/terms/> .
+@prefix dash:     <http://datashapes.org/dash#> .
+
+:DistributionShape a sh:NodeShape ;
+  sh:targetClass dcat:Distribution ;
+  sh:property [
+      sh:path dct:isPartOf ;
+      sh:nodeKind sh:IRI ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+    ],
+    [
+      sh:path dcat:accessURL ;
+      sh:nodeKind sh:IRI ;
+      sh:maxCount 1 ;
+      dash:editor dash:URIEditor ;
+    ],
+    [
+      sh:path dcat:downloadURL ;
+      sh:nodeKind sh:IRI ;
+      sh:maxCount 1 ;
+      dash:editor dash:URIEditor ;
+    ],
+    [
+      sh:path dcat:mediaType ;
+      sh:nodeKind sh:Literal ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+      dash:editor dash:TextFieldEditor ;
+      dash:viewer dash:LiteralViewer ;
+    ],
+    [
+      sh:path dcat:format ;
+      sh:nodeKind sh:Literal ;
+      sh:maxCount 1 ;
+      dash:editor dash:TextFieldEditor ;
+    ],
+    [
+      sh:path dcat:byteSize ;
+      sh:nodeKind sh:Literal ;
+      sh:maxCount 1 ;
+    ] .
