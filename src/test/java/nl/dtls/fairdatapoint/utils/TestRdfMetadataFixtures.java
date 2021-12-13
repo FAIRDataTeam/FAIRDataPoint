@@ -56,29 +56,29 @@ public class TestRdfMetadataFixtures extends RdfMetadataFixtures {
         this.resourceDefinitionFixtures = resourceDefinitionFixtures;
     }
 
-    public Model repositoryMetadata() {
-        Model metadata = super.repositoryMetadata(persistentUrl);
-        ResourceDefinition rd = resourceDefinitionFixtures.repositoryDefinition();
+    public Model fdpMetadata() {
+        Model metadata = super.fdpMetadata(persistentUrl);
+        ResourceDefinition rd = resourceDefinitionFixtures.fdpDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog1() {
-        Model metadata = super.catalog1(persistentUrl, getUri(repositoryMetadata()));
+        Model metadata = super.catalog1(persistentUrl, getUri(fdpMetadata()));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog2() {
-        Model metadata = super.catalog2(persistentUrl, getUri(repositoryMetadata()));
+        Model metadata = super.catalog2(persistentUrl, getUri(fdpMetadata()));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog3() {
-        Model metadata = super.catalog3(persistentUrl, getUri(repositoryMetadata()));
+        Model metadata = super.catalog3(persistentUrl, getUri(fdpMetadata()));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
@@ -86,7 +86,7 @@ public class TestRdfMetadataFixtures extends RdfMetadataFixtures {
 
     public Model alternative_catalog3() {
         Model metadata = super.catalog3(alternativePersistentUrl,
-                getUri(super.repositoryMetadata(alternativePersistentUrl)));
+                getUri(super.fdpMetadata(alternativePersistentUrl)));
         ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;

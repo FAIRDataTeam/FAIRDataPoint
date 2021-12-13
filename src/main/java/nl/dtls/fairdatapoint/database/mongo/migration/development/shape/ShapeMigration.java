@@ -40,7 +40,9 @@ public class ShapeMigration implements Migration {
     public void runMigration() {
         shapeRepository.deleteAll();
         shapeRepository.save(shapeFixtures.resourceShape());
-        shapeRepository.save(shapeFixtures.repositoryShape());
+        shapeRepository.save(shapeFixtures.fdpShape());
+        shapeRepository.save(shapeFixtures.dataServiceShape());
+        shapeRepository.save(shapeFixtures.metadataServiceShape());
         shapeRepository.save(shapeFixtures.catalogShape());
         shapeRepository.save(shapeFixtures.datasetShape());
         shapeRepository.save(shapeFixtures.distributionShape());

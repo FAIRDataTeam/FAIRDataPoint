@@ -57,7 +57,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
         RequestEntity<Void> request = RequestEntity
                 .delete(url(resourceDefinition.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
@@ -75,14 +75,14 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
         createUserForbiddenTestDelete(client, url(resourceDefinition.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_resourceDefinition() {
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
         createUserForbiddenTestDelete(client, url(resourceDefinition.getUuid()));
     }
 

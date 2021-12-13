@@ -31,8 +31,10 @@ import org.springframework.http.HttpHeaders;
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.String.format;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
@@ -83,6 +85,27 @@ public class HttpUtil {
         } catch (MalformedURLException e) {
             throw new ValidationException("URL was not in the right format");
         }
+    }
+
+    public static URL getMetadataURL(String persistentUrl, String urlPrefix, String recordId) {
+        try {
+            if (urlPrefix.isEmpty()) {
+                return new URL(persistentUrl);
+            }
+            if (recordId.isEmpty()) {
+                throw new ValidationException("No metadata record identifier given");
+            }
+            return new URL(format("%s/%s/%s", persistentUrl, urlPrefix, recordId));
+        } catch (MalformedURLException e) {
+            throw new ValidationException("URL was not in the right format");
+        }
+    }
+
+    public static IRI getMetadataIRI(String persistentUrl, String urlPrefix, String recordId) {
+        return i(getMetadataURL(persistentUrl, urlPrefix, recordId).toString());
+    }
+    public static IRI generateNewMetadataIRI(String persistentUrl, String urlPrefix) {
+        return getMetadataIRI(persistentUrl, urlPrefix, UUID.randomUUID().toString());
     }
 
     public static IRI generateNewIRI(HttpServletRequest request, String persistentUrl) {

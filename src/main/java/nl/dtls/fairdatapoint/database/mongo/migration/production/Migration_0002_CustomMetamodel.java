@@ -27,6 +27,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
@@ -60,7 +61,7 @@ public class Migration_0002_CustomMetamodel {
 
     private Document repositoryDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c");
+        definition.append("uuid", KnownUUIDs.RD_REPOSITORY_UUID);
         definition.append("name", "Repository");
         definition.append("uriPrefix", "");
         definition.append("rdfType", "http://www.re3data.org/schema/3-0#Repository");
@@ -69,14 +70,14 @@ public class Migration_0002_CustomMetamodel {
                 "http://www.w3.org/ns/dcat#Resource"));
         definition.append("child", "http://www.re3data.org/schema/3-0#dataCatalog");
         definition.append("parentResourceDefinitionUuid", null);
-        definition.append("childResourceDefinitionUuid", "a0949e72-4466-4d53-8900-9436d1049a4b");
+        definition.append("childResourceDefinitionUuid", KnownUUIDs.RD_CATALOG_UUID);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 
     private Document catalogDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "a0949e72-4466-4d53-8900-9436d1049a4b");
+        definition.append("uuid", KnownUUIDs.RD_CATALOG_UUID);
         definition.append("name", "Catalog");
         definition.append("uriPrefix", "catalog");
         definition.append("rdfType", "http://www.w3.org/ns/dcat#Catalog");
@@ -84,15 +85,15 @@ public class Migration_0002_CustomMetamodel {
         definition.append("shaclTargetClasses", List.of("http://www.w3.org/ns/dcat#Catalog",
                 "http://www.w3.org/ns/dcat#Resource"));
         definition.append("child", "http://www.w3.org/ns/dcat#dataset");
-        definition.append("parentResourceDefinitionUuid", "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c");
-        definition.append("childResourceDefinitionUuid", "2f08228e-1789-40f8-84cd-28e3288c3604");
+        definition.append("parentResourceDefinitionUuid", KnownUUIDs.RD_REPOSITORY_UUID);
+        definition.append("childResourceDefinitionUuid", KnownUUIDs.RD_DATASET_UUID);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 
     private Document datasetDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "2f08228e-1789-40f8-84cd-28e3288c3604");
+        definition.append("uuid", KnownUUIDs.RD_DATASET_UUID);
         definition.append("name", "Dataset");
         definition.append("uriPrefix", "dataset");
         definition.append("rdfType", "http://www.w3.org/ns/dcat#Dataset");
@@ -100,15 +101,15 @@ public class Migration_0002_CustomMetamodel {
         definition.append("shaclTargetClasses", List.of("http://www.w3.org/ns/dcat#Dataset",
                 "http://www.w3.org/ns/dcat#Resource"));
         definition.append("child", "http://www.w3.org/ns/dcat#distribution");
-        definition.append("parentResourceDefinitionUuid", "a0949e72-4466-4d53-8900-9436d1049a4b");
-        definition.append("childResourceDefinitionUuid", "02c649de-c579-43bb-b470-306abdc808c7");
+        definition.append("parentResourceDefinitionUuid", KnownUUIDs.RD_CATALOG_UUID);
+        definition.append("childResourceDefinitionUuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 
     private Document distributionDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "02c649de-c579-43bb-b470-306abdc808c7");
+        definition.append("uuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
         definition.append("name", "Distribution");
         definition.append("uriPrefix", "distribution");
         definition.append("rdfType", "http://www.w3.org/ns/dcat#Distribution");
@@ -116,7 +117,7 @@ public class Migration_0002_CustomMetamodel {
         definition.append("shaclTargetClasses", List.of("http://www.w3.org/ns/dcat#Distribution",
                 "http://www.w3.org/ns/dcat#Resource"));
         definition.append("child", null);
-        definition.append("parentResourceDefinitionUuid", "2f08228e-1789-40f8-84cd-28e3288c3604");
+        definition.append("parentResourceDefinitionUuid", KnownUUIDs.RD_DATASET_UUID);
         definition.append("childResourceDefinitionUuid", null);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;

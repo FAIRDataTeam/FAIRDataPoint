@@ -45,7 +45,7 @@ public class ResourceDefinitionMigration implements Migration {
     public void runMigration() {
         resourceDefinitionRepository.deleteAll();
 
-        ResourceDefinition repositoryDef = resourceDefinitionFixtures.repositoryDefinition();
+        ResourceDefinition repositoryDef = resourceDefinitionFixtures.fdpDefinition();
         resourceDefinitionRepository.save(repositoryDef);
 
         ResourceDefinition catalogDef = resourceDefinitionFixtures.catalogDefinition();

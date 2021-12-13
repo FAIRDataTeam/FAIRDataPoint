@@ -1,0 +1,27 @@
+@prefix :         <http://fairdatapoint.org/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+@prefix r3d:      <http://www.re3data.org/schema/3-0#> .
+
+:RepositoryShape a sh:NodeShape ;
+  sh:targetClass r3d:Repository ;
+  sh:property [
+      sh:path r3d:startDate ;
+      sh:datatype xsd:date ;
+      sh:maxCount 1 ;
+    ] ,
+    [
+      sh:path r3d:lastUpdate ;
+      sh:datatype xsd:date ;
+      sh:maxCount 1 ;
+    ] ,
+    [
+      sh:path r3d:institution ;
+      sh:class r3d:Institution ;
+      sh:maxCount 1 ;
+    ] ,
+    [
+      sh:path r3d:institutionCountry ;
+      sh:nodeKind sh:IRI ;
+      sh:maxCount 1 ;
+    ] .

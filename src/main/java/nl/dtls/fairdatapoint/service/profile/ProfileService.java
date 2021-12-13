@@ -70,6 +70,7 @@ public class ProfileService {
             Resource resource = bn();
             modelBuilder.subject(resource);
             modelBuilder.add(RDF.TYPE, i(format("%s#ResourceDescriptor", PROFILE_PREFIX)));
+            modelBuilder.add(RDFS.LABEL, l(shape.getName()));
             modelBuilder.add(DCTERMS.FORMAT, i("https://w3id.org/mediatype/text/turtle"));
             modelBuilder.add(DCTERMS.CONFORMS_TO, i("https://www.w3.org/TR/shacl/"));
             modelBuilder.add(i(format("%shasRole", PROFILE_PREFIX)), i(format("%srole/Validation",

@@ -56,6 +56,11 @@ public class ResourceDefinitionValidator {
             uniquenessValidationFailed("urlPrefix", reqDto);
         }
 
+        // Check urlPrefix validity
+        if (!isValidPrefixUrl(reqDto.getUrlPrefix())) {
+            throw new ValidationException("URL prefix is not valid");
+        }
+
         // Check existence of connected entities
         for (ResourceDefinitionChild child : reqDto.getChildren()) {
             if (resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid()) == null) {
@@ -80,6 +85,10 @@ public class ResourceDefinitionValidator {
             }
             validateDependencyCycles(reqDto, rdChild.getChildren());
         }
+    }
+
+    private boolean isValidPrefixUrl(String urlPrefix) {
+        return urlPrefix.matches("[a-zA-Z0-9-_]*");
     }
 
 }
