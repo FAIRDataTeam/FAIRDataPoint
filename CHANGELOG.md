@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.12.1]
+
+### Changed
+
+- Forcing log4j (indirect dependency) to v2.15.0 due to [vulnerability](https://spring.io/blog/2021/12/10/log4j2-vulnerability-and-spring-boot)
+
 ## [1.12.0]
 
 ### Added
@@ -238,3 +244,5 @@ The first release of reference FAIR Data Point implementation.
 [1.9.0]: /../../tree/v1.9.0
 [1.10.0]: /../../tree/v1.10.0
 [1.11.0]: /../../tree/v1.11.0
+[1.12.0]: /../../tree/v1.12.0
+[1.12.1]: /../../tree/v1.12.1
