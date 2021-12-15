@@ -101,7 +101,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 400: Delete INTERNAL shape")
     public void res400_internal() {
         // GIVEN:
-        Shape shape = shapeFixtures.repositoryShape();
+        Shape shape = shapeFixtures.fdpShape();
         RequestEntity<Void> request = RequestEntity
                 .delete(url(shape.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)

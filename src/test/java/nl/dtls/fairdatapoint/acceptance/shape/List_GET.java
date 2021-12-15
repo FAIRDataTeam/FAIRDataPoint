@@ -66,12 +66,14 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<ShapeDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(5)));
+        assertThat(body.size(), is(equalTo(7)));
         Common.compare(shapeFixtures.resourceShape(), body.get(0));
-        Common.compare(shapeFixtures.repositoryShape(), body.get(1));
-        Common.compare(shapeFixtures.catalogShape(), body.get(2));
-        Common.compare(shapeFixtures.datasetShape(), body.get(3));
-        Common.compare(shapeFixtures.distributionShape(), body.get(4));
+        Common.compare(shapeFixtures.fdpShape(), body.get(1));
+        Common.compare(shapeFixtures.dataServiceShape(), body.get(2));
+        Common.compare(shapeFixtures.metadataServiceShape(), body.get(3));
+        Common.compare(shapeFixtures.catalogShape(), body.get(4));
+        Common.compare(shapeFixtures.datasetShape(), body.get(5));
+        Common.compare(shapeFixtures.distributionShape(), body.get(6));
     }
 
 }

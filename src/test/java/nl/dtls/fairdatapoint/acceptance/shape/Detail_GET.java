@@ -56,7 +56,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        Shape shape = shapeFixtures.repositoryShape();
+        Shape shape = shapeFixtures.fdpShape();
         RequestEntity<Void> request = RequestEntity
                 .get(url(shape.getUuid()))
                 .build();

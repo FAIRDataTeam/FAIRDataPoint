@@ -24,6 +24,6 @@ package nl.dtls.fairdatapoint.database.common.migration;
 
 public interface Migration {
 
-    void runMigration();
+    void runMigration() throws Exception;
 
 }

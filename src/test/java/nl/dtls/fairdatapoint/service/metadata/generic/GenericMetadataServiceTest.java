@@ -75,8 +75,8 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void retrieveNonExitingMetadataThrowsError() {
         // GIVEN:
-        IRI repositoryUri = getUri(testMetadataFixtures.repositoryMetadata());
-        IRI metadataUri = i(format("%s/distribution/non-existing", repositoryUri));
+        IRI fdpUri = getUri(testMetadataFixtures.fdpMetadata());
+        IRI metadataUri = i(format("%s/distribution/non-existing", fdpUri));
 
         // WHEN:
         ResourceNotFoundException exception = assertThrows(
@@ -123,7 +123,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithWrongParentURIThrowsError() {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
-        Model repository = testMetadataFixtures.repositoryMetadata();
+        Model repository = testMetadataFixtures.fdpMetadata();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setParent(metadata, getUri(metadata), getUri(repository));
 
@@ -134,7 +134,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         );
 
         // THEN:
-        assertThat(exception.getMessage(), is(equalTo("Parent is not of correct type (RD: Repository)")));
+        assertThat(exception.getMessage(), is(equalTo("Parent is not of correct type (RD: FAIR Data Point)")));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     public void updateParent() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
-        Model repository = testMetadataFixtures.repositoryMetadata();
+        Model repository = testMetadataFixtures.fdpMetadata();
         Model catalog = testMetadataFixtures.catalog1();
         Model dataset = testMetadataFixtures.c1_dataset1();
         Model distribution = testMetadataFixtures.c1_d1_distribution1();

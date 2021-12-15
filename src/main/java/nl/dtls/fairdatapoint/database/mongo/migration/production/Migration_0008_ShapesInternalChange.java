@@ -29,6 +29,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
@@ -45,12 +46,12 @@ public class Migration_0008_ShapesInternalChange {
         MongoCollection<Document> shapeCol = db.getCollection("shape");
         // DATASET
         shapeCol.updateOne(
-                Filters.eq("uuid", "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3"),
+                Filters.eq("uuid", KnownUUIDs.SHAPE_DATASET_UUID),
                 Updates.set("type", "CUSTOM")
         );
         // DISTRIBUTION
         shapeCol.updateOne(
-                Filters.eq("uuid", "ebacbf83-cd4f-4113-8738-d73c0735b0ab"),
+                Filters.eq("uuid", KnownUUIDs.SHAPE_DISTRIBUTION_UUID),
                 Updates.set("type", "CUSTOM")
         );
     }

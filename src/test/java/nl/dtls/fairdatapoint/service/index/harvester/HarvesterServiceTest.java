@@ -31,6 +31,7 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,12 +91,12 @@ public class HarvesterServiceTest {
         RdfMetadataFixtures fixtures = new RdfMetadataFixtures(new MetadataFactoryImpl());
 
         // Create repository
-        repository = fixtures.repositoryMetadata(repositoryUrl);
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.repositoryDefinition();
+        repository = fixtures.fdpMetadata(repositoryUrl);
+        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
 
         // Create catalog
         catalog = fixtures.catalog1(repositoryUrl, getUri(repository));
-        repository.add(i(repositoryUrl), R3D.DATACATALOG, i(catalogUrl));
+        repository.add(i(repositoryUrl), FDP.METADATACATALOG, i(catalogUrl));
     }
 
     @Test

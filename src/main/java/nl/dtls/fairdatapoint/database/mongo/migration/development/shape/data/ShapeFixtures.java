@@ -22,358 +22,141 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data;
 
+import lombok.SneakyThrows;
 import nl.dtls.fairdatapoint.entity.shape.Shape;
 import nl.dtls.fairdatapoint.entity.shape.ShapeType;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
+
 @Service
 public class ShapeFixtures {
 
-    public static final String RESOURCE_SHAPE_UUID = "6a668323-3936-4b53-8380-a4fd2ed082ee";
-
-    public static final String REPOSITORY_SHAPE_UUID = "a92958ab-a414-47e6-8e17-68ba96ba3a2b";
-
-    public static final String CATALOG_SHAPE_UUID = "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660";
-
-    public static final String DATASET_SHAPE_UUID = "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3";
-
-    public static final String DISTRIBUTION_SHAPE_UUID = "ebacbf83-cd4f-4113-8738-d73c0735b0ab";
-
+    @SneakyThrows
     public Shape resourceShape() {
+        String definition = loadClassResource("shape-resource.ttl", getClass());
         return new Shape(
                 null,
-                "6a668323-3936-4b53-8380-a4fd2ed082ee",
+                KnownUUIDs.SHAPE_RESOURCE_UUID,
                 "Resource",
                 false,
                 ShapeType.INTERNAL,
-                "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                        "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                        "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                        "@prefix foaf:     <http://xmlns.com/foaf/0.1/>.\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                        "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
-                        "\n" +
-                        ":ResourceShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass dcat:Resource ;\n" +
-                        "  sh:property [\n" +
-                        "    sh:path dct:title ;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    sh:minCount 1 ;\n" +
-                        "    sh:maxCount  1 ;\n" +
-                        "    dash:editor dash:TextFieldEditor ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:description ;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:TextAreaEditor ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:publisher ;\n" +
-                        "    sh:node :AgentShape ;\n" +
-                        "    sh:minCount 1 ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:BlankNodeEditor ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:hasVersion ;\n" +
-                        "    sh:name \"version\" ;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    sh:minCount 1 ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:TextFieldEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:language ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:license ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:rights ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ] .\n" +
-                        "\n" +
-                        ":AgentShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass foaf:Agent ;\n" +
-                        "  sh:property [\n" +
-                        "    sh:path foaf:name;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    sh:minCount 1 ;\n" +
-                        "    sh:maxCount  1 ;\n" +
-                        "    dash:editor dash:TextFieldEditor ;\n" +
-                        "  ] .",
+                definition,
                 Set.of("http://www.w3.org/ns/dcat#Resource")
         );
     }
 
-    public Shape repositoryShape() {
+    @SneakyThrows
+    public Shape fdpShape() {
+        String definition = loadClassResource("shape-fdp.ttl", getClass());
         return new Shape(
                 null,
-                "a92958ab-a414-47e6-8e17-68ba96ba3a2b",
-                "Repository",
+                KnownUUIDs.SHAPE_FDP_UUID,
+                "FAIR Data Point",
                 false,
                 ShapeType.INTERNAL,
-                "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                        "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                        "@prefix r3d:      <http://www.re3data.org/schema/3-0#> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                        "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n" +
-                        "\n" +
-                        ":RepositoryShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass r3d:Repository ;\n" +
-                        "  sh:property [\n" +
-                        "    sh:path dct:references ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path r3d:institution ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path r3d:startDate ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:DatePickerEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path r3d:lastUpdate ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:DatePickerEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path r3d:institutionCountry ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ] .\n",
-                Set.of("http://www.w3.org/ns/dcat#Repository")
+                definition,
+                Set.of("https://w3id.org/fdp/fdp-o#FAIRDataPoint")
         );
     }
 
-    public Shape catalogShape() {
+    @SneakyThrows
+    public Shape dataServiceShape() {
+        String definition = loadClassResource("shape-data-service.ttl", getClass());
         return new Shape(
                 null,
-                "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660",
+                KnownUUIDs.SHAPE_DATASERVICE_UUID,
+                "Data Service",
+                false,
+                ShapeType.INTERNAL,
+                definition,
+                Set.of("http://www.w3.org/ns/dcat#DataService")
+        );
+    }
+
+    @SneakyThrows
+    public Shape metadataServiceShape() {
+        String definition = loadClassResource("shape-metadata-service.ttl", getClass());
+        return new Shape(
+                null,
+                KnownUUIDs.SHAPE_METADATASERVICE_UUID,
+                "Metadata Service",
+                false,
+                ShapeType.INTERNAL,
+                definition,
+                Set.of("https://w3id.org/fdp/fdp-o#MetadataService")
+        );
+    }
+
+    @SneakyThrows
+    public Shape catalogShape() {
+        String definition = loadClassResource("shape-catalog.ttl", getClass());
+        return new Shape(
+                null,
+                KnownUUIDs.SHAPE_CATALOG_UUID,
                 "Catalog",
                 false,
                 ShapeType.INTERNAL,
-                "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                        "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                        "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                        "@prefix foaf:     <http://xmlns.com/foaf/0.1/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                        "\n" +
-                        ":CatalogShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass dcat:Catalog ;\n" +
-                        "  sh:property [\n" +
-                        "    sh:path dct:issued ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:modified ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path foaf:homePage ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:themeTaxonomy ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ] .\n",
+                definition,
                 Set.of("http://www.w3.org/ns/dcat#Catalog")
         );
     }
 
+    @SneakyThrows
     public Shape datasetShape() {
+        String definition = loadClassResource("shape-dataset.ttl", getClass());
         return new Shape(
                 null,
-                "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3",
+                KnownUUIDs.SHAPE_DATASET_UUID,
                 "Dataset",
                 false,
                 ShapeType.CUSTOM,
-                "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                        "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                        "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                        "\n" +
-                        ":DatasetShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass dcat:Dataset ;\n" +
-                        "  sh:property [\n" +
-                        "    sh:path dct:issued ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:DatePickerEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:modified ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:DatePickerEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ],  [\n" +
-                        "    sh:path dcat:theme ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:minCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:contactPoint ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:keyword ;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    dash:editor dash:TextFieldEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:landingPage ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "    dash:viewer dash:LabelViewer ;\n" +
-                        "  ] .\n",
+                definition,
                 Set.of("http://www.w3.org/ns/dcat#Dataset")
         );
     }
 
+    @SneakyThrows
     public Shape distributionShape() {
+        String definition = loadClassResource("shape-distribution.ttl", getClass());
         return new Shape(
                 null,
-                "ebacbf83-cd4f-4113-8738-d73c0735b0ab",
+                KnownUUIDs.SHAPE_DISTRIBUTION_UUID,
                 "Distribution",
                 false,
                 ShapeType.CUSTOM,
-                "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                        "@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n" +
-                        "@prefix dct:      <http://purl.org/dc/terms/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                        "\n" +
-                        ":DistributionShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass dcat:Distribution ;\n" +
-                        "  sh:property [\n" +
-                        "    sh:path dct:issued ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:DatePickerEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dct:modified ;\n" +
-                        "    sh:datatype xsd:dateTime ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:DatePickerEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:accessURL ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:downloadURL ;\n" +
-                        "    sh:nodeKind sh:IRI ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:URIEditor ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:mediaType ;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    sh:minCount 1 ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:TextFieldEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:format ;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:TextFieldEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ], [\n" +
-                        "    sh:path dcat:byteSize ;\n" +
-                        "    sh:nodeKind sh:Literal ;\n" +
-                        "    sh:maxCount 1 ;\n" +
-                        "    dash:editor dash:TextFieldEditor ;\n" +
-                        "    dash:viewer dash:LiteralViewer ;\n" +
-                        "  ] .",
+                definition,
                 Set.of("http://www.w3.org/ns/dcat#Distribution")
         );
     }
 
+    @SneakyThrows
     public Shape customShape() {
+        String definition = loadClassResource("shape-custom.ttl", getClass());
         return new Shape(
                 null,
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
                 "Custom Shape",
                 false,
                 ShapeType.CUSTOM,
-                "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                        "@prefix ex:     <http://example.org/> .\n" +
-                        "\n" +
-                        ":CustomShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass ex:Dog ;\n" +
-                        "  sh:property [\n" +
-                        "      sh:path ex:identifier ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      dash:editor dash:URIEditor ;\n" +
-                        "      dash:viewer dash:LabelViewer ;\n" +
-                        "    ] .",
+                definition,
                 Set.of("http://example.org/Dog")
         );
     }
 
-    public Shape customShapeEdited() {
+    @SneakyThrows
+    public Shape customShapeEdited(){
+        String definition = loadClassResource("shape-custom-edited.ttl", getClass());
         return new Shape(
                 null,
                 customShape().getUuid(),
                 customShape().getName(),
                 false,
                 customShape().getType(),
-                "@prefix :         <http://fairdatapoint.org/> .\n" +
-                        "@prefix sh:       <http://www.w3.org/ns/shacl#> .\n" +
-                        "@prefix dash:     <http://datashapes.org/dash#> .\n" +
-                        "@prefix ex:     <http://example.org/> .\n" +
-                        "\n" +
-                        ":CustomShape a sh:NodeShape ;\n" +
-                        "  sh:targetClass ex:Dog ;\n" +
-                        "  sh:property [\n" +
-                        "      sh:path ex:identifier ;\n" +
-                        "      sh:nodeKind sh:IRI ;\n" +
-                        "      dash:editor dash:URIEditor ;\n" +
-                        "      dash:viewer dash:LabelViewer ;\n" +
-                        "    ],\n" +
-                        "    [\n" +
-                        "      sh:path ex:name ;\n" +
-                        "      sh:nodeKind sh:Literal ;\n" +
-                        "      dash:editor dash:TextFieldEditor ;\n" +
-                        "      dash:viewer dash:LiteralViewer ;\n" +
-                        "    ] .",
+                definition,
                 Set.of("http://example.org/Dog")
         );
     }

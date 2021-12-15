@@ -35,7 +35,7 @@ public class MetadataFixtures {
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
-    public Metadata repositoryMetadata() {
+    public Metadata fdpMetadata() {
         return
                 new Metadata(
                         null,
