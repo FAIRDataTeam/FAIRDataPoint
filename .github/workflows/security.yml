@@ -96,6 +96,8 @@ jobs:
         uses: snyk/actions/maven@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
 
   snyk-docker:
     name: Snyk (Docker)
@@ -121,7 +123,9 @@ jobs:
 
       - name: Perform Snyk Check (Docker)
         uses: snyk/actions/docker@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: fdp:snyk-test
+          args: --severity-threshold=high
