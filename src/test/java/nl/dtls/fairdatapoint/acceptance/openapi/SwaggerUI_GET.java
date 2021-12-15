@@ -48,7 +48,7 @@ public class SwaggerUI_GET extends WebIntegrationTest {
     }
 
     private URI redirectedUrl() {
-        return URI.create("/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config");
+        return URI.create("/swagger-ui/index.html");
     }
 
     @Test
@@ -66,7 +66,7 @@ public class SwaggerUI_GET extends WebIntegrationTest {
         // THEN
         assertThat("Response code is FOUND", result.getStatusCode(), is(equalTo(HttpStatus.FOUND)));
         assertThat("Contains Location header", result.getHeaders().getLocation(), is(notNullValue()));
-        assertThat("Contains correct Location header", result.getHeaders().getLocation().toString().endsWith(redirectedUrl().toString()), is(Boolean.TRUE));
+        assertThat("Contains correct Location header", result.getHeaders().getLocation().toString(), is(equalTo(redirectedUrl().toString())));
     }
 
     @Test
