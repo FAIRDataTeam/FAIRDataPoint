@@ -45,8 +45,9 @@ public class Detail_DELETE extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 404")
-    public void res404() {
+    @DisplayName("HTTP 405")
+    public void res405() {
+        // Repository metadata exist but cannot be deleted (only updated and retrieved)
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
                 .delete(url())
@@ -61,7 +62,7 @@ public class Detail_DELETE extends WebIntegrationTest {
         ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NOT_FOUND)));
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.METHOD_NOT_ALLOWED)));
     }
 
 }

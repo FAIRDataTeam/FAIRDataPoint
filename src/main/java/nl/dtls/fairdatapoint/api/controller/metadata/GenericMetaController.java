@@ -42,21 +42,16 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Optional;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
-import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
+import static nl.dtls.fairdatapoint.util.HttpUtil.getMetadataIRI;
 import static nl.dtls.fairdatapoint.util.RdfUtil.getStringObjectBy;
-import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Metadata")
@@ -80,18 +75,21 @@ public class GenericMetaController {
     private ResourceDefinitionService resourceDefinitionService;
 
     @Operation(hidden = true)
-    @RequestMapping(path = "**/meta", method = RequestMethod.GET)
-    public MetaDTO getMeta(HttpServletRequest request) throws MetadataServiceException {
+    @GetMapping(path = {"meta", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/meta"})
+    public MetaDTO getMeta(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId
+    ) throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
+        String urlPrefix = oUrlPrefix.orElse("");
+        String recordId = oRecordId.orElse("");
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get resource definition
         ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(uri);
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model entity = metadataService.retrieve(entityUri);
 
         // 4. Get member
@@ -124,15 +122,19 @@ public class GenericMetaController {
     }
 
     @Operation(hidden = true)
-    @RequestMapping(path = "**/meta/state", method = RequestMethod.PUT)
-    public MetaStateChangeDTO putMetaState(HttpServletRequest request, @RequestBody @Valid MetaStateChangeDTO reqDto) throws MetadataServiceException {
+    @PutMapping(path = {"meta/state", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/meta/state"})
+    public MetaStateChangeDTO putMetaState(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId,
+            @RequestBody @Valid MetaStateChangeDTO reqDto
+    ) throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
+        String urlPrefix = oUrlPrefix.orElse("");
+        String recordId = oRecordId.orElse("");
         MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI entityUri = removeLastPartOfIRI(removeLastPartOfIRI(uri));
+        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model model = metadataService.retrieve(entityUri);
 
         // 3. Get state

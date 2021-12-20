@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.database.mongo.migration.development.user.data;
 
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class UserFixtures {
 
     public User admin() {
         return new User(
-                "95589e50-d261-492b-8852-9324e9a66a42",
+                KnownUUIDs.USER_ADMIN_UUID,
                 "Admin",
                 "von Universe",
                 adminEmail,
@@ -51,7 +52,7 @@ public class UserFixtures {
 
     public User albert() {
         return new User(
-                "7e64818d-6276-46fb-8bb1-732e6e09f7e9",
+                KnownUUIDs.USER_ALBERT_UUID,
                 "Albert",
                 "Einstein",
                 albertEmail,
@@ -64,7 +65,7 @@ public class UserFixtures {
 
     public User nikola() {
         return new User(
-                "b5b92c69-5ed9-4054-954d-0121c29b6800",
+                KnownUUIDs.USER_NIKOLA_UUID,
                 "Nikola",
                 "Tesla",
                 nikolaEmail,
@@ -77,7 +78,7 @@ public class UserFixtures {
 
     public User isaac() {
         return new User(
-                "8d1a4c06-bb0e-4d03-a01f-14fa49bbc152",
+                KnownUUIDs.USER_ISAAC_UUID,
                 "Isaac",
                 "Newton",
                 isaacEmail,

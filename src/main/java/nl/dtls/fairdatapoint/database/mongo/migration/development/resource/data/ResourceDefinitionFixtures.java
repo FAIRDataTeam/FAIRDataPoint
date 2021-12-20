@@ -22,9 +22,9 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
 import nl.dtls.fairdatapoint.entity.resource.*;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import nl.dtls.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.stereotype.Service;
 
@@ -33,28 +33,24 @@ import java.util.List;
 @Service
 public class ResourceDefinitionFixtures {
 
-    public static String REPOSITORY_DEFINITION_UUID = "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c";
-
-    public static String CATALOG_DEFINITION_UUID = "a0949e72-4466-4d53-8900-9436d1049a4b";
-
-    public static String DATASET_DEFINITION_UUID = "2f08228e-1789-40f8-84cd-28e3288c3604";
-
-    public static String DISTRIBUTION_DEFINITION_UUID = "02c649de-c579-43bb-b470-306abdc808c7";
-
     public static String ONTOLOGY_DEFINITION_UUID = "4bc19f45-845d-48d6-ade7-ac2664563f60";
 
-    public ResourceDefinition repositoryDefinition() {
+    public ResourceDefinition fdpDefinition() {
         return new ResourceDefinition(
-                REPOSITORY_DEFINITION_UUID,
-                "Repository",
+                KnownUUIDs.RD_FDP_UUID,
+                "FAIR Data Point",
                 "",
-                List.of(ShapeFixtures.RESOURCE_SHAPE_UUID, ShapeFixtures.REPOSITORY_SHAPE_UUID),
+                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID,
+                        KnownUUIDs.SHAPE_DATASERVICE_UUID,
+                        KnownUUIDs.SHAPE_METADATASERVICE_UUID,
+                        KnownUUIDs.SHAPE_FDP_UUID
+                ),
                 List.of(new ResourceDefinitionChild(
-                        CATALOG_DEFINITION_UUID,
-                        R3D.DATACATALOG.stringValue(),
+                        KnownUUIDs.RD_CATALOG_UUID,
+                        FDP.METADATACATALOG.stringValue(),
                         new ResourceDefinitionChildListView(
                                 "Catalogs",
-                                "http://www.w3.org/ns/dcat#themeTaxonomy",
+                                DCAT.THEME_TAXONOMY.stringValue(),
                                 List.of()
                         )
                 )),
@@ -64,16 +60,16 @@ public class ResourceDefinitionFixtures {
 
     public ResourceDefinition catalogDefinition() {
         return new ResourceDefinition(
-                CATALOG_DEFINITION_UUID,
+                KnownUUIDs.RD_CATALOG_UUID,
                 "Catalog",
                 "catalog",
-                List.of(ShapeFixtures.RESOURCE_SHAPE_UUID, ShapeFixtures.CATALOG_SHAPE_UUID),
+                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID, KnownUUIDs.SHAPE_CATALOG_UUID),
                 List.of(new ResourceDefinitionChild(
-                        DATASET_DEFINITION_UUID,
+                        KnownUUIDs.RD_DATASET_UUID,
                         DCAT.HAS_DATASET.stringValue(),
                         new ResourceDefinitionChildListView(
                                 "Datasets",
-                                "http://www.w3.org/ns/dcat#theme",
+                                DCAT.THEME.stringValue(),
                                 List.of()
                         )
                 )),
@@ -83,17 +79,17 @@ public class ResourceDefinitionFixtures {
 
     public ResourceDefinition datasetDefinition() {
         return new ResourceDefinition(
-                DATASET_DEFINITION_UUID,
+                KnownUUIDs.RD_DATASET_UUID,
                 "Dataset",
                 "dataset",
-                List.of(ShapeFixtures.RESOURCE_SHAPE_UUID, ShapeFixtures.DATASET_SHAPE_UUID),
+                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID, KnownUUIDs.SHAPE_DATASET_UUID),
                 List.of(new ResourceDefinitionChild(
-                        DISTRIBUTION_DEFINITION_UUID,
+                        KnownUUIDs.RD_DISTRIBUTION_UUID,
                         DCAT.HAS_DISTRIBUTION.stringValue(),
                         new ResourceDefinitionChildListView("Distributions", null, List.of(
                                 new ResourceDefinitionChildListViewMetadata(
                                         "Media Type",
-                                        "http://www.w3.org/ns/dcat#mediaType"
+                                        DCAT.MEDIA_TYPE.stringValue()
                                 )
                         ))
                 )),
@@ -103,14 +99,14 @@ public class ResourceDefinitionFixtures {
 
     public ResourceDefinition distributionDefinition() {
         return new ResourceDefinition(
-                DISTRIBUTION_DEFINITION_UUID,
+                KnownUUIDs.RD_DISTRIBUTION_UUID,
                 "Distribution",
                 "distribution",
-                List.of(ShapeFixtures.RESOURCE_SHAPE_UUID, ShapeFixtures.DISTRIBUTION_SHAPE_UUID),
+                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID, KnownUUIDs.SHAPE_DISTRIBUTION_UUID),
                 List.of(),
                 List.of(
-                        new ResourceDefinitionLink("Access online", "http://www.w3.org/ns/dcat#accessURL"),
-                        new ResourceDefinitionLink("Download", "http://www.w3.org/ns/dcat#downloadURL")
+                        new ResourceDefinitionLink("Access online", DCAT.ACCESS_URL.stringValue()),
+                        new ResourceDefinitionLink("Download", DCAT.DOWNLOAD_URL.stringValue())
                 )
         );
     }
@@ -120,7 +116,7 @@ public class ResourceDefinitionFixtures {
                 ONTOLOGY_DEFINITION_UUID,
                 "Ontology",
                 "ontology",
-                List.of(ShapeFixtures.RESOURCE_SHAPE_UUID),
+                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID),
                 List.of(),
                 List.of()
         );

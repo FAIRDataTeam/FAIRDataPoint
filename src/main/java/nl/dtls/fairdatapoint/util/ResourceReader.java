@@ -22,6 +22,8 @@
  */
 package nl.dtls.fairdatapoint.util;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -54,4 +56,10 @@ public class ResourceReader {
         return resourceLoader.getResource(format("classpath:%s", name));
     }
 
+    public static String loadClassResource(String name, Class cls) throws Exception {
+        return Resources.toString(
+                cls.getResource(name),
+                Charsets.UTF_8
+        );
+    }
 }

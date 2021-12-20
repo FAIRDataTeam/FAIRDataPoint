@@ -60,7 +60,7 @@ public class RdfIOUtil {
                 .map(rdfType -> getSubjectBy(oldModel, RDF.TYPE, i(rdfType)))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new ValidationException("Validation failed (no rdf:type was provided"));
+                .orElseThrow(() -> new ValidationException("Validation failed (no rdf:type was provided)"));
         // - sanitize statements
         List<Statement> sanitizedStatements =
                 new ArrayList<>(oldModel)

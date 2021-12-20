@@ -59,7 +59,7 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     private String reqDto() {
-        Model repository = testMetadataFixtures.repositoryMetadata();
+        Model repository = testMetadataFixtures.fdpMetadata();
         IRI uri = getUri(repository);
         setTitle(repository, uri, l("EDITED: Some title"));
         setDescription(repository, uri, l("EDITED: Some description"));

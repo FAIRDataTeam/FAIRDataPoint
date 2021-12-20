@@ -96,7 +96,6 @@ public class JwtService {
             Jws<Claims> claims = parser.parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            System.out.println(e);
             throw new UnauthorizedException("Expired or invalid JWT token");
         }
     }

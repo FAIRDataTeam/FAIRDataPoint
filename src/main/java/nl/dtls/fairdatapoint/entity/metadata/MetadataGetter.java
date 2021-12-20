@@ -117,7 +117,7 @@ public class MetadataGetter {
     //  Children
     // ------------------------------------------------------------------------------------------------------------
     public static List<IRI> getCatalogs(Model metadata) {
-        return getChildren(metadata, R3D.DATACATALOG);
+        return getChildren(metadata, FDP.METADATACATALOG);
     }
 
     public static List<IRI> getDatasets(Model metadata) {

@@ -1,0 +1,6 @@
+@prefix :         <http://fairdatapoint.org/> .
+@prefix fdp:      <https://w3id.org/fdp/fdp-o#> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+
+:MetadataServiceShape a sh:NodeShape ;
+  sh:targetClass fdp:MetadataService .

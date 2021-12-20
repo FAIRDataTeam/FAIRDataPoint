@@ -5,3 +5,13 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "develop"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "develop"
+    labels:
+      - "dependencies"

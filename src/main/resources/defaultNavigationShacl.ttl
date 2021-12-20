@@ -3,11 +3,19 @@
 @prefix r3d:      <http://www.re3data.org/schema/3-0#> .
 @prefix dcat:     <http://www.w3.org/ns/dcat#> .
 @prefix dct:      <http://purl.org/dc/terms/> .
+@prefix fdp:      <https://w3id.org/fdp/fdp-o#> .
 
 :repoNavShape a sh:NodeShape ;
     sh:targetClass r3d:Repository ;
     sh:property [
                     sh:path r3d:dataCatalog ;
+                    sh:node :catNavShape ;
+                ] .
+
+:fdpNavShape a sh:NodeShape ;
+    sh:targetClass fdp:FAIRDataPoint ;
+    sh:property [
+                    sh:path fdp:metadataCatalog ;
                     sh:node :catNavShape ;
                 ] .
 
