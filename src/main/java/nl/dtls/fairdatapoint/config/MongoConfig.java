@@ -22,9 +22,10 @@
  */
 package nl.dtls.fairdatapoint.config;
 
-import com.github.cloudyrock.mongock.config.LegacyMigration;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
-import com.github.cloudyrock.spring.v5.MongockSpring5;
+import io.mongock.api.config.LegacyMigration;
+import io.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
+import io.mongock.runner.springboot.MongockSpringboot;
+import io.mongock.runner.springboot.base.MongockInitializingBeanRunner;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,16 +48,16 @@ public class MongoConfig {
     private ResourceDefinitionTargetClassesCache targetClassesCache;
 
     @Bean("mongockRunner")
-    public MongockSpring5.MongockApplicationRunner mongockApplicationRunner(
+    public MongockInitializingBeanRunner mongockApplicationRunner(
             ApplicationContext springContext,
             MongoTemplate mongoTemplate) {
-        return MongockSpring5.builder()
+        return MongockSpringboot.builder()
                 .setDriver(SpringDataMongoV3Driver.withDefaultLock(mongoTemplate))
-                .addChangeLogsScanPackage("nl.dtls.fairdatapoint.database.mongo.migration.production")
+                .addMigrationScanPackage("nl.dtls.fairdatapoint.database.mongo.migration.production")
                 .setSpringContext(springContext)
                 .setLegacyMigration(new LegacyMigration("dbchangelog"))
                 .addDependency(ResourceDefinitionCache.class, resourceDefinitionCache)
                 .addDependency(ResourceDefinitionTargetClassesCache.class, targetClassesCache)
-                .buildApplicationRunner();
+                .buildInitializingBeanRunner();
     }
 }

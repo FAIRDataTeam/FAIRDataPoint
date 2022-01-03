@@ -56,8 +56,7 @@
 
         <!-- Core -->
         <springdoc.version>1.6.3</springdoc.version>
-        <mongock.version>4.3.8</mongock.version>
-        <mongodb.driver-sync.version>4.2.3</mongodb.driver-sync.version>
+        <mongock.version>5.0.34</mongock.version>
         <mongodb.spring-data.v3.version>3.3.0</mongodb.spring-data.v3.version>
         <rdf4j.version>3.7.4</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
@@ -105,7 +104,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.cloudyrock.mongock</groupId>
+                <groupId>io.mongock</groupId>
                 <artifactId>mongock-bom</artifactId>
                 <version>${mongock.version}</version>
                 <type>pom</type>
@@ -180,17 +179,12 @@
         <!--   Mongock          -->
         <!-- ////////////////// -->
         <dependency>
-            <groupId>com.github.cloudyrock.mongock</groupId>
-            <artifactId>mongock-spring-v5</artifactId>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongock-springboot</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.cloudyrock.mongock</groupId>
+            <groupId>io.mongock</groupId>
             <artifactId>mongodb-springdata-v3-driver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-sync</artifactId>
-            <version>${mongodb.driver-sync.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
