@@ -24,6 +24,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Missing `xsd` prefix in some default shapes
 
 
+## [1.12.4]
+
+### Changed
+
+- Forcing log4j (indirect dependency) to v2.17.1 due to [CVE-2021-44832](https://logging.apache.org/log4j/2.x/)
+
 ## [1.12.3]
 
 ### Changed
@@ -277,3 +283,4 @@ The first release of reference FAIR Data Point implementation.
 [1.12.1]: /../../tree/v1.12.1
 [1.12.2]: /../../tree/v1.12.2
 [1.12.3]: /../../tree/v1.12.3
+[1.12.4]: /../../tree/v1.12.4
