@@ -30,6 +30,7 @@ import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,6 +56,7 @@ public class JwtService {
     @Autowired
     private UserRepository userRepository;
 
+    @Lazy
     @Autowired
     private AuthenticationManager authenticationManager;
 
