@@ -55,7 +55,7 @@
         <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Core -->
-        <springdoc.version>1.6.5</springdoc.version>
+        <springdoc.version>1.6.6</springdoc.version>
         <mongock.version>5.0.35</mongock.version>
         <mongodb.spring-data.v3.version>3.3.1</mongodb.spring-data.v3.version>
         <rdf4j.version>3.7.4</rdf4j.version>
