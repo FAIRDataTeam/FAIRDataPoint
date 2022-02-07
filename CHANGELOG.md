@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+
+## [1.13.0]
+
 ### Added
 
 - Profile resources contain `rdfs:label` with Shape name
@@ -22,7 +25,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Missing `xsd` prefix in some default shapes
-
 
 ## [1.12.4]
 
@@ -284,3 +286,4 @@ The first release of reference FAIR Data Point implementation.
 [1.12.2]: /../../tree/v1.12.2
 [1.12.3]: /../../tree/v1.12.3
 [1.12.4]: /../../tree/v1.12.4
+[1.13.0]: /../../tree/v1.13.0
