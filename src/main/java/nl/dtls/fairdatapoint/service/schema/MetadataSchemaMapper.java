@@ -20,71 +20,71 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.shape;
+package nl.dtls.fairdatapoint.service.schema;
 
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeRemoteDTO;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
-import nl.dtls.fairdatapoint.entity.shape.ShapeType;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ShapeMapper {
+public class MetadataSchemaMapper {
 
-    public ShapeDTO toDTO(Shape shape) {
+    public MetadataSchemaDTO toDTO(MetadataSchema metadataSchema) {
         return
-                new ShapeDTO(
-                        shape.getUuid(),
-                        shape.getName(),
-                        shape.isPublished(),
-                        shape.getType(),
-                        shape.getDefinition(),
-                        shape.getTargetClasses().stream().sorted().toList()
+                new MetadataSchemaDTO(
+                        metadataSchema.getUuid(),
+                        metadataSchema.getName(),
+                        metadataSchema.isPublished(),
+                        metadataSchema.getType(),
+                        metadataSchema.getDefinition(),
+                        metadataSchema.getTargetClasses().stream().sorted().toList()
                 );
     }
 
-    public Shape fromChangeDTO(ShapeChangeDTO dto, String uuid) {
+    public MetadataSchema fromChangeDTO(MetadataSchemaChangeDTO dto, String uuid) {
         return
-                new Shape(
+                new MetadataSchema(
                         null,
                         uuid,
                         dto.getName(),
                         dto.isPublished(),
-                        ShapeType.CUSTOM,
+                        MetadataSchemaType.CUSTOM,
                         dto.getDefinition(),
-                        ShapeShaclUtils.extractTargetClasses(dto.getDefinition())
+                        MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition())
                 );
 
     }
 
-    public Shape fromChangeDTO(ShapeChangeDTO dto, Shape shape) {
+    public MetadataSchema fromChangeDTO(MetadataSchemaChangeDTO dto, MetadataSchema schema) {
         return
-                shape
+                schema
                         .toBuilder()
                         .name(dto.getName())
                         .published(dto.isPublished())
                         .definition(dto.getDefinition())
-                        .targetClasses(ShapeShaclUtils.extractTargetClasses(dto.getDefinition()))
+                        .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition()))
                         .build();
     }
 
-    public ShapeRemoteDTO toRemoteDTO(String fdpUrl, ShapeDTO shape) {
+    public MetadataSchemaRemoteDTO toRemoteDTO(String fdpUrl, MetadataSchemaDTO schema) {
         return
-                new ShapeRemoteDTO(
+                new MetadataSchemaRemoteDTO(
                         fdpUrl,
-                        shape.getUuid(),
-                        shape.getName(),
-                        shape.getDefinition()
+                        schema.getUuid(),
+                        schema.getName(),
+                        schema.getDefinition()
                 );
     }
 
-    public ShapeChangeDTO fromRemoteDTO(ShapeRemoteDTO shape) {
+    public MetadataSchemaChangeDTO fromRemoteDTO(MetadataSchemaRemoteDTO schema) {
         return
-                new ShapeChangeDTO(
-                        shape.getName(),
+                new MetadataSchemaChangeDTO(
+                        schema.getName(),
                         false,
-                        shape.getDefinition()
+                        schema.getDefinition()
                 );
     }
 }

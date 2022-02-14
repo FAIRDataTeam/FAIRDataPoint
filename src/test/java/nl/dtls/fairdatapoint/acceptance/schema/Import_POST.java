@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeRemoteDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ShapeRepository;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,38 +44,38 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-@DisplayName("GET /shapes/import")
+@DisplayName("GET /metadata-schemas/import")
 public class Import_POST extends WebIntegrationTest {
 
     @Autowired
-    private ShapeRepository shapeRepository;
+    private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private MetadataSchemaFixtures metadataSchemaFixtures;
 
-    private final ParameterizedTypeReference<List<ShapeDTO>> responseType =
+    private final ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType =
             new ParameterizedTypeReference<>() {
             };
 
     private URI url() {
-        return URI.create("/shapes/import");
+        return URI.create("/metadata-schemas/import");
     }
 
-    private ShapeRemoteDTO shapeRemoteDTO1() {
-        return new ShapeRemoteDTO(
+    private MetadataSchemaRemoteDTO schemaRemoteDTO1() {
+        return new MetadataSchemaRemoteDTO(
                 "http://example.com",
                 UUID.randomUUID().toString(),
-                shapeFixtures.customShape().getName(),
-                shapeFixtures.customShape().getDefinition()
+                metadataSchemaFixtures.customSchema().getName(),
+                metadataSchemaFixtures.customSchema().getDefinition()
         );
     }
 
-    private ShapeRemoteDTO shapeRemoteDTO2() {
-        return new ShapeRemoteDTO(
+    private MetadataSchemaRemoteDTO schemaRemoteDTO2() {
+        return new MetadataSchemaRemoteDTO(
                 "http://example.com",
                 UUID.randomUUID().toString(),
-                shapeFixtures.customShapeEdited().getName(),
-                shapeFixtures.customShapeEdited().getDefinition()
+                metadataSchemaFixtures.customSchemaEdited().getName(),
+                metadataSchemaFixtures.customSchemaEdited().getDefinition()
         );
     }
 
@@ -83,8 +83,8 @@ public class Import_POST extends WebIntegrationTest {
     @DisplayName("HTTP 200: empty import")
     public void res200_emptyImport() {
         // GIVEN: prepare data
-        shapeRepository.deleteAll();
-        List<ShapeRemoteDTO> reqDTOs = Collections.emptyList();
+        metadataSchemaRepository.deleteAll();
+        List<MetadataSchemaRemoteDTO> reqDTOs = Collections.emptyList();
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -94,22 +94,22 @@ public class Import_POST extends WebIntegrationTest {
                 .body(reqDTOs);
 
         // WHEN:
-        ResponseEntity<List<ShapeDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Result is an empty list", result.getBody().size(), is(equalTo(0)));
-        assertThat("Shape repository is empty", shapeRepository.count(), is(equalTo(0L)));
+        assertThat("Metadata schema repository is empty", metadataSchemaRepository.count(), is(equalTo(0L)));
     }
 
     @Test
     @DisplayName("HTTP 200: single import")
     public void res200_singleImport() {
         // GIVEN: prepare data
-        shapeRepository.deleteAll();
-        ShapeRemoteDTO shape = shapeRemoteDTO1();
-        List<ShapeRemoteDTO> reqDTOs = Collections.singletonList(shape);
+        metadataSchemaRepository.deleteAll();
+        MetadataSchemaRemoteDTO schema = schemaRemoteDTO1();
+        List<MetadataSchemaRemoteDTO> reqDTOs = Collections.singletonList(schema);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -119,23 +119,23 @@ public class Import_POST extends WebIntegrationTest {
                 .body(reqDTOs);
 
         // WHEN:
-        ResponseEntity<List<ShapeDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Result contains one shape", result.getBody().size(), is(equalTo(1)));
-        assertThat("Shape is in the shape repository", shapeRepository.count(), is(equalTo(1L)));
+        assertThat("Result contains one schema", result.getBody().size(), is(equalTo(1)));
+        assertThat("Schema is in the metadata schema repository", metadataSchemaRepository.count(), is(equalTo(1L)));
     }
 
     @Test
     @DisplayName("HTTP 200: multiple import")
     public void res200_multipleImport() {
         // GIVEN: prepare data
-        shapeRepository.deleteAll();
-        ShapeRemoteDTO shape1 = shapeRemoteDTO1();
-        ShapeRemoteDTO shape2 = shapeRemoteDTO2();
-        List<ShapeRemoteDTO> reqDTOs = Arrays.asList(shape1, shape2);
+        metadataSchemaRepository.deleteAll();
+        MetadataSchemaRemoteDTO schema1 = schemaRemoteDTO1();
+        MetadataSchemaRemoteDTO schema2 = schemaRemoteDTO2();
+        List<MetadataSchemaRemoteDTO> reqDTOs = Arrays.asList(schema1, schema2);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -145,22 +145,22 @@ public class Import_POST extends WebIntegrationTest {
                 .body(reqDTOs);
 
         // WHEN:
-        ResponseEntity<List<ShapeDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Result contains one shape", result.getBody().size(), is(equalTo(2)));
-        assertThat("Shape is in the shape repository", shapeRepository.count(), is(equalTo(2L)));
+        assertThat("Result contains one schema", result.getBody().size(), is(equalTo(2)));
+        assertThat("Schema is in the metadata schema repository", metadataSchemaRepository.count(), is(equalTo(2L)));
     }
 
     @Test
     @DisplayName("HTTP 403: no token")
     public void res403_noToken() {
         // GIVEN: prepare data
-        shapeRepository.deleteAll();
-        ShapeRemoteDTO shape = shapeRemoteDTO1();
-        List<ShapeRemoteDTO> reqDTOs = Collections.singletonList(shape);
+        metadataSchemaRepository.deleteAll();
+        MetadataSchemaRemoteDTO schema = schemaRemoteDTO1();
+        List<MetadataSchemaRemoteDTO> reqDTOs = Collections.singletonList(schema);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -173,17 +173,17 @@ public class Import_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat("Shape repository stays empty", shapeRepository.count(), is(equalTo(0L)));
+        assertThat("Metadata schema repository stays empty", metadataSchemaRepository.count(), is(equalTo(0L)));
     }
 
     @Test
     @DisplayName("HTTP 403: non-admin token")
     public void res403_nonAdminToken() {
         // GIVEN: prepare data
-        shapeRepository.deleteAll();
-        ShapeRemoteDTO shape1 = shapeRemoteDTO1();
-        ShapeRemoteDTO shape2 = shapeRemoteDTO2();
-        List<ShapeRemoteDTO> reqDTOs = Arrays.asList(shape1, shape2);
+        metadataSchemaRepository.deleteAll();
+        MetadataSchemaRemoteDTO schema1 = schemaRemoteDTO1();
+        MetadataSchemaRemoteDTO schema2 = schemaRemoteDTO2();
+        List<MetadataSchemaRemoteDTO> reqDTOs = Arrays.asList(schema1, schema2);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -197,6 +197,6 @@ public class Import_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat("Shape repository stays empty", shapeRepository.count(), is(equalTo(0L)));
+        assertThat("Metadata schema repository stays empty", metadataSchemaRepository.count(), is(equalTo(0L)));
     }
 }

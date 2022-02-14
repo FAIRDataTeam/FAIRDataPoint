@@ -37,7 +37,7 @@ public class ResourceDefinitionMapper {
                 uuid,
                 dto.getName(),
                 dto.getUrlPrefix(),
-                dto.getShapeUuids(),
+                dto.getMetadataSchemaUuids(),
                 dto.getChildren(),
                 dto.getExternalLinks());
     }
@@ -46,7 +46,7 @@ public class ResourceDefinitionMapper {
         return new ResourceDefinitionChangeDTO(
                 rd.getName(),
                 rd.getUrlPrefix(),
-                rd.getShapeUuids(),
+                rd.getMetadataSchemaUuids(),
                 rd.getChildren(),
                 rd.getExternalLinks());
     }
@@ -56,7 +56,7 @@ public class ResourceDefinitionMapper {
                 rd.getUuid(),
                 rd.getName(),
                 rd.getUrlPrefix(),
-                rd.getShapeUuids(),
+                rd.getMetadataSchemaUuids(),
                 targetClassUris,
                 rd.getChildren(),
                 rd.getExternalLinks()

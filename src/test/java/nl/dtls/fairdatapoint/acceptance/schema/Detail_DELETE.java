@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ShapeRepository;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,27 +45,27 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("DELETE /shapes/:shapeUuid")
+@DisplayName("DELETE /metadata-schemas/:schemaUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
     private URI url(String uuid) {
-        return URI.create(format("/shapes/%s", uuid));
+        return URI.create(format("/metadata-schemas/%s", uuid));
     }
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private MetadataSchemaFixtures metadataSchemaFixtures;
 
     @Autowired
-    private ShapeRepository shapeRepository;
+    private MetadataSchemaRepository metadataSchemaRepository;
 
     @Test
     @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        Shape shape = shapeFixtures.customShape();
-        shapeRepository.save(shape);
+        MetadataSchema metadataSchema = metadataSchemaFixtures.customSchema();
+        metadataSchemaRepository.save(metadataSchema);
         RequestEntity<Void> request = RequestEntity
-                .delete(url(shape.getUuid()))
+                .delete(url(metadataSchema.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -82,9 +82,9 @@ public class Detail_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 400")
     public void res400_used() {
         // GIVEN:
-        Shape shape = shapeFixtures.datasetShape();
+        MetadataSchema metadataSchema = metadataSchemaFixtures.datasetSchema();
         RequestEntity<Void> request = RequestEntity
-                .delete(url(shape.getUuid()))
+                .delete(url(metadataSchema.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -98,12 +98,12 @@ public class Detail_DELETE extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 400: Delete INTERNAL shape")
+    @DisplayName("HTTP 400: Delete INTERNAL schema")
     public void res400_internal() {
         // GIVEN:
-        Shape shape = shapeFixtures.fdpShape();
+        MetadataSchema metadataSchema = metadataSchemaFixtures.fdpSchema();
         RequestEntity<Void> request = RequestEntity
-                .delete(url(shape.getUuid()))
+                .delete(url(metadataSchema.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
@@ -119,15 +119,15 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        Shape shape = shapeFixtures.datasetShape();
-        createUserForbiddenTestDelete(client, url(shape.getUuid()));
+        MetadataSchema metadataSchema = metadataSchemaFixtures.datasetSchema();
+        createUserForbiddenTestDelete(client, url(metadataSchema.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
-    public void res403_shape() {
-        Shape shape = shapeFixtures.datasetShape();
-        createUserForbiddenTestDelete(client, url(shape.getUuid()));
+    public void res403_notAdmin() {
+        MetadataSchema metadataSchema = metadataSchemaFixtures.datasetSchema();
+        createUserForbiddenTestDelete(client, url(metadataSchema.getUuid()));
     }
 
     @Test

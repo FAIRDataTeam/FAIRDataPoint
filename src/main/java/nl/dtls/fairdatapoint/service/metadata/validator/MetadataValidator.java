@@ -29,7 +29,7 @@ import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import nl.dtls.fairdatapoint.service.shape.ShapeService;
+import nl.dtls.fairdatapoint.service.schema.MetadataSchemaService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
@@ -52,7 +52,7 @@ public class MetadataValidator {
     private ShaclValidator shaclValidator;
 
     @Autowired
-    private ShapeService shapeService;
+    private MetadataSchemaService metadataSchemaService;
 
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
@@ -65,7 +65,7 @@ public class MetadataValidator {
     }
 
     private void validateByShacl(Model metadata, IRI uri) {
-        Model shacl = shapeService.getShaclFromShapes();
+        Model shacl = metadataSchemaService.getShaclFromSchemas();
         shaclValidator.validate(shacl, metadata, uri.stringValue());
     }
 

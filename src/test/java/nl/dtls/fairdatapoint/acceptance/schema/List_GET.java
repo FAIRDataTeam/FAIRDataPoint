@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +40,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /shapes")
+@DisplayName("GET /metadata-schemas")
 public class List_GET extends WebIntegrationTest {
 
     private URI url() {
-        return URI.create("/shapes");
+        return URI.create("/metadata-schemas");
     }
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private MetadataSchemaFixtures metadataSchemaFixtures;
 
     @Test
     @DisplayName("HTTP 200")
@@ -57,23 +57,23 @@ public class List_GET extends WebIntegrationTest {
         RequestEntity<Void> request = RequestEntity
                 .get(url())
                 .build();
-        ParameterizedTypeReference<List<ShapeDTO>> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<List<ShapeDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        List<ShapeDTO> body = result.getBody();
+        List<MetadataSchemaDTO> body = result.getBody();
         assertThat(body.size(), is(equalTo(7)));
-        Common.compare(shapeFixtures.resourceShape(), body.get(0));
-        Common.compare(shapeFixtures.fdpShape(), body.get(1));
-        Common.compare(shapeFixtures.dataServiceShape(), body.get(2));
-        Common.compare(shapeFixtures.metadataServiceShape(), body.get(3));
-        Common.compare(shapeFixtures.catalogShape(), body.get(4));
-        Common.compare(shapeFixtures.datasetShape(), body.get(5));
-        Common.compare(shapeFixtures.distributionShape(), body.get(6));
+        Common.compare(metadataSchemaFixtures.resourceSchema(), body.get(0));
+        Common.compare(metadataSchemaFixtures.fdpSchema(), body.get(1));
+        Common.compare(metadataSchemaFixtures.dataServiceSchema(), body.get(2));
+        Common.compare(metadataSchemaFixtures.metadataServiceSchema(), body.get(3));
+        Common.compare(metadataSchemaFixtures.catalogSchema(), body.get(4));
+        Common.compare(metadataSchemaFixtures.datasetSchema(), body.get(5));
+        Common.compare(metadataSchemaFixtures.distributionSchema(), body.get(6));
     }
 
 }

@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data;
+package nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data;
 
 import lombok.SneakyThrows;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
-import nl.dtls.fairdatapoint.entity.shape.ShapeType;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
@@ -33,129 +33,129 @@ import java.util.Set;
 import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
 
 @Service
-public class ShapeFixtures {
+public class MetadataSchemaFixtures {
 
     @SneakyThrows
-    public Shape resourceShape() {
+    public MetadataSchema resourceSchema() {
         String definition = loadClassResource("shape-resource.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                KnownUUIDs.SHAPE_RESOURCE_UUID,
+                KnownUUIDs.SCHEMA_RESOURCE_UUID,
                 "Resource",
                 false,
-                ShapeType.INTERNAL,
+                MetadataSchemaType.INTERNAL,
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Resource")
         );
     }
 
     @SneakyThrows
-    public Shape fdpShape() {
+    public MetadataSchema fdpSchema() {
         String definition = loadClassResource("shape-fdp.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                KnownUUIDs.SHAPE_FDP_UUID,
+                KnownUUIDs.SCHEMA_FDP_UUID,
                 "FAIR Data Point",
                 false,
-                ShapeType.INTERNAL,
+                MetadataSchemaType.INTERNAL,
                 definition,
                 Set.of("https://w3id.org/fdp/fdp-o#FAIRDataPoint")
         );
     }
 
     @SneakyThrows
-    public Shape dataServiceShape() {
+    public MetadataSchema dataServiceSchema() {
         String definition = loadClassResource("shape-data-service.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                KnownUUIDs.SHAPE_DATASERVICE_UUID,
+                KnownUUIDs.SCHEMA_DATASERVICE_UUID,
                 "Data Service",
                 false,
-                ShapeType.INTERNAL,
+                MetadataSchemaType.INTERNAL,
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#DataService")
         );
     }
 
     @SneakyThrows
-    public Shape metadataServiceShape() {
+    public MetadataSchema metadataServiceSchema() {
         String definition = loadClassResource("shape-metadata-service.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                KnownUUIDs.SHAPE_METADATASERVICE_UUID,
+                KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
                 "Metadata Service",
                 false,
-                ShapeType.INTERNAL,
+                MetadataSchemaType.INTERNAL,
                 definition,
                 Set.of("https://w3id.org/fdp/fdp-o#MetadataService")
         );
     }
 
     @SneakyThrows
-    public Shape catalogShape() {
+    public MetadataSchema catalogSchema() {
         String definition = loadClassResource("shape-catalog.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                KnownUUIDs.SHAPE_CATALOG_UUID,
+                KnownUUIDs.SCHEMA_CATALOG_UUID,
                 "Catalog",
                 false,
-                ShapeType.INTERNAL,
+                MetadataSchemaType.INTERNAL,
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Catalog")
         );
     }
 
     @SneakyThrows
-    public Shape datasetShape() {
+    public MetadataSchema datasetSchema() {
         String definition = loadClassResource("shape-dataset.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                KnownUUIDs.SHAPE_DATASET_UUID,
+                KnownUUIDs.SCHEMA_DATASET_UUID,
                 "Dataset",
                 false,
-                ShapeType.CUSTOM,
+                MetadataSchemaType.CUSTOM,
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Dataset")
         );
     }
 
     @SneakyThrows
-    public Shape distributionShape() {
+    public MetadataSchema distributionSchema() {
         String definition = loadClassResource("shape-distribution.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                KnownUUIDs.SHAPE_DISTRIBUTION_UUID,
+                KnownUUIDs.SCHEMA_DISTRIBUTION_UUID,
                 "Distribution",
                 false,
-                ShapeType.CUSTOM,
+                MetadataSchemaType.CUSTOM,
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Distribution")
         );
     }
 
     @SneakyThrows
-    public Shape customShape() {
+    public MetadataSchema customSchema() {
         String definition = loadClassResource("shape-custom.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
                 "Custom Shape",
                 false,
-                ShapeType.CUSTOM,
+                MetadataSchemaType.CUSTOM,
                 definition,
                 Set.of("http://example.org/Dog")
         );
     }
 
     @SneakyThrows
-    public Shape customShapeEdited(){
+    public MetadataSchema customSchemaEdited(){
         String definition = loadClassResource("shape-custom-edited.ttl", getClass());
-        return new Shape(
+        return new MetadataSchema(
                 null,
-                customShape().getUuid(),
-                customShape().getName(),
+                customSchema().getUuid(),
+                customSchema().getName(),
                 false,
-                customShape().getType(),
+                customSchema().getType(),
                 definition,
                 Set.of("http://example.org/Dog")
         );

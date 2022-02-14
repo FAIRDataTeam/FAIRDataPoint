@@ -20,23 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.shape;
+package nl.dtls.fairdatapoint.entity.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@NoArgsConstructor
-@AllArgsConstructor
+import java.util.Set;
+
+@Document
 @Getter
 @Setter
-public class ShapeRemoteDTO {
-    private String from;
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class MetadataSchema {
+
+    @Id
+    protected ObjectId id;
 
     private String uuid;
 
     private String name;
 
+    private boolean published;
+
+    private MetadataSchemaType type;
+
     private String definition;
+
+    private Set<String> targetClasses;
 }

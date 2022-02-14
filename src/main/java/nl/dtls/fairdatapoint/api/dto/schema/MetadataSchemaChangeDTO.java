@@ -20,20 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.exception;
+package nl.dtls.fairdatapoint.api.dto.schema;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-@Getter
+import javax.validation.constraints.NotBlank;
+
+@NoArgsConstructor
 @AllArgsConstructor
-public class ShapeImportException extends RuntimeException {
+@Getter
+@Setter
+public class MetadataSchemaChangeDTO {
 
-    private final String from;
+    @NotBlank
+    private String name;
 
-    private final String message;
+    private boolean published;
+
+    private String definition;
 
 }

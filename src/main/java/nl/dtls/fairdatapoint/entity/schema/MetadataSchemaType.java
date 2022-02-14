@@ -20,10 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.shape;
+package nl.dtls.fairdatapoint.entity.schema;
 
-public enum ShapeType {
-
+public enum MetadataSchemaType {
     INTERNAL, CUSTOM
-
 }

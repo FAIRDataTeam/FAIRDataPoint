@@ -55,7 +55,7 @@ public class Migration_0011_ComplyFDPO {
         MongoCollection<Document> shapeCol = db.getCollection("shape");
 
         // Delete Repository Shape
-        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SHAPE_REPOSITORY_UUID));
+        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SCHEMA_REPOSITORY_UUID));
 
         // Insert New Shapes
         shapeCol.insertOne(dataServiceShape());
@@ -66,7 +66,7 @@ public class Migration_0011_ComplyFDPO {
     private Document fdpShape() throws Exception {
         String shaclDefinition = loadClassResource("0011_shape-fdp.ttl", getClass());
         Document shape = new Document();
-        shape.append("uuid", KnownUUIDs.SHAPE_FDP_UUID);
+        shape.append("uuid", KnownUUIDs.SCHEMA_FDP_UUID);
         shape.append("name", "FAIR Data Point");
         shape.append("type", "INTERNAL");
         shape.append("definition", shaclDefinition);
@@ -78,7 +78,7 @@ public class Migration_0011_ComplyFDPO {
     private Document dataServiceShape() throws Exception {
         String shaclDefinition = loadClassResource("0011_shape-data-service.ttl", getClass());
         Document shape = new Document();
-        shape.append("uuid", KnownUUIDs.SHAPE_DATASERVICE_UUID);
+        shape.append("uuid", KnownUUIDs.SCHEMA_DATASERVICE_UUID);
         shape.append("name", "Data Service");
         shape.append("type", "INTERNAL");
         shape.append("definition", shaclDefinition);
@@ -90,7 +90,7 @@ public class Migration_0011_ComplyFDPO {
     private Document metadataServiceShape() throws Exception {
         String shaclDefinition = loadClassResource("0011_shape-metadata-service.ttl", getClass());
         Document shape = new Document();
-        shape.append("uuid", KnownUUIDs.SHAPE_METADATASERVICE_UUID);
+        shape.append("uuid", KnownUUIDs.SCHEMA_METADATASERVICE_UUID);
         shape.append("name", "Metadata Service");
         shape.append("type", "INTERNAL");
         shape.append("definition", shaclDefinition);
@@ -115,10 +115,10 @@ public class Migration_0011_ComplyFDPO {
         definition.append("name", "FAIR Data Point");
         definition.append("urlPrefix", "");
         definition.append("shapeUuids", List.of(
-                KnownUUIDs.SHAPE_RESOURCE_UUID,
-                KnownUUIDs.SHAPE_DATASERVICE_UUID,
-                KnownUUIDs.SHAPE_METADATASERVICE_UUID,
-                KnownUUIDs.SHAPE_FDP_UUID
+                KnownUUIDs.SCHEMA_RESOURCE_UUID,
+                KnownUUIDs.SCHEMA_DATASERVICE_UUID,
+                KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
+                KnownUUIDs.SCHEMA_FDP_UUID
         ));
 
         // Child

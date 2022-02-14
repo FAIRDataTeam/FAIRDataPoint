@@ -27,11 +27,11 @@ import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.entity.resource.*;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
-import nl.dtls.fairdatapoint.entity.shape.ShapeType;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
-import nl.dtls.fairdatapoint.service.shape.ShapeShaclUtils;
+import nl.dtls.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
@@ -107,11 +107,11 @@ public class FactoryDefaults {
             .uuid(KnownUUIDs.RD_FDP_UUID)
             .name("FAIR Data Point")
             .urlPrefix("")
-            .shapeUuids(List.of(
-                    KnownUUIDs.SHAPE_RESOURCE_UUID,
-                    KnownUUIDs.SHAPE_DATASERVICE_UUID,
-                    KnownUUIDs.SHAPE_METADATASERVICE_UUID,
-                    KnownUUIDs.SHAPE_FDP_UUID
+            .metadataSchemaUuids(List.of(
+                    KnownUUIDs.SCHEMA_RESOURCE_UUID,
+                    KnownUUIDs.SCHEMA_DATASERVICE_UUID,
+                    KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
+                    KnownUUIDs.SCHEMA_FDP_UUID
             ))
             .children(List.of(
                     ResourceDefinitionChild.builder()
@@ -133,9 +133,9 @@ public class FactoryDefaults {
             .uuid(KnownUUIDs.RD_CATALOG_UUID)
             .name("Catalog")
             .urlPrefix("catalog")
-            .shapeUuids(List.of(
-                    KnownUUIDs.SHAPE_RESOURCE_UUID,
-                    KnownUUIDs.SHAPE_CATALOG_UUID
+            .metadataSchemaUuids(List.of(
+                    KnownUUIDs.SCHEMA_RESOURCE_UUID,
+                    KnownUUIDs.SCHEMA_CATALOG_UUID
             ))
             .children(List.of(
                     ResourceDefinitionChild.builder()
@@ -157,9 +157,9 @@ public class FactoryDefaults {
             .uuid(KnownUUIDs.RD_DATASET_UUID)
             .name("Dataset")
             .urlPrefix("dataset")
-            .shapeUuids(List.of(
-                    KnownUUIDs.SHAPE_RESOURCE_UUID,
-                    KnownUUIDs.SHAPE_DATASET_UUID
+            .metadataSchemaUuids(List.of(
+                    KnownUUIDs.SCHEMA_RESOURCE_UUID,
+                    KnownUUIDs.SCHEMA_DATASET_UUID
             ))
             .children(List.of(
                     ResourceDefinitionChild.builder()
@@ -186,9 +186,9 @@ public class FactoryDefaults {
             .uuid(KnownUUIDs.RD_DISTRIBUTION_UUID)
             .name("Distribution")
             .urlPrefix("distribution")
-            .shapeUuids(List.of(
-                    KnownUUIDs.SHAPE_RESOURCE_UUID,
-                    KnownUUIDs.SHAPE_DISTRIBUTION_UUID
+            .metadataSchemaUuids(List.of(
+                    KnownUUIDs.SCHEMA_RESOURCE_UUID,
+                    KnownUUIDs.SCHEMA_DISTRIBUTION_UUID
             ))
             .children(List.of())
             .externalLinks(List.of(
@@ -205,87 +205,87 @@ public class FactoryDefaults {
 
     //== SHAPES
     //== Changes: Migration_0003_ShapeDefinition, Migration_0005_UpdateShapeDefinition, Migration_0006_ShapesSharing, Migration_0010_ComplyFDPO
-    public static Shape shapeResource() throws Exception {
+    public static MetadataSchema schemaResource() throws Exception {
         String definition = loadClassResource("shape-resource.ttl", FactoryDefaults.class);
-        return Shape.builder()
-                .uuid(KnownUUIDs.SHAPE_RESOURCE_UUID)
+        return MetadataSchema.builder()
+                .uuid(KnownUUIDs.SCHEMA_RESOURCE_UUID)
                 .name("Resource")
-                .type(ShapeType.INTERNAL)
+                .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .definition(definition)
-                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
-    public static Shape shapeFDP() throws Exception {
+    public static MetadataSchema schemaFDP() throws Exception {
         String definition = loadClassResource("shape-fdp.ttl", FactoryDefaults.class);
-        return Shape.builder()
-                .uuid(KnownUUIDs.SHAPE_FDP_UUID)
+        return MetadataSchema.builder()
+                .uuid(KnownUUIDs.SCHEMA_FDP_UUID)
                 .name("FAIR Data Point")
-                .type(ShapeType.INTERNAL)
+                .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .definition(definition)
-                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
-    public static Shape shapeDataService() throws Exception {
+    public static MetadataSchema schemaDataService() throws Exception {
         String definition = loadClassResource("shape-data-service.ttl", FactoryDefaults.class);
-        return Shape.builder()
-                .uuid(KnownUUIDs.SHAPE_DATASERVICE_UUID)
+        return MetadataSchema.builder()
+                .uuid(KnownUUIDs.SCHEMA_DATASERVICE_UUID)
                 .name("Data Service")
-                .type(ShapeType.INTERNAL)
+                .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .definition(definition)
-                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
-    public static Shape shapeMetadataService() throws Exception {
+    public static MetadataSchema schemaMetadataService() throws Exception {
         String definition = loadClassResource("shape-metadata-service.ttl", FactoryDefaults.class);
-        return Shape.builder()
-                .uuid(KnownUUIDs.SHAPE_METADATASERVICE_UUID)
+        return MetadataSchema.builder()
+                .uuid(KnownUUIDs.SCHEMA_METADATASERVICE_UUID)
                 .name("Metadata Service")
-                .type(ShapeType.INTERNAL)
+                .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .definition(definition)
-                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
-    public static Shape shapeCatalog() throws Exception {
+    public static MetadataSchema schemaCatalog() throws Exception {
         String definition = loadClassResource("shape-catalog.ttl", FactoryDefaults.class);
-        return Shape.builder()
-                .uuid(KnownUUIDs.SHAPE_CATALOG_UUID)
+        return MetadataSchema.builder()
+                .uuid(KnownUUIDs.SCHEMA_CATALOG_UUID)
                 .name("Catalog")
-                .type(ShapeType.INTERNAL)
+                .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .definition(definition)
-                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
-    public static Shape shapeDataset() throws Exception {
+    public static MetadataSchema schemaDataset() throws Exception {
         String definition = loadClassResource("shape-dataset.ttl", FactoryDefaults.class);
-        return Shape.builder()
-                .uuid(KnownUUIDs.SHAPE_DATASET_UUID)
+        return MetadataSchema.builder()
+                .uuid(KnownUUIDs.SCHEMA_DATASET_UUID)
                 .name("Dataset")
-                .type(ShapeType.CUSTOM)
+                .type(MetadataSchemaType.CUSTOM)
                 .published(false)
                 .definition(definition)
-                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 
-    public static Shape shapeDistribution() throws Exception {
+    public static MetadataSchema schemaDistribution() throws Exception {
         String definition = loadClassResource("shape-distribution.ttl", FactoryDefaults.class);
-        return Shape.builder()
-                .uuid(KnownUUIDs.SHAPE_DISTRIBUTION_UUID)
+        return MetadataSchema.builder()
+                .uuid(KnownUUIDs.SCHEMA_DISTRIBUTION_UUID)
                 .name("Distribution")
-                .type(ShapeType.CUSTOM)
+                .type(MetadataSchemaType.CUSTOM)
                 .published(false)
                 .definition(definition)
-                .targetClasses(ShapeShaclUtils.extractTargetClasses(definition))
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
     }
 

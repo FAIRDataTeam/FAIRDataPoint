@@ -20,35 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.shape;
+package nl.dtls.fairdatapoint.entity.exception;
 
-import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.Set;
-
-@Document
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
-public class Shape {
+public class MetadataSchemaImportException extends RuntimeException {
 
-    @Id
-    protected ObjectId id;
+    private final String from;
 
-    private String uuid;
+    private final String message;
 
-    private String name;
-
-    private boolean published;
-
-    private ShapeType type;
-
-    private String definition;
-
-    private Set<String> targetClasses;
 }

@@ -40,10 +40,10 @@ public class ResourceDefinitionFixtures {
                 KnownUUIDs.RD_FDP_UUID,
                 "FAIR Data Point",
                 "",
-                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID,
-                        KnownUUIDs.SHAPE_DATASERVICE_UUID,
-                        KnownUUIDs.SHAPE_METADATASERVICE_UUID,
-                        KnownUUIDs.SHAPE_FDP_UUID
+                List.of(KnownUUIDs.SCHEMA_RESOURCE_UUID,
+                        KnownUUIDs.SCHEMA_DATASERVICE_UUID,
+                        KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
+                        KnownUUIDs.SCHEMA_FDP_UUID
                 ),
                 List.of(new ResourceDefinitionChild(
                         KnownUUIDs.RD_CATALOG_UUID,
@@ -63,7 +63,7 @@ public class ResourceDefinitionFixtures {
                 KnownUUIDs.RD_CATALOG_UUID,
                 "Catalog",
                 "catalog",
-                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID, KnownUUIDs.SHAPE_CATALOG_UUID),
+                List.of(KnownUUIDs.SCHEMA_RESOURCE_UUID, KnownUUIDs.SCHEMA_CATALOG_UUID),
                 List.of(new ResourceDefinitionChild(
                         KnownUUIDs.RD_DATASET_UUID,
                         DCAT.HAS_DATASET.stringValue(),
@@ -82,7 +82,7 @@ public class ResourceDefinitionFixtures {
                 KnownUUIDs.RD_DATASET_UUID,
                 "Dataset",
                 "dataset",
-                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID, KnownUUIDs.SHAPE_DATASET_UUID),
+                List.of(KnownUUIDs.SCHEMA_RESOURCE_UUID, KnownUUIDs.SCHEMA_DATASET_UUID),
                 List.of(new ResourceDefinitionChild(
                         KnownUUIDs.RD_DISTRIBUTION_UUID,
                         DCAT.HAS_DISTRIBUTION.stringValue(),
@@ -102,7 +102,7 @@ public class ResourceDefinitionFixtures {
                 KnownUUIDs.RD_DISTRIBUTION_UUID,
                 "Distribution",
                 "distribution",
-                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID, KnownUUIDs.SHAPE_DISTRIBUTION_UUID),
+                List.of(KnownUUIDs.SCHEMA_RESOURCE_UUID, KnownUUIDs.SCHEMA_DISTRIBUTION_UUID),
                 List.of(),
                 List.of(
                         new ResourceDefinitionLink("Access online", DCAT.ACCESS_URL.stringValue()),
@@ -116,7 +116,7 @@ public class ResourceDefinitionFixtures {
                 ONTOLOGY_DEFINITION_UUID,
                 "Ontology",
                 "ontology",
-                List.of(KnownUUIDs.SHAPE_RESOURCE_UUID),
+                List.of(KnownUUIDs.SCHEMA_RESOURCE_UUID),
                 List.of(),
                 List.of()
         );

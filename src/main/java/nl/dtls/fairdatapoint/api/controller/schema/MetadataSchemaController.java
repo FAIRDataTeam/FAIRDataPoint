@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.shape;
+package nl.dtls.fairdatapoint.api.controller.schema;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeRemoteDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.service.shape.ShapeService;
+import nl.dtls.fairdatapoint.service.schema.MetadataSchemaService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,53 +44,55 @@ import static java.lang.String.format;
 
 @Tag(name = "Metadata Model")
 @RestController
-@RequestMapping("/shapes")
-public class ShapeController {
+@RequestMapping("/metadata-schemas")
+public class MetadataSchemaController {
+
+    private static final String NOT_FOUND_MSG = "Metadata schema '%s' doesn't exist";
 
     @Autowired
-    private ShapeService shapeService;
+    private MetadataSchemaService metadataSchemaService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ShapeDTO>> getShapes() {
-        List<ShapeDTO> dto = shapeService.getShapes();
+    public ResponseEntity<List<MetadataSchemaDTO>> getSchemas() {
+        List<MetadataSchemaDTO> dto = metadataSchemaService.getSchemas();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping(path = "/public", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ShapeDTO>> getPublishedShapes() {
-        List<ShapeDTO> dto = shapeService.getPublishedShapes();
+    public ResponseEntity<List<MetadataSchemaDTO>> getPublishedSchemas() {
+        List<MetadataSchemaDTO> dto = metadataSchemaService.getPublishedSchemas();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ShapeRemoteDTO>> getImportableShapes(@RequestParam(name = "from") String fdpUrl) {
-        List<ShapeRemoteDTO> dto = shapeService.getRemoteShapes(fdpUrl);
+    public ResponseEntity<List<MetadataSchemaRemoteDTO>> getImportableSchemas(@RequestParam(name = "from") String fdpUrl) {
+        List<MetadataSchemaRemoteDTO> dto = metadataSchemaService.getRemoteSchemas(fdpUrl);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ShapeDTO>> importShapes(@RequestBody @Valid List<ShapeRemoteDTO> reqDtos) {
-        List<ShapeDTO> dto = shapeService.importShapes(reqDtos);
+    public ResponseEntity<List<MetadataSchemaDTO>> importSchemas(@RequestBody @Valid List<MetadataSchemaRemoteDTO> reqDtos) {
+        List<MetadataSchemaDTO> dto = metadataSchemaService.importSchemas(reqDtos);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ShapeDTO> createShape(@RequestBody @Valid ShapeChangeDTO reqDto) {
-        ShapeDTO dto = shapeService.createShape(reqDto);
+    public ResponseEntity<MetadataSchemaDTO> createSchema(@RequestBody @Valid MetadataSchemaChangeDTO reqDto) {
+        MetadataSchemaDTO dto = metadataSchemaService.createSchema(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ShapeDTO> getShape(@PathVariable final String uuid)
+    public ResponseEntity<MetadataSchemaDTO> getSchema(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        Optional<ShapeDTO> oDto = shapeService.getShapeByUuid(uuid);
+        Optional<MetadataSchemaDTO> oDto = metadataSchemaService.getSchemaByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {
-            throw new ResourceNotFoundException(format("Shape '%s' doesn't exist", uuid));
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
@@ -104,38 +106,38 @@ public class ShapeController {
             "application/xml",
             "text/xml",
     })
-    public ResponseEntity<Model> getShapeContent(@PathVariable final String uuid)
+    public ResponseEntity<Model> getSchemaContent(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        Optional<Model> oDto = shapeService.getShapeContentByUuid(uuid);
+        Optional<Model> oDto = metadataSchemaService.getSchemaContentByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {
-            throw new ResourceNotFoundException(format("Shape '%s' doesn't exist", uuid));
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ShapeDTO> putShape(@PathVariable final String uuid,
-                                             @RequestBody @Valid ShapeChangeDTO reqDto) throws ResourceNotFoundException {
-        Optional<ShapeDTO> oDto = shapeService.updateShape(uuid, reqDto);
+    public ResponseEntity<MetadataSchemaDTO> putSchema(@PathVariable final String uuid,
+                                                      @RequestBody @Valid MetadataSchemaChangeDTO reqDto) throws ResourceNotFoundException {
+        Optional<MetadataSchemaDTO> oDto = metadataSchemaService.updateSchema(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {
-            throw new ResourceNotFoundException(format("Shape '%s' doesn't exist", uuid));
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteShape(@PathVariable final String uuid)
+    public ResponseEntity<Void> deleteSchema(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        boolean result = shapeService.deleteShape(uuid);
+        boolean result = metadataSchemaService.deleteSchema(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
         } else {
-            throw new ResourceNotFoundException(format("Shape '%s' doesn't exist", uuid));
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 

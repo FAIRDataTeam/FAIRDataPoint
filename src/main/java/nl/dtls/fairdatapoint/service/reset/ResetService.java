@@ -27,24 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.reset.ResetDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.*;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.settings.Settings;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.generic.GenericMetadataService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
-import nl.dtls.fairdatapoint.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
-import nl.dtls.fairdatapoint.vocabulary.Sio;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.eclipse.rdf4j.model.vocabulary.FOAF;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -57,10 +47,7 @@ import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -103,7 +90,7 @@ public class ResetService {
     private UserRepository userRepository;
 
     @Autowired
-    private ShapeRepository shapeRepository;
+    private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
@@ -146,9 +133,9 @@ public class ResetService {
             restoreDefaultMetadata();
         }
         if (reqDto.isResourceDefinitions()) {
-            clearShapes();
+            clearMetadataSchemas();
             clearResourceDefinitions();
-            restoreDefaultShapes();
+            restoreDefaultMetadataSchemas();
             restoreDefaultResourceDefinitions();
         }
         resourceDefinitionCache.computeCache();
@@ -173,9 +160,9 @@ public class ResetService {
         userRepository.deleteAll();
     }
 
-    private void clearShapes() {
-        log.debug("Clearing SHACL shapes");
-        shapeRepository.deleteAll();
+    private void clearMetadataSchemas() {
+        log.debug("Clearing metadata schemas");
+        metadataSchemaRepository.deleteAll();
     }
 
     private void clearResourceDefinitions() {
@@ -223,15 +210,15 @@ public class ResetService {
         }
     }
 
-    private void restoreDefaultShapes() throws Exception {
-        log.debug("Creating default shapes");
-        shapeRepository.save(FactoryDefaults.shapeResource());
-        shapeRepository.save(FactoryDefaults.shapeDataService());
-        shapeRepository.save(FactoryDefaults.shapeMetadataService());
-        shapeRepository.save(FactoryDefaults.shapeFDP());
-        shapeRepository.save(FactoryDefaults.shapeCatalog());
-        shapeRepository.save(FactoryDefaults.shapeDataset());
-        shapeRepository.save(FactoryDefaults.shapeDistribution());
+    private void restoreDefaultMetadataSchemas() throws Exception {
+        log.debug("Creating default metadata schemas");
+        metadataSchemaRepository.save(FactoryDefaults.schemaResource());
+        metadataSchemaRepository.save(FactoryDefaults.schemaDataService());
+        metadataSchemaRepository.save(FactoryDefaults.schemaMetadataService());
+        metadataSchemaRepository.save(FactoryDefaults.schemaFDP());
+        metadataSchemaRepository.save(FactoryDefaults.schemaCatalog());
+        metadataSchemaRepository.save(FactoryDefaults.schemaDataset());
+        metadataSchemaRepository.save(FactoryDefaults.schemaDistribution());
     }
 
     private void restoreDefaultResourceDefinitions() {

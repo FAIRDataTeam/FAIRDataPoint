@@ -20,32 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.shape;
+package nl.dtls.fairdatapoint.acceptance.schema;
 
-import nl.dtls.fairdatapoint.database.common.migration.Migration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ShapeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 
-@Service
-public class ShapeMigration implements Migration {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
-    @Autowired
-    private ShapeFixtures shapeFixtures;
+public class Common {
 
-    @Autowired
-    private ShapeRepository shapeRepository;
-
-    public void runMigration() {
-        shapeRepository.deleteAll();
-        shapeRepository.save(shapeFixtures.resourceShape());
-        shapeRepository.save(shapeFixtures.fdpShape());
-        shapeRepository.save(shapeFixtures.dataServiceShape());
-        shapeRepository.save(shapeFixtures.metadataServiceShape());
-        shapeRepository.save(shapeFixtures.catalogShape());
-        shapeRepository.save(shapeFixtures.datasetShape());
-        shapeRepository.save(shapeFixtures.distributionShape());
+    public static void compare(MetadataSchemaChangeDTO entity, MetadataSchemaDTO dto) {
+        assertThat(dto.getName(), is(equalTo(entity.getName())));
+        assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));
     }
 
+    public static void compare(MetadataSchema entity, MetadataSchemaDTO dto) {
+        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
+        assertThat(dto.getName(), is(equalTo(entity.getName())));
+        assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));
+    }
 }

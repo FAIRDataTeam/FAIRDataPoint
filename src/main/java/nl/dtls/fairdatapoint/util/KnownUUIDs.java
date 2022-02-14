@@ -36,21 +36,21 @@ public class KnownUUIDs {
 
     public static final String MEMBERSHIP_DATAPROVIDER_UUID = "87a2d984-7db2-43f6-805c-6b0040afead5";
 
-    public static final String SHAPE_RESOURCE_UUID = "6a668323-3936-4b53-8380-a4fd2ed082ee";
+    public static final String SCHEMA_RESOURCE_UUID = "6a668323-3936-4b53-8380-a4fd2ed082ee";
 
-    public static final String SHAPE_REPOSITORY_UUID = "a92958ab-a414-47e6-8e17-68ba96ba3a2b";
+    public static final String SCHEMA_REPOSITORY_UUID = "a92958ab-a414-47e6-8e17-68ba96ba3a2b";
 
-    public static final String SHAPE_FDP_UUID = "a92958ab-a414-47e6-8e17-68ba96ba3a2b";
+    public static final String SCHEMA_FDP_UUID = "a92958ab-a414-47e6-8e17-68ba96ba3a2b";
 
-    public static final String SHAPE_DATASERVICE_UUID = "89d94c1b-f6ff-4545-ba9b-120b2d1921d0";
+    public static final String SCHEMA_DATASERVICE_UUID = "89d94c1b-f6ff-4545-ba9b-120b2d1921d0";
 
-    public static final String SHAPE_METADATASERVICE_UUID = "6f7a5a76-6185-4bd0-9fe9-62ecc90c9bad";
+    public static final String SCHEMA_METADATASERVICE_UUID = "6f7a5a76-6185-4bd0-9fe9-62ecc90c9bad";
 
-    public static final String SHAPE_CATALOG_UUID = "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660";
+    public static final String SCHEMA_CATALOG_UUID = "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660";
 
-    public static final String SHAPE_DATASET_UUID = "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3";
+    public static final String SCHEMA_DATASET_UUID = "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3";
 
-    public static final String SHAPE_DISTRIBUTION_UUID = "ebacbf83-cd4f-4113-8738-d73c0735b0ab";
+    public static final String SCHEMA_DISTRIBUTION_UUID = "ebacbf83-cd4f-4113-8738-d73c0735b0ab";
 
     public static final String RD_REPOSITORY_UUID = "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c";
 

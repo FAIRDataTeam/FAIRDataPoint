@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,38 +42,38 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("POST /shapes")
+@DisplayName("POST /metadata-schemas")
 public class List_POST extends WebIntegrationTest {
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private MetadataSchemaFixtures metadataSchemaFixtures;
 
     private URI url() {
-        return URI.create("/shapes");
+        return URI.create("/metadata-schemas");
     }
 
-    private ShapeChangeDTO reqDto(Shape shape) {
-        return new ShapeChangeDTO(shape.getName(), false, shape.getDefinition());
+    private MetadataSchemaChangeDTO reqDto(MetadataSchema metadataSchema) {
+        return new MetadataSchemaChangeDTO(metadataSchema.getName(), false, metadataSchema.getDefinition());
     }
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        Shape shape = shapeFixtures.customShape();
-        ShapeChangeDTO reqDto = reqDto(shape);
+        MetadataSchema metadataSchema = metadataSchemaFixtures.customSchema();
+        MetadataSchemaChangeDTO reqDto = reqDto(metadataSchema);
 
         // AND: Prepare request
-        RequestEntity<ShapeChangeDTO> request = RequestEntity
+        RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
-        ParameterizedTypeReference<ShapeDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<MetadataSchemaDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<ShapeDTO> result = client.exchange(request, responseType);
+        ResponseEntity<MetadataSchemaDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -84,12 +84,12 @@ public class List_POST extends WebIntegrationTest {
     @DisplayName("HTTP 400: Invalid SHACL Definition")
     public void res400_invalidShacl() {
         // GIVEN: Prepare data
-        Shape shape = shapeFixtures.customShape();
-        shape.setDefinition(shape.getDefinition() + "Some random text that will break the validity of SHACL");
-        ShapeChangeDTO reqDto = reqDto(shape);
+        MetadataSchema metadataSchema = metadataSchemaFixtures.customSchema();
+        metadataSchema.setDefinition(metadataSchema.getDefinition() + "Some random text that will break the validity of SHACL");
+        MetadataSchemaChangeDTO reqDto = reqDto(metadataSchema);
 
         // AND: Prepare request
-        RequestEntity<ShapeChangeDTO> request = RequestEntity
+        RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
@@ -108,13 +108,13 @@ public class List_POST extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
+        createNoUserForbiddenTestPost(client, url(), reqDto(metadataSchemaFixtures.customSchema()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
-    public void res403_shape() {
-        createUserForbiddenTestPost(client, url(), reqDto(shapeFixtures.customShape()));
+    public void res403_notAdmin() {
+        createUserForbiddenTestPost(client, url(), reqDto(metadataSchemaFixtures.customSchema()));
     }
 
 }

@@ -22,16 +22,16 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.repository;
 
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ShapeRepository extends MongoRepository<Shape, String> {
+public interface MetadataSchemaRepository extends MongoRepository<MetadataSchema, String> {
 
-    Optional<Shape> findByUuid(String uuid);
+    Optional<MetadataSchema> findByUuid(String uuid);
 
-    List<Shape> findAllByPublishedIsTrue();
+    List<MetadataSchema> findAllByPublishedIsTrue();
 
 }

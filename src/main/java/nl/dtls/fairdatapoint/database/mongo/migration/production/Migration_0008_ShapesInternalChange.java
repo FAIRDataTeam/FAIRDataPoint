@@ -46,12 +46,12 @@ public class Migration_0008_ShapesInternalChange {
         MongoCollection<Document> shapeCol = db.getCollection("shape");
         // DATASET
         shapeCol.updateOne(
-                Filters.eq("uuid", KnownUUIDs.SHAPE_DATASET_UUID),
+                Filters.eq("uuid", KnownUUIDs.SCHEMA_DATASET_UUID),
                 Updates.set("type", "CUSTOM")
         );
         // DISTRIBUTION
         shapeCol.updateOne(
-                Filters.eq("uuid", KnownUUIDs.SHAPE_DISTRIBUTION_UUID),
+                Filters.eq("uuid", KnownUUIDs.SCHEMA_DISTRIBUTION_UUID),
                 Updates.set("type", "CUSTOM")
         );
     }

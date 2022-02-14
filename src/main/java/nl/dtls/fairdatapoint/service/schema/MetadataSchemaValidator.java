@@ -20,40 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.shape;
+package nl.dtls.fairdatapoint.service.schema;
 
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
+import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.vocabulary.SHACL;
+import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+@Service
+public class MetadataSchemaValidator {
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-
-public class ShapeShaclUtils {
-
-    public static Set<String> extractTargetClasses(String definition) {
-        var model = RdfIOUtil.read(definition, "");
-        return model
-                .filter(null, SHACL.TARGET_CLASS, null)
-                .objects()
-                .stream()
-                .map(Value::stringValue)
-                .filter(iri -> isRootNodeOfTargetClass(model, iri))
-                .collect(Collectors.toSet());
-    }
-
-    private static boolean isRootNodeOfTargetClass(Model model, String iri) {
-        var resource = i(iri);
-        for (Resource subject : model.filter(null, null, resource).subjects()) {
-            if (model.contains(null, null, subject)) {
-                return false;
-            }
+    public void validate(MetadataSchemaChangeDTO reqDto) {
+        // Try to parse SHACL definition
+        try {
+            RdfIOUtil.read(reqDto.getDefinition(), "");
+        } catch (ValidationException e) {
+            throw new ValidationException("Unable to read SHACL definition");
         }
-        return true;
     }
+
 }

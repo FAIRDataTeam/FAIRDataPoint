@@ -20,26 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.api.dto.schema;
 
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import java.util.List;
 
-public class Common {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class MetadataSchemaDTO {
 
-    public static void compare(ShapeChangeDTO entity, ShapeDTO dto) {
-        assertThat(dto.getName(), is(equalTo(entity.getName())));
-        assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));
-    }
+    private String uuid;
 
-    public static void compare(Shape entity, ShapeDTO dto) {
-        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
-        assertThat(dto.getName(), is(equalTo(entity.getName())));
-        assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));
-    }
+    private String name;
+
+    private boolean published;
+
+    private MetadataSchemaType type;
+
+    private String definition;
+
+    private List<String> targetClasses;
 }

@@ -39,7 +39,7 @@ import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import nl.dtls.fairdatapoint.service.shape.ShapeService;
+import nl.dtls.fairdatapoint.service.schema.MetadataSchemaService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -82,7 +82,7 @@ public class GenericController {
     private ResourceDefinitionService resourceDefinitionService;
 
     @Autowired
-    private ShapeService shapeService;
+    private MetadataSchemaService metadataSchemaService;
 
     @Autowired
     private MetadataStateService metadataStateService;
@@ -101,7 +101,7 @@ public class GenericController {
     public Model getFormMetadata(
             @PathVariable final Optional<String> oUrlPrefix
     ) {
-        return shapeService.getShaclFromShapes();
+        return metadataSchemaService.getShaclFromSchemas();
     }
 
     @Operation(hidden = true, deprecated = true)

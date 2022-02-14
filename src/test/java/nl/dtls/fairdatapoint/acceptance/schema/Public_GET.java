@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ShapeRepository;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,28 +46,28 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-@DisplayName("GET /shapes/public")
+@DisplayName("GET /metadata-schemas/public")
 public class Public_GET extends WebIntegrationTest {
 
     @Autowired
-    private ShapeRepository shapeRepository;
+    private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private MetadataSchemaFixtures metadataSchemaFixtures;
 
-    private final ParameterizedTypeReference<List<ShapeDTO>> responseType =
+    private final ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType =
             new ParameterizedTypeReference<>() {
             };
 
     private URI url() {
-        return URI.create("/shapes/public");
+        return URI.create("/metadata-schemas/public");
     }
 
-    private Shape makeShape(Boolean published) {
-        return new Shape().toBuilder()
+    private MetadataSchema makeSchema(Boolean published) {
+        return new MetadataSchema().toBuilder()
                 .uuid(UUID.randomUUID().toString())
-                .name(shapeFixtures.customShape().getName())
-                .definition(shapeFixtures.customShape().getDefinition())
+                .name(metadataSchemaFixtures.customSchema().getName())
+                .definition(metadataSchemaFixtures.customSchema().getDefinition())
                 .published(published)
                 .targetClasses(Set.of())
                 .build();
@@ -77,9 +77,9 @@ public class Public_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: no published")
     public void res200_noPublished() {
         // GIVEN: prepare data
-        shapeRepository.deleteAll();
-        Shape shape = makeShape(false);
-        shapeRepository.insert(shape);
+        metadataSchemaRepository.deleteAll();
+        MetadataSchema metadataSchema = makeSchema(false);
+        metadataSchemaRepository.insert(metadataSchema);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -88,7 +88,7 @@ public class Public_GET extends WebIntegrationTest {
                 .build();
 
         // WHEN:
-        ResponseEntity<List<ShapeDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -100,11 +100,11 @@ public class Public_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: published")
     public void res200_published() {
         // GIVEN: prepare data
-        shapeRepository.deleteAll();
-        Shape shapeNotPublished = makeShape(false);
-        Shape shapePublished = makeShape(true);
-        shapeRepository.insert(shapeNotPublished);
-        shapeRepository.insert(shapePublished);
+        metadataSchemaRepository.deleteAll();
+        MetadataSchema metadataSchemaNotPublished = makeSchema(false);
+        MetadataSchema metadataSchemaPublished = makeSchema(true);
+        metadataSchemaRepository.insert(metadataSchemaNotPublished);
+        metadataSchemaRepository.insert(metadataSchemaPublished);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -113,12 +113,12 @@ public class Public_GET extends WebIntegrationTest {
                 .build();
 
         // WHEN:
-        ResponseEntity<List<ShapeDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Result is an empty list", result.getBody().size(), is(equalTo(1)));
-        assertThat("UUID matches the published shape", result.getBody().get(0).getUuid(), is(equalTo(shapePublished.getUuid())));
+        assertThat("UUID matches the published schema", result.getBody().get(0).getUuid(), is(equalTo(metadataSchemaPublished.getUuid())));
     }
 }

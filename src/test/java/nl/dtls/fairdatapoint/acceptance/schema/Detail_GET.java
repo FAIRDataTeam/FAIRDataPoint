@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.shape;
+package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.shape.ShapeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.data.ShapeFixtures;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,33 +42,33 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("GET /shapes/:shapeUuid")
+@DisplayName("GET /metadata-schemas/:schemaUuid")
 public class Detail_GET extends WebIntegrationTest {
 
     private URI url(String uuid) {
-        return URI.create(format("/shapes/%s", uuid));
+        return URI.create(format("/metadata-schemas/%s", uuid));
     }
 
     @Autowired
-    private ShapeFixtures shapeFixtures;
+    private MetadataSchemaFixtures metadataSchemaFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        Shape shape = shapeFixtures.fdpShape();
+        MetadataSchema metadataSchema = metadataSchemaFixtures.fdpSchema();
         RequestEntity<Void> request = RequestEntity
-                .get(url(shape.getUuid()))
+                .get(url(metadataSchema.getUuid()))
                 .build();
-        ParameterizedTypeReference<ShapeDTO> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<MetadataSchemaDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<ShapeDTO> result = client.exchange(request, responseType);
+        ResponseEntity<MetadataSchemaDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(shape, result.getBody());
+        Common.compare(metadataSchema, result.getBody());
     }
 
     @Test
