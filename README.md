@@ -12,7 +12,7 @@
 [**FAIR Data Point** (FDP)](https://www.fairdatapoint.org) is a REST API for creating, storing, and serving **FAIR
 metadata**. This FDP implementation also presents a Web-based graphical user interface (GUI). The metadata contents are
 generated **semi-automatically** according to
-the [FAIR Data Point software specification](https://github.com/FAIRDataTeam/FAIRDataPoint-Spec) document.
+the [FAIR Data Point software specification](https://specs.fairdatapoint.org) document.
 
 ## Usage
 
