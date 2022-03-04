@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.3</version>
+        <version>2.6.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.12.4</version>
+    <version>1.13.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -47,22 +47,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Maven -->
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Project related -->
         <spring.rdf.migration.version>1.1.0.RELEASE</spring.rdf.migration.version>
         <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Core -->
-        <springdoc.version>1.5.2</springdoc.version>
-        <mongock.version>4.3.8</mongock.version>
-        <mongodb.driver-sync.version>4.2.3</mongodb.driver-sync.version>
-        <mongodb.spring-data.v3.version>3.2.3</mongodb.spring-data.v3.version>
-        <rdf4j.version>3.7.2</rdf4j.version>
+        <springdoc.version>1.6.5</springdoc.version>
+        <mongock.version>5.0.35</mongock.version>
+        <mongodb.spring-data.v3.version>3.3.1</mongodb.spring-data.v3.version>
+        <rdf4j.version>3.7.4</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
         <jwt.version>0.11.2</jwt.version>
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
         <log4j2.version>2.17.1</log4j2.version>
 
@@ -105,7 +104,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.cloudyrock.mongock</groupId>
+                <groupId>io.mongock</groupId>
                 <artifactId>mongock-bom</artifactId>
                 <version>${mongock.version}</version>
                 <type>pom</type>
@@ -180,17 +179,12 @@
         <!--   Mongock          -->
         <!-- ////////////////// -->
         <dependency>
-            <groupId>com.github.cloudyrock.mongock</groupId>
-            <artifactId>mongock-spring-v5</artifactId>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongock-springboot</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.cloudyrock.mongock</groupId>
+            <groupId>io.mongock</groupId>
             <artifactId>mongodb-springdata-v3-driver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-sync</artifactId>
-            <version>${mongodb.driver-sync.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -417,8 +411,8 @@
                             <url>https://raw.githubusercontent.com/re3data/ontology/master/r3dOntology.ttl</url>
                         </vocabulary>
                         <vocabulary>
-                            <url>https://raw.githubusercontent.com/DTL-FAIRData/FDP-O/develop/fdp-ontology.owl</url>
-                            <namespace>http://rdf.biosemantics.org/ontologies/fdp-o#</namespace>
+                            <url>https://raw.githubusercontent.com/FAIRDataTeam/FDP-O/v1.1/fdp-ontology.owl</url>
+                            <namespace>https://w3id.org/fdp/fdp-o#</namespace>
                             <prefix>fdp</prefix>
                         </vocabulary>
                         <vocabulary>

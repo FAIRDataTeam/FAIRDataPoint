@@ -149,7 +149,7 @@ public class Detail_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 200: Edit INTERNAL shape")
     public void res200_internal() {
         // GIVEN:
-        Shape shape = shapeFixtures.repositoryShape();
+        Shape shape = shapeFixtures.fdpShape();
         ShapeChangeDTO reqDto = reqDto(shape);
         RequestEntity<ShapeChangeDTO> request = RequestEntity
                 .put(url(shape.getUuid()))
@@ -170,14 +170,14 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        Shape shape = shapeFixtures.repositoryShape();
+        Shape shape = shapeFixtures.fdpShape();
         createNoUserForbiddenTestPut(client, url(shape.getUuid()), reqDto(shape));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_shape() {
-        Shape shape = shapeFixtures.repositoryShape();
+        Shape shape = shapeFixtures.fdpShape();
         createUserForbiddenTestPut(client, url(shape.getUuid()), reqDto(shape));
     }
 

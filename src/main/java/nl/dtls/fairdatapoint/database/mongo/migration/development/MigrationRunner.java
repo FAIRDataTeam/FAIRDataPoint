@@ -32,6 +32,8 @@ import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.Metad
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.ResourceDefinitionMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.ShapeMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -69,6 +71,12 @@ public class MigrationRunner {
     @Autowired
     private EventMigration eventMigration;
 
+    @Autowired
+    private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
+
+    @Autowired
+    private ResourceDefinitionCache resourceDefinitionCache;
+
     @PostConstruct
     public void run() {
         userMigration.runMigration();
@@ -80,6 +88,8 @@ public class MigrationRunner {
         metadataMigration.runMigration();
         indexEntryMigration.runMigration();
         eventMigration.runMigration();
+        resourceDefinitionTargetClassesCache.computeCache();
+        resourceDefinitionCache.computeCache();
     }
 
 }

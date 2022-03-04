@@ -17,7 +17,7 @@ the [FAIR Data Point software specification](https://specs.fairdatapoint.org) do
 ## Usage
 
 More information about FDP, how to deploy it and use it can be found in
-the [FDP Deployment Documentation](https://fairdatapoint.readthedocs.io/).
+the [FDP Deployment and REST API usage Documentation](https://fairdatapoint.readthedocs.io/).
 
 ## Related GitHub Projects
 
@@ -33,16 +33,16 @@ details of API calls can be found there. It also allows trying out API calls dir
 document please visit the following url via web
 browser [localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) (for local deployment)
 or `https://your.domain.tld/swagger-ui.html` for your deployment (
-e.g. [app.fairdatapoint.org/swagger-ui.html](https://app.fairdatapoint.org/swagger-ui.html)).
+e.g. [app.fairdatapoint.org/swagger-ui.html](https://app.fairdatapoint.org/swagger-ui.html)).  More detailed descriptions and examples of these API calls is available in the [Deployment and Usage instructions](https://fairdatapoint.readthedocs.io/)
 
 ## Development
 
 ### Technology Stack
 
-- **Java** (JDK 16)
+- **Java** (JDK 17)
 - **MongoDB** (4.2)
 - **Maven** (3.2.5 or higher)
-- **Docker** (17.09.0-ce or higher) - *for building Docker image only*
+- **Docker** (19.03.0-ce or higher) - *for building Docker image only*
 
 ### Build & Run
 
@@ -114,8 +114,7 @@ documentation.
 ## Contributing
 
 We maintain a [CHANGELOG](CHANGELOG.md), you should also take a look at our [Contributing guidelines](CONTRIBUTING.md)
-and
-[Code of Conduct](CODE_OF_CONDUCT.md).
+and [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 

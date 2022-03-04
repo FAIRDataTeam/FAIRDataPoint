@@ -27,6 +27,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
@@ -49,7 +50,7 @@ public class Migration_0001_Init {
 
     private Document userAlbert() {
         Document user = new Document();
-        user.append("uuid", "7e64818d-6276-46fb-8bb1-732e6e09f7e9");
+        user.append("uuid", KnownUUIDs.USER_ALBERT_UUID);
         user.append("firstName", "Albert");
         user.append("lastName", "Einstein");
         user.append("email", "albert.einstein@example.com");
@@ -61,7 +62,7 @@ public class Migration_0001_Init {
 
     private Document userNikola() {
         Document user = new Document();
-        user.append("uuid", "b5b92c69-5ed9-4054-954d-0121c29b6800");
+        user.append("uuid", KnownUUIDs.USER_NIKOLA_UUID);
         user.append("firstName", "Nikola");
         user.append("lastName", "Tesla");
         user.append("email", "nikola.tesla@example.com");
@@ -73,7 +74,7 @@ public class Migration_0001_Init {
 
     private Document membershipOwner() {
         Document user = new Document();
-        user.append("uuid", "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8");
+        user.append("uuid", KnownUUIDs.MEMBERSHIP_OWNER_UUID);
         user.append("name", "Owner");
         BasicBSONList permissions = new BasicBSONList();
         permissions.add(new BasicBSONObject().append("mask", 2).append("code", "W"));
@@ -92,7 +93,7 @@ public class Migration_0001_Init {
 
     private Document membershipDataProvider() {
         Document user = new Document();
-        user.append("uuid", "87a2d984-7db2-43f6-805c-6b0040afead5");
+        user.append("uuid", KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID);
         user.append("name", "Data Provider");
         BasicBSONList permissions = new BasicBSONList();
         permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));

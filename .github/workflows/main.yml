@@ -12,11 +12,13 @@ jobs:
     env:
       PUBLIC_IMAGE: fairdata/fairdatapoint
       PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
       TAG_DEVELOP: develop
       TAG_LATEST: latest
-      JDK_VERSION: 16
-      JDK_FILE: openjdk-16.0.1_linux-x64_bin.tar.gz
-      JDK_URL: https://download.java.net/java/GA/jdk16.0.1/7147401fd7354114ac51ef3e1328291f/9/GPL/openjdk-16.0.1_linux-x64_bin.tar.gz
+      JDK_VERSION: 17
+      JDK_FILE: openjdk-17_linux-x64_bin.tar.gz
+      JDK_URL: https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_linux-x64_bin.tar.gz
 
     services:
       mongo:
@@ -36,13 +38,13 @@ jobs:
 
 # (1) -> Prepare cache and Java
     - name: Cache ~/.m2
-      uses: actions/cache@v1
+      uses: actions/cache@v2.1.7
       with:
         path: ~/.m2
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
   
     - name: Cache JDK folder
-      uses: actions/cache@v1
+      uses: actions/cache@v2.1.7
       with:
         path: ~/jdk
         key: ${{ env.JDK_FILE }}
@@ -56,10 +58,12 @@ jobs:
         cp ~/jdk/$JDK_FILE .
 
     - name: Setup Java
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2.5.0
       with:
+        distribution: 'jdkfile'
         java-version: ${{ env.JDK_VERSION }}
         jdkFile: ${{ env.JDK_FILE }}
+        architecture: x64
 
     - name: Verify Maven and Java
       run: |
@@ -88,28 +92,33 @@ jobs:
     - name: Docker build
       run: |
         docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
-        docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
+        docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t ${PRIVATE_IMAGE#/}:$GITHUB_SHA .
 
 # (5) -> Docker image tagging
-    - name: Docker login
-      if: github.event_name == 'push'
+    - name: Docker login (private)
+      if: github.event_name == 'push' && env.PRIVATE_REGISTRY_URL != ''
       run: |
-        docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"
         docker login -u "$PRIVATE_REGISTRY_USERNAME" -p "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
       env:
-        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-        DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
         PRIVATE_REGISTRY_USERNAME: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
         PRIVATE_REGISTRY_PASSWORD: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
 
+    - name: Docker login (public)
+      if: github.event_name == 'push' && env.DOCKER_HUB_USERNAME != ''
+      run: |
+        docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"
+      env:
+        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
     - name: Docker push - commit SHA (private)
-      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+      if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') && env.PRIVATE_REGISTRY_URL != ''
       run: |
         docker push $PRIVATE_IMAGE:$GITHUB_SHA
 
     - name: Docker tag and push - branch (private)
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release')
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release') && env.PRIVATE_REGISTRY_URL != ''
       run: |
         GITHUB_BRANCH=`echo $GITHUB_REF | cut -d/ -f3- | sed 's#/#-#g'`
         docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PRIVATE_IMAGE:$GITHUB_BRANCH

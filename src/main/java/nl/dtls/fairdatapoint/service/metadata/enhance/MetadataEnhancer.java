@@ -25,12 +25,14 @@ package nl.dtls.fairdatapoint.service.metadata.enhance;
 import nl.dtls.fairdatapoint.entity.metadata.Identifier;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import nl.dtls.fairdatapoint.service.actuator.AppInfoContributor;
 import nl.dtls.fairdatapoint.service.metadata.metric.MetricsMetadataService;
 import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
+import nl.dtls.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
@@ -66,6 +68,9 @@ public class MetadataEnhancer {
     private IRI license;
 
     @Autowired
+    private String persistentUrl;
+
+    @Autowired
     private MetricsMetadataService metricsMetadataService;
 
     @Autowired
@@ -77,12 +82,15 @@ public class MetadataEnhancer {
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
+    @Autowired
+    private AppInfoContributor appInfoContributor;
+
     public void enhance(Model metadata, IRI uri, ResourceDefinition rd, Model oldMetadata) {
         enhance(metadata, uri, rd);
 
         // Populate with current data from the triple store
         setIssued(metadata, uri, l(getIssued(oldMetadata)));
-        if (rd.getUrlPrefix().equals("catalog")) {
+        if (rd.isCatalog()) {
             setMetadataIssued(metadata, uri, l(getMetadataIssued(oldMetadata)));
         }
     }
@@ -98,9 +106,6 @@ public class MetadataEnhancer {
         // Add identifiers
         Identifier identifier = createMetadataIdentifier(uri);
         setMetadataIdentifier(metadata, uri, identifier);
-        if (rd.getUrlPrefix().equals("")) {
-            setRepositoryIdentifier(metadata, uri, identifier);
-        }
 
         // Add label
         if (containsObject(metadata, uri.stringValue(), DCTERMS.TITLE.stringValue())) {
@@ -130,7 +135,7 @@ public class MetadataEnhancer {
         OffsetDateTime timestamp = OffsetDateTime.now();
         setIssued(metadata, uri, l(timestamp));
         setModified(metadata, uri, l(timestamp));
-        if (rd.getUrlPrefix().equals("catalog")) {
+        if (rd.isCatalog()) {
             setMetadataIssued(metadata, uri, l(timestamp));
             setMetadataModified(metadata, uri, l(timestamp));
         }
@@ -155,6 +160,10 @@ public class MetadataEnhancer {
     public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition rd, Model resultRdf) {
         resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(rd));
         resultRdf.add(profileService.getProfileUri(rd), RDFS.LABEL, l(format("%s Profile", rd.getName())));
+        if (rd.isRoot()) {
+            resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
+            resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
+        }
     }
 
     private Identifier createMetadataIdentifier(IRI uri) {

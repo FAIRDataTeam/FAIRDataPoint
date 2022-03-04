@@ -28,6 +28,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
@@ -61,7 +62,7 @@ public class Migration_0004_ResourceDefinition {
 
     private Document repositoryDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c");
+        definition.append("uuid", KnownUUIDs.RD_REPOSITORY_UUID);
         definition.append("name", "Repository");
         definition.append("urlPrefix", "");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
@@ -69,7 +70,7 @@ public class Migration_0004_ResourceDefinition {
 
         // Child
         Document child = new Document();
-        child.append("resourceDefinitionUuid", "a0949e72-4466-4d53-8900-9436d1049a4b");
+        child.append("resourceDefinitionUuid", KnownUUIDs.RD_CATALOG_UUID);
         child.append("relationUri", "http://www.re3data.org/schema/3-0#dataCatalog");
         Document listView = new Document();
         listView.append("title", "Catalogs");
@@ -87,7 +88,7 @@ public class Migration_0004_ResourceDefinition {
 
     private Document catalogDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "a0949e72-4466-4d53-8900-9436d1049a4b");
+        definition.append("uuid", KnownUUIDs.RD_CATALOG_UUID);
         definition.append("name", "Catalog");
         definition.append("urlPrefix", "catalog");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
@@ -95,7 +96,7 @@ public class Migration_0004_ResourceDefinition {
 
         // Child
         Document child = new Document();
-        child.append("resourceDefinitionUuid", "2f08228e-1789-40f8-84cd-28e3288c3604");
+        child.append("resourceDefinitionUuid", KnownUUIDs.RD_DATASET_UUID);
         child.append("relationUri", "http://www.w3.org/ns/dcat#dataset");
         Document listView = new Document();
         listView.append("title", "Datasets");
@@ -113,7 +114,7 @@ public class Migration_0004_ResourceDefinition {
 
     private Document datasetDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "2f08228e-1789-40f8-84cd-28e3288c3604");
+        definition.append("uuid", KnownUUIDs.RD_DATASET_UUID);
         definition.append("name", "Dataset");
         definition.append("urlPrefix", "dataset");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
@@ -121,7 +122,7 @@ public class Migration_0004_ResourceDefinition {
 
         // Child
         Document child = new Document();
-        child.append("resourceDefinitionUuid", "02c649de-c579-43bb-b470-306abdc808c7");
+        child.append("resourceDefinitionUuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
         child.append("relationUri", "http://www.w3.org/ns/dcat#distribution");
         // - list View
         Document listView = new Document();
@@ -144,7 +145,7 @@ public class Migration_0004_ResourceDefinition {
 
     private Document distributionDefinition() {
         Document definition = new Document();
-        definition.append("uuid", "02c649de-c579-43bb-b470-306abdc808c7");
+        definition.append("uuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
         definition.append("name", "Distribution");
         definition.append("urlPrefix", "distribution");
         definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
@@ -168,7 +169,7 @@ public class Migration_0004_ResourceDefinition {
 
     private Document membershipOwner() {
         Document user = new Document();
-        user.append("uuid", "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8");
+        user.append("uuid", KnownUUIDs.MEMBERSHIP_OWNER_UUID);
         user.append("name", "Owner");
         BasicBSONList permissions = new BasicBSONList();
         permissions.add(new BasicBSONObject().append("mask", 2).append("code", "W"));
@@ -177,9 +178,9 @@ public class Migration_0004_ResourceDefinition {
         permissions.add(new BasicBSONObject().append("mask", 16).append("code", "A"));
         user.append("permissions", permissions);
         BasicBSONList allowedEntities = new BasicBSONList();
-        allowedEntities.add("a0949e72-4466-4d53-8900-9436d1049a4b");
-        allowedEntities.add("2f08228e-1789-40f8-84cd-28e3288c3604");
-        allowedEntities.add("02c649de-c579-43bb-b470-306abdc808c7");
+        allowedEntities.add(KnownUUIDs.RD_CATALOG_UUID);
+        allowedEntities.add(KnownUUIDs.RD_DATASET_UUID);
+        allowedEntities.add(KnownUUIDs.RD_DISTRIBUTION_UUID);
         user.append("allowedEntities", allowedEntities);
         user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
         return user;
@@ -187,13 +188,13 @@ public class Migration_0004_ResourceDefinition {
 
     private Document membershipDataProvider() {
         Document user = new Document();
-        user.append("uuid", "87a2d984-7db2-43f6-805c-6b0040afead5");
+        user.append("uuid", KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID);
         user.append("name", "Data Provider");
         BasicBSONList permissions = new BasicBSONList();
         permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));
         user.append("permissions", permissions);
         BasicBSONList allowedEntities = new BasicBSONList();
-        allowedEntities.add("a0949e72-4466-4d53-8900-9436d1049a4b");
+        allowedEntities.add(KnownUUIDs.RD_CATALOG_UUID);
         user.append("allowedEntities", allowedEntities);
         user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
         return user;

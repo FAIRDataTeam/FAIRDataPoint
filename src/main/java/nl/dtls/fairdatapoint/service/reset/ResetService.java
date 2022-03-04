@@ -210,7 +210,7 @@ public class ResetService {
     private void restoreDefaultMetadata() {
         log.debug("Creating default metadata");
         try (RepositoryConnection conn = repository.getConnection()) {
-            List<Statement> s = FactoryDefaults.repositoryStatements(
+            List<Statement> s = FactoryDefaults.fdpStatements(
                     persistentUrl,
                     license,
                     language,
@@ -226,7 +226,9 @@ public class ResetService {
     private void restoreDefaultShapes() throws Exception {
         log.debug("Creating default shapes");
         shapeRepository.save(FactoryDefaults.shapeResource());
-        shapeRepository.save(FactoryDefaults.shapeRepository());
+        shapeRepository.save(FactoryDefaults.shapeDataService());
+        shapeRepository.save(FactoryDefaults.shapeMetadataService());
+        shapeRepository.save(FactoryDefaults.shapeFDP());
         shapeRepository.save(FactoryDefaults.shapeCatalog());
         shapeRepository.save(FactoryDefaults.shapeDataset());
         shapeRepository.save(FactoryDefaults.shapeDistribution());
@@ -234,7 +236,7 @@ public class ResetService {
 
     private void restoreDefaultResourceDefinitions() {
         log.debug("Creating default resource definitions");
-        resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_REPOSITORY);
+        resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_FDP);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_CATALOG);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DATASET);
         resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DISTRIBUTION);

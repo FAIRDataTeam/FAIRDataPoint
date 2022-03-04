@@ -1,0 +1,13 @@
+@prefix :         <http://fairdatapoint.org/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix dash:     <http://datashapes.org/dash#> .
+@prefix ex:       <http://example.org/> .
+
+:CustomShape a sh:NodeShape ;
+  sh:targetClass ex:Dog ;
+  sh:property [
+      sh:path ex:identifier ;
+      sh:nodeKind sh:IRI ;
+      dash:editor dash:URIEditor ;
+      dash:viewer dash:LabelViewer ;
+    ] .

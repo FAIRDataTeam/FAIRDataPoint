@@ -1,0 +1,36 @@
+@prefix :         <http://fairdatapoint.org/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dct:      <http://purl.org/dc/terms/> .
+@prefix dash:     <http://datashapes.org/dash#> .
+
+:DatasetShape a sh:NodeShape ;
+  sh:targetClass dcat:Dataset ;
+  sh:property [
+      sh:path dct:isPartOf ;
+      sh:nodeKind sh:IRI ;
+      sh:minCount 1 ;
+      sh:maxCount 1 ;
+    ],
+    [
+      sh:path dcat:landingPage ;
+      sh:nodeKind sh:IRI ;
+      sh:maxCount 1 ;
+    ],
+    [
+      sh:path dcat:theme ;
+      sh:nodeKind sh:IRI ;
+      dash:editor dash:URIEditor ;
+      dash:viewer dash:LabelViewer ;
+    ],
+    [
+      sh:path dcat:keyword ;
+      sh:nodeKind sh:Literal ;
+      dash:editor dash:TextFieldEditor ;
+      dash:viewer dash:LiteralViewer ;
+    ],
+    [
+      sh:path dcat:contactPoint ;
+       sh:nodeKind sh:IRI ;
+       sh:maxCount 1 ;
+    ] .

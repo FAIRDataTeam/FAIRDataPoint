@@ -72,15 +72,6 @@ public class WebConfig implements WebMvcConfigurer {
         configurer.favorParameter(true);
     }
 
-    @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        // Swagger
-        registry.setOrder(Integer.MIN_VALUE + 1).addResourceHandler("/webjars/**")
-                .addResourceLocations(CLASSPATH_RESOURCE_LOCATION+"/webjars/")
-                .resourceChain(true)
-                .addResolver(new WebJarsResourceResolver());
-    }
-
     @Bean
     @Primary
     public ObjectMapper objectMapper() {

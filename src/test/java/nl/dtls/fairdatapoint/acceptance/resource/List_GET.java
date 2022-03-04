@@ -67,7 +67,7 @@ public class List_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<ResourceDefinition> body = result.getBody();
         assertThat(body, is(equalTo(List.of(
-                resourceDefinitionFixtures.repositoryDefinition(),
+                resourceDefinitionFixtures.fdpDefinition(),
                 resourceDefinitionFixtures.catalogDefinition(),
                 resourceDefinitionFixtures.datasetDefinition(),
                 resourceDefinitionFixtures.distributionDefinition()

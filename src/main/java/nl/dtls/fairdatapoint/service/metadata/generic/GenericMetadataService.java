@@ -43,7 +43,7 @@ public class GenericMetadataService extends AbstractMetadataService {
 
     @Override
     public Model store(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
-        if (!rd.getName().equals("Repository")) {
+        if (!rd.isRoot()) {
             // 1. Check permissions
             String parentId = Optional.ofNullable(getParent(metadata))
                     .orElseThrow(() -> new ValidationException("Metadata has no parent")).stringValue();

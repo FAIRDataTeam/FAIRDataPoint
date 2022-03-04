@@ -24,7 +24,6 @@ package nl.dtls.fairdatapoint.entity.metadata;
 
 import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
@@ -117,7 +116,7 @@ public class MetadataGetter {
     //  Children
     // ------------------------------------------------------------------------------------------------------------
     public static List<IRI> getCatalogs(Model metadata) {
-        return getChildren(metadata, R3D.DATACATALOG);
+        return getChildren(metadata, FDP.METADATACATALOG);
     }
 
     public static List<IRI> getDatasets(Model metadata) {

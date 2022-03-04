@@ -113,6 +113,14 @@ public class OpenApiGenerator {
             .addApiResponse("404", RESPONSE_NOT_FOUND)
             .addApiResponse("500", RESPONSE_INTERNAL_SERVER_ERROR);
 
+    private static final ApiResponses RESPONSES_RDF_POST = new ApiResponses()
+            .addApiResponse("201", RESPONSE_OK_RDF)
+            .addApiResponse("400", RESPONSE_BAD_REQUEST)
+            .addApiResponse("401", RESPONSE_UNAUTHORIZED)
+            .addApiResponse("403", RESPONSE_FORBIDDEN)
+            .addApiResponse("404", RESPONSE_NOT_FOUND)
+            .addApiResponse("500", RESPONSE_INTERNAL_SERVER_ERROR);
+
     private static final ApiResponses RESPONSES_DELETE = new ApiResponses()
             .addApiResponse("204", RESPONSE_NO_CONTENT)
             .addApiResponse("400", RESPONSE_BAD_REQUEST)
@@ -345,7 +353,7 @@ public class OpenApiGenerator {
                                         .content(CONTENT_RDF)
                                         .required(true)
                                 )
-                                .responses(RESPONSES_RDF)
+                                .responses(RESPONSES_RDF_POST)
                         )
         );
         // CRUD: GET, PUT, DELETE

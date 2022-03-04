@@ -1,0 +1,59 @@
+@prefix :         <http://fairdatapoint.org/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dct:      <http://purl.org/dc/terms/> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+@prefix dash:     <http://datashapes.org/dash#> .
+
+:ResourceShape a sh:NodeShape ;
+  sh:targetClass dcat:Resource ;
+  sh:property [
+    sh:path dct:title ;
+    sh:nodeKind sh:Literal ;
+    sh:minCount 1 ;
+    sh:maxCount  1 ;
+    dash:editor dash:TextFieldEditor ;
+  ], [
+    sh:path dct:description ;
+    sh:nodeKind sh:Literal ;
+    sh:maxCount 1 ;
+    dash:editor dash:TextAreaEditor ;
+  ], [
+    sh:path dct:hasVersion ;
+    sh:name "version" ;
+    sh:nodeKind sh:Literal ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    dash:editor dash:TextFieldEditor ;
+    dash:viewer dash:LiteralViewer ;
+  ], [
+    sh:path dct:license ;
+    sh:nodeKind sh:IRI ;
+    sh:maxCount 1 ;
+    dash:editor dash:URIEditor ;
+    dash:viewer dash:LabelViewer ;
+  ], [
+    sh:path dct:conformsTo ;
+    sh:name "specification" ;
+    sh:maxCount 1 ;
+    sh:nodeKind sh:IRI ;
+    dash:viewer dash:LabelViewer ;
+  ], [
+    sh:path dct:language ;
+    sh:nodeKind sh:IRI ;
+    sh:maxCount 1 ;
+    dash:editor dash:URIEditor ;
+    dash:viewer dash:LabelViewer ;
+  ], [
+    sh:path dct:rights ;
+    sh:nodeKind sh:IRI ;
+    sh:maxCount 1 ;
+  ], [
+    sh:path dct:issued ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+  ], [
+    sh:path dct:modified ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+  ] .
