@@ -42,7 +42,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.eclipse.rdf4j.model.util.Statements.statement;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.s;
 
 @RdfMigrationAnnotation(
         number = 3,
@@ -54,6 +54,9 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
 
     @Autowired
     protected Repository repository;
+
+    @Autowired
+    protected String persistentUrl;
 
     private static final String LEGACY_CONFORMS_TO = "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata";
 
@@ -70,7 +73,7 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, DCTERMS.CONFORMS_TO, i(LEGACY_CONFORMS_TO));
             while (queryResult.hasNext()) {
                 Statement st = queryResult.next();
-                log.debug("Removing old conformsTo: {} {} {}", st.getSubject().stringValue(), st.getPredicate().stringValue(), st.getObject().stringValue());
+                log.warn("Removing: {} {} {}", st.getSubject(), st.getPredicate(), st.getObject());
                 conn.remove(st);
             }
         } catch (RepositoryException e) {
@@ -86,10 +89,10 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
             while (queryResult.hasNext()) {
                 Statement st = queryResult.next();
                 for (IRI type : newTypes) {
-                    log.debug("Adding: {} {} {}", st.getSubject().stringValue(), RDF.TYPE.stringValue(), type.stringValue());
-                    conn.add(statement(st.getSubject(), RDF.TYPE, type, st.getContext()));
+                    log.debug("Adding: {} {} {}", st.getSubject(), RDF.TYPE, type);
+                    conn.add(s(st.getSubject(), RDF.TYPE, type, st.getSubject()));
                 }
-                log.debug("Removing: {} {} {}", st.getSubject().stringValue(), st.getPredicate().stringValue(), st.getObject().stringValue());
+                log.debug("Removing: {} {} {}", st.getSubject(), st.getPredicate(), st.getObject());
                 conn.remove(st);
             }
         } catch (RepositoryException e) {
@@ -103,25 +106,25 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, i("http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier"), null);
             while (queryResult.hasNext()) {
                 Statement st = queryResult.next();
-                log.debug("Adding: {} {} {}", st.getSubject().stringValue(), FDP.METADATAIDENTIFIER.stringValue(), st.getObject());
-                conn.add(statement(st.getSubject(), FDP.METADATAIDENTIFIER, st.getObject(), st.getContext()));
-                log.debug("Removing: {} {} {}", st.getSubject().stringValue(), st.getPredicate().stringValue(), st.getObject().stringValue());
+                log.debug("Adding: {} {} {}", st.getSubject(), FDP.METADATAIDENTIFIER, st.getObject());
+                conn.add(s(st.getSubject(), FDP.METADATAIDENTIFIER, st.getObject(), st.getSubject()));
+                log.debug("Removing: {} {} {}", st.getSubject(), st.getPredicate(), st.getObject());
                 conn.remove(st);
             }
             queryResult = conn.getStatements(null, i("http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued"), null);
             while (queryResult.hasNext()) {
                 Statement st = queryResult.next();
-                log.debug("Adding: {} {} {}", st.getSubject().stringValue(), FDP.METADATAISSUED.stringValue(), st.getObject());
-                conn.add(statement(st.getSubject(), FDP.METADATAISSUED, st.getObject(), st.getContext()));
-                log.debug("Removing: {} {} {}", st.getSubject().stringValue(), st.getPredicate().stringValue(), st.getObject().stringValue());
+                log.debug("Adding: {} {} {}", st.getSubject(), FDP.METADATAISSUED, st.getObject());
+                conn.add(s(st.getSubject(), FDP.METADATAISSUED, st.getObject(), st.getSubject()));
+                log.debug("Removing: {} {} {}", st.getSubject(), st.getPredicate(), st.getObject());
                 conn.remove(st);
             }
             queryResult = conn.getStatements(null, i("http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified"), null);
             while (queryResult.hasNext()) {
                 Statement st = queryResult.next();
-                log.debug("Adding: {} {} {}", st.getSubject().stringValue(), FDP.METADATAMODIFIED.stringValue(), st.getObject());
-                conn.add(statement(st.getSubject(), FDP.METADATAMODIFIED, st.getObject(), st.getContext()));
-                log.debug("Removing: {} {} {}", st.getSubject().stringValue(), st.getPredicate().stringValue(), st.getObject().stringValue());
+                log.debug("Adding: {} {} {}", st.getSubject(), FDP.METADATAMODIFIED, st.getObject());
+                conn.add(s(st.getSubject(), FDP.METADATAMODIFIED, st.getObject(), st.getSubject()));
+                log.debug("Removing: {} {} {}", st.getSubject(), st.getPredicate(), st.getObject());
                 conn.remove(st);
             }
         } catch (RepositoryException e) {
@@ -135,9 +138,9 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, R3D.DATACATALOG, null);
             while (queryResult.hasNext()) {
                 Statement st = queryResult.next();
-                log.debug("Adding: {} {} {}", st.getSubject().stringValue(), FDP.METADATACATALOG.stringValue(), st.getObject().stringValue());
-                conn.add(statement(st.getSubject(), FDP.METADATACATALOG, st.getObject(), st.getContext()));
-                log.debug("Removing: {} {} {}", st.getSubject().stringValue(), st.getPredicate().stringValue(), st.getObject().stringValue());
+                log.debug("Adding: {} {} {}", st.getSubject(), FDP.METADATACATALOG, st.getObject());
+                conn.add(s(st.getSubject(), FDP.METADATACATALOG, st.getObject(), st.getSubject()));
+                log.debug("Removing: {} {} {}", st.getSubject(), st.getPredicate(), st.getObject());
                 conn.remove(st);
             }
         } catch (RepositoryException e) {
