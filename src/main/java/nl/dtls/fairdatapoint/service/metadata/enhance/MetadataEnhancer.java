@@ -162,7 +162,7 @@ public class MetadataEnhancer {
         resultRdf.add(profileService.getProfileUri(rd), RDFS.LABEL, l(format("%s Profile", rd.getName())));
         if (rd.isRoot()) {
             resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
-            resultRdf.add(entityUri, DCAT.ENDPOINT_URL, l(persistentUrl));
+            resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
         }
     }
 
