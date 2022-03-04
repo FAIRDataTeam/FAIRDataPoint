@@ -22,27 +22,25 @@
  */
 package nl.dtls.fairdatapoint.service.schema;
 
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.*;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Meta;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -57,7 +55,7 @@ public class MetadataSchemaService {
     private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
 
     @Autowired
     private MetadataSchemaMapper metadataSchemaMapper;
@@ -68,81 +66,185 @@ public class MetadataSchemaService {
     @Autowired
     private ResourceDefinitionTargetClassesCache targetClassesCache;
 
-    public List<MetadataSchemaDTO> getSchemas() {
-        List<MetadataSchema> metadataSchemas = metadataSchemaRepository.findAll();
-        return
-                metadataSchemas
-                        .stream()
-                        .map(metadataSchemaMapper::toDTO)
-                        .collect(toList());
-    }
+    @Autowired
+    private String persistentUrl;
 
-    public List<MetadataSchemaDTO> getPublishedSchemas() {
-        List<MetadataSchema> metadataSchemas = metadataSchemaRepository.findAllByPublishedIsTrue();
-        return
-                metadataSchemas
-                        .stream()
-                        .map(metadataSchemaMapper::toDTO)
-                        .collect(toList());
-    }
-
-    public Optional<MetadataSchemaDTO> getSchemaByUuid(String uuid) {
-        return
-                metadataSchemaRepository
-                        .findByUuid(uuid)
-                        .map(metadataSchemaMapper::toDTO);
-    }
-
-    public Optional<Model> getSchemaContentByUuid(String uuid) {
-        return
-                metadataSchemaRepository
-                        .findByUuid(uuid)
-                        .map(schema -> RdfIOUtil.read(schema.getDefinition(), ""));
-    }
+    // ===============================================================================================
+    // Schema drafts
 
     @PreAuthorize("hasRole('ADMIN')")
-    public MetadataSchemaDTO createSchema(MetadataSchemaChangeDTO reqDto) {
-        metadataSchemaValidator.validate(reqDto);
+    public MetadataSchemaDraftDTO createSchemaDraft(MetadataSchemaChangeDTO reqDto) {
         String uuid = UUID.randomUUID().toString();
-        MetadataSchema metadataSchema = metadataSchemaMapper.fromChangeDTO(reqDto, uuid);
-        metadataSchemaRepository.save(metadataSchema);
-        targetClassesCache.computeCache();
-        return metadataSchemaMapper.toDTO(metadataSchema);
+
+        // Validate
+        metadataSchemaValidator.validateAllExist(reqDto.getExtendsSchemaUuids());
+
+        MetadataSchemaDraft draft = metadataSchemaMapper.fromChangeDTO(reqDto, uuid);
+        metadataSchemaDraftRepository.save(draft);
+        return metadataSchemaMapper.toDraftDTO(draft);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<MetadataSchemaDTO> updateSchema(String uuid, MetadataSchemaChangeDTO reqDto) {
-        metadataSchemaValidator.validate(reqDto);
-        Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuid(uuid);
+    public Optional<MetadataSchemaDraftDTO> getSchemaDraft(String uuid) {
+        Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+        if (oDraft.isPresent()) {
+            return oDraft.map(metadataSchemaMapper::toDraftDTO);
+        }
+        return metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid).map(metadataSchemaMapper::toDraftDTO);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public Optional<MetadataSchemaDraftDTO> updateSchemaDraft(String uuid, MetadataSchemaChangeDTO reqDto) {
+        Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+        // Check if present
+        if (oDraft.isEmpty()) {
+            return empty();
+        }
+        // Validate
+        metadataSchemaValidator.validateAllExist(reqDto.getExtendsSchemaUuids());
+        // Save
+        MetadataSchemaDraft draft = oDraft.get();
+        MetadataSchemaDraft updatedDraft = metadataSchemaMapper.fromChangeDTO(reqDto, draft);
+        metadataSchemaDraftRepository.save(updatedDraft);
+        return of(metadataSchemaMapper.toDraftDTO(updatedDraft));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public boolean deleteSchemaDraft(String uuid) {
+        Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+        if (oDraft.isEmpty()) {
+            return false;
+        }
+        MetadataSchemaDraft draft = oDraft.get();
+        metadataSchemaDraftRepository.delete(draft);
+        return true;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public Optional<MetadataSchemaDTO> publishDraft(String uuid, MetadataSchemaPublishDTO reqDto) {
+        Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+        // Check if present
+        if (oDraft.isEmpty()) {
+            return empty();
+        }
+        // Update
+        MetadataSchemaDraft draft = oDraft.get();
+        MetadataSchema newLatest = metadataSchemaMapper.fromPublishDTO(reqDto, draft);
+        Optional<MetadataSchema> oLatest = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
+        if (oLatest.isPresent()) {
+            MetadataSchema oldLatest = oLatest.get();
+            oldLatest.setLatest(false);
+            newLatest.setPreviousVersion(oldLatest);
+        }
+        // Validate
+        metadataSchemaValidator.validateAllExist(newLatest.getExtendSchemas());
+        metadataSchemaValidator.validate(newLatest);
+        // Save
+        metadataSchemaRepository.save(newLatest);
+        List<MetadataSchema> versions = metadataSchemaRepository.findByUuid(uuid);
+        return of(metadataSchemaMapper.toDTO(newLatest, versions));
+    }
+
+    // ===============================================================================================
+    // Schema versions
+
+    private Optional<MetadataSchema> getByUuidAndVersion(String uuid, String version) {
+        if (Objects.equals(version, "latest")) {
+            return metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
+        }
+        return metadataSchemaRepository.findByUuidAndVersionString(uuid, version);
+    }
+
+    public Optional<MetadataSchemaVersionDTO> getVersion(String uuid, String version) {
+        return getByUuidAndVersion(uuid, version).map(metadataSchemaMapper::toVersionDTO);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public Optional<MetadataSchemaVersionDTO> updateVersion(String uuid, String version, MetadataSchemaUpdateDTO reqDto) {
+        Optional<MetadataSchema> oSchema = getByUuidAndVersion(uuid, version);
         if (oSchema.isEmpty()) {
             return empty();
         }
-        MetadataSchema metadataSchema = oSchema.get();
-        MetadataSchema updatedMetadataSchema = metadataSchemaMapper.fromChangeDTO(reqDto, metadataSchema);
-        metadataSchemaRepository.save(updatedMetadataSchema);
-        targetClassesCache.computeCache();
-        return of(metadataSchemaMapper.toDTO(updatedMetadataSchema));
+        MetadataSchema updatedSchema = metadataSchemaRepository.save(metadataSchemaMapper.fromUpdateDTO(oSchema.get(), reqDto));
+        return of(metadataSchemaMapper.toVersionDTO(updatedSchema));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public boolean deleteSchema(String uuid) {
-        Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuid(uuid);
+    public boolean deleteVersion(String uuid, String version) {
+        Optional<MetadataSchema> oSchema = getByUuidAndVersion(uuid, version);
+        // Check if present
         if (oSchema.isEmpty()) {
             return false;
         }
-        MetadataSchema metadataSchema = oSchema.get();
-
-        List<ResourceDefinition> resourceDefinitions = resourceDefinitionRepository.findByMetadataSchemaUuidsIsContaining(metadataSchema.getUuid());
-        if (!resourceDefinitions.isEmpty()) {
-            throw new ValidationException(format("Metadata schema is used in %d resource definitions", resourceDefinitions.size()));
+        // Validate and fix links
+        MetadataSchema schema = oSchema.get();
+        MetadataSchema previous = schema.getPreviousVersion();
+        Optional<MetadataSchema> oNewer = metadataSchemaRepository.findByPreviousVersion(schema);
+        if (schema.isLatest()) {
+            if (previous == null) {
+                metadataSchemaValidator.validateNotUsed(uuid);
+            } else {
+                previous.setLatest(true);
+                metadataSchemaValidator.validateNoExtendsCycle(uuid, previous.getExtendSchemas());
+                metadataSchemaRepository.save(previous);
+            }
+        } else if (oNewer.isPresent()) {
+            MetadataSchema newer = oNewer.get();
+            newer.setPreviousVersion(previous);
+            metadataSchemaRepository.save(newer);
         }
+        metadataSchemaRepository.delete(schema);
+        return true;
+    }
 
-        if (metadataSchema.getType() == MetadataSchemaType.INTERNAL) {
-            throw new ValidationException("You can't delete INTERNAL metadata schema");
+    @PreAuthorize("hasRole('ADMIN')")
+    public boolean deleteSchemaFull(String uuid) {
+        List<MetadataSchema> schemas = metadataSchemaRepository.findByUuid(uuid);
+        Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+        // Check if present
+        if (schemas.isEmpty() && oDraft.isEmpty()) {
+            return false;
         }
-        metadataSchemaRepository.delete(metadataSchema);
+        // Validate
+        metadataSchemaValidator.validateNotUsed(uuid);
+        if (schemas.stream().anyMatch(schema -> schema.getType() == MetadataSchemaType.INTERNAL)) {
+            throw new ValidationException("You can't delete INTERNAL Shape");
+        }
+        // Delete
+        if (!schemas.isEmpty()) {
+            metadataSchemaRepository.deleteAll(schemas);
+        }
+        oDraft.ifPresent(draft -> metadataSchemaDraftRepository.delete(draft));
+        // Update cache
         targetClassesCache.computeCache();
         return true;
+    }
+
+    // ===============================================================================================
+    // Reading schemas
+
+    public List<MetadataSchemaDTO> getSchemas() {
+        return metadataSchemaRepository
+                .findAllByLatestIsTrue()
+                .stream()
+                .map(schema -> {
+                    List<MetadataSchema> versions = metadataSchemaRepository.findByUuid(schema.getUuid());
+                    return metadataSchemaMapper.toDTO(schema, versions);
+                })
+                .toList();
+    }
+
+    public Optional<MetadataSchemaDTO> getSchemaByUuid(String uuid) {
+        Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
+        return oSchema.map(schema -> {
+            List<MetadataSchema> versions = metadataSchemaRepository.findByUuid(schema.getUuid());
+            return metadataSchemaMapper.toDTO(schema, versions);
+        });
+    }
+
+    public Optional<Model> getSchemaContentByUuid(String uuid) {
+        Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
+        return oSchema.map(schema -> RdfIOUtil.read(schema.getDefinition(), ""));
     }
 
     public Model getShaclFromSchemas() {
@@ -154,27 +256,33 @@ public class MetadataSchemaService {
         return shacl;
     }
 
-    public List<MetadataSchemaRemoteDTO> getRemoteSchemas(String fdpUrl) {
-        List<MetadataSchemaDTO> schemas = MetadataSchemaRetrievalUtils.retrievePublishedMetadataSchemas(fdpUrl);
-        return schemas
+    // ===============================================================================================
+    // Importing and sharing
+
+    public List<MetadataSchemaRemoteDTO> getPublishedSchemas() {
+        return metadataSchemaRepository
+                .findAllByPublishedIsTrue()
                 .stream()
-                .map(s -> metadataSchemaMapper.toRemoteDTO(fdpUrl, s))
-                .collect(Collectors.toList());
+                .map(schema -> metadataSchemaMapper.toRemoteDTO(schema, persistentUrl))
+                .toList();
     }
 
-    private MetadataSchemaDTO importSchema(MetadataSchemaChangeDTO reqDto) {
+    public List<MetadataSchemaRemoteDTO> getRemoteSchemas(String fdpUrl) {
+        return MetadataSchemaRetrievalUtils.retrievePublishedMetadataSchemas(fdpUrl);
+    }
+
+    private MetadataSchemaVersionDTO importSchema(MetadataSchemaRemoteDTO reqDto) {
         metadataSchemaValidator.validate(reqDto);
         String uuid = UUID.randomUUID().toString();
-        MetadataSchema metadataSchema = metadataSchemaMapper.fromChangeDTO(reqDto, uuid);
-        metadataSchemaRepository.save(metadataSchema);
-        return metadataSchemaMapper.toDTO(metadataSchema);
+        MetadataSchema metadataSchema = metadataSchemaMapper.fromRemoteDTO(reqDto, uuid);
+        MetadataSchema newMetadataSchema = metadataSchemaRepository.save(metadataSchema);
+        return metadataSchemaMapper.toVersionDTO(newMetadataSchema);
     }
 
-    public List<MetadataSchemaDTO> importSchemas(List<MetadataSchemaRemoteDTO> reqDtos) {
-        List<MetadataSchemaDTO> result =
+    public List<MetadataSchemaVersionDTO> importSchemas(List<MetadataSchemaRemoteDTO> reqDtos) {
+        List<MetadataSchemaVersionDTO> result =
                 reqDtos
                         .stream()
-                        .map(s -> metadataSchemaMapper.fromRemoteDTO(s))
                         .map(this::importSchema)
                         .collect(Collectors.toList());
         targetClassesCache.computeCache();

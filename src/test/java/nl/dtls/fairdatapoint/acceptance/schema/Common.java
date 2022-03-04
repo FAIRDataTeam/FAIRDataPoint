@@ -24,7 +24,10 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -34,10 +37,27 @@ public class Common {
 
     public static void compare(MetadataSchemaChangeDTO entity, MetadataSchemaDTO dto) {
         assertThat(dto.getName(), is(equalTo(entity.getName())));
+        assertThat(dto.getLatest().getDefinition(), is(equalTo(entity.getDefinition())));
+    }
+
+    public static void compare(MetadataSchemaChangeDTO entity, MetadataSchemaDraftDTO dto) {
+        assertThat(dto.getName(), is(equalTo(entity.getName())));
         assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));
     }
 
     public static void compare(MetadataSchema entity, MetadataSchemaDTO dto) {
+        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
+        assertThat(dto.getName(), is(equalTo(entity.getName())));
+        assertThat(dto.getLatest().getDefinition(), is(equalTo(entity.getDefinition())));
+    }
+
+    public static void compare(MetadataSchema entity, MetadataSchemaVersionDTO dto) {
+        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
+        assertThat(dto.getName(), is(equalTo(entity.getName())));
+        assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));
+    }
+
+    public static void compare(MetadataSchemaDraft entity, MetadataSchemaDraftDTO dto) {
         assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
         assertThat(dto.getName(), is(equalTo(entity.getName())));
         assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));

@@ -20,36 +20,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.schema;
+package nl.dtls.fairdatapoint.entity.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class MetadataSchemaChangeDTO {
+@EqualsAndHashCode
+@Builder(toBuilder = true)
+public class SemVer implements Comparable<SemVer> {
 
-    @NotBlank
-    @NotNull
-    private String name;
+    private int major;
 
-    @NotNull
-    private String description;
+    private int minor;
 
-    private boolean abstractSchema;
+    private int patch;
 
-    @NotNull
-    private String definition;
+    public String toString() {
+        return format("%d.%d.%d", major, minor, patch);
+    }
 
-    @NotNull
-    private List<String> extendsSchemaUuids;
+    public SemVer(String semverString) {
+        var parts = Arrays.stream(semverString.split("\\.")).map(Integer::parseInt).collect(Collectors.toList());
+        major = parts.get(0);
+        minor = parts.get(1);
+        patch = parts.get(2);
+    }
 
+    @Override
+    public int compareTo(SemVer other) {
+        if (other == null) {
+            return 1;
+        }
+        return Comparator.comparing(SemVer::getMajor)
+                .thenComparing(SemVer::getMinor)
+                .thenComparing(SemVer::getPatch)
+                .compare(this, other);
+    }
+
+    public boolean isSuccessor(SemVer version) {
+        return compareTo(version) > 0;
+    }
 }

@@ -23,12 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,68 +33,68 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.util.Collections;
+import java.util.UUID;
 
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPost;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestPost;
+import static java.lang.String.format;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.*;
+import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@DisplayName("POST /metadata-schemas")
-public class List_POST extends WebIntegrationTest {
+@DisplayName("DELETE /metadata-schemas/:schemaUuid/draft")
+public class Draft_DELETE extends WebIntegrationTest {
+
+    private URI url(String uuid) {
+        return URI.create(format("/metadata-schemas/%s/draft", uuid));
+    }
 
     @Autowired
     private MetadataSchemaFixtures metadataSchemaFixtures;
 
-    private URI url() {
-        return URI.create("/metadata-schemas");
-    }
-
-    private MetadataSchemaChangeDTO reqDto(MetadataSchema metadataSchema) {
-        return new MetadataSchemaChangeDTO(
-                metadataSchema.getName(),
-                "",
-                false,
-                metadataSchema.getDefinition(),
-                Collections.emptyList()
-        );
-    }
+    @Autowired
+    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        MetadataSchema metadataSchema = metadataSchemaFixtures.customSchema();
-        MetadataSchemaChangeDTO reqDto = reqDto(metadataSchema);
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
+        metadataSchemaDraftRepository.deleteAll();
+        metadataSchemaDraftRepository.save(draft);
 
         // AND: Prepare request
-        RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
-                .post(url())
+        RequestEntity<Void> request = RequestEntity
+                .delete(url(draft.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(reqDto);
-        ParameterizedTypeReference<MetadataSchemaDraftDTO> responseType = new ParameterizedTypeReference<>() {
+                .build();
+        ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<MetadataSchemaDraftDTO> result = client.exchange(request, responseType);
+        ResponseEntity<Void> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(reqDto, result.getBody());
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
+        assertThat(metadataSchemaDraftRepository.findAll().isEmpty(), is(true));
+    }
+
+    @Test
+    @DisplayName("HTTP 404")
+    public void res404() {
+        createAdminNotFoundTestDelete(client, url("nonExisting"));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPost(client, url(), reqDto(metadataSchemaFixtures.customSchema()));
+        createNoUserForbiddenTestDelete(client, url(UUID.randomUUID().toString()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestPost(client, url(), reqDto(metadataSchemaFixtures.customSchema()));
+        createUserForbiddenTestDelete(client, url(UUID.randomUUID().toString()));
     }
 
 }

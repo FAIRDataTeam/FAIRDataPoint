@@ -64,7 +64,7 @@ public class ProfileService {
         profile.add(uri, RDFS.LABEL, l(format("%s Profile", rd.getName())));
         profile.add(uri, i(format("%sisProfileOf", PROFILE_PREFIX)), i(format("%s/profile/core",
                 persistentUrl)));
-        rd.getMetadataSchemaUuids().forEach(schemaUuid -> metadataSchemaRepository.findByUuid(schemaUuid).map(schema -> {
+        rd.getMetadataSchemaUuids().forEach(schemaUuid -> metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid).map(schema -> {
             ModelBuilder modelBuilder = new ModelBuilder();
             Resource resource = bn();
             modelBuilder.subject(resource);

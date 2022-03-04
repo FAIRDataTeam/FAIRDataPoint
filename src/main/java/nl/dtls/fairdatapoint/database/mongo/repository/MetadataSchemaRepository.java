@@ -30,8 +30,18 @@ import java.util.Optional;
 
 public interface MetadataSchemaRepository extends MongoRepository<MetadataSchema, String> {
 
-    Optional<MetadataSchema> findByUuid(String uuid);
+    List<MetadataSchema> findByUuid(String uuid);
+
+    Optional<MetadataSchema> findByUuidAndVersionString(String uuid, String versionString);
+
+    Optional<MetadataSchema> findByUuidAndLatestIsTrue(String uuid);
 
     List<MetadataSchema> findAllByPublishedIsTrue();
+
+    List<MetadataSchema> findAllByLatestIsTrue();
+
+    List<MetadataSchema> findAllByExtendSchemasContains(String uuid);
+
+    Optional<MetadataSchema> findByPreviousVersion(MetadataSchema previousVersion);
 
 }

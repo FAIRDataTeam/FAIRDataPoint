@@ -25,6 +25,8 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +50,25 @@ public class List_GET extends WebIntegrationTest {
     }
 
     @Autowired
+    private MetadataSchemaRepository metadataSchemaRepository;
+
+    @Autowired
     private MetadataSchemaFixtures metadataSchemaFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
-        // GIVEN:
+        // GIVEN: prepare data
+        metadataSchemaRepository.deleteAll();
+        metadataSchemaRepository.insert(metadataSchemaFixtures.resourceSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.fdpSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.dataServiceSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.metadataServiceSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.catalogSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.datasetSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.distributionSchema());
+
+        // AND: prepare request
         RequestEntity<Void> request = RequestEntity
                 .get(url())
                 .build();

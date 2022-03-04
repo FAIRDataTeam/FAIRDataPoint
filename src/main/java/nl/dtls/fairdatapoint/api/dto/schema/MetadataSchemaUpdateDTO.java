@@ -35,7 +35,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MetadataSchemaChangeDTO {
+public class MetadataSchemaUpdateDTO {
 
     @NotBlank
     @NotNull
@@ -44,12 +44,6 @@ public class MetadataSchemaChangeDTO {
     @NotNull
     private String description;
 
-    private boolean abstractSchema;
-
-    @NotNull
-    private String definition;
-
-    @NotNull
-    private List<String> extendsSchemaUuids;
+    private boolean published;
 
 }

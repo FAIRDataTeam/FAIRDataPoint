@@ -58,13 +58,14 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
     @Test
     public void findWorks() throws Exception {
         // GIVEN:
+        Model metadata = testMetadataFixtures.catalog1();
         IRI context = getUri(testMetadataFixtures.catalog1());
 
         // WHEN:
         List<Statement> result = metadataRepository.find(context);
 
         // THEN:
-        assertThat(result.size(), is(equalTo(30)));
+        assertThat(result.size(), is(equalTo(metadata.size())));
     }
 
     @Test
@@ -112,7 +113,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(metadataRepository.find(context).size(), is(equalTo(30)));
+        assertThat(metadataRepository.find(context).size(), is(equalTo(metadata.size())));
 
         // WHEN:
         metadataRepository.remove(context);
@@ -128,13 +129,13 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(metadataRepository.find(context).size(), is(equalTo(30)));
+        assertThat(metadataRepository.find(context).size(), is(equalTo(metadata.size())));
 
         // WHEN:
         metadataRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
 
         // THEN:
-        assertThat(metadataRepository.find(context).size(), is(equalTo(29)));
+        assertThat(metadataRepository.find(context).size(), is(equalTo(metadata.size() - 1)));
     }
 
 }

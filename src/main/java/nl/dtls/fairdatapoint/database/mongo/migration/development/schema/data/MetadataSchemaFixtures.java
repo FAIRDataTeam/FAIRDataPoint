@@ -24,10 +24,14 @@ package nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data;
 
 import lombok.SneakyThrows;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
+import nl.dtls.fairdatapoint.entity.schema.SemVer;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Collections;
 import java.util.Set;
 
 import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
@@ -35,130 +39,206 @@ import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
 @Service
 public class MetadataSchemaFixtures {
 
+    private static final SemVer VERSION = new SemVer("1.0.0");
+
+    private MetadataSchema createSchemaFixture(
+            String uuid,
+            String name,
+            String definition,
+            Set<String> targetClasses,
+            MetadataSchemaType type
+    ) {
+        return new MetadataSchema(
+                null,
+                uuid,
+                VERSION.toString(),
+                VERSION,
+                name,
+                "",
+                definition,
+                targetClasses,
+                Collections.emptyList(),
+                type,
+                null,
+                true,
+                false,
+                true,
+                Instant.now(),
+                null
+        );
+    }
+
+    private MetadataSchemaDraft createSchemaDraftFixture(
+            String uuid,
+            String name,
+            String definition,
+            Set<String> targetClasses
+    ) {
+        return new MetadataSchemaDraft(
+                null,
+                uuid,
+                name,
+                "",
+                false,
+                definition,
+                targetClasses,
+                Collections.emptyList(),
+                Instant.now(),
+                Instant.now()
+        );
+    }
+
     @SneakyThrows
     public MetadataSchema resourceSchema() {
         String definition = loadClassResource("shape-resource.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 KnownUUIDs.SCHEMA_RESOURCE_UUID,
                 "Resource",
-                false,
-                MetadataSchemaType.INTERNAL,
                 definition,
-                Set.of("http://www.w3.org/ns/dcat#Resource")
+                Set.of("http://www.w3.org/ns/dcat#Resource"),
+                MetadataSchemaType.INTERNAL
         );
     }
 
     @SneakyThrows
     public MetadataSchema fdpSchema() {
         String definition = loadClassResource("shape-fdp.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 KnownUUIDs.SCHEMA_FDP_UUID,
                 "FAIR Data Point",
-                false,
-                MetadataSchemaType.INTERNAL,
                 definition,
-                Set.of("https://w3id.org/fdp/fdp-o#FAIRDataPoint")
+                Set.of("https://w3id.org/fdp/fdp-o#FAIRDataPoint"),
+                MetadataSchemaType.INTERNAL
         );
     }
 
     @SneakyThrows
     public MetadataSchema dataServiceSchema() {
         String definition = loadClassResource("shape-data-service.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DATASERVICE_UUID,
                 "Data Service",
-                false,
-                MetadataSchemaType.INTERNAL,
                 definition,
-                Set.of("http://www.w3.org/ns/dcat#DataService")
+                Set.of("http://www.w3.org/ns/dcat#DataService"),
+                MetadataSchemaType.INTERNAL
         );
     }
 
     @SneakyThrows
     public MetadataSchema metadataServiceSchema() {
         String definition = loadClassResource("shape-metadata-service.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
                 "Metadata Service",
-                false,
-                MetadataSchemaType.INTERNAL,
                 definition,
-                Set.of("https://w3id.org/fdp/fdp-o#MetadataService")
+                Set.of("https://w3id.org/fdp/fdp-o#MetadataService"),
+                MetadataSchemaType.INTERNAL
         );
     }
 
     @SneakyThrows
     public MetadataSchema catalogSchema() {
         String definition = loadClassResource("shape-catalog.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 KnownUUIDs.SCHEMA_CATALOG_UUID,
                 "Catalog",
-                false,
-                MetadataSchemaType.INTERNAL,
                 definition,
-                Set.of("http://www.w3.org/ns/dcat#Catalog")
+                Set.of("http://www.w3.org/ns/dcat#Catalog"),
+                MetadataSchemaType.INTERNAL
         );
     }
 
     @SneakyThrows
     public MetadataSchema datasetSchema() {
         String definition = loadClassResource("shape-dataset.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DATASET_UUID,
                 "Dataset",
-                false,
-                MetadataSchemaType.CUSTOM,
                 definition,
-                Set.of("http://www.w3.org/ns/dcat#Dataset")
+                Set.of("http://www.w3.org/ns/dcat#Dataset"),
+                MetadataSchemaType.CUSTOM
         );
     }
 
     @SneakyThrows
     public MetadataSchema distributionSchema() {
         String definition = loadClassResource("shape-distribution.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DISTRIBUTION_UUID,
                 "Distribution",
-                false,
-                MetadataSchemaType.CUSTOM,
                 definition,
-                Set.of("http://www.w3.org/ns/dcat#Distribution")
+                Set.of("http://www.w3.org/ns/dcat#Distribution"),
+                MetadataSchemaType.CUSTOM
         );
     }
 
     @SneakyThrows
     public MetadataSchema customSchema() {
         String definition = loadClassResource("shape-custom.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
                 "Custom Shape",
-                false,
-                MetadataSchemaType.CUSTOM,
                 definition,
-                Set.of("http://example.org/Dog")
+                Set.of("http://example.org/Dog"),
+                MetadataSchemaType.CUSTOM
         );
     }
 
     @SneakyThrows
     public MetadataSchema customSchemaEdited(){
         String definition = loadClassResource("shape-custom-edited.ttl", getClass());
-        return new MetadataSchema(
-                null,
+        return createSchemaFixture(
                 customSchema().getUuid(),
                 customSchema().getName(),
-                false,
-                customSchema().getType(),
+                definition,
+                Set.of("http://example.org/Dog"),
+                customSchema().getType()
+        );
+    }
+
+    @SneakyThrows
+    public MetadataSchemaDraft customSchemaDraft1() {
+        String definition = loadClassResource("shape-custom.ttl", getClass());
+        return createSchemaDraftFixture(
+                customSchema().getUuid(),
+                customSchema().getName(),
                 definition,
                 Set.of("http://example.org/Dog")
         );
     }
 
+    @SneakyThrows
+    public MetadataSchemaDraft customSchemaDraft2() {
+        String definition = loadClassResource("shape-custom.ttl", getClass());
+        return createSchemaDraftFixture(
+                "ceba9984-9838-4be2-a2a7-12213016fd97",
+                "Custom Shape 2",
+                definition,
+                Set.of("http://example.org/Dog")
+        );
+    }
+
+    @SneakyThrows
+    public MetadataSchema customSchema_v1() {
+        MetadataSchema schema = customSchema();
+        schema.setName("Schema v1.0.0");
+        schema.setVersionString("1.0.0");
+        return schema;
+    }
+
+    @SneakyThrows
+    public MetadataSchema customSchema_v2() {
+        MetadataSchema schema = customSchema();
+        schema.setName("Schema v2.0.0");
+        schema.setVersionString("2.0.0");
+        return schema;
+    }
+
+    @SneakyThrows
+    public MetadataSchema customSchema_v3() {
+        MetadataSchema schema = customSchema();
+        schema.setName("Schema v2.1.0");
+        schema.setVersionString("2.1.0");
+        return schema;
+    }
 }

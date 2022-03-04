@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
@@ -55,7 +56,7 @@ public class Public_GET extends WebIntegrationTest {
     @Autowired
     private MetadataSchemaFixtures metadataSchemaFixtures;
 
-    private final ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType =
+    private final ParameterizedTypeReference<List<MetadataSchemaRemoteDTO>> responseType =
             new ParameterizedTypeReference<>() {
             };
 
@@ -88,7 +89,7 @@ public class Public_GET extends WebIntegrationTest {
                 .build();
 
         // WHEN:
-        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaRemoteDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -113,12 +114,12 @@ public class Public_GET extends WebIntegrationTest {
                 .build();
 
         // WHEN:
-        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaRemoteDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Result is an empty list", result.getBody().size(), is(equalTo(1)));
-        assertThat("UUID matches the published schema", result.getBody().get(0).getUuid(), is(equalTo(metadataSchemaPublished.getUuid())));
+        assertThat("UUID matches the published schema", result.getBody().get(0).getOrigin().getUuid(), is(equalTo(metadataSchemaPublished.getUuid())));
     }
 }

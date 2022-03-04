@@ -22,12 +22,15 @@
  */
 package nl.dtls.fairdatapoint.api.dto.schema;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @NoArgsConstructor
@@ -36,15 +39,17 @@ import java.util.List;
 @Setter
 public class MetadataSchemaDTO {
 
+    @NotNull
+    @NotBlank
     private String uuid;
 
+    @NotNull
+    @NotBlank
     private String name;
 
-    private boolean published;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private MetadataSchemaVersionDTO latest;
 
-    private MetadataSchemaType type;
-
-    private String definition;
-
-    private List<String> targetClasses;
+    @NotNull
+    private List<String> versions;
 }

@@ -20,36 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.schema;
+package nl.dtls.fairdatapoint.api.validator;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.schema.SemVer;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class MetadataSchemaChangeDTO {
+public class SemVerValidator implements ConstraintValidator<ValidSemVer, String> {
 
-    @NotBlank
-    @NotNull
-    private String name;
+    @Override
+    public void initialize(ValidSemVer text) {
+    }
 
-    @NotNull
-    private String description;
-
-    private boolean abstractSchema;
-
-    @NotNull
-    private String definition;
-
-    @NotNull
-    private List<String> extendsSchemaUuids;
-
+    @Override
+    public boolean isValid(String text, ConstraintValidatorContext cxt) {
+        try {
+            SemVer version = new SemVer(text);
+            return text.equals(version.toString());
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

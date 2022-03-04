@@ -25,8 +25,10 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaOrigin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,7 @@ public class Import_POST extends WebIntegrationTest {
     @Autowired
     private MetadataSchemaFixtures metadataSchemaFixtures;
 
-    private final ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType =
+    private final ParameterizedTypeReference<List<MetadataSchemaVersionDTO>> responseType =
             new ParameterizedTypeReference<>() {
             };
 
@@ -62,20 +64,36 @@ public class Import_POST extends WebIntegrationTest {
     }
 
     private MetadataSchemaRemoteDTO schemaRemoteDTO1() {
+        String remoteUuid = UUID.randomUUID().toString();
         return new MetadataSchemaRemoteDTO(
-                "http://example.com",
-                UUID.randomUUID().toString(),
+                new MetadataSchemaOrigin(
+                        "http://example.com",
+                        "http://example.com/metadata-schemas/" + remoteUuid,
+                        remoteUuid
+                ),
+                "1.0.0",
                 metadataSchemaFixtures.customSchema().getName(),
-                metadataSchemaFixtures.customSchema().getDefinition()
+                metadataSchemaFixtures.customSchema().getDescription(),
+                metadataSchemaFixtures.customSchema().getDefinition(),
+                metadataSchemaFixtures.customSchema().isAbstractSchema(),
+                metadataSchemaFixtures.customSchema().getExtendSchemas()
         );
     }
 
     private MetadataSchemaRemoteDTO schemaRemoteDTO2() {
+        String remoteUuid = UUID.randomUUID().toString();
         return new MetadataSchemaRemoteDTO(
-                "http://example.com",
-                UUID.randomUUID().toString(),
-                metadataSchemaFixtures.customSchemaEdited().getName(),
-                metadataSchemaFixtures.customSchemaEdited().getDefinition()
+                new MetadataSchemaOrigin(
+                        "http://example.com",
+                        "http://example.com/metadata-schemas/" + remoteUuid,
+                        remoteUuid
+                ),
+                "1.2.3",
+                metadataSchemaFixtures.customSchema().getName(),
+                metadataSchemaFixtures.customSchema().getDescription(),
+                metadataSchemaFixtures.customSchema().getDefinition(),
+                metadataSchemaFixtures.customSchema().isAbstractSchema(),
+                metadataSchemaFixtures.customSchema().getExtendSchemas()
         );
     }
 
@@ -94,7 +112,7 @@ public class Import_POST extends WebIntegrationTest {
                 .body(reqDTOs);
 
         // WHEN:
-        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaVersionDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -119,7 +137,7 @@ public class Import_POST extends WebIntegrationTest {
                 .body(reqDTOs);
 
         // WHEN:
-        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaVersionDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -145,7 +163,7 @@ public class Import_POST extends WebIntegrationTest {
                 .body(reqDTOs);
 
         // WHEN:
-        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<List<MetadataSchemaVersionDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));

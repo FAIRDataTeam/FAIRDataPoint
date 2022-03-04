@@ -26,17 +26,40 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaOrigin;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class MetadataSchemaRemoteDTO {
-    private String from;
 
-    private String uuid;
+    @NotNull
+    @NotBlank
+    private MetadataSchemaOrigin origin;
 
+    @NotNull
+    @NotBlank
+    private String version;
+
+    @NotNull
+    @NotBlank
     private String name;
 
+    @NotNull
+    @NotBlank
     private String definition;
+
+    @NotNull
+    @NotBlank
+    private String description;
+
+    private boolean abstractSchema;
+
+    @NotNull
+    private List<String> extendsSchemaUuids;
 }

@@ -26,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
 import nl.dtls.fairdatapoint.entity.exception.MetadataSchemaImportException;
 import org.springframework.http.HttpHeaders;
 
@@ -47,10 +48,10 @@ public class MetadataSchemaRetrievalUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final TypeReference<List<MetadataSchemaDTO>> responseType = new TypeReference<>() {
+    private static final TypeReference<List<MetadataSchemaRemoteDTO>> responseType = new TypeReference<>() {
     };
 
-    public static List<MetadataSchemaDTO> retrievePublishedMetadataSchemas(String fdpUrl) {
+    public static List<MetadataSchemaRemoteDTO> retrievePublishedMetadataSchemas(String fdpUrl) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(fdpUrl.replaceAll("/$", "") + "/metadata-schemas/public"))

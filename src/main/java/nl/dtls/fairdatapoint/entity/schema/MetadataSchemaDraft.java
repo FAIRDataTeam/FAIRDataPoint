@@ -20,25 +20,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.schema;
+package nl.dtls.fairdatapoint.entity.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@Document
 @Getter
 @Setter
-public class MetadataSchemaChangeDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class MetadataSchemaDraft {
 
-    @NotBlank
+    @Id
+    protected ObjectId id;
+
+    @Indexed
+    private String uuid;
+
     @NotNull
+    @NotBlank
     private String name;
 
     @NotNull
@@ -50,6 +62,13 @@ public class MetadataSchemaChangeDTO {
     private String definition;
 
     @NotNull
-    private List<String> extendsSchemaUuids;
+    private Set<String> targetClasses;
+
+    @NotNull
+    private List<String> extendSchemas;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
 }

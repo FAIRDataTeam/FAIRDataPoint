@@ -25,8 +25,16 @@ package nl.dtls.fairdatapoint.entity.schema;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Document
@@ -40,15 +48,54 @@ public class MetadataSchema {
     @Id
     protected ObjectId id;
 
+    @Indexed
     private String uuid;
 
+    @Indexed
+    protected String versionString;
+
+    @NotNull
+    protected SemVer version;
+
+    @NotNull
+    @NotBlank
     private String name;
+
+    @NotNull
+    private String description;
+
+    @NotNull
+    private String definition;
+
+    @NotNull
+    private Set<String> targetClasses = new HashSet<>();
+
+    @NotNull
+    private List<String> extendSchemas = new ArrayList<>();
+
+    @NotNull
+    private MetadataSchemaType type;
+
+    private MetadataSchemaOrigin origin;
+
+    private boolean latest;
 
     private boolean published;
 
-    private MetadataSchemaType type;
+    private boolean abstractSchema;
 
-    private String definition;
+    private Instant createdAt;
 
-    private Set<String> targetClasses;
+    @DBRef
+    protected MetadataSchema previousVersion = null;
+
+    public void setVersionString(String versionString) {
+        this.versionString = versionString;
+        this.version = new SemVer(versionString);
+    }
+
+    public void setVersion(SemVer version) {
+        this.version = version;
+        this.versionString = version.toString();
+    }
 }

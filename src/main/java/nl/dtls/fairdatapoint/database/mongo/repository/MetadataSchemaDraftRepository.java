@@ -20,36 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.schema;
+package nl.dtls.fairdatapoint.database.mongo.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Optional;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class MetadataSchemaChangeDTO {
+public interface MetadataSchemaDraftRepository extends MongoRepository<MetadataSchemaDraft, String> {
 
-    @NotBlank
-    @NotNull
-    private String name;
-
-    @NotNull
-    private String description;
-
-    private boolean abstractSchema;
-
-    @NotNull
-    private String definition;
-
-    @NotNull
-    private List<String> extendsSchemaUuids;
+    Optional<MetadataSchemaDraft> findByUuid(String uuid);
 
 }
