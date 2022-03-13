@@ -30,6 +30,7 @@ import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,8 +79,6 @@ public class Versions_POST extends WebIntegrationTest {
             new ParameterizedTypeReference<>() {
             };
 
-    // TODO: more complex publish variants
-
     @Test
     @DisplayName("HTTP 200: publish new")
     public void res200_publishNew() {
@@ -107,9 +106,66 @@ public class Versions_POST extends WebIntegrationTest {
         assertThat("Result is published", result.getBody().getLatest().isPublished(), is(equalTo(true)));
         assertThat("Result has correct name", result.getBody().getName(), is(equalTo(draft.getName())));
         assertThat("Result has correct version", result.getBody().getLatest().getVersion(), is(equalTo(reqDto.getVersion())));
-        assertThat("Metadata schema repository is empty", metadataSchemaRepository.count(), is(equalTo(1L)));
+        assertThat("Metadata schema repository has one schema", metadataSchemaRepository.count(), is(equalTo(1L)));
     }
 
+    @Test
+    @DisplayName("HTTP 200: publish newer version")
+    public void res200_publishNewerVersion() {
+        // GIVEN: prepare data
+        metadataSchemaRepository.deleteAll();
+        metadataSchemaDraftRepository.deleteAll();
+        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(true));
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
+        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaPublishDTO reqDto = reqDto("2.0.0", true);
+
+        // AND: prepare request
+        RequestEntity<?> request = RequestEntity
+                .post(url(draft.getUuid()))
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .body(reqDto);
+
+        // WHEN:
+        ResponseEntity<MetadataSchemaDTO> result = client.exchange(request, responseType);
+
+        // THEN
+        assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat("Response body is not null", result.getBody(), is(notNullValue()));
+        assertThat("Result is latest", result.getBody().getLatest().isLatest(), is(equalTo(true)));
+        assertThat("Result is published", result.getBody().getLatest().isPublished(), is(equalTo(true)));
+        assertThat("Result has correct name", result.getBody().getName(), is(equalTo(draft.getName())));
+        assertThat("Result has correct version", result.getBody().getLatest().getVersion(), is(equalTo(reqDto.getVersion())));
+        assertThat("Metadata schema repository has 2 schemas", metadataSchemaRepository.count(), is(equalTo(2L)));
+        assertThat("Older version is still stored", metadataSchemaRepository.findByUuidAndVersionString(schemaV1.getUuid(), schemaV1.getVersionString()).isPresent(), is(true));
+        assertThat("Older version is no longer the latest", metadataSchemaRepository.findByUuidAndVersionString(schemaV1.getUuid(), schemaV1.getVersionString()).get().isLatest(), is(false));
+    }
+
+    @Test
+    @DisplayName("HTTP 400: not newer version")
+    public void res400_notNewerVersion() {
+        // GIVEN: prepare data
+        metadataSchemaRepository.deleteAll();
+        metadataSchemaDraftRepository.deleteAll();
+        metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(true));
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
+        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaPublishDTO reqDto = reqDto("0.1.0", true);
+
+        // AND: prepare request
+        RequestEntity<?> request = RequestEntity
+                .post(url(draft.getUuid()))
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .body(reqDto);
+
+        // WHEN:
+        ResponseEntity<MetadataSchemaDTO> result = client.exchange(request, responseType);
+
+        // THEN
+        assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+    }
 
     @Test
     @DisplayName("HTTP 404")

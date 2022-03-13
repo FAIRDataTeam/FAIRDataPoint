@@ -60,7 +60,12 @@ public class ResourceDefinitionTargetClassesCache {
 
         // Add to cache
         List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
-        Map<String, MetadataSchema> metadataSchemaMap = metadataSchemaRepository.findAll().stream().collect(Collectors.toMap(MetadataSchema::getUuid, Function.identity()));
+        Map<String, MetadataSchema> metadataSchemaMap = new HashMap<>();
+        metadataSchemaRepository.findAllByLatestIsTrue().forEach(schema -> {
+            if (!metadataSchemaMap.containsKey(schema.getUuid()) || metadataSchemaMap.get(schema.getUuid()).getVersion().compareTo(schema.getVersion()) < 0) {
+                metadataSchemaMap.put(schema.getUuid(), schema);
+            }
+        });
         rds.forEach(rd -> {
             Set<String> targetClassUris = new HashSet<>();
             rd.getMetadataSchemaUuids().forEach(schemaUuid -> {

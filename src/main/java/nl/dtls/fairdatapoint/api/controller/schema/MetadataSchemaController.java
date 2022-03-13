@@ -25,7 +25,9 @@ package nl.dtls.fairdatapoint.api.controller.schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.schema.*;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
 import nl.dtls.fairdatapoint.service.schema.MetadataSchemaService;
+import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,10 +53,19 @@ public class MetadataSchemaController {
     @Autowired
     private MetadataSchemaService metadataSchemaService;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MetadataSchemaDTO>> getSchemas() {
-        List<MetadataSchemaDTO> dto = metadataSchemaService.getSchemas();
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+    public ResponseEntity<List<MetadataSchemaDTO>> getSchemas(
+            @RequestParam(required = false, defaultValue = "false") boolean includeDrafts
+    ) {
+        if (includeDrafts && currentUserService.isAdmin()) {
+            return new ResponseEntity<>(metadataSchemaService.getSchemasWithDrafts(), HttpStatus.OK);
+        } else if (includeDrafts) {
+            throw new UnauthorizedException("Unauthorized to see drafts of metadata schemas");
+        }
+        return new ResponseEntity<>(metadataSchemaService.getSchemasWithoutDrafts(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)

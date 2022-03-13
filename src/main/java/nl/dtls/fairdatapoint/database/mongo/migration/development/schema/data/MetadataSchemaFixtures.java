@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
@@ -46,6 +47,7 @@ public class MetadataSchemaFixtures {
             String name,
             String definition,
             Set<String> targetClasses,
+            List<String> extendsSchemas,
             MetadataSchemaType type
     ) {
         return new MetadataSchema(
@@ -57,12 +59,12 @@ public class MetadataSchemaFixtures {
                 "",
                 definition,
                 targetClasses,
-                Collections.emptyList(),
+                extendsSchemas,
                 type,
                 null,
                 true,
-                false,
                 true,
+                false,
                 Instant.now(),
                 null
         );
@@ -91,13 +93,16 @@ public class MetadataSchemaFixtures {
     @SneakyThrows
     public MetadataSchema resourceSchema() {
         String definition = loadClassResource("shape-resource.ttl", getClass());
-        return createSchemaFixture(
+        MetadataSchema schema = createSchemaFixture(
                 KnownUUIDs.SCHEMA_RESOURCE_UUID,
                 "Resource",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Resource"),
+                Collections.emptyList(),
                 MetadataSchemaType.INTERNAL
         );
+        schema.setAbstractSchema(true);
+        return schema;
     }
 
     @SneakyThrows
@@ -108,6 +113,7 @@ public class MetadataSchemaFixtures {
                 "FAIR Data Point",
                 definition,
                 Set.of("https://w3id.org/fdp/fdp-o#FAIRDataPoint"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_METADATASERVICE_UUID),
                 MetadataSchemaType.INTERNAL
         );
     }
@@ -120,6 +126,7 @@ public class MetadataSchemaFixtures {
                 "Data Service",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#DataService"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_RESOURCE_UUID),
                 MetadataSchemaType.INTERNAL
         );
     }
@@ -132,6 +139,7 @@ public class MetadataSchemaFixtures {
                 "Metadata Service",
                 definition,
                 Set.of("https://w3id.org/fdp/fdp-o#MetadataService"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_DATASERVICE_UUID),
                 MetadataSchemaType.INTERNAL
         );
     }
@@ -144,6 +152,7 @@ public class MetadataSchemaFixtures {
                 "Catalog",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Catalog"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_RESOURCE_UUID),
                 MetadataSchemaType.INTERNAL
         );
     }
@@ -156,6 +165,7 @@ public class MetadataSchemaFixtures {
                 "Dataset",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Dataset"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_RESOURCE_UUID),
                 MetadataSchemaType.CUSTOM
         );
     }
@@ -168,6 +178,7 @@ public class MetadataSchemaFixtures {
                 "Distribution",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Distribution"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_RESOURCE_UUID),
                 MetadataSchemaType.CUSTOM
         );
     }
@@ -180,6 +191,7 @@ public class MetadataSchemaFixtures {
                 "Custom Shape",
                 definition,
                 Set.of("http://example.org/Dog"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_RESOURCE_UUID),
                 MetadataSchemaType.CUSTOM
         );
     }
@@ -192,6 +204,7 @@ public class MetadataSchemaFixtures {
                 customSchema().getName(),
                 definition,
                 Set.of("http://example.org/Dog"),
+                Collections.singletonList(KnownUUIDs.SCHEMA_RESOURCE_UUID),
                 customSchema().getType()
         );
     }
@@ -219,26 +232,31 @@ public class MetadataSchemaFixtures {
     }
 
     @SneakyThrows
-    public MetadataSchema customSchema_v1() {
+    public MetadataSchema customSchema_v1(boolean latest) {
         MetadataSchema schema = customSchema();
         schema.setName("Schema v1.0.0");
         schema.setVersionString("1.0.0");
+        schema.setLatest(latest);
         return schema;
     }
 
     @SneakyThrows
-    public MetadataSchema customSchema_v2() {
+    public MetadataSchema customSchema_v2(MetadataSchema previousVersion, boolean latest) {
         MetadataSchema schema = customSchema();
         schema.setName("Schema v2.0.0");
         schema.setVersionString("2.0.0");
+        schema.setLatest(latest);
+        schema.setPreviousVersion(previousVersion);
         return schema;
     }
 
     @SneakyThrows
-    public MetadataSchema customSchema_v3() {
+    public MetadataSchema customSchema_v3(MetadataSchema previousVersion, boolean latest) {
         MetadataSchema schema = customSchema();
         schema.setName("Schema v2.1.0");
         schema.setVersionString("2.1.0");
+        schema.setLatest(latest);
+        schema.setPreviousVersion(previousVersion);
         return schema;
     }
 }

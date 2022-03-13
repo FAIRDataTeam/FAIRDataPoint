@@ -51,6 +51,11 @@ public class CurrentUserService {
         return empty();
     }
 
+    public boolean isAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
+
     public Optional<User> getCurrentUser() {
         return getCurrentUserUuid().flatMap(userRepository::findByUuid);
     }

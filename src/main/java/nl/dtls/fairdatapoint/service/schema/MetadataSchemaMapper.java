@@ -58,7 +58,7 @@ public class MetadataSchemaMapper {
                         .abstractSchema(dto.isAbstractSchema())
                         .description(dto.getDescription())
                         .definition(dto.getDefinition())
-                        .extendSchemas(draft.getExtendSchemas())
+                        .extendSchemas(dto.getExtendsSchemaUuids())
                         .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition()))
                         .build();
     }
@@ -127,14 +127,28 @@ public class MetadataSchemaMapper {
                 );
     }
 
-    public MetadataSchemaDTO toDTO(MetadataSchema newLatest, List<MetadataSchema> schemaVersions) {
-        return
-                new MetadataSchemaDTO(
-                        newLatest.getUuid(),
-                        newLatest.getName(),
-                        toVersionDTO(newLatest),
-                        schemaVersions.stream().map(MetadataSchema::getVersion).sorted().map(SemVer::toString).toList()
-                );
+    public MetadataSchemaDTO toDTO(MetadataSchema latest, MetadataSchemaDraft draft, List<MetadataSchema> schemaVersions) {
+        if (latest != null) {
+            return
+                    new MetadataSchemaDTO(
+                            latest.getUuid(),
+                            latest.getName(),
+                            toVersionDTO(latest),
+                            draft == null ? null : toDraftDTO(draft),
+                            schemaVersions.stream().map(MetadataSchema::getVersion).sorted().map(SemVer::toString).toList()
+                    );
+        }
+        if (draft != null) {
+            return
+                    new MetadataSchemaDTO(
+                            draft.getUuid(),
+                            draft.getName(),
+                            null,
+                            toDraftDTO(draft),
+                            schemaVersions.stream().map(MetadataSchema::getVersion).sorted().map(SemVer::toString).toList()
+                    );
+        }
+        return null;
     }
 
     public MetadataSchemaRemoteDTO toRemoteDTO(MetadataSchema schema, String persistentUrl) {

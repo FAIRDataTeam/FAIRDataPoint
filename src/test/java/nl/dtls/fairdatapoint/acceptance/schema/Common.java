@@ -51,6 +51,12 @@ public class Common {
         assertThat(dto.getLatest().getDefinition(), is(equalTo(entity.getDefinition())));
     }
 
+    public static void compare(MetadataSchemaDraft entity, MetadataSchemaDTO dto) {
+        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
+        assertThat(dto.getName(), is(equalTo(entity.getName())));
+        assertThat(dto.getDraft().getDefinition(), is(equalTo(entity.getDefinition())));
+    }
+
     public static void compare(MetadataSchema entity, MetadataSchemaVersionDTO dto) {
         assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
         assertThat(dto.getName(), is(equalTo(entity.getName())));

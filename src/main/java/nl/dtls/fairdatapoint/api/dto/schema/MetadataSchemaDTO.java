@@ -50,6 +50,9 @@ public class MetadataSchemaDTO {
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private MetadataSchemaVersionDTO latest;
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private MetadataSchemaDraftDTO draft;
+
     @NotNull
     private List<String> versions;
 }

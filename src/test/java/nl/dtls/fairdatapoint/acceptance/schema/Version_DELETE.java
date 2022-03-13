@@ -63,8 +63,8 @@ public class Version_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 200: delete single")
     public void res200_deleteSingle() {
         // GIVEN: Prepare data
-        MetadataSchema schema = metadataSchemaFixtures.customSchema();
         metadataSchemaRepository.deleteAll();
+        MetadataSchema schema = metadataSchemaFixtures.customSchema();
         metadataSchemaRepository.save(schema);
 
         // AND: Prepare request
@@ -86,15 +86,15 @@ public class Version_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 200: delete latest")
     public void res200_deleteLatest() {
-        // TODO: !!
         // GIVEN: Prepare data
-        MetadataSchema schema = metadataSchemaFixtures.customSchema();
         metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(schema);
+        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(false));
+        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v2(schemaV1, false));
+        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v3(schemaV2, true));
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(schema.getUuid(), schema.getVersionString()))
+                .delete(url(schemaV3.getUuid(), schemaV3.getVersionString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -105,21 +105,25 @@ public class Version_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
-        assertThat(metadataSchemaRepository.findAll().isEmpty(), is(true));
+        assertThat(metadataSchemaRepository.findAll().isEmpty(), is(false));
+        assertThat(metadataSchemaRepository.findAll().size(), is(equalTo(2)));
+        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).isPresent(), is(true));
+        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().getVersion(), is(equalTo(schemaV2.getVersion())));
+        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().isLatest(), is(true));
     }
 
     @Test
     @DisplayName("HTTP 200: delete non-latest")
     public void res200_deleteNonLatest() {
-        // TODO: !!
         // GIVEN: Prepare data
-        MetadataSchema schema = metadataSchemaFixtures.customSchema();
         metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(schema);
+        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(false));
+        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v2(schemaV1, false));
+        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v3(schemaV2, true));
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(schema.getUuid(), schema.getVersionString()))
+                .delete(url(schemaV2.getUuid(), schemaV2.getVersionString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -130,7 +134,11 @@ public class Version_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
-        assertThat(metadataSchemaRepository.findAll().isEmpty(), is(true));
+        assertThat(metadataSchemaRepository.findAll().isEmpty(), is(false));
+        assertThat(metadataSchemaRepository.findAll().size(), is(equalTo(2)));
+        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).isPresent(), is(true));
+        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().getVersion(), is(equalTo(schemaV3.getVersion())));
+        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().isLatest(), is(true));
     }
 
     @Test

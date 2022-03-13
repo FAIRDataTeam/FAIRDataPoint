@@ -78,11 +78,15 @@ public class Migration_0012_MetadataSchemas {
         });
         db.dropCollection("shape");
     }
-
     @RollbackExecution
     public void rollback() {
-        MongoCollection<Document> shapeCol = db.getCollection("shape");
-        MongoCollection<Document> schemaCol = db.createCollection("metadataSchema");
+
+    }
+/*
+    @RollbackExecution
+    public void rollback() {
+        MongoCollection<Document> shapeCol = db.createCollection("shape");
+        MongoCollection<Document> schemaCol = db.getCollection("metadataSchema");
         schemaCol.find(Filters.eq("latest", true)).forEach(schemaDoc -> {
             Document shapeDoc = new Document();
             shapeDoc.append("uuid", schemaDoc.getString("uuid"));
@@ -96,4 +100,5 @@ public class Migration_0012_MetadataSchemas {
         db.dropCollection("metadataSchema");
         db.dropCollection("metadataSchemaDraft");
     }
+    */
 }

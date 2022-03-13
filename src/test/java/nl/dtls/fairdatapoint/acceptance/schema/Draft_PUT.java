@@ -42,7 +42,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -51,6 +53,7 @@ import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserFo
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestGet;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -77,12 +80,15 @@ public class Draft_PUT extends WebIntegrationTest {
     @Autowired
     private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
 
+    @Autowired
+    private MetadataSchemaRepository metadataSchemaRepository;
+
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
         metadataSchemaDraftRepository.deleteAll();
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
         metadataSchemaDraftRepository.save(draft);
         MetadataSchemaChangeDTO reqDto = reqDto();
 
@@ -100,13 +106,131 @@ public class Draft_PUT extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getBody(), is(notNullValue()));
         assertThat(result.getBody().getName(), is(equalTo(reqDto.getName())));
         assertThat(result.getBody().getDescription(), is(equalTo(reqDto.getDescription())));
         assertThat(result.getBody().getDefinition(), is(equalTo(reqDto.getDefinition())));
         assertThat(result.getBody().isAbstractSchema(), is(equalTo(reqDto.isAbstractSchema())));
         assertThat(result.getBody().getExtendsSchemaUuids(), is(equalTo(reqDto.getExtendsSchemaUuids())));
-        // TODO: test with extends that does not exist (and that does)
-        // TODO: test with extends cycle
+    }
+
+    @Test
+    @DisplayName("HTTP 200: with extends")
+    public void res200_extends() {
+        // GIVEN: Prepare data
+        metadataSchemaDraftRepository.deleteAll();
+        metadataSchemaRepository.deleteAll();
+        MetadataSchema parentSchema = metadataSchemaFixtures.resourceSchema();
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
+        metadataSchemaDraftRepository.save(draft);
+        metadataSchemaRepository.save(parentSchema);
+        MetadataSchemaChangeDTO reqDto = reqDto();
+        reqDto.setExtendsSchemaUuids(List.of(parentSchema.getUuid()));
+
+        // AND: Prepare request
+        RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
+                .put(url(draft.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<MetadataSchemaDraftDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<MetadataSchemaDraftDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat(result.getBody(), is(notNullValue()));
+        assertThat(result.getBody().getExtendsSchemaUuids(), is(equalTo(reqDto.getExtendsSchemaUuids())));
+    }
+
+    @Test
+    @DisplayName("HTTP 400: non-existing schema")
+    public void res400_nonExistingSchema() {
+        // GIVEN: Prepare data
+        metadataSchemaDraftRepository.deleteAll();
+        metadataSchemaRepository.deleteAll();
+        MetadataSchema parentSchema = metadataSchemaFixtures.resourceSchema();
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
+        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaChangeDTO reqDto = reqDto();
+        reqDto.setExtendsSchemaUuids(List.of(parentSchema.getUuid()));
+
+        // AND: Prepare request
+        RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
+                .put(url(draft.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<MetadataSchemaDraftDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<MetadataSchemaDraftDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+    }
+
+    @Test
+    @DisplayName("HTTP 400: simple schema loop")
+    public void res400_schemaLoopSimple() {
+        // GIVEN: Prepare data
+        metadataSchemaDraftRepository.deleteAll();
+        metadataSchemaRepository.deleteAll();
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
+        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaChangeDTO reqDto = reqDto();
+        reqDto.setExtendsSchemaUuids(List.of(draft.getUuid()));
+
+        // AND: Prepare request
+        RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
+                .put(url(draft.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<MetadataSchemaDraftDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<MetadataSchemaDraftDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+    }
+
+    @Test
+    @DisplayName("HTTP 400: complex schema loop")
+    public void res400_schemaLoopComplex() {
+        // GIVEN: Prepare data
+        MetadataSchema resourceSchema = metadataSchemaFixtures.resourceSchema();
+        MetadataSchema catalogSchema = metadataSchemaFixtures.catalogSchema();
+        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
+        catalogSchema.setExtendSchemas(List.of(resourceSchema.getUuid()));
+        resourceSchema.setExtendSchemas(List.of(draft.getUuid()));
+        metadataSchemaDraftRepository.deleteAll();
+        metadataSchemaDraftRepository.save(draft);
+        metadataSchemaRepository.deleteAll();
+        metadataSchemaRepository.save(resourceSchema);
+        metadataSchemaRepository.save(catalogSchema);
+        MetadataSchemaChangeDTO reqDto = reqDto();
+        reqDto.setExtendsSchemaUuids(List.of(catalogSchema.getUuid()));
+
+        // AND: Prepare request
+        RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
+                .put(url(draft.getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDto);
+        ParameterizedTypeReference<MetadataSchemaDraftDTO> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<MetadataSchemaDraftDTO> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
     }
 
     @Test
