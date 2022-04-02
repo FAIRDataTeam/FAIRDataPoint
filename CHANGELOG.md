@@ -8,6 +8,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.13.1]
+
+### Changed
+
+- Upgrade to Spring Boot 2.6.6 due to [CVE-2022-22965](https://tanzu.vmware.com/security/cve-2022-22965) ([more info](https://spring.io/blog/2022/03/31/spring-boot-2-6-6-available-now))
+
 ## [1.13.0]
 
 ### Added
@@ -287,3 +293,4 @@ The first release of reference FAIR Data Point implementation.
 [1.12.3]: /../../tree/v1.12.3
 [1.12.4]: /../../tree/v1.12.4
 [1.13.0]: /../../tree/v1.13.0
+[1.13.1]: /../../tree/v1.13.1
