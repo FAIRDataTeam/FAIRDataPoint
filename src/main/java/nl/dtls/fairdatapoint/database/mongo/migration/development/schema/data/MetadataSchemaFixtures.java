@@ -50,24 +50,24 @@ public class MetadataSchemaFixtures {
             List<String> extendsSchemas,
             MetadataSchemaType type
     ) {
-        return new MetadataSchema(
-                null,
-                uuid,
-                VERSION.toString(),
-                VERSION,
-                name,
-                "",
-                definition,
-                targetClasses,
-                extendsSchemas,
-                type,
-                null,
-                true,
-                true,
-                false,
-                Instant.now(),
-                null
-        );
+        return MetadataSchema.builder()
+                .uuid(uuid)
+                .version(VERSION)
+                .versionString(VERSION.toString())
+                .name(name)
+                .definition(definition)
+                .targetClasses(targetClasses)
+                .extendSchemas(extendsSchemas)
+                .type(type)
+                .origin(null)
+                .latest(true)
+                .published(true)
+                .abstractSchema(false)
+                .suggestedResourceName(null)
+                .suggestedUrlPrefix(null)
+                .previousVersion(null)
+                .createdAt(Instant.now())
+                .build();
     }
 
     private MetadataSchemaDraft createSchemaDraftFixture(
@@ -76,18 +76,17 @@ public class MetadataSchemaFixtures {
             String definition,
             Set<String> targetClasses
     ) {
-        return new MetadataSchemaDraft(
-                null,
-                uuid,
-                name,
-                "",
-                false,
-                definition,
-                targetClasses,
-                Collections.emptyList(),
-                Instant.now(),
-                Instant.now()
-        );
+        return MetadataSchemaDraft.builder()
+                .uuid(uuid)
+                .name(name)
+                .description("")
+                .abstractSchema(false)
+                .definition(definition)
+                .targetClasses(targetClasses)
+                .extendSchemas(Collections.emptyList())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
     }
 
     @SneakyThrows

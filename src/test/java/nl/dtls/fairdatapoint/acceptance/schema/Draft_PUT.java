@@ -23,16 +23,11 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaUpdateDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
 import org.junit.jupiter.api.DisplayName;
@@ -42,15 +37,13 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.*;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestGet;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestGet;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestPut;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -65,13 +58,13 @@ public class Draft_PUT extends WebIntegrationTest {
     }
 
     private MetadataSchemaChangeDTO reqDto() {
-        return new MetadataSchemaChangeDTO(
-                "Updated schema draft",
-                "Description of changes",
-                false,
-                "# no SHACL",
-                Collections.emptyList()
-        );
+        return MetadataSchemaChangeDTO.builder()
+                .name("Updated schema draft")
+                .description("Description of changes")
+                .abstractSchema(false)
+                .definition("# no SHACL")
+                .extendsSchemaUuids(Collections.emptyList())
+                .build();
     }
 
     @Autowired

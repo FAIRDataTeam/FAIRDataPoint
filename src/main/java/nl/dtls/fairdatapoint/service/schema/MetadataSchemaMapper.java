@@ -34,20 +34,19 @@ public class MetadataSchemaMapper {
 
     public MetadataSchemaDraft fromChangeDTO(MetadataSchemaChangeDTO dto, String uuid) {
         Instant now = Instant.now();
-        return
-                new MetadataSchemaDraft(
-                        null,
-                        uuid,
-                        dto.getName(),
-                        dto.getDescription(),
-                        dto.isAbstractSchema(),
-                        dto.getDefinition(),
-                        MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition()),
-                        dto.getExtendsSchemaUuids(),
-                        now,
-                        now
-                );
-
+        return MetadataSchemaDraft.builder()
+                .uuid(uuid)
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .abstractSchema(dto.isAbstractSchema())
+                .definition(dto.getDefinition())
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition()))
+                .extendSchemas(dto.getExtendsSchemaUuids())
+                .suggestedResourceName(dto.getSuggestedResourceName())
+                .suggestedUrlPrefix(dto.getSuggestedUrlPrefix())
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 
     public MetadataSchemaDraft fromChangeDTO(MetadataSchemaChangeDTO dto, MetadataSchemaDraft draft) {
@@ -64,67 +63,70 @@ public class MetadataSchemaMapper {
     }
 
     public MetadataSchemaDraftDTO toDraftDTO(MetadataSchemaDraft draft) {
-        return
-                new MetadataSchemaDraftDTO(
-                        draft.getUuid(),
-                        draft.getName(),
-                        draft.getDescription(),
-                        draft.isAbstractSchema(),
-                        draft.getDefinition(),
-                        draft.getExtendSchemas()
-                );
+        return MetadataSchemaDraftDTO.builder()
+                .uuid(draft.getUuid())
+                .name(draft.getName())
+                .description(draft.getDescription())
+                .abstractSchema(draft.isAbstractSchema())
+                .definition(draft.getDefinition())
+                .extendsSchemaUuids(draft.getExtendSchemas())
+                .suggestedResourceName(draft.getSuggestedResourceName())
+                .suggestedUrlPrefix(draft.getSuggestedUrlPrefix())
+                .build();
     }
 
-    public MetadataSchemaDraftDTO toDraftDTO(MetadataSchema draft) {
-        return
-                new MetadataSchemaDraftDTO(
-                        draft.getUuid(),
-                        draft.getName(),
-                        draft.getDescription(),
-                        draft.isAbstractSchema(),
-                        draft.getDefinition(),
-                        draft.getExtendSchemas()
-                );
+    public MetadataSchemaDraftDTO toDraftDTO(MetadataSchema schema) {
+        return MetadataSchemaDraftDTO.builder()
+                .uuid(schema.getUuid())
+                .name(schema.getName())
+                .description(schema.getDescription())
+                .abstractSchema(schema.isAbstractSchema())
+                .definition(schema.getDefinition())
+                .extendsSchemaUuids(schema.getExtendSchemas())
+                .suggestedResourceName(schema.getSuggestedResourceName())
+                .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
+                .build();
     }
 
     public MetadataSchemaVersionDTO toVersionDTO(MetadataSchema schema) {
-        return
-                new MetadataSchemaVersionDTO(
-                        schema.getUuid(),
-                        schema.getVersion().toString(),
-                        schema.getName(),
-                        schema.isPublished(),
-                        schema.isAbstractSchema(),
-                        schema.isLatest(),
-                        schema.getType(),
-                        schema.getOrigin(),
-                        schema.getDefinition(),
-                        schema.getDescription(),
-                        schema.getTargetClasses(),
-                        schema.getExtendSchemas()
-                );
+        return MetadataSchemaVersionDTO.builder()
+                .uuid(schema.getUuid())
+                .version(schema.getVersion().toString())
+                .name(schema.getName())
+                .description(schema.getDescription())
+                .published(schema.isPublished())
+                .abstractSchema(schema.isAbstractSchema())
+                .latest(schema.isLatest())
+                .type(schema.getType())
+                .origin(schema.getOrigin())
+                .definition(schema.getDefinition())
+                .targetClasses(schema.getTargetClasses())
+                .extendsSchemaUuids(schema.getExtendSchemas())
+                .suggestedResourceName(schema.getSuggestedResourceName())
+                .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
+                .build();
     }
 
     public MetadataSchema fromReleaseDTO(MetadataSchemaReleaseDTO reqDto, MetadataSchemaDraft draft) {
-        return
-                new MetadataSchema(
-                        null,
-                        draft.getUuid(),
-                        reqDto.getVersion(),
-                        new SemVer(reqDto.getVersion()),
-                        draft.getName(),
-                        reqDto.getDescription(),
-                        draft.getDefinition(),
-                        draft.getTargetClasses(),
-                        draft.getExtendSchemas(),
-                        MetadataSchemaType.CUSTOM,
-                        null,
-                        true,
-                        reqDto.isPublished(),
-                        draft.isAbstractSchema(),
-                        Instant.now(),
-                        null
-                );
+        return MetadataSchema.builder()
+                .uuid(draft.getUuid())
+                .version(new SemVer(reqDto.getVersion()))
+                .versionString(reqDto.getVersion())
+                .type(MetadataSchemaType.CUSTOM)
+                .origin(null)
+                .name(draft.getName())
+                .description(reqDto.getDescription())
+                .definition(draft.getDefinition())
+                .targetClasses(draft.getTargetClasses())
+                .extendSchemas(draft.getExtendSchemas())
+                .abstractSchema(draft.isAbstractSchema())
+                .published(reqDto.isPublished())
+                .latest(true)
+                .previousVersion(null)
+                .suggestedResourceName(draft.getSuggestedResourceName())
+                .suggestedUrlPrefix(draft.getSuggestedUrlPrefix())
+                .createdAt(Instant.now())
+                .build();
     }
 
     public MetadataSchemaDTO toDTO(MetadataSchema latest, MetadataSchemaDraft draft, List<MetadataSchema> schemaVersions) {
@@ -152,20 +154,23 @@ public class MetadataSchemaMapper {
     }
 
     public MetadataSchemaRemoteDTO toRemoteDTO(MetadataSchema schema, String persistentUrl) {
-        return
-                new MetadataSchemaRemoteDTO(
+        return MetadataSchemaRemoteDTO.builder()
+                .origin(
                         new MetadataSchemaOrigin(
-                                persistentUrl + "/metadata-schemas/" + schema.getUuid(),
-                                persistentUrl,
-                                schema.getUuid()
-                        ),
-                        schema.getVersionString(),
-                        schema.getName(),
-                        schema.getDefinition(),
-                        schema.getDescription(),
-                        schema.isAbstractSchema(),
-                        schema.getExtendSchemas()
-                );
+                            persistentUrl + "/metadata-schemas/" + schema.getUuid(),
+                            persistentUrl,
+                            schema.getUuid()
+                        )
+                )
+                .version(schema.getVersionString())
+                .name(schema.getName())
+                .description(schema.getDescription())
+                .definition(schema.getDefinition())
+                .abstractSchema(schema.isAbstractSchema())
+                .extendsSchemaUuids(schema.getExtendSchemas())
+                .suggestedResourceName(schema.getSuggestedResourceName())
+                .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
+                .build();
     }
 
     public MetadataSchema fromRemoteDTO(MetadataSchemaRemoteDTO remoteDto, String uuid) {

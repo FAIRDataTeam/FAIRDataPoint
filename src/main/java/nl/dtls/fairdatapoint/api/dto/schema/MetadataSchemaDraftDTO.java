@@ -1,9 +1,6 @@
 package nl.dtls.fairdatapoint.api.dto.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class MetadataSchemaDraftDTO {
 
     @NotNull
@@ -33,4 +31,8 @@ public class MetadataSchemaDraftDTO {
 
     @NotNull
     private List<String> extendsSchemaUuids;
+
+    private String suggestedResourceName;
+
+    private String suggestedUrlPrefix;
 }

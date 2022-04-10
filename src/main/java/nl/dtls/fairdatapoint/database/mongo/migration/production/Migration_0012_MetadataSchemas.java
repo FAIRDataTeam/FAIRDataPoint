@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.database.mongo.migration.production;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
@@ -49,7 +48,9 @@ public class Migration_0012_MetadataSchemas {
     @Execution
     public void run() {
         updateInternalShapesType();
-        // TODO: update Resource to be abstract and parent?
+        // TODO: update Resource to be abstract
+        // TODO: all shapes (except Resource, Data Service, Metadata Service, and FDP) extend Resource
+        // TODO: extends hierarchy FDP -> Metadata Service -> Data Service -> Resource
     }
 
     private void updateInternalShapesType() {

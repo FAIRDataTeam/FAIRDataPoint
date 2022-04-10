@@ -1,10 +1,7 @@
 package nl.dtls.fairdatapoint.api.dto.schema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaOrigin;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 
@@ -17,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class MetadataSchemaVersionDTO {
 
     @NotNull
@@ -53,4 +51,8 @@ public class MetadataSchemaVersionDTO {
 
     @NotNull
     private List<String> extendsSchemaUuids;
+
+    private String suggestedResourceName;
+
+    private String suggestedUrlPrefix;
 }

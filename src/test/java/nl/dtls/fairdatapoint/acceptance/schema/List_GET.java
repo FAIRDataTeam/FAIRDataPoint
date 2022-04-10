@@ -152,11 +152,11 @@ public class List_GET extends WebIntegrationTest {
         RequestEntity<Void> request = RequestEntity
                 .get(url(true))
                 .build();
-        ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
+        ResponseEntity<?> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.UNAUTHORIZED)));

@@ -23,9 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
@@ -55,13 +53,13 @@ public class List_POST extends WebIntegrationTest {
     }
 
     private MetadataSchemaChangeDTO reqDto(MetadataSchema metadataSchema) {
-        return new MetadataSchemaChangeDTO(
-                metadataSchema.getName(),
-                "",
-                false,
-                metadataSchema.getDefinition(),
-                Collections.emptyList()
-        );
+        return MetadataSchemaChangeDTO.builder()
+                .name(metadataSchema.getName())
+                .description("")
+                .abstractSchema(false)
+                .definition(metadataSchema.getDefinition())
+                .extendsSchemaUuids(Collections.emptyList())
+                .build();
     }
 
     @Test

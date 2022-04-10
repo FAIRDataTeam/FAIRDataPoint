@@ -84,6 +84,10 @@ public class MetadataSchema {
 
     private boolean abstractSchema;
 
+    private String suggestedResourceName;
+
+    private String suggestedUrlPrefix;
+
     private Instant createdAt;
 
     @DBRef

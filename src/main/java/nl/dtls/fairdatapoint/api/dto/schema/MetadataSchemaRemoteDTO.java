@@ -22,10 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.dto.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaOrigin;
 
 import javax.validation.constraints.NotBlank;
@@ -36,6 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class MetadataSchemaRemoteDTO {
 
     @NotNull
@@ -62,4 +60,8 @@ public class MetadataSchemaRemoteDTO {
 
     @NotNull
     private List<String> extendsSchemaUuids;
+
+    private String suggestedResourceName;
+
+    private String suggestedUrlPrefix;
 }
