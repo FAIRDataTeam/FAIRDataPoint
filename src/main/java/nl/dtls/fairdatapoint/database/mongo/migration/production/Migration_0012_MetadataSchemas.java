@@ -23,17 +23,21 @@
 package nl.dtls.fairdatapoint.database.mongo.migration.production;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.entity.schema.SemVer;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @ChangeUnit(id="Migration_0012_MetadataSchemas", order = "0012", author = "migrationBot")
 @Profile(Profiles.PRODUCTION)
@@ -48,9 +52,6 @@ public class Migration_0012_MetadataSchemas {
     @Execution
     public void run() {
         updateInternalShapesType();
-        // TODO: update Resource to be abstract
-        // TODO: all shapes (except Resource, Data Service, Metadata Service, and FDP) extend Resource
-        // TODO: extends hierarchy FDP -> Metadata Service -> Data Service -> Resource
     }
 
     private void updateInternalShapesType() {
@@ -59,29 +60,54 @@ public class Migration_0012_MetadataSchemas {
         db.createCollection("metadataSchemaDraft");
         SemVer version = new SemVer("1.0.0");
         Instant now = Instant.now();
+
+        // Check default schemas presence
+        boolean resourceExists = docWithUuidExists(shapeCol, KnownUUIDs.SCHEMA_RESOURCE_UUID);
+        boolean dataServiceExists = docWithUuidExists(shapeCol, KnownUUIDs.SCHEMA_DATASERVICE_UUID);
+        boolean metadataServiceExists = docWithUuidExists(shapeCol, KnownUUIDs.SCHEMA_METADATASERVICE_UUID);
+
+        // Migrate shapes to schemas
         shapeCol.find().forEach(shapeDoc -> {
+            boolean isResource = Objects.equals(shapeDoc.getString("uuid"), KnownUUIDs.SCHEMA_RESOURCE_UUID);
+            String schemaUuid = shapeDoc.getString("uuid");
+            List<String> extendSchemas = new ArrayList<>();
+            if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_FDP_UUID) && metadataServiceExists) {
+                // FAIRDataPoint extends MetadataService
+                extendSchemas.add(KnownUUIDs.SCHEMA_METADATASERVICE_UUID);
+            } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_METADATASERVICE_UUID) && dataServiceExists) {
+                // MetadataService extends DataService
+                extendSchemas.add(KnownUUIDs.SCHEMA_DATASERVICE_UUID);
+            } else if (!Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_RESOURCE_UUID) && resourceExists) {
+                // Everything else (except Resource) extends Resource
+                extendSchemas.add(KnownUUIDs.SCHEMA_RESOURCE_UUID);
+            }
             Document schemaDoc = new Document();
-            schemaDoc.append("uuid", shapeDoc.getString("uuid"));
+            schemaDoc.append("uuid", schemaUuid);
             schemaDoc.append("versionString", version.toString());
             schemaDoc.append("version", version);
             schemaDoc.append("name", shapeDoc.getString("name"));
             schemaDoc.append("description", "");
             schemaDoc.append("definition", shapeDoc.getString("definition"));
             schemaDoc.append("targetClasses", shapeDoc.get("targetClasses"));
-            schemaDoc.append("extendSchemas", new ArrayList<>());
+            schemaDoc.append("extendSchemas", extendSchemas);
             schemaDoc.append("type", shapeDoc.get("type"));
             schemaDoc.append("origin", null);
             schemaDoc.append("latest", true);
             schemaDoc.append("published", shapeDoc.getBoolean("published", false));
-            schemaDoc.append("abstractSchema", false);
+            schemaDoc.append("abstractSchema", isResource);
             schemaDoc.append("createdAt", now);
             schemaCol.insertOne(schemaDoc);
         });
         db.dropCollection("shape");
     }
+
+    private boolean docWithUuidExists(MongoCollection<Document> collection, String uuid) {
+        return collection.find(Filters.eq("uuid", uuid)).first() != null;
+    }
+
     @RollbackExecution
     public void rollback() {
-
+        // TODO
     }
 /*
     @RollbackExecution
