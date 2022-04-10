@@ -105,7 +105,7 @@ public class MetadataSchemaMapper {
                 );
     }
 
-    public MetadataSchema fromPublishDTO(MetadataSchemaPublishDTO reqDto, MetadataSchemaDraft draft) {
+    public MetadataSchema fromReleaseDTO(MetadataSchemaReleaseDTO reqDto, MetadataSchemaDraft draft) {
         return
                 new MetadataSchema(
                         null,

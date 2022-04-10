@@ -24,10 +24,8 @@ package nl.dtls.fairdatapoint.service.schema;
 
 import nl.dtls.fairdatapoint.api.dto.schema.*;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
@@ -36,7 +34,6 @@ import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Meta;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -45,10 +42,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class MetadataSchemaService {
@@ -124,7 +119,7 @@ public class MetadataSchemaService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<MetadataSchemaDTO> publishDraft(String uuid, MetadataSchemaPublishDTO reqDto) {
+    public Optional<MetadataSchemaDTO> releaseDraft(String uuid, MetadataSchemaReleaseDTO reqDto) {
         Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
         // Check if present
         if (oDraft.isEmpty()) {
@@ -132,7 +127,7 @@ public class MetadataSchemaService {
         }
         // Update
         MetadataSchemaDraft draft = oDraft.get();
-        MetadataSchema newLatest = metadataSchemaMapper.fromPublishDTO(reqDto, draft);
+        MetadataSchema newLatest = metadataSchemaMapper.fromReleaseDTO(reqDto, draft);
         Optional<MetadataSchema> oLatest = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
         oLatest.ifPresent(newLatest::setPreviousVersion);
         // Validate & Save

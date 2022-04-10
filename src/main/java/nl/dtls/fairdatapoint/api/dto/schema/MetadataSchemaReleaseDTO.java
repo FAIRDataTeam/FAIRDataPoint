@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MetadataSchemaPublishDTO {
+public class MetadataSchemaReleaseDTO {
 
     @NotBlank
     @ValidSemVer

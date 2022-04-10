@@ -24,9 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaPublishDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaReleaseDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
@@ -39,8 +37,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -58,8 +54,8 @@ public class Versions_POST extends WebIntegrationTest {
         return URI.create(format("/metadata-schemas/%s/versions", uuid));
     }
 
-    private MetadataSchemaPublishDTO reqDto(String version, boolean published) {
-        return new MetadataSchemaPublishDTO(
+    private MetadataSchemaReleaseDTO reqDto(String version, boolean published) {
+        return new MetadataSchemaReleaseDTO(
                 version,
                 "Some description",
                 published
@@ -87,7 +83,7 @@ public class Versions_POST extends WebIntegrationTest {
         metadataSchemaDraftRepository.deleteAll();
         MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
         metadataSchemaDraftRepository.save(draft);
-        MetadataSchemaPublishDTO reqDto = reqDto("0.1.0", true);
+        MetadataSchemaReleaseDTO reqDto = reqDto("0.1.0", true);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -118,7 +114,7 @@ public class Versions_POST extends WebIntegrationTest {
         MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(true));
         MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
         metadataSchemaDraftRepository.save(draft);
-        MetadataSchemaPublishDTO reqDto = reqDto("2.0.0", true);
+        MetadataSchemaReleaseDTO reqDto = reqDto("2.0.0", true);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -151,7 +147,7 @@ public class Versions_POST extends WebIntegrationTest {
         metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(true));
         MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
         metadataSchemaDraftRepository.save(draft);
-        MetadataSchemaPublishDTO reqDto = reqDto("0.1.0", true);
+        MetadataSchemaReleaseDTO reqDto = reqDto("0.1.0", true);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity

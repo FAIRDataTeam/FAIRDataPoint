@@ -160,11 +160,11 @@ public class MetadataSchemaController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/{uuid}/versions")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<MetadataSchemaDTO> publishSchemaVersion(
+    public ResponseEntity<MetadataSchemaDTO> releaseSchemaVersion(
             @PathVariable final String uuid,
-            @RequestBody @Valid MetadataSchemaPublishDTO reqDto
+            @RequestBody @Valid MetadataSchemaReleaseDTO reqDto
     ) throws ResourceNotFoundException {
-        Optional<MetadataSchemaDTO> oDto = metadataSchemaService.publishDraft(uuid, reqDto);
+        Optional<MetadataSchemaDTO> oDto = metadataSchemaService.releaseDraft(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         } else {
