@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.service.schema;
 
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
+import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
@@ -33,7 +33,6 @@ import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,17 +63,21 @@ public class MetadataSchemaValidator {
     }
 
     public void validate(MetadataSchema metadataSchema) {
+        validate(metadataSchema, null);
+    }
+
+    public void validate(MetadataSchema newVersion, MetadataSchema previousVersion) {
         // Check previous
-        if (metadataSchema.getPreviousVersion() != null) {
-            if (metadataSchema.getPreviousVersion().getVersion().compareTo(metadataSchema.getVersion()) >= 0) {
+        if (previousVersion != null) {
+            if (previousVersion.getVersion().compareTo(newVersion.getVersion()) >= 0) {
                 throw new ValidationException("Version is not higher than previous");
             }
-            if (metadataSchema.getPreviousVersion().isLatest()) {
+            if (previousVersion.isLatest()) {
                 throw new ValidationException("Older version is still marked as latest");
             }
         }
         // Check SHACL definition
-        validateShacl(metadataSchema.getDefinition());
+        validateShacl(newVersion.getDefinition());
     }
 
     public void validateNotUsed(String uuid) {
@@ -98,7 +101,7 @@ public class MetadataSchemaValidator {
         });
     }
 
-    public void validate(MetadataSchemaRemoteDTO reqDto) {
+    public void validate(MetadataSchemaVersionDTO reqDto) {
         // Check SHACL definition
         validateShacl(reqDto.getDefinition());
     }

@@ -23,5 +23,5 @@
 package nl.dtls.fairdatapoint.entity.schema;
 
 public enum MetadataSchemaType {
-    INTERNAL, CUSTOM
+    INTERNAL, CUSTOM, REFERENCE
 }

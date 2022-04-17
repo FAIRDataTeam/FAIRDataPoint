@@ -23,11 +23,9 @@
 package nl.dtls.fairdatapoint.api.dto.schema;
 
 import lombok.*;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaOrigin;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,30 +36,13 @@ public class MetadataSchemaRemoteDTO {
 
     @NotNull
     @NotBlank
-    private MetadataSchemaOrigin origin;
+    private MetadataSchemaVersionDTO schema;
 
-    @NotNull
-    @NotBlank
-    private String version;
+    private boolean schemaImported;
 
-    @NotNull
-    @NotBlank
-    private String name;
+    private boolean versionImported;
 
-    @NotNull
-    @NotBlank
-    private String definition;
+    private boolean dirty;
 
-    @NotNull
-    @NotBlank
-    private String description;
-
-    private boolean abstractSchema;
-
-    @NotNull
-    private List<String> extendsSchemaUuids;
-
-    private String suggestedResourceName;
-
-    private String suggestedUrlPrefix;
+    private boolean canImport;
 }

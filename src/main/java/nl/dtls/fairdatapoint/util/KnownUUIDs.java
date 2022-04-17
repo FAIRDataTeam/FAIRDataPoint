@@ -52,6 +52,20 @@ public class KnownUUIDs {
 
     public static final String SCHEMA_DISTRIBUTION_UUID = "ebacbf83-cd4f-4113-8738-d73c0735b0ab";
 
+    public static final String SCHEMA_V1_RESOURCE_UUID = "71d77460-f919-4f72-b265-ed26567fe361";
+
+    public static final String SCHEMA_V1_FDP_UUID = "4e64208d-f102-45a0-96e3-17b002e6213e";
+
+    public static final String SCHEMA_V1_DATASERVICE_UUID = "9111d436-fe58-4bd5-97ae-e6f86bc2997a";
+
+    public static final String SCHEMA_V1_METADATASERVICE_UUID = "36b22b70-6203-4dd2-9fb6-b39a776bf467";
+
+    public static final String SCHEMA_V1_CATALOG_UUID = "c9640671-945d-4114-88fb-e81314cb7ab2";
+
+    public static final String SCHEMA_V1_DATASET_UUID = "9cc3c89a-76cf-4639-a71f-652627af51db";
+
+    public static final String SCHEMA_V1_DISTRIBUTION_UUID = "3cda8cd3-b08b-4797-822d-d3f3e83c466a";
+
     public static final String RD_REPOSITORY_UUID = "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c";
 
     public static final String RD_FDP_UUID = "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c";

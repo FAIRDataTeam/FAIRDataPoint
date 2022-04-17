@@ -71,6 +71,17 @@ public class ResourceDefinitionTargetClassesCache {
             rd.getMetadataSchemaUuids().forEach(schemaUuid -> {
                 if (metadataSchemaMap.containsKey(schemaUuid)) {
                     targetClassUris.addAll(metadataSchemaMap.get(schemaUuid).getTargetClasses());
+                    Queue<String> parentUuids = new LinkedList<>(metadataSchemaMap.get(schemaUuid).getExtendSchemas());
+                    Set<String> visitedParents = new HashSet<>();
+                    String parentUuid = null;
+                    while (!parentUuids.isEmpty()) {
+                        parentUuid = parentUuids.poll();
+                        if (!visitedParents.contains(parentUuid)) {
+                            visitedParents.add(parentUuid);
+                            targetClassUris.addAll(metadataSchemaMap.get(parentUuid).getTargetClasses());
+                            parentUuids.addAll(metadataSchemaMap.get(parentUuid).getExtendSchemas());
+                        }
+                    }
                 }
             });
             cache.put(rd.getUuid(), targetClassUris.stream().toList());

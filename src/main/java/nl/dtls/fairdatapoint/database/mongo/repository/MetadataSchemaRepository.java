@@ -32,6 +32,8 @@ public interface MetadataSchemaRepository extends MongoRepository<MetadataSchema
 
     List<MetadataSchema> findByUuid(String uuid);
 
+    Optional<MetadataSchema> findByVersionUuid(String uuid);
+
     Optional<MetadataSchema> findByUuidAndVersionString(String uuid, String versionString);
 
     Optional<MetadataSchema> findByUuidAndLatestIsTrue(String uuid);
@@ -42,6 +44,7 @@ public interface MetadataSchemaRepository extends MongoRepository<MetadataSchema
 
     List<MetadataSchema> findAllByExtendSchemasContains(String uuid);
 
-    Optional<MetadataSchema> findByPreviousVersion(MetadataSchema previousVersion);
+    Optional<MetadataSchema> findByPreviousVersionUuid(String uuid);
 
+    List<MetadataSchema> findAllByImportedFromIsNotNull();
 }

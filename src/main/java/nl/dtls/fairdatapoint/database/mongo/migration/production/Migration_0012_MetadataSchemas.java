@@ -38,12 +38,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @ChangeUnit(id="Migration_0012_MetadataSchemas", order = "0012", author = "migrationBot")
 @Profile(Profiles.PRODUCTION)
 public class Migration_0012_MetadataSchemas {
 
     private final MongoTemplate db;
+
+    private static final String FDP_APP_URL = "https://purl.org/fairdatapoint/app";
 
     public Migration_0012_MetadataSchemas(MongoTemplate template) {
         this.db = template;
@@ -68,8 +71,35 @@ public class Migration_0012_MetadataSchemas {
 
         // Migrate shapes to schemas
         shapeCol.find().forEach(shapeDoc -> {
-            boolean isResource = Objects.equals(shapeDoc.getString("uuid"), KnownUUIDs.SCHEMA_RESOURCE_UUID);
             String schemaUuid = shapeDoc.getString("uuid");
+            // Internal shapes
+            String origin = null;
+            String versionUuid = UUID.randomUUID().toString();
+            boolean isAbstract = false;
+            if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_RESOURCE_UUID)) {
+                isAbstract = true;
+                versionUuid = KnownUUIDs.SCHEMA_V1_RESOURCE_UUID;
+                origin = FDP_APP_URL;
+            } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_FDP_UUID)) {
+                versionUuid = KnownUUIDs.SCHEMA_V1_FDP_UUID;
+                origin = FDP_APP_URL;
+            } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_DATASERVICE_UUID)) {
+                versionUuid = KnownUUIDs.SCHEMA_V1_DATASERVICE_UUID;
+                origin = FDP_APP_URL;
+            } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_METADATASERVICE_UUID)) {
+                versionUuid = KnownUUIDs.SCHEMA_V1_METADATASERVICE_UUID;
+                origin = FDP_APP_URL;
+            } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_CATALOG_UUID)) {
+                versionUuid = KnownUUIDs.SCHEMA_V1_CATALOG_UUID;
+                origin = FDP_APP_URL;
+            } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_DATASET_UUID)) {
+                versionUuid = KnownUUIDs.SCHEMA_V1_DATASET_UUID;
+                origin = FDP_APP_URL;
+            } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_DISTRIBUTION_UUID)) {
+                versionUuid = KnownUUIDs.SCHEMA_V1_DISTRIBUTION_UUID;
+                origin = FDP_APP_URL;
+            }
+            // Extends
             List<String> extendSchemas = new ArrayList<>();
             if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_FDP_UUID) && metadataServiceExists) {
                 // FAIRDataPoint extends MetadataService
@@ -81,8 +111,10 @@ public class Migration_0012_MetadataSchemas {
                 // Everything else (except Resource) extends Resource
                 extendSchemas.add(KnownUUIDs.SCHEMA_RESOURCE_UUID);
             }
+            // Prepare
             Document schemaDoc = new Document();
             schemaDoc.append("uuid", schemaUuid);
+            schemaDoc.append("versionUuid", versionUuid);
             schemaDoc.append("versionString", version.toString());
             schemaDoc.append("version", version);
             schemaDoc.append("name", shapeDoc.getString("name"));
@@ -91,11 +123,14 @@ public class Migration_0012_MetadataSchemas {
             schemaDoc.append("targetClasses", shapeDoc.get("targetClasses"));
             schemaDoc.append("extendSchemas", extendSchemas);
             schemaDoc.append("type", shapeDoc.get("type"));
-            schemaDoc.append("origin", null);
+            schemaDoc.append("origin", origin);
+            schemaDoc.append("importedFrom", origin);
             schemaDoc.append("latest", true);
+            schemaDoc.append("previousVersionUuid", null);
             schemaDoc.append("published", shapeDoc.getBoolean("published", false));
-            schemaDoc.append("abstractSchema", isResource);
+            schemaDoc.append("abstractSchema", isAbstract);
             schemaDoc.append("createdAt", now);
+            // Insert
             schemaCol.insertOne(schemaDoc);
         });
         db.dropCollection("shape");
@@ -107,12 +142,7 @@ public class Migration_0012_MetadataSchemas {
 
     @RollbackExecution
     public void rollback() {
-        // TODO
-    }
-/*
-    @RollbackExecution
-    public void rollback() {
-        MongoCollection<Document> shapeCol = db.createCollection("shape");
+        MongoCollection<Document> shapeCol = db.getCollection("shape");
         MongoCollection<Document> schemaCol = db.getCollection("metadataSchema");
         schemaCol.find(Filters.eq("latest", true)).forEach(schemaDoc -> {
             Document shapeDoc = new Document();
@@ -120,12 +150,11 @@ public class Migration_0012_MetadataSchemas {
             shapeDoc.append("name", schemaDoc.getString("name"));
             shapeDoc.append("definition", schemaDoc.getString("definition"));
             shapeDoc.append("targetClasses", schemaDoc.get("targetClasses"));
-            shapeDoc.append("type", schemaDoc.get("type"));
+            shapeDoc.append("type", schemaDoc.get("type") == "INTERNAL" ? "INTERNAL" : "CUSTOM");
             shapeDoc.append("published", schemaDoc.getBoolean("published", false));
             shapeCol.insertOne(shapeDoc);
         });
         db.dropCollection("metadataSchema");
         db.dropCollection("metadataSchemaDraft");
     }
-    */
 }

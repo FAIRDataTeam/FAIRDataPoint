@@ -44,6 +44,7 @@ public class MetadataSchemaFixtures {
 
     private MetadataSchema createSchemaFixture(
             String uuid,
+            String versionUuid,
             String name,
             String definition,
             Set<String> targetClasses,
@@ -52,6 +53,7 @@ public class MetadataSchemaFixtures {
     ) {
         return MetadataSchema.builder()
                 .uuid(uuid)
+                .versionUuid(versionUuid)
                 .version(VERSION)
                 .versionString(VERSION.toString())
                 .name(name)
@@ -65,7 +67,7 @@ public class MetadataSchemaFixtures {
                 .abstractSchema(false)
                 .suggestedResourceName(null)
                 .suggestedUrlPrefix(null)
-                .previousVersion(null)
+                .previousVersionUuid(null)
                 .createdAt(Instant.now())
                 .build();
     }
@@ -94,6 +96,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-resource.ttl", getClass());
         MetadataSchema schema = createSchemaFixture(
                 KnownUUIDs.SCHEMA_RESOURCE_UUID,
+                KnownUUIDs.SCHEMA_V1_RESOURCE_UUID,
                 "Resource",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Resource"),
@@ -109,6 +112,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-fdp.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_FDP_UUID,
+                KnownUUIDs.SCHEMA_V1_FDP_UUID,
                 "FAIR Data Point",
                 definition,
                 Set.of("https://w3id.org/fdp/fdp-o#FAIRDataPoint"),
@@ -122,6 +126,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-data-service.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DATASERVICE_UUID,
+                KnownUUIDs.SCHEMA_V1_DATASERVICE_UUID,
                 "Data Service",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#DataService"),
@@ -135,6 +140,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-metadata-service.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
+                KnownUUIDs.SCHEMA_V1_METADATASERVICE_UUID,
                 "Metadata Service",
                 definition,
                 Set.of("https://w3id.org/fdp/fdp-o#MetadataService"),
@@ -148,6 +154,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-catalog.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_CATALOG_UUID,
+                KnownUUIDs.SCHEMA_V1_CATALOG_UUID,
                 "Catalog",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Catalog"),
@@ -161,6 +168,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-dataset.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DATASET_UUID,
+                KnownUUIDs.SCHEMA_V1_DATASET_UUID,
                 "Dataset",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Dataset"),
@@ -174,6 +182,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-distribution.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DISTRIBUTION_UUID,
+                KnownUUIDs.SCHEMA_V1_DISTRIBUTION_UUID,
                 "Distribution",
                 definition,
                 Set.of("http://www.w3.org/ns/dcat#Distribution"),
@@ -187,6 +196,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-custom.ttl", getClass());
         return createSchemaFixture(
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
+                "ceba9984-9838-4be2-a2a7-12213016fd97",
                 "Custom Shape",
                 definition,
                 Set.of("http://example.org/Dog"),
@@ -200,6 +210,7 @@ public class MetadataSchemaFixtures {
         String definition = loadClassResource("shape-custom-edited.ttl", getClass());
         return createSchemaFixture(
                 customSchema().getUuid(),
+                "ceba9984-9838-4be2-a2a7-12213016fd98",
                 customSchema().getName(),
                 definition,
                 Set.of("http://example.org/Dog"),
@@ -245,7 +256,8 @@ public class MetadataSchemaFixtures {
         schema.setName("Schema v2.0.0");
         schema.setVersionString("2.0.0");
         schema.setLatest(latest);
-        schema.setPreviousVersion(previousVersion);
+        schema.setVersionUuid("ceba9984-9838-4be2-a2a7-12213016fd99");
+        schema.setPreviousVersionUuid(previousVersion.getVersionUuid());
         return schema;
     }
 
@@ -255,7 +267,8 @@ public class MetadataSchemaFixtures {
         schema.setName("Schema v2.1.0");
         schema.setVersionString("2.1.0");
         schema.setLatest(latest);
-        schema.setPreviousVersion(previousVersion);
+        schema.setVersionUuid("ceba9984-9838-4be2-a2a7-12213016fd00");
+        schema.setPreviousVersionUuid(previousVersion.getVersionUuid());
         return schema;
     }
 }

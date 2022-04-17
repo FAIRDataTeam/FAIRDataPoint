@@ -26,7 +26,6 @@ import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
@@ -50,6 +49,9 @@ public class MetadataSchema {
 
     @Indexed
     private String uuid;
+
+    @Indexed
+    protected String versionUuid;
 
     @Indexed
     protected String versionString;
@@ -76,7 +78,9 @@ public class MetadataSchema {
     @NotNull
     private MetadataSchemaType type;
 
-    private MetadataSchemaOrigin origin;
+    private String origin = null;
+
+    private String importedFrom = null;
 
     private boolean latest;
 
@@ -90,8 +94,7 @@ public class MetadataSchema {
 
     private Instant createdAt;
 
-    @DBRef
-    protected MetadataSchema previousVersion = null;
+    private String previousVersionUuid = null;
 
     public void setVersionString(String versionString) {
         this.versionString = versionString;

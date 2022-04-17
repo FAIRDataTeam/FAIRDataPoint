@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright © 2017 DTL
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -218,8 +218,8 @@ public class MetadataSchemaController {
     }
 
     @GetMapping(path = "/public", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MetadataSchemaRemoteDTO>> getPublishedSchemas() {
-        List<MetadataSchemaRemoteDTO> dto = metadataSchemaService.getPublishedSchemas();
+    public ResponseEntity<List<MetadataSchemaVersionDTO>> getPublishedSchemas() {
+        List<MetadataSchemaVersionDTO> dto = metadataSchemaService.getPublishedSchemas();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -231,10 +231,16 @@ public class MetadataSchemaController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MetadataSchemaVersionDTO>> importSchemas(@RequestBody @Valid List<MetadataSchemaRemoteDTO> reqDtos) {
+    @PostMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<MetadataSchemaVersionDTO>> importSchemas(@RequestBody @Valid List<MetadataSchemaVersionDTO> reqDtos) {
         List<MetadataSchemaVersionDTO> dto = metadataSchemaService.importSchemas(reqDtos);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/updates", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<MetadataSchemaVersionDTO>> checkForUpdates() {
+        List<MetadataSchemaVersionDTO> dtos = metadataSchemaService.checkForUpdates();
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
 }

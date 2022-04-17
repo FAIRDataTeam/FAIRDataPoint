@@ -101,8 +101,9 @@ public class GenericController {
     public Model getFormMetadata(
             @PathVariable final Optional<String> oUrlPrefix
     ) {
-        // TODO: only for specific url prefix (resource only)
-        return metadataSchemaService.getShaclFromSchemas();
+        String urlPrefix = oUrlPrefix.orElse("");
+        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+        return metadataSchemaService.getShaclFromSchemas(rd.getMetadataSchemaUuids());
     }
 
     @Operation(hidden = true, deprecated = true)
