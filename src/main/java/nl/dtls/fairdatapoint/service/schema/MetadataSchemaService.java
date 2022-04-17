@@ -93,16 +93,23 @@ public class MetadataSchemaService {
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<MetadataSchemaDraftDTO> updateSchemaDraft(String uuid, MetadataSchemaChangeDTO reqDto) {
         Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+        MetadataSchemaDraft baseDraft;
         // Check if present
-        if (oDraft.isEmpty()) {
-            return empty();
+        if (oDraft.isPresent()) {
+            baseDraft = oDraft.get();
+        } else {
+            Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
+            if (oSchema.isEmpty()) {
+                return empty();
+            }
+            MetadataSchema schema = oSchema.get();
+            baseDraft = metadataSchemaMapper.toDraft(schema);
         }
         // Validate
         metadataSchemaValidator.validateAllExist(reqDto.getExtendsSchemaUuids());
         metadataSchemaValidator.validateNoExtendsCycle(uuid, reqDto.getExtendsSchemaUuids());
         // Save
-        MetadataSchemaDraft draft = oDraft.get();
-        MetadataSchemaDraft updatedDraft = metadataSchemaMapper.fromChangeDTO(reqDto, draft);
+        MetadataSchemaDraft updatedDraft = metadataSchemaMapper.fromChangeDTO(reqDto, baseDraft);
         metadataSchemaDraftRepository.save(updatedDraft);
         return of(metadataSchemaMapper.toDraftDTO(updatedDraft));
     }
@@ -226,10 +233,11 @@ public class MetadataSchemaService {
     // ===============================================================================================
     // Reading schemas
 
-    public List<MetadataSchemaDTO> getSchemasWithoutDrafts() {
+    public List<MetadataSchemaDTO> getSchemasWithoutDrafts(boolean includeAbstract) {
         return metadataSchemaRepository
                 .findAllByLatestIsTrue()
                 .stream()
+                .filter(s -> includeAbstract || !s.isAbstractSchema())
                 .map(schema -> {
                     List<MetadataSchema> versions = metadataSchemaRepository.findByUuid(schema.getUuid());
                     return metadataSchemaMapper.toDTO(schema, null, versions);
@@ -237,11 +245,12 @@ public class MetadataSchemaService {
                 .toList();
     }
 
-    public List<MetadataSchemaDTO> getSchemasWithDrafts() {
+    public List<MetadataSchemaDTO> getSchemasWithDrafts(boolean includeAbstract) {
         Set<String> listedUuids = new HashSet<>();
         Stream<MetadataSchemaDTO> schemas = metadataSchemaRepository
                 .findAllByLatestIsTrue()
                 .stream()
+                .filter(s -> includeAbstract || !s.isAbstractSchema())
                 .map(schema -> {
                     List<MetadataSchema> versions = metadataSchemaRepository.findByUuid(schema.getUuid());
                     Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(schema.getUuid());
@@ -252,7 +261,7 @@ public class MetadataSchemaService {
         Stream<MetadataSchemaDTO> drafts = metadataSchemaDraftRepository
                 .findAll()
                 .stream()
-                .filter(d -> !listedUuids.contains(d.getUuid()))
+                .filter(d -> !listedUuids.contains(d.getUuid()) && (includeAbstract || !d.isAbstractSchema()))
                 .map(draft -> metadataSchemaMapper.toDTO(null, draft, Collections.emptyList()));
         return Stream.concat(schemas, drafts).toList();
     }

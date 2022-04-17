@@ -47,9 +47,15 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /metadata-schemas")
 public class List_GET extends WebIntegrationTest {
 
-    private URI url(boolean includeDrafts) {
+    private URI url(boolean includeDrafts, boolean includeAbstract) {
+        if (includeDrafts && !includeAbstract) {
+            return URI.create("/metadata-schemas?drafts=true&abstract=false");
+        }
         if (includeDrafts) {
-            return URI.create("/metadata-schemas?includeDrafts=true");
+            return URI.create("/metadata-schemas?drafts=true");
+        }
+        if (!includeAbstract) {
+            return URI.create("/metadata-schemas?abstract=false");
         }
         return URI.create("/metadata-schemas");
     }
@@ -79,7 +85,7 @@ public class List_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(false))
+                .get(url(false, true))
                 .build();
         ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType = new ParameterizedTypeReference<>() {
         };
@@ -101,6 +107,42 @@ public class List_GET extends WebIntegrationTest {
     }
 
     @Test
+    @DisplayName("HTTP 200: regular user, no abstract")
+    public void res200_regularUserNoAbstract() {
+        // GIVEN: prepare data
+        metadataSchemaDraftRepository.deleteAll();
+        metadataSchemaRepository.deleteAll();
+        metadataSchemaRepository.insert(metadataSchemaFixtures.resourceSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.fdpSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.dataServiceSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.metadataServiceSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.catalogSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.datasetSchema());
+        metadataSchemaRepository.insert(metadataSchemaFixtures.distributionSchema());
+
+        // AND: prepare request
+        RequestEntity<Void> request = RequestEntity
+                .get(url(false, false))
+                .build();
+        ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // WHEN:
+        ResponseEntity<List<MetadataSchemaDTO>> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        List<MetadataSchemaDTO> body = result.getBody();
+        assertThat(body.size(), is(equalTo(6)));
+        Common.compare(metadataSchemaFixtures.fdpSchema(), body.get(0));
+        Common.compare(metadataSchemaFixtures.dataServiceSchema(), body.get(1));
+        Common.compare(metadataSchemaFixtures.metadataServiceSchema(), body.get(2));
+        Common.compare(metadataSchemaFixtures.catalogSchema(), body.get(3));
+        Common.compare(metadataSchemaFixtures.datasetSchema(), body.get(4));
+        Common.compare(metadataSchemaFixtures.distributionSchema(), body.get(5));
+    }
+
+    @Test
     @DisplayName("HTTP 200: admin with drafts")
     public void res200_adminDrafts() {
         // GIVEN: prepare data
@@ -117,7 +159,7 @@ public class List_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(true))
+                .get(url(true, true))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<List<MetadataSchemaDTO>> responseType = new ParameterizedTypeReference<>() {
@@ -150,7 +192,7 @@ public class List_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(true))
+                .get(url(true, true))
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
         };

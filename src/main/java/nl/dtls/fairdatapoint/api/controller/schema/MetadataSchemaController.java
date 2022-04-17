@@ -58,14 +58,15 @@ public class MetadataSchemaController {
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaDTO>> getSchemas(
-            @RequestParam(required = false, defaultValue = "false") boolean includeDrafts
+            @RequestParam(name = "drafts", required = false, defaultValue = "false") boolean includeDrafts,
+            @RequestParam(name = "abstract", required = false, defaultValue = "true") boolean includeAbstract
     ) throws UnauthorizedException {
         if (includeDrafts && currentUserService.isAdmin()) {
-            return new ResponseEntity<>(metadataSchemaService.getSchemasWithDrafts(), HttpStatus.OK);
+            return new ResponseEntity<>(metadataSchemaService.getSchemasWithDrafts(includeAbstract), HttpStatus.OK);
         } else if (includeDrafts) {
             throw new UnauthorizedException("Unauthorized to see drafts of metadata schemas");
         }
-        return new ResponseEntity<>(metadataSchemaService.getSchemasWithoutDrafts(), HttpStatus.OK);
+        return new ResponseEntity<>(metadataSchemaService.getSchemasWithoutDrafts(includeAbstract), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)

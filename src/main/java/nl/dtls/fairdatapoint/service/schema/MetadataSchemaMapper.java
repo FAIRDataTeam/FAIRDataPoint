@@ -201,4 +201,18 @@ public class MetadataSchemaMapper {
                         .published(reqDto.isPublished())
                         .build();
     }
+
+    public MetadataSchemaDraft toDraft(MetadataSchema schema) {
+        return MetadataSchemaDraft.builder()
+                .uuid(schema.getUuid())
+                .name(schema.getName())
+                .name(schema.getName())
+                .description(schema.getDescription())
+                .abstractSchema(schema.isAbstractSchema())
+                .definition(schema.getDefinition())
+                .extendSchemas(schema.getExtendSchemas())
+                .suggestedResourceName(schema.getSuggestedResourceName())
+                .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
+                .build();
+    }
 }
