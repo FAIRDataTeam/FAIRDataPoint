@@ -22,23 +22,6 @@
  */
 package nl.dtls.fairdatapoint.api.dto.schema;
 
-import lombok.*;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder
-public class MetadataSchemaRemoteDTO {
-
-    @NotNull
-    @NotBlank
-    private MetadataSchemaVersionDTO schema;
-
-    private MetadataSchemaRemoteState status;
-
-    private boolean canImport;
+public enum MetadataSchemaRemoteState {
+    DIRTY, CONFLICT, ALREADY_IMPORTED, NOT_IMPORTED
 }

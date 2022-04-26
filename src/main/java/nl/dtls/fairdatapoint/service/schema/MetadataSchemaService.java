@@ -36,7 +36,6 @@ import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Meta;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -396,18 +395,24 @@ public class MetadataSchemaService {
         Optional<MetadataSchema> localVersion = metadataSchemaRepository.findByVersionUuid(remoteDto.getVersionUuid());
         List<MetadataSchema> localSchemas = metadataSchemaRepository.findByUuid(remoteDto.getUuid());
         boolean isDirty = false;
+        MetadataSchemaRemoteState status = MetadataSchemaRemoteState.NOT_IMPORTED;
         if (localVersion.isPresent()) {
             isDirty = !Objects.equals(localVersion.get().getDefinition(), remoteDto.getDefinition());
             // TODO: compare more
         }
-        boolean canImport = localSchemas.stream().noneMatch(schema -> schema.getType() == MetadataSchemaType.CUSTOM);
+        boolean hasConflict = localSchemas.stream().anyMatch(schema -> schema.getType() == MetadataSchemaType.CUSTOM);
+        if (localVersion.isEmpty() && hasConflict) {
+            status = MetadataSchemaRemoteState.CONFLICT;
+        } else if (isDirty) {
+            status = MetadataSchemaRemoteState.DIRTY;
+        } else if (localVersion.isPresent()) {
+            status = MetadataSchemaRemoteState.ALREADY_IMPORTED;
+        }
         return MetadataSchemaRemoteDTO
                 .builder()
                 .schema(remoteDto)
-                .schemaImported(!localSchemas.isEmpty())
-                .versionImported(localVersion.isPresent())
-                .dirty(isDirty)
-                .canImport(canImport)
+                .status(status)
+                .canImport(!hasConflict && localVersion.isEmpty())
                 .build();
     }
 
