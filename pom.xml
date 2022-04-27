@@ -60,7 +60,7 @@
         <mongodb.spring-data.v3.version>3.3.4</mongodb.spring-data.v3.version>
         <rdf4j.version>3.7.7</rdf4j.version>
         <unirest.version>1.4.9</unirest.version>
-        <jwt.version>0.11.3</jwt.version>
+        <jwt.version>0.11.4</jwt.version>
         <lombok.version>1.18.24</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
         <log4j2.version>2.17.1</log4j2.version>
