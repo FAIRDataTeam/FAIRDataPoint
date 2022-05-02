@@ -52,7 +52,7 @@ public class RepositoryConfig {
     @Autowired
     private RepositoryProperties repositoryProperties;
 
-    @Bean(initMethod = "initialize", destroyMethod = "shutDown")
+    @Bean(initMethod = "init", destroyMethod = "shutDown")
     public Repository repository(ApplicationContext context)
             throws RepositoryException {
 
