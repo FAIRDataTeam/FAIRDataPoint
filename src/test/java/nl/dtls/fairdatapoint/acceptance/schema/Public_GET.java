@@ -68,7 +68,7 @@ public class Public_GET extends WebIntegrationTest {
 
     private MetadataSchema makeSchema(Boolean published) {
         SemVer version = new SemVer("1.0.0");
-        return new MetadataSchema().toBuilder()
+        return MetadataSchema.builder()
                 .uuid(UUID.randomUUID().toString())
                 .version(version)
                 .versionString(version.toString())

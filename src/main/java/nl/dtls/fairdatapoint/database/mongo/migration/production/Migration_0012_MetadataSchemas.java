@@ -116,7 +116,6 @@ public class Migration_0012_MetadataSchemas {
             schemaDoc.append("uuid", schemaUuid);
             schemaDoc.append("versionUuid", versionUuid);
             schemaDoc.append("versionString", version.toString());
-            schemaDoc.append("version", version);
             schemaDoc.append("name", shapeDoc.getString("name"));
             schemaDoc.append("description", "");
             schemaDoc.append("definition", shapeDoc.getString("definition"));

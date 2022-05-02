@@ -25,6 +25,8 @@ package nl.dtls.fairdatapoint.entity.schema;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -39,7 +41,6 @@ import java.util.Set;
 @Document
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class MetadataSchema {
@@ -57,6 +58,7 @@ public class MetadataSchema {
     protected String versionString;
 
     @NotNull
+    @Transient
     protected SemVer version;
 
     @NotNull
@@ -96,6 +98,29 @@ public class MetadataSchema {
 
     private String previousVersionUuid = null;
 
+    @PersistenceConstructor
+    public MetadataSchema(ObjectId id, String uuid, String versionUuid, String versionString, String name, String description, String definition, Set<String> targetClasses, List<String> extendSchemas, MetadataSchemaType type, String origin, String importedFrom, boolean latest, boolean published, boolean abstractSchema, String suggestedResourceName, String suggestedUrlPrefix, Instant createdAt, String previousVersionUuid) {
+        this.id = id;
+        this.uuid = uuid;
+        this.versionUuid = versionUuid;
+        this.versionString = versionString;
+        this.name = name;
+        this.description = description;
+        this.definition = definition;
+        this.targetClasses = targetClasses;
+        this.extendSchemas = extendSchemas;
+        this.type = type;
+        this.origin = origin;
+        this.importedFrom = importedFrom;
+        this.latest = latest;
+        this.published = published;
+        this.abstractSchema = abstractSchema;
+        this.suggestedResourceName = suggestedResourceName;
+        this.suggestedUrlPrefix = suggestedUrlPrefix;
+        this.createdAt = createdAt;
+        this.previousVersionUuid = previousVersionUuid;
+    }
+
     public void setVersionString(String versionString) {
         this.versionString = versionString;
         this.version = new SemVer(versionString);
@@ -104,5 +129,12 @@ public class MetadataSchema {
     public void setVersion(SemVer version) {
         this.version = version;
         this.versionString = version.toString();
+    }
+
+    public SemVer getVersion() {
+        if (this.version == null) {
+            this.version = new SemVer(this.versionString);
+        }
+        return version;
     }
 }
