@@ -6,7 +6,7 @@ instance:
 spring:
   data:
     mongodb:
-      uri: mongodb://mongo:27017/fdp2
+      uri: mongodb://mongo:27017/fdp
     web:
       pageable:
         default-page-size: 50

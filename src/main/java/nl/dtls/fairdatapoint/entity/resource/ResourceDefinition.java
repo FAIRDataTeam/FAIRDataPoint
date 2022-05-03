@@ -73,6 +73,6 @@ public class ResourceDefinition {
     }
 
     public boolean isCatalog() {
-        return name.equals(CATALOG_PREFIX);
+        return urlPrefix.equals(CATALOG_PREFIX);
     }
 }
