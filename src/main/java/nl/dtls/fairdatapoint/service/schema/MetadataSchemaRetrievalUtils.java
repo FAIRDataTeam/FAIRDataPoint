@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.service.schema;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
 import nl.dtls.fairdatapoint.entity.exception.MetadataSchemaImportException;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +38,9 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 
+import static java.lang.String.format;
+
+@Slf4j
 public class MetadataSchemaRetrievalUtils {
 
     private static final HttpClient client = HttpClient.newBuilder()
@@ -52,6 +56,7 @@ public class MetadataSchemaRetrievalUtils {
 
     public static List<MetadataSchemaVersionDTO> retrievePublishedMetadataSchemas(String fdpUrl) {
         try {
+            log.info(format("Retrieving published metadata schemas from %s", fdpUrl));
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(fdpUrl.replaceAll("/$", "") + "/metadata-schemas/public"))
                     .header(HttpHeaders.ACCEPT, "application/json")
@@ -59,10 +64,13 @@ public class MetadataSchemaRetrievalUtils {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return objectMapper.readValue(response.body(), responseType);
         } catch (JsonProcessingException e) {
+            log.warn(format("Could not parse published metadata schemas from %s: %s", fdpUrl, e.getMessage()));
             throw new MetadataSchemaImportException(fdpUrl, "Cannot process response: " + e.getMessage());
         } catch (IOException e) {
+            log.warn(format("Could not retrieve published metadata schemas from %s: %s", fdpUrl, e.getMessage()));
             throw new MetadataSchemaImportException(fdpUrl, "Cannot get response: " + e.getMessage());
         } catch (Exception e) {
+            log.warn(format("Could not retrieve published metadata schemas from %s: %s", fdpUrl, e.getMessage()));
             throw new MetadataSchemaImportException(fdpUrl, e.getMessage());
         }
     }

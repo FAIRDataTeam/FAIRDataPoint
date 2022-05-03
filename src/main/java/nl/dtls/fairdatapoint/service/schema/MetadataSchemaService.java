@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.schema;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.schema.*;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
@@ -52,6 +53,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
 @Service
+@Slf4j
 public class MetadataSchemaService {
 
     @Autowired
@@ -480,21 +482,26 @@ public class MetadataSchemaService {
     }
 
     private List<MetadataSchemaVersionDTO> checkForUpdates(String fdpUrl) {
-        Map<String, List<MetadataSchemaVersionDTO>> remoteSchemas = MetadataSchemaRetrievalUtils
-                .retrievePublishedMetadataSchemas(fdpUrl)
-                .stream()
-                .collect(groupingBy(MetadataSchemaVersionDTO::getUuid));
-        List<MetadataSchemaVersionDTO> updates = new ArrayList<>();
-        remoteSchemas.forEach((schemaUuid, remoteVersions) -> {
-            List<MetadataSchema> localVersions = metadataSchemaRepository.findByUuid(schemaUuid);
-            boolean hasCustom = localVersions.stream().anyMatch(schema -> schema.getType() == MetadataSchemaType.CUSTOM);
-            boolean allImportedFromThis = localVersions.stream().allMatch(schema -> schema.getImportedFrom().equals(fdpUrl));
-            if (!hasCustom && allImportedFromThis && !localVersions.isEmpty()) {
-                Set<String> localVersionUuids = localVersions.stream().map(MetadataSchema::getVersionUuid).collect(Collectors.toSet());
-                updates.addAll(remoteVersions.stream().filter(v -> !localVersionUuids.contains(v.getVersionUuid())).toList());
-            }
-        });
-        return updates;
+        try {
+            Map<String, List<MetadataSchemaVersionDTO>> remoteSchemas = MetadataSchemaRetrievalUtils
+                    .retrievePublishedMetadataSchemas(fdpUrl)
+                    .stream()
+                    .collect(groupingBy(MetadataSchemaVersionDTO::getUuid));
+            List<MetadataSchemaVersionDTO> updates = new ArrayList<>();
+            remoteSchemas.forEach((schemaUuid, remoteVersions) -> {
+                List<MetadataSchema> localVersions = metadataSchemaRepository.findByUuid(schemaUuid);
+                boolean hasCustom = localVersions.stream().anyMatch(schema -> schema.getType() == MetadataSchemaType.CUSTOM);
+                boolean allImportedFromThis = localVersions.stream().allMatch(schema -> schema.getImportedFrom().equals(fdpUrl));
+                if (!hasCustom && allImportedFromThis && !localVersions.isEmpty()) {
+                    Set<String> localVersionUuids = localVersions.stream().map(MetadataSchema::getVersionUuid).collect(Collectors.toSet());
+                    updates.addAll(remoteVersions.stream().filter(v -> !localVersionUuids.contains(v.getVersionUuid())).toList());
+                }
+            });
+            return updates;
+        } catch (Exception e) {
+            log.warn(format("Failed to check for updates from %s: %s", fdpUrl, e.getMessage()));
+            return Collections.emptyList();
+        }
     }
 
     public List<MetadataSchemaVersionDTO> checkForUpdates() {
