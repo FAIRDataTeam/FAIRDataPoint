@@ -24,21 +24,22 @@ package nl.dtls.fairdatapoint.database.mongo.migration.production;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.entity.schema.SemVer;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import nl.dtls.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @ChangeUnit(id="Migration_0012_MetadataSchemas", order = "0012", author = "migrationBot")
 @Profile(Profiles.PRODUCTION)
@@ -53,8 +54,12 @@ public class Migration_0012_MetadataSchemas {
     }
 
     @Execution
-    public void run() {
+    public void run(ResourceDefinitionCache resourceDefinitionCache, ResourceDefinitionTargetClassesCache targetClassesCache) {
         updateInternalShapesType();
+        updateResourceDefinitionLinks();
+
+        resourceDefinitionCache.computeCache();
+        targetClassesCache.computeCache();
     }
 
     private void updateInternalShapesType() {
@@ -119,7 +124,7 @@ public class Migration_0012_MetadataSchemas {
             schemaDoc.append("name", shapeDoc.getString("name"));
             schemaDoc.append("description", "");
             schemaDoc.append("definition", shapeDoc.getString("definition"));
-            schemaDoc.append("targetClasses", shapeDoc.get("targetClasses"));
+            schemaDoc.append("targetClasses", MetadataSchemaShaclUtils.extractTargetClasses(shapeDoc.getString("definition")));
             schemaDoc.append("extendSchemas", extendSchemas);
             schemaDoc.append("type", shapeDoc.get("type"));
             schemaDoc.append("origin", origin);
@@ -134,6 +139,24 @@ public class Migration_0012_MetadataSchemas {
         });
         db.dropCollection("shape");
     }
+    private void updateResourceDefinitionLinks() {
+        MongoCollection<Document> rdCol = db.getCollection("resourceDefinition");
+        // Rename shape to metadata schema
+        rdCol.updateMany(
+                Filters.exists("shapeUuids"),
+                Updates.rename("shapeUuids", "metadataSchemaUuids")
+        );
+        // Remove Resource link (it is abstract)
+        rdCol.find().forEach(rdDoc -> {
+            ArrayList<String> metadataSchemaUuids = (ArrayList<String>)rdDoc.get("metadataSchemaUuids");
+            if (metadataSchemaUuids.contains(KnownUUIDs.SCHEMA_RESOURCE_UUID)) {
+                rdCol.updateOne(
+                        Filters.eq("uuid", rdDoc.get("uuid")),
+                        Updates.set("metadataSchemaUuids", metadataSchemaUuids.stream().filter(x -> !Objects.equals(x, KnownUUIDs.SCHEMA_RESOURCE_UUID)).toList())
+                );
+            }
+        });
+    }
 
     private boolean docWithUuidExists(MongoCollection<Document> collection, String uuid) {
         return collection.find(Filters.eq("uuid", uuid)).first() != null;
@@ -141,6 +164,7 @@ public class Migration_0012_MetadataSchemas {
 
     @RollbackExecution
     public void rollback() {
+        // updateInternalShapesType
         MongoCollection<Document> shapeCol = db.getCollection("shape");
         MongoCollection<Document> schemaCol = db.getCollection("metadataSchema");
         schemaCol.find(Filters.eq("latest", true)).forEach(schemaDoc -> {
@@ -155,5 +179,23 @@ public class Migration_0012_MetadataSchemas {
         });
         db.dropCollection("metadataSchema");
         db.dropCollection("metadataSchemaDraft");
+        // updateResourceDefinitionLinks
+        MongoCollection<Document> rdCol = db.getCollection("resourceDefinition");
+        // Add Resource link (it is abstract)
+        rdCol.find().forEach(rdDoc -> {
+            ArrayList<String> metadataSchemaUuids = (ArrayList<String>)rdDoc.get("metadataSchemaUuids");
+            if (!metadataSchemaUuids.contains(KnownUUIDs.SCHEMA_RESOURCE_UUID)) {
+                metadataSchemaUuids.add(KnownUUIDs.SCHEMA_RESOURCE_UUID);
+                rdCol.updateOne(
+                        Filters.eq("uuid", rdDoc.get("uuid")),
+                        Updates.set("metadataSchemaUuids", metadataSchemaUuids)
+                );
+            }
+        });
+        // Rename metadata schema to shape
+        rdCol.updateMany(
+                Filters.exists("metadataSchemaUuids"),
+                Updates.rename("metadataSchemaUuids", "shapeUuids")
+        );
     }
 }
