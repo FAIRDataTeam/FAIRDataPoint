@@ -80,6 +80,8 @@ public class Migration_0012_MetadataSchemas {
             // Internal shapes
             String origin = null;
             String versionUuid = UUID.randomUUID().toString();
+            String suggestedResourceName = null;
+            String suggestedUrlPrefix = null;
             boolean isAbstract = false;
             if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_RESOURCE_UUID)) {
                 isAbstract = true;
@@ -88,21 +90,33 @@ public class Migration_0012_MetadataSchemas {
             } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_FDP_UUID)) {
                 versionUuid = KnownUUIDs.SCHEMA_V1_FDP_UUID;
                 origin = FDP_APP_URL;
+                suggestedResourceName = "FAIR Data Point";
+                suggestedUrlPrefix = "";
             } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_DATASERVICE_UUID)) {
                 versionUuid = KnownUUIDs.SCHEMA_V1_DATASERVICE_UUID;
                 origin = FDP_APP_URL;
+                suggestedResourceName = "Data Service";
+                suggestedUrlPrefix = "data-service";
             } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_METADATASERVICE_UUID)) {
                 versionUuid = KnownUUIDs.SCHEMA_V1_METADATASERVICE_UUID;
                 origin = FDP_APP_URL;
+                suggestedResourceName = "Metadata Service";
+                suggestedUrlPrefix = "metadata-service";
             } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_CATALOG_UUID)) {
                 versionUuid = KnownUUIDs.SCHEMA_V1_CATALOG_UUID;
                 origin = FDP_APP_URL;
+                suggestedResourceName = "Catalog";
+                suggestedUrlPrefix = "catalog";
             } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_DATASET_UUID)) {
                 versionUuid = KnownUUIDs.SCHEMA_V1_DATASET_UUID;
                 origin = FDP_APP_URL;
+                suggestedResourceName = "Dataset";
+                suggestedUrlPrefix = "dataset";
             } else if (Objects.equals(schemaUuid, KnownUUIDs.SCHEMA_DISTRIBUTION_UUID)) {
                 versionUuid = KnownUUIDs.SCHEMA_V1_DISTRIBUTION_UUID;
                 origin = FDP_APP_URL;
+                suggestedResourceName = "Distribution";
+                suggestedUrlPrefix = "distribution";
             }
             // Extends
             List<String> extendSchemas = new ArrayList<>();
@@ -133,6 +147,8 @@ public class Migration_0012_MetadataSchemas {
             schemaDoc.append("previousVersionUuid", null);
             schemaDoc.append("published", shapeDoc.getBoolean("published", false));
             schemaDoc.append("abstractSchema", isAbstract);
+            schemaDoc.append("suggestedResourceName", suggestedResourceName);
+            schemaDoc.append("suggestedUrlPrefix", suggestedUrlPrefix);
             schemaDoc.append("createdAt", now);
             // Insert
             schemaCol.insertOne(schemaDoc);

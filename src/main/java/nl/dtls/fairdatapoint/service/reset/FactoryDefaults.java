@@ -212,6 +212,7 @@ public class FactoryDefaults {
                 .name("Resource")
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
+                .abstractSchema(true)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
                 .build();
@@ -224,8 +225,11 @@ public class FactoryDefaults {
                 .name("FAIR Data Point")
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
+                .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
+                .suggestedResourceName("FAIR Data Point")
+                .suggestedUrlPrefix("")
                 .build();
     }
 
@@ -236,8 +240,11 @@ public class FactoryDefaults {
                 .name("Data Service")
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
+                .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
+                .suggestedResourceName("Data Service")
+                .suggestedUrlPrefix("data-service")
                 .build();
     }
 
@@ -248,8 +255,11 @@ public class FactoryDefaults {
                 .name("Metadata Service")
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
+                .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
+                .suggestedResourceName("Metadata Service")
+                .suggestedUrlPrefix("metadata-service")
                 .build();
     }
 
@@ -260,8 +270,11 @@ public class FactoryDefaults {
                 .name("Catalog")
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
+                .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
+                .suggestedResourceName("Catalog")
+                .suggestedUrlPrefix("catalog")
                 .build();
     }
 
@@ -272,8 +285,11 @@ public class FactoryDefaults {
                 .name("Dataset")
                 .type(MetadataSchemaType.CUSTOM)
                 .published(false)
+                .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
+                .suggestedResourceName("Dataset")
+                .suggestedUrlPrefix("dataset")
                 .build();
     }
 
@@ -284,8 +300,11 @@ public class FactoryDefaults {
                 .name("Distribution")
                 .type(MetadataSchemaType.CUSTOM)
                 .published(false)
+                .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
+                .suggestedResourceName("Distribution")
+                .suggestedUrlPrefix("distribution")
                 .build();
     }
 
