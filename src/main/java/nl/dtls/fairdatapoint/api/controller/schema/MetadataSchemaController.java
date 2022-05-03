@@ -232,15 +232,15 @@ public class MetadataSchemaController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MetadataSchemaVersionDTO>> importSchemas(@RequestBody @Valid List<MetadataSchemaVersionDTO> reqDtos) {
+    public ResponseEntity<List<MetadataSchemaVersionDTO>> importSchemas(@RequestBody @Valid List<@Valid MetadataSchemaVersionDTO> reqDtos) {
         List<MetadataSchemaVersionDTO> dto = metadataSchemaService.importSchemas(reqDtos);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/updates", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MetadataSchemaVersionDTO>> checkForUpdates() {
-        List<MetadataSchemaVersionDTO> dtos = metadataSchemaService.checkForUpdates();
+    public ResponseEntity<List<MetadataSchemaRemoteDTO>> checkForUpdates() {
+        List<MetadataSchemaRemoteDTO> dtos = metadataSchemaService.checkForUpdates();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 }

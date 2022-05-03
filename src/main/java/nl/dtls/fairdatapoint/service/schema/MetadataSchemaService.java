@@ -481,7 +481,7 @@ public class MetadataSchemaService {
                 .toList();
     }
 
-    private List<MetadataSchemaVersionDTO> checkForUpdates(String fdpUrl) {
+    private List<MetadataSchemaRemoteDTO> checkForUpdates(String fdpUrl) {
         try {
             Map<String, List<MetadataSchemaVersionDTO>> remoteSchemas = MetadataSchemaRetrievalUtils
                     .retrievePublishedMetadataSchemas(fdpUrl)
@@ -497,14 +497,21 @@ public class MetadataSchemaService {
                     updates.addAll(remoteVersions.stream().filter(v -> !localVersionUuids.contains(v.getVersionUuid())).toList());
                 }
             });
-            return updates;
+            return updates
+                    .stream()
+                    .map(schemaVersion -> MetadataSchemaRemoteDTO.builder()
+                        .canImport(true)
+                        .schema(schemaVersion)
+                        .status(MetadataSchemaRemoteState.NOT_IMPORTED)
+                        .build()
+                    ).toList();
         } catch (Exception e) {
             log.warn(format("Failed to check for updates from %s: %s", fdpUrl, e.getMessage()));
             return Collections.emptyList();
         }
     }
 
-    public List<MetadataSchemaVersionDTO> checkForUpdates() {
+    public List<MetadataSchemaRemoteDTO> checkForUpdates() {
         Set<String> importSources = metadataSchemaRepository
                 .findAllByImportedFromIsNotNull()
                 .stream()

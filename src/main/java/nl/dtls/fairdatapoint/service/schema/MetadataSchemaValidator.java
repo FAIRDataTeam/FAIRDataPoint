@@ -93,7 +93,7 @@ public class MetadataSchemaValidator {
 
     public void validateNoExtendsCycle(String uuid, List<String> extendSchemaUuids) {
         if (extendSchemaUuids.contains(uuid)) {
-            throw new ValidationException(format("Extends-cycle detected for schema %s", uuid));
+            throw new ValidationException("Extends-cycle detected for the metadata schema");
         }
         extendSchemaUuids.forEach(schemaUuid -> {
             Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid);

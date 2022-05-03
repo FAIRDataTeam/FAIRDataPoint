@@ -230,7 +230,6 @@ public class MetadataSchemaMapper {
                 .description(remoteVersion.getDescription())
                 .definition(remoteVersion.getDefinition())
                 .versionString(remoteVersion.getVersion())
-                .version(new SemVer(remoteVersion.getVersion()))
                 .origin(remoteVersion.getOrigin())
                 .importedFrom(remoteVersion.getImportedFrom())
                 .extendSchemas(remoteVersion.getExtendsSchemaUuids())
@@ -260,7 +259,6 @@ public class MetadataSchemaMapper {
                 .suggestedUrlPrefix(remoteVersion.getSuggestedUrlPrefix())
                 .suggestedResourceName(remoteVersion.getSuggestedResourceName())
                 .versionString(remoteVersion.getVersion())
-                .version(new SemVer(remoteVersion.getVersion()))
                 .createdAt(Instant.now())
                 .build();
     }
