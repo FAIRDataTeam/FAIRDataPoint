@@ -31,7 +31,7 @@ import com.mongodb.client.model.Updates;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import nl.dtls.fairdatapoint.service.shape.ShapeShaclUtils;
+import nl.dtls.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
@@ -55,7 +55,7 @@ public class Migration_0009_ShapeTargetClasses {
         for (Document document : shapeCol.find()) {
             String definition = (String) document.get("definition");
             String uuid = (String) document.get("uuid");
-            Set<String> targetClasses = ShapeShaclUtils.extractTargetClasses(definition);
+            Set<String> targetClasses = MetadataSchemaShaclUtils.extractTargetClasses(definition);
             targetClassesMap.put(uuid, targetClasses);
             shapeCol.updateOne(
                     Filters.eq("uuid", uuid),

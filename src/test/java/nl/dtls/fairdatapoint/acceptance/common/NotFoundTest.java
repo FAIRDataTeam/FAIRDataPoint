@@ -51,6 +51,13 @@ public class NotFoundTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NOT_FOUND)));
     }
 
+    public static <T> void createAdminNotFoundTestGet(TestRestTemplate client, URI url) {
+        createNotFoundTest(
+                client,
+                RequestEntity.get(url).header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN).build()
+        );
+    }
+
     public static <T> void createUserNotFoundTestGet(TestRestTemplate client, URI url) {
         createNotFoundTest(
                 client,

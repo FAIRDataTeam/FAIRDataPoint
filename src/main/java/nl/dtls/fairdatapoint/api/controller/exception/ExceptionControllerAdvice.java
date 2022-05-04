@@ -72,6 +72,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleBadRequest(Exception e) {
         log.warn(e.getMessage());
+        e.printStackTrace();
         return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -88,6 +89,7 @@ public class ExceptionControllerAdvice {
     )
     public Model handleBadRequest(RdfValidationException e) {
         Model validationReportModel = e.getModel();
+        e.printStackTrace();
 
         // Log number of errors
         IRI validationResultIri = i("http://www.w3.org/ns/shacl#ValidationResult");
@@ -115,6 +117,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleUnauthorized(Exception e) {
         log.error(e.getMessage());
+        e.printStackTrace();
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
@@ -131,6 +134,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleForbidden(Exception e) {
         log.error(e.getMessage());
+        e.printStackTrace();
         return new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
@@ -147,6 +151,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleResourceNotFound(ResourceNotFoundException e) {
         log.error(e.getMessage());
+        e.printStackTrace();
         return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
@@ -163,6 +168,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleInternalServerError(Exception e) {
         log.error(e.getMessage());
+        e.printStackTrace();
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 

@@ -23,9 +23,9 @@
 package nl.dtls.fairdatapoint.service.resource;
 
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.ShapeRepository;
+import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.shape.Shape;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -48,7 +48,7 @@ public class ResourceDefinitionTargetClassesCache {
     private ResourceDefinitionRepository resourceDefinitionRepository;
 
     @Autowired
-    private ShapeRepository shapeRepository;
+    private MetadataSchemaRepository metadataSchemaRepository;
 
     @PostConstruct
     public void computeCache() {
@@ -60,12 +60,28 @@ public class ResourceDefinitionTargetClassesCache {
 
         // Add to cache
         List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
-        Map<String, Shape> shapes = shapeRepository.findAll().stream().collect(Collectors.toMap(Shape::getUuid, Function.identity()));
+        Map<String, MetadataSchema> metadataSchemaMap = new HashMap<>();
+        metadataSchemaRepository.findAllByLatestIsTrue().forEach(schema -> {
+            if (!metadataSchemaMap.containsKey(schema.getUuid()) || metadataSchemaMap.get(schema.getUuid()).getVersion().compareTo(schema.getVersion()) < 0) {
+                metadataSchemaMap.put(schema.getUuid(), schema);
+            }
+        });
         rds.forEach(rd -> {
             Set<String> targetClassUris = new HashSet<>();
-            rd.getShapeUuids().forEach(shapeUuid -> {
-                if (shapes.containsKey(shapeUuid)) {
-                    targetClassUris.addAll(shapes.get(shapeUuid).getTargetClasses());
+            rd.getMetadataSchemaUuids().forEach(schemaUuid -> {
+                if (metadataSchemaMap.containsKey(schemaUuid)) {
+                    targetClassUris.addAll(metadataSchemaMap.get(schemaUuid).getTargetClasses());
+                    Queue<String> parentUuids = new LinkedList<>(metadataSchemaMap.get(schemaUuid).getExtendSchemas());
+                    Set<String> visitedParents = new HashSet<>();
+                    String parentUuid = null;
+                    while (!parentUuids.isEmpty()) {
+                        parentUuid = parentUuids.poll();
+                        if (!visitedParents.contains(parentUuid)) {
+                            visitedParents.add(parentUuid);
+                            targetClassUris.addAll(metadataSchemaMap.get(parentUuid).getTargetClasses());
+                            parentUuids.addAll(metadataSchemaMap.get(parentUuid).getExtendSchemas());
+                        }
+                    }
                 }
             });
             cache.put(rd.getUuid(), targetClassUris.stream().toList());

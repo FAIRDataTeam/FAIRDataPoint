@@ -59,7 +59,7 @@ public class ApiKeyController {
 
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteShape(@PathVariable final String uuid) throws ResourceNotFoundException {
+    public ResponseEntity<Void> deleteApiKey(@PathVariable final String uuid) throws ResourceNotFoundException {
         boolean result = apiKeyService.delete(uuid);
         if (result) {
             return ResponseEntity.noContent().build();

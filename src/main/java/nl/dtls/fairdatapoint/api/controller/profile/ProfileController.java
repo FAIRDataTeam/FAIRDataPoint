@@ -63,7 +63,7 @@ public class ProfileController {
             "application/xml",
             "text/xml",
     })
-    public ResponseEntity<Model> getShapeContent(HttpServletRequest request, @PathVariable final String uuid)
+    public ResponseEntity<Model> getSchemaContent(HttpServletRequest request, @PathVariable final String uuid)
             throws ResourceNotFoundException {
         IRI uri = i(getRequestURL(request, persistentUrl));
         Optional<Model> oDto = profileService.getProfileByUuid(uuid, uri);

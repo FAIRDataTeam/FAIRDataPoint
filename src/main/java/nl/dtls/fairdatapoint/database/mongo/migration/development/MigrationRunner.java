@@ -30,7 +30,7 @@ import nl.dtls.fairdatapoint.database.mongo.migration.development.index.event.Ev
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.MembershipMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.MetadataMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.ResourceDefinitionMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.shape.ShapeMigration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.MetadataSchemaMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
@@ -57,7 +57,7 @@ public class MigrationRunner {
     private ResourceDefinitionMigration resourceDefinitionMigration;
 
     @Autowired
-    private ShapeMigration shapeMigration;
+    private MetadataSchemaMigration metadataSchemaMigration;
 
     @Autowired
     private ApiKeyMigration apiKeyMigration;
@@ -83,7 +83,7 @@ public class MigrationRunner {
         membershipMigration.runMigration();
         aclMigration.runMigration();
         resourceDefinitionMigration.runMigration();
-        shapeMigration.runMigration();
+        metadataSchemaMigration.runMigration();
         apiKeyMigration.runMigration();
         metadataMigration.runMigration();
         indexEntryMigration.runMigration();

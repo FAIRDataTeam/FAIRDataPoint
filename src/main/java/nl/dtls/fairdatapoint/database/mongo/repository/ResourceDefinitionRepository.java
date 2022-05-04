@@ -36,6 +36,6 @@ public interface ResourceDefinitionRepository extends MongoRepository<ResourceDe
 
     Optional<ResourceDefinition> findByUrlPrefix(String urlPrefix);
 
-    List<ResourceDefinition> findByShapeUuidsIsContaining(String shapeUuid);
+    List<ResourceDefinition> findByMetadataSchemaUuidsIsContaining(String metadataSchemaUuid);
 
 }
