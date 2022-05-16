@@ -8,6 +8,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.13.2]
+
+### Fixed
+
+- Harvest also `fdp-o:MetadataService` in FDP Index
+
 ## [1.13.1]
 
 ### Changed
