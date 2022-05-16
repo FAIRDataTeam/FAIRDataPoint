@@ -30,6 +30,8 @@ import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeDirection;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
+import nl.dtls.fairdatapoint.vocabulary.FDP;
+import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -54,6 +56,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,18 +66,17 @@ public class MetadataRetrievalUtils {
 
     private static final Integer VERSION = 1;
 
-    private static final IRI REPOSITORY = SimpleValueFactory.getInstance().createIRI("http://www.re3data" +
-            ".org/schema/3-0#Repository");
-
-    private static final IRI COUNTRY = SimpleValueFactory.getInstance().createIRI("http://www.re3data" +
-            ".org/schema/3-0#institutionCountry");
+    private static final List<IRI> REPOSITORY_TYPES = List.of(
+            R3D.REPOSITORY,
+            FDP.METADATASERVICE
+    );
 
     private static final Map<IRI, String> MAPPING = Map.of(
             DCTERMS.TITLE, "title",
             DCTERMS.DESCRIPTION, "description",
             DCTERMS.HAS_VERSION, "version",
             DCTERMS.PUBLISHER, "publisher",
-            COUNTRY, "country"
+            R3D.COUNTRY, "country"
     );
 
     private static final HttpClient client = HttpClient.newBuilder()
@@ -181,7 +183,7 @@ public class MetadataRetrievalUtils {
 
     private static Optional<Resource> findRepository(ArrayList<Statement> statements) {
         for (Statement st : statements) {
-            if (st.getPredicate().equals(RDF.TYPE) && st.getObject().equals(REPOSITORY)) {
+            if (st.getPredicate().equals(RDF.TYPE) && REPOSITORY_TYPES.stream().anyMatch(st.getObject()::equals)) {
                 return Optional.of(st.getSubject());
             }
         }
