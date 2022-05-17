@@ -37,6 +37,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,6 +79,7 @@ public class List_DELETE extends WebIntegrationTest {
                         ))
                         .build()
                 )
+                .searchFilters(Collections.emptyList())
                 .build();
     }
 

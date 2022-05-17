@@ -22,6 +22,8 @@
  */
 package nl.dtls.fairdatapoint.service.settings;
 
+import nl.dtls.fairdatapoint.api.dto.search.SearchFilterDTO;
+import nl.dtls.fairdatapoint.api.dto.search.SearchFilterItemDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.*;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.config.properties.PingProperties;
@@ -29,6 +31,9 @@ import nl.dtls.fairdatapoint.config.properties.RepositoryProperties;
 import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
 import nl.dtls.fairdatapoint.entity.settings.SettingsPing;
+import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
+import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+import nl.dtls.fairdatapoint.service.search.SearchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -45,60 +50,128 @@ public class SettingsMapper {
     @Autowired
     private RepositoryProperties repositoryProperties;
 
+    @Autowired
+    private SearchMapper searchMapper;
+
     public SettingsDTO toDTO(Settings settings) {
-        return new SettingsDTO(
-                instanceProperties.getClientUrl(),
-                instanceProperties.getPersistentUrl(),
-                settings.getMetadataMetrics(),
-                toDTO(settings.getPing()),
-                getRepositoryDTO()
-        );
+        return SettingsDTO
+                .builder()
+                .clientUrl(instanceProperties.getClientUrl())
+                .persistentUrl(instanceProperties.getPersistentUrl())
+                .metadataMetrics(settings.getMetadataMetrics())
+                .ping(toDTO(settings.getPing()))
+                .repository(getRepositoryDTO())
+                .search(
+                        SettingsSearchDTO
+                                .builder()
+                                .filters(settings.getSearchFilters().stream().map(this::toDTO).toList())
+                                .build()
+                )
+                .build();
+    }
+
+    public SearchFilterDTO toDTO(SettingsSearchFilter filter) {
+        return SearchFilterDTO
+                .builder()
+                .type(filter.getType())
+                .label(filter.getLabel())
+                .predicate(filter.getPredicate())
+                .values(filter.getPresetValues().stream().map(this::toDTO).toList())
+                .queryFromRecords(filter.isQueryFromRecords())
+                .build();
+    }
+
+    public SearchFilterItemDTO toDTO(SettingsSearchFilterItem filterItem) {
+        return SearchFilterItemDTO
+                .builder()
+                .label(filterItem.getLabel())
+                .value(filterItem.getValue())
+                .preset(true)
+                .build();
     }
 
     public SettingsPingDTO toDTO(SettingsPing settingsPing) {
-        return new SettingsPingDTO(
-                settingsPing.isEnabled(),
-                settingsPing.getEndpoints(),
-                pingProperties.getInterval().toString()
-        );
+        return SettingsPingDTO
+                .builder()
+                .enabled(settingsPing.isEnabled())
+                .endpoints(settingsPing.getEndpoints())
+                .interval(pingProperties.getInterval().toString())
+                .build();
     }
 
     public SettingsRepositoryDTO getRepositoryDTO() {
-        return new SettingsRepositoryDTO(
-                repositoryProperties.getStringType(),
-                repositoryProperties.getDir(),
-                repositoryProperties.getUrl(),
-                repositoryProperties.getRepository(),
-                repositoryProperties.getUsername(),
-                repositoryProperties.getPassword() != null ? "<SECRET>" : null
-        );
+        return SettingsRepositoryDTO
+                .builder()
+                .type(repositoryProperties.getStringType())
+                .dir(repositoryProperties.getDir())
+                .url(repositoryProperties.getUrl())
+                .repository(repositoryProperties.getRepository())
+                .username(repositoryProperties.getUsername())
+                .password(repositoryProperties.getPassword() != null ? "<SECRET>" : null)
+                .build();
     }
 
     public Settings fromUpdateDTO(SettingsUpdateDTO dto, Settings settings) {
-        return settings.toBuilder()
+        return settings
+                .toBuilder()
                 .metadataMetrics(dto.getMetadataMetrics())
                 .ping(fromUpdateDTO(dto.getPing(), settings.getPing()))
+                .searchFilters(dto.getSearch().getFilters().stream().map(this::fromUpdateDTO).toList())
+                .build();
+    }
+
+    public SettingsSearchFilter fromUpdateDTO(SearchFilterDTO dto) {
+        return SettingsSearchFilter
+                .builder()
+                .type(dto.getType())
+                .label(dto.getLabel())
+                .predicate(dto.getPredicate())
+                .queryFromRecords(dto.isQueryFromRecords())
+                .presetValues(dto.getValues().stream().map(this::fromUpdateDTO).toList())
+                .build();
+    }
+
+    public SettingsSearchFilterItem fromUpdateDTO(SearchFilterItemDTO dto) {
+        return SettingsSearchFilterItem
+                .builder()
+                .label(dto.getLabel())
+                .value(dto.getValue())
                 .build();
     }
 
     public SettingsPing fromUpdateDTO(SettingsPingUpdateDTO dto, SettingsPing settingsPing) {
-        return settingsPing.toBuilder()
+        return settingsPing
+                .toBuilder()
                 .enabled(dto.isEnabled())
                 .endpoints(dto.getEndpoints())
                 .build();
     }
 
     public SettingsUpdateDTO toUpdateDTO(Settings settings) {
-        return new SettingsUpdateDTO(
-                settings.getMetadataMetrics(),
-                toUpdateDTO(settings.getPing())
-        );
+        return SettingsUpdateDTO
+                .builder()
+                .metadataMetrics(settings.getMetadataMetrics())
+                .ping(toUpdateDTO(settings.getPing()))
+                .search(
+                        SettingsSearchDTO
+                                .builder()
+                                .filters(
+                                        settings
+                                                .getSearchFilters()
+                                                .stream()
+                                                .map(searchMapper::toFilterDTO)
+                                                .toList()
+                                )
+                                .build()
+                )
+                .build();
     }
 
     public SettingsPingUpdateDTO toUpdateDTO(SettingsPing settingsPing) {
-        return new SettingsPingUpdateDTO(
-                settingsPing.isEnabled(),
-                settingsPing.getEndpoints()
-        );
+        return SettingsPingUpdateDTO
+                .builder()
+                .enabled(settingsPing.isEnabled())
+                .endpoints(settingsPing.getEndpoints())
+                .build();
     }
 }

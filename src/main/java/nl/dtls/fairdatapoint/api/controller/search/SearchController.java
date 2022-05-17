@@ -23,17 +23,15 @@
 package nl.dtls.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nl.dtls.fairdatapoint.api.dto.search.SearchQueryDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
+import nl.dtls.fairdatapoint.api.dto.search.*;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.search.SearchService;
+import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -46,9 +44,47 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            path = "",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<List<SearchResultDTO>> search(@RequestBody @Valid SearchQueryDTO reqDto) throws MetadataRepositoryException {
         return ResponseEntity.ok(searchService.search(reqDto));
+    }
+
+    @GetMapping(
+            path = "/query",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<SearchQueryTemplateDTO> getSearchQueryTemplate() {
+        return ResponseEntity.ok(searchService.getSearchQueryTemplate());
+    }
+
+    @PostMapping(
+            path = "/query",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<SearchResultDTO>> searchWithQuery(@RequestBody @Valid SearchQueryVariablesDTO reqDto) throws MetadataRepositoryException, MalformedQueryException {
+        return ResponseEntity.ok(searchService.search(reqDto));
+    }
+
+    @GetMapping(
+            path = "/filters",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<SearchFilterDTO>> getSearchFilters() {
+        return ResponseEntity.ok(searchService.getSearchFilters());
+    }
+
+    @DeleteMapping(
+            path = "/filters",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<SearchFilterDTO>> resetSearchFiltersCache() {
+        return ResponseEntity.ok(searchService.resetSearchFilters());
     }
 
 }

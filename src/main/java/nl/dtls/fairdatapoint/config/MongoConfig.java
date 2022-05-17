@@ -28,6 +28,7 @@ import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.runner.springboot.base.MongockInitializingBeanRunner;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import nl.dtls.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +48,9 @@ public class MongoConfig {
     @Autowired
     private ResourceDefinitionTargetClassesCache targetClassesCache;
 
+    @Autowired
+    private SettingsCache settingsCache;
+
     @Bean("mongockRunner")
     public MongockInitializingBeanRunner mongockApplicationRunner(
             ApplicationContext springContext,
@@ -58,6 +62,7 @@ public class MongoConfig {
                 .setLegacyMigration(new LegacyMigration("dbchangelog"))
                 .addDependency(ResourceDefinitionCache.class, resourceDefinitionCache)
                 .addDependency(ResourceDefinitionTargetClassesCache.class, targetClassesCache)
+                .addDependency(SettingsCache.class, settingsCache)
                 .buildInitializingBeanRunner();
     }
 }

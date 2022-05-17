@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.acceptance.settings;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsPingUpdateDTO;
+import nl.dtls.fairdatapoint.api.dto.settings.SettingsSearchDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
@@ -40,6 +41,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,6 +83,7 @@ public class List_PUT extends WebIntegrationTest {
                         ))
                         .build()
                 )
+                .searchFilters(Collections.emptyList())
                 .build();
     }
 
@@ -91,6 +94,9 @@ public class List_PUT extends WebIntegrationTest {
                 new SettingsPingUpdateDTO(
                         customSettings.getPing().isEnabled(),
                         customSettings.getPing().getEndpoints()
+                ),
+                new SettingsSearchDTO(
+                        Collections.emptyList()  // TODO!
                 )
         );
     }
@@ -102,6 +108,9 @@ public class List_PUT extends WebIntegrationTest {
                 new SettingsPingUpdateDTO(
                         customSettings.getPing().isEnabled(),
                         customSettings.getPing().getEndpoints()
+                ),
+                new SettingsSearchDTO(
+                        Collections.emptyList()  // TODO!
                 )
         );
     }

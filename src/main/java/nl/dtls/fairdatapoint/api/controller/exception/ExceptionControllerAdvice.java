@@ -37,6 +37,7 @@ import nl.dtls.fairdatapoint.entity.index.exception.IndexException;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.http.HttpStatus;
@@ -102,6 +103,24 @@ public class ExceptionControllerAdvice {
         log.warn(serialized.toString());
 
         return validationReportModel;
+    }
+
+    @ExceptionHandler({MalformedQueryException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
+    public ErrorDTO handleInvalidQuery(MalformedQueryException e) {
+        String message = format("Invalid SPARQL query: %s", e.getMessage());
+        log.error(message);
+        e.printStackTrace();
+        return new ErrorDTO(HttpStatus.BAD_REQUEST, message);
     }
 
     @ExceptionHandler({BadCredentialsException.class, UnauthorizedException.class})

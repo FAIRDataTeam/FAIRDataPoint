@@ -1,4 +1,4 @@
-prefix dct: <http://purl.org/dc/terms/>
+PREFIX dct: <http://purl.org/dc/terms/>
 
 SELECT ?child ?title WHERE {
 	?parent ?relation ?child .
