@@ -26,8 +26,13 @@ import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
+import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
+import nl.dtls.fairdatapoint.service.search.SearchFilterCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SettingsService {
@@ -39,10 +44,13 @@ public class SettingsService {
     private SettingsMapper mapper;
 
     @Autowired
-    private SettingsCache cache;
+    private SettingsCache settingsCache;
+
+    @Autowired
+    private SearchFilterCache searchFilterCache;
 
     public Settings getOrDefaults() {
-        return cache.getOrDefaults();
+        return settingsCache.getOrDefaults();
     }
 
     public SettingsDTO getCurrentSettings() {
@@ -50,9 +58,18 @@ public class SettingsService {
     }
 
     public SettingsDTO updateSettings(SettingsUpdateDTO dto) {
-        Settings settings = repository.save(mapper.fromUpdateDTO(dto, getOrDefaults()));
-        cache.updateCachedSettings(settings);
-        return mapper.toDTO(settings);
+        Settings oldSettings = getOrDefaults();
+        Settings newSettings = repository.save(mapper.fromUpdateDTO(dto, getOrDefaults()));
+        handleSearchFiltersChange(oldSettings, newSettings);
+        settingsCache.updateCachedSettings(newSettings);
+        return mapper.toDTO(newSettings);
+    }
+
+    private void handleSearchFiltersChange(Settings oldSettings, Settings newSettings) {
+        Set<String> oldPredicateUris = oldSettings.getSearchFilters().stream().map(SettingsSearchFilter::getPredicate).collect(Collectors.toSet());
+        Set<String> newPredicateUris = newSettings.getSearchFilters().stream().map(SettingsSearchFilter::getPredicate).collect(Collectors.toSet());
+        oldPredicateUris.stream().filter(predicate -> !newPredicateUris.contains(predicate)).forEach(searchFilterCache::clearFilter);
+        newPredicateUris.stream().filter(predicate -> !oldPredicateUris.contains(predicate)).forEach(searchFilterCache::clearFilter);
     }
 
     public SettingsDTO resetSettings() {

@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Extended search (filters, simple and complex query)
+
 
 ## [1.14.0]
 
