@@ -44,6 +44,10 @@ import java.util.stream.Collectors;
 @Service
 public class ApiKeyService {
 
+    private static final int TOKEN_SIZE = 128;
+
+    private static final String MSG_LOGIN_FIRST = "You have to log in";
+
     @Autowired
     private ApiKeyRepository apiKeyRepository;
 
@@ -57,57 +61,53 @@ public class ApiKeyService {
     private ApiKeyMapper apiKeyMapper;
 
     public List<ApiKeyDTO> getAll() {
-        Optional<User> oUser = currentUserService.getCurrentUser();
-        if (oUser.isEmpty()) {
-            throw new UnauthorizedException("You have to be log in");
+        final Optional<User> user = currentUserService.getCurrentUser();
+        if (user.isEmpty()) {
+            throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
-        User user = oUser.get();
-        List<ApiKey> apiKeys = apiKeyRepository.findByUserUuid(user.getUuid());
-        return apiKeys
+        return apiKeyRepository.findByUserUuid(user.get().getUuid())
                 .stream()
                 .map(apiKeyMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public ApiKeyDTO create() {
-        Optional<User> oUser = currentUserService.getCurrentUser();
-        if (oUser.isEmpty()) {
-            throw new UnauthorizedException("You have to be log in");
+        final Optional<User> user = currentUserService.getCurrentUser();
+        if (user.isEmpty()) {
+            throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
-        User user = oUser.get();
-        String generatedString = RandomStringUtils.random(128, true, true);
-        String uuid = UUID.randomUUID().toString();
-        ApiKey apiKey = new ApiKey(null, uuid, user.getUuid(), generatedString);
+        final String generatedString = RandomStringUtils.random(TOKEN_SIZE, true, true);
+        final String uuid = UUID.randomUUID().toString();
+        final ApiKey apiKey = new ApiKey(null, uuid, user.get().getUuid(), generatedString);
         apiKeyRepository.save(apiKey);
         return apiKeyMapper.toDTO(apiKey);
     }
 
     public boolean delete(String uuid) {
-        Optional<ApiKey> oApiKey = apiKeyRepository.findByUuid(uuid);
-        if (oApiKey.isEmpty()) {
+        final Optional<ApiKey> apiKey = apiKeyRepository.findByUuid(uuid);
+        if (apiKey.isEmpty()) {
             return false;
         }
-        ApiKey apiKey = oApiKey.get();
-        Optional<User> oCurrentUser = currentUserService.getCurrentUser();
-        if (oCurrentUser.isEmpty()) {
-            throw new ForbiddenException("You have to be log in");
+        final Optional<User> user = currentUserService.getCurrentUser();
+        if (user.isEmpty()) {
+            throw new ForbiddenException(MSG_LOGIN_FIRST);
         }
-        User currentUser = oCurrentUser.get();
-        if (currentUser.getRole().equals(UserRole.ADMIN) || apiKey.getUserUuid().equals(currentUser.getUuid())) {
-            apiKeyRepository.delete(apiKey);
+        if (user.get().getRole().equals(UserRole.ADMIN)
+                || apiKey.get().getUserUuid().equals(user.get().getUuid())) {
+            apiKeyRepository.delete(apiKey.get());
             return true;
-        } else {
+        }
+        else {
             throw new ForbiddenException("You are not allow to delete the entry");
         }
     }
 
     public Authentication getAuthentication(String token) {
-        Optional<ApiKey> oApiKey = apiKeyRepository.findByToken(token);
-        if (oApiKey.isEmpty()) {
+        final Optional<ApiKey> apiKey = apiKeyRepository.findByToken(token);
+        if (apiKey.isEmpty()) {
             throw new UnauthorizedException("Invalid or non-existing API key");
         }
-        ApiKey apiKey = oApiKey.get();
-        return mongoAuthenticationService.getAuthentication(apiKey.getUserUuid());
+        return mongoAuthenticationService.getAuthentication(apiKey.get().getUserUuid());
     }
 
 }

@@ -33,8 +33,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_TARGET_CLASSES_CACHE;
 
@@ -53,38 +51,46 @@ public class ResourceDefinitionTargetClassesCache {
     @PostConstruct
     public void computeCache() {
         // Get cache
-        Cache cache = cache();
+        final Cache cache = cache();
 
         // Clear cache
         cache.clear();
 
         // Add to cache
-        List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
-        Map<String, MetadataSchema> metadataSchemaMap = new HashMap<>();
+        final List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
+        final Map<String, MetadataSchema> metadataSchemaMap = new HashMap<>();
         metadataSchemaRepository.findAllByLatestIsTrue().forEach(schema -> {
-            if (!metadataSchemaMap.containsKey(schema.getUuid()) || metadataSchemaMap.get(schema.getUuid()).getVersion().compareTo(schema.getVersion()) < 0) {
+            final boolean isNewer = Optional.ofNullable(metadataSchemaMap.get(schema.getUuid()))
+                    .map(otherSchema -> otherSchema.getVersion().compareTo(schema.getVersion()) < 0)
+                    .orElse(false);
+            if (!metadataSchemaMap.containsKey(schema.getUuid()) || isNewer) {
                 metadataSchemaMap.put(schema.getUuid(), schema);
             }
         });
-        rds.forEach(rd -> {
-            Set<String> targetClassUris = new HashSet<>();
-            rd.getMetadataSchemaUuids().forEach(schemaUuid -> {
+        rds.forEach(resourceDefinition -> {
+            final Set<String> targetClassUris = new HashSet<>();
+            resourceDefinition.getMetadataSchemaUuids().forEach(schemaUuid -> {
                 if (metadataSchemaMap.containsKey(schemaUuid)) {
                     targetClassUris.addAll(metadataSchemaMap.get(schemaUuid).getTargetClasses());
-                    Queue<String> parentUuids = new LinkedList<>(metadataSchemaMap.get(schemaUuid).getExtendSchemas());
-                    Set<String> visitedParents = new HashSet<>();
+                    final Queue<String> parentUuids =
+                            new LinkedList<>(metadataSchemaMap.get(schemaUuid).getExtendSchemas());
+                    final Set<String> visitedParents = new HashSet<>();
                     String parentUuid = null;
                     while (!parentUuids.isEmpty()) {
                         parentUuid = parentUuids.poll();
                         if (!visitedParents.contains(parentUuid)) {
                             visitedParents.add(parentUuid);
-                            targetClassUris.addAll(metadataSchemaMap.get(parentUuid).getTargetClasses());
-                            parentUuids.addAll(metadataSchemaMap.get(parentUuid).getExtendSchemas());
+                            targetClassUris.addAll(
+                                    metadataSchemaMap.get(parentUuid).getTargetClasses()
+                            );
+                            parentUuids.addAll(
+                                    metadataSchemaMap.get(parentUuid).getExtendSchemas()
+                            );
                         }
                     }
                 }
             });
-            cache.put(rd.getUuid(), targetClassUris.stream().toList());
+            cache.put(resourceDefinition.getUuid(), targetClassUris.stream().toList());
         });
     }
 

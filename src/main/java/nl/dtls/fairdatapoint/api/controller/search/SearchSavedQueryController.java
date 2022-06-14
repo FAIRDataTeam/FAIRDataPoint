@@ -59,10 +59,11 @@ public class SearchSavedQueryController {
     public ResponseEntity<SearchSavedQueryDTO> getSingle(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
-        Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
+        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -72,7 +73,7 @@ public class SearchSavedQueryController {
     public ResponseEntity<SearchSavedQueryDTO> create(
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
-        SearchSavedQueryDTO dto = searchSavedQueryService.create(reqDto);
+        final SearchSavedQueryDTO dto = searchSavedQueryService.create(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
@@ -82,10 +83,11 @@ public class SearchSavedQueryController {
             @PathVariable final String uuid,
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
-        Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.update(uuid, reqDto);
+        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.update(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -96,10 +98,11 @@ public class SearchSavedQueryController {
     public ResponseEntity<Void> delete(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
-        boolean result = searchSavedQueryService.delete(uuid);
+        final boolean result = searchSavedQueryService.delete(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }

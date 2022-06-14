@@ -39,7 +39,13 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoAuditing
-@EnableMongoRepositories(basePackages = {"nl.dtls.fairdatapoint", "nl.dtls.rdf.migration", "org.springframework.security.acls"})
+@EnableMongoRepositories(
+        basePackages = {
+            "nl.dtls.fairdatapoint",
+            "nl.dtls.rdf.migration",
+            "org.springframework.security.acls"
+        }
+)
 public class MongoConfig {
 
     @Autowired
@@ -54,10 +60,13 @@ public class MongoConfig {
     @Bean("mongockRunner")
     public MongockInitializingBeanRunner mongockApplicationRunner(
             ApplicationContext springContext,
-            MongoTemplate mongoTemplate) {
+            MongoTemplate mongoTemplate
+    ) {
         return MongockSpringboot.builder()
                 .setDriver(SpringDataMongoV3Driver.withDefaultLock(mongoTemplate))
-                .addMigrationScanPackage("nl.dtls.fairdatapoint.database.mongo.migration.production")
+                .addMigrationScanPackage(
+                        "nl.dtls.fairdatapoint.database.mongo.migration.production"
+                )
                 .setSpringContext(springContext)
                 .setLegacyMigration(new LegacyMigration("dbchangelog"))
                 .addDependency(ResourceDefinitionCache.class, resourceDefinitionCache)

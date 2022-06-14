@@ -46,8 +46,10 @@ public class IndexEntryController {
     private IndexEntryService service;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<IndexEntryDTO> getEntriesPage(Pageable pageable,
-                                              @RequestParam(required = false, defaultValue = "") String state) {
+    public Page<IndexEntryDTO> getEntriesPage(
+            Pageable pageable,
+            @RequestParam(required = false, defaultValue = "") String state
+    ) {
         return service.getEntriesPageDTOs(pageable, state);
     }
 

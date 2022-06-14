@@ -27,26 +27,28 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface ThrowingFunction<T, R, E extends Throwable> {
 
-    static <T, R, E extends Throwable> Function<T, R> suppress(ThrowingFunction<T, R, E> f) {
-        return t -> {
+    static <T, R, E extends Throwable> Function<T, R> suppress(ThrowingFunction<T, R, E> func) {
+        return param -> {
             try {
-                return f.apply(t);
-            } catch (Throwable e) {
+                return func.apply(param);
+            }
+            catch (Throwable throwable) {
                 return null;
             }
         };
     }
 
-    static <T, R, E extends Throwable> Function<T, R> unchecked(ThrowingFunction<T, R, E> f) {
-        return t -> {
+    static <T, R, E extends Throwable> Function<T, R> unchecked(ThrowingFunction<T, R, E> func) {
+        return param -> {
             try {
-                return f.apply(t);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
+                return func.apply(param);
+            }
+            catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
             }
         };
     }
 
-    R apply(T t) throws E;
+    R apply(T param) throws E;
 
 }

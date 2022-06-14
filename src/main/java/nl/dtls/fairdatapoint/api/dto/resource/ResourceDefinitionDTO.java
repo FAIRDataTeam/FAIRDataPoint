@@ -44,22 +44,22 @@ public class ResourceDefinitionDTO {
     private String uuid;
 
     @NotBlank
-    protected String name;
+    private String name;
 
     @NotNull
-    protected String urlPrefix;
+    private String urlPrefix;
 
     @NotNull
-    protected List<String> metadataSchemaUuids;
+    private List<String> metadataSchemaUuids;
 
     @NotNull
-    protected List<String> targetClassUris;
-
-    @NotNull
-    @Valid
-    protected List<ResourceDefinitionChild> children;
+    private List<String> targetClassUris;
 
     @NotNull
     @Valid
-    protected List<ResourceDefinitionLink> externalLinks;
+    private List<ResourceDefinitionChild> children;
+
+    @NotNull
+    @Valid
+    private List<ResourceDefinitionLink> externalLinks;
 }

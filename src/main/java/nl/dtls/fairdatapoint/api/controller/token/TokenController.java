@@ -28,7 +28,6 @@ import nl.dtls.fairdatapoint.api.dto.auth.TokenDTO;
 import nl.dtls.fairdatapoint.service.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -48,11 +47,12 @@ public class TokenController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TokenDTO> generateToken(@RequestBody @Valid AuthDTO reqDto) {
         try {
-            String token = jwtService.createToken(reqDto);
+            final String token = jwtService.createToken(reqDto);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                     .body(new TokenDTO(token));
-        } catch (AuthenticationException e) {
+        }
+        catch (AuthenticationException exception) {
             throw new BadCredentialsException("Invalid username/password supplied");
         }
     }

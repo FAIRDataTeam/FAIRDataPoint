@@ -38,12 +38,12 @@ import java.util.List;
 public class ResourceDefinitionChildListView {
 
     @NotBlank
-    protected String title;
+    private String title;
 
     @ValidIri
-    protected String tagsUri;
+    private String tagsUri;
 
     @Valid
-    protected List<ResourceDefinitionChildListViewMetadata> metadata;
+    private List<ResourceDefinitionChildListViewMetadata> metadata;
 
 }

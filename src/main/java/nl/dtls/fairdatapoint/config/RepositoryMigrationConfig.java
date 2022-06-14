@@ -37,9 +37,12 @@ public class RepositoryMigrationConfig {
     @Bean
     @DependsOn("mongockRunner")
     @Profile(Profiles.PRODUCTION)
-    public RdfProductionMigrationRunner rdfProductionMigrationRunner(RdfMigrationRepository rdfMigrationRepository,
-                                                                     ApplicationContext appContext) {
-        RdfProductionMigrationRunner mr = new RdfProductionMigrationRunner(rdfMigrationRepository, appContext);
+    public RdfProductionMigrationRunner rdfProductionMigrationRunner(
+            RdfMigrationRepository rdfMigrationRepository,
+            ApplicationContext appContext
+    ) {
+        final RdfProductionMigrationRunner mr =
+                new RdfProductionMigrationRunner(rdfMigrationRepository, appContext);
         mr.run();
         return mr;
     }

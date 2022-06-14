@@ -25,7 +25,6 @@ package nl.dtls.fairdatapoint.api.dto.search;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 
 @NoArgsConstructor
 @AllArgsConstructor

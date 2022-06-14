@@ -85,26 +85,27 @@ public class MetadataEnhancer {
     @Autowired
     private AppInfoContributor appInfoContributor;
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition rd, Model oldMetadata) {
-        enhance(metadata, uri, rd);
+    public void enhance(Model metadata, IRI uri, ResourceDefinition definition, Model oldMetadata) {
+        enhance(metadata, uri, definition);
 
         // Populate with current data from the triple store
         setIssued(metadata, uri, l(getIssued(oldMetadata)));
-        if (rd.isCatalog()) {
+        if (definition.isCatalog()) {
             setMetadataIssued(metadata, uri, l(getMetadataIssued(oldMetadata)));
         }
     }
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition rd) {
+    public void enhance(Model metadata, IRI uri, ResourceDefinition definition) {
         // Add RDF Type
-        List<IRI> targetClassUris = resourceDefinitionService.getTargetClassUris(rd)
+        final List<IRI> targetClassUris = resourceDefinitionService
+                .getTargetClassUris(definition)
                 .stream()
                 .map(ValueFactoryHelper::i)
                 .collect(Collectors.toList());
         setRdfTypes(metadata, uri, targetClassUris);
 
         // Add identifiers
-        Identifier identifier = createMetadataIdentifier(uri);
+        final Identifier identifier = createMetadataIdentifier(uri);
         setMetadataIdentifier(metadata, uri, identifier);
 
         // Add label
@@ -124,7 +125,7 @@ public class MetadataEnhancer {
 
         // Add access rights
         if (!containsObject(metadata, uri.stringValue(), DCTERMS.ACCESS_RIGHTS.stringValue())) {
-            IRI arIri = i(uri.stringValue() + "#accessRights");
+            final IRI arIri = i(uri.stringValue() + "#accessRights");
             setAccessRights(metadata, uri, arIri, accessRightsDescription);
         }
 
@@ -132,20 +133,20 @@ public class MetadataEnhancer {
         setMetrics(metadata, uri, metricsMetadataService.generateMetrics(uri));
 
         // Add timestamps
-        OffsetDateTime timestamp = OffsetDateTime.now();
+        final OffsetDateTime timestamp = OffsetDateTime.now();
         setIssued(metadata, uri, l(timestamp));
         setModified(metadata, uri, l(timestamp));
-        if (rd.isCatalog()) {
+        if (definition.isCatalog()) {
             setMetadataIssued(metadata, uri, l(timestamp));
             setMetadataModified(metadata, uri, l(timestamp));
         }
     }
 
-    public void enhanceWithLinks(IRI entityUri, Model entity, ResourceDefinition rd, String persistentUrl,
+    public void enhanceWithLinks(IRI entityUri, Model entity, ResourceDefinition definition, String url,
                                  Model resultRdf) {
-        for (ResourceDefinitionChild child : rd.getChildren()) {
-            ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid());
-            IRI container = i(format("%s/%s/", persistentUrl, rdChild.getUrlPrefix()));
+        for (ResourceDefinitionChild child : definition.getChildren()) {
+            final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid());
+            final IRI container = i(format("%s/%s/", url, rdChild.getUrlPrefix()));
 
             resultRdf.add(container, RDF.TYPE, LDP.DIRECT_CONTAINER);
             resultRdf.add(container, DCTERMS.TITLE, l(child.getListView().getTitle()));
@@ -157,20 +158,19 @@ public class MetadataEnhancer {
         }
     }
 
-    public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition rd, Model resultRdf) {
-        resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(rd));
-        resultRdf.add(profileService.getProfileUri(rd), RDFS.LABEL, l(format("%s Profile", rd.getName())));
-        if (rd.isRoot()) {
+    public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition definition, Model resultRdf) {
+        resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(definition));
+        resultRdf.add(profileService.getProfileUri(definition), RDFS.LABEL,
+                l(format("%s Profile", definition.getName())));
+        if (definition.isRoot()) {
             resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
             resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
         }
     }
 
     private Identifier createMetadataIdentifier(IRI uri) {
-        IRI identifierUri = i(uri.stringValue() + "#identifier");
+        final IRI identifierUri = i(uri.stringValue() + "#identifier");
         return new Identifier(identifierUri, DATACITE.IDENTIFIER, l(uri));
     }
 
 }
-
-

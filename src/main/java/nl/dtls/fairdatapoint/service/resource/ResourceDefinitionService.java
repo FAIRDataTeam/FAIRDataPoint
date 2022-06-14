@@ -68,8 +68,8 @@ public class ResourceDefinitionService {
     @Autowired
     private OpenApiService openApiService;
 
-    public ResourceDefinitionDTO toDTO(ResourceDefinition rd) {
-        return resourceDefinitionMapper.toDTO(rd, getTargetClassUris(rd));
+    public ResourceDefinitionDTO toDTO(ResourceDefinition definition) {
+        return resourceDefinitionMapper.toDTO(definition, getTargetClassUris(definition));
     }
 
     public List<ResourceDefinitionDTO> getAll() {
@@ -89,80 +89,86 @@ public class ResourceDefinitionService {
     }
 
     public ResourceDefinition getByUrl(String url) {
-        String[] parts = url.replace(persistentUrl, "").split("/");
-        String parentPrefix = ""; // Repository
+        final String[] parts = url.replace(persistentUrl, "").split("/");
+        // Repository
+        String parentPrefix = "";
         if (parts.length > 1 && parts[0].isEmpty()) {
-            parentPrefix = parts[1]; // Other prefix (first empty caused by leading /)
-        } else if (parts.length > 0) {
-            parentPrefix = parts[0]; // Other prefix
+            // Other prefix (first empty caused by leading /)
+            parentPrefix = parts[1];
+        }
+        else if (parts.length > 0) {
+            // Other prefix
+            parentPrefix = parts[0];
         }
         return getByUrlPrefix(parentPrefix);
     }
 
     public ResourceDefinition getByUrlPrefix(String urlPrefix) {
-        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUrlPrefix(urlPrefix);
-        if (oRd.isEmpty()) {
+        final Optional<ResourceDefinition> definition = resourceDefinitionRepository.findByUrlPrefix(urlPrefix);
+        if (definition.isEmpty()) {
             throw new ResourceNotFoundException(
                     format("Resource with provided uri prefix ('%s') is not defined", urlPrefix)
             );
         }
-        return oRd.get();
+        return definition.get();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public ResourceDefinitionDTO create(ResourceDefinitionChangeDTO reqDto) throws BindException {
-        String uuid = UUID.randomUUID().toString();
-        ResourceDefinition rd = resourceDefinitionMapper.fromChangeDTO(reqDto, uuid);
+        final String uuid = UUID.randomUUID().toString();
+        final ResourceDefinition definition = resourceDefinitionMapper.fromChangeDTO(reqDto, uuid);
 
         // TODO: check if schemas exist
 
-        resourceDefinitionValidator.validate(rd);
-        resourceDefinitionRepository.save(rd);
+        resourceDefinitionValidator.validate(definition);
+        resourceDefinitionRepository.save(definition);
         resourceDefinitionCache.computeCache();
         targetClassesCache.computeCache();
 
-        membershipService.addToMembership(rd);
-        openApiService.updateGenericPaths(rd);
-        return toDTO(rd);
+        membershipService.addToMembership(definition);
+        openApiService.updateGenericPaths(definition);
+        return toDTO(definition);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<ResourceDefinitionDTO> update(String uuid, ResourceDefinitionChangeDTO reqDto) throws BindException {
-        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
-        if (oRd.isEmpty()) {
+    public Optional<ResourceDefinitionDTO> update(String uuid, ResourceDefinitionChangeDTO reqDto)
+            throws BindException {
+        final Optional<ResourceDefinition> optionalDefinition = resourceDefinitionRepository.findByUuid(uuid);
+        if (optionalDefinition.isEmpty()) {
             return Optional.empty();
         }
-        ResourceDefinition rd = oRd.get();
-        ResourceDefinition updatedRd = resourceDefinitionMapper.fromChangeDTO(reqDto, rd.getUuid());
-        updatedRd.setId(rd.getId());
+        final ResourceDefinition definition = optionalDefinition.get();
+        final ResourceDefinition updatedDefinition =
+                resourceDefinitionMapper.fromChangeDTO(reqDto, definition.getUuid());
+        updatedDefinition.setId(definition.getId());
 
         // TODO: check if schemas exist
 
-        resourceDefinitionValidator.validate(updatedRd);
-        resourceDefinitionRepository.save(updatedRd);
+        resourceDefinitionValidator.validate(updatedDefinition);
+        resourceDefinitionRepository.save(updatedDefinition);
         resourceDefinitionCache.computeCache();
         targetClassesCache.computeCache();
-        openApiService.updateGenericPaths(updatedRd);
-        return Optional.of(updatedRd).map(this::toDTO);
+        openApiService.updateGenericPaths(updatedDefinition);
+        return Optional.of(updatedDefinition).map(this::toDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteByUuid(String uuid) {
         // 1. Get resource definition
-        Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
+        final Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
         if (oRd.isEmpty()) {
             return false;
         }
-        ResourceDefinition rd = oRd.get();
+        final ResourceDefinition rd = oRd.get();
 
         // 2. Delete from parent resource definitions
-        Set<ResourceDefinition> rdParents = resourceDefinitionCache.getParentsByUuid(rd.getUuid());
-        rdParents.forEach(rdParent -> {
-            rdParent = resourceDefinitionRepository.findByUuid(rdParent.getUuid()).get();
+        final Set<ResourceDefinition> rdParents = resourceDefinitionCache.getParentsByUuid(rd.getUuid());
+        rdParents.forEach(definition -> {
+            final ResourceDefinition rdParent = resourceDefinitionRepository.findByUuid(definition.getUuid()).get();
             rdParent.setChildren(
                     rdParent.getChildren()
                             .stream()
-                            .filter(x -> !x.getResourceDefinitionUuid().equals(rd.getUuid()))
+                            .filter(child -> !child.getResourceDefinitionUuid().equals(rd.getUuid()))
                             .collect(Collectors.toList())
             );
             resourceDefinitionRepository.save(rdParent);
@@ -183,11 +189,11 @@ public class ResourceDefinitionService {
         return true;
     }
 
-    public List<String> getTargetClassUris(ResourceDefinition rd) {
-        List<String> result = targetClassesCache.getByUuid(rd.getUuid());
+    public List<String> getTargetClassUris(ResourceDefinition resourceDefinition) {
+        final List<String> result = targetClassesCache.getByUuid(resourceDefinition.getUuid());
         if (result == null) {
             targetClassesCache.computeCache();
-            return targetClassesCache.getByUuid(rd.getUuid());
+            return targetClassesCache.getByUuid(resourceDefinition.getUuid());
         }
         return result;
     }

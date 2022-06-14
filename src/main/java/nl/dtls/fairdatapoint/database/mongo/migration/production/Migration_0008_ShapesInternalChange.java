@@ -37,22 +37,26 @@ import org.springframework.context.annotation.Profile;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0008_ShapesInternalChange {
 
+    private static final String FIELD_UUID = "uuid";
+    private static final String FIELD_TYPE = "type";
+    private static final String VALUE_CUSTOM = "CUSTOM";
+
     @ChangeSet(order = "0008", id = "Migration_0008_ShapesInternalChange", author = "migrationBot")
-    public void run(MongoDatabase db) {
-        updateInternalShapesType(db);
+    public void run(MongoDatabase database) {
+        updateInternalShapesType(database);
     }
 
-    private void updateInternalShapesType(MongoDatabase db) {
-        MongoCollection<Document> shapeCol = db.getCollection("shape");
+    private void updateInternalShapesType(MongoDatabase database) {
+        final MongoCollection<Document> shapeCol = database.getCollection("shape");
         // DATASET
         shapeCol.updateOne(
-                Filters.eq("uuid", KnownUUIDs.SCHEMA_DATASET_UUID),
-                Updates.set("type", "CUSTOM")
+                Filters.eq(FIELD_UUID, KnownUUIDs.SCHEMA_DATASET_UUID),
+                Updates.set(FIELD_TYPE, VALUE_CUSTOM)
         );
         // DISTRIBUTION
         shapeCol.updateOne(
-                Filters.eq("uuid", KnownUUIDs.SCHEMA_DISTRIBUTION_UUID),
-                Updates.set("type", "CUSTOM")
+                Filters.eq(FIELD_UUID, KnownUUIDs.SCHEMA_DISTRIBUTION_UUID),
+                Updates.set(FIELD_TYPE, VALUE_CUSTOM)
         );
     }
 }

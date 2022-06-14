@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.service.resource;
 
 import lombok.Getter;
-import lombok.Setter;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -44,15 +42,6 @@ import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PAREN
 @Service
 public class ResourceDefinitionCache {
 
-    @Getter
-    private static class ResourceDefinitionParents {
-        private final HashSet<ResourceDefinition> parents = new HashSet<>();
-
-        public void add(ResourceDefinition rdParent) {
-            parents.add(rdParent);
-        }
-    }
-
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
 
@@ -62,21 +51,27 @@ public class ResourceDefinitionCache {
     @PostConstruct
     public void computeCache() {
         // Get cache
-        Cache cache = cache();
-        Cache parentCache = parentCache();
+        final Cache cache = cache();
+        final Cache parentCache = parentCache();
 
         // Clear cache
         cache.clear();
         parentCache.clear();
 
         // Add to cache
-        List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
-        rds.forEach(rd -> {
-            parentCache.put(rd.getUuid(), new ResourceDefinitionParents());
+        final List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
+        rds.forEach(resourceDefinition -> {
+            parentCache.put(resourceDefinition.getUuid(), new ResourceDefinitionParents());
         });
-        rds.forEach(rd -> {
-            cache.put(rd.getUuid(), rd);
-            rd.getChildren().forEach(c -> parentCache.get(c.getResourceDefinitionUuid(), ResourceDefinitionParents.class).add(rd));
+        rds.forEach(resourceDefinition -> {
+            cache.put(resourceDefinition.getUuid(), resourceDefinition);
+            resourceDefinition.getChildren()
+                    .forEach(child -> {
+                        parentCache.get(
+                                child.getResourceDefinitionUuid(),
+                                ResourceDefinitionParents.class
+                        ).add(resourceDefinition);
+                    });
         });
     }
 
@@ -87,7 +82,7 @@ public class ResourceDefinitionCache {
     public Set<ResourceDefinition> getParentsByUuid(String uuid) {
         var parents = parentCache().get(uuid, ResourceDefinitionParents.class);
         if (parents == null) {
-            computeCache(); // Try to recompute cache (the object should be there)
+            computeCache();
             parents = parentCache().get(uuid, ResourceDefinitionParents.class);
             if (parents == null) {
                 return Collections.emptySet();
@@ -104,5 +99,12 @@ public class ResourceDefinitionCache {
         return cacheManager.getCache(RESOURCE_DEFINITION_PARENT_CACHE);
     }
 
+    @Getter
+    private static class ResourceDefinitionParents {
+        private final Set<ResourceDefinition> parents = new HashSet<>();
 
+        public void add(ResourceDefinition rdParent) {
+            parents.add(rdParent);
+        }
+    }
 }

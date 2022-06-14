@@ -57,28 +57,32 @@ public class MetadataValidator {
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
-    public void validate(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
+    public void validate(Model metadata, IRI uri, ResourceDefinition definition) throws MetadataServiceException {
         validateByShacl(metadata, uri);
-        if (!rd.getUrlPrefix().isEmpty()) {
-            validateParent(metadata, rd);
+        if (!definition.getUrlPrefix().isEmpty()) {
+            validateParent(metadata, definition);
         }
     }
 
     private void validateByShacl(Model metadata, IRI uri) {
-        Model shacl = metadataSchemaService.getShaclFromSchemas();
+        final Model shacl = metadataSchemaService.getShaclFromSchemas();
         shaclValidator.validate(shacl, metadata, uri.stringValue());
     }
 
-    private void validateParent(Model metadata, ResourceDefinition rd) throws MetadataServiceException {
+    private void validateParent(Model metadata, ResourceDefinition definition) throws MetadataServiceException {
         // 1. Check if parent exists
-        IRI parent = getParent(metadata);
+        final IRI parent = getParent(metadata);
         if (parent == null) {
             throw new ValidationException("Not parent uri");
         }
 
         // 2. Get parent resource definition
-        ResourceDefinition rdParent = resourceDefinitionService.getByUrl(parent.toString());
-        if (rdParent.getChildren().stream().noneMatch(rdChild -> rdChild.getResourceDefinitionUuid().equals(rd.getUuid()))) {
+        final ResourceDefinition rdParent = resourceDefinitionService.getByUrl(parent.toString());
+        if (rdParent
+                .getChildren()
+                .stream()
+                .noneMatch(rdChild -> rdChild.getResourceDefinitionUuid().equals(definition.getUuid()))
+        ) {
             throw new ValidationException(format("Parent is not of correct type (RD: %s)", rdParent.getName()));
         }
 
@@ -90,8 +94,9 @@ public class MetadataValidator {
                     throw new ValidationException(format("Parent is not of type (missing type: %s)", rdfType));
                 }
             }
-        } catch (MetadataRepositoryException e) {
-            throw new MetadataServiceException(e.getMessage());
+        }
+        catch (MetadataRepositoryException exception) {
+            throw new MetadataServiceException(exception.getMessage());
         }
     }
 

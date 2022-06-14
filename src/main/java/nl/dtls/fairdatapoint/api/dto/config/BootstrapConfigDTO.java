@@ -22,12 +22,8 @@
  */
 package nl.dtls.fairdatapoint.api.dto.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 
 import java.util.List;
 
@@ -35,12 +31,13 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class BootstrapConfigDTO {
 
-    protected String persistentUrl;
+    private String persistentUrl;
 
-    protected List<ResourceDefinitionDTO> resourceDefinitions;
+    private List<ResourceDefinitionDTO> resourceDefinitions;
 
-    protected boolean index;
+    private boolean index;
 
 }

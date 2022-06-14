@@ -40,5 +40,6 @@ public interface EventRepository extends MongoRepository<Event, String> {
 
     Page<Event> getAllByRelatedTo(IndexEntry indexEntry, Pageable pageable);
 
-    List<Event> findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(String remoteAddr, Instant after);
+    List<Event> findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
+            String remoteAddr, Instant after);
 }

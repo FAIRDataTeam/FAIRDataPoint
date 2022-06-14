@@ -30,19 +30,6 @@ import java.util.stream.Collectors;
 
 public class OpenApiTagsUtils {
 
-    private static final Comparator<String> STRING_COMPARATOR = Comparator.comparing(String::toString);
-
-    private static final Comparator<Tag> TAG_COMPARATOR = (o1, o2) -> {
-        int priority1 = (int)o1.getExtensions().getOrDefault(OpenApiGenerator.FDP_TAG_PRIORITY, 90);
-        int priority2 = (int)o2.getExtensions().getOrDefault(OpenApiGenerator.FDP_TAG_PRIORITY, 90);
-        if (priority1 < priority2) {
-            return -1;
-        } else if (priority1 > priority2) {
-            return 1;
-        }
-        return STRING_COMPARATOR.compare(o1.getName(), o2.getName());
-    };
-
     public static final Tag METADATA_TAG = new Tag()
             .name("Metadata")
             .description("Common operations with all metadata")
@@ -73,12 +60,30 @@ public class OpenApiTagsUtils {
             .description("Management of user accounts")
             .extensions(Map.of(OpenApiGenerator.FDP_TAG_PRIORITY, 60));
 
-    public static final List<Tag> STATIC_TAGS = Arrays.asList(METADATA_TAG, METADATA_MMODEL_TAG, METADATA_CLIENT_TAG, METADATA_INDEX_TAG, METADATA_AA_TAG, METADATA_USERMGMT_TAG);
+    public static final List<Tag> STATIC_TAGS =
+            Arrays.asList(METADATA_TAG, METADATA_MMODEL_TAG, METADATA_CLIENT_TAG,
+                    METADATA_INDEX_TAG, METADATA_AA_TAG, METADATA_USERMGMT_TAG);
+
+    private static final Comparator<String> STRING_COMPARATOR = Comparator.comparing(String::toString);
+
+    private static int compareTags(Tag tag1, Tag tag2) {
+        final int priority1 = (int) tag1.getExtensions().getOrDefault(OpenApiGenerator.FDP_TAG_PRIORITY, 90);
+        final int priority2 = (int) tag2.getExtensions().getOrDefault(OpenApiGenerator.FDP_TAG_PRIORITY, 90);
+        if (priority1 < priority2) {
+            return -1;
+        }
+        else if (priority1 > priority2) {
+            return 1;
+        }
+        return STRING_COMPARATOR.compare(tag1.getName(), tag2.getName());
+    }
 
     public static List<Tag> listTags(List<ResourceDefinition> resourceDefinitions) {
-        List<Tag> tags = resourceDefinitions.stream().map(OpenApiGenerator::generateTag).collect(Collectors.toList());
+        final List<Tag> tags = resourceDefinitions.stream()
+                .map(OpenApiGenerator::generateTag)
+                .collect(Collectors.toList());
         tags.addAll(STATIC_TAGS);
-        tags.sort(TAG_COMPARATOR);
+        tags.sort(OpenApiTagsUtils::compareTags);
         return tags;
     }
 }

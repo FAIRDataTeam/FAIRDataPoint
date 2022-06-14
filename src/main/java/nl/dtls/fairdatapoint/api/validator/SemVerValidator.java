@@ -36,9 +36,10 @@ public class SemVerValidator implements ConstraintValidator<ValidSemVer, String>
     @Override
     public boolean isValid(String text, ConstraintValidatorContext cxt) {
         try {
-            SemVer version = new SemVer(text);
+            final SemVer version = new SemVer(text);
             return text.equals(version.toString());
-        } catch (Exception e) {
+        }
+        catch (Exception exception) {
             return false;
         }
     }

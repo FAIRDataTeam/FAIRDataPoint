@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.entity.metadata;
 
 import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
 import nl.dtls.fairdatapoint.vocabulary.Sio;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
@@ -38,9 +37,9 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 public class MetadataSetter {
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
     //  Basic
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
     public static void setRdfTypes(Model metadata, IRI uri, IRI... rdfTypes) {
         setRdfTypes(metadata, uri, List.of(rdfTypes));
     }
@@ -64,9 +63,9 @@ public class MetadataSetter {
         update(metadata, uri, DCTERMS.CONFORMS_TO, specs);
     }
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
     //  Resource
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
     public static void setTitle(Model metadata, IRI uri, Literal title) {
         update(metadata, uri, DCTERMS.TITLE, title);
     }
@@ -113,9 +112,9 @@ public class MetadataSetter {
         update(metadata, uri, DCTERMS.MODIFIED, dataRecordModified);
     }
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
     //  Custom
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
 
     public static void setPublisher(Model metadata, IRI uri, Agent publisher) {
         setAgent(metadata, uri, publisher, DCTERMS.PUBLISHER);
@@ -155,22 +154,22 @@ public class MetadataSetter {
         update(metadata, uri, DCAT.KEYWORD, keywords);
     }
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
     //  Utils
-    // ------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
     private static void setIdentifier(Model metadata, IRI uri, Identifier id, IRI pred) {
         if (id == null) {
             metadata.filter(uri, pred, null)
                     .stream()
                     .findFirst()
                     .ifPresent(statement -> {
-                                IRI identifier = i(statement.getObject().stringValue());
-                                metadata.remove(uri, pred, identifier);
-                                metadata.remove(identifier, RDF.TYPE, null);
-                                metadata.remove(identifier, DCTERMS.IDENTIFIER, null);
-                            }
-                    );
-        } else {
+                        final IRI identifier = i(statement.getObject().stringValue());
+                        metadata.remove(uri, pred, identifier);
+                        metadata.remove(identifier, RDF.TYPE, null);
+                        metadata.remove(identifier, DCTERMS.IDENTIFIER, null);
+                    });
+        }
+        else {
             update(metadata, uri, pred, id.getUri());
             update(metadata, id.getUri(), RDF.TYPE, id.getType());
             update(metadata, id.getUri(), DCTERMS.IDENTIFIER, id.getIdentifier());
@@ -183,13 +182,13 @@ public class MetadataSetter {
                     .stream()
                     .findFirst()
                     .ifPresent(statement -> {
-                                IRI publisherUri = i(statement.getObject().stringValue());
-                                metadata.remove(uri, agentType, publisherUri);
-                                metadata.remove(publisherUri, RDF.TYPE, null);
-                                metadata.remove(publisherUri, FOAF.NAME, null);
-                            }
-                    );
-        } else {
+                        final IRI publisherUri = i(statement.getObject().stringValue());
+                        metadata.remove(uri, agentType, publisherUri);
+                        metadata.remove(publisherUri, RDF.TYPE, null);
+                        metadata.remove(publisherUri, FOAF.NAME, null);
+                    });
+        }
+        else {
             update(metadata, uri, agentType, agent.getUri());
             update(metadata, agent.getUri(), RDF.TYPE, agent.getType());
             update(metadata, agent.getUri(), FOAF.NAME, agent.getName());

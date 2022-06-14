@@ -40,7 +40,7 @@ import java.time.Instant;
 public class IndexEntry {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
     private String uuid;
 

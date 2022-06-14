@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.service.profile;
 
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -58,36 +59,50 @@ public class ProfileService {
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
-    private Model getProfileForResourceDefinition(ResourceDefinition rd, IRI uri) {
-        Model profile = new LinkedHashModel();
+    private Model getProfileForResourceDefinition(
+            ResourceDefinition resourceDefinition, IRI uri
+    ) {
+        final Model profile = new LinkedHashModel();
         profile.add(uri, RDF.TYPE, i(format("%sProfile", PROFILE_PREFIX)));
-        profile.add(uri, RDFS.LABEL, l(format("%s Profile", rd.getName())));
-        profile.add(uri, i(format("%sisProfileOf", PROFILE_PREFIX)), i(format("%s/profile/core",
-                persistentUrl)));
-        rd.getMetadataSchemaUuids().forEach(schemaUuid -> metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid).map(schema -> {
-            ModelBuilder modelBuilder = new ModelBuilder();
-            Resource resource = bn();
-            modelBuilder.subject(resource);
-            modelBuilder.add(RDF.TYPE, i(format("%s#ResourceDescriptor", PROFILE_PREFIX)));
-            modelBuilder.add(RDFS.LABEL, l(schema.getName()));
-            modelBuilder.add(DCTERMS.FORMAT, i("https://w3id.org/mediatype/text/turtle"));
-            modelBuilder.add(DCTERMS.CONFORMS_TO, i("https://www.w3.org/TR/shacl/"));
-            modelBuilder.add(i(format("%shasRole", PROFILE_PREFIX)), i(format("%srole/Validation",
-                    PROFILE_PREFIX)));
-            modelBuilder.add(i(format("%shasArtifact", PROFILE_PREFIX)), i(format("%s/metadata-schemas/%s",
-                    persistentUrl, schemaUuid)));
-            profile.add(uri, i(format("%shasResource", PROFILE_PREFIX)), resource);
-            profile.addAll(new ArrayList<>(modelBuilder.build()));
-            return null;
-        }));
+        profile.add(uri, RDFS.LABEL, l(format("%s Profile", resourceDefinition.getName())));
+        profile.add(
+                uri,
+                i(format("%sisProfileOf", PROFILE_PREFIX)),
+                i(format("%s/profile/core", persistentUrl))
+        );
+        resourceDefinition
+                .getMetadataSchemaUuids()
+                .forEach(schemaUuid -> {
+                    metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid).ifPresent(schema -> {
+                        addSchemaToProfile(uri, profile, schema);
+                    });
+                });
         return profile;
     }
 
-    public Optional<Model> getProfileByUuid(String uuid, IRI uri) {
-        return resourceDefinitionService.getByUuid(uuid).map(rd -> getProfileForResourceDefinition(rd, uri));
+    private void addSchemaToProfile(IRI uri, Model profile, MetadataSchema schema) {
+        final ModelBuilder modelBuilder = new ModelBuilder();
+        final Resource resource = bn();
+        modelBuilder.subject(resource);
+        modelBuilder.add(RDF.TYPE, i(format("%s#ResourceDescriptor", PROFILE_PREFIX)));
+        modelBuilder.add(RDFS.LABEL, l(schema.getName()));
+        modelBuilder.add(DCTERMS.FORMAT, i("https://w3id.org/mediatype/text/turtle"));
+        modelBuilder.add(DCTERMS.CONFORMS_TO, i("https://www.w3.org/TR/shacl/"));
+        modelBuilder.add(i(format("%shasRole", PROFILE_PREFIX)), i(format("%srole/Validation",
+                PROFILE_PREFIX)));
+        modelBuilder.add(i(format("%shasArtifact", PROFILE_PREFIX)), i(format("%s/metadata-schemas/%s",
+                persistentUrl, schema.getUuid())));
+        profile.add(uri, i(format("%shasResource", PROFILE_PREFIX)), resource);
+        profile.addAll(new ArrayList<>(modelBuilder.build()));
     }
 
-    public IRI getProfileUri(ResourceDefinition rd) {
-        return i(format("%s/profile/%s", persistentUrl, rd.getUuid()));
+    public Optional<Model> getProfileByUuid(String uuid, IRI uri) {
+        return resourceDefinitionService
+                .getByUuid(uuid)
+                .map(definition -> getProfileForResourceDefinition(definition, uri));
+    }
+
+    public IRI getProfileUri(ResourceDefinition definition) {
+        return i(format("%s/profile/%s", persistentUrl, definition.getUuid()));
     }
 }

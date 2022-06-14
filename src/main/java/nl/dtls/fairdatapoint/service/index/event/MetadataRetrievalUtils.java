@@ -36,7 +36,6 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.FOAF;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
@@ -79,7 +78,7 @@ public class MetadataRetrievalUtils {
             R3D.COUNTRY, "country"
     );
 
-    private static final HttpClient client = HttpClient.newBuilder()
+    private static final HttpClient CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
@@ -88,24 +87,35 @@ public class MetadataRetrievalUtils {
         if (triggerEvent.getRelatedTo() == null) {
             return false;
         }
-        Instant lastRetrieval = triggerEvent.getRelatedTo().getLastRetrievalTime();
+        final Instant lastRetrieval = triggerEvent.getRelatedTo().getLastRetrievalTime();
         if (lastRetrieval == null) {
             return true;
         }
         return Duration.between(lastRetrieval, Instant.now()).compareTo(rateLimitWait) > 0;
     }
 
-    public static Iterable<Event> prepareEvents(Event triggerEvent, IndexEntryService indexEntryService) {
-        ArrayList<Event> events = new ArrayList<>();
+    public static Iterable<Event> prepareEvents(
+            Event triggerEvent, IndexEntryService indexEntryService
+    ) {
+        final ArrayList<Event> events = new ArrayList<>();
         if (triggerEvent.getType() == EventType.IncomingPing) {
-            events.add(new Event(VERSION, triggerEvent, triggerEvent.getRelatedTo(), new MetadataRetrieval()));
-        } else if (triggerEvent.getType() == EventType.AdminTrigger) {
+            events.add(new Event(VERSION, triggerEvent,
+                    triggerEvent.getRelatedTo(), new MetadataRetrieval()));
+        }
+        else if (triggerEvent.getType() == EventType.AdminTrigger) {
             if (triggerEvent.getAdminTrigger().getClientUrl() == null) {
                 indexEntryService.getAllEntries().forEach(
-                        entry -> events.add(new Event(VERSION, triggerEvent, entry, new MetadataRetrieval()))
+                        entry -> {
+                            events.add(
+                                    new Event(VERSION, triggerEvent,
+                                            entry, new MetadataRetrieval())
+                            );
+                        }
                 );
-            } else {
-                events.add(new Event(VERSION, triggerEvent, triggerEvent.getRelatedTo(), new MetadataRetrieval()));
+            }
+            else {
+                events.add(new Event(VERSION, triggerEvent,
+                        triggerEvent.getRelatedTo(), new MetadataRetrieval()));
             }
         }
         return events;
@@ -115,64 +125,77 @@ public class MetadataRetrievalUtils {
         if (event.getType() != EVENT_TYPE) {
             throw new IllegalArgumentException("Invalid event type");
         }
-        var ex = new Exchange(ExchangeDirection.OUTGOING);
+        final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
         event.getMetadataRetrieval().setExchange(ex);
         try {
-            HttpRequest request = HttpRequest.newBuilder()
+            final HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(event.getRelatedTo().getClientUrl()))
                     .timeout(timeout)
                     .header(HttpHeaders.ACCEPT, RDFFormat.TURTLE.getDefaultMIMEType())
                     .GET().build();
             ex.getRequest().setFromHttpRequest(request);
             ex.setState(ExchangeState.Requested);
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            final HttpResponse<String> response =
+                    CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
             ex.getResponse().setFromHttpResponse(response);
             ex.setState(ExchangeState.Retrieved);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException exception) {
             ex.setState(ExchangeState.Timeout);
             ex.setError("Timeout");
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException exception) {
             ex.setState(ExchangeState.Failed);
-            ex.setError("Invalid URI: " + e.getMessage());
-        } catch (IOException e) {
+            ex.setError("Invalid URI: " + exception.getMessage());
+        }
+        catch (IOException exception) {
             ex.setState(ExchangeState.Failed);
-            ex.setError("IO error: " + e.getMessage());
+            ex.setError("IO error: " + exception.getMessage());
         }
     }
 
-    public static Optional<RepositoryMetadata> parseRepositoryMetadata(String metadata) throws IOException {
-        RDFParser parser = Rio.createParser(RDFFormat.TURTLE);
-        StatementCollector collector = new StatementCollector();
+    public static Optional<RepositoryMetadata> parseRepositoryMetadata(
+            String metadata
+    ) throws IOException {
+        final RDFParser parser = Rio.createParser(RDFFormat.TURTLE);
+        final StatementCollector collector = new StatementCollector();
         parser.setRDFHandler(collector);
 
         parser.parse(new StringReader(metadata), String.valueOf(StandardCharsets.UTF_8));
-        ArrayList<Statement> statements = new ArrayList<>(collector.getStatements());
+        final ArrayList<Statement> statements = new ArrayList<>(collector.getStatements());
 
-        return findRepository(statements).map(repository -> extractRepositoryMetadata(statements, repository));
+        return findRepository(statements)
+                .map(repository -> extractRepositoryMetadata(statements, repository));
     }
 
-    private static RepositoryMetadata extractRepositoryMetadata(ArrayList<Statement> statements, Resource repository) {
-        var repositoryMetadata = new RepositoryMetadata();
+    private static RepositoryMetadata extractRepositoryMetadata(
+            ArrayList<Statement> statements, Resource repository
+    ) {
+        final RepositoryMetadata repositoryMetadata = new RepositoryMetadata();
         repositoryMetadata.setMetadataVersion(VERSION);
         repositoryMetadata.setRepositoryUri(repository.toString());
 
         Value publisher = null;
-        for (Statement st : statements) {
-            if (st.getSubject().equals(repository)) {
-                if (MAPPING.containsKey(st.getPredicate())) {
-                    repositoryMetadata.getMetadata().put(MAPPING.get(st.getPredicate()), st.getObject().stringValue());
+        for (Statement statement : statements) {
+            if (statement.getSubject().equals(repository)) {
+                if (MAPPING.containsKey(statement.getPredicate())) {
+                    repositoryMetadata.getMetadata()
+                            .put(MAPPING.get(
+                                    statement.getPredicate()),
+                                    statement.getObject().stringValue());
                 }
-                if (st.getPredicate().equals(DCTERMS.PUBLISHER)) {
-                    publisher = st.getObject();
+                if (statement.getPredicate().equals(DCTERMS.PUBLISHER)) {
+                    publisher = statement.getObject();
                 }
             }
         }
 
         if (publisher != null) {
-            for (Statement st : statements) {
-                if (st.getSubject().equals(publisher)) {
-                    if (st.getPredicate().equals(FOAF.NAME)) {
-                        repositoryMetadata.getMetadata().put("publisherName", st.getObject().stringValue());
+            for (Statement statement : statements) {
+                if (statement.getSubject().equals(publisher)) {
+                    if (statement.getPredicate().equals(FOAF.NAME)) {
+                        repositoryMetadata.getMetadata()
+                                .put("publisherName", statement.getObject().stringValue());
                     }
                 }
             }
@@ -182,9 +205,10 @@ public class MetadataRetrievalUtils {
     }
 
     private static Optional<Resource> findRepository(ArrayList<Statement> statements) {
-        for (Statement st : statements) {
-            if (st.getPredicate().equals(RDF.TYPE) && REPOSITORY_TYPES.stream().anyMatch(st.getObject()::equals)) {
-                return Optional.of(st.getSubject());
+        for (Statement statement : statements) {
+            if (statement.getPredicate().equals(RDF.TYPE)
+                    && REPOSITORY_TYPES.stream().anyMatch(statement.getObject()::equals)) {
+                return Optional.of(statement.getSubject());
             }
         }
         return Optional.empty();

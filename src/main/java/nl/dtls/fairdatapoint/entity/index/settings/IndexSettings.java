@@ -38,7 +38,7 @@ import java.util.Objects;
 @Builder(toBuilder = true)
 public class IndexSettings {
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
     @NotNull
     private IndexSettingsRetrieval retrieval;
@@ -47,7 +47,7 @@ public class IndexSettings {
     private IndexSettingsPing ping;
 
     public static IndexSettings getDefault() {
-        IndexSettings settings = new IndexSettings();
+        final IndexSettings settings = new IndexSettings();
         settings.setPing(IndexSettingsPing.getDefault());
         settings.setRetrieval(IndexSettingsRetrieval.getDefault());
         return settings;
@@ -55,9 +55,13 @@ public class IndexSettings {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        IndexSettings that = (IndexSettings) o;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final IndexSettings that = (IndexSettings) o;
         return retrieval.equals(that.retrieval) && ping.equals(that.ping);
     }
 

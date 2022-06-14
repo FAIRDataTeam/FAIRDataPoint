@@ -36,9 +36,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Metadata {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
-    protected String uri;
+    private String uri;
 
-    protected MetadataState state;
+    private MetadataState state;
 }

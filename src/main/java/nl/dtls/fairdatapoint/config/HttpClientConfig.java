@@ -32,12 +32,15 @@ import java.time.Duration;
 
 @Configuration
 public class HttpClientConfig {
+    // TODO: use newer WebClient (Spring 5)
+
+    private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .setReadTimeout(Duration.ofSeconds(5))
+                .setConnectTimeout(TIMEOUT)
+                .setReadTimeout(TIMEOUT)
                 .build();
     }
 

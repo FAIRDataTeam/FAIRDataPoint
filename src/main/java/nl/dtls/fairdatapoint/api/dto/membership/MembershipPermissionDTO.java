@@ -29,8 +29,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class MembershipPermissionDTO {
 
-    protected int mask;
+    private int mask;
 
-    protected char code;
+    private char code;
 
 }

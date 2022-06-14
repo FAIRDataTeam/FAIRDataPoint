@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.api.controller.profile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nl.dtls.fairdatapoint.config.ConverterConfig;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import org.eclipse.rdf4j.model.IRI;
@@ -54,22 +53,25 @@ public class ProfileController {
     private ProfileService profileService;
 
     @GetMapping(path = "/{uuid}", produces = {
-            "text/turtle",
-            "application/x-turtle",
-            "text/n3",
-            "text/rdf+n3",
-            "application/ld+json",
-            "application/rdf+xml",
-            "application/xml",
-            "text/xml",
+        "text/turtle",
+        "application/x-turtle",
+        "text/n3",
+        "text/rdf+n3",
+        "application/ld+json",
+        "application/rdf+xml",
+        "application/xml",
+        "text/xml"
     })
-    public ResponseEntity<Model> getSchemaContent(HttpServletRequest request, @PathVariable final String uuid)
-            throws ResourceNotFoundException {
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        Optional<Model> oDto = profileService.getProfileByUuid(uuid, uri);
+    public ResponseEntity<Model> getSchemaContent(
+            HttpServletRequest request,
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException {
+        final IRI uri = i(getRequestURL(request, persistentUrl));
+        final Optional<Model> oDto = profileService.getProfileByUuid(uuid, uri);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format("Profile '%s' doesn't exist", uuid));
         }
     }

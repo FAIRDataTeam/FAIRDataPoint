@@ -29,12 +29,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserSimpleDTO {
 
-    protected String uuid;
+    private String uuid;
 
-    protected String firstName;
+    private String firstName;
 
-    protected String lastName;
+    private String lastName;
 
-    protected String email;
+    private String email;
 
 }

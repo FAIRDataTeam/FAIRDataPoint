@@ -38,17 +38,19 @@ import java.util.List;
 public class Membership {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
-    protected String uuid;
+    private String uuid;
 
-    protected String name;
+    private String name;
 
-    protected List<MembershipPermission> permissions;
+    private List<MembershipPermission> permissions;
 
-    protected List<String> allowedEntities;
+    private List<String> allowedEntities;
 
-    public Membership(String uuid, String name, List<MembershipPermission> permissions, List<String> allowedEntities) {
+    public Membership(String uuid, String name,
+                      List<MembershipPermission> permissions,
+                      List<String> allowedEntities) {
         this.uuid = uuid;
         this.name = name;
         this.permissions = permissions;

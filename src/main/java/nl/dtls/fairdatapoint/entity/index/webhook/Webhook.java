@@ -40,7 +40,7 @@ import java.util.UUID;
 @Document(collection = "webhook")
 public class Webhook {
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
     @NotNull
     private UUID uuid = UUID.randomUUID();

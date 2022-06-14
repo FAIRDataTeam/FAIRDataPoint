@@ -37,6 +37,7 @@ import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,23 +82,25 @@ public class SearchService {
     private String persistentUrl;
 
     public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
-        List<SearchResult> results = metadataRepository.findByLiteral(l(reqDto.getQ()));
+        final List<SearchResult> results = metadataRepository.findByLiteral(l(reqDto.getQuery()));
+        return processSearchResults(results);
+    }
+
+    public List<SearchResultDTO> search(
+            SearchQueryVariablesDTO reqDto
+    ) throws MetadataRepositoryException, MalformedQueryException {
+        // Compose query
+        final String query = composeQuery(reqDto);
+        // Verify query
+        final SPARQLParser parser = new SPARQLParser();
+        parser.parseQuery(query, persistentUrl);
+        // Get and process results for query
+        final List<SearchResult> results = metadataRepository.findBySparqlQuery(query);
         return processSearchResults(results);
     }
 
     public SearchQueryTemplateDTO getSearchQueryTemplate() {
         return searchMapper.toQueryTemplateDTO(QUERY_TEMPLATE);
-    }
-
-    public List<SearchResultDTO> search(SearchQueryVariablesDTO reqDto) throws MetadataRepositoryException, MalformedQueryException {
-        // Compose query
-        String query = composeQuery(reqDto);
-        // Verify query
-        SPARQLParser parser = new SPARQLParser();
-        parser.parseQuery(query, persistentUrl);
-        // Get and process results for query
-        List<SearchResult> results = metadataRepository.findBySparqlQuery(query);
-        return processSearchResults(results);
     }
 
     public List<SearchFilterDTO> getSearchFilters() {
@@ -115,15 +118,20 @@ public class SearchService {
     }
 
     private SearchFilterDTO enrichItems(SettingsSearchFilter filter) {
-        SearchFilterDTO result = searchMapper.toFilterDTO(filter);
-        Set<String> values = result.getValues().stream().map(SearchFilterItemDTO::getValue).collect(Collectors.toSet());
+        final SearchFilterDTO result = searchMapper.toFilterDTO(filter);
+        final Set<String> values =
+                result
+                        .getValues()
+                        .stream()
+                        .map(SearchFilterItemDTO::getValue)
+                        .collect(Collectors.toSet());
         if (filter.isQueryFromRecords()) {
-            List<SearchFilterItemDTO> xvalues = new ArrayList<>();
+            final List<SearchFilterItemDTO> xvalues = new ArrayList<>();
             xvalues.addAll(result.getValues());
             xvalues.addAll(
                 queryFilterItems(filter.getPredicate())
                     .stream()
-                    .filter(v -> !values.contains(v.getValue()))
+                    .filter(item -> !values.contains(item.getValue()))
                     .map(searchMapper::toFilterItemDTO)
                     .toList()
             );
@@ -137,32 +145,34 @@ public class SearchService {
 
     private List<SearchFilterValue> queryFilterItems(String predicate) {
         // TODO: filter related to DRAFT records
-        SearchFilterCacheContainer cacheContainer = searchFilterCache.getFilter(predicate);
+        final SearchFilterCacheContainer cacheContainer =
+                searchFilterCache.getFilter(predicate);
         if (cacheContainer != null) {
             return cacheContainer.getValues();
         }
         try {
-            List<SearchFilterValue> result = metadataRepository.findByFilterPredicate(i(predicate));
+            final List<SearchFilterValue> result =
+                    metadataRepository.findByFilterPredicate(i(predicate));
             searchFilterCache.setFilter(predicate, new SearchFilterCacheContainer(result));
             return result;
-        } catch (MetadataRepositoryException e) {
-            throw new RuntimeException(e);
+        }
+        catch (MetadataRepositoryException exception) {
+            throw new RuntimeException(exception);
         }
     }
 
     private List<SearchResultDTO> processSearchResults(List<SearchResult> results) {
-        Map<String, SearchResultDTO> resultDtos = results
+        final Map<String, SearchResultDTO> resultDtos = results
                 .stream()
-                .collect(Collectors.groupingBy(SearchResult::getUri, Collectors.mapping(i -> i, toList())))
+                .collect(
+                        Collectors.groupingBy(
+                                SearchResult::getUri,
+                                Collectors.mapping(Function.identity(), toList())
+                        )
+                )
                 .entrySet()
                 .parallelStream()
-                .filter(entry -> {
-                    try {
-                        return !metadataStateService.get(i(entry.getKey())).getState().equals(MetadataState.DRAFT);
-                    } catch (ResourceNotFoundException e) {
-                        return true;
-                    }
-                })
+                .filter(entry -> isUsableForFilter(i(entry.getKey())))
                 .map(entry -> searchMapper.toResultDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(SearchResultDTO::getUri, Function.identity()));
         return results
@@ -174,17 +184,34 @@ public class SearchService {
                 .toList();
     }
 
+    private boolean isUsableForFilter(IRI iri) {
+        try {
+            return !metadataStateService
+                    .get(iri)
+                    .getState()
+                    .equals(MetadataState.DRAFT);
+        }
+        catch (ResourceNotFoundException exception) {
+            return true;
+        }
+    }
+
     private String composeQuery(SearchQueryVariablesDTO reqDto) {
-        StrSubstitutor substitutor = new StrSubstitutor(searchMapper.toSubstitutions(reqDto), "{{", "}}");
+        final StrSubstitutor substitutor =
+                new StrSubstitutor(searchMapper.toSubstitutions(reqDto), "{{", "}}");
         return substitutor.replace(QUERY_TEMPLATE);
     }
 
     private static String loadSparqlQueryTemplate() {
         try {
-            URL fileURL = SearchService.class.getResource(QUERY_TEMPLATE_NAME);
+            final URL fileURL = SearchService.class.getResource(QUERY_TEMPLATE_NAME);
             return Resources.toString(fileURL, Charsets.UTF_8);
-        } catch (IOException e) {
-            throw new RuntimeException(format("Cannot load SPARQL template for search: %s", e.getMessage()));
+        }
+        catch (IOException exception) {
+            throw new RuntimeException(
+                    format("Cannot load SPARQL template for search: %s",
+                            exception.getMessage())
+            );
         }
     }
 }

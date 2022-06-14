@@ -43,9 +43,9 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 public class MetadataGetter {
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     //  Basic
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     public static IRI getUri(Model metadata) {
         return i(getSubjectBy(metadata, DCTERMS.TITLE, null));
     }
@@ -69,9 +69,9 @@ public class MetadataGetter {
         return i(getObjectBy(metadata, null, DCTERMS.CONFORMS_TO));
     }
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     //  Resource
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     public static Literal getTitle(Model metadata) {
         return l(getObjectBy(metadata, null, DCTERMS.TITLE));
     }
@@ -93,28 +93,28 @@ public class MetadataGetter {
     }
 
     public static OffsetDateTime getIssued(Model metadata) {
-        String result = getStringObjectBy(metadata, null, FDP.METADATAISSUED);
+        final String result = getStringObjectBy(metadata, null, FDP.METADATAISSUED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
     public static OffsetDateTime getModified(Model metadata) {
-        String result = getStringObjectBy(metadata, null, FDP.METADATAMODIFIED);
+        final String result = getStringObjectBy(metadata, null, FDP.METADATAMODIFIED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
     public static OffsetDateTime getMetadataIssued(Model metadata) {
-        String result = getStringObjectBy(metadata, null, DCTERMS.ISSUED);
+        final String result = getStringObjectBy(metadata, null, DCTERMS.ISSUED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
     public static OffsetDateTime getMetadataModified(Model metadata) {
-        String result = getStringObjectBy(metadata, null, DCTERMS.MODIFIED);
+        final String result = getStringObjectBy(metadata, null, DCTERMS.MODIFIED);
         return result != null ? parseDateTimeLiteral(result) : null;
     }
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     //  Children
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     public static List<IRI> getCatalogs(Model metadata) {
         return getChildren(metadata, FDP.METADATACATALOG);
     }
@@ -127,9 +127,9 @@ public class MetadataGetter {
         return getChildren(metadata, DCAT.HAS_DISTRIBUTION);
     }
 
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     //  Custom
-    // ------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     public static List<IRI> getThemeTaxonomies(Model metadata) {
         return getObjectsBy(metadata, null, DCAT.THEME_TAXONOMY)
                 .stream()
@@ -145,12 +145,12 @@ public class MetadataGetter {
     }
 
     public static Identifier getIdentifier(Model metadata, IRI pred) {
-        IRI idUri = i(getObjectBy(metadata, null, pred));
+        final IRI idUri = i(getObjectBy(metadata, null, pred));
         if (idUri == null) {
             return null;
         }
-        IRI rdfType = i(getObjectBy(metadata, idUri, RDF.TYPE));
-        Literal id = l(getObjectBy(metadata, idUri, DCTERMS.IDENTIFIER));
+        final IRI rdfType = i(getObjectBy(metadata, idUri, RDF.TYPE));
+        final Literal id = l(getObjectBy(metadata, idUri, DCTERMS.IDENTIFIER));
         return new Identifier(idUri, rdfType, id);
     }
 

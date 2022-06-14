@@ -38,15 +38,15 @@ import javax.validation.constraints.NotNull;
 public class UserChangeDTO {
 
     @NotBlank
-    protected String firstName;
+    private String firstName;
 
     @NotBlank
-    protected String lastName;
+    private String lastName;
 
     @NotBlank
-    protected String email;
+    private String email;
 
     @NotNull
-    protected UserRole role;
+    private UserRole role;
 
 }

@@ -46,20 +46,20 @@ import java.util.Set;
 public class MetadataSchema {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
     @Indexed
     private String uuid;
 
     @Indexed
-    protected String versionUuid;
+    private String versionUuid;
 
     @Indexed
-    protected String versionString;
+    private String versionString;
 
     @NotNull
     @Transient
-    protected SemVer version;
+    private SemVer version;
 
     @NotNull
     @NotBlank
@@ -80,9 +80,9 @@ public class MetadataSchema {
     @NotNull
     private MetadataSchemaType type;
 
-    private String origin = null;
+    private String origin;
 
-    private String importedFrom = null;
+    private String importedFrom;
 
     private boolean latest;
 
@@ -96,10 +96,17 @@ public class MetadataSchema {
 
     private Instant createdAt;
 
-    private String previousVersionUuid = null;
+    private String previousVersionUuid;
 
     @PersistenceConstructor
-    public MetadataSchema(ObjectId id, String uuid, String versionUuid, String versionString, String name, String description, String definition, Set<String> targetClasses, List<String> extendSchemas, MetadataSchemaType type, String origin, String importedFrom, boolean latest, boolean published, boolean abstractSchema, String suggestedResourceName, String suggestedUrlPrefix, Instant createdAt, String previousVersionUuid) {
+    public MetadataSchema(
+            ObjectId id, String uuid, String versionUuid, String versionString,
+            String name, String description, String definition, Set<String> targetClasses,
+            List<String> extendSchemas, MetadataSchemaType type, String origin,
+            String importedFrom, boolean latest, boolean published, boolean abstractSchema,
+            String suggestedResourceName, String suggestedUrlPrefix, Instant createdAt,
+            String previousVersionUuid
+    ) {
         this.id = id;
         this.uuid = uuid;
         this.versionUuid = versionUuid;

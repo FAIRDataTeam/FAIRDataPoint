@@ -52,14 +52,36 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 
 public class FactoryDefaults {
 
-    //== USERS
+    public static final String PASSWORD_HASH =
+            "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW";
+    public static final String LIPSUM_TEXT = "Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec "
+            + "ultricies augue turpis sed velit. Donec id consectetur ligula. Suspendisse pharetra egestas "
+            + "massa, vel varius leo viverra at. Donec scelerisque id ipsum id semper. Maecenas facilisis augue"
+            + " vel justo molestie aliquet. Maecenas sed mattis lacus, sed viverra risus. Donec iaculis quis "
+            + "lacus vitae scelerisque. Nullam fermentum lectus nisi, id vulputate nisi congue nec. Morbi "
+            + "fermentum justo at justo bibendum, at tempus ipsum tempor. Donec facilisis nibh sed lectus "
+            + "blandit venenatis. Cras ullamcorper, justo vitae feugiat commodo, orci metus suscipit purus, "
+            + "quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum "
+            + "euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at.";
+    public static final String FIELD_SID = "sid";
+    public static final String FIELD_PERM = "permission";
+    public static final String FIELD_GRANT = "granting";
+    public static final String FIELD_AUDIT_FAILURE = "auditFailure";
+    public static final String FIELD_AUDIT_SUCCESS = "auditSuccess";
+    public static final String DEFAULT_FDP_TITLE = "My FAIR Data Point";
+    public static final String DEFAULT_PUBLISHER = "Default Publisher";
+    public static final String SUFFIX_IDENTIFIER = "#identifier";
+    public static final String SUFFIX_ACCESS_RIGHTS = "#accessRights";
+    public static final String SUFFIX_PUBLISHER = "#publisher";
+
+    // == USERS
     // Changes: Migration_0001_Init
     public static final User USER_ALBERT = User.builder()
             .uuid(KnownUUIDs.USER_ALBERT_UUID)
             .firstName("Albert")
             .lastName("Einstein")
             .email("albert.einstein@example.com")
-            .passwordHash("$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW")
+            .passwordHash(PASSWORD_HASH)
             .role(UserRole.ADMIN)
             .build();
 
@@ -68,20 +90,25 @@ public class FactoryDefaults {
             .firstName("Nikola")
             .lastName("Tesla")
             .email("nikola.tesla@example.com")
-            .passwordHash("$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW")
+            .passwordHash(PASSWORD_HASH)
             .role(UserRole.USER)
             .build();
 
-    //== MEMBERSHIPS
+    // == MEMBERSHIPS
     // Changes: Migration_0001_Init, Migration_0004_ResourceDefinition
+    public static final int MASK_W = 2;
+    public static final int MASK_C = 4;
+    public static final int MASK_D = 8;
+    public static final int MASK_A = 16;
+
     public static final Membership MEMBERSHIP_OWNER = Membership.builder()
             .uuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID)
             .name("Owner")
             .permissions(List.of(
-                    new MembershipPermission(2, 'W'),
-                    new MembershipPermission(4, 'C'),
-                    new MembershipPermission(8, 'D'),
-                    new MembershipPermission(16, 'A')
+                    new MembershipPermission(MASK_W, 'W'),
+                    new MembershipPermission(MASK_C, 'C'),
+                    new MembershipPermission(MASK_D, 'D'),
+                    new MembershipPermission(MASK_A, 'A')
             ))
             .allowedEntities(List.of(
                     KnownUUIDs.RD_CATALOG_UUID,
@@ -94,19 +121,32 @@ public class FactoryDefaults {
             .uuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID)
             .name("Data Provider")
             .permissions(List.of(
-                    new MembershipPermission(4, 'C')
+                    new MembershipPermission(MASK_C, 'C')
             ))
             .allowedEntities(List.of(
                     KnownUUIDs.RD_CATALOG_UUID
             ))
             .build();
 
-    //== RESOURCE DEFINITIONS
+    // == RESOURCE DEFINITIONS
     // Changes: Migration_0002_CustomMetamodel, Migration_0004_ResourceDefinition, Migration_0010_ComplyFDPO
+    public static final String FDP_TITLE = "FAIR Data Point";
+    public static final String FDP_PREFIX = "";
+    public static final String CATALOG_TITLE = "Catalog";
+    public static final String CATALOG_PREFIX = "catalog";
+    public static final String DATASET_TITLE = "Dataset";
+    public static final String DATASET_PREFIX = "dataset";
+    public static final String DISTRIBUTION_TITLE = "Distribution";
+    public static final String DISTRIBUTION_PREFIX = "distribution";
+    public static final String DATASERVICE_TITLE = "Data Service";
+    public static final String DATASERVICE_PREFIX = "data-service";
+    public static final String METADATASERVICE_TITLE = "Metadata Service";
+    public static final String METADATASERVICE_PREFIX = "metadata-service";
+
     public static final ResourceDefinition RESOURCE_DEFINITION_FDP = ResourceDefinition.builder()
             .uuid(KnownUUIDs.RD_FDP_UUID)
-            .name("FAIR Data Point")
-            .urlPrefix("")
+            .name(FDP_TITLE)
+            .urlPrefix(FDP_PREFIX)
             .metadataSchemaUuids(List.of(
                     KnownUUIDs.SCHEMA_RESOURCE_UUID,
                     KnownUUIDs.SCHEMA_DATASERVICE_UUID,
@@ -131,8 +171,8 @@ public class FactoryDefaults {
 
     public static final ResourceDefinition RESOURCE_DEFINITION_CATALOG = ResourceDefinition.builder()
             .uuid(KnownUUIDs.RD_CATALOG_UUID)
-            .name("Catalog")
-            .urlPrefix("catalog")
+            .name(CATALOG_TITLE)
+            .urlPrefix(CATALOG_PREFIX)
             .metadataSchemaUuids(List.of(
                     KnownUUIDs.SCHEMA_RESOURCE_UUID,
                     KnownUUIDs.SCHEMA_CATALOG_UUID
@@ -155,8 +195,8 @@ public class FactoryDefaults {
 
     public static final ResourceDefinition RESOURCE_DEFINITION_DATASET = ResourceDefinition.builder()
             .uuid(KnownUUIDs.RD_DATASET_UUID)
-            .name("Dataset")
-            .urlPrefix("dataset")
+            .name(DATASET_TITLE)
+            .urlPrefix(DATASET_PREFIX)
             .metadataSchemaUuids(List.of(
                     KnownUUIDs.SCHEMA_RESOURCE_UUID,
                     KnownUUIDs.SCHEMA_DATASET_UUID
@@ -182,10 +222,10 @@ public class FactoryDefaults {
             .externalLinks(List.of())
             .build();
 
-    public static ResourceDefinition RESOURCE_DEFINITION_DISTRIBUTION = ResourceDefinition.builder()
+    public static final ResourceDefinition RESOURCE_DEFINITION_DISTRIBUTION = ResourceDefinition.builder()
             .uuid(KnownUUIDs.RD_DISTRIBUTION_UUID)
-            .name("Distribution")
-            .urlPrefix("distribution")
+            .name(DISTRIBUTION_TITLE)
+            .urlPrefix(DISTRIBUTION_PREFIX)
             .metadataSchemaUuids(List.of(
                     KnownUUIDs.SCHEMA_RESOURCE_UUID,
                     KnownUUIDs.SCHEMA_DISTRIBUTION_UUID
@@ -203,10 +243,11 @@ public class FactoryDefaults {
             ))
             .build();
 
-    //== SHAPES
-    //== Changes: Migration_0003_ShapeDefinition, Migration_0005_UpdateShapeDefinition, Migration_0006_ShapesSharing, Migration_0010_ComplyFDPO
+    // == SHAPES
+    // == Changes: Migration_0003_ShapeDefinition, Migration_0005_UpdateShapeDefinition,
+    //             Migration_0006_ShapesSharing, Migration_0010_ComplyFDPO
     public static MetadataSchema schemaResource() throws Exception {
-        String definition = loadClassResource("shape-resource.ttl", FactoryDefaults.class);
+        final String definition = loadClassResource("shape-resource.ttl", FactoryDefaults.class);
         return MetadataSchema.builder()
                 .uuid(KnownUUIDs.SCHEMA_RESOURCE_UUID)
                 .name("Resource")
@@ -219,193 +260,187 @@ public class FactoryDefaults {
     }
 
     public static MetadataSchema schemaFDP() throws Exception {
-        String definition = loadClassResource("shape-fdp.ttl", FactoryDefaults.class);
+        final String definition = loadClassResource("shape-fdp.ttl", FactoryDefaults.class);
         return MetadataSchema.builder()
                 .uuid(KnownUUIDs.SCHEMA_FDP_UUID)
-                .name("FAIR Data Point")
+                .name(FDP_TITLE)
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
-                .suggestedResourceName("FAIR Data Point")
-                .suggestedUrlPrefix("")
+                .suggestedResourceName(FDP_TITLE)
+                .suggestedUrlPrefix(FDP_PREFIX)
                 .build();
     }
 
     public static MetadataSchema schemaDataService() throws Exception {
-        String definition = loadClassResource("shape-data-service.ttl", FactoryDefaults.class);
+        final String definition = loadClassResource("shape-data-service.ttl", FactoryDefaults.class);
         return MetadataSchema.builder()
                 .uuid(KnownUUIDs.SCHEMA_DATASERVICE_UUID)
-                .name("Data Service")
+                .name(DATASERVICE_TITLE)
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
-                .suggestedResourceName("Data Service")
-                .suggestedUrlPrefix("data-service")
+                .suggestedResourceName(DATASERVICE_TITLE)
+                .suggestedUrlPrefix(DATASERVICE_PREFIX)
                 .build();
     }
 
     public static MetadataSchema schemaMetadataService() throws Exception {
-        String definition = loadClassResource("shape-metadata-service.ttl", FactoryDefaults.class);
+        final String definition = loadClassResource("shape-metadata-service.ttl", FactoryDefaults.class);
         return MetadataSchema.builder()
                 .uuid(KnownUUIDs.SCHEMA_METADATASERVICE_UUID)
-                .name("Metadata Service")
+                .name(METADATASERVICE_TITLE)
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
-                .suggestedResourceName("Metadata Service")
-                .suggestedUrlPrefix("metadata-service")
+                .suggestedResourceName(METADATASERVICE_TITLE)
+                .suggestedUrlPrefix(METADATASERVICE_PREFIX)
                 .build();
     }
 
     public static MetadataSchema schemaCatalog() throws Exception {
-        String definition = loadClassResource("shape-catalog.ttl", FactoryDefaults.class);
+        final String definition = loadClassResource("shape-catalog.ttl", FactoryDefaults.class);
         return MetadataSchema.builder()
                 .uuid(KnownUUIDs.SCHEMA_CATALOG_UUID)
-                .name("Catalog")
+                .name(CATALOG_TITLE)
                 .type(MetadataSchemaType.INTERNAL)
                 .published(false)
                 .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
-                .suggestedResourceName("Catalog")
-                .suggestedUrlPrefix("catalog")
+                .suggestedResourceName(CATALOG_TITLE)
+                .suggestedUrlPrefix(CATALOG_PREFIX)
                 .build();
     }
 
     public static MetadataSchema schemaDataset() throws Exception {
-        String definition = loadClassResource("shape-dataset.ttl", FactoryDefaults.class);
+        final String definition = loadClassResource("shape-dataset.ttl", FactoryDefaults.class);
         return MetadataSchema.builder()
                 .uuid(KnownUUIDs.SCHEMA_DATASET_UUID)
-                .name("Dataset")
+                .name(DATASET_TITLE)
                 .type(MetadataSchemaType.CUSTOM)
                 .published(false)
                 .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
-                .suggestedResourceName("Dataset")
-                .suggestedUrlPrefix("dataset")
+                .suggestedResourceName(DATASET_TITLE)
+                .suggestedUrlPrefix(DATASET_PREFIX)
                 .build();
     }
 
     public static MetadataSchema schemaDistribution() throws Exception {
-        String definition = loadClassResource("shape-distribution.ttl", FactoryDefaults.class);
+        final String definition = loadClassResource("shape-distribution.ttl", FactoryDefaults.class);
         return MetadataSchema.builder()
                 .uuid(KnownUUIDs.SCHEMA_DISTRIBUTION_UUID)
-                .name("Distribution")
+                .name(DISTRIBUTION_TITLE)
                 .type(MetadataSchemaType.CUSTOM)
                 .published(false)
                 .abstractSchema(false)
                 .definition(definition)
                 .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(definition))
-                .suggestedResourceName("Distribution")
-                .suggestedUrlPrefix("distribution")
+                .suggestedResourceName(DISTRIBUTION_TITLE)
+                .suggestedUrlPrefix(DISTRIBUTION_PREFIX)
                 .build();
     }
 
     // Repository ACL
     public static Document aclRepository(String persistentUrl) {
-        BasicBSONObject owner = new BasicBSONObject()
+        final BasicBSONObject owner = new BasicBSONObject()
                 .append("name", USER_ALBERT.getUuid())
                 .append("isPrincipal", true);
-        Document acl = new Document();
+        final Document acl = new Document();
         acl.append("className", "nl.dtls.fairdatapoint.entity.metadata.FDPMetadata");
         acl.append("instanceId", persistentUrl);
         acl.append("owner", owner);
         acl.append("inheritPermissions", true);
-        BasicBSONList permissions = new BasicBSONList();
+        final BasicBSONList permissions = new BasicBSONList();
         permissions.add(
                 new Document()
-                        .append("sid", owner)
-                        .append("permission", 2)
-                        .append("granting", true)
-                        .append("auditFailure", false)
-                        .append("auditSuccess", false));
+                        .append(FIELD_SID, owner)
+                        .append(FIELD_PERM, MASK_W)
+                        .append(FIELD_GRANT, true)
+                        .append(FIELD_AUDIT_FAILURE, false)
+                        .append(FIELD_AUDIT_SUCCESS, false));
         permissions.add(
                 new Document()
-                        .append("sid", owner)
-                        .append("permission", 4)
-                        .append("granting", true)
-                        .append("auditFailure", false)
-                        .append("auditSuccess", false));
+                        .append(FIELD_SID, owner)
+                        .append(FIELD_PERM, MASK_C)
+                        .append(FIELD_GRANT, true)
+                        .append(FIELD_AUDIT_FAILURE, false)
+                        .append(FIELD_AUDIT_SUCCESS, false));
         permissions.add(
                 new Document()
-                        .append("sid", owner)
-                        .append("permission", 8)
-                        .append("granting", true)
-                        .append("auditFailure", false)
-                        .append("auditSuccess", false));
+                        .append(FIELD_SID, owner)
+                        .append(FIELD_PERM, MASK_D)
+                        .append(FIELD_GRANT, true)
+                        .append(FIELD_AUDIT_FAILURE, false)
+                        .append(FIELD_AUDIT_SUCCESS, false));
         permissions.add(
                 new Document()
-                        .append("sid", owner)
-                        .append("permission", 16)
-                        .append("granting", true)
-                        .append("auditFailure", false)
-                        .append("auditSuccess", false));
+                        .append(FIELD_SID, owner)
+                        .append(FIELD_PERM, MASK_A)
+                        .append(FIELD_GRANT, true)
+                        .append(FIELD_AUDIT_FAILURE, false)
+                        .append(FIELD_AUDIT_SUCCESS, false));
         acl.append("permissions", permissions);
         acl.append("_class", "org.springframework.security.acls.domain.MongoAcl");
         return acl;
     }
 
     // Repository RDF statements
-    private static final String LIPSUM_TEXT = "Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec " +
-            "ultricies augue turpis sed velit. Donec id consectetur ligula. Suspendisse pharetra egestas " +
-            "massa, vel varius leo viverra at. Donec scelerisque id ipsum id semper. Maecenas facilisis augue" +
-            " vel justo molestie aliquet. Maecenas sed mattis lacus, sed viverra risus. Donec iaculis quis " +
-            "lacus vitae scelerisque. Nullam fermentum lectus nisi, id vulputate nisi congue nec. Morbi " +
-            "fermentum justo at justo bibendum, at tempus ipsum tempor. Donec facilisis nibh sed lectus " +
-            "blandit venenatis. Cras ullamcorper, justo vitae feugiat commodo, orci metus suscipit purus, " +
-            "quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum " +
-            "euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at.";
 
-    public static List<Statement> repositoryStatements(String persistentUrl, IRI license, IRI language, String accessRightsDescription) {
-        List<Statement> s = new ArrayList<>();
-        IRI baseUrl = i(persistentUrl);
+    public static List<Statement> repositoryStatements(String persistentUrl, IRI license,
+                                                       IRI language, String accessRightsDescription) {
+        final List<Statement> s = new ArrayList<>();
+        final IRI baseUrl = i(persistentUrl);
         FactoryDefaults.add(s, RDF.TYPE, R3D.REPOSITORY, baseUrl);
         FactoryDefaults.add(s, RDF.TYPE, i("http://www.w3.org/ns/dcat#Resource"), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.TITLE, l("My FAIR Data Point"), baseUrl);
-        FactoryDefaults.add(s, RDFS.LABEL, l("My FAIR Data Point"), baseUrl);
+        FactoryDefaults.add(s, DCTERMS.TITLE, l(DEFAULT_FDP_TITLE), baseUrl);
+        FactoryDefaults.add(s, RDFS.LABEL, l(DEFAULT_FDP_TITLE), baseUrl);
         FactoryDefaults.add(s, DCTERMS.HAS_VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(LIPSUM_TEXT), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.CONFORMS_TO, i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"), baseUrl);
+        FactoryDefaults.add(s, DCTERMS.CONFORMS_TO,
+                i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
         // Identifier
-        IRI identifierIri = i(persistentUrl + "#identifier");
+        final IRI identifierIri = i(persistentUrl + SUFFIX_IDENTIFIER);
         FactoryDefaults.add(s, FDP.METADATAIDENTIFIER, identifierIri, baseUrl);
         FactoryDefaults.add(s, identifierIri, RDF.TYPE, DATACITE.IDENTIFIER, baseUrl);
         FactoryDefaults.add(s, identifierIri, DCTERMS.IDENTIFIER, l(persistentUrl), baseUrl);
         // Repository Identifier
         FactoryDefaults.add(s, R3D.REPOSITORYIDENTIFIER, identifierIri, baseUrl);
         // Access Rights
-        IRI arIri = i(persistentUrl + "#accessRights");
+        final IRI arIri = i(persistentUrl + SUFFIX_ACCESS_RIGHTS);
         FactoryDefaults.add(s, DCTERMS.ACCESS_RIGHTS, arIri, baseUrl);
         FactoryDefaults.add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT, baseUrl);
         FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
         // Publisher
-        IRI publisherIri = i(persistentUrl + "#publisher");
+        final IRI publisherIri = i(persistentUrl + SUFFIX_PUBLISHER);
         FactoryDefaults.add(s, DCTERMS.PUBLISHER, publisherIri, baseUrl);
         FactoryDefaults.add(s, publisherIri, RDF.TYPE, FOAF.AGENT, baseUrl);
-        FactoryDefaults.add(s, publisherIri, FOAF.NAME, l("Default Publisher"), baseUrl);
+        FactoryDefaults.add(s, publisherIri, FOAF.NAME, l(DEFAULT_PUBLISHER), baseUrl);
         return s;
     }
 
-    public static List<Statement> fdpStatements(String persistentUrl, IRI license, IRI language, String accessRightsDescription) {
-        List<Statement> s = new ArrayList<>();
-        IRI baseUrl = i(persistentUrl);
+    public static List<Statement> fdpStatements(String persistentUrl, IRI license,
+                                                IRI language, String accessRightsDescription) {
+        final List<Statement> s = new ArrayList<>();
+        final IRI baseUrl = i(persistentUrl);
         FactoryDefaults.add(s, RDF.TYPE, FDP.FAIRDATAPOINT, baseUrl);
         FactoryDefaults.add(s, RDF.TYPE, FDP.METADATASERVICE, baseUrl);
         FactoryDefaults.add(s, RDF.TYPE, DCAT.DATA_SERVICE, baseUrl);
         FactoryDefaults.add(s, RDF.TYPE, DCAT.RESOURCE, baseUrl);
-        FactoryDefaults.add(s, DCTERMS.TITLE, l("My FAIR Data Point"), baseUrl);
-        FactoryDefaults.add(s, RDFS.LABEL, l("My FAIR Data Point"), baseUrl);
+        FactoryDefaults.add(s, DCTERMS.TITLE, l(DEFAULT_FDP_TITLE), baseUrl);
+        FactoryDefaults.add(s, RDFS.LABEL, l(DEFAULT_FDP_TITLE), baseUrl);
         FactoryDefaults.add(s, DCTERMS.HAS_VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
@@ -413,20 +448,20 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(LIPSUM_TEXT), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
         // Identifier
-        IRI identifierIri = i(persistentUrl + "#identifier");
+        final IRI identifierIri = i(persistentUrl + SUFFIX_IDENTIFIER);
         FactoryDefaults.add(s, FDP.METADATAIDENTIFIER, identifierIri, baseUrl);
         FactoryDefaults.add(s, identifierIri, RDF.TYPE, DATACITE.IDENTIFIER, baseUrl);
         FactoryDefaults.add(s, identifierIri, DCTERMS.IDENTIFIER, l(persistentUrl), baseUrl);
         // Access Rights
-        IRI arIri = i(persistentUrl + "#accessRights");
+        final IRI arIri = i(persistentUrl + SUFFIX_ACCESS_RIGHTS);
         FactoryDefaults.add(s, DCTERMS.ACCESS_RIGHTS, arIri, baseUrl);
         FactoryDefaults.add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT, baseUrl);
         FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
         // Publisher
-        IRI publisherIri = i(persistentUrl + "#publisher");
+        final IRI publisherIri = i(persistentUrl + SUFFIX_PUBLISHER);
         FactoryDefaults.add(s, DCTERMS.PUBLISHER, publisherIri, baseUrl);
         FactoryDefaults.add(s, publisherIri, RDF.TYPE, FOAF.AGENT, baseUrl);
-        FactoryDefaults.add(s, publisherIri, FOAF.NAME, l("Default Publisher"), baseUrl);
+        FactoryDefaults.add(s, publisherIri, FOAF.NAME, l(DEFAULT_PUBLISHER), baseUrl);
         return s;
     }
 
@@ -437,11 +472,13 @@ public class FactoryDefaults {
                 .build();
     }
 
-    private static void add(List<Statement> statements, IRI predicate, org.eclipse.rdf4j.model.Value object, IRI base) {
+    private static void add(List<Statement> statements, IRI predicate,
+                            org.eclipse.rdf4j.model.Value object, IRI base) {
         statements.add(s(base, predicate, object, base));
     }
 
-    private static void add(List<Statement> statements, IRI subject, IRI predicate, org.eclipse.rdf4j.model.Value object, IRI base) {
+    private static void add(List<Statement> statements, IRI subject, IRI predicate,
+                            org.eclipse.rdf4j.model.Value object, IRI base) {
         statements.add(s(subject, predicate, object, base));
     }
 }

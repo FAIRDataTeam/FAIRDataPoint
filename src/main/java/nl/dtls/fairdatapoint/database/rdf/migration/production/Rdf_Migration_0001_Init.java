@@ -25,22 +25,11 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.service.reset.FactoryDefaults;
-import nl.dtls.fairdatapoint.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
-import nl.dtls.fairdatapoint.vocabulary.Sio;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
 import nl.dtls.rdf.migration.runner.RdfProductionMigration;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.bson.BasicBSONObject;
 import org.bson.Document;
-import org.bson.types.BasicBSONList;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.eclipse.rdf4j.model.vocabulary.FOAF;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -50,13 +39,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 
 @RdfMigrationAnnotation(
         number = 1,
@@ -67,7 +50,7 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
     @Autowired
-    protected Repository repository;
+    private Repository repository;
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -92,20 +75,21 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
     private void createRepositoryInTripleStore() {
         try (RepositoryConnection conn = repository.getConnection()) {
-            List<Statement> s = FactoryDefaults.repositoryStatements(
+            final List<Statement> statements = FactoryDefaults.repositoryStatements(
                     persistentUrl,
                     license,
                     language,
                     accessRightsDescription
             );
-            conn.add(s);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
+            conn.add(statements);
+        }
+        catch (RepositoryException exception) {
+            log.error(exception.getMessage(), exception);
         }
     }
 
     private void storePermissionForRepository() {
-        MongoCollection<Document> aclCol = mongoTemplate.getCollection("ACL");
+        final MongoCollection<Document> aclCol = mongoTemplate.getCollection("ACL");
         aclCol.insertOne(repositoryPermission());
     }
 

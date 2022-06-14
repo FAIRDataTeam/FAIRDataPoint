@@ -52,11 +52,14 @@ public class AppInfoContributor implements InfoContributor {
     }
 
     public String getFdpVersion() {
+        return format("%s~%s", getFdpVersionTag(), commitShort);
+    }
+
+    private String getFdpVersionTag() {
         if (tag == null || tag.isEmpty()) {
-            return format("%s~%s", branch, commitShort);
-        } else {
-            return format("%s~%s", tag, commitShort);
+            return branch;
         }
+        return tag;
     }
 
 }

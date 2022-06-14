@@ -53,17 +53,42 @@ public class MetadataSchemaValidator {
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
 
-
     private void validateShacl(String shaclDefinition) {
         try {
             RdfIOUtil.read(shaclDefinition, "");
-        } catch (ValidationException e) {
+        }
+        catch (ValidationException exception) {
             throw new ValidationException("Unable to read SHACL definition");
         }
     }
 
-    public void validate(MetadataSchema metadataSchema) {
-        validate(metadataSchema, null);
+    public void validateNotUsed(String uuid) {
+        final List<ResourceDefinition> resourceDefinitions =
+                resourceDefinitionRepository.findByMetadataSchemaUuidsIsContaining(uuid);
+        if (!resourceDefinitions.isEmpty()) {
+            throw new ValidationException(
+                    format("Schema is used in %d resource definitions",
+                            resourceDefinitions.size())
+            );
+        }
+        final List<MetadataSchema> children =
+                metadataSchemaRepository.findAllByExtendSchemasContains(uuid);
+        if (!children.isEmpty()) {
+            throw new ValidationException(
+                    format("Schema is used in %d other schemas", children.size())
+            );
+        }
+    }
+
+    public void validateNoExtendsCycle(String uuid, List<String> extendSchemaUuids) {
+        if (extendSchemaUuids.contains(uuid)) {
+            throw new ValidationException("Extends-cycle detected for the metadata schema");
+        }
+        extendSchemaUuids.forEach(schemaUuid -> {
+            final Optional<MetadataSchema> oSchema =
+                    metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid);
+            oSchema.ifPresent(schema -> validateNoExtendsCycle(uuid, schema.getExtendSchemas()));
+        });
     }
 
     public void validate(MetadataSchema newVersion, MetadataSchema previousVersion) {
@@ -80,25 +105,8 @@ public class MetadataSchemaValidator {
         validateShacl(newVersion.getDefinition());
     }
 
-    public void validateNotUsed(String uuid) {
-        List<ResourceDefinition> resourceDefinitions = resourceDefinitionRepository.findByMetadataSchemaUuidsIsContaining(uuid);
-        if (!resourceDefinitions.isEmpty()) {
-            throw new ValidationException(format("Schema is used in %d resource definitions", resourceDefinitions.size()));
-        }
-        List<MetadataSchema> children = metadataSchemaRepository.findAllByExtendSchemasContains(uuid);
-        if (!children.isEmpty()) {
-            throw new ValidationException(format("Schema is used in %d other schemas", children.size()));
-        }
-    }
-
-    public void validateNoExtendsCycle(String uuid, List<String> extendSchemaUuids) {
-        if (extendSchemaUuids.contains(uuid)) {
-            throw new ValidationException("Extends-cycle detected for the metadata schema");
-        }
-        extendSchemaUuids.forEach(schemaUuid -> {
-            Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid);
-            oSchema.ifPresent(schema -> validateNoExtendsCycle(uuid, schema.getExtendSchemas()));
-        });
+    public void validate(MetadataSchema metadataSchema) {
+        validate(metadataSchema, null);
     }
 
     public void validate(MetadataSchemaVersionDTO reqDto) {
@@ -112,16 +120,19 @@ public class MetadataSchemaValidator {
     }
 
     private List<String> getMissingSchemaUuids(List<String> schemasUuids) {
-        Set<String> existingUuids = metadataSchemaRepository
+        final Set<String> existingUuids = metadataSchemaRepository
                 .findAllByLatestIsTrue()
                 .stream()
                 .map(MetadataSchema::getUuid)
                 .collect(Collectors.toSet());
-        return schemasUuids.stream().filter(schemaUuid -> !existingUuids.contains(schemaUuid)).toList();
+        return schemasUuids
+                .stream()
+                .filter(schemaUuid -> !existingUuids.contains(schemaUuid))
+                .toList();
     }
 
     public void validateAllExist(List<String> schemasUuids) {
-        List<String> missing = getMissingSchemaUuids(schemasUuids);
+        final List<String> missing = getMissingSchemaUuids(schemasUuids);
         if (!missing.isEmpty()) {
             throw new ValidationException(format("Metadata schemas not found: %s", missing));
         }

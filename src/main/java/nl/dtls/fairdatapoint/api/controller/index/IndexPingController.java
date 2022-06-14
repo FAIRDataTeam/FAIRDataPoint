@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
@@ -35,8 +36,6 @@ import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,10 +46,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Tag(name = "Index")
+@Slf4j
 @RestController
 @RequestMapping("/")
 public class IndexPingController {
-    private static final Logger logger = LoggerFactory.getLogger(IndexPingController.class);
 
     @Autowired
     private EventService eventService;
@@ -60,19 +59,21 @@ public class IndexPingController {
 
     @Autowired
     private HarvesterService harvesterService;
-    
+
     @Autowired
     private UtilityService utilityService;
 
     @Operation(
-            description = "Inform about running FAIR Data Point. It is expected to send pings regularly (at least weekly). There is a rate limit set both per single IP within a period of time and per URL in message.",
+            description = "Inform about running FAIR Data Point. It is expected to "
+                    + "send pings regularly (at least weekly). There is a rate limit set "
+                    + "both per single IP within a period of time and per URL in message.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Ping payload with FAIR Data Point info",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
                             examples = {
-                                    @ExampleObject(value = "{\"clientUrl\": \"https://example.com\"}")
+                                @ExampleObject(value = "{\"clientUrl\": \"https://example.com\"}")
                             },
                             schema = @Schema(
                                     type = "object",
@@ -82,17 +83,23 @@ public class IndexPingController {
                     )
             ),
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Ping accepted (no content)"),
-                    @ApiResponse(responseCode = "400", description = "Invalid ping format"),
-                    @ApiResponse(responseCode = "429", description = "Rate limit exceeded")
+                @ApiResponse(responseCode = "204", description = "Ping accepted (no content)"),
+                @ApiResponse(responseCode = "400", description = "Invalid ping format"),
+                @ApiResponse(responseCode = "429", description = "Rate limit exceeded")
             }
     )
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> receivePing(@RequestBody @Valid PingDTO reqDto, HttpServletRequest request) throws MetadataRepositoryException {
-        logger.info("Received ping from {}", utilityService.getRemoteAddr(request));
+    public ResponseEntity<Void> receivePing(
+            @RequestBody @Valid PingDTO reqDto,
+            HttpServletRequest request
+    ) throws MetadataRepositoryException {
+        log.info("Received ping from {}", utilityService.getRemoteAddr(request));
         final Event event = eventService.acceptIncomingPing(reqDto, request);
-        logger.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
+        log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
         harvesterService.harvest(reqDto.getClientUrl());
         webhookService.triggerWebhooks(event);

@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.entity.index.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class PingDeniedException extends IndexException {
+public class PingDeniedException extends AbstractIndexException {
 
     public PingDeniedException(String clientUrl) {
         super("Client URL is denied: " + clientUrl, HttpStatus.FORBIDDEN);

@@ -46,13 +46,16 @@ public class ResourceDefinitionValidator {
 
     public void validate(ResourceDefinition reqDto) throws BindException {
         // Check uniqueness
-        Optional<ResourceDefinition> oRdByName = resourceDefinitionRepository.findByName(reqDto.getName());
-        if (oRdByName.isPresent() && !oRdByName.get().getUuid().equals(reqDto.getUuid())) {
+        final Optional<ResourceDefinition> resourceDefinitionByName =
+                resourceDefinitionRepository.findByName(reqDto.getName());
+        if (resourceDefinitionByName.isPresent()
+                && !resourceDefinitionByName.get().getUuid().equals(reqDto.getUuid())) {
             uniquenessValidationFailed("name", reqDto);
         }
-        Optional<ResourceDefinition> oRdByUrlPrefix =
+        final Optional<ResourceDefinition> resourceDefinitionByPrefix =
                 resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix());
-        if (oRdByUrlPrefix.isPresent() && !oRdByUrlPrefix.get().getUuid().equals(reqDto.getUuid())) {
+        if (resourceDefinitionByPrefix.isPresent()
+                && !resourceDefinitionByPrefix.get().getUuid().equals(reqDto.getUuid())) {
             uniquenessValidationFailed("urlPrefix", reqDto);
         }
 
@@ -72,14 +75,16 @@ public class ResourceDefinitionValidator {
         validateDependencyCycles(reqDto, reqDto.getChildren());
     }
 
-    private void validateDependencyCycles(ResourceDefinition reqDto, List<ResourceDefinitionChild> children) {
+    private void validateDependencyCycles(
+            ResourceDefinition reqDto, List<ResourceDefinitionChild> children
+    ) {
         for (ResourceDefinitionChild child : children) {
-            String childUuid = child.getResourceDefinitionUuid();
+            final String childUuid = child.getResourceDefinitionUuid();
             if (reqDto.getUuid().equals(childUuid)) {
                 throw new ValidationException("Detect dependency cycle through child");
             }
 
-            ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childUuid);
+            final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childUuid);
             if (rdChild.getChildren().isEmpty()) {
                 return;
             }

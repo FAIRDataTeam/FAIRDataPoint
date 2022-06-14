@@ -37,19 +37,21 @@ import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0005_UpdateShapeDefinition {
 
+    private static final String FIELD_UUID = "uuid";
+
     @ChangeSet(order = "0005", id = "Migration_0005_UpdateShapeDefinition", author = "migrationBot")
-    public void run(MongoDatabase db) throws Exception {
-        addShapeDefinitions(db);
+    public void run(MongoDatabase database) throws Exception {
+        addShapeDefinitions(database);
     }
 
-    private void addShapeDefinitions(MongoDatabase db) throws Exception {
-        MongoCollection<Document> shapeCol = db.getCollection("shape");
+    private void addShapeDefinitions(MongoDatabase database) throws Exception {
+        final MongoCollection<Document> shapeCol = database.getCollection("shape");
 
-        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SCHEMA_RESOURCE_UUID));
-        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SCHEMA_REPOSITORY_UUID));
-        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SCHEMA_CATALOG_UUID));
-        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SCHEMA_DATASET_UUID));
-        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SCHEMA_DISTRIBUTION_UUID));
+        shapeCol.deleteOne(new Document(FIELD_UUID, KnownUUIDs.SCHEMA_RESOURCE_UUID));
+        shapeCol.deleteOne(new Document(FIELD_UUID, KnownUUIDs.SCHEMA_REPOSITORY_UUID));
+        shapeCol.deleteOne(new Document(FIELD_UUID, KnownUUIDs.SCHEMA_CATALOG_UUID));
+        shapeCol.deleteOne(new Document(FIELD_UUID, KnownUUIDs.SCHEMA_DATASET_UUID));
+        shapeCol.deleteOne(new Document(FIELD_UUID, KnownUUIDs.SCHEMA_DISTRIBUTION_UUID));
 
         shapeCol.insertOne(resourceDefinition());
         shapeCol.insertOne(repositoryDefinition());
@@ -59,59 +61,34 @@ public class Migration_0005_UpdateShapeDefinition {
     }
 
     private Document resourceDefinition() throws Exception {
-        String shaclDefinition = loadClassResource("0005_shape-resource.ttl", getClass());
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SCHEMA_RESOURCE_UUID);
-        definition.append("name", "Resource");
-        definition.append("type", "INTERNAL");
-        definition.append("definition", shaclDefinition);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
-        return definition;
+        return createShape("0005_shape-resource.ttl", KnownUUIDs.SCHEMA_RESOURCE_UUID, "Resource");
     }
 
-
     private Document repositoryDefinition() throws Exception {
-        String shaclDefinition = loadClassResource("0005_shape-repository.ttl", getClass());
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SCHEMA_REPOSITORY_UUID);
-        definition.append("name", "Repository");
-        definition.append("type", "INTERNAL");
-        definition.append("definition", shaclDefinition);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
-        return definition;
+        return createShape("0005_shape-repository.ttl", KnownUUIDs.SCHEMA_REPOSITORY_UUID, "Repository");
     }
 
     private Document catalogDefinition() throws Exception {
-        String shaclDefinition = loadClassResource("0005_shape-catalog.ttl", getClass());
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SCHEMA_CATALOG_UUID);
-        definition.append("name", "Catalog");
-        definition.append("type", "INTERNAL");
-        definition.append("definition", shaclDefinition);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
-        return definition;
+        return createShape("0005_shape-catalog.ttl", KnownUUIDs.SCHEMA_CATALOG_UUID, "Catalog");
     }
 
     private Document datasetDefinition() throws Exception {
-        String shaclDefinition = loadClassResource("0005_shape-dataset.ttl", getClass());
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SCHEMA_DATASET_UUID);
-        definition.append("name", "Dataset");
-        definition.append("type", "INTERNAL");
-        definition.append("definition", shaclDefinition);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
-        return definition;
+        return createShape("0005_shape-dataset.ttl", KnownUUIDs.SCHEMA_DATASET_UUID, "Dataset");
     }
 
     private Document distributionDefinition() throws Exception {
-        String shaclDefinition = loadClassResource("0005_shape-distribution.ttl", getClass());
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SCHEMA_DISTRIBUTION_UUID);
-        definition.append("name", "Distribution");
-        definition.append("type", "INTERNAL");
-        definition.append("definition", shaclDefinition);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
-        return definition;
+        return createShape("0005_shape-distribution.ttl", KnownUUIDs.SCHEMA_DISTRIBUTION_UUID, "Distribution");
+    }
+
+    private Document createShape(String filename, String uuid, String name) throws Exception {
+        final String shaclDefinition = loadClassResource(filename, getClass());
+        final Document shape = new Document();
+        shape.append(FIELD_UUID, uuid);
+        shape.append("name", name);
+        shape.append("type", "INTERNAL");
+        shape.append("definition", shaclDefinition);
+        shape.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
+        return shape;
     }
 
 }

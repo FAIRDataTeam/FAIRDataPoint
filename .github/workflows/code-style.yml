@@ -1,0 +1,88 @@
+name: "Code Style"
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  checkstyle:
+    name: Checkstyle
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_DISTRIBUTION: temurin
+      JAVA_VERSION: 17
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
+
+      - name: Verify Maven and Java
+        run: |
+          mvn --version
+
+      - name: Run Checkstyle
+        run: |
+          mvn -B checkstyle:checkstyle
+
+  spotbugs:
+    name: SpotBugs
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_DISTRIBUTION: temurin
+      JAVA_VERSION: 17
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
+
+      - name: Verify Maven and Java
+        run: |
+          mvn --version
+
+      - name: Run SpotBugs
+        run: |
+          mvn -B spotbugs:check
+
+  license-head:
+    name: License Headers
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_DISTRIBUTION: temurin
+      JAVA_VERSION: 17
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
+
+      - name: Verify Maven and Java
+        run: |
+          mvn --version
+
+      - name: Check license
+        run: |
+          mvn -B license:check

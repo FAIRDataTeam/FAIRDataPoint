@@ -28,7 +28,7 @@ import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
 import nl.dtls.rdf.migration.runner.RdfProductionMigration;
-import org.eclipse.rdf4j.common.iteration.Iterations;
+import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service;
 public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration {
 
     @Autowired
-    protected Repository repository;
+    private Repository repository;
 
     @Autowired
     private MetadataRepository metadataRepository;
@@ -55,13 +55,17 @@ public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration
 
     private void createRepositoryInTripleStore() {
         try (RepositoryConnection conn = repository.getConnection()) {
-            Iterations.asList(conn.getContextIDs())
-                    .forEach(iri ->
-                            metadataRepository.save(new Metadata(null, iri.stringValue(), MetadataState.PUBLISHED))
-                    );
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
+            conn.getContextIDs()
+                    .stream()
+                    .forEach(this::saveMetadataForResource);
         }
+        catch (RepositoryException exception) {
+            log.error(exception.getMessage(), exception);
+        }
+    }
+
+    private void saveMetadataForResource(Resource resource) {
+        metadataRepository.save(new Metadata(null, resource.stringValue(), MetadataState.PUBLISHED));
     }
 
 }

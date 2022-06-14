@@ -22,7 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.index.entry;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
@@ -45,14 +45,13 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO.*;
 
+@Slf4j
 @Service
 @Validated
-@Log4j2
 public class IndexEntryService {
 
     @Autowired
@@ -74,20 +73,23 @@ public class IndexEntryService {
 
     @RequiredEnabledIndexFeature
     public List<IndexEntryDTO> getAllEntriesAsDTOs() {
-        Instant validThreshold = getValidThreshold();
-        return StreamSupport.stream(getAllEntries().spliterator(), true).map(it -> mapper.toDTO(it, validThreshold)).collect(Collectors.toList());
+        final Instant validThreshold = getValidThreshold();
+        return StreamSupport
+                .stream(getAllEntries().spliterator(), true)
+                .map(entry -> mapper.toDTO(entry, validThreshold))
+                .toList();
     }
 
     @RequiredEnabledIndexFeature
     public Page<IndexEntry> getEntriesPage(Pageable pageable, String state) {
-        Instant validThreshold = getValidThreshold();
+        final Instant validThreshold = getValidThreshold();
         if (state.equalsIgnoreCase(ACTIVE.name())) {
-            return repository.findAllByStateEqualsAndLastRetrievalTimeAfter(pageable, IndexEntryState.Valid,
-                    validThreshold);
+            return repository.findAllByStateEqualsAndLastRetrievalTimeAfter(pageable,
+                    IndexEntryState.Valid, validThreshold);
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.INACTIVE.name())) {
-            return repository.findAllByStateEqualsAndLastRetrievalTimeBefore(pageable, IndexEntryState.Valid,
-                    validThreshold);
+            return repository.findAllByStateEqualsAndLastRetrievalTimeBefore(pageable,
+                    IndexEntryState.Valid, validThreshold);
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.UNREACHABLE.name())) {
             return repository.findAllByStateEquals(pageable, IndexEntryState.Unreachable);
@@ -103,8 +105,9 @@ public class IndexEntryService {
 
     @RequiredEnabledIndexFeature
     public Page<IndexEntryDTO> getEntriesPageDTOs(Pageable pageable, String state) {
-        Instant validThreshold = getValidThreshold();
-        return getEntriesPage(pageable, state).map(it -> mapper.toDTO(it, validThreshold));
+        final Instant validThreshold = getValidThreshold();
+        return getEntriesPage(pageable, state)
+                .map(entry -> mapper.toDTO(entry, validThreshold));
     }
 
     @RequiredEnabledIndexFeature
@@ -114,36 +117,45 @@ public class IndexEntryService {
 
     @RequiredEnabledIndexFeature
     public Optional<IndexEntryDetailDTO> getEntryDetailDTO(String uuid) {
-        Instant validThreshold = getValidThreshold();
-        return getEntry(uuid).map(entry -> mapper.toDetailDTO(entry, eventService.getEvents(entry.getUuid()), validThreshold));
+        final Instant validThreshold = getValidThreshold();
+        return getEntry(uuid)
+                .map(entry -> {
+                    return mapper.toDetailDTO(
+                            entry, eventService.getEvents(entry.getUuid()), validThreshold
+                    );
+                });
     }
 
     @RequiredEnabledIndexFeature
     public IndexEntryInfoDTO getEntriesInfo() {
-        Instant validThreshold = getValidThreshold();
-        Map<String, Long> entriesCount = new HashMap<>();
+        final Instant validThreshold = getValidThreshold();
+        final Map<String, Long> entriesCount = new HashMap<>();
         entriesCount.put("ALL", repository.count());
         entriesCount.put(UNKNOWN.name(), repository.countAllByStateEquals(IndexEntryState.Unknown));
         entriesCount.put(ACTIVE.name(),
-                repository.countAllByStateEqualsAndLastRetrievalTimeAfter(IndexEntryState.Valid, validThreshold));
+                repository.countAllByStateEqualsAndLastRetrievalTimeAfter(
+                        IndexEntryState.Valid, validThreshold));
         entriesCount.put(INACTIVE.name(),
-                repository.countAllByStateEqualsAndLastRetrievalTimeBefore(IndexEntryState.Valid, validThreshold));
-        entriesCount.put(UNREACHABLE.name(), repository.countAllByStateEquals(IndexEntryState.Unreachable));
+                repository.countAllByStateEqualsAndLastRetrievalTimeBefore(
+                        IndexEntryState.Valid, validThreshold));
+        entriesCount.put(UNREACHABLE.name(), repository.countAllByStateEquals(
+                IndexEntryState.Unreachable));
         entriesCount.put(INVALID.name(), repository.countAllByStateEquals(IndexEntryState.Invalid));
         return new IndexEntryInfoDTO(entriesCount);
     }
 
     @RequiredEnabledIndexFeature
     public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
-        var clientUrl = pingDTO.getClientUrl();
-        var entity = repository.findByClientUrl(clientUrl);
-        var now = Instant.now();
+        final String clientUrl = pingDTO.getClientUrl();
+        final Optional<IndexEntry> entity = repository.findByClientUrl(clientUrl);
+        final Instant now = Instant.now();
 
         final IndexEntry entry;
         if (entity.isPresent()) {
             log.info("Updating timestamp of existing entry {}", clientUrl);
             entry = entity.orElseThrow();
-        } else {
+        }
+        else {
             log.info("Storing new entry {}", clientUrl);
             entry = new IndexEntry();
             entry.setUuid(UUID.randomUUID().toString());
@@ -158,11 +170,13 @@ public class IndexEntryService {
     @RequiredEnabledIndexFeature
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteEntry(String uuid) {
-        IndexEntry entry = repository.findByUuid(uuid).orElseThrow(() -> new ResourceNotFoundException("Index entry not found"));
+        final IndexEntry entry = repository.findByUuid(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException("Index entry not found"));
         repository.delete(entry);
     }
 
     private Instant getValidThreshold() {
-        return Instant.now().minus(indexSettingsService.getOrDefaults().getPing().getValidDuration());
+        return Instant.now()
+                .minus(indexSettingsService.getOrDefaults().getPing().getValidDuration());
     }
 }

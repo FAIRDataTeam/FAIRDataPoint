@@ -42,7 +42,7 @@ import java.util.UUID;
 @Document(collection = "event")
 public class Event {
     @Id
-    protected ObjectId id;
+    private ObjectId id;
     @NotNull
     private UUID uuid = UUID.randomUUID();
     @NotNull
@@ -72,29 +72,14 @@ public class Event {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Instant finished;
 
-    public boolean isExecuted() {
-        return executed != null;
-    }
-
-    public void execute() {
-        executed = Instant.now();
-    }
-
-    public boolean isFinished() {
-        return finished != null;
-    }
-
-    public void finish() {
-        finished = Instant.now();
-    }
-
     public Event(Integer version, IncomingPing incomingPing) {
         this.type = EventType.IncomingPing;
         this.version = version;
         this.incomingPing = incomingPing;
     }
 
-    public Event(Integer version, Event triggerEvent, IndexEntry relatedTo, MetadataRetrieval metadataRetrieval) {
+    public Event(Integer version, Event triggerEvent, IndexEntry relatedTo,
+                 MetadataRetrieval metadataRetrieval) {
         this.type = EventType.MetadataRetrieval;
         this.version = version;
         this.triggeredBy = triggerEvent;
@@ -120,5 +105,21 @@ public class Event {
         this.type = EventType.WebhookPing;
         this.version = version;
         this.webhookPing = webhookPing;
+    }
+
+    public boolean isExecuted() {
+        return executed != null;
+    }
+
+    public void execute() {
+        executed = Instant.now();
+    }
+
+    public boolean isFinished() {
+        return finished != null;
+    }
+
+    public void finish() {
+        finished = Instant.now();
     }
 }

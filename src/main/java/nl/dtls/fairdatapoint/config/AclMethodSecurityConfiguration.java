@@ -33,7 +33,7 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 public class AclMethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
     @Autowired
-    MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler;
+    private MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler;
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {

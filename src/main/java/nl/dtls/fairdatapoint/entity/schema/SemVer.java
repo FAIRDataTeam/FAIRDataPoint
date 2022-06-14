@@ -26,7 +26,7 @@ import lombok.*;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -44,12 +44,11 @@ public class SemVer implements Comparable<SemVer> {
 
     private int patch;
 
-    public String toString() {
-        return format("%d.%d.%d", major, minor, patch);
-    }
-
     public SemVer(String semverString) {
-        var parts = Arrays.stream(semverString.split("\\.")).map(Integer::parseInt).collect(Collectors.toList());
+        final List<Integer> parts = Arrays
+                .stream(semverString.split("\\."))
+                .map(Integer::parseInt)
+                .toList();
         major = parts.get(0);
         minor = parts.get(1);
         patch = parts.get(2);
@@ -68,5 +67,9 @@ public class SemVer implements Comparable<SemVer> {
 
     public boolean isSuccessor(SemVer version) {
         return compareTo(version) > 0;
+    }
+
+    public String toString() {
+        return format("%d.%d.%d", major, minor, patch);
     }
 }

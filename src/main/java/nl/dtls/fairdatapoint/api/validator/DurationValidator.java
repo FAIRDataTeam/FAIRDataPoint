@@ -27,8 +27,6 @@ import javax.validation.ConstraintValidatorContext;
 
 import java.time.Duration;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-
 public class DurationValidator implements ConstraintValidator<ValidDuration, String> {
 
     @Override
@@ -40,7 +38,8 @@ public class DurationValidator implements ConstraintValidator<ValidDuration, Str
         try {
             Duration.parse(text);
             return true;
-        } catch (Exception e) {
+        }
+        catch (Exception exception) {
             return false;
         }
     }

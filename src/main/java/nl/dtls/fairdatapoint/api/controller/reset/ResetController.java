@@ -46,7 +46,9 @@ public class ResetController {
     @PostMapping("/reset")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> postResetFactoryDefaults(@RequestBody @Valid ResetDTO reqDto) throws Exception {
+    public ResponseEntity<Void> postResetFactoryDefaults(
+            @RequestBody @Valid ResetDTO reqDto
+    ) throws Exception {
         resetService.resetToFactoryDefaults(reqDto);
         return ResponseEntity.noContent().build();
     }

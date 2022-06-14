@@ -43,9 +43,9 @@ public class ShaclValidator {
 
     public void validate(Model shacl, Model data, String baseUri) {
         // 1. Prepare repository
-        ShaclSail shaclSail = new ShaclSail(new MemoryStore());
+        final ShaclSail shaclSail = new ShaclSail(new MemoryStore());
         shaclSail.setRdfsSubClassReasoning(true);
-        SailRepository sailRepository = new SailRepository(shaclSail);
+        final SailRepository sailRepository = new SailRepository(shaclSail);
         sailRepository.init();
 
         try (SailRepositoryConnection connection = sailRepository.getConnection()) {
@@ -59,10 +59,12 @@ public class ShaclValidator {
             connection.add(new ArrayList<>(data), i(baseUri));
             connection.commit();
 
-        } catch (RepositoryException exception) {
-            Throwable cause = exception.getCause();
+        }
+        catch (RepositoryException exception) {
+            final Throwable cause = exception.getCause();
             if (cause instanceof ShaclSailValidationException) {
-                Model validationReportModel = ((ShaclSailValidationException) cause).validationReportAsModel();
+                final Model validationReportModel =
+                        ((ShaclSailValidationException) cause).validationReportAsModel();
                 throw new RdfValidationException(validationReportModel);
             }
             throw new ValidationException("Validation failed (unsupported exception)");
