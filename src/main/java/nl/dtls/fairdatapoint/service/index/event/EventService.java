@@ -24,11 +24,13 @@ package nl.dtls.fairdatapoint.service.index.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
+import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.entity.index.event.EventType;
 import nl.dtls.fairdatapoint.entity.index.exception.IncorrectPingFormatException;
@@ -36,17 +38,18 @@ import nl.dtls.fairdatapoint.entity.index.exception.PingDeniedException;
 import nl.dtls.fairdatapoint.entity.index.exception.RateLimitException;
 import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
 import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.Authentication;
@@ -57,10 +60,14 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class EventService {
-    private static final Logger logger = LoggerFactory.getLogger(EventService.class);
+
+    private static final int PAGE_SIZE = 10;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -95,140 +102,159 @@ public class EventService {
 
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
         // TODO: make events pagination in the future
-        return eventRepository.getAllByRelatedTo(indexEntry, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC,
-                "created")));
+        return eventRepository.getAllByRelatedTo(indexEntry,
+                PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "created")));
     }
 
     @RequiredEnabledIndexFeature
     public Iterable<Event> getEvents(String indexEntryUuid) {
-        return indexEntryService.getEntry(indexEntryUuid).map(this::getEvents).orElse(Collections.emptyList());
+        return indexEntryService
+                .getEntry(indexEntryUuid)
+                .map(this::getEvents).orElse(Collections.emptyList());
     }
 
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
-        var remoteAddr = utilityService.getRemoteAddr(request);
-        var pingSettings = indexSettingsService.getOrDefaults().getPing();
+        final String remoteAddr = utilityService.getRemoteAddr(request);
+        final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
 
         if (indexSettingsService.isPingDenied(reqDto)) {
-            logger.info("Received ping is denied");
+            log.info("Received ping is denied");
             throw new PingDeniedException(reqDto.getClientUrl());
         }
 
-        var rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
-        var previousPings = eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(remoteAddr,
-                rateLimitSince);
+        final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
+        final List<Event> previousPings =
+                eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
+                        remoteAddr, rateLimitSince
+                );
         if (previousPings.size() > pingSettings.getRateLimitHits()) {
-            logger.warn("Rate limit for PING reached by {}", remoteAddr);
+            log.warn("Rate limit for PING reached by {}", remoteAddr);
             throw new RateLimitException(String.format(
                     "Rate limit reached for %s (max. %d per %s) - PING ignored",
                     remoteAddr, pingSettings.getRateLimitHits(), pingSettings.getRateLimitDuration().toString())
             );
         }
 
-        var event = incomingPingUtils.prepareEvent(reqDto, request, remoteAddr);
+        final Event event = incomingPingUtils.prepareEvent(reqDto, request, remoteAddr);
         eventRepository.save(event);
         event.execute();
         try {
-            var indexEntry = indexEntryService.storeEntry(reqDto);
-            event.getIncomingPing().setNewEntry(indexEntry.getRegistrationTime().equals(indexEntry.getModificationTime()));
-            event.getIncomingPing().getExchange().getResponse().setCode(204);
+            final IndexEntry indexEntry = indexEntryService.storeEntry(reqDto);
+            event.getIncomingPing()
+                    .setNewEntry(indexEntry.getRegistrationTime().equals(indexEntry.getModificationTime()));
+            event.getIncomingPing().getExchange().getResponse()
+                    .setCode(HttpStatus.CREATED.value());
             event.setRelatedTo(indexEntry);
-            logger.info("Accepted incoming ping as a new event");
-        } catch (Exception e) {
-            var ex = new IncorrectPingFormatException("Could not parse PING: " + e.getMessage());
-            event.getIncomingPing().getExchange().getResponse().setCode(400);
-            event.getIncomingPing().getExchange().getResponse().setBody(objectMapper.writeValueAsString(ex.getErrorDTO()));
+            log.info("Accepted incoming ping as a new event");
+        }
+        catch (Exception exception) {
+            final IncorrectPingFormatException nextException =
+                    new IncorrectPingFormatException("Could not parse PING: " + exception.getMessage());
+            event.getIncomingPing().getExchange().getResponse()
+                    .setCode(HttpStatus.BAD_REQUEST.value());
+            event.getIncomingPing().getExchange().getResponse()
+                    .setBody(objectMapper.writeValueAsString(nextException.getErrorDTO()));
             event.setFinished(Instant.now());
             eventRepository.save(event);
-            logger.info("Incoming ping has incorrect format: {}", e.getMessage());
-            throw ex;
+            log.info("Incoming ping has incorrect format: {}", exception.getMessage());
+            throw nextException;
         }
         event.setFinished(Instant.now());
         return eventRepository.save(event);
     }
 
     private void processMetadataRetrieval(Event event) {
-        var retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
-        var clientUrl = event.getRelatedTo().getClientUrl();
+        final IndexSettingsRetrieval retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
+        final String clientUrl = event.getRelatedTo().getClientUrl();
         if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
             indexEntryRepository.save(event.getRelatedTo());
             eventRepository.save(event);
             event.execute();
 
-            logger.info("Retrieving metadata for {}", clientUrl);
+            log.info("Retrieving metadata for {}", clientUrl);
             MetadataRetrievalUtils.retrieveRepositoryMetadata(event, retrievalSettings.getTimeout());
-            Exchange ex = event.getMetadataRetrieval().getExchange();
-            if (ex.getState() == ExchangeState.Retrieved) {
+            final Exchange exchange = event.getMetadataRetrieval().getExchange();
+            if (exchange.getState() == ExchangeState.Retrieved) {
                 try {
-                    logger.info("Parsing metadata for {}", clientUrl);
-                    var metadata = MetadataRetrievalUtils.parseRepositoryMetadata(ex.getResponse().getBody());
+                    log.info("Parsing metadata for {}", clientUrl);
+                    final Optional<RepositoryMetadata> metadata =
+                            MetadataRetrievalUtils.parseRepositoryMetadata(exchange.getResponse().getBody());
                     if (metadata.isPresent()) {
                         event.getMetadataRetrieval().setMetadata(metadata.get());
                         event.getRelatedTo().setCurrentMetadata(metadata.get());
                         event.getRelatedTo().setState(IndexEntryState.Valid);
-                        logger.info("Storing metadata for {}", clientUrl);
+                        log.info("Storing metadata for {}", clientUrl);
                         indexEntryRepository.save(event.getRelatedTo());
-                    } else {
-                        logger.info("Repository not found in metadata for {}", clientUrl);
+                    }
+                    else {
+                        log.info("Repository not found in metadata for {}", clientUrl);
                         event.getRelatedTo().setState(IndexEntryState.Invalid);
                         event.getMetadataRetrieval().setError("Repository not found in metadata");
                     }
-                } catch (Exception e) {
-                    logger.info("Cannot parse metadata for {}", clientUrl);
+                }
+                catch (Exception exception) {
+                    log.info("Cannot parse metadata for {}", clientUrl);
                     event.getRelatedTo().setState(IndexEntryState.Invalid);
                     event.getMetadataRetrieval().setError("Cannot parse metadata");
                 }
-            } else {
-                event.getRelatedTo().setState(IndexEntryState.Unreachable);
-                logger.info("Cannot retrieve metadata for {}: {}", clientUrl, ex.getError());
             }
-        } else {
-            logger.info("Rate limit reached for {} (skipping metadata retrieval)", clientUrl);
+            else {
+                event.getRelatedTo().setState(IndexEntryState.Unreachable);
+                log.info("Cannot retrieve metadata for {}: {}", clientUrl, exchange.getError());
+            }
+        }
+        else {
+            log.info("Rate limit reached for {} (skipping metadata retrieval)", clientUrl);
             event.getMetadataRetrieval().setError("Rate limit reached (skipping)");
         }
         event.getRelatedTo().setLastRetrievalTime(Instant.now());
         event.finish();
-        event = eventRepository.save(event);
-        indexEntryRepository.save(event.getRelatedTo());
-        webhookService.triggerWebhooks(event);
+        final Event newEvent = eventRepository.save(event);
+        indexEntryRepository.save(newEvent.getRelatedTo());
+        webhookService.triggerWebhooks(newEvent);
     }
 
     @Async
     @RequiredEnabledIndexFeature
     public void triggerMetadataRetrieval(Event triggerEvent) {
-        logger.info("Initiating metadata retrieval triggered by {}", triggerEvent.getUuid());
-        Iterable<Event> events = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
+        log.info("Initiating metadata retrieval triggered by {}", triggerEvent.getUuid());
+        final Iterable<Event> events = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
         for (Event event : events) {
-            logger.info("Triggering metadata retrieval for {} as {}", event.getRelatedTo().getClientUrl(),
+            log.info("Triggering metadata retrieval for {} as {}", event.getRelatedTo().getClientUrl(),
                     event.getUuid());
             try {
                 processMetadataRetrieval(event);
-            } catch (Exception e) {
-                logger.error("Failed to retrieve metadata: {}", e.getMessage());
+            }
+            catch (Exception exception) {
+                log.error("Failed to retrieve metadata: {}", exception.getMessage());
             }
         }
-        logger.info("Finished metadata retrieval triggered by {}", triggerEvent.getUuid());
+        log.info("Finished metadata retrieval triggered by {}", triggerEvent.getUuid());
     }
 
     private void resumeUnfinishedEvents() {
-        logger.info("Resuming unfinished events");
+        log.info("Resuming unfinished events");
         for (Event event : eventRepository.getAllByFinishedIsNull()) {
-            logger.info("Resuming event {}", event.getUuid());
+            log.info("Resuming event {}", event.getUuid());
 
             try {
                 if (event.getType() == EventType.MetadataRetrieval) {
                     processMetadataRetrieval(event);
-                } else if (event.getType() == EventType.WebhookTrigger) {
-                    webhookService.processWebhookTrigger(event);
-                } else {
-                    logger.warn("Unknown event type {} ({})", event.getUuid(), event.getType());
                 }
-            } catch (Exception e) {
-                logger.error("Failed to resume event {}: {}", event.getUuid(), e.getMessage());
+                else if (event.getType() == EventType.WebhookTrigger) {
+                    webhookService.processWebhookTrigger(event);
+                }
+                else {
+                    log.warn("Unknown event type {} ({})", event.getUuid(), event.getType());
+                }
+            }
+            catch (Exception exception) {
+                log.error("Failed to resume event {}: {}", event.getUuid(), exception.getMessage());
             }
         }
-        logger.info("Finished unfinished events");
+        log.info("Finished unfinished events");
     }
 
     @PostConstruct
@@ -238,9 +264,11 @@ public class EventService {
 
     @RequiredEnabledIndexFeature
     public Event acceptAdminTrigger(HttpServletRequest request, PingDTO pingDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Event event = eventMapper.toAdminTriggerEvent(request, authentication, pingDTO.getClientUrl(), utilityService.getRemoteAddr(request));
-        IndexEntry entry = indexEntryService.storeEntry(pingDTO);
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Event event =
+                eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(),
+                        utilityService.getRemoteAddr(request));
+        final IndexEntry entry = indexEntryService.storeEntry(pingDTO);
         event.setRelatedTo(entry);
         event.finish();
         return eventRepository.save(event);
@@ -248,8 +276,10 @@ public class EventService {
 
     @RequiredEnabledIndexFeature
     public Event acceptAdminTriggerAll(HttpServletRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Event event = eventMapper.toAdminTriggerEvent(request, authentication, null, utilityService.getRemoteAddr(request));
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Event event =
+                eventMapper.toAdminTriggerEvent(authentication, null,
+                        utilityService.getRemoteAddr(request));
         event.finish();
         return eventRepository.save(event);
     }

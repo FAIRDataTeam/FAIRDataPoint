@@ -32,13 +32,12 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MetadataSchemaMapper {
 
     public MetadataSchemaDraft fromChangeDTO(MetadataSchemaChangeDTO dto, String uuid) {
-        Instant now = Instant.now();
+        final Instant now = Instant.now();
         return MetadataSchemaDraft.builder()
                 .uuid(uuid)
                 .name(dto.getName())
@@ -54,7 +53,9 @@ public class MetadataSchemaMapper {
                 .build();
     }
 
-    public MetadataSchemaDraft fromChangeDTO(MetadataSchemaChangeDTO dto, MetadataSchemaDraft draft) {
+    public MetadataSchemaDraft fromChangeDTO(
+            MetadataSchemaChangeDTO dto, MetadataSchemaDraft draft
+    ) {
         return
                 draft
                         .toBuilder()
@@ -63,13 +64,18 @@ public class MetadataSchemaMapper {
                         .description(dto.getDescription())
                         .definition(dto.getDefinition())
                         .extendSchemas(dto.getExtendsSchemaUuids())
-                        .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition()))
+                        .targetClasses(
+                                MetadataSchemaShaclUtils
+                                        .extractTargetClasses(dto.getDefinition())
+                        )
                         .suggestedResourceName(dto.getSuggestedResourceName())
                         .suggestedUrlPrefix(dto.getSuggestedUrlPrefix())
                         .build();
     }
 
-    public MetadataSchemaDraftDTO toDraftDTO(MetadataSchemaDraft draft, MetadataSchema lastVersion) {
+    public MetadataSchemaDraftDTO toDraftDTO(
+            MetadataSchemaDraft draft, MetadataSchema lastVersion
+    ) {
         return MetadataSchemaDraftDTO.builder()
                 .uuid(draft.getUuid())
                 .name(draft.getName())
@@ -119,7 +125,9 @@ public class MetadataSchemaMapper {
                 .build();
     }
 
-    public MetadataSchema fromReleaseDTO(MetadataSchemaReleaseDTO reqDto, MetadataSchemaDraft draft, String versionUuid) {
+    public MetadataSchema fromReleaseDTO(
+            MetadataSchemaReleaseDTO reqDto, MetadataSchemaDraft draft, String versionUuid
+    ) {
         return MetadataSchema.builder()
                 .uuid(draft.getUuid())
                 .versionUuid(versionUuid)
@@ -214,8 +222,10 @@ public class MetadataSchemaMapper {
                 .build();
     }
 
-    public MetadataSchemaVersionDTO toPublishedVersionDTO(MetadataSchema schema, String persistentUrl) {
-        MetadataSchemaVersionDTO dto = toVersionDTO(schema);
+    public MetadataSchemaVersionDTO toPublishedVersionDTO(
+            MetadataSchema schema, String persistentUrl
+    ) {
+        final MetadataSchemaVersionDTO dto = toVersionDTO(schema);
         if (dto.getOrigin() == null) {
             dto.setOrigin(persistentUrl);
         }
@@ -245,7 +255,9 @@ public class MetadataSchemaMapper {
                 .build();
     }
 
-    public MetadataSchema fromRemoteVersion(MetadataSchemaVersionDTO remoteVersion, MetadataSchema schema) {
+    public MetadataSchema fromRemoteVersion(
+            MetadataSchemaVersionDTO remoteVersion, MetadataSchema schema
+    ) {
         return schema.toBuilder()
                 .name(remoteVersion.getName())
                 .description(remoteVersion.getDescription())

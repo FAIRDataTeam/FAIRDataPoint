@@ -22,38 +22,37 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MembershipFixtures {
 
-    public static final MembershipPermission READ = new MembershipPermission(1 << 0, 'R'); // 1
-    public static final MembershipPermission WRITE = new MembershipPermission(1 << 1, 'W'); // 2
-    public static final MembershipPermission CREATE = new MembershipPermission(1 << 2, 'C'); // 4
-    public static final MembershipPermission DELETE = new MembershipPermission(1 << 3, 'D'); // 8
-    public static final MembershipPermission ADMINISTRATION = new MembershipPermission(1 << 4, 'A'); // 16
+    public static final MembershipPermission READ = new MembershipPermission(1, 'R');
+    public static final MembershipPermission WRITE = new MembershipPermission(2, 'W');
+    public static final MembershipPermission CREATE = new MembershipPermission(4, 'C');
+    public static final MembershipPermission DELETE = new MembershipPermission(8, 'D');
+    public static final MembershipPermission ADMINISTRATION = new MembershipPermission(16, 'A');
 
     public Membership owner() {
         return new Membership(
                 KnownUUIDs.MEMBERSHIP_OWNER_UUID,
                 "Owner",
-                new ArrayList<>() {{
-                    add(WRITE);
-                    add(DELETE);
-                    add(CREATE);
-                    add(ADMINISTRATION);
-                }},
-                new ArrayList<>() {{
-                    add(KnownUUIDs.RD_CATALOG_UUID);
-                    add(KnownUUIDs.RD_DATASET_UUID);
-                    add(KnownUUIDs.RD_DISTRIBUTION_UUID);
-                }}
+                List.of(
+                    WRITE,
+                    DELETE,
+                    CREATE,
+                    ADMINISTRATION
+                ),
+                List.of(
+                    KnownUUIDs.RD_CATALOG_UUID,
+                    KnownUUIDs.RD_DATASET_UUID,
+                    KnownUUIDs.RD_DISTRIBUTION_UUID
+                )
         );
     }
 
@@ -61,12 +60,8 @@ public class MembershipFixtures {
         return new Membership(
                 KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID,
                 "Data Provider",
-                new ArrayList<>() {{
-                    add(CREATE);
-                }},
-                new ArrayList<>() {{
-                    add(KnownUUIDs.RD_CATALOG_UUID);
-                }}
+                List.of(CREATE),
+                List.of(KnownUUIDs.RD_CATALOG_UUID)
         );
     }
 

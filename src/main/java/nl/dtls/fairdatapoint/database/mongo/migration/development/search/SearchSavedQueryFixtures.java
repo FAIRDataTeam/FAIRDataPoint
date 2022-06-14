@@ -34,6 +34,9 @@ import java.util.UUID;
 @Service
 public class SearchSavedQueryFixtures {
 
+    private static final String PREFIX_DCAT = "PREFIX dcat: <http://www.w3.org/ns/dcat#>";
+    private static final String ORDER_TITLE = "ASC(?title)";
+
     public SearchSavedQuery savedQueryPublic01() {
         return SearchSavedQuery.builder()
                 .uuid(UUID.randomUUID().toString())
@@ -42,9 +45,9 @@ public class SearchSavedQueryFixtures {
                 .type(SearchSavedQueryType.PUBLIC)
                 .userUuid(KnownUUIDs.USER_ALBERT_UUID)
                 .variables(SearchQueryVariablesDTO.builder()
-                        .prefixes("PREFIX dcat: <http://www.w3.org/ns/dcat#>")
+                        .prefixes(PREFIX_DCAT)
                         .graphPattern("?entity rdf:type dcat:Dataset .")
-                        .ordering("ASC(?title)")
+                        .ordering(ORDER_TITLE)
                         .build()
                 )
                 .createdAt(Instant.now())
@@ -60,9 +63,9 @@ public class SearchSavedQueryFixtures {
                 .type(SearchSavedQueryType.INTERNAL)
                 .userUuid(KnownUUIDs.USER_ADMIN_UUID)
                 .variables(SearchQueryVariablesDTO.builder()
-                        .prefixes("PREFIX dcat: <http://www.w3.org/ns/dcat#>")
+                        .prefixes(PREFIX_DCAT)
                         .graphPattern("?entity rdf:type dcat:Distribution .")
-                        .ordering("ASC(?title)")
+                        .ordering(ORDER_TITLE)
                         .build()
                 )
                 .createdAt(Instant.now())
@@ -83,7 +86,7 @@ public class SearchSavedQueryFixtures {
                                 ?entity ?relationPredicate ?relationObject .
                                 FILTER isLiteral(?relationObject)
                                 FILTER CONTAINS(LCASE(str(?relationObject)), LCASE("data"))""")
-                        .ordering("ASC(?title)")
+                        .ordering(ORDER_TITLE)
                         .build()
                 )
                 .createdAt(Instant.now())

@@ -45,7 +45,9 @@ public class IndexSettingsMapper {
         );
     }
 
-    private IndexSettingsRetrievalDTO toRetrievalDTO(IndexSettingsRetrieval indexSettingsRetrieval) {
+    private IndexSettingsRetrievalDTO toRetrievalDTO(
+            IndexSettingsRetrieval indexSettingsRetrieval
+    ) {
         return new IndexSettingsRetrievalDTO(
                 indexSettingsRetrieval.getRateLimitWait().toString(),
                 indexSettingsRetrieval.getTimeout().toString()
@@ -78,7 +80,9 @@ public class IndexSettingsMapper {
                         .build();
     }
 
-    private IndexSettingsRetrieval fromDTO(IndexSettingsRetrievalDTO dto, IndexSettingsRetrieval retrieval) {
+    private IndexSettingsRetrieval fromDTO(
+            IndexSettingsRetrievalDTO dto, IndexSettingsRetrieval retrieval
+    ) {
         return
                 retrieval
                         .toBuilder()

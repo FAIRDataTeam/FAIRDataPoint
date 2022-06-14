@@ -38,10 +38,10 @@ public class MetadataSchemaReleaseDTO {
 
     @NotBlank
     @ValidSemVer
-    protected String version;
+    private String version;
 
     @NotBlank
-    protected String description;
+    private String description;
 
     private boolean published;
 }

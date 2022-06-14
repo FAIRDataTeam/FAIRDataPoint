@@ -30,20 +30,19 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.SETTINGS_CACHE;
 
 @Service
 public class SettingsCache {
 
+    private static final String SETTINGS_KEY = "settings";
+
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
 
     @Autowired
     private SettingsRepository settingsRepository;
-
-    private static final String SETTINGS_KEY = "settings";
 
     @PostConstruct
     public void updateCachedSettings() {
@@ -52,7 +51,7 @@ public class SettingsCache {
 
     public void updateCachedSettings(Settings settings) {
         // Get cache
-        Cache cache = cache();
+        final Cache cache = cache();
 
         // Clear cache
         cache.clear();

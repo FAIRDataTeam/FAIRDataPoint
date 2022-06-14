@@ -32,6 +32,7 @@ import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.context.annotation.Profile;
 
 import java.util.List;
@@ -40,164 +41,171 @@ import java.util.List;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0004_ResourceDefinition {
 
+    private static final String R3D_REPOSITORY = "http://www.re3data.org/schema/3-0#Repository";
+    private static final String R3D_HAS_CATALOG = "http://www.re3data.org/schema/3-0#dataCatalog";
+    private static final String FIELD_TITLE = "title";
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_UUID = "uuid";
+    private static final String FIELD_PERMISSIONS = "permissions";
+    private static final String FIELD_MASK = "mask";
+    private static final String FIELD_CODE = "code";
+    private static final String FIELD_CLASS = "_class";
+    private static final int MASK_W = 2;
+    private static final int MASK_C = 4;
+    private static final int MASK_D = 8;
+    private static final int MASK_A = 16;
+
     @ChangeSet(order = "0004", id = "Migration_0004_ResourceDefinition", author = "migrationBot")
-    public void run(MongoDatabase db, ResourceDefinitionCache resourceDefinitionCache) {
-        migrateResourceDefinitions(db);
+    public void run(MongoDatabase database, ResourceDefinitionCache resourceDefinitionCache) {
+        migrateResourceDefinitions(database);
         resourceDefinitionCache.computeCache();
     }
 
-    private void migrateResourceDefinitions(MongoDatabase db) {
-        MongoCollection<Document> rdCol = db.getCollection("resourceDefinition");
+    private void migrateResourceDefinitions(MongoDatabase database) {
+        final MongoCollection<Document> rdCol = database.getCollection("resourceDefinition");
         rdCol.deleteMany(new Document());
         rdCol.insertOne(repositoryDefinition());
         rdCol.insertOne(catalogDefinition());
         rdCol.insertOne(datasetDefinition());
         rdCol.insertOne(distributionDefinition());
 
-        MongoCollection<Document> membershipCol = db.getCollection("membership");
+        final MongoCollection<Document> membershipCol = database.getCollection("membership");
         membershipCol.deleteMany(new Document());
         membershipCol.insertOne(membershipOwner());
         membershipCol.insertOne(membershipDataProvider());
     }
 
     private Document repositoryDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_REPOSITORY_UUID);
-        definition.append("name", "Repository");
-        definition.append("urlPrefix", "");
-        definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
-                "http://www.re3data.org/schema/3-0#Repository"));
-
-        // Child
-        Document child = new Document();
-        child.append("resourceDefinitionUuid", KnownUUIDs.RD_CATALOG_UUID);
-        child.append("relationUri", "http://www.re3data.org/schema/3-0#dataCatalog");
-        Document listView = new Document();
-        listView.append("title", "Catalogs");
-        listView.append("tagsUri", "http://www.w3.org/ns/dcat#themeTaxonomy");
-        listView.append("metadata", List.of());
-        child.append("listView", listView);
-        definition.append("children", List.of(child));
-
-        // External Links
-        definition.append("externalLinks", List.of());
-
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
-        return definition;
+        return createDefinition(
+                KnownUUIDs.RD_REPOSITORY_UUID,
+                "Repository",
+                "",
+                List.of(DCAT.RESOURCE.stringValue(), R3D_REPOSITORY),
+                List.of(createChild(
+                        KnownUUIDs.RD_CATALOG_UUID,
+                        R3D_HAS_CATALOG,
+                        "Catalogs",
+                        DCAT.THEME_TAXONOMY.stringValue(),
+                        List.of()
+                )),
+                List.of()
+        );
     }
 
     private Document catalogDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_CATALOG_UUID);
-        definition.append("name", "Catalog");
-        definition.append("urlPrefix", "catalog");
-        definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
-                "http://www.w3.org/ns/dcat#Catalog"));
-
-        // Child
-        Document child = new Document();
-        child.append("resourceDefinitionUuid", KnownUUIDs.RD_DATASET_UUID);
-        child.append("relationUri", "http://www.w3.org/ns/dcat#dataset");
-        Document listView = new Document();
-        listView.append("title", "Datasets");
-        listView.append("tagsUri", "http://www.w3.org/ns/dcat#theme");
-        listView.append("metadata", List.of());
-        child.append("listView", listView);
-        definition.append("children", List.of(child));
-
-        // External Links
-        definition.append("externalLinks", List.of());
-
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
-        return definition;
+        return createDefinition(
+                KnownUUIDs.RD_CATALOG_UUID,
+                "Catalog",
+                "catalog",
+                List.of(DCAT.RESOURCE.stringValue(), DCAT.CATALOG.stringValue()),
+                List.of(createChild(
+                        KnownUUIDs.RD_DATASET_UUID,
+                        DCAT.HAS_DATASET.stringValue(),
+                        "Datasets",
+                        DCAT.THEME.stringValue(),
+                        List.of()
+                )),
+                List.of()
+        );
     }
 
     private Document datasetDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_DATASET_UUID);
-        definition.append("name", "Dataset");
-        definition.append("urlPrefix", "dataset");
-        definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
-                "http://www.w3.org/ns/dcat#Dataset"));
-
-        // Child
-        Document child = new Document();
-        child.append("resourceDefinitionUuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
-        child.append("relationUri", "http://www.w3.org/ns/dcat#distribution");
-        // - list View
-        Document listView = new Document();
-        listView.append("title", "Distributions");
-        listView.append("tagsUri", null);
-        // - metadata
-        Document metadata = new Document();
-        metadata.append("title", "Media Type");
-        metadata.append("propertyUri", "http://www.w3.org/ns/dcat#mediaType");
-        listView.append("metadata", List.of(metadata));
-        child.append("listView", listView);
-        definition.append("children", List.of(child));
-
-        // External Links
-        definition.append("externalLinks", List.of());
-
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
-        return definition;
+        return createDefinition(
+                KnownUUIDs.RD_DATASET_UUID,
+                "Dataset",
+                "dataset",
+                List.of(DCAT.RESOURCE.stringValue(), DCAT.DATASET.stringValue()),
+                List.of(createChild(
+                        KnownUUIDs.RD_DISTRIBUTION_UUID,
+                        DCAT.HAS_DISTRIBUTION.stringValue(),
+                        "Distributions",
+                        null,
+                        List.of(createChildMetadata("Media Type", DCAT.MEDIA_TYPE.stringValue()))
+                )),
+                List.of()
+        );
     }
 
     private Document distributionDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
-        definition.append("name", "Distribution");
-        definition.append("urlPrefix", "distribution");
-        definition.append("targetClassUris", List.of("http://www.w3.org/ns/dcat#Resource",
-                "http://www.w3.org/ns/dcat#Distribution"));
+        return createDefinition(
+                KnownUUIDs.RD_DISTRIBUTION_UUID,
+                "Distribution",
+                "distribution",
+                List.of(DCAT.RESOURCE.stringValue(), DCAT.DISTRIBUTION.stringValue()),
+                List.of(),
+                List.of(
+                        createLink("Access online", DCAT.ACCESS_URL.stringValue()),
+                        createLink("Download", DCAT.DOWNLOAD_URL.stringValue())
+                )
+        );
+    }
 
+    private Document createChildMetadata(String title, String property) {
+        return createLink(title, property);
+    }
+
+    private Document createChild(String uuid, String relation, String title, String tagsUri,
+                                 List<Document> metadata) {
         // Child
-        definition.append("children", List.of());
+        final Document child = new Document();
+        child.append("resourceDefinitionUuid", uuid);
+        child.append("relationUri", relation);
+        // - list View
+        final Document listView = new Document();
+        listView.append(FIELD_TITLE, title);
+        listView.append("tagsUri", tagsUri);
+        listView.append("metadata", metadata);
+        child.append("listView", listView);
+        return child;
+    }
 
-        // External Links
-        Document accessLink = new Document();
-        accessLink.append("title", "Access online");
-        accessLink.append("propertyUri", "http://www.w3.org/ns/dcat#accessURL");
-        Document downloadLink = new Document();
-        downloadLink.append("title", "Download");
-        downloadLink.append("propertyUri", "http://www.w3.org/ns/dcat#downloadURL");
-        definition.append("externalLinks", List.of(accessLink, downloadLink));
+    private Document createLink(String title, String property) {
+        final Document link = new Document();
+        link.append(FIELD_TITLE, title);
+        link.append("propertyUri", property);
+        return link;
+    }
 
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
+    private Document createDefinition(String uuid, String name, String prefix, List<String> classes,
+                                      List<Document> children, List<Document> links) {
+        final Document definition = new Document();
+        definition.append(FIELD_UUID, uuid);
+        definition.append(FIELD_NAME, name);
+        definition.append("urlPrefix", prefix);
+        definition.append("targetClassUris", classes);
+        definition.append("children", children);
+        definition.append("externalLinks", links);
+        definition.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 
     private Document membershipOwner() {
-        Document user = new Document();
-        user.append("uuid", KnownUUIDs.MEMBERSHIP_OWNER_UUID);
-        user.append("name", "Owner");
-        BasicBSONList permissions = new BasicBSONList();
-        permissions.add(new BasicBSONObject().append("mask", 2).append("code", "W"));
-        permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));
-        permissions.add(new BasicBSONObject().append("mask", 8).append("code", "D"));
-        permissions.add(new BasicBSONObject().append("mask", 16).append("code", "A"));
-        user.append("permissions", permissions);
-        BasicBSONList allowedEntities = new BasicBSONList();
-        allowedEntities.add(KnownUUIDs.RD_CATALOG_UUID);
-        allowedEntities.add(KnownUUIDs.RD_DATASET_UUID);
-        allowedEntities.add(KnownUUIDs.RD_DISTRIBUTION_UUID);
-        user.append("allowedEntities", allowedEntities);
-        user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
-        return user;
+        return createMembership(KnownUUIDs.MEMBERSHIP_OWNER_UUID, "Owner", true);
     }
 
     private Document membershipDataProvider() {
-        Document user = new Document();
-        user.append("uuid", KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID);
-        user.append("name", "Data Provider");
-        BasicBSONList permissions = new BasicBSONList();
-        permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));
-        user.append("permissions", permissions);
-        BasicBSONList allowedEntities = new BasicBSONList();
+        return createMembership(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID, "Data Provider", false);
+    }
+
+    private Document createMembership(String uuid, String name, boolean owner) {
+        final Document membership = new Document();
+        membership.append(FIELD_UUID, uuid);
+        membership.append(FIELD_NAME, name);
+        final BasicBSONList permissions = new BasicBSONList();
+        permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_C).append(FIELD_CODE, "C"));
+        final BasicBSONList allowedEntities = new BasicBSONList();
         allowedEntities.add(KnownUUIDs.RD_CATALOG_UUID);
-        user.append("allowedEntities", allowedEntities);
-        user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
-        return user;
+        if (owner) {
+            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_A).append(FIELD_CODE, "W"));
+            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_D).append(FIELD_CODE, "D"));
+            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_A).append(FIELD_CODE, "A"));
+            allowedEntities.add(KnownUUIDs.RD_DATASET_UUID);
+            allowedEntities.add(KnownUUIDs.RD_DISTRIBUTION_UUID);
+        }
+        membership.append(FIELD_PERMISSIONS, permissions);
+        membership.append("allowedEntities", allowedEntities);
+        membership.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.membership.Membership");
+        return membership;
     }
 
 }

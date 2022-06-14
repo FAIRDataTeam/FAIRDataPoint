@@ -25,11 +25,11 @@ package nl.dtls.fairdatapoint.entity.index.exception;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import org.springframework.http.HttpStatus;
 
-public abstract class IndexException extends RuntimeException {
+public abstract class AbstractIndexException extends RuntimeException {
 
-    protected final HttpStatus status;
+    private final HttpStatus status;
 
-    public IndexException(String message, HttpStatus status) {
+    public AbstractIndexException(String message, HttpStatus status) {
         super(message);
         this.status = status;
     }

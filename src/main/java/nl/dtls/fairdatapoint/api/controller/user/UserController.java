@@ -28,7 +28,6 @@ import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,94 +44,115 @@ import static java.lang.String.format;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final String LOGIN_FIRST_MSG = "You have to be login at first";
+
+    private static final String NOT_FOUND_MSG = "User '%s' doesn't exist";
+
     @Autowired
     private UserService userService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserDTO>> getUsers() {
-        List<UserDTO> dto = userService.getUsers();
+        final List<UserDTO> dto = userService.getUsers();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserCreateDTO reqDto) {
-        UserDTO dto = userService.createUser(reqDto);
+        final UserDTO dto = userService.createUser(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Tag(name = "Authentication and Authorization")
     @GetMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUserCurrent() throws ResourceNotFoundException {
-        Optional<UserDTO> oDto = userService.getCurrentUser();
+        final Optional<UserDTO> oDto = userService.getCurrentUser();
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ForbiddenException("You have to be login at first");
+        }
+        else {
+            throw new ForbiddenException(LOGIN_FIRST_MSG);
         }
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> getUser(@PathVariable final String uuid) throws ResourceNotFoundException {
-        Optional<UserDTO> oDto = userService.getUserByUuid(uuid);
+    public ResponseEntity<UserDTO> getUser(
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException {
+        final Optional<UserDTO> oDto = userService.getUserByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ResourceNotFoundException(format("User '%s' doesn't exist", uuid));
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @PutMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> putUserCurrent(@RequestBody @Valid UserProfileChangeDTO reqDto) throws ResourceNotFoundException {
-        Optional<UserDTO> oDto = userService.updateCurrentUser(reqDto);
+    public ResponseEntity<UserDTO> putUserCurrent(
+            @RequestBody @Valid UserProfileChangeDTO reqDto
+    ) throws ResourceNotFoundException {
+        final Optional<UserDTO> oDto = userService.updateCurrentUser(reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ForbiddenException("You have to be login at first");
+        }
+        else {
+            throw new ForbiddenException(LOGIN_FIRST_MSG);
         }
     }
 
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> putUser(@PathVariable final String uuid,
-                                           @RequestBody @Valid UserChangeDTO reqDto) throws ResourceNotFoundException {
-        Optional<UserDTO> oDto = userService.updateUser(uuid, reqDto);
+    public ResponseEntity<UserDTO> putUser(
+            @PathVariable final String uuid,
+            @RequestBody @Valid UserChangeDTO reqDto
+    ) throws ResourceNotFoundException {
+        final Optional<UserDTO> oDto = userService.updateUser(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ResourceNotFoundException(format("User '%s' doesn't exist", uuid));
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @PutMapping(path = "/current/password", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> putUserCurrentPassword(@RequestBody @Valid UserPasswordDTO reqDto)
-            throws ResourceNotFoundException {
-        Optional<UserDTO> oDto = userService.updatePasswordForCurrentUser(reqDto);
+    public ResponseEntity<UserDTO> putUserCurrentPassword(
+            @RequestBody @Valid UserPasswordDTO reqDto
+    ) throws ResourceNotFoundException {
+        final Optional<UserDTO> oDto = userService.updatePasswordForCurrentUser(reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ForbiddenException("You have to be login at first");
+        }
+        else {
+            throw new ForbiddenException(LOGIN_FIRST_MSG);
         }
     }
 
     @PutMapping(path = "/{uuid}/password", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> putUserPassword(@PathVariable final String uuid,
-                                                   @RequestBody @Valid UserPasswordDTO reqDto) throws ResourceNotFoundException {
-        Optional<UserDTO> oDto = userService.updatePassword(uuid, reqDto);
+    public ResponseEntity<UserDTO> putUserPassword(
+            @PathVariable final String uuid,
+            @RequestBody @Valid UserPasswordDTO reqDto
+    ) throws ResourceNotFoundException {
+        final Optional<UserDTO> oDto = userService.updatePassword(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ResourceNotFoundException(format("User '%s' doesn't exist", uuid));
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteUser(@PathVariable final String uuid)
-            throws ResourceNotFoundException {
-        boolean result = userService.deleteUser(uuid);
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException {
+        final boolean result = userService.deleteUser(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
-            throw new ResourceNotFoundException(format("User '%s' doesn't exist", uuid));
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 

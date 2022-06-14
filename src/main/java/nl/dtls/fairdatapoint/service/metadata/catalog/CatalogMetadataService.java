@@ -45,30 +45,35 @@ public class CatalogMetadataService extends AbstractMetadataService {
 
     @Autowired
     @Qualifier("catalogMetadataRepository")
-    protected CatalogMetadataRepository metadataRepository;
+    private CatalogMetadataRepository metadataRepository;
 
     @Override
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
-        Model catalog = super.retrieve(uri);
+        final Model catalog = super.retrieve(uri);
         try {
-            List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
+            final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
-        } catch (MetadataRepositoryException ex) {
+        }
+        catch (MetadataRepositoryException exception) {
             log.error("Error retrieving the metadata");
-            throw new MetadataServiceException(ex.getMessage());
+            throw new MetadataServiceException(exception.getMessage());
         }
         return catalog;
     }
 
     @Override
-    public Model store(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+    public Model store(
+            Model metadata, IRI uri, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException {
         setThemeTaxonomies(metadata, uri, null);
         return super.store(metadata, uri, resourceDefinition);
     }
 
     @Override
-    public Model update(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
+    public Model update(
+            Model metadata, IRI uri, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException {
         setThemeTaxonomies(metadata, uri, null);
-        return super.update(metadata, uri, rd);
+        return super.update(metadata, uri, resourceDefinition);
     }
 }

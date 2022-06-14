@@ -36,6 +36,6 @@ import javax.validation.constraints.NotNull;
 public class SearchQueryDTO {
 
     @NotNull
-    private String q;
+    private String query;
 
 }

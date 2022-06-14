@@ -24,10 +24,9 @@ package nl.dtls.fairdatapoint.database.mongo.repository;
 
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-public interface IndexSettingsRepository  extends MongoRepository<IndexSettings, String> {
+public interface IndexSettingsRepository extends MongoRepository<IndexSettings, String> {
     Optional<IndexSettings> findFirstBy();
 }

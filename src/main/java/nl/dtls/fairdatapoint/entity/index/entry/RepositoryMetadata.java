@@ -26,6 +26,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -42,7 +43,6 @@ public class RepositoryMetadata {
     private String repositoryUri;
 
     @NotNull
-    private HashMap<String, String> metadata = new HashMap<>();
+    private Map<String, String> metadata = new HashMap<>();
 
 }
-

@@ -43,7 +43,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.setRdfTypes;
 import static nl.dtls.fairdatapoint.util.RdfUtil.getSubjectBy;
@@ -53,30 +52,39 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.s;
 
 public class RdfIOUtil {
 
+    private static final String MSG_NO_RDF_TYPE = "Validation failed (no rdf:type was provided)";
+
+    private static final String MSG_EXC_IO = "Unable to read RDF (IO exception)";
+
+    private static final String MSG_EXC_PARSE = "Unable to read RDF (parse exception)";
+
+    private static final String MSG_EXC_HANDLER = "Unable to read RDF (handler exception)";
+
     public static Model changeBaseUri(Model oldModel, String newBaseUri, List<String> rdfTypes) {
         // - get baseUri
-        Resource oldBaseUri = rdfTypes
+        final Resource oldBaseUri = rdfTypes
                 .stream()
                 .map(rdfType -> getSubjectBy(oldModel, RDF.TYPE, i(rdfType)))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new ValidationException("Validation failed (no rdf:type was provided)"));
+                .orElseThrow(() -> new ValidationException(MSG_NO_RDF_TYPE));
         // - sanitize statements
-        List<Statement> sanitizedStatements =
+        final List<Statement> sanitizedStatements =
                 new ArrayList<>(oldModel)
                         .stream()
-                        .map(oldStatement -> {
-                            if (oldStatement.getSubject().stringValue().equals(oldBaseUri.stringValue())) {
-                                return s(i(newBaseUri), oldStatement.getPredicate(), oldStatement.getObject());
-                            } else {
-                                return oldStatement;
-                            }
-                        })
-                        .collect(Collectors.toList());
-        Model model = new LinkedHashModel();
+                        .map(stmt -> changeSubject(stmt, oldBaseUri.stringValue(), newBaseUri))
+                        .toList();
+        final Model model = new LinkedHashModel();
         model.addAll(sanitizedStatements);
-        setRdfTypes(model, i(newBaseUri), rdfTypes.stream().map(ValueFactoryHelper::i).collect(Collectors.toList()));
+        setRdfTypes(model, i(newBaseUri), rdfTypes.stream().map(ValueFactoryHelper::i).toList());
         return model;
+    }
+
+    private static Statement changeSubject(Statement statement, String oldUri, String newUri) {
+        if (statement.getSubject().stringValue().equals(oldUri)) {
+            return s(i(newUri), statement.getPredicate(), statement.getObject());
+        }
+        return statement;
     }
 
     public static Model readFile(String name, String baseUri) {
@@ -86,12 +94,15 @@ public class RdfIOUtil {
     public static Model readFile(String name, String baseUri, RDFFormat format) {
         try (InputStream inputStream = getResource(name).getInputStream()) {
             return Rio.parse(inputStream, baseUri, format);
-        } catch (IOException e) {
-            throw new ValidationException("Unable to read RDF (IO exception)");
-        } catch (RDFParseException e) {
-            throw new ValidationException("Unable to read RDF (parse exception)");
-        } catch (RDFHandlerException e) {
-            throw new ValidationException("Unable to read RDF (handler exception)");
+        }
+        catch (IOException exception) {
+            throw new ValidationException(MSG_EXC_IO);
+        }
+        catch (RDFParseException exception) {
+            throw new ValidationException(MSG_EXC_PARSE);
+        }
+        catch (RDFHandlerException exception) {
+            throw new ValidationException(MSG_EXC_HANDLER);
         }
     }
 
@@ -102,12 +113,15 @@ public class RdfIOUtil {
     public static Model read(String content, String baseUri, RDFFormat format) {
         try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
             return Rio.parse(inputStream, baseUri, format);
-        } catch (IOException e) {
-            throw new ValidationException("Unable to read RDF (IO exception)");
-        } catch (RDFParseException e) {
-            throw new ValidationException("Unable to read RDF (parse exception)");
-        } catch (RDFHandlerException e) {
-            throw new ValidationException("Unable to read RDF (handler exception)");
+        }
+        catch (IOException exception) {
+            throw new ValidationException(MSG_EXC_IO);
+        }
+        catch (RDFParseException exception) {
+            throw new ValidationException(MSG_EXC_PARSE);
+        }
+        catch (RDFHandlerException exception) {
+            throw new ValidationException(MSG_EXC_HANDLER);
         }
     }
 
@@ -125,13 +139,14 @@ public class RdfIOUtil {
         try (StringWriter out = new StringWriter()) {
             Rio.write(model, out, format, getWriterConfig());
             return out.toString();
-        } catch (IOException e) {
-            throw new ValidationException("Unable to write RDF (IO exception)");
+        }
+        catch (IOException exception) {
+            throw new ValidationException(MSG_EXC_IO);
         }
     }
 
     public static WriterConfig getWriterConfig() {
-        WriterConfig config = new WriterConfig();
+        final WriterConfig config = new WriterConfig();
         config.set(BasicWriterSettings.INLINE_BLANK_NODES, true);
         return config;
     }

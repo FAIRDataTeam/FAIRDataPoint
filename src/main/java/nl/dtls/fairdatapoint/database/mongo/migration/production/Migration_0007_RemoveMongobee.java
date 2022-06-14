@@ -33,8 +33,8 @@ import org.springframework.context.annotation.Profile;
 public class Migration_0007_RemoveMongobee {
 
     @ChangeSet(order = "0007", id = "Migration_0007_RemoveMongobee", author = "migrationBot")
-    public void run(MongoDatabase db) {
-        db.getCollection("dbchangelog").drop();
-        db.getCollection("mongobeelock").drop();
+    public void run(MongoDatabase database) {
+        database.getCollection("dbchangelog").drop();
+        database.getCollection("mongobeelock").drop();
     }
 }

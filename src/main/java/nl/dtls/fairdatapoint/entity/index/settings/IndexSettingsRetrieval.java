@@ -34,6 +34,10 @@ import java.time.Duration;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 public class IndexSettingsRetrieval {
+
+    private static final int DEFAULT_WAIT_MIN = 10;
+    private static final int DEFAULT_TIMEOUT_MIN = 1;
+
     @NotNull
     private Duration rateLimitWait;
 
@@ -41,9 +45,9 @@ public class IndexSettingsRetrieval {
     private Duration timeout;
 
     public static IndexSettingsRetrieval getDefault() {
-        IndexSettingsRetrieval retrieval = new IndexSettingsRetrieval();
-        retrieval.setRateLimitWait(Duration.ofMinutes(10));
-        retrieval.setTimeout(Duration.ofMinutes(1));
+        final IndexSettingsRetrieval retrieval = new IndexSettingsRetrieval();
+        retrieval.setRateLimitWait(Duration.ofMinutes(DEFAULT_WAIT_MIN));
+        retrieval.setTimeout(Duration.ofMinutes(DEFAULT_TIMEOUT_MIN));
         return retrieval;
     }
 }

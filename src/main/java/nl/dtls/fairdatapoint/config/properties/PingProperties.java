@@ -36,7 +36,8 @@ import java.time.Duration;
 @Setter
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
+    private static final int DEFAULT_INTERVAL_DAYS = 7;
     private boolean enabled = true;
     private String initDelay = "10000";
-    private Duration interval = Duration.ofDays(7);
+    private Duration interval = Duration.ofDays(DEFAULT_INTERVAL_DAYS);
 }

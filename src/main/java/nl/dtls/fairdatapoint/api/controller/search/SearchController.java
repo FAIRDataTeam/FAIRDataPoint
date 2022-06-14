@@ -49,7 +49,9 @@ public class SearchController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<SearchResultDTO>> search(@RequestBody @Valid SearchQueryDTO reqDto) throws MetadataRepositoryException {
+    public ResponseEntity<List<SearchResultDTO>> search(
+            @RequestBody @Valid SearchQueryDTO reqDto
+    ) throws MetadataRepositoryException {
         return ResponseEntity.ok(searchService.search(reqDto));
     }
 
@@ -66,7 +68,9 @@ public class SearchController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<SearchResultDTO>> searchWithQuery(@RequestBody @Valid SearchQueryVariablesDTO reqDto) throws MetadataRepositoryException, MalformedQueryException {
+    public ResponseEntity<List<SearchResultDTO>> searchWithQuery(
+            @RequestBody @Valid SearchQueryVariablesDTO reqDto
+    ) throws MetadataRepositoryException, MalformedQueryException {
         return ResponseEntity.ok(searchService.search(reqDto));
     }
 

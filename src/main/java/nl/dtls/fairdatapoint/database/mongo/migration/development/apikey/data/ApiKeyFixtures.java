@@ -30,12 +30,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApiKeyFixtures {
 
+    public static final String ALBERT_API_KEY =
+            "a274793046e34a219fd0ea6362fcca61a001500b71724f4c973a017031653c20";
+
+    public static final String NIKOLA_API_KEY =
+            "dd5dc3b53b6145cfa9f6c58b72ebad21cd2f860ace62451ba4e3c74a0e63540a";
+
     @Autowired
     private UserFixtures userFixtures;
-
-    public final String ALBERT_API_KEY = "a274793046e34a219fd0ea6362fcca61a001500b71724f4c973a017031653c20";
-
-    public final String NIKOLA_API_KEY = "dd5dc3b53b6145cfa9f6c58b72ebad21cd2f860ace62451ba4e3c74a0e63540a";
 
     public ApiKey albertApiKey() {
         return new ApiKey(

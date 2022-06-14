@@ -41,7 +41,7 @@ import java.io.IOException;
 
 public class ErrorConverter extends AbstractHttpMessageConverter<ErrorDTO> {
 
-    protected RDFFormat format;
+    private final RDFFormat format;
 
     public ErrorConverter(RDFFormat format) {
         super(getMediaTypes(format));
@@ -54,13 +54,16 @@ public class ErrorConverter extends AbstractHttpMessageConverter<ErrorDTO> {
     }
 
     @Override
-    protected ErrorDTO readInternal(Class<? extends ErrorDTO> aClass, HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
+    protected ErrorDTO readInternal(
+            Class<? extends ErrorDTO> aClass, HttpInputMessage inputMessage
+    ) throws HttpMessageNotReadableException {
         return new ErrorDTO();
     }
 
     @Override
-    protected void writeInternal(ErrorDTO errorDTO, HttpOutputMessage outputMessage) throws IOException,
-            HttpMessageNotWritableException {
+    protected void writeInternal(
+            ErrorDTO errorDTO, HttpOutputMessage outputMessage
+    ) throws IOException, HttpMessageNotWritableException {
         outputMessage.getBody().write(errorDTO.getMessage().getBytes());
     }
 
@@ -72,7 +75,10 @@ public class ErrorConverter extends AbstractHttpMessageConverter<ErrorDTO> {
     }
 
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.mediaType(format.getDefaultFileExtension(), MediaType.parseMediaType(format.getDefaultMIMEType()));
+        configurer.mediaType(
+                format.getDefaultFileExtension(),
+                MediaType.parseMediaType(format.getDefaultMIMEType())
+        );
     }
 
 }

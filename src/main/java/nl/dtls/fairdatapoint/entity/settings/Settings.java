@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Document
 @NoArgsConstructor
@@ -41,20 +40,26 @@ import java.util.Map;
 @Builder(toBuilder = true)
 public class Settings {
 
+    private static final List<SettingsMetricsEntry> DEFAULT_METRICS = List.of(
+            new SettingsMetricsEntry(
+                    "https://purl.org/fair-metrics/FM_F1A",
+                    "https://www.ietf.org/rfc/rfc3986.txt"
+            ),
+            new SettingsMetricsEntry(
+                    "https://purl.org/fair-metrics/FM_A1.1",
+                    "https://www.wikidata.org/wiki/Q8777"
+            )
+    );
+
     @Id
     @JsonIgnore
-    protected ObjectId id;
+    private ObjectId id;
 
     private List<SettingsMetricsEntry> metadataMetrics;
 
     private SettingsPing ping;
 
     private List<SettingsSearchFilter> searchFilters;
-
-    private static final List<SettingsMetricsEntry> DEFAULT_METRICS = List.of(
-            new SettingsMetricsEntry("https://purl.org/fair-metrics/FM_F1A", "https://www.ietf.org/rfc/rfc3986.txt"),
-            new SettingsMetricsEntry("https://purl.org/fair-metrics/FM_A1.1", "https://www.wikidata.org/wiki/Q8777")
-    );
 
     public static Settings getDefault() {
         return Settings.builder()

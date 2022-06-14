@@ -37,13 +37,13 @@ import javax.validation.constraints.NotBlank;
 public class ResourceDefinitionChild {
 
     @NotBlank
-    protected String resourceDefinitionUuid;
+    private String resourceDefinitionUuid;
 
     @NotBlank
     @ValidIri
-    protected String relationUri;
+    private String relationUri;
 
     @Valid
-    protected ResourceDefinitionChildListView listView;
+    private ResourceDefinitionChildListView listView;
 
 }

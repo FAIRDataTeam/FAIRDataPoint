@@ -53,21 +53,21 @@ public class RdfMetadataMigration implements Migration {
     private GenericMetadataRepository metadataRepository;
 
     @Autowired
-    protected RdfMetadataFixtures rdfMetadataFixtures;
+    private RdfMetadataFixtures rdfMetadataFixtures;
 
     @Autowired
     @Qualifier("catalogMetadataService")
-    protected MetadataService catalogMetadataService;
+    private MetadataService catalogMetadataService;
 
     @Autowired
     @Qualifier("genericMetadataService")
-    protected MetadataService genericMetadataService;
+    private MetadataService genericMetadataService;
 
     @Autowired
-    protected UserFixtures userFixtures;
+    private UserFixtures userFixtures;
 
     @Autowired
-    protected ResourceDefinitionFixtures resourceDefinitionFixtures;
+    private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     @Autowired
     private MongoAuthenticationService mongoAuthenticationService;
@@ -85,53 +85,54 @@ public class RdfMetadataMigration implements Migration {
             metadataRepository.removeAll();
 
             // 2. Auth user
-            String adminUuid = userFixtures.admin().getUuid();
-            Authentication auth = mongoAuthenticationService.getAuthentication(adminUuid);
+            final String adminUuid = userFixtures.admin().getUuid();
+            final Authentication auth = mongoAuthenticationService.getAuthentication(adminUuid);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             // 3. Load metadata fixtures
             importDefaultFixtures(persistentUrl);
-        } catch (MetadataServiceException | MetadataRepositoryException e) {
-            e.printStackTrace();
+        }
+        catch (MetadataServiceException | MetadataRepositoryException exception) {
+            exception.printStackTrace();
         }
     }
 
     public void importDefaultFixtures(String fdpUrl) throws MetadataServiceException {
-        ResourceDefinition fdpRd = resourceDefinitionFixtures.fdpDefinition();
-        ResourceDefinition catalogRd = resourceDefinitionFixtures.catalogDefinition();
-        ResourceDefinition datasetRd = resourceDefinitionFixtures.datasetDefinition();
-        ResourceDefinition distributionRd = resourceDefinitionFixtures.distributionDefinition();
+        final ResourceDefinition fdpRd = resourceDefinitionFixtures.fdpDefinition();
+        final ResourceDefinition catalogRd = resourceDefinitionFixtures.catalogDefinition();
+        final ResourceDefinition datasetRd = resourceDefinitionFixtures.datasetDefinition();
+        final ResourceDefinition distributionRd = resourceDefinitionFixtures.distributionDefinition();
 
-        Model fdpM = rdfMetadataFixtures.fdpMetadata(fdpUrl);
-        IRI fdpUri = getUri(fdpM);
+        final Model fdpM = rdfMetadataFixtures.fdpMetadata(fdpUrl);
+        final IRI fdpUri = getUri(fdpM);
         genericMetadataService.store(fdpM, i(fdpUrl), fdpRd);
         metadataStateService.modifyState(fdpUri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
-        Model catalog1 = rdfMetadataFixtures.catalog1(fdpUrl, i(fdpUrl));
-        IRI catalog1Uri = getUri(catalog1);
+        final Model catalog1 = rdfMetadataFixtures.catalog1(fdpUrl, i(fdpUrl));
+        final IRI catalog1Uri = getUri(catalog1);
         catalogMetadataService.store(catalog1, catalog1Uri, catalogRd);
         metadataStateService.modifyState(catalog1Uri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
-        Model catalog2 = rdfMetadataFixtures.catalog2(fdpUrl, fdpUri);
-        IRI catalog2Uri = getUri(catalog2);
+        final Model catalog2 = rdfMetadataFixtures.catalog2(fdpUrl, fdpUri);
+        final IRI catalog2Uri = getUri(catalog2);
         catalogMetadataService.store(catalog2, catalog2Uri, catalogRd);
 
-        Model dataset1 = rdfMetadataFixtures.dataset1(fdpUrl, catalog1Uri);
-        IRI dataset1Uri = getUri(dataset1);
+        final Model dataset1 = rdfMetadataFixtures.dataset1(fdpUrl, catalog1Uri);
+        final IRI dataset1Uri = getUri(dataset1);
         genericMetadataService.store(dataset1, dataset1Uri, datasetRd);
         metadataStateService.modifyState(dataset1Uri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
-        Model dataset2 = rdfMetadataFixtures.dataset2(fdpUrl, catalog1Uri);
-        IRI dataset2Uri = getUri(dataset2);
+        final Model dataset2 = rdfMetadataFixtures.dataset2(fdpUrl, catalog1Uri);
+        final IRI dataset2Uri = getUri(dataset2);
         genericMetadataService.store(dataset2, dataset2Uri, datasetRd);
 
-        Model distribution1 = rdfMetadataFixtures.distribution1(fdpUrl, dataset1Uri);
-        IRI distribution1Uri = getUri(distribution1);
+        final Model distribution1 = rdfMetadataFixtures.distribution1(fdpUrl, dataset1Uri);
+        final IRI distribution1Uri = getUri(distribution1);
         genericMetadataService.store(distribution1, distribution1Uri, distributionRd);
         metadataStateService.modifyState(distribution1Uri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
-        Model distribution2 = rdfMetadataFixtures.distribution2(fdpUrl, dataset1Uri);
-        IRI distribution2Uri = getUri(distribution2);
+        final Model distribution2 = rdfMetadataFixtures.distribution2(fdpUrl, dataset1Uri);
+        final IRI distribution2Uri = getUri(distribution2);
         genericMetadataService.store(distribution2, distribution2Uri, distributionRd);
     }
 

@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.schema;
 
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Value;
@@ -36,7 +37,7 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 public class MetadataSchemaShaclUtils {
 
     public static Set<String> extractTargetClasses(String definition) {
-        var model = RdfIOUtil.read(definition, "");
+        final Model model = RdfIOUtil.read(definition, "");
         return model
                 .filter(null, SHACL.TARGET_CLASS, null)
                 .objects()
@@ -47,7 +48,7 @@ public class MetadataSchemaShaclUtils {
     }
 
     private static boolean isRootNodeOfTargetClass(Model model, String iri) {
-        var resource = i(iri);
+        final IRI resource = i(iri);
         for (Resource subject : model.filter(null, null, resource).subjects()) {
             if (model.contains(null, null, subject)) {
                 return false;

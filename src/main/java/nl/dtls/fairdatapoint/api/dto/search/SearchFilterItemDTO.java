@@ -35,7 +35,7 @@ public class SearchFilterItemDTO {
     @ValidIri
     private String value;
 
-    private String label = null;
+    private String label;
 
     private boolean preset = true;
 

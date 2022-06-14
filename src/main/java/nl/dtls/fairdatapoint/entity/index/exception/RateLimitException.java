@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.entity.index.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class RateLimitException extends IndexException {
+public class RateLimitException extends AbstractIndexException {
 
     public RateLimitException(String message) {
         super(message, HttpStatus.TOO_MANY_REQUESTS);

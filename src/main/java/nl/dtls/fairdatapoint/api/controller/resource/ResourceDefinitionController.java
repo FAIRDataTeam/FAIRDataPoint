@@ -45,41 +45,49 @@ import static java.lang.String.format;
 @RequestMapping("/resource-definitions")
 public class ResourceDefinitionController {
 
+    private static final String NOT_FOUND_MSG = "Resource Definition '%s' doesn't exist";
+
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ResourceDefinitionDTO>> getResourceDefinitions() {
-        List<ResourceDefinitionDTO> dto = resourceDefinitionService.getAll();
+        final List<ResourceDefinitionDTO> dto = resourceDefinitionService.getAll();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResourceDefinitionDTO> createResourceDefinitions(@RequestBody @Valid ResourceDefinitionChangeDTO reqDto) throws BindException {
-        ResourceDefinitionDTO dto = resourceDefinitionService.create(reqDto);
+    public ResponseEntity<ResourceDefinitionDTO> createResourceDefinitions(
+            @RequestBody @Valid ResourceDefinitionChangeDTO reqDto
+    ) throws BindException {
+        final ResourceDefinitionDTO dto = resourceDefinitionService.create(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResourceDefinitionDTO> getResourceDefinition(@PathVariable final String uuid)
-            throws ResourceNotFoundException {
-        Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.getDTOByUuid(uuid);
+    public ResponseEntity<ResourceDefinitionDTO> getResourceDefinition(
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException {
+        final Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.getDTOByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ResourceNotFoundException(format("Resource Definition '%s' doesn't exist", uuid));
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResourceDefinitionDTO> putResourceDefinitions(@PathVariable final String uuid,
-                                                                     @RequestBody @Valid ResourceDefinitionChangeDTO reqDto)
-            throws ResourceNotFoundException, BindException {
-        Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.update(uuid, reqDto);
+    public ResponseEntity<ResourceDefinitionDTO> putResourceDefinitions(
+            @PathVariable final String uuid,
+            @RequestBody @Valid ResourceDefinitionChangeDTO reqDto
+    ) throws ResourceNotFoundException, BindException {
+        final Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.update(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
-            throw new ResourceNotFoundException(format("Resource Definition '%s' doesn't exist", uuid));
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
@@ -87,11 +95,12 @@ public class ResourceDefinitionController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteResourceDefinitions(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        boolean result = resourceDefinitionService.deleteByUuid(uuid);
+        final boolean result = resourceDefinitionService.deleteByUuid(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
-            throw new ResourceNotFoundException(format("Resource Definition '%s' doesn't exist", uuid));
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 }

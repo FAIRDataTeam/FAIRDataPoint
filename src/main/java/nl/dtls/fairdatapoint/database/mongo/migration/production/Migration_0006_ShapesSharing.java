@@ -36,16 +36,18 @@ import org.springframework.context.annotation.Profile;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0006_ShapesSharing {
 
+    private static final String FIELD_PUBLISHED = "published";
+
     @ChangeSet(order = "0006", id = "Migration_0006_ShapesSharing", author = "migrationBot")
-    public void run(MongoDatabase db) {
-        addShapeDefinitions(db);
+    public void run(MongoDatabase database) {
+        addShapeDefinitions(database);
     }
 
-    private void addShapeDefinitions(MongoDatabase db) {
-        MongoCollection<Document> shapeCol = db.getCollection("shape");
+    private void addShapeDefinitions(MongoDatabase database) {
+        final MongoCollection<Document> shapeCol = database.getCollection("shape");
         shapeCol.updateMany(
-                Filters.exists("published", false),
-                Updates.set("published", false)
+                Filters.exists(FIELD_PUBLISHED, false),
+                Updates.set(FIELD_PUBLISHED, false)
         );
     }
 }

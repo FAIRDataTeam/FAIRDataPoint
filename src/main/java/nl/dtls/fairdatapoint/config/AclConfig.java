@@ -58,8 +58,10 @@ public class AclConfig {
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
-        Cache springCache = cacheManager.getCache(ACL_CACHE);
-        return new SpringCacheBasedAclCache(springCache, permissionGrantingStrategy(), aclAuthorizationStrategy());
+        final Cache springCache = cacheManager.getCache(ACL_CACHE);
+        return new SpringCacheBasedAclCache(
+                springCache, permissionGrantingStrategy(), aclAuthorizationStrategy()
+        );
     }
 
     @Bean
@@ -74,16 +76,23 @@ public class AclConfig {
 
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
-        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(format("ROLE_%s",
-                UserRole.ADMIN.toString())));
+        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(
+                format("ROLE_%s", UserRole.ADMIN.toString()))
+        );
     }
 
     @Bean
-    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(AclCache aclCache) {
-        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService(aclCache));
+    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(
+            AclCache aclCache
+    ) {
+        final DefaultMethodSecurityExpressionHandler expressionHandler =
+                new DefaultMethodSecurityExpressionHandler();
+        final AclPermissionEvaluator permissionEvaluator =
+                new AclPermissionEvaluator(aclService(aclCache));
         expressionHandler.setPermissionEvaluator(permissionEvaluator);
-        expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService(aclCache)));
+        expressionHandler.setPermissionCacheOptimizer(
+                new AclPermissionCacheOptimizer(aclService(aclCache))
+        );
         return expressionHandler;
     }
 

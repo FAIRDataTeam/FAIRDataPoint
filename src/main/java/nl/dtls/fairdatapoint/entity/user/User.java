@@ -36,21 +36,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
-    protected String uuid;
+    private String uuid;
 
-    protected String firstName;
+    private String firstName;
 
-    protected String lastName;
+    private String lastName;
 
-    protected String email;
+    private String email;
 
-    protected String passwordHash;
+    private String passwordHash;
 
-    protected UserRole role;
+    private UserRole role;
 
-    public User(String uuid, String firstName, String lastName, String email, String passwordHash, UserRole role) {
+    public User(
+            String uuid, String firstName, String lastName,
+            String email, String passwordHash, UserRole role
+    ) {
         this.uuid = uuid;
         this.firstName = firstName;
         this.lastName = lastName;

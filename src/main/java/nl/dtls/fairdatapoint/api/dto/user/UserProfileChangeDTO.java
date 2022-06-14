@@ -36,13 +36,12 @@ import javax.validation.constraints.NotBlank;
 public class UserProfileChangeDTO {
 
     @NotBlank
-    protected String firstName;
+    private String firstName;
 
     @NotBlank
-    protected String lastName;
+    private String lastName;
 
     @NotBlank
-    protected String email;
-
+    private String email;
 
 }

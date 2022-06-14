@@ -23,15 +23,11 @@
 package nl.dtls.fairdatapoint.service.config;
 
 import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ConfigService {
@@ -47,8 +43,11 @@ public class ConfigService {
     private ResourceDefinitionService resourceDefinitionService;
 
     public BootstrapConfigDTO getBootstrapConfig() {
-        List<ResourceDefinitionDTO> resourceDefinitions = resourceDefinitionService.getAll();
-        return new BootstrapConfigDTO(persistentUrl, resourceDefinitions, instanceProperties.isIndex());
+        return BootstrapConfigDTO.builder()
+                .persistentUrl(persistentUrl)
+                .resourceDefinitions(resourceDefinitionService.getAll())
+                .index(instanceProperties.isIndex())
+                .build();
     }
 
 }

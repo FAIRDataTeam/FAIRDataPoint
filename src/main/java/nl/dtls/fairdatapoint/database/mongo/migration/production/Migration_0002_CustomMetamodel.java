@@ -29,6 +29,7 @@ import com.mongodb.client.MongoDatabase;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.context.annotation.Profile;
 
 import java.util.List;
@@ -40,19 +41,22 @@ import static com.mongodb.client.model.Updates.set;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0002_CustomMetamodel {
 
+    private static final String R3D_REPOSITORY = "http://www.re3data.org/schema/3-0#Repository";
+    private static final String R3D_HAS_CATALOG = "http://www.re3data.org/schema/3-0#dataCatalog";
+
     @ChangeSet(order = "0002", id = "0002_Custom_metamodel", author = "migrationBot")
-    public void run(MongoDatabase db) {
-        updateAcl(db);
-        addResourceDefinitions(db);
+    public void run(MongoDatabase database) {
+        updateAcl(database);
+        addResourceDefinitions(database);
     }
 
-    private void updateAcl(MongoDatabase db) {
-        MongoCollection<Document> aclCol = db.getCollection("ACL");
+    private void updateAcl(MongoDatabase database) {
+        final MongoCollection<Document> aclCol = database.getCollection("ACL");
         aclCol.updateMany(new Document(), combine(set("className", "nl.dtls.fairdatapoint.entity.metadata.Metadata")));
     }
 
-    private void addResourceDefinitions(MongoDatabase db) {
-        MongoCollection<Document> rdCol = db.getCollection("resourceDefinition");
+    private void addResourceDefinitions(MongoDatabase database) {
+        final MongoCollection<Document> rdCol = database.getCollection("resourceDefinition");
         rdCol.insertOne(repositoryDefinition());
         rdCol.insertOne(catalogDefinition());
         rdCol.insertOne(datasetDefinition());
@@ -60,67 +64,74 @@ public class Migration_0002_CustomMetamodel {
     }
 
     private Document repositoryDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_REPOSITORY_UUID);
-        definition.append("name", "Repository");
-        definition.append("uriPrefix", "");
-        definition.append("rdfType", "http://www.re3data.org/schema/3-0#Repository");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata");
-        definition.append("shaclTargetClasses", List.of("http://www.re3data.org/schema/3-0#Repository",
-                "http://www.w3.org/ns/dcat#Resource"));
-        definition.append("child", "http://www.re3data.org/schema/3-0#dataCatalog");
-        definition.append("parentResourceDefinitionUuid", null);
-        definition.append("childResourceDefinitionUuid", KnownUUIDs.RD_CATALOG_UUID);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
-        return definition;
+        return createDefinition(
+                KnownUUIDs.RD_REPOSITORY_UUID,
+                "Repository",
+                "",
+                R3D_REPOSITORY,
+                "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata",
+                List.of(R3D_REPOSITORY, DCAT.RESOURCE.stringValue()),
+                R3D_HAS_CATALOG,
+                null,
+                KnownUUIDs.RD_CATALOG_UUID
+        );
     }
 
     private Document catalogDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_CATALOG_UUID);
-        definition.append("name", "Catalog");
-        definition.append("uriPrefix", "catalog");
-        definition.append("rdfType", "http://www.w3.org/ns/dcat#Catalog");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/catalogMetadata");
-        definition.append("shaclTargetClasses", List.of("http://www.w3.org/ns/dcat#Catalog",
-                "http://www.w3.org/ns/dcat#Resource"));
-        definition.append("child", "http://www.w3.org/ns/dcat#dataset");
-        definition.append("parentResourceDefinitionUuid", KnownUUIDs.RD_REPOSITORY_UUID);
-        definition.append("childResourceDefinitionUuid", KnownUUIDs.RD_DATASET_UUID);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
-        return definition;
+        return createDefinition(
+                KnownUUIDs.RD_CATALOG_UUID,
+                "Catalog",
+                "catalog",
+                DCAT.CATALOG.stringValue(),
+                "https://www.purl.org/fairtools/fdp/schema/0.1/catalogMetadata",
+                List.of(DCAT.CATALOG.stringValue(), DCAT.RESOURCE.stringValue()),
+                DCAT.HAS_DATASET.stringValue(),
+                KnownUUIDs.RD_REPOSITORY_UUID,
+                KnownUUIDs.RD_DATASET_UUID
+        );
     }
 
     private Document datasetDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_DATASET_UUID);
-        definition.append("name", "Dataset");
-        definition.append("uriPrefix", "dataset");
-        definition.append("rdfType", "http://www.w3.org/ns/dcat#Dataset");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/datasetMetadata");
-        definition.append("shaclTargetClasses", List.of("http://www.w3.org/ns/dcat#Dataset",
-                "http://www.w3.org/ns/dcat#Resource"));
-        definition.append("child", "http://www.w3.org/ns/dcat#distribution");
-        definition.append("parentResourceDefinitionUuid", KnownUUIDs.RD_CATALOG_UUID);
-        definition.append("childResourceDefinitionUuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
-        return definition;
+        return createDefinition(
+                KnownUUIDs.RD_DATASET_UUID,
+                "Dataset",
+                "dataset",
+                DCAT.DATASET.stringValue(),
+                "https://www.purl.org/fairtools/fdp/schema/0.1/datasetMetadata",
+                List.of(DCAT.DATASET.stringValue(), DCAT.RESOURCE.stringValue()),
+                DCAT.HAS_DISTRIBUTION.stringValue(),
+                KnownUUIDs.RD_CATALOG_UUID,
+                KnownUUIDs.RD_DISTRIBUTION_UUID
+        );
     }
 
     private Document distributionDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_DISTRIBUTION_UUID);
-        definition.append("name", "Distribution");
-        definition.append("uriPrefix", "distribution");
-        definition.append("rdfType", "http://www.w3.org/ns/dcat#Distribution");
-        definition.append("specs", "https://www.purl.org/fairtools/fdp/schema/0.1/distributionMetadata");
-        definition.append("shaclTargetClasses", List.of("http://www.w3.org/ns/dcat#Distribution",
-                "http://www.w3.org/ns/dcat#Resource"));
-        definition.append("child", null);
-        definition.append("parentResourceDefinitionUuid", KnownUUIDs.RD_DATASET_UUID);
-        definition.append("childResourceDefinitionUuid", null);
+        return createDefinition(
+                KnownUUIDs.RD_DISTRIBUTION_UUID,
+                "Distribution",
+                "distribution",
+                DCAT.DISTRIBUTION.stringValue(),
+                "https://www.purl.org/fairtools/fdp/schema/0.1/distributionMetadata",
+                List.of(DCAT.DISTRIBUTION.stringValue(), DCAT.RESOURCE.stringValue()),
+                null,
+                KnownUUIDs.RD_DATASET_UUID,
+                null
+        );
+    }
+
+    private Document createDefinition(String uuid, String name, String prefix, String type, String specs,
+                             List<String> classes, String child, String parentUuid, String childUuid) {
+        final Document definition = new Document();
+        definition.append("uuid", uuid);
+        definition.append("name", name);
+        definition.append("uriPrefix", prefix);
+        definition.append("rdfType", type);
+        definition.append("specs", specs);
+        definition.append("shaclTargetClasses", classes);
+        definition.append("child", child);
+        definition.append("parentResourceDefinitionUuid", parentUuid);
+        definition.append("childResourceDefinitionUuid", childUuid);
         definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
-
 }

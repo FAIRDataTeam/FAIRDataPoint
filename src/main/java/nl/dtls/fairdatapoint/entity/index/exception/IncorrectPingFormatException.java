@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.entity.index.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class IncorrectPingFormatException extends IndexException {
+public class IncorrectPingFormatException extends AbstractIndexException {
 
     public IncorrectPingFormatException(String message) {
         super(message, HttpStatus.BAD_REQUEST);

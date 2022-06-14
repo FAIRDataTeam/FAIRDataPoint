@@ -28,14 +28,12 @@ import nl.dtls.fairdatapoint.api.dto.settings.*;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.config.properties.PingProperties;
 import nl.dtls.fairdatapoint.config.properties.RepositoryProperties;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
 import nl.dtls.fairdatapoint.entity.settings.SettingsPing;
 import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
 import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilterItem;
 import nl.dtls.fairdatapoint.service.search.SearchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -64,7 +62,12 @@ public class SettingsMapper {
                 .search(
                         SettingsSearchDTO
                                 .builder()
-                                .filters(settings.getSearchFilters().stream().map(this::toDTO).toList())
+                                .filters(settings
+                                        .getSearchFilters()
+                                        .stream()
+                                        .map(this::toDTO)
+                                        .toList()
+                                )
                                 .build()
                 )
                 .build();
@@ -116,7 +119,13 @@ public class SettingsMapper {
                 .toBuilder()
                 .metadataMetrics(dto.getMetadataMetrics())
                 .ping(fromUpdateDTO(dto.getPing(), settings.getPing()))
-                .searchFilters(dto.getSearch().getFilters().stream().map(this::fromUpdateDTO).toList())
+                .searchFilters(dto
+                        .getSearch()
+                        .getFilters()
+                        .stream()
+                        .map(this::fromUpdateDTO)
+                        .toList()
+                )
                 .build();
     }
 
@@ -127,7 +136,12 @@ public class SettingsMapper {
                 .label(dto.getLabel())
                 .predicate(dto.getPredicate())
                 .queryFromRecords(dto.isQueryFromRecords())
-                .presetValues(dto.getValues().stream().map(this::fromUpdateDTO).toList())
+                .presetValues(dto
+                        .getValues()
+                        .stream()
+                        .map(this::fromUpdateDTO)
+                        .toList()
+                )
                 .build();
     }
 

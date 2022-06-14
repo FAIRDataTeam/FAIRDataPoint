@@ -43,35 +43,55 @@ import static java.lang.String.format;
 @Slf4j
 public class MetadataSchemaRetrievalUtils {
 
-    private static final HttpClient client = HttpClient.newBuilder()
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .connectTimeout(Duration.ofMinutes(1))
             .build();
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private static final TypeReference<List<MetadataSchemaVersionDTO>> responseType = new TypeReference<>() {
-    };
+    private static final TypeReference<List<MetadataSchemaVersionDTO>> RESPONSE_TYPE =
+            new TypeReference<>() {
+            };
 
     public static List<MetadataSchemaVersionDTO> retrievePublishedMetadataSchemas(String fdpUrl) {
         try {
             log.info(format("Retrieving published metadata schemas from %s", fdpUrl));
-            HttpRequest request = HttpRequest.newBuilder()
+            final HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(fdpUrl.replaceAll("/$", "") + "/metadata-schemas/public"))
                     .header(HttpHeaders.ACCEPT, "application/json")
                     .GET().build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return objectMapper.readValue(response.body(), responseType);
-        } catch (JsonProcessingException e) {
-            log.warn(format("Could not parse published metadata schemas from %s: %s", fdpUrl, e.getMessage()));
-            throw new MetadataSchemaImportException(fdpUrl, "Cannot process response: " + e.getMessage());
-        } catch (IOException e) {
-            log.warn(format("Could not retrieve published metadata schemas from %s: %s", fdpUrl, e.getMessage()));
-            throw new MetadataSchemaImportException(fdpUrl, "Cannot get response: " + e.getMessage());
-        } catch (Exception e) {
-            log.warn(format("Could not retrieve published metadata schemas from %s: %s", fdpUrl, e.getMessage()));
-            throw new MetadataSchemaImportException(fdpUrl, e.getMessage());
+            final HttpResponse<String> response =
+                    HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+            return OBJECT_MAPPER.readValue(response.body(), RESPONSE_TYPE);
+        }
+        catch (JsonProcessingException exception) {
+            log.warn(
+                    format("Could not parse published metadata schemas from %s: %s",
+                            fdpUrl, exception.getMessage())
+            );
+            throw new MetadataSchemaImportException(
+                    fdpUrl, "Cannot process response: " + exception.getMessage()
+            );
+        }
+        catch (IOException exception) {
+            log.warn(
+                    format("Could not retrieve published metadata schemas from %s: %s",
+                            fdpUrl, exception.getMessage())
+            );
+            throw new MetadataSchemaImportException(
+                    fdpUrl, "Cannot get response: " + exception.getMessage()
+            );
+        }
+        catch (Exception exception) {
+            log.warn(
+                    format("Failed to get published metadata schemas from %s: %s",
+                            fdpUrl, exception.getMessage())
+            );
+            throw new MetadataSchemaImportException(
+                    fdpUrl, exception.getMessage()
+            );
         }
     }
 }

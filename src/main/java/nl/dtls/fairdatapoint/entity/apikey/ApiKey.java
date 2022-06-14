@@ -36,7 +36,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ApiKey {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
     private String uuid;
 

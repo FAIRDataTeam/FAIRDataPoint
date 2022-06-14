@@ -31,31 +31,30 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import io.swagger.v3.oas.models.tags.Tag;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.config.properties.OpenApiProperties;
 import nl.dtls.fairdatapoint.service.openapi.OpenApiTagsUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Configuration
 public class OpenApiConfig {
 
+    private static final String BEARER_SECURITY_SCHEMA = "bearer-jwt";
+
     @Bean
-    public OpenAPI customOpenAPI(InstanceProperties instanceProperties, OpenApiProperties openApiProperties) {
-        OpenAPI openAPI = new OpenAPI()
+    public OpenAPI customOpenAPI(
+            InstanceProperties instanceProperties,
+            OpenApiProperties openApiProperties
+    ) {
+        final OpenAPI openAPI = new OpenAPI()
                 .servers(Collections.singletonList(new Server().url(instanceProperties.getUrl())))
                 .components(new Components()
-                        .addSecuritySchemes("bearer-jwt", new SecurityScheme()
+                        .addSecuritySchemes(BEARER_SECURITY_SCHEMA, new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
@@ -74,7 +73,7 @@ public class OpenApiConfig {
                         )
                 )
                 .addSecurityItem(new SecurityRequirement()
-                        .addList("bearer-jwt", Arrays.asList("read", "write"))
+                        .addList(BEARER_SECURITY_SCHEMA, Arrays.asList("read", "write"))
                 )
                 .tags(OpenApiTagsUtils.STATIC_TAGS);
         if (openApiProperties.getContact().getUrl() != null) {

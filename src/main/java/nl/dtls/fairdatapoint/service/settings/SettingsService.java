@@ -58,18 +58,34 @@ public class SettingsService {
     }
 
     public SettingsDTO updateSettings(SettingsUpdateDTO dto) {
-        Settings oldSettings = getOrDefaults();
-        Settings newSettings = repository.save(mapper.fromUpdateDTO(dto, getOrDefaults()));
+        final Settings oldSettings = getOrDefaults();
+        final Settings newSettings = repository.save(mapper.fromUpdateDTO(dto, getOrDefaults()));
         handleSearchFiltersChange(oldSettings, newSettings);
         settingsCache.updateCachedSettings(newSettings);
         return mapper.toDTO(newSettings);
     }
 
     private void handleSearchFiltersChange(Settings oldSettings, Settings newSettings) {
-        Set<String> oldPredicateUris = oldSettings.getSearchFilters().stream().map(SettingsSearchFilter::getPredicate).collect(Collectors.toSet());
-        Set<String> newPredicateUris = newSettings.getSearchFilters().stream().map(SettingsSearchFilter::getPredicate).collect(Collectors.toSet());
-        oldPredicateUris.stream().filter(predicate -> !newPredicateUris.contains(predicate)).forEach(searchFilterCache::clearFilter);
-        newPredicateUris.stream().filter(predicate -> !oldPredicateUris.contains(predicate)).forEach(searchFilterCache::clearFilter);
+        final Set<String> oldPredicateUris =
+                oldSettings
+                        .getSearchFilters()
+                        .stream()
+                        .map(SettingsSearchFilter::getPredicate)
+                        .collect(Collectors.toSet());
+        final Set<String> newPredicateUris =
+                newSettings
+                        .getSearchFilters()
+                        .stream()
+                        .map(SettingsSearchFilter::getPredicate)
+                        .collect(Collectors.toSet());
+        oldPredicateUris
+                .stream()
+                .filter(predicate -> !newPredicateUris.contains(predicate))
+                .forEach(searchFilterCache::clearFilter);
+        newPredicateUris
+                .stream()
+                .filter(predicate -> !oldPredicateUris.contains(predicate))
+                .forEach(searchFilterCache::clearFilter);
     }
 
     public SettingsDTO resetSettings() {

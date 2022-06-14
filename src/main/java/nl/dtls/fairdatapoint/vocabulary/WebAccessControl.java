@@ -32,25 +32,27 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 /**
- * WebAccessControl vocabulary. See {@link
- * <a href="https://www.w3.org/wiki/WebAccessControl">WebAccessControl Vocabulary</a>}.
+ * WebAccessControl vocabulary.
  *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
+ * @see <a href="https://www.w3.org/wiki/WebAccessControl">WebAccessControl Vocabulary</a>
+ * @author Rajaram Kaliyaperumal
+ * @author Kees Burger
  * @version 0.1
  * @since 2017-02-22
  */
 public class WebAccessControl {
 
-    private static final ValueFactory f = SimpleValueFactory.getInstance();
+    public static final ValueFactory VF = SimpleValueFactory.getInstance();
+
     public static final String PREFIX = "acl";
     public static final String NAMESPACE = "http://www.w3.org/ns/auth/acl#";
-    public static final IRI AUTHORIZATION = f.createIRI(NAMESPACE + "Authorization");
-    public static final IRI ACCESS_APPEND = f.createIRI(NAMESPACE + "Append");
-    public static final IRI ACCESS_WRITE = f.createIRI(NAMESPACE + "Write");
-    public static final IRI ACCESS_READ = f.createIRI(NAMESPACE + "Read");
-    public static final IRI ACCESS_MODE = f.createIRI(NAMESPACE + "mode");
-    public static final IRI ACCESS_AGENT = f.createIRI(NAMESPACE + "agent");
-    public static final IRI ACCESS_TO = f.createIRI(NAMESPACE + "accessTo");
+
+    public static final IRI AUTHORIZATION = VF.createIRI(NAMESPACE + "Authorization");
+    public static final IRI ACCESS_APPEND = VF.createIRI(NAMESPACE + "Append");
+    public static final IRI ACCESS_WRITE = VF.createIRI(NAMESPACE + "Write");
+    public static final IRI ACCESS_READ = VF.createIRI(NAMESPACE + "Read");
+    public static final IRI ACCESS_MODE = VF.createIRI(NAMESPACE + "mode");
+    public static final IRI ACCESS_AGENT = VF.createIRI(NAMESPACE + "agent");
+    public static final IRI ACCESS_TO = VF.createIRI(NAMESPACE + "accessTo");
 
 }

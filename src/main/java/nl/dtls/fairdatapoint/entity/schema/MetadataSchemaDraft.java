@@ -43,7 +43,7 @@ import java.util.Set;
 public class MetadataSchemaDraft {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
     @Indexed
     private String uuid;

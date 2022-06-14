@@ -45,16 +45,17 @@ public class ResourceDefinitionMigration implements Migration {
     public void runMigration() {
         resourceDefinitionRepository.deleteAll();
 
-        ResourceDefinition repositoryDef = resourceDefinitionFixtures.fdpDefinition();
+        final ResourceDefinition repositoryDef = resourceDefinitionFixtures.fdpDefinition();
         resourceDefinitionRepository.save(repositoryDef);
 
-        ResourceDefinition catalogDef = resourceDefinitionFixtures.catalogDefinition();
+        final ResourceDefinition catalogDef = resourceDefinitionFixtures.catalogDefinition();
         resourceDefinitionRepository.save(catalogDef);
 
-        ResourceDefinition datasetDef = resourceDefinitionFixtures.datasetDefinition();
+        final ResourceDefinition datasetDef = resourceDefinitionFixtures.datasetDefinition();
         resourceDefinitionRepository.save(datasetDef);
 
-        ResourceDefinition distributionDef = resourceDefinitionFixtures.distributionDefinition();
+        final ResourceDefinition distributionDef =
+                resourceDefinitionFixtures.distributionDefinition();
         resourceDefinitionRepository.save(distributionDef);
 
         resourceDefinitionCache.computeCache();

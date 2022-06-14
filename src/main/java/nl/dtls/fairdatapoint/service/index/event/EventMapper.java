@@ -22,14 +22,11 @@
  */
 package nl.dtls.fairdatapoint.service.index.event;
 
-
 import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
 import nl.dtls.fairdatapoint.entity.index.event.AdminTrigger;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class EventMapper {
@@ -45,8 +42,10 @@ public class EventMapper {
         );
     }
 
-    public Event toAdminTriggerEvent(HttpServletRequest request, Authentication authentication, String clientUrl, String remoteAddr) {
-        var adminTrigger = new AdminTrigger();
+    public Event toAdminTriggerEvent(
+            Authentication authentication, String clientUrl, String remoteAddr
+    ) {
+        final AdminTrigger adminTrigger = new AdminTrigger();
         adminTrigger.setRemoteAddr(remoteAddr);
         adminTrigger.setTokenName(authentication.getName());
         adminTrigger.setClientUrl(clientUrl);

@@ -35,10 +35,10 @@ import javax.validation.constraints.NotBlank;
 public class ResourceDefinitionLink {
 
     @NotBlank
-    protected String title;
+    private String title;
 
     @NotBlank
     @ValidIri
-    protected String propertyUri;
+    private String propertyUri;
 
 }

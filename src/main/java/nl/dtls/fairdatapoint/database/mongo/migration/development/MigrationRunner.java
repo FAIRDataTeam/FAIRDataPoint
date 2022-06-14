@@ -33,7 +33,6 @@ import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.Resou
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.MetadataSchemaMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.settings.SettingsMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.service.search.SearchFilterCache;

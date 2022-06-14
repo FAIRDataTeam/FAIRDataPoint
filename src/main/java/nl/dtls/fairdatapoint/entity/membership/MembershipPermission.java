@@ -36,11 +36,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MembershipPermission {
 
     @Id
-    protected ObjectId id;
+    private ObjectId id;
 
-    protected int mask;
+    private int mask;
 
-    protected char code;
+    private char code;
 
     public MembershipPermission(int mask, char code) {
         this.mask = mask;

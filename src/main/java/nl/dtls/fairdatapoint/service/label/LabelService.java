@@ -50,39 +50,45 @@ public class LabelService {
     private final ResourceResolver resolver;
 
     public LabelService() {
-        var resolver = new CoreResourceResolver();
-        resolver.register(new ContentNegotiationStrategy());
-        resolver.register(new PathExtensionStrategy());
+        final CoreResourceResolver defaultResolver = new CoreResourceResolver();
+        defaultResolver.register(new ContentNegotiationStrategy());
+        defaultResolver.register(new PathExtensionStrategy());
 
-        this.resolver = resolver;
+        this.resolver = defaultResolver;
     }
 
     @Cacheable
     public Optional<LabelDTO> getLabel(String iri, String lang) {
         try {
-            var subject = i(iri);
-
+            final IRI subject = i(iri);
             return resolver.resolveResource(iri)
-                    .flatMap(model -> getPropertyLiteralByLanguage(model, subject, SKOS.PREF_LABEL, lang)
-                            .or(() -> getPropertyLiteralWithoutLanguage(model, subject, SKOS.PREF_LABEL))
-                            .or(() -> getPropertyLiteralByLanguage(model, subject, RDFS.LABEL, lang))
-                            .or(() -> getPropertyLiteralWithoutLanguage(model, subject, RDFS.LABEL))
-                    )
+                    .flatMap(model -> {
+                        return getPropertyLiteralByLanguage(model, subject, SKOS.PREF_LABEL, lang)
+                                .or(() -> getPropertyLiteralWithoutLanguage(model, subject, SKOS.PREF_LABEL))
+                                .or(() -> getPropertyLiteralByLanguage(model, subject, RDFS.LABEL, lang))
+                                .or(() -> getPropertyLiteralWithoutLanguage(model, subject, RDFS.LABEL));
+                    })
                     .map(literal -> new LabelDTO(literal.getLabel(), literal.getLanguage().orElse("")));
-        } catch (Exception e) {
-            log.warn("Unable to resolve label for {} (lang {}): {}", iri, lang, e.getMessage());
+        }
+        catch (Exception exception) {
+            log.warn("Unable to resolve label for {} (lang {}): {}",
+                    iri, lang, exception.getMessage());
             return Optional.empty();
         }
     }
 
-    private static Optional<Literal> getPropertyLiteralByLanguage(Model model, IRI subject, IRI predicate, String lang) {
+    private static Optional<Literal> getPropertyLiteralByLanguage(
+            Model model, IRI subject, IRI predicate, String lang
+    ) {
         return Models.getPropertyLiterals(model, subject, predicate)
                 .stream()
                 .filter(literal -> literal.getLanguage().filter(isEqual(lang)).isPresent())
                 .findFirst();
     }
 
-    private static Optional<Literal> getPropertyLiteralWithoutLanguage(Model model, IRI subject, IRI predicate) {
+    private static Optional<Literal> getPropertyLiteralWithoutLanguage(
+            Model model, IRI subject, IRI predicate
+    ) {
         return Models.getPropertyLiterals(model, subject, predicate)
                 .stream()
                 .filter(literal -> literal.getLanguage().isEmpty())

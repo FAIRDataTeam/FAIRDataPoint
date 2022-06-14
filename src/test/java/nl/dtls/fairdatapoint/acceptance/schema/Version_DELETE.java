@@ -88,9 +88,9 @@ public class Version_DELETE extends WebIntegrationTest {
     public void res200_deleteLatest() {
         // GIVEN: Prepare data
         metadataSchemaRepository.deleteAll();
-        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(false));
-        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v2(schemaV1, false));
-        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v3(schemaV2, true));
+        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(false));
+        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV2(schemaV1, false));
+        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV3(schemaV2, true));
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
@@ -117,9 +117,9 @@ public class Version_DELETE extends WebIntegrationTest {
     public void res200_deleteNonLatest() {
         // GIVEN: Prepare data
         metadataSchemaRepository.deleteAll();
-        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(false));
-        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v2(schemaV1, false));
-        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v3(schemaV2, true));
+        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(false));
+        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV2(schemaV1, false));
+        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV3(schemaV2, true));
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity

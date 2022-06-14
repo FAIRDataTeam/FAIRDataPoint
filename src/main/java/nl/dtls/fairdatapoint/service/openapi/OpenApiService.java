@@ -25,7 +25,6 @@ package nl.dtls.fairdatapoint.service.openapi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
-import io.swagger.v3.oas.models.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -33,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +40,9 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 public class OpenApiService {
+
+    private static final String MSG_ADD = "Adding OpenAPI paths: {}";
+    private static final String MSG_REMOVE = "Removing OpenAPI paths: {}";
 
     @Autowired
     private OpenAPI openAPI;
@@ -53,24 +54,24 @@ public class OpenApiService {
         return (Paths) openAPI.getExtensions().get("fdpGenericPaths");
     }
 
-    private boolean isRelatedToResourceDefinition(PathItem pathItem, ResourceDefinition rd) {
-        String rdUuid = (String) pathItem.getExtensions().getOrDefault("fdpResourceDefinition", "");
-        return rdUuid.equals(rd.getUuid());
+    private boolean isRelatedToResourceDefinition(PathItem pathItem, ResourceDefinition definition) {
+        final String rdUuid = (String) pathItem.getExtensions().getOrDefault("fdpResourceDefinition", "");
+        return rdUuid.equals(definition.getUuid());
     }
 
     public void updateTags(List<ResourceDefinition> resourceDefinitions) {
         openAPI.setTags(OpenApiTagsUtils.listTags(resourceDefinitions));
     }
 
-    public void removeGenericPaths(ResourceDefinition rd) {
-        Paths fdpGenericPaths = getGenericPaths();
-        Set<String> toRemove = fdpGenericPaths
+    public void removeGenericPaths(ResourceDefinition definition) {
+        final Paths fdpGenericPaths = getGenericPaths();
+        final Set<String> toRemove = fdpGenericPaths
                 .entrySet()
                 .stream()
-                .filter(item -> isRelatedToResourceDefinition(item.getValue(), rd))
+                .filter(item -> isRelatedToResourceDefinition(item.getValue(), definition))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
-        log.info("Removing OpenAPI paths: {}", toRemove);
+        log.info(MSG_REMOVE, toRemove);
         openAPI.getPaths().keySet().removeAll(toRemove);
         fdpGenericPaths.keySet().removeAll(toRemove);
         // Update tags
@@ -78,34 +79,34 @@ public class OpenApiService {
     }
 
     public void removeAllGenericPaths() {
-        Paths fdpGenericPaths = getGenericPaths();
-        log.info("Removing OpenAPI paths: {}", fdpGenericPaths.keySet());
+        final Paths fdpGenericPaths = getGenericPaths();
+        log.info(MSG_REMOVE, fdpGenericPaths.keySet());
         openAPI.getPaths().keySet().removeAll(fdpGenericPaths.keySet());
         fdpGenericPaths.clear();
     }
 
-    public void updateGenericPaths(ResourceDefinition rd) {
-        Paths fdpGenericPaths = getGenericPaths();
+    public void updateGenericPaths(ResourceDefinition definition) {
+        final Paths fdpGenericPaths = getGenericPaths();
         // Cleanup
-        removeGenericPaths(rd);
+        removeGenericPaths(definition);
         // Generate
-        OpenApiGenerator.generatePathsForResourceDefinition(fdpGenericPaths, rd);
+        OpenApiGenerator.generatePathsForResourceDefinition(fdpGenericPaths, definition);
         // Apply
-        log.info("Adding OpenAPI paths: {}", fdpGenericPaths.keySet());
+        log.info(MSG_ADD, fdpGenericPaths.keySet());
         openAPI.getPaths().putAll(fdpGenericPaths);
         // Update tags
         updateTags(resourceDefinitionRepository.findAll());
     }
 
     public void updateAllGenericPaths() {
-        Paths fdpGenericPaths = getGenericPaths();
+        final Paths fdpGenericPaths = getGenericPaths();
         // Cleanup
         removeAllGenericPaths();
         // Re-generate from Resource Definitions
-        List<ResourceDefinition> resourceDefinitions = resourceDefinitionRepository.findAll();
-        resourceDefinitions.forEach(rd -> OpenApiGenerator.generatePathsForResourceDefinition(fdpGenericPaths, rd));
+        final List<ResourceDefinition> resourceDefinitions = resourceDefinitionRepository.findAll();
+        resourceDefinitions.forEach(def -> OpenApiGenerator.generatePathsForResourceDefinition(fdpGenericPaths, def));
         // Apply
-        log.info("Adding OpenAPI paths: {}", fdpGenericPaths.keySet());
+        log.info(MSG_ADD, fdpGenericPaths.keySet());
         openAPI.getPaths().putAll(fdpGenericPaths);
         updateTags(resourceDefinitions);
     }

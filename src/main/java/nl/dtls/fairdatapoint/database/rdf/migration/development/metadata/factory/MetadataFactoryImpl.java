@@ -41,15 +41,15 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 public class MetadataFactoryImpl implements MetadataFactory {
 
     public Model createFDPMetadata(String title, String description, String fdpUrl) {
-        Model metadata = new LinkedHashModel();
+        final Model metadata = new LinkedHashModel();
         setCommonMetadata(metadata, i(fdpUrl), title, description, null);
         return metadata;
     }
 
     public Model createCatalogMetadata(String title, String description, String identifier,
                                        List<String> themeTaxonomies, String fdpUrl, IRI fdp) {
-        Model metadata = new LinkedHashModel();
-        IRI catalogUri = i(fdpUrl + "/catalog/" + identifier);
+        final Model metadata = new LinkedHashModel();
+        final IRI catalogUri = i(fdpUrl + "/catalog/" + identifier);
         setCommonMetadata(metadata, catalogUri, title, description, fdp);
         setThemeTaxonomies(metadata, catalogUri,
                 themeTaxonomies.stream().map(ValueFactoryHelper::i).collect(Collectors.toList()));
@@ -59,8 +59,8 @@ public class MetadataFactoryImpl implements MetadataFactory {
     public Model createDatasetMetadata(String title, String description, String identifier,
                                        List<String> themes, List<String> keywords, String fdpUrl,
                                        IRI catalog) {
-        Model metadata = new LinkedHashModel();
-        IRI datasetUri = i(fdpUrl + "/dataset/" + identifier);
+        final Model metadata = new LinkedHashModel();
+        final IRI datasetUri = i(fdpUrl + "/dataset/" + identifier);
         setCommonMetadata(metadata, datasetUri, title, description, catalog);
         setThemes(metadata, datasetUri, themes.stream().map(ValueFactoryHelper::i).collect(Collectors.toList()));
         setKeywords(metadata, datasetUri, keywords.stream().map(ValueFactoryHelper::l).collect(Collectors.toList()));
@@ -70,8 +70,8 @@ public class MetadataFactoryImpl implements MetadataFactory {
     public Model createDistributionMetadata(String title, String description, String identifier,
                                             String downloadUrl, String accessUrl, String mediaType,
                                             String fdpUrl, IRI dataset) {
-        Model metadata = new LinkedHashModel();
-        IRI distributionUri = i(fdpUrl + "/distribution/" + identifier);
+        final Model metadata = new LinkedHashModel();
+        final IRI distributionUri = i(fdpUrl + "/distribution/" + identifier);
         setCommonMetadata(metadata, distributionUri, title, description, dataset);
 
         if (downloadUrl != null) {
@@ -86,7 +86,8 @@ public class MetadataFactoryImpl implements MetadataFactory {
         return metadata;
     }
 
-    private void setCommonMetadata(Model metadata, IRI uri, String title, String description, IRI parent) {
+    private void setCommonMetadata(Model metadata, IRI uri, String title,
+                                   String description, IRI parent) {
         setTitle(metadata, uri, l(title));
         setDescription(metadata, uri, l(description));
         setVersion(metadata, uri, l(1.0f));

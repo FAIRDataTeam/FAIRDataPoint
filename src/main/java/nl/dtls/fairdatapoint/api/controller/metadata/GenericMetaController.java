@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
@@ -57,6 +58,8 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Tag(name = "Metadata")
 @RestController
 public class GenericMetaController {
+
+    private static final int SUPPORTED_URL_FRAGMENTS = 3;
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -82,31 +85,33 @@ public class GenericMetaController {
     ) throws MetadataServiceException {
         // 1. Init
         String urlPrefix = oUrlPrefix.orElse("");
-        String recordId = oRecordId.orElse("");
-        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+        final String recordId = oRecordId.orElse("");
+        final MetadataService metadataService =
+                metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get resource definition
-        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+        ResourceDefinition definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get and check existence entity
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model entity = metadataService.retrieve(entityUri);
 
         // 4. Get member
-        String entityId = getMetadataIdentifier(entity).getIdentifier().getLabel();
-        Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(entityId, Metadata.class);
-        MemberDTO member = oMember.orElse(new MemberDTO(null, null));
+        final String entityId = getMetadataIdentifier(entity).getIdentifier().getLabel();
+        final Optional<MemberDTO> oMember =
+                memberService.getMemberForCurrentUser(entityId, Metadata.class);
+        final MemberDTO member = oMember.orElse(new MemberDTO(null, null));
 
         // 5. Get state
-        MetaStateDTO state = metadataStateService.getState(entityUri, entity, rd);
+        final MetaStateDTO state = metadataStateService.getState(entityUri, entity, definition);
 
         // 6. Make path map
-        HashMap<String, MetaPathDTO> pathMap = new HashMap<>();
+        final Map<String, MetaPathDTO> pathMap = new HashMap<>();
         while (true) {
-            MetaPathDTO entry = new MetaPathDTO();
-            entry.setResourceDefinitionUuid(rd.getUuid());
+            final MetaPathDTO entry = new MetaPathDTO();
+            entry.setResourceDefinitionUuid(definition.getUuid());
             entry.setTitle(getTitle(entity).stringValue());
-            IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
+            final IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
             Optional.ofNullable(parentUri).map(IRI::toString).ifPresent(entry::setParent);
             pathMap.put(entityUri.toString(), entry);
             if (parentUri == null) {
@@ -115,7 +120,7 @@ public class GenericMetaController {
             entity = metadataService.retrieve(parentUri);
             entityUri = parentUri;
             urlPrefix = getResourceNameForList(parentUri.toString());
-            rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+            definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
         }
 
         return new MetaDTO(member, state, pathMap);
@@ -129,13 +134,14 @@ public class GenericMetaController {
             @RequestBody @Valid MetaStateChangeDTO reqDto
     ) throws MetadataServiceException {
         // 1. Init
-        String urlPrefix = oUrlPrefix.orElse("");
-        String recordId = oRecordId.orElse("");
-        MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+        final String urlPrefix = oUrlPrefix.orElse("");
+        final String recordId = oRecordId.orElse("");
+        final MetadataService metadataService =
+                metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
-        IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        Model model = metadataService.retrieve(entityUri);
+        final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
+        final Model model = metadataService.retrieve(entityUri);
 
         // 3. Get state
         metadataStateService.modifyState(entityUri, reqDto);
@@ -144,16 +150,16 @@ public class GenericMetaController {
     }
 
     private String getResourceNameForList(String url) throws MetadataServiceException {
-        url = url.replace(persistentUrl, "")
+        final String fixedUrl = url
+                .replace(persistentUrl, "")
                 .replace("/meta", "")
                 .replace("/state", "");
 
-        String[] parts = url.split("/");
+        final String[] parts = fixedUrl.split("/");
         if (parts.length == 1) {
             return "";
         }
-
-        if (parts.length != 3) {
+        if (parts.length != SUPPORTED_URL_FRAGMENTS) {
             throw new MetadataServiceException("Unsupported URL");
         }
         return parts[1];

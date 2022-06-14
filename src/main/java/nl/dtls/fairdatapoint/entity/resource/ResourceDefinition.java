@@ -44,22 +44,24 @@ public class ResourceDefinition {
 
     @Id
     @JsonIgnore
-    protected ObjectId id;
+    private ObjectId id;
 
-    protected String uuid;
+    private String uuid;
 
-    protected String name;
+    private String name;
 
-    protected String urlPrefix;
+    private String urlPrefix;
 
-    protected List<String> metadataSchemaUuids = new ArrayList<>();
+    private List<String> metadataSchemaUuids = new ArrayList<>();
 
-    protected List<ResourceDefinitionChild> children = new ArrayList<>();
+    private List<ResourceDefinitionChild> children = new ArrayList<>();
 
-    protected List<ResourceDefinitionLink> externalLinks = new ArrayList<>();
+    private List<ResourceDefinitionLink> externalLinks = new ArrayList<>();
 
-    public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> metadataSchemaUuids,
-                              List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks) {
+    public ResourceDefinition(
+            String uuid, String name, String urlPrefix, List<String> metadataSchemaUuids,
+            List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks
+    ) {
         this.uuid = uuid;
         this.name = name;
         this.urlPrefix = urlPrefix;

@@ -34,29 +34,41 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @ConfigurationProperties(prefix = "repository")
 public class RepositoryProperties {
-    private int type;
-    private RepositoryNativeProperties nativeRepo = null;
-    private RepositoryBasicProperties agraph = null;
-    private RepositoryBasicProperties graphDb = null;
-    private RepositoryBasicProperties blazegraph = null;
+    // TODO: use polymorphism for types of repository
 
-    public void setNative(RepositoryNativeProperties nativeRepo) {
-        this.nativeRepo = nativeRepo;
+    public static final int TYPE_IN_MEMORY = 1;
+
+    public static final int TYPE_NATIVE = 2;
+
+    public static final int TYPE_ALLEGRO = 3;
+
+    public static final int TYPE_GRAPHDB = 4;
+
+    public static final int TYPE_BLAZEGRAPH = 5;
+
+    private int type;
+    private RepositoryNativeProperties nativeRepo;
+    private RepositoryBasicProperties agraph;
+    private RepositoryBasicProperties graphDb;
+    private RepositoryBasicProperties blazegraph;
+
+    public void setNative(RepositoryNativeProperties repositoryNativeProperties) {
+        this.nativeRepo = repositoryNativeProperties;
     }
 
     public String getStringType() {
         return switch (type) {
-            case 1 -> "InMemory";
-            case 2 -> "Native";
-            case 3 -> "AllegroGraph";
-            case 4 -> "GraphDB";
-            case 5 -> "Blazegraph";
+            case TYPE_IN_MEMORY -> "InMemory";
+            case TYPE_NATIVE -> "Native";
+            case TYPE_ALLEGRO -> "AllegroGraph";
+            case TYPE_GRAPHDB -> "GraphDB";
+            case TYPE_BLAZEGRAPH -> "Blazegraph";
             default -> "Invalid";
         };
     }
 
     public String getDir() {
-        if (type == 2) {
+        if (type == TYPE_NATIVE) {
             return nativeRepo.getDir();
         }
         return null;
@@ -64,34 +76,34 @@ public class RepositoryProperties {
 
     public String getUrl() {
         return switch (type) {
-            case 3 -> agraph.getUrl();
-            case 4 -> graphDb.getUrl();
-            case 5 -> blazegraph.getUrl();
+            case TYPE_ALLEGRO -> agraph.getUrl();
+            case TYPE_GRAPHDB -> graphDb.getUrl();
+            case TYPE_BLAZEGRAPH -> blazegraph.getUrl();
             default -> null;
         };
     }
 
     public String getRepository() {
         return switch (type) {
-            case 3 -> agraph.getRepository();
-            case 4 -> graphDb.getRepository();
-            case 5 -> blazegraph.getRepository();
+            case TYPE_ALLEGRO -> agraph.getRepository();
+            case TYPE_GRAPHDB -> graphDb.getRepository();
+            case TYPE_BLAZEGRAPH -> blazegraph.getRepository();
             default -> null;
         };
     }
 
     public String getUsername() {
         return switch (type) {
-            case 3 -> agraph.getUsername();
-            case 4 -> graphDb.getUsername();
+            case TYPE_ALLEGRO -> agraph.getUsername();
+            case TYPE_GRAPHDB -> graphDb.getUsername();
             default -> null;
         };
     }
 
     public String getPassword() {
         return switch (type) {
-            case 3 -> agraph.getPassword();
-            case 4 -> graphDb.getPassword();
+            case TYPE_ALLEGRO -> agraph.getPassword();
+            case TYPE_GRAPHDB -> graphDb.getPassword();
             default -> null;
         };
     }

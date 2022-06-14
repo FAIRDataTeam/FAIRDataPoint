@@ -33,7 +33,6 @@ import nl.dtls.fairdatapoint.entity.search.SearchResult;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -47,11 +46,14 @@ public interface MetadataRepository {
 
     List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException;
 
-    List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException;
+    List<SearchFilterValue> findByFilterPredicate(IRI predicateUri)
+            throws MetadataRepositoryException;
 
-    Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRepositoryException;
+    Map<String, String> findChildTitles(IRI parent, IRI relation)
+            throws MetadataRepositoryException;
 
-    boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException;
+    boolean checkExistence(Resource subject, IRI predicate, Value object)
+            throws MetadataRepositoryException;
 
     void save(List<Statement> statements, IRI context) throws MetadataRepositoryException;
 
@@ -59,7 +61,10 @@ public interface MetadataRepository {
 
     void remove(IRI uri) throws MetadataRepositoryException;
 
-    void removeStatement(Resource subject, IRI predicate, Value object, IRI context) throws MetadataRepositoryException;
+    void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+            throws MetadataRepositoryException;
 
-    List<BindingSet> runSparqlQuery(String queryName, Class repositoryType, Map<String, Value> bindings) throws MetadataRepositoryException;
+    List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
+                                    Map<String, Value> bindings)
+            throws MetadataRepositoryException;
 }

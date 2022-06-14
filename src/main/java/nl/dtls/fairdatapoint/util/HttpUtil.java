@@ -31,7 +31,6 @@ import org.springframework.http.HttpHeaders;
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -42,25 +41,37 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 public class HttpUtil {
 
+    private static final String MSG_BAD_URL_FORMAT = "URL was not in the right format";
+
+    private static final String MSG_NO_METADATA = "No metadata record identifier given";
+
+    private static final String URL_SEP = "/";
+
+    private static final String PROTO_HTTP = "http://";
+
+    private static final String PROTO_HTTPS = "https://";
+
+    private static final String HEADER_TOKEN_PREFIX = "Bearer ";
+
     private static final String[] IP_HEADER_CANDIDATES = {
-            "X-Forwarded-For",
-            "X-Real-IP",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_X_FORWARDED_FOR",
-            "HTTP_X_FORWARDED",
-            "HTTP_X_CLUSTER_CLIENT_IP",
-            "HTTP_CLIENT_IP",
-            "HTTP_FORWARDED_FOR",
-            "HTTP_FORWARDED",
-            "HTTP_VIA",
-            "REMOTE_ADDR"
+        "X-Forwarded-For",
+        "X-Real-IP",
+        "Proxy-Client-IP",
+        "WL-Proxy-Client-IP",
+        "HTTP_X_FORWARDED_FOR",
+        "HTTP_X_FORWARDED",
+        "HTTP_X_CLUSTER_CLIENT_IP",
+        "HTTP_CLIENT_IP",
+        "HTTP_FORWARDED_FOR",
+        "HTTP_FORWARDED",
+        "HTTP_VIA",
+        "REMOTE_ADDR",
     };
 
     public static String getClientIpAddress(HttpServletRequest request, Boolean behindProxy) {
         if (behindProxy) {
             for (String header : IP_HEADER_CANDIDATES) {
-                String ipList = request.getHeader(header);
+                final String ipList = request.getHeader(header);
                 if (ipList != null && ipList.length() != 0 && !"unknown".equalsIgnoreCase(ipList)) {
                     return ipList.split(",")[0];
                 }
@@ -74,16 +85,16 @@ public class HttpUtil {
         log.info("Original requested url {}", urlS);
         try {
             urlS = removeLastSlash(urlS.replace("/expanded", ""));
-            persistentUrl = removeLastSlash(persistentUrl);
 
-            URL url = new URL(urlS);
-            String modifiedUrl = persistentUrl + url.getPath();
+            final URL url = new URL(urlS);
+            final String modifiedUrl = removeLastSlash(persistentUrl) + url.getPath();
             log.info("Modified requested url {}", modifiedUrl);
 
             return modifiedUrl;
 
-        } catch (MalformedURLException e) {
-            throw new ValidationException("URL was not in the right format");
+        }
+        catch (MalformedURLException exception) {
+            throw new ValidationException(MSG_BAD_URL_FORMAT);
         }
     }
 
@@ -93,25 +104,27 @@ public class HttpUtil {
                 return new URL(persistentUrl);
             }
             if (recordId.isEmpty()) {
-                throw new ValidationException("No metadata record identifier given");
+                throw new ValidationException(MSG_NO_METADATA);
             }
             return new URL(format("%s/%s/%s", persistentUrl, urlPrefix, recordId));
-        } catch (MalformedURLException e) {
-            throw new ValidationException("URL was not in the right format");
+        }
+        catch (MalformedURLException exception) {
+            throw new ValidationException(MSG_BAD_URL_FORMAT);
         }
     }
 
     public static IRI getMetadataIRI(String persistentUrl, String urlPrefix, String recordId) {
         return i(getMetadataURL(persistentUrl, urlPrefix, recordId).toString());
     }
+
     public static IRI generateNewMetadataIRI(String persistentUrl, String urlPrefix) {
         return getMetadataIRI(persistentUrl, urlPrefix, UUID.randomUUID().toString());
     }
 
     public static IRI generateNewIRI(HttpServletRequest request, String persistentUrl) {
-        String requestedURL = getRequestURL(request, persistentUrl);
-        UUID uid = UUID.randomUUID();
-        return i(requestedURL + "/" + uid.toString());
+        final String requestedURL = getRequestURL(request, persistentUrl);
+        final UUID uid = UUID.randomUUID();
+        return i(requestedURL + URL_SEP + uid.toString());
     }
 
     public static RDFFormat getRdfContentType(String name) {
@@ -130,25 +143,28 @@ public class HttpUtil {
 
     public static String getToken(HttpServletRequest req) {
         return ofNullable(req.getHeader(HttpHeaders.AUTHORIZATION))
-                .filter(h -> h.startsWith("Bearer "))
-                .flatMap(h -> of(h.substring(7)))
+                .filter(header -> header.startsWith(HEADER_TOKEN_PREFIX))
+                .flatMap(header -> of(header.substring(HEADER_TOKEN_PREFIX.length())))
                 .orElse(null);
     }
 
     public static String removeLastSlash(String url) {
-        if (url.endsWith("/")) {
+        if (url.endsWith(URL_SEP)) {
             return url.substring(0, url.length() - 1);
-        } else {
+        }
+        else {
             return url;
         }
     }
 
     public static String removeProtocol(String url) {
-        if (url.contains("http://")) {
-            return url.substring(7);
-        } else if (url.contains("https://")) {
-            return url.substring(8);
-        } else {
+        if (url.startsWith(PROTO_HTTP)) {
+            return url.substring(PROTO_HTTP.length());
+        }
+        else if (url.startsWith(PROTO_HTTPS)) {
+            return url.substring(PROTO_HTTPS.length());
+        }
+        else {
             return url;
         }
     }

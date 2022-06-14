@@ -27,14 +27,18 @@ import org.springframework.validation.BindException;
 
 public class ValidationUtil {
 
-    public static <T> void validationFailed(String field, String code, String defaultMessage, T reqDto) throws BindException {
-        BeanPropertyBindingResult error = new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
+    public static <T> void validationFailed(
+            String field, String code, String defaultMessage, T reqDto
+    ) throws BindException {
+        final BeanPropertyBindingResult error =
+                new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
         error.rejectValue(field, code, defaultMessage);
         throw new BindException(error);
     }
 
     public static <T> void uniquenessValidationFailed(String field, T reqDto) throws BindException {
-        BeanPropertyBindingResult error = new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
+        final BeanPropertyBindingResult error =
+                new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
         error.rejectValue(field, "Uniqueness", "must be unique");
         throw new BindException(error);
     }

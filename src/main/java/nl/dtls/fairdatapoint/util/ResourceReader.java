@@ -46,13 +46,14 @@ public class ResourceReader {
     public static String loadResource(Resource resource) {
         try (Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8)) {
             return FileCopyUtils.copyToString(reader);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        }
+        catch (IOException exception) {
+            throw new UncheckedIOException(exception);
         }
     }
 
     public static Resource getResource(String name) {
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        final ResourceLoader resourceLoader = new DefaultResourceLoader();
         return resourceLoader.getResource(format("classpath:%s", name));
     }
 

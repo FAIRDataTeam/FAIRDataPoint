@@ -47,6 +47,8 @@ import java.util.Optional;
 @Component
 public class JwtService {
 
+    private static final Long DAY_MS = 24 * 60 * 60 * 1000L;
+
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;
 
@@ -75,14 +77,16 @@ public class JwtService {
     }
 
     public String createToken(AuthDTO authDTO) {
-        Optional<User> oUser = userRepository.findByEmail(authDTO.getEmail());
-        if (oUser.isEmpty()) {
+        final Optional<User> user = userRepository.findByEmail(authDTO.getEmail());
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
-        User user = oUser.get();
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUuid(),
-                authDTO.getPassword()));
-        return buildToken(user);
+        final Authentication auth = new UsernamePasswordAuthenticationToken(
+                user.get().getUuid(),
+                authDTO.getPassword()
+        );
+        authenticationManager.authenticate(auth);
+        return buildToken(user.get());
     }
 
     public Authentication getAuthentication(String token) {
@@ -95,17 +99,18 @@ public class JwtService {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = parser.parseClaimsJws(token);
+            final Jws<Claims> claims = parser.parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (JwtException | IllegalArgumentException e) {
+        }
+        catch (JwtException | IllegalArgumentException exception) {
             throw new UnauthorizedException("Expired or invalid JWT token");
         }
     }
 
     private String buildToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getUuid());
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + (expiration * 24 * 60 * 60 * 1000));
+        final Claims claims = Jwts.claims().setSubject(user.getUuid());
+        final Date now = new Date();
+        final Date validity = new Date(now.getTime() + (expiration * DAY_MS));
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)

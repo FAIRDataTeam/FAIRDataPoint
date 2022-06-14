@@ -41,5 +41,5 @@ public class MetaPathDTO {
     private String title;
 
     @JsonInclude
-    private String parent = null;
+    private String parent;
 }

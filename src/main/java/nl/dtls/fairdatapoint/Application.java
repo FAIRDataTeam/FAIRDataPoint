@@ -36,12 +36,13 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ConfigurationPropertiesScan("nl.dtls.fairdatapoint.config.*")
 public class Application {
 
+    private static final String PROFILES_PROPERTY = "spring.profiles.active";
+
     public static void main(String[] args) {
-        String property = System.getProperties().getProperty("spring.profiles.active");
+        final String property = System.getProperties().getProperty(PROFILES_PROPERTY);
         if (property == null) {
-            System.setProperty("spring.profiles.active", Profiles.PRODUCTION);
+            System.setProperty(PROFILES_PROPERTY, Profiles.PRODUCTION);
         }
         SpringApplication.run(Application.class, args);
     }
-
 }
