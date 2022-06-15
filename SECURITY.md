@@ -5,13 +5,13 @@
 We support the latest major and minor version with patch versions that fix vulnerabilities and critical bugs. For older versions, we highly recommend upgrading to the latest version. 
 
 | Version | Supported          |
-| ------- | ------------------ |
-| 1.12.x   | :white_check_mark: |
-| < 1.12   | :x:                |
+|---------| ------------------ |
+| 1.14.0  | :white_check_mark: |
+| < 1.14  | :x:                |
 
 ## Current Recommendations
 
-* Use 1.12.2 that uses log4j 2.16.0 (due to vulnerabilities [CVE-2021-45046](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45046) and [CVE-2021-44228](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228))
+* Use 1.14.0 with the newest dependencies (and no known vulnerabilities)
 
 ## Reporting a Vulnerability
 

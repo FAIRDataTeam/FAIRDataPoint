@@ -7,10 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+
+## [1.14.0]
+
+### Added
+
+- Security audit via GitHub Actions (Snyk and CodeQL)
+
 ### Changed
 
 - Introduced metadata schemas (as replacement of shapes) including versioning and importing
-
+- Updated RDF4J to 4.0
+- Several dependencies updated
 
 ## [1.13.2]
 
@@ -304,3 +312,5 @@ The first release of reference FAIR Data Point implementation.
 [1.12.4]: /../../tree/v1.12.4
 [1.13.0]: /../../tree/v1.13.0
 [1.13.1]: /../../tree/v1.13.1
+[1.13.2]: /../../tree/v1.13.2
+[1.14.0]: /../../tree/v1.14.0
