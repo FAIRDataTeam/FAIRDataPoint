@@ -1,0 +1,131 @@
+name: "Security Audit"
+
+on:
+  push:
+    branches: [ develop, master ]
+  pull_request:
+    branches: [ develop ]
+  schedule:
+    - cron: '23 4 * * 1'
+
+jobs:
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    env:
+      JDK_VERSION: 17
+      JDK_FILE: openjdk-17_linux-x64_bin.tar.gz
+      JDK_URL: https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_linux-x64_bin.tar.gz
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+
+      - name: Prepare JDK folder
+        run: mkdir -p ~/jdk
+
+      # (1) -> Prepare cache and Java
+      - name: Cache ~/.m2
+        uses: actions/cache@v2.1.7
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Cache JDK folder
+        uses: actions/cache@v2.1.7
+        with:
+          path: ~/jdk
+          key: ${{ env.JDK_FILE }}
+
+      # (2) -> Prepare Java
+      - name: Download JDK
+        run: |
+          if [ ! -f ~/jdk/$JDK_FILE ]; then
+            wget --quiet $JDK_URL -O ~/jdk/$JDK_FILE
+          fi
+          cp ~/jdk/$JDK_FILE .
+
+      - name: Setup Java
+        uses: actions/setup-java@v2.4.0
+        with:
+          distribution: 'jdkfile'
+          java-version: ${{ env.JDK_VERSION }}
+          jdkFile: ${{ env.JDK_FILE }}
+          architecture: x64
+
+      - name: Verify Maven and Java
+        run: |
+          mvn --version
+
+      # (3) -> Init CodeQL
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: 'java'
+
+      # (3) -> Build
+      - name: Build package
+        run: |
+          mvn --quiet -B -U --fail-fast -DskipTests package
+
+      # (4) -> CodeQL Analysis
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+
+  snyk:
+    name: Snyk (Maven)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@master
+
+      - name: Perform Snyk Check (Maven)
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  snyk-docker:
+    name: Snyk (Docker)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    env:
+      PUBLIC_IMAGE: fairdata/fairdatapoint
+      TAG_DEVELOP: develop
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@master
+
+      - name: Docker build
+        run: |
+          docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
+          docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t fdp:snyk-test -f Dockerfile.build .
+
+      - name: Perform Snyk Check (Docker)
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: fdp:snyk-test
+          args: --severity-threshold=high

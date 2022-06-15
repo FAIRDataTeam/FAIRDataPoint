@@ -27,7 +27,6 @@ import lombok.SneakyThrows;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
@@ -42,16 +41,12 @@ import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
-import nl.dtls.fairdatapoint.util.HttpUtil;
-import org.eclipse.rdf4j.util.iterators.EmptyIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.Authentication;
@@ -61,7 +56,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
-import java.util.Optional;
+import java.util.Collections;
 
 @Service
 public class EventService {
@@ -106,7 +101,7 @@ public class EventService {
 
     @RequiredEnabledIndexFeature
     public Iterable<Event> getEvents(String indexEntryUuid) {
-        return indexEntryService.getEntry(indexEntryUuid).map(this::getEvents).orElse(EmptyIterator::new);
+        return indexEntryService.getEntry(indexEntryUuid).map(this::getEvents).orElse(Collections.emptyList());
     }
 
     @RequiredEnabledIndexFeature

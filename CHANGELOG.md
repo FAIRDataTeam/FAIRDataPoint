@@ -8,6 +8,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.14.0]
+
+### Added
+
+- Security audit via GitHub Actions (Snyk and CodeQL)
+
+### Changed
+
+- Introduced metadata schemas (as replacement of shapes) including versioning and importing
+- Updated RDF4J to 4.0
+- Several dependencies updated
+
 ## [1.13.2]
 
 ### Fixed
@@ -36,7 +48,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Missing `xsd` prefix in some default shapes
+- Missing `xsd` prefix in some default metadataSchemas
 
 ## [1.12.4]
 
@@ -92,13 +104,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Resource definitions are related directly to shapes
+- Resource definitions are related directly to metadataSchemas
 
 ## [1.10.0]
 
 ### Added
 
-- Allow to change internal shapes
+- Allow to change internal metadataSchemas
 - Reset to "factory defaults" (users, resource definitions, metadata)
 
 ### Changed
@@ -109,7 +121,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Publishing and sharing SHACL shapes between FDPs
+- Publishing and sharing SHACL metadataSchemas between FDPs
 - Pagination for child resources
 
 ### Changed
@@ -193,8 +205,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Shape definitions with DASH support
 - Endpoint for bootstrapping [Client]
-- Validation for SHACL definitions in shapes
-- Production migration for shape definitions
+- Validation for SHACL definitions in metadataSchemas
+- Production migration for metadataSchema definitions
 
 ### Changed
 
@@ -300,3 +312,5 @@ The first release of reference FAIR Data Point implementation.
 [1.12.4]: /../../tree/v1.12.4
 [1.13.0]: /../../tree/v1.13.0
 [1.13.1]: /../../tree/v1.13.1
+[1.13.2]: /../../tree/v1.13.2
+[1.14.0]: /../../tree/v1.14.0

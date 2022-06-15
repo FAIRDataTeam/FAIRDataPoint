@@ -50,7 +50,7 @@ public class ResourceDefinitionDTO {
     protected String urlPrefix;
 
     @NotNull
-    protected List<String> shapeUuids;
+    protected List<String> metadataSchemaUuids;
 
     @NotNull
     protected List<String> targetClassUris;

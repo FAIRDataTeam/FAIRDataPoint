@@ -52,7 +52,7 @@ public class RepositoryConfig {
     @Autowired
     private RepositoryProperties repositoryProperties;
 
-    @Bean(initMethod = "initialize", destroyMethod = "shutDown")
+    @Bean(initMethod = "init", destroyMethod = "shutDown")
     public Repository repository(ApplicationContext context)
             throws RepositoryException {
 
@@ -133,6 +133,7 @@ public class RepositoryConfig {
     private Repository getGraphDBRepository() {
         log.info("Setting up GraphDB Store");
         try {
+            System.setProperty("org.eclipse.rdf4j.rio.binary.format_version", "1");
             if (!repositoryProperties.getGraphDb().getUrl().isEmpty() &&
                     !repositoryProperties.getGraphDb().getRepository().isEmpty()) {
                 final RepositoryManager repositoryManager;

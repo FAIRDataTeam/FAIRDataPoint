@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
+        <version>2.7.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.13.2</version>
+    <version>1.14.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -51,17 +51,16 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Project related -->
-        <spring.rdf.migration.version>1.1.0.RELEASE</spring.rdf.migration.version>
+        <spring.rdf.migration.version>1.2.0.RELEASE</spring.rdf.migration.version>
         <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Core -->
-        <springdoc.version>1.6.5</springdoc.version>
-        <mongock.version>5.0.35</mongock.version>
-        <mongodb.spring-data.v3.version>3.3.1</mongodb.spring-data.v3.version>
-        <rdf4j.version>3.7.4</rdf4j.version>
-        <unirest.version>1.4.9</unirest.version>
-        <jwt.version>0.11.2</jwt.version>
-        <lombok.version>1.18.22</lombok.version>
+        <springdoc.version>1.6.9</springdoc.version>
+        <mongock.version>5.1.0</mongock.version>
+        <mongodb.spring-data.v3.version>3.4.0</mongodb.spring-data.v3.version>
+        <rdf4j.version>4.0.2</rdf4j.version>
+        <jwt.version>0.11.5</jwt.version>
+        <lombok.version>1.18.24</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
         <log4j2.version>2.17.1</log4j2.version>
 
@@ -221,11 +220,6 @@
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-sail-nativerdf</artifactId>
             <version>${rdf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mashape.unirest</groupId>
-            <artifactId>unirest-java</artifactId>
-            <version>${unirest.version}</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

@@ -72,6 +72,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleBadRequest(Exception e) {
         log.warn(e.getMessage());
+        log.debug("Handling bad request (ValidationException)", e);
         return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -88,6 +89,7 @@ public class ExceptionControllerAdvice {
     )
     public Model handleBadRequest(RdfValidationException e) {
         Model validationReportModel = e.getModel();
+        log.debug("Handling bad request (RdfValidationException)", e);
 
         // Log number of errors
         IRI validationResultIri = i("http://www.w3.org/ns/shacl#ValidationResult");
@@ -115,6 +117,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleUnauthorized(Exception e) {
         log.error(e.getMessage());
+        e.printStackTrace();
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
@@ -131,6 +134,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleForbidden(Exception e) {
         log.error(e.getMessage());
+        log.debug("Handling forbidden", e);
         return new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
@@ -147,6 +151,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleResourceNotFound(ResourceNotFoundException e) {
         log.error(e.getMessage());
+        log.debug("Handling resource not found", e);
         return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
@@ -163,12 +168,14 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleInternalServerError(Exception e) {
         log.error(e.getMessage());
+        log.debug("Handling internal server error (MetadataServiceException)", e);
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @ExceptionHandler(IndexException.class)
-    public ResponseEntity<ErrorDTO> handleIndexException(IndexException exception) {
-        return new ResponseEntity<>(exception.getErrorDTO(), exception.getStatus());
+    public ResponseEntity<ErrorDTO> handleIndexException(IndexException e) {
+        log.debug("Handling index exception", e);
+        return new ResponseEntity<>(e.getErrorDTO(), e.getStatus());
     }
 
 }

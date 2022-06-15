@@ -54,7 +54,7 @@ public class Migration_0003_ShapeDefinition {
     private Document resourceDefinition() throws Exception {
         String shaclDefinition = loadClassResource("0003_shape-resource.ttl", getClass());
         Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SHAPE_RESOURCE_UUID);
+        definition.append("uuid", KnownUUIDs.SCHEMA_RESOURCE_UUID);
         definition.append("name", "Resource");
         definition.append("type", "INTERNAL");
         definition.append("definition", shaclDefinition);
@@ -66,7 +66,7 @@ public class Migration_0003_ShapeDefinition {
     private Document repositoryDefinition() throws Exception {
         String shaclDefinition = loadClassResource("0003_shape-repository.ttl", getClass());
         Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SHAPE_REPOSITORY_UUID);
+        definition.append("uuid", KnownUUIDs.SCHEMA_REPOSITORY_UUID);
         definition.append("name", "Repository");
         definition.append("type", "INTERNAL");
         definition.append("definition", shaclDefinition);
@@ -77,7 +77,7 @@ public class Migration_0003_ShapeDefinition {
     private Document catalogDefinition() throws Exception {
         String shaclDefinition = loadClassResource("0003_shape-catalog.ttl", getClass());
         Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SHAPE_CATALOG_UUID);
+        definition.append("uuid", KnownUUIDs.SCHEMA_CATALOG_UUID);
         definition.append("name", "Catalog");
         definition.append("type", "INTERNAL");
         definition.append("definition", shaclDefinition);
@@ -88,7 +88,7 @@ public class Migration_0003_ShapeDefinition {
     private Document datasetDefinition() throws Exception {
         String shaclDefinition = loadClassResource("0003_shape-dataset.ttl", getClass());
         Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SHAPE_DATASET_UUID);
+        definition.append("uuid", KnownUUIDs.SCHEMA_DATASET_UUID);
         definition.append("name", "Dataset");
         definition.append("type", "INTERNAL");
         definition.append("definition", shaclDefinition);
@@ -99,7 +99,7 @@ public class Migration_0003_ShapeDefinition {
     private Document distributionDefinition() throws Exception {
         String shaclDefinition = loadClassResource("0003_shape-distribution.ttl", getClass());
         Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.SHAPE_DISTRIBUTION_UUID);
+        definition.append("uuid", KnownUUIDs.SCHEMA_DISTRIBUTION_UUID);
         definition.append("name", "Distribution");
         definition.append("type", "INTERNAL");
         definition.append("definition", shaclDefinition);

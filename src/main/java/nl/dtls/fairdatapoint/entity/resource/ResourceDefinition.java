@@ -52,18 +52,18 @@ public class ResourceDefinition {
 
     protected String urlPrefix;
 
-    protected List<String> shapeUuids = new ArrayList<>();
+    protected List<String> metadataSchemaUuids = new ArrayList<>();
 
     protected List<ResourceDefinitionChild> children = new ArrayList<>();
 
     protected List<ResourceDefinitionLink> externalLinks = new ArrayList<>();
 
-    public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> shapeUuids,
+    public ResourceDefinition(String uuid, String name, String urlPrefix, List<String> metadataSchemaUuids,
                               List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks) {
         this.uuid = uuid;
         this.name = name;
         this.urlPrefix = urlPrefix;
-        this.shapeUuids = shapeUuids;
+        this.metadataSchemaUuids = metadataSchemaUuids;
         this.children = children;
         this.externalLinks = externalLinks;
     }
@@ -73,6 +73,6 @@ public class ResourceDefinition {
     }
 
     public boolean isCatalog() {
-        return name.equals(CATALOG_PREFIX);
+        return urlPrefix.equals(CATALOG_PREFIX);
     }
 }
