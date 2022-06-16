@@ -1,9 +1,6 @@
 package nl.dtls.fairdatapoint.api.dto.search;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
@@ -12,6 +9,7 @@ import java.util.HashMap;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class SearchQueryVariablesDTO {
 
     @NotNull
