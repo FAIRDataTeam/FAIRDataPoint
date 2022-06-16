@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Tag(name = "Metadata")
+@Tag(name = "Search")
 @RestController
 @RequestMapping("/search")
 public class SearchController {

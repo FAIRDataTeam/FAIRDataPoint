@@ -20,10 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.search;
+package nl.dtls.fairdatapoint.acceptance.search.query;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.search.SearchQueryDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +39,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("POST /search/query")
-public class Query_POST extends WebIntegrationTest {
+public class List_POST extends WebIntegrationTest {
 
     private URI url() {
         return URI.create("/search/query");
