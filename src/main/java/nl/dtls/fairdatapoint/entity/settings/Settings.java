@@ -66,4 +66,11 @@ public class Settings {
                 .searchFilters(Collections.emptyList())
                 .build();
     }
+
+    public List<SettingsSearchFilter> getSearchFilters() {
+        if (searchFilters == null) {
+            return Collections.emptyList();
+        }
+        return searchFilters;
+    }
 }
