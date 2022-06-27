@@ -35,9 +35,11 @@ import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.*;
 import nl.dtls.fairdatapoint.entity.index.exception.IndexException;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.eclipse.rdf4j.common.exception.RDF4JException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.http.HttpStatus;
@@ -105,7 +107,7 @@ public class ExceptionControllerAdvice {
         return validationReportModel;
     }
 
-    @ExceptionHandler({MalformedQueryException.class})
+    @ExceptionHandler({MalformedQueryException.class, QueryEvaluationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     @ApiResponse(
@@ -116,10 +118,10 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleInvalidQuery(MalformedQueryException e) {
+    public ErrorDTO handleInvalidQuery(RDF4JException e) {
         String message = format("Invalid SPARQL query: %s", e.getMessage());
         log.error(message);
-        e.printStackTrace();
+        log.debug("Handling invalid query (RDF4JException)", e);
         return new ErrorDTO(HttpStatus.BAD_REQUEST, message);
     }
 
@@ -136,7 +138,7 @@ public class ExceptionControllerAdvice {
     )
     public ErrorDTO handleUnauthorized(Exception e) {
         log.error(e.getMessage());
-        e.printStackTrace();
+        log.debug("Handling unauthorized", e);
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
