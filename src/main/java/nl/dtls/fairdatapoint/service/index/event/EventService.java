@@ -58,6 +58,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpClient;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -99,6 +100,9 @@ public class EventService {
 
     @Autowired
     private IndexSettingsService indexSettingsService;
+
+    @Autowired
+    private HttpClient httpClient;
 
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
         // TODO: make events pagination in the future
