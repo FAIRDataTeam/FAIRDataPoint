@@ -34,6 +34,7 @@ import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -112,7 +113,7 @@ public abstract class AbstractMetadataRepository {
                                 null
                         )
                 )
-                .collect(toList());
+                .toList();
     }
 
     public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException {
@@ -204,7 +205,7 @@ public abstract class AbstractMetadataRepository {
     public List<BindingSet> runSparqlQuery(String queryString) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             TupleQuery query = conn.prepareTupleQuery(queryString);
-            return QueryResults.asList(query.evaluate());
+            return query.evaluate().stream().toList();
         } catch (RepositoryException e) {
             throw new MetadataRepositoryException("Error retrieve repository uri :" + e.getMessage());
         }

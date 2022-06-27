@@ -44,6 +44,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -139,7 +140,7 @@ public class SearchService {
     }
 
     private List<SearchResultDTO> processSearchResults(List<SearchResult> results) {
-        return results
+        Map<String, SearchResultDTO> resultDtos = results
                 .stream()
                 .collect(Collectors.groupingBy(SearchResult::getUri, Collectors.mapping(i -> i, toList())))
                 .entrySet()
@@ -152,6 +153,13 @@ public class SearchService {
                     }
                 })
                 .map(entry -> searchMapper.toResultDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toMap(SearchResultDTO::getUri, Function.identity()));
+        return results
+                .stream()
+                .map(SearchResult::getUri)
+                .distinct()
+                .map(resultDtos::get)
+                .filter(Objects::nonNull)
                 .toList();
     }
 
