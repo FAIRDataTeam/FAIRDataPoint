@@ -44,9 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRdfContentType;
@@ -63,28 +61,35 @@ public class HarvesterService {
     private static final String DEFAULT_NAVIGATION_SHACL = "defaultNavigationShacl.ttl";
 
     @Autowired
-    private RestTemplate restTemplate;
+    private GenericMetadataRepository genericMetadataRepository;
 
     @Autowired
-    private GenericMetadataRepository genericMetadataRepository;
+    private RestTemplate restTemplate;
+
+    public void deleteHarvestedData(String clientUrl) throws MetadataRepositoryException {
+        genericMetadataRepository.remove(i(clientUrl));
+    }
 
     @Async
     public void harvest(String clientUrl) throws MetadataRepositoryException {
-        log.info(format("Start harvesting '%s'", clientUrl));
+        log.info("Start harvesting '{}'", clientUrl);
+
+        // 0. Remove previously harvested metadata
+        deleteHarvestedData(clientUrl);
 
         // 1. Get navigation relationships
         final List<IRI> navigationRelationships = getNavigationRelationships(clientUrl);
 
         // 2. Harvest data
-        final Map<String, Model> result =
-                visitNode(clientUrl, navigationRelationships, new HashMap<>());
+        final Map<String, Model> result = new HashMap<>();
+        visitNode(clientUrl, navigationRelationships, result);
 
         // 3. Store data
         for (Map.Entry<String, Model> item : result.entrySet()) {
-            genericMetadataRepository.save(new ArrayList<>(item.getValue()), i(item.getKey()));
+            genericMetadataRepository.save(new ArrayList<>(item.getValue()), i(clientUrl));
         }
 
-        log.info(format("Harvesting for '%s' completed", clientUrl));
+        log.info("Harvesting for '{}' completed", clientUrl);
     }
 
     private List<IRI> getNavigationRelationships(String uri) {
@@ -93,16 +98,15 @@ public class HarvesterService {
                 .stream()
                 .map(object -> i(object.stringValue()))
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private Map<String, Model> visitNode(
+    private void visitNode(
             String uri, List<IRI> relationships, Map<String, Model> nodes
     ) {
         try {
             final Model model = makeRequest(uri);
-            Map<String, Model> actNodes = nodes;
-            actNodes.put(uri, model);
+            nodes.put(uri, model);
 
             final List<Resource> containers = getSubjectsBy(model, RDF.TYPE, LDP.DIRECT_CONTAINER);
             if (containers.size() > 0) {
@@ -111,8 +115,8 @@ public class HarvesterService {
                     for (Value child : getObjectsBy(
                             model, i(container.stringValue()), LDP.CONTAINS
                     )) {
-                        if (!actNodes.containsKey(child.stringValue())) {
-                            actNodes = visitNode(child.stringValue(), relationships, actNodes);
+                        if (!nodes.containsKey(child.stringValue())) {
+                            visitNode(child.stringValue(), relationships, nodes);
                         }
                     }
                 }
@@ -122,21 +126,20 @@ public class HarvesterService {
                 for (IRI relationship : relationships) {
                     final List<IRI> children = getChildren(model, relationship);
                     for (IRI child : children) {
-                        if (!actNodes.containsKey(child.stringValue())) {
-                            actNodes = visitNode(child.stringValue(), relationships, actNodes);
+                        if (!nodes.containsKey(child.stringValue())) {
+                            visitNode(child.stringValue(), relationships, nodes);
                         }
                     }
                 }
             }
-            return actNodes;
         }
         catch (HttpClientErrorException exception) {
-            return nodes;
+            log.debug("HttpClientErrorException occurred for {}: {}", uri, exception);
         }
     }
 
     private Model makeRequest(String uri) {
-        log.info(format("Making request to '%s'", uri));
+        log.info("Making request to '{}'", uri);
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(List.of(MediaType.parseMediaType(RDFFormat.TURTLE.getDefaultMIMEType())));
         final HttpEntity<Void> entity = new HttpEntity<>(null, headers);
@@ -144,18 +147,18 @@ public class HarvesterService {
             final ResponseEntity<String> response =
                     restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
-                log.info(format("Request to '%s' failed (%s)", uri, response.getStatusCode()));
+                log.info("Request to '{}' failed ({})", uri, response.getStatusCode());
                 throw new HttpClientErrorException(response.getStatusCode());
             }
             final RDFFormat rdfContentType =
                     getRdfContentType(response.getHeaders().getContentType().getType());
-            log.info(format("Request to '%s' successfully received", uri));
+            log.info("Request to '{}' successfully received", uri);
             final Model result = read(response.getBody(), uri, rdfContentType);
-            log.info(format("Request to '%s' successfully parsed", uri));
+            log.info("Request to '{}' successfully parsed", uri);
             return result;
         }
         catch (RestClientException exception) {
-            log.info(format("Request to '%s' failed", uri));
+            log.info("Request to '{}' failed: {}", uri, exception.getMessage());
             throw new HttpClientErrorException(
                     HttpStatus.BAD_GATEWAY,
                     ofNullable(exception.getMessage())
@@ -163,4 +166,5 @@ public class HarvesterService {
             );
         }
     }
+
 }

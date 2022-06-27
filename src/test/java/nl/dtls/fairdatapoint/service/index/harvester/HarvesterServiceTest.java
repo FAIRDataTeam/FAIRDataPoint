@@ -109,8 +109,7 @@ public class HarvesterServiceTest {
         harvesterService.harvest(repositoryUrl);
 
         // THEN:
-        verify(genericMetadataRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
-        verify(genericMetadataRepository, times(1)).save(anyList(), eq(i(catalogUrl)));
+        verify(genericMetadataRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     @Test
@@ -124,7 +123,6 @@ public class HarvesterServiceTest {
 
         // THEN:
         verify(genericMetadataRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
-        verify(genericMetadataRepository, times(0)).save(anyList(), eq(i(catalogUrl)));
     }
 
     private void mockEndpoint(String url, Model body) {

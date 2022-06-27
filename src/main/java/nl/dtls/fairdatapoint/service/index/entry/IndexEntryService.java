@@ -29,12 +29,17 @@ import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
+import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,11 +53,14 @@ import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO.*;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service
 @Validated
 public class IndexEntryService {
+
+    private static final String MSG_NOT_FOUND = "Index entry not found";
 
     @Autowired
     private IndexEntryRepository repository;
@@ -65,6 +73,12 @@ public class IndexEntryService {
 
     @Autowired
     private IndexEntryMapper mapper;
+
+    @Autowired
+    private GenericMetadataRepository genericMetadataRepository;
+
+    @Autowired
+    private HarvesterService harvesterService;
 
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries() {
@@ -169,14 +183,25 @@ public class IndexEntryService {
 
     @RequiredEnabledIndexFeature
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteEntry(String uuid) {
+    public void deleteEntry(String uuid) throws MetadataRepositoryException {
         final IndexEntry entry = repository.findByUuid(uuid)
-                .orElseThrow(() -> new ResourceNotFoundException("Index entry not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
+        harvesterService.deleteHarvestedData(entry.getClientUrl());
         repository.delete(entry);
     }
 
     private Instant getValidThreshold() {
         return Instant.now()
                 .minus(indexSettingsService.getOrDefaults().getPing().getValidDuration());
+    }
+
+    @RequiredEnabledIndexFeature
+    public Model getEntryHarvestedData(String uuid) throws MetadataRepositoryException {
+        final IndexEntry entry = repository
+                .findByUuid(uuid)
+                .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
+        final Model model = new TreeModel();
+        model.addAll(genericMetadataRepository.find(i(entry.getClientUrl())));
+        return model;
     }
 }
