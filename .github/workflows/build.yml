@@ -1,0 +1,155 @@
+name: "Test & Build"
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up MongoDB
+        uses: ankane/setup-mongodb@v1
+        with:
+          mongodb-version: '5.0'
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Compile
+        run: |
+          mvn -q -U -B compile
+
+      - name: Test
+        run: |
+          mvn -q -U -B test
+
+      - name: Package
+        run: |
+          mvn -q -U -B -ff -DskipTests package
+
+      - name: Verify
+        run: |
+          mvn -q -U -B -ff -DskipTests verify
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    needs: test
+
+    env:
+      PUBLIC_IMAGE: fairdata/fairdatapoint
+      PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Check available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+
+      - name: Docker meta [test]
+        id: meta-test
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.PUBLIC_IMAGE }}
+          tags: |
+            type=sha
+
+      - name: Docker build+push [test]
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile.build
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: ${{ steps.meta-test.outputs.tags }}
+          labels: ${{ steps.meta-test.outputs.labels }}
+
+      # PRIVATE: DOCKER REGISTRY
+      - name: Docker login [private]
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.PRIVATE_REGISTRY_URL }}
+          username: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
+          password: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
+
+      - name: Docker meta [private]
+        id: meta-private
+        if: github.event_name != 'pull_request'
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.PRIVATE_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+
+      - name: Docker build+push [private]
+        uses: docker/build-push-action@v3
+        if: github.event_name != 'pull_request' && steps.meta-private.outputs.tags != ''
+        with:
+          context: .
+          file: ./Dockerfile.build
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-private.outputs.tags }}
+          labels: ${{ steps.meta-private.outputs.labels }}
+
+      # PUBLIC: DOCKER HUB
+      - name: Docker login [public]
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Docker meta [public]
+        id: meta-public
+        if: github.event_name != 'pull_request'
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.PUBLIC_IMAGE }}
+          tags: |
+            type=raw,value=develop,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
+
+      - name: Docker build+push [public]
+        uses: docker/build-push-action@v3
+        if: github.event_name != 'pull_request' && steps.meta-public.outputs.tags != ''
+        with:
+          context: .
+          file: ./Dockerfile.build
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-public.outputs.tags }}
+          labels: ${{ steps.meta-public.outputs.labels }}
