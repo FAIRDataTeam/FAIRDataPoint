@@ -22,17 +22,17 @@
 #
 ################################################################################
 # BUILD STAGE
-FROM maven:3-openjdk-17-slim as builder
+FROM maven:3-eclipse-temurin-17-focal as builder
 
 WORKDIR /builder
 
 ADD . /builder
 
-RUN mvn --quiet -B -U --fail-fast -DskipTests package
+RUN mvn -q -B -U -ff -DskipTests package
 
 ################################################################################
 # RUN STAGE
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-focal
 
 WORKDIR /fdp
 
