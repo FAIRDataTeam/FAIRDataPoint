@@ -12,3 +12,4 @@ WHERE {
     {{graphPattern}}
 }
 ORDER BY {{ordering}}
+LIMIT 50
