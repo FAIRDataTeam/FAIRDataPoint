@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.StringWriter;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.util.RdfIOUtil.getWriterConfig;
@@ -107,7 +108,7 @@ public class ExceptionControllerAdvice {
         return validationReportModel;
     }
 
-    @ExceptionHandler({MalformedQueryException.class, QueryEvaluationException.class})
+    @ExceptionHandler(MalformedQueryException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     @ApiResponse(
@@ -118,11 +119,31 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleInvalidQuery(RDF4JException e) {
-        String message = format("Invalid SPARQL query: %s", e.getMessage());
+    public ErrorDTO handleInvalidQuery(MalformedQueryException e) {
+        String message = "Invalid SPARQL query";
         log.error(message);
-        log.debug("Handling invalid query (RDF4JException)", e);
-        return new ErrorDTO(HttpStatus.BAD_REQUEST, message);
+        log.debug("Handling invalid query (MalformedQueryException)", e);
+        Map<String, String> details = Map.of("sparql", e.getMessage(), "exception", e.getClass().getName());
+        return new ErrorDTO(HttpStatus.BAD_REQUEST, "Invalid SPARQL query", details);
+    }
+
+    @ExceptionHandler(QueryEvaluationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
+    public ErrorDTO handleInvalidQuery(QueryEvaluationException e) {
+        String message = "Invalid SPARQL query";
+        log.error(message);
+        log.debug("Handling invalid query (QueryEvaluationException)", e);
+        Map<String, String> details = Map.of("sparql", e.getMessage(), "exception", e.getClass().getName());
+        return new ErrorDTO(HttpStatus.BAD_REQUEST, "Invalid SPARQL query", details);
     }
 
     @ExceptionHandler({BadCredentialsException.class, UnauthorizedException.class})
