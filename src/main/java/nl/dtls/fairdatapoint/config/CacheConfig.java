@@ -47,6 +47,8 @@ public class CacheConfig {
 
     public static final String SETTINGS_CACHE = "SETTINGS_CACHE";
 
+    public static final String SEARCH_FILTERS_CACHE = "SEARCH_FILTERS_CACHE";
+
     @Bean
     public ConcurrentMapCacheManager cacheManager() {
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
@@ -57,6 +59,7 @@ public class CacheConfig {
                 RESOURCE_DEFINITION_PARENT_CACHE,
                 RESOURCE_DEFINITION_TARGET_CLASSES_CACHE,
                 SETTINGS_CACHE,
+                SEARCH_FILTERS_CACHE,
                 LABEL_CACHE
         ));
         return cacheManager;

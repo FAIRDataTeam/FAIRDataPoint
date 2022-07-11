@@ -1,0 +1,15 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+{{prefixes}}
+
+SELECT ?entity ?rdfType ?title ?description
+WHERE {
+    ?entity rdf:type ?rdfType .
+    ?entity dct:title ?title .
+
+    OPTIONAL { ?entity dct:description ?description }
+
+    {{graphPattern}}
+}
+ORDER BY {{ordering}}
+LIMIT 50

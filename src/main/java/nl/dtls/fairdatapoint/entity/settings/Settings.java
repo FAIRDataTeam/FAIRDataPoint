@@ -28,6 +28,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,8 @@ public class Settings {
 
     private SettingsPing ping;
 
+    private List<SettingsSearchFilter> searchFilters;
+
     private static final List<SettingsMetricsEntry> DEFAULT_METRICS = List.of(
             new SettingsMetricsEntry("https://purl.org/fair-metrics/FM_F1A", "https://www.ietf.org/rfc/rfc3986.txt"),
             new SettingsMetricsEntry("https://purl.org/fair-metrics/FM_A1.1", "https://www.wikidata.org/wiki/Q8777")
@@ -60,6 +63,14 @@ public class Settings {
                         .enabled(true)
                         .endpoints(List.of("https://home.fairdatapoint.org"))
                         .build())
+                .searchFilters(Collections.emptyList())
                 .build();
+    }
+
+    public List<SettingsSearchFilter> getSearchFilters() {
+        if (searchFilters == null) {
+            return Collections.emptyList();
+        }
+        return searchFilters;
     }
 }

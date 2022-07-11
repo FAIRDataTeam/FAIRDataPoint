@@ -40,6 +40,7 @@ import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import nl.dtls.fairdatapoint.service.schema.MetadataSchemaService;
+import nl.dtls.fairdatapoint.service.search.SearchFilterCache;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -95,6 +96,9 @@ public class GenericController {
 
     @Autowired
     private GenericMetadataRepository metadataRepository;
+
+    @Autowired
+    private SearchFilterCache searchFilterCache;
 
     @Operation(hidden = true)
     @GetMapping(path = {"/spec", "{oUrlPrefix:[^.]+}/spec"}, produces = {"!application/json"})
@@ -229,7 +233,10 @@ public class GenericController {
         // 5. Store metadata
         Model metadata = metadataService.store(reqDto, uri, rd);
 
-        // 6. Create response
+        // 6. Invalidate search filters cache
+        searchFilterCache.clearCache();
+
+        // 7. Create response
         return ResponseEntity
                 .created(URI.create(uri.stringValue()))
                 .body(metadata);
@@ -265,7 +272,10 @@ public class GenericController {
         // 4. Store metadata
         Model metadata = metadataService.update(reqDto, uri, rd);
 
-        // 5. Create response
+        // 5. Invalidate search filters cache
+        searchFilterCache.clearCache();
+
+        // 6. Create response
         return ResponseEntity
                 .ok(metadata);
     }
@@ -293,7 +303,10 @@ public class GenericController {
         // 4. Store metadata
         metadataService.delete(uri, rd);
 
-        // 5. Create response
+        // 5. Invalidate search filters cache
+        searchFilterCache.clearCache();
+
+        // 6. Create response
         return ResponseEntity.noContent().build();
     }
 

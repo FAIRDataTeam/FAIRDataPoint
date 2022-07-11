@@ -31,9 +31,12 @@ import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.Mem
 import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.MetadataMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.ResourceDefinitionMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.MetadataSchemaMigration;
+import nl.dtls.fairdatapoint.database.mongo.migration.development.settings.SettingsMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
+import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import nl.dtls.fairdatapoint.service.search.SearchFilterCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -72,13 +75,20 @@ public class MigrationRunner {
     private EventMigration eventMigration;
 
     @Autowired
+    private SettingsMigration settingsMigration;
+
+    @Autowired
     private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
 
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
 
+    @Autowired
+    private SearchFilterCache searchFilterCache;
+
     @PostConstruct
     public void run() {
+        settingsMigration.runMigration();
         userMigration.runMigration();
         membershipMigration.runMigration();
         aclMigration.runMigration();
@@ -90,6 +100,7 @@ public class MigrationRunner {
         eventMigration.runMigration();
         resourceDefinitionTargetClassesCache.computeCache();
         resourceDefinitionCache.computeCache();
+        searchFilterCache.clearCache();
     }
 
 }

@@ -66,6 +66,7 @@ public class List_POST extends WebIntegrationTest {
     @DisplayName("HTTP 204: new entry")
     public void res204_newEntry() {
         // GIVEN: prepare data
+        indexEntryRepository.deleteAll();
         String clientUrl = "http://example.com";
         PingDTO reqDto = reqDTO(clientUrl);
 
@@ -89,8 +90,9 @@ public class List_POST extends WebIntegrationTest {
 
     @Test
     @DisplayName("HTTP 204: existing entry")
-    public void res204_existingEnty() {
+    public void res204_existingEntry() {
         // GIVEN: prepare data
+        indexEntryRepository.deleteAll();
         IndexEntry indexEntry = TestIndexEntryFixtures.entryExample();
         String clientUrl = indexEntry.getClientUrl();
         PingDTO reqDto = reqDTO(clientUrl);

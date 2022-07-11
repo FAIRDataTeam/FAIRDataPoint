@@ -28,10 +28,12 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
 import nl.dtls.fairdatapoint.entity.search.SearchResult;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,10 @@ public interface MetadataRepository {
     List<Statement> find(IRI context) throws MetadataRepositoryException;
 
     List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException;
+
+    List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException;
+
+    List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException;
 
     Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRepositoryException;
 
@@ -56,5 +62,4 @@ public interface MetadataRepository {
     void removeStatement(Resource subject, IRI predicate, Value object, IRI context) throws MetadataRepositoryException;
 
     List<BindingSet> runSparqlQuery(String queryName, Class repositoryType, Map<String, Value> bindings) throws MetadataRepositoryException;
-
 }

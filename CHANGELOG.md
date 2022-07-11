@@ -8,6 +8,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.15.0]
+
+### Added
+
+- Extended search (filters, simple and complex query)
+- Add saved search queries
+- Several dependencies updated
+
 ## [1.14.0]
 
 ### Added
@@ -314,3 +322,4 @@ The first release of reference FAIR Data Point implementation.
 [1.13.1]: /../../tree/v1.13.1
 [1.13.2]: /../../tree/v1.13.2
 [1.14.0]: /../../tree/v1.14.0
+[1.15.0]: /../../tree/v1.15.0

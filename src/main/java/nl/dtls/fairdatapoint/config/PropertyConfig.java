@@ -30,7 +30,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class PropertyConfig {
 
-    private static final String GIT_FILE = "git.properties";
+    private static final String GIT_FILE = "META-INF/git.properties";
 
     private static final String BUILD_INFO_FILE = "META-INF/build-info.properties";
 

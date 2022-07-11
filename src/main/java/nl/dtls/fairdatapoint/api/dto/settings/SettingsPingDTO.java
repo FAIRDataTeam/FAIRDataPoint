@@ -22,10 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.dto.settings;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -34,6 +31,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder(toBuilder = true)
 public class SettingsPingDTO {
 
     @NotNull

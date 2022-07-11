@@ -26,6 +26,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
 import nl.dtls.fairdatapoint.entity.search.SearchResult;
 import nl.dtls.fairdatapoint.entity.search.SearchResultRelation;
 import org.eclipse.rdf4j.common.iteration.Iterations;
@@ -33,6 +34,7 @@ import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -43,6 +45,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
@@ -53,6 +56,7 @@ public abstract class AbstractMetadataRepository {
 
     private static final String FIND_ENTITY_BY_LITERAL = "findEntityByLiteral.sparql";
     private static final String FIND_CHILD_TITLES = "findChildTitles.sparql";
+    private static final String FIND_OBJECT_FOR_PREDICATE = "findObjectsForPredicate.sparql";
 
     @Autowired
     protected Repository repository;
@@ -79,8 +83,11 @@ public abstract class AbstractMetadataRepository {
     }
 
     public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
-        return runSparqlQuery(FIND_ENTITY_BY_LITERAL, AbstractMetadataRepository.class, Map.of(
-                "query", query))
+        return runSparqlQuery(
+                FIND_ENTITY_BY_LITERAL,
+                AbstractMetadataRepository.class,
+                Map.of("query", query)
+        )
                 .stream()
                 .map(s -> new SearchResult(
                                 s.getValue("entity").stringValue(),
@@ -95,12 +102,45 @@ public abstract class AbstractMetadataRepository {
                 .collect(toList());
     }
 
+    public List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException {
+        return runSparqlQuery(query)
+                .stream()
+                .map(s -> new SearchResult(
+                                s.getValue("entity").stringValue(),
+                                s.getValue("rdfType").stringValue(),
+                                s.getValue("title").stringValue(),
+                                ofNullable(s.getValue("description")).map(Value::stringValue).orElse(""),
+                                null
+                        )
+                )
+                .toList();
+    }
+
+    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException {
+        Map<String, String> values = new HashMap<>();
+        runSparqlQuery(
+                FIND_OBJECT_FOR_PREDICATE,
+                AbstractMetadataRepository.class,
+                Map.of("predicate", predicateUri)
+        ).forEach(entry -> {
+            values.put(
+                    entry.getValue("value").stringValue(),
+                    Optional.ofNullable(entry.getValue("label")).map(Value::stringValue).orElse(null)
+            );
+        });
+        return values
+                .entrySet()
+                .stream()
+                .map(entry -> new SearchFilterValue(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
     public Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRepositoryException {
         Map<String, String> titles = new HashMap<>();
 
         var results = runSparqlQuery(FIND_CHILD_TITLES, AbstractMetadataRepository.class, Map.of(
-            "parent", parent,
-            "relation", relation
+                "parent", parent,
+                "relation", relation
         ));
 
         for (var result : results) {
@@ -159,6 +199,15 @@ public abstract class AbstractMetadataRepository {
         } catch (IOException e) {
             throw new MetadataRepositoryException(format("Error reading %s.sparql file (error: %s)", queryName,
                     e.getMessage()));
+        }
+    }
+
+    public List<BindingSet> runSparqlQuery(String queryString) throws MetadataRepositoryException {
+        try (RepositoryConnection conn = repository.getConnection()) {
+            TupleQuery query = conn.prepareTupleQuery(queryString);
+            return query.evaluate().stream().toList();
+        } catch (RepositoryException e) {
+            throw new MetadataRepositoryException("Error retrieve repository uri :" + e.getMessage());
         }
     }
 
