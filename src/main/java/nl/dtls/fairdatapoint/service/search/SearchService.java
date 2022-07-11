@@ -38,7 +38,9 @@ import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -74,6 +76,10 @@ public class SearchService {
     @Autowired
     private SearchFilterCache searchFilterCache;
 
+    @Autowired
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
+
     public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
         List<SearchResult> results = metadataRepository.findByLiteral(l(reqDto.getQ()));
         return processSearchResults(results);
@@ -84,7 +90,12 @@ public class SearchService {
     }
 
     public List<SearchResultDTO> search(SearchQueryVariablesDTO reqDto) throws MetadataRepositoryException, MalformedQueryException {
+        // Compose query
         String query = composeQuery(reqDto);
+        // Verify query
+        SPARQLParser parser = new SPARQLParser();
+        parser.parseQuery(query, persistentUrl);
+        // Get and process results for query
         List<SearchResult> results = metadataRepository.findBySparqlQuery(query);
         return processSearchResults(results);
     }
