@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Child UUIDs for a metadata schema repetition due to versions
+
 
 ## [1.15.0]
 

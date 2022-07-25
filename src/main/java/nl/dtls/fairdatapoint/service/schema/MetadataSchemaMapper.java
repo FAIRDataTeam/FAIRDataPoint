@@ -165,6 +165,7 @@ public class MetadataSchemaMapper {
                     .childSchemaUuids(childSchemas
                             .stream()
                             .map(MetadataSchema::getUuid)
+                            .distinct()
                             .toList()
                     )
                     .build();
