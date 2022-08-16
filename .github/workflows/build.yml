@@ -18,10 +18,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Start MongoDB (win service)
+        if: matrix.os == 'windows-latest'
+        run: |
+          Set-Service mongodb -StartupType Automatic          
+          Start-Service -Name mongodb
+
       - name: Set up MongoDB
         uses: ankane/setup-mongodb@v1
         with:
           mongodb-version: '5.0'
+
+      - name: Check MongoDB
+        run: |
+          mongo --eval "db.version()"
 
       - name: Set up JDK 17 (Temurin)
         uses: actions/setup-java@v3
