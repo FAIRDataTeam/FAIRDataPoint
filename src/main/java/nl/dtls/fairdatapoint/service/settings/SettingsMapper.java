@@ -54,6 +54,10 @@ public class SettingsMapper {
     public SettingsDTO toDTO(Settings settings) {
         return SettingsDTO
                 .builder()
+                .appTitle(settings.getAppTitle())
+                .appSubtitle(settings.getAppSubtitle())
+                .appTitleFromConfig(instanceProperties.getTitle())
+                .appSubtitleFromConfig(instanceProperties.getSubtitle())
                 .clientUrl(instanceProperties.getClientUrl())
                 .persistentUrl(instanceProperties.getPersistentUrl())
                 .metadataMetrics(settings.getMetadataMetrics())
@@ -98,6 +102,7 @@ public class SettingsMapper {
                 .builder()
                 .enabled(settingsPing.isEnabled())
                 .endpoints(settingsPing.getEndpoints())
+                .endpointsFromConfig(pingProperties.getEndpoints())
                 .interval(pingProperties.getInterval().toString())
                 .build();
     }
@@ -117,6 +122,8 @@ public class SettingsMapper {
     public Settings fromUpdateDTO(SettingsUpdateDTO dto, Settings settings) {
         return settings
                 .toBuilder()
+                .appTitle(dto.getAppTitle())
+                .appSubtitle(dto.getAppSubtitle())
                 .metadataMetrics(dto.getMetadataMetrics())
                 .ping(fromUpdateDTO(dto.getPing(), settings.getPing()))
                 .searchFilters(dto

@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Application title and subtitle in config and settings
+- Possibility to configure ping endpoints in config file
+
 ### Fixed
 
 - Child UUIDs for a metadata schema repetition due to versions

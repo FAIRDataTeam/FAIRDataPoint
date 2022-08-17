@@ -34,7 +34,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Log4j2
 @Service
@@ -62,7 +64,11 @@ public class PingService {
         if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
             return;
         }
-        for (String endpoint : settings.getPing().getEndpoints()) {
+        final List<String> endpoints = Stream.concat(
+                pingProperties.getEndpoints().stream(),
+                settings.getPing().getEndpoints().stream()
+        ).distinct().toList();
+        for (String endpoint : endpoints) {
             pingEndpoint(
                     endpoint.trim(),
                     Map.of("clientUrl", instanceProperties.getClientUrl())
