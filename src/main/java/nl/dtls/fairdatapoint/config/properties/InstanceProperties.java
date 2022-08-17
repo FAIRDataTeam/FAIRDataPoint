@@ -39,6 +39,9 @@ public class InstanceProperties {
     private String persistentUrl;
     private boolean index;
 
+    private String title = "FAIR Data Point";
+    private String subtitle = "Metadata for machines";
+
     public String getUrl() {
         if (persistentUrl == null || persistentUrl.isBlank()) {
             return clientUrl;

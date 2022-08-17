@@ -41,5 +41,8 @@ public class SettingsPingDTO {
     private List<String> endpoints;
 
     @NotNull
+    private List<String> endpointsFromConfig;
+
+    @NotNull
     private String interval;
 }

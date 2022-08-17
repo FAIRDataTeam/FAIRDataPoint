@@ -55,6 +55,10 @@ public class Settings {
     @JsonIgnore
     private ObjectId id;
 
+    private String appTitle;
+
+    private String appSubtitle;
+
     private List<SettingsMetricsEntry> metadataMetrics;
 
     private SettingsPing ping;
@@ -63,10 +67,12 @@ public class Settings {
 
     public static Settings getDefault() {
         return Settings.builder()
+                .appTitle(null)
+                .appSubtitle(null)
                 .metadataMetrics(DEFAULT_METRICS)
                 .ping(SettingsPing.builder()
                         .enabled(true)
-                        .endpoints(List.of("https://home.fairdatapoint.org"))
+                        .endpoints(Collections.emptyList())
                         .build())
                 .searchFilters(Collections.emptyList())
                 .build();

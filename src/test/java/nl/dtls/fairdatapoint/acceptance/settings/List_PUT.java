@@ -90,13 +90,15 @@ public class List_PUT extends WebIntegrationTest {
     private SettingsUpdateDTO customSettingsUpdateDTO() {
         Settings customSettings = customSettings();
         return new SettingsUpdateDTO(
+                null,
+                null,
                 customSettings.getMetadataMetrics(),
                 new SettingsPingUpdateDTO(
                         customSettings.getPing().isEnabled(),
                         customSettings.getPing().getEndpoints()
                 ),
                 new SettingsSearchDTO(
-                        Collections.emptyList()  // TODO!
+                        Collections.emptyList()
                 )
         );
     }
@@ -105,12 +107,14 @@ public class List_PUT extends WebIntegrationTest {
         Settings customSettings = customSettings();
         return new SettingsUpdateDTO(
                 null,
+                null,
+                null,
                 new SettingsPingUpdateDTO(
                         customSettings.getPing().isEnabled(),
                         customSettings.getPing().getEndpoints()
                 ),
                 new SettingsSearchDTO(
-                        Collections.emptyList()  // TODO!
+                        Collections.emptyList()
                 )
         );
     }

@@ -40,4 +40,8 @@ public class BootstrapConfigDTO {
 
     private boolean index;
 
+    private String appTitle;
+
+    private String appSubtitle;
+
 }
