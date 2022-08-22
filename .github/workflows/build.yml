@@ -18,12 +18,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Start MongoDB (win service)
-        if: matrix.os == 'windows-latest'
-        run: |
-          Set-Service mongodb -StartupType Automatic          
-          Start-Service -Name mongodb
-
       - name: Set up MongoDB
         uses: ankane/setup-mongodb@v1
         with:
