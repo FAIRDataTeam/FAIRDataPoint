@@ -116,6 +116,22 @@ documentation.
 We maintain a [CHANGELOG](CHANGELOG.md), you should also take a look at our [Contributing guidelines](CONTRIBUTING.md)
 and [Code of Conduct](CODE_OF_CONDUCT.md).
 
+## Citation
+
+The following paper can be cite as a reference paper for the FAIR Data Point:
+
+    @article{10.1162/dint_a_00160,
+    author = {Bonino da Silva Santos, Luiz Olavo and Burger, Kees and Kaliyaperumal, Rajaram and Wilkinson, Mark D.},
+    title = "{FAIR Data Point: A FAIR-oriented approach for metadata publication}",
+    journal = {Data Intelligence},
+    pages = {1-21},
+    year = {2022},
+    month = {08},
+    issn = {2641-435X},
+    doi = {10.1162/dint_a_00160},
+    url = {https://doi.org/10.1162/dint\_a\_00160},
+    eprint = {https://direct.mit.edu/dint/article-pdf/doi/10.1162/dint\_a\_00160/2038268/dint\_a\_00160.pdf}}
+    
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for more details.
