@@ -58,6 +58,8 @@ jobs:
     env:
       PUBLIC_IMAGE: fairdata/fairdatapoint
       PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/fairdatapoint
+      PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
 
     steps:
       - name: Checkout repo
