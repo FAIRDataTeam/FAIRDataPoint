@@ -22,18 +22,23 @@
  */
 package nl.dtls.fairdatapoint.service.schema;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,8 +49,9 @@ import static java.lang.String.format;
 @Component
 public class MetadataSchemaValidator {
 
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private static final String SHACL_SHACL_FILENAME = "shacl-shacl.ttl";
+
+    private static final Model SHACL_SHACL_DEF = loadShaclShaclDefinition();
 
     @Autowired
     private MetadataSchemaRepository metadataSchemaRepository;
@@ -53,13 +59,22 @@ public class MetadataSchemaValidator {
     @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
 
+    @Autowired
+    private ShaclValidator shaclValidator;
+
+    @Autowired
+    private String persistentUrl;
+
     private void validateShacl(String shaclDefinition) {
+        final Model data;
         try {
-            RdfIOUtil.read(shaclDefinition, "");
+            data = RdfIOUtil.read(shaclDefinition, "");
         }
         catch (ValidationException exception) {
             throw new ValidationException("Unable to read SHACL definition");
         }
+
+        shaclValidator.validate(SHACL_SHACL_DEF, data, persistentUrl);
     }
 
     public void validateNotUsed(String uuid) {
@@ -135,6 +150,22 @@ public class MetadataSchemaValidator {
         final List<String> missing = getMissingSchemaUuids(schemasUuids);
         if (!missing.isEmpty()) {
             throw new ValidationException(format("Metadata schemas not found: %s", missing));
+        }
+    }
+
+    private static Model loadShaclShaclDefinition() {
+        try {
+            final URL fileURL = MetadataSchemaValidator.class.getResource(SHACL_SHACL_FILENAME);
+            return RdfIOUtil.read(
+                    Resources.toString(fileURL, Charsets.UTF_8),
+                    "http://www.w3.org/ns/shacl-shacl#"
+            );
+        }
+        catch (IOException exception) {
+            throw new RuntimeException(
+                    format("Cannot load SHACL-SHACL definition: %s",
+                            exception.getMessage())
+            );
         }
     }
 }
