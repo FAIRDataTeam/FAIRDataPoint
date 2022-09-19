@@ -279,4 +279,24 @@ public class MetadataSchemaController {
         final List<MetadataSchemaRemoteDTO> dtos = metadataSchemaService.checkForUpdates();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(
+            path = "/preview",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = {
+                "text/turtle",
+                "application/x-turtle",
+                "text/n3",
+                "text/rdf+n3",
+                "application/ld+json",
+                "application/rdf+xml",
+                "application/xml",
+                "text/xml"
+            }
+    )
+    public ResponseEntity<Model> getShaclPreview(@RequestBody @Valid MetadataSchemaPreviewRequestDTO reqDto) {
+        final Model model = metadataSchemaService.getShaclFromSchemas(reqDto);
+        return new ResponseEntity<>(model, HttpStatus.OK);
+    }
 }
