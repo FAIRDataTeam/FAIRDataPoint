@@ -342,6 +342,10 @@ public class MetadataSchemaService {
         return mergeSchemaDefinitions(metadataSchemaRepository.findAllByLatestIsTrue());
     }
 
+    public Model getShaclFromSchemas(MetadataSchemaPreviewRequestDTO reqDto) {
+        return getShaclFromSchemas(reqDto.getMetadataSchemaUuids());
+    }
+
     public Model getShaclFromSchemas(List<String> metadataSchemaUuids) {
         final Set<String> schemaUuids = new HashSet<>(metadataSchemaUuids);
         final List<MetadataSchema> schemas = schemaUuids

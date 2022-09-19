@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Application title and subtitle in config and settings
 - Possibility to configure ping endpoints in config file
+- SHACL preview for metadata schemas
 - (Index) Cleanup of harvested records before next harvesting
 
 ### Fixed
