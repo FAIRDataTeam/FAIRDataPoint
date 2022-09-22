@@ -56,4 +56,6 @@ public class SettingsDTO {
     private SettingsRepositoryDTO repository;
 
     private SettingsSearchDTO search;
+
+    private SettingsFormsDTO forms;
 }

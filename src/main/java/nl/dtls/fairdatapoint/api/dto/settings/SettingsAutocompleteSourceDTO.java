@@ -23,31 +23,24 @@
 package nl.dtls.fairdatapoint.api.dto.settings;
 
 import lombok.*;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
+import nl.dtls.fairdatapoint.api.validator.ValidIri;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder(toBuilder = true)
-public class SettingsUpdateDTO {
-
-    private String appTitle;
-
-    private String appSubtitle;
+public class SettingsAutocompleteSourceDTO {
 
     @NotNull
-    private List<SettingsMetricsEntry> metadataMetrics;
+    @ValidIri
+    private String rdfType;
 
     @NotNull
-    private SettingsPingUpdateDTO ping;
+    private String sparqlEndpoint;
 
     @NotNull
-    private SettingsSearchDTO search;
-
-    @NotNull
-    private SettingsFormsDTO forms;
+    private String sparqlQuery;
 }
