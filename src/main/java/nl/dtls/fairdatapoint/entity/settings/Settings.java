@@ -65,16 +65,31 @@ public class Settings {
 
     private List<SettingsSearchFilter> searchFilters;
 
+    private SettingsForms forms;
+
     public static Settings getDefault() {
-        return Settings.builder()
+        return Settings
+                .builder()
                 .appTitle(null)
                 .appSubtitle(null)
                 .metadataMetrics(DEFAULT_METRICS)
-                .ping(SettingsPing.builder()
+                .ping(SettingsPing
+                        .builder()
                         .enabled(true)
                         .endpoints(Collections.emptyList())
-                        .build())
+                        .build()
+                )
                 .searchFilters(Collections.emptyList())
+                .forms(SettingsForms
+                        .builder()
+                        .autocomplete(SettingsFormsAutocomplete
+                                .builder()
+                                .searchNamespace(true)
+                                .sources(Collections.emptyList())
+                                .build()
+                        )
+                        .build()
+                )
                 .build();
     }
 
@@ -83,5 +98,12 @@ public class Settings {
             return Collections.emptyList();
         }
         return searchFilters;
+    }
+
+    public SettingsForms getForms() {
+        if (forms == null) {
+            return getDefault().getForms();
+        }
+        return forms;
     }
 }

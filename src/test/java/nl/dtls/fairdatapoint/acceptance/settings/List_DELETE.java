@@ -25,9 +25,7 @@ package nl.dtls.fairdatapoint.acceptance.settings;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
-import nl.dtls.fairdatapoint.entity.settings.Settings;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
-import nl.dtls.fairdatapoint.entity.settings.SettingsPing;
+import nl.dtls.fairdatapoint.entity.settings.*;
 import nl.dtls.fairdatapoint.service.settings.SettingsCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -80,6 +78,16 @@ public class List_DELETE extends WebIntegrationTest {
                         .build()
                 )
                 .searchFilters(Collections.emptyList())
+                .forms(SettingsForms
+                        .builder()
+                        .autocomplete(SettingsFormsAutocomplete
+                                .builder()
+                                .searchNamespace(true)
+                                .sources(Collections.emptyList())
+                                .build()
+                        )
+                        .build()
+                )
                 .build();
     }
 

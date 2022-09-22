@@ -28,10 +28,7 @@ import nl.dtls.fairdatapoint.api.dto.settings.*;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.config.properties.PingProperties;
 import nl.dtls.fairdatapoint.config.properties.RepositoryProperties;
-import nl.dtls.fairdatapoint.entity.settings.Settings;
-import nl.dtls.fairdatapoint.entity.settings.SettingsPing;
-import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
-import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+import nl.dtls.fairdatapoint.entity.settings.*;
 import nl.dtls.fairdatapoint.service.search.SearchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,6 +71,31 @@ public class SettingsMapper {
                                 )
                                 .build()
                 )
+                .forms(toDTO(settings.getForms()))
+                .build();
+    }
+
+    public SettingsFormsDTO toDTO(SettingsForms forms) {
+        return SettingsFormsDTO
+                .builder()
+                .autocomplete(toDTO(forms.getAutocomplete()))
+                .build();
+    }
+
+    public SettingsFormsAutocompleteDTO toDTO(SettingsFormsAutocomplete autocomplete) {
+        return SettingsFormsAutocompleteDTO
+                .builder()
+                .searchNamespace(autocomplete.getSearchNamespace())
+                .sources(autocomplete.getSources().stream().map(this::toDTO).toList())
+                .build();
+    }
+
+    public SettingsAutocompleteSourceDTO toDTO(SettingsAutocompleteSource autocomplete) {
+        return SettingsAutocompleteSourceDTO
+                .builder()
+                .rdfType(autocomplete.getRdfType())
+                .sparqlEndpoint(autocomplete.getSparqlEndpoint())
+                .sparqlQuery(autocomplete.getSparqlQuery())
                 .build();
     }
 
@@ -133,6 +155,7 @@ public class SettingsMapper {
                         .map(this::fromUpdateDTO)
                         .toList()
                 )
+                .forms(fromUpdateDTO(dto.getForms(), settings.getForms()))
                 .build();
     }
 
@@ -160,6 +183,32 @@ public class SettingsMapper {
                 .build();
     }
 
+    public SettingsForms fromUpdateDTO(SettingsFormsDTO dto, SettingsForms forms) {
+        return forms
+                .toBuilder()
+                .autocomplete(fromUpdateDTO(dto.getAutocomplete(), forms.getAutocomplete()))
+                .build();
+    }
+
+    public SettingsFormsAutocomplete fromUpdateDTO(
+            SettingsFormsAutocompleteDTO dto, SettingsFormsAutocomplete autocomplete
+    ) {
+        return autocomplete
+                .toBuilder()
+                .searchNamespace(dto.getSearchNamespace())
+                .sources(dto.getSources().stream().map(this::fromUpdateDTO).toList())
+                .build();
+    }
+
+    public SettingsAutocompleteSource fromUpdateDTO(SettingsAutocompleteSourceDTO dto) {
+        return SettingsAutocompleteSource
+                .builder()
+                .rdfType(dto.getRdfType())
+                .sparqlEndpoint(dto.getSparqlEndpoint())
+                .sparqlQuery(dto.getSparqlQuery())
+                .build();
+    }
+
     public SettingsPing fromUpdateDTO(SettingsPingUpdateDTO dto, SettingsPing settingsPing) {
         return settingsPing
                 .toBuilder()
@@ -173,18 +222,17 @@ public class SettingsMapper {
                 .builder()
                 .metadataMetrics(settings.getMetadataMetrics())
                 .ping(toUpdateDTO(settings.getPing()))
-                .search(
-                        SettingsSearchDTO
-                                .builder()
-                                .filters(
-                                        settings
-                                                .getSearchFilters()
-                                                .stream()
-                                                .map(searchMapper::toFilterDTO)
-                                                .toList()
-                                )
-                                .build()
+                .search(SettingsSearchDTO
+                        .builder()
+                        .filters(settings
+                                        .getSearchFilters()
+                                        .stream()
+                                        .map(searchMapper::toFilterDTO)
+                                        .toList()
+                        )
+                        .build()
                 )
+                .forms(toDTO(settings.getForms()))
                 .build();
     }
 

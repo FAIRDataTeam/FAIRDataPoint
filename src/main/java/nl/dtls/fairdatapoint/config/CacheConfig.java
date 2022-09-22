@@ -51,6 +51,8 @@ public class CacheConfig {
 
     public static final String SEARCH_FILTERS_CACHE = "SEARCH_FILTERS_CACHE";
 
+    public static final String FORMS_AUTOCOMPLETE_CACHE = "FORMS_AUTOCOMPLETE_CACHE";
+
     @Bean
     public ConcurrentMapCacheManager cacheManager() {
         final ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
@@ -62,6 +64,7 @@ public class CacheConfig {
                 RESOURCE_DEFINITION_TARGET_CLASSES_CACHE,
                 SETTINGS_CACHE,
                 SEARCH_FILTERS_CACHE,
+                FORMS_AUTOCOMPLETE_CACHE,
                 LABEL_CACHE
         ));
         return cacheManager;

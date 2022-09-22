@@ -77,7 +77,6 @@ public class SearchSavedQueryService {
 
     public Optional<SearchSavedQueryDTO> getSingle(String uuid) {
         final Optional<User> optionalUser = currentUserService.getCurrentUser();
-        System.out.println(optionalUser);
         return repository.findByUuid(uuid)
                 .filter(searchSavedQuery -> canSeeQuery(optionalUser, searchSavedQuery))
                 .map(searchSavedQuery -> {
