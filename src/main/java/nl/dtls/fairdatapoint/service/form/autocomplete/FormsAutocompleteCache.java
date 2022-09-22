@@ -20,34 +20,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.settings;
+package nl.dtls.fairdatapoint.service.form.autocomplete;
 
-import lombok.*;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
+import nl.dtls.fairdatapoint.entity.forms.RdfEntityCacheContainer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import static nl.dtls.fairdatapoint.config.CacheConfig.FORMS_AUTOCOMPLETE_CACHE;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder(toBuilder = true)
-public class SettingsUpdateDTO {
+@Component
+public class FormsAutocompleteCache {
 
-    private String appTitle;
+    @Autowired
+    private ConcurrentMapCacheManager cacheManager;
 
-    private String appSubtitle;
+    public void clear() {
+        cache().clear();
+    }
 
-    @NotNull
-    private List<SettingsMetricsEntry> metadataMetrics;
+    public void evict(String rdfType) {
+        cache().evict(rdfType);
+    }
 
-    @NotNull
-    private SettingsPingUpdateDTO ping;
+    public void set(RdfEntityCacheContainer container) {
+        cache().put(container.getRdfType(), container);
+    }
 
-    @NotNull
-    private SettingsSearchDTO search;
+    public RdfEntityCacheContainer get(String rdfType) {
+        return cache().get(rdfType, RdfEntityCacheContainer.class);
+    }
 
-    @NotNull
-    private SettingsFormsDTO forms;
+    private Cache cache() {
+        return cacheManager.getCache(FORMS_AUTOCOMPLETE_CACHE);
+    }
 }

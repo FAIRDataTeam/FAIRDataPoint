@@ -20,34 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.settings;
+package nl.dtls.fairdatapoint.service.form.autocomplete.retrieval;
 
-import lombok.*;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
+import nl.dtls.fairdatapoint.entity.forms.RdfEntitySourceType;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Map;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder(toBuilder = true)
-public class SettingsUpdateDTO {
+public interface RdfEntitiesRetriever {
 
-    private String appTitle;
+    Map<String, String> retrieve(String rdfType);
 
-    private String appSubtitle;
-
-    @NotNull
-    private List<SettingsMetricsEntry> metadataMetrics;
-
-    @NotNull
-    private SettingsPingUpdateDTO ping;
-
-    @NotNull
-    private SettingsSearchDTO search;
-
-    @NotNull
-    private SettingsFormsDTO forms;
+    RdfEntitySourceType getSourceType();
 }

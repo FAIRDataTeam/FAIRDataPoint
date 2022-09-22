@@ -23,31 +23,16 @@
 package nl.dtls.fairdatapoint.api.dto.settings;
 
 import lombok.*;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder(toBuilder = true)
-public class SettingsUpdateDTO {
-
-    private String appTitle;
-
-    private String appSubtitle;
+public class SettingsFormsDTO {
 
     @NotNull
-    private List<SettingsMetricsEntry> metadataMetrics;
-
-    @NotNull
-    private SettingsPingUpdateDTO ping;
-
-    @NotNull
-    private SettingsSearchDTO search;
-
-    @NotNull
-    private SettingsFormsDTO forms;
+    private SettingsFormsAutocompleteDTO autocomplete;
 }
