@@ -76,6 +76,7 @@
 
         <!-- override for security -->
         <snakeyaml.version>1.31</snakeyaml.version>
+        <spring-security.version>5.7.5</spring-security.version>
     </properties>
 
     <repositories>
