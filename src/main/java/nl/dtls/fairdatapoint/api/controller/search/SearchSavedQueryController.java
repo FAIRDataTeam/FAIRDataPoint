@@ -23,9 +23,12 @@
 package nl.dtls.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.search.SearchService;
 import nl.dtls.fairdatapoint.service.search.query.SearchSavedQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,6 +53,9 @@ public class SearchSavedQueryController {
     @Autowired
     private SearchSavedQueryService searchSavedQueryService;
 
+    @Autowired
+    private SearchService searchService;
+
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
         return new ResponseEntity<>(searchSavedQueryService.getAll(), HttpStatus.OK);
@@ -62,6 +68,19 @@ public class SearchSavedQueryController {
         final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
+        }
+    }
+
+    @PostMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SearchResultDTO>> search(
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException, MetadataRepositoryException {
+        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
+        if (oDto.isPresent()) {
+            return ResponseEntity.ok(searchService.search(oDto.get()));
         }
         else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
