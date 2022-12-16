@@ -81,6 +81,12 @@ public class SearchService {
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
+    public List<SearchResultDTO> search(
+            SearchSavedQueryDTO searchSavedQueryDTO
+    ) throws MetadataRepositoryException {
+        return search(searchSavedQueryDTO.getVariables());
+    }
+
     public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
         final List<SearchResult> results = metadataRepository.findByLiteral(l(reqDto.getQuery()));
         return processSearchResults(results);
