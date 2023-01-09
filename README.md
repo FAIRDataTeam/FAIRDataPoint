@@ -1,13 +1,10 @@
 # FAIR Data Point
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/FAIRDataTeam/FAIRDataPoint?sort=semver)](https://github.com/FAIRDataTeam/FAIRDataPoint/releases)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/FAIRDataTeam/FAIRDataPoint/FAIRDataPoint%20CI)](https://github.com/FAIRDataTeam/FAIRDataPoint/actions)
 [![Documentation Status](https://readthedocs.org/projects/fairdatapoint/badge/?version=latest)](https://fairdatapoint.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/github/license/FAIRDataTeam/FAIRDataPoint)](https://github.com/FAIRDataTeam/FAIRDataPoint/blob/develop/LICENSE)
 [![Docker Pulls](https://img.shields.io/docker/pulls/fairdata/fairdatapoint)](https://hub.docker.com/r/fairdata/fairdatapoint)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/61f029299b814ca8be2b8edbaab6ce50)](https://www.codacy.com/app/rajaram5/FAIRDataPoint?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DTL-FAIRData/FAIRDataPoint&amp;utm_campaign=Badge_Grade)
-[![Coverage Status](https://coveralls.io/repos/github/DTL-FAIRData/FAIRDataPoint/badge.svg?branch=master)](https://coveralls.io/github/DTL-FAIRData/FAIRDataPoint?branch=master)
-[![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/FAIRDataTeam/FAIRDataPoint)](https://libraries.io/github/FAIRDataTeam/FAIRDataPoint)
+[![Libraries.io](https://img.shields.io/librariesio/github/FAIRDataTeam/FAIRDataPoint)](https://libraries.io/github/FAIRDataTeam/FAIRDataPoint)
 
 [**FAIR Data Point** (FDP)](https://www.fairdatapoint.org) is a REST API for creating, storing, and serving **FAIR
 metadata**. This FDP implementation also presents a Web-based graphical user interface (GUI). The metadata contents are
