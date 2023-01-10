@@ -36,6 +36,8 @@ import java.util.Objects;
 @Component
 public class SearchMapper {
 
+    private static final String FRAGMENT_SUFFIX = "\n";
+
     public SearchQueryTemplateDTO toQueryTemplateDTO(String template) {
         return new SearchQueryTemplateDTO(template);
     }
@@ -95,9 +97,9 @@ public class SearchMapper {
 
     public Map<String, String> toSubstitutions(SearchQueryVariablesDTO reqDto) {
         return Map.of(
-                "prefixes", reqDto.getPrefixes() + "\n",
-                "graphPattern", reqDto.getGraphPattern() + "\n",
-                "ordering", reqDto.getOrdering() + "\n"
+                "prefixes", reqDto.getPrefixes() + FRAGMENT_SUFFIX,
+                "graphPattern", reqDto.getGraphPattern() + FRAGMENT_SUFFIX,
+                "ordering", reqDto.getOrdering() + FRAGMENT_SUFFIX
         );
     }
 }

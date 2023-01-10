@@ -47,7 +47,11 @@ public class IndexSettingsService {
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
         log.info("Checking if ping.clientUrl is on deny list: " + ping.getClientUrl());
-        return getOrDefaults().getPing().getDenyList().parallelStream().anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
+        return getOrDefaults()
+                .getPing()
+                .getDenyList()
+                .parallelStream()
+                .anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
     }
 
     @RequiredEnabledIndexFeature

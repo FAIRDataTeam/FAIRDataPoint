@@ -44,7 +44,7 @@ public class MembershipService {
     private MembershipMapper membershipMapper;
 
     public List<MembershipDTO> getMemberships() {
-        List<Membership> memberships = membershipRepository.findAll();
+        final List<Membership> memberships = membershipRepository.findAll();
         return
                 memberships
                         .stream()
@@ -53,33 +53,37 @@ public class MembershipService {
     }
 
     public void addToMembership(ResourceDefinition resourceDefinition) {
-        String rdUuid = resourceDefinition.getUuid();
+        final String uuid = resourceDefinition.getUuid();
 
         // Add to owner
-        Membership owner = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
-        addEntityIfMissing(owner, rdUuid);
+        final Membership owner =
+                membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
+        addEntityIfMissing(owner, uuid);
         membershipRepository.save(owner);
 
         // Add to data provider
         if (resourceDefinition.isCatalog()) {
-            Membership dataProvider = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
-            addEntityIfMissing(dataProvider, rdUuid);
+            final Membership dataProvider =
+                    membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
+            addEntityIfMissing(dataProvider, uuid);
             membershipRepository.save(dataProvider);
         }
     }
 
     public void removeFromMembership(ResourceDefinition resourceDefinition) {
-        String rdUuid = resourceDefinition.getUuid();
+        final String uuid = resourceDefinition.getUuid();
 
         // Add to owner
-        Membership owner = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
-        removeEntityIfPresent(owner, rdUuid);
+        final Membership owner =
+                membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
+        removeEntityIfPresent(owner, uuid);
         membershipRepository.save(owner);
 
         // Add to data provider
         if (resourceDefinition.isCatalog()) {
-            Membership dataProvider = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
-            removeEntityIfPresent(dataProvider, rdUuid);
+            final Membership dataProvider =
+                    membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
+            removeEntityIfPresent(dataProvider, uuid);
             membershipRepository.save(dataProvider);
         }
     }
@@ -91,7 +95,7 @@ public class MembershipService {
     }
 
     private void removeEntityIfPresent(Membership membership, String rdUuid) {
-        int index = membership.getAllowedEntities().indexOf(rdUuid);
+        final int index = membership.getAllowedEntities().indexOf(rdUuid);
         if (index != -1) {
             membership.getAllowedEntities().remove(index);
         }

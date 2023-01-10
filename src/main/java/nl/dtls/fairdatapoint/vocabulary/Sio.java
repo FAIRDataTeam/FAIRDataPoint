@@ -32,20 +32,20 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 /**
- * Semanticscience Integrated Ontology. See {@link
- * <a href="https://bioportal.bioontology.org/ontologies/SIO">Semanticscience Integrated Ontology</a>}.
+ * Semanticscience Integrated Ontology
  *
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
+ * @see <a href="https://bioportal.bioontology.org/ontologies/SIO">Semanticscience Integrated Ontology</a>
+ * @author Rajaram Kaliyaperumal
+ * @author Kees Burger
  * @version 0.1
  * @since 2018-01-17
  */
 public class Sio {
 
-    private static final ValueFactory f = SimpleValueFactory.getInstance();
+    public static final ValueFactory VF = SimpleValueFactory.getInstance();
     public static final String PREFIX = "sio";
     public static final String NAMESPACE = "http://semanticscience.org/resource/";
-    public static final IRI REFERS_TO = f.createIRI(NAMESPACE + "SIO_000628");
-    public static final IRI IS_ABOUT = f.createIRI(NAMESPACE + "SIO_000332");
+    public static final IRI REFERS_TO = VF.createIRI(NAMESPACE + "SIO_000628");
+    public static final IRI IS_ABOUT = VF.createIRI(NAMESPACE + "SIO_000332");
 
 }

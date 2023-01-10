@@ -38,7 +38,8 @@ public class IriValidator implements ConstraintValidator<ValidIri, String> {
         try {
             i(text);
             return true;
-        } catch (Exception e) {
+        }
+        catch (Exception exception) {
             return false;
         }
     }

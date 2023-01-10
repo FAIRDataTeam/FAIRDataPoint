@@ -51,6 +51,8 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Service
 public class MetadataStateService {
 
+    private static final String MSG_NOT_FOUND = "Metadata info '%s' was not found";
+
     @Autowired
     private MetadataRepository metadataRepository;
 
@@ -61,35 +63,35 @@ public class MetadataStateService {
     private CurrentUserService currentUserService;
 
     public Metadata get(IRI metadataUri) {
-        Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
+        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format("Metadata info '%s' was not found", metadataUri));
+            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
         return oMetadata.get();
     }
 
-    public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition rd) {
+    public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition definition) {
         // 1. Return null if user is not log in
         if (currentUserService.getCurrentUser().isEmpty()) {
             return null;
         }
 
         // 2. Get metadata info for current
-        Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
+        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format("Metadata info '%s' was not found", metadataUri));
+            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
-        Metadata metadata = oMetadata.get();
+        final Metadata metadata = oMetadata.get();
 
         // 3. Get metadata info for children
-        List<String> childrenUris = new ArrayList<>();
-        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            IRI relationUri = i(rdChild.getRelationUri());
+        final List<String> childrenUris = new ArrayList<>();
+        for (ResourceDefinitionChild rdChild : definition.getChildren()) {
+            final IRI relationUri = i(rdChild.getRelationUri());
             for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(model, metadataUri, relationUri)) {
                 childrenUris.add(childUri.stringValue());
             }
         }
-        Map<String, MetadataState> children =
+        final Map<String, MetadataState> children =
                 metadataRepository.findByUriIn(childrenUris)
                         .stream()
                         .collect(Collectors.toMap(Metadata::getUri, Metadata::getState));
@@ -102,17 +104,17 @@ public class MetadataStateService {
     }
 
     public void initState(IRI metadataUri) {
-        Metadata metadata = new Metadata(null, metadataUri.stringValue(), MetadataState.DRAFT);
+        final Metadata metadata = new Metadata(null, metadataUri.stringValue(), MetadataState.DRAFT);
         metadataRepository.save(metadata);
     }
 
     public void modifyState(IRI metadataUri, MetaStateChangeDTO reqDto) {
         // 1. Get metadata info for current
-        Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
+        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format("Metadata info '%s' was not found", metadataUri));
+            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
-        Metadata metadata = oMetadata.get();
+        final Metadata metadata = oMetadata.get();
 
         // 2. Validate
         metadataStateValidator.validate(reqDto, metadata);

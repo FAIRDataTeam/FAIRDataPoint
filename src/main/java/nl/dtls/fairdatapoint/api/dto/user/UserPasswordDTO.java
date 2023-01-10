@@ -33,6 +33,6 @@ import lombok.Setter;
 @Setter
 public class UserPasswordDTO {
 
-    protected String password;
+    private String password;
 
 }

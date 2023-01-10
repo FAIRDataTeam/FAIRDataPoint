@@ -29,6 +29,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,7 +37,9 @@ import java.time.Duration;
 @Setter
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
+    private static final int DEFAULT_INTERVAL_DAYS = 7;
     private boolean enabled = true;
     private String initDelay = "10000";
-    private Duration interval = Duration.ofDays(7);
+    private Duration interval = Duration.ofDays(DEFAULT_INTERVAL_DAYS);
+    private List<String> endpoints = List.of("https://home.fairdatapoint.org");
 }

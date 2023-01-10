@@ -33,10 +33,10 @@ import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.Resou
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.MetadataSchemaMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.settings.SettingsMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.service.search.SearchFilterCache;
+import nl.dtls.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -78,6 +78,9 @@ public class MigrationRunner {
     private SettingsMigration settingsMigration;
 
     @Autowired
+    private SettingsCache settingsCache;
+
+    @Autowired
     private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
 
     @Autowired
@@ -89,6 +92,7 @@ public class MigrationRunner {
     @PostConstruct
     public void run() {
         settingsMigration.runMigration();
+        settingsCache.updateCachedSettings();
         userMigration.runMigration();
         membershipMigration.runMigration();
         aclMigration.runMigration();

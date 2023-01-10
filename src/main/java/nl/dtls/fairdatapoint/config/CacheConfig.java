@@ -39,9 +39,11 @@ public class CacheConfig {
 
     public static final String RESOURCE_DEFINITION_CACHE = "RESOURCE_DEFINITION_CACHE";
 
-    public static final String RESOURCE_DEFINITION_PARENT_CACHE = "RESOURCE_DEFINITION_PARENT_CACHE";
+    public static final String RESOURCE_DEFINITION_PARENT_CACHE =
+            "RESOURCE_DEFINITION_PARENT_CACHE";
 
-    public static final String RESOURCE_DEFINITION_TARGET_CLASSES_CACHE = "RESOURCE_DEFINITION_TARGET_CLASSES_CACHE";
+    public static final String RESOURCE_DEFINITION_TARGET_CLASSES_CACHE =
+            "RESOURCE_DEFINITION_TARGET_CLASSES_CACHE";
 
     public static final String LABEL_CACHE = "LABEL_CACHE";
 
@@ -49,9 +51,11 @@ public class CacheConfig {
 
     public static final String SEARCH_FILTERS_CACHE = "SEARCH_FILTERS_CACHE";
 
+    public static final String FORMS_AUTOCOMPLETE_CACHE = "FORMS_AUTOCOMPLETE_CACHE";
+
     @Bean
     public ConcurrentMapCacheManager cacheManager() {
-        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+        final ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
         cacheManager.setCacheNames(List.of(
                 ACL_CACHE,
                 CATALOG_THEMES_CACHE,
@@ -60,6 +64,7 @@ public class CacheConfig {
                 RESOURCE_DEFINITION_TARGET_CLASSES_CACHE,
                 SETTINGS_CACHE,
                 SEARCH_FILTERS_CACHE,
+                FORMS_AUTOCOMPLETE_CACHE,
                 LABEL_CACHE
         ));
         return cacheManager;

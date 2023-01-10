@@ -47,8 +47,10 @@ import static java.lang.String.format;
 @RequestMapping("/metadata-schemas")
 public class MetadataSchemaController {
 
-    private static final String NOT_FOUND_MSG = "Metadata schema '%s' doesn't exist";
-    private static final String NOT_FOUND_VERSION_MSG = "Metadata Schema '%s' doesn't exist with version '%s'";
+    private static final String NOT_FOUND_MSG =
+            "Metadata schema '%s' doesn't exist";
+    private static final String NOT_FOUND_VERSION_MSG =
+            "Metadata Schema '%s' doesn't exist with version '%s'";
 
     @Autowired
     private MetadataSchemaService metadataSchemaService;
@@ -58,44 +60,55 @@ public class MetadataSchemaController {
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaDTO>> getSchemas(
-            @RequestParam(name = "drafts", required = false, defaultValue = "false") boolean includeDrafts,
-            @RequestParam(name = "abstract", required = false, defaultValue = "true") boolean includeAbstract
+            @RequestParam(name = "drafts", required = false, defaultValue = "false")
+            boolean includeDrafts,
+            @RequestParam(name = "abstract", required = false, defaultValue = "true")
+            boolean includeAbstract
     ) throws UnauthorizedException {
         if (includeDrafts && currentUserService.isAdmin()) {
-            return new ResponseEntity<>(metadataSchemaService.getSchemasWithDrafts(includeAbstract), HttpStatus.OK);
-        } else if (includeDrafts) {
+            return new ResponseEntity<>(
+                    metadataSchemaService.getSchemasWithDrafts(includeAbstract),
+                    HttpStatus.OK
+            );
+        }
+        else if (includeDrafts) {
             throw new UnauthorizedException("Unauthorized to see drafts of metadata schemas");
         }
-        return new ResponseEntity<>(metadataSchemaService.getSchemasWithoutDrafts(includeAbstract), HttpStatus.OK);
+        return new ResponseEntity<>(
+                metadataSchemaService.getSchemasWithoutDrafts(includeAbstract),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MetadataSchemaDTO> getSchema(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        Optional<MetadataSchemaDTO> oDto = metadataSchemaService.getSchemaByUuid(uuid);
+        final Optional<MetadataSchemaDTO> oDto = metadataSchemaService.getSchemaByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @GetMapping(path = "/{uuid}", produces = {
-            "text/turtle",
-            "application/x-turtle",
-            "text/n3",
-            "text/rdf+n3",
-            "application/ld+json",
-            "application/rdf+xml",
-            "application/xml",
-            "text/xml",
+        "text/turtle",
+        "application/x-turtle",
+        "text/n3",
+        "text/rdf+n3",
+        "application/ld+json",
+        "application/rdf+xml",
+        "application/xml",
+        "text/xml"
     })
     public ResponseEntity<Model> getSchemaContent(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        Optional<Model> oDto = metadataSchemaService.getSchemaContentByUuid(uuid);
+        final Optional<Model> oDto = metadataSchemaService.getSchemaContentByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -105,28 +118,34 @@ public class MetadataSchemaController {
     public ResponseEntity<Void> deleteSchemaFull(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
-        boolean result = metadataSchemaService.deleteSchemaFull(uuid);
+        final boolean result = metadataSchemaService.deleteSchemaFull(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MetadataSchemaDraftDTO> createSchemaDraft(@RequestBody @Valid MetadataSchemaChangeDTO reqDto) {
-        MetadataSchemaDraftDTO dto = metadataSchemaService.createSchemaDraft(reqDto);
+    public ResponseEntity<MetadataSchemaDraftDTO> createSchemaDraft(
+            @RequestBody @Valid MetadataSchemaChangeDTO reqDto
+    ) {
+        final MetadataSchemaDraftDTO dto = metadataSchemaService.createSchemaDraft(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/{uuid}/draft", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MetadataSchemaDraftDTO> getSchemaDraft(@PathVariable final String uuid) throws ResourceNotFoundException {
-        Optional<MetadataSchemaDraftDTO> oDto = metadataSchemaService.getSchemaDraft(uuid);
+    public ResponseEntity<MetadataSchemaDraftDTO> getSchemaDraft(
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException {
+        final Optional<MetadataSchemaDraftDTO> oDto = metadataSchemaService.getSchemaDraft(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -137,10 +156,12 @@ public class MetadataSchemaController {
             @PathVariable final String uuid,
             @RequestBody @Valid MetadataSchemaChangeDTO reqDto
     ) throws ResourceNotFoundException {
-        Optional<MetadataSchemaDraftDTO> oDto = metadataSchemaService.updateSchemaDraft(uuid, reqDto);
+        final Optional<MetadataSchemaDraftDTO> oDto =
+                metadataSchemaService.updateSchemaDraft(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -150,10 +171,11 @@ public class MetadataSchemaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteSchemaDraft(@PathVariable final String uuid)
             throws ResourceNotFoundException {
-        boolean result = metadataSchemaService.deleteSchemaDraft(uuid);
+        final boolean result = metadataSchemaService.deleteSchemaDraft(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -165,10 +187,11 @@ public class MetadataSchemaController {
             @PathVariable final String uuid,
             @RequestBody @Valid MetadataSchemaReleaseDTO reqDto
     ) throws ResourceNotFoundException {
-        Optional<MetadataSchemaDTO> oDto = metadataSchemaService.releaseDraft(uuid, reqDto);
+        final Optional<MetadataSchemaDTO> oDto = metadataSchemaService.releaseDraft(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -179,10 +202,12 @@ public class MetadataSchemaController {
             @PathVariable final String uuid,
             @PathVariable final String version
     ) throws ResourceNotFoundException {
-        Optional<MetadataSchemaVersionDTO> oDto = metadataSchemaService.getVersion(uuid, version);
+        final Optional<MetadataSchemaVersionDTO> oDto =
+                metadataSchemaService.getVersion(uuid, version);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_VERSION_MSG, uuid, version));
         }
     }
@@ -194,10 +219,12 @@ public class MetadataSchemaController {
             @PathVariable final String version,
             @RequestBody @Valid MetadataSchemaUpdateDTO reqDto
     ) throws ResourceNotFoundException {
-        Optional<MetadataSchemaVersionDTO> oDto = metadataSchemaService.updateVersion(uuid, version, reqDto);
+        final Optional<MetadataSchemaVersionDTO> oDto =
+                metadataSchemaService.updateVersion(uuid, version, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_VERSION_MSG, uuid, version));
         }
     }
@@ -209,38 +236,67 @@ public class MetadataSchemaController {
             @PathVariable final String uuid,
             @PathVariable final String version
     ) throws ResourceNotFoundException {
-        boolean result = metadataSchemaService.deleteVersion(uuid, version);
+        final boolean result = metadataSchemaService.deleteVersion(uuid, version);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_VERSION_MSG, uuid, version));
         }
     }
 
     @GetMapping(path = "/public", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaVersionDTO>> getPublishedSchemas() {
-        List<MetadataSchemaVersionDTO> dto = metadataSchemaService.getPublishedSchemas();
+        final List<MetadataSchemaVersionDTO> dto = metadataSchemaService.getPublishedSchemas();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MetadataSchemaRemoteDTO>> getImportableSchemas(@RequestParam(name = "from") String fdpUrl) {
-        List<MetadataSchemaRemoteDTO> dto = metadataSchemaService.getRemoteSchemas(fdpUrl);
+    public ResponseEntity<List<MetadataSchemaRemoteDTO>> getImportableSchemas(
+            @RequestParam(name = "from") String fdpUrl
+    ) {
+        final List<MetadataSchemaRemoteDTO> dto = metadataSchemaService.getRemoteSchemas(fdpUrl);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(path = "/import", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MetadataSchemaVersionDTO>> importSchemas(@RequestBody @Valid List<@Valid MetadataSchemaVersionDTO> reqDtos) {
-        List<MetadataSchemaVersionDTO> dto = metadataSchemaService.importSchemas(reqDtos);
+    @PostMapping(
+            path = "/import",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<MetadataSchemaVersionDTO>> importSchemas(
+            @RequestBody @Valid List<@Valid MetadataSchemaVersionDTO> reqDtos
+    ) {
+        final List<MetadataSchemaVersionDTO> dto = metadataSchemaService.importSchemas(reqDtos);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/updates", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaRemoteDTO>> checkForUpdates() {
-        List<MetadataSchemaRemoteDTO> dtos = metadataSchemaService.checkForUpdates();
+        final List<MetadataSchemaRemoteDTO> dtos = metadataSchemaService.checkForUpdates();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(
+            path = "/preview",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = {
+                "text/turtle",
+                "application/x-turtle",
+                "text/n3",
+                "text/rdf+n3",
+                "application/ld+json",
+                "application/rdf+xml",
+                "application/xml",
+                "text/xml"
+            }
+    )
+    public ResponseEntity<Model> getShaclPreview(@RequestBody @Valid MetadataSchemaPreviewRequestDTO reqDto) {
+        final Model model = metadataSchemaService.getShaclFromSchemas(reqDto);
+        return new ResponseEntity<>(model, HttpStatus.OK);
     }
 }

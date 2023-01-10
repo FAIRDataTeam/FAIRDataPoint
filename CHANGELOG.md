@@ -8,6 +8,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.16.0]
+
+### Added
+
+- Application title and subtitle in config and settings
+- Possibility to configure ping endpoints in config file
+- SHACL preview for metadata schemas
+- (Index) Cleanup of harvested records before next harvesting
+
+### Fixed
+
+- Child UUIDs for a metadata schema repetition due to versions
+
 ## [1.15.0]
 
 ### Added
@@ -323,3 +336,4 @@ The first release of reference FAIR Data Point implementation.
 [1.13.2]: /../../tree/v1.13.2
 [1.14.0]: /../../tree/v1.14.0
 [1.15.0]: /../../tree/v1.15.0
+[1.16.0]: /../../tree/v1.16.0

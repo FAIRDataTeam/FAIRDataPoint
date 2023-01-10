@@ -33,7 +33,9 @@ import java.util.UUID;
 
 @Component
 public class SearchSavedQueryMapper {
-    public SearchSavedQueryDTO toDTO(SearchSavedQuery query, UserDTO userDTO) {
+    public SearchSavedQueryDTO toDTO(
+            SearchSavedQuery query, UserDTO userDTO
+    ) {
         return SearchSavedQueryDTO.builder()
                 .uuid(query.getUuid())
                 .name(query.getName())
@@ -46,7 +48,9 @@ public class SearchSavedQueryMapper {
                 .build();
     }
 
-    public SearchSavedQuery fromChangeDTO(SearchSavedQueryChangeDTO reqDto, UserDTO userDto) {
+    public SearchSavedQuery fromChangeDTO(
+            SearchSavedQueryChangeDTO reqDto, UserDTO userDto
+    ) {
         return SearchSavedQuery.builder()
                 .uuid(UUID.randomUUID().toString())
                 .name(reqDto.getName())
@@ -59,7 +63,9 @@ public class SearchSavedQueryMapper {
                 .build();
     }
 
-    public SearchSavedQuery fromChangeDTO(SearchSavedQuery query, SearchSavedQueryChangeDTO reqDto) {
+    public SearchSavedQuery fromChangeDTO(
+            SearchSavedQuery query, SearchSavedQueryChangeDTO reqDto
+    ) {
         return query.toBuilder()
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())

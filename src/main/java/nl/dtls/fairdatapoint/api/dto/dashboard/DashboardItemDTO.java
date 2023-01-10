@@ -38,14 +38,14 @@ import java.util.Optional;
 @Setter
 public class DashboardItemDTO {
 
-    protected String uri;
+    private String uri;
 
-    protected String title;
+    private String title;
 
-    protected List<DashboardItemDTO> children;
+    private List<DashboardItemDTO> children;
 
-    protected Optional<MembershipDTO> membership;
+    private Optional<MembershipDTO> membership;
 
-    protected MetadataState state;
+    private MetadataState state;
 
 }

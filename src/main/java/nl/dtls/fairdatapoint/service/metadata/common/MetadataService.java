@@ -36,9 +36,13 @@ public interface MetadataService {
 
     List<Model> retrieve(List<IRI> uri) throws MetadataServiceException, ResourceNotFoundException;
 
-    Model store(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException;
+    Model store(
+            Model metadata, IRI uri, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException;
 
-    Model update(Model model, IRI uri, ResourceDefinition rd) throws MetadataServiceException;
+    Model update(
+            Model model, IRI uri, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException;
 
     void delete(IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException;
 

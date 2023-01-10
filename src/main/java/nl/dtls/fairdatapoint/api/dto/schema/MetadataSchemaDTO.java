@@ -24,7 +24,6 @@ package nl.dtls.fairdatapoint.api.dto.schema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

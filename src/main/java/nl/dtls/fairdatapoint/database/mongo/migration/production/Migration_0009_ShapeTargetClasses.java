@@ -41,32 +41,36 @@ import java.util.*;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0009_ShapeTargetClasses {
 
+    private static final String FIELD_UUID = "uuid";
+    private static final String FILED_CLASSES = "targetClassUris";
+
     @ChangeSet(order = "0009", id = "Migration_0009_ShapeTargetClasses", author = "migrationBot")
-    public void run(MongoDatabase db, ResourceDefinitionCache resourceDefinitionCache, ResourceDefinitionTargetClassesCache targetClassesCache) {
-        updateShapesAndResources(db);
+    public void run(MongoDatabase database, ResourceDefinitionCache resourceDefinitionCache,
+                    ResourceDefinitionTargetClassesCache targetClassesCache) {
+        updateShapesAndResources(database);
         resourceDefinitionCache.computeCache();
         targetClassesCache.computeCache();
     }
 
-    private void updateShapesAndResources(MongoDatabase db) {
-        Map<String, Set<String>> targetClassesMap = new HashMap<>();
+    private void updateShapesAndResources(MongoDatabase database) {
+        final Map<String, Set<String>> targetClassesMap = new HashMap<>();
         // Update shapes
-        MongoCollection<Document> shapeCol = db.getCollection("shape");
+        final MongoCollection<Document> shapeCol = database.getCollection("shape");
         for (Document document : shapeCol.find()) {
-            String definition = (String) document.get("definition");
-            String uuid = (String) document.get("uuid");
-            Set<String> targetClasses = MetadataSchemaShaclUtils.extractTargetClasses(definition);
+            final String definition = (String) document.get("definition");
+            final String uuid = (String) document.get(FIELD_UUID);
+            final Set<String> targetClasses = MetadataSchemaShaclUtils.extractTargetClasses(definition);
             targetClassesMap.put(uuid, targetClasses);
             shapeCol.updateOne(
-                    Filters.eq("uuid", uuid),
+                    Filters.eq(FIELD_UUID, uuid),
                     Updates.set("targetClasses", targetClasses)
             );
         }
         // Update resource definitions
-        MongoCollection<Document> rdCol = db.getCollection("resourceDefinition");
+        final MongoCollection<Document> rdCol = database.getCollection("resourceDefinition");
         for (Document document : rdCol.find()) {
-            List<String> targetClassUris = (List<String>) document.get("targetClassUris");
-            Set<String> shapeUuids = new HashSet<>();
+            final List<String> targetClassUris = (List<String>) document.get(FILED_CLASSES);
+            final Set<String> shapeUuids = new HashSet<>();
             targetClassUris.forEach(uri -> {
                 targetClassesMap.forEach((shapeUuid, targetClasses) -> {
                     if (targetClasses.contains(uri)) {
@@ -75,11 +79,11 @@ public class Migration_0009_ShapeTargetClasses {
                 });
             });
             rdCol.updateOne(
-                    Filters.eq("uuid", document.get("uuid")),
-                    Updates.unset("targetClassUris")
+                    Filters.eq(FIELD_UUID, document.get(FIELD_UUID)),
+                    Updates.unset(FILED_CLASSES)
             );
             rdCol.updateOne(
-                    Filters.eq("uuid", document.get("uuid")),
+                    Filters.eq(FIELD_UUID, document.get(FIELD_UUID)),
                     Updates.set("shapeUuids", shapeUuids)
             );
         }

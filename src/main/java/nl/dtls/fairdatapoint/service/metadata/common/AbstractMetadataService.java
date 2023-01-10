@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataGetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -64,19 +63,19 @@ public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
     @Qualifier("genericMetadataRepository")
-    protected MetadataRepository metadataRepository;
+    private MetadataRepository metadataRepository;
 
     @Autowired
-    protected MemberService memberService;
+    private MemberService memberService;
 
     @Autowired
     private CurrentUserService currentUserService;
 
     @Autowired
-    protected MetadataEnhancer metadataEnhancer;
+    private MetadataEnhancer metadataEnhancer;
 
     @Autowired
-    protected MetadataValidator metadataValidator;
+    private MetadataValidator metadataValidator;
 
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
@@ -91,17 +90,20 @@ public abstract class AbstractMetadataService implements MetadataService {
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
         try {
             // 1. Get metadata
-            List<Statement> statements = metadataRepository.find(uri);
+            final List<Statement> statements = metadataRepository.find(uri);
             if (statements.isEmpty()) {
-                throw new ResourceNotFoundException(format("No metadata found for the uri '%s'", uri));
+                throw new ResourceNotFoundException(
+                        format("No metadata found for the uri '%s'", uri)
+                );
             }
 
             // 2. Convert to model
-            Model metadata = new LinkedHashModel();
+            final Model metadata = new LinkedHashModel();
             metadata.addAll(statements);
             return metadata;
-        } catch (MetadataRepositoryException ex) {
-            throw new MetadataServiceException(ex.getMessage());
+        }
+        catch (MetadataRepositoryException exception) {
+            throw new MetadataServiceException(exception.getMessage());
         }
     }
 
@@ -115,7 +117,9 @@ public abstract class AbstractMetadataService implements MetadataService {
     }
 
     @Override
-    public Model store(Model metadata, IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException {
+    public Model store(
+            Model metadata, IRI uri, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException {
         try {
             metadataValidator.validate(metadata, uri, resourceDefinition);
             metadataEnhancer.enhance(metadata, uri, resourceDefinition);
@@ -124,25 +128,32 @@ public abstract class AbstractMetadataService implements MetadataService {
             addPermissions(uri);
             addState(uri);
             return metadata;
-        } catch (MetadataRepositoryException e) {
-            throw new MetadataServiceException(e.getMessage());
+        }
+        catch (MetadataRepositoryException exception) {
+            throw new MetadataServiceException(exception.getMessage());
         }
     }
 
     @Override
-    @PreAuthorize("hasPermission(#uri.stringValue(), 'nl.dtls.fairdatapoint.entity.metadata.Metadata', 'WRITE') " +
-            "or hasRole('ADMIN')")
-    public Model update(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
+    @PreAuthorize("""
+            hasPermission(#uri.stringValue(),
+            'nl.dtls.fairdatapoint.entity.metadata.Metadata', 'WRITE')
+            or hasRole('ADMIN')
+            """)
+    public Model update(
+            Model metadata, IRI uri, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException {
         try {
-            metadataValidator.validate(metadata, uri, rd);
-            Model oldMetadata = retrieve(uri);
-            metadataEnhancer.enhance(metadata, uri, rd, oldMetadata);
+            metadataValidator.validate(metadata, uri, resourceDefinition);
+            final Model oldMetadata = retrieve(uri);
+            metadataEnhancer.enhance(metadata, uri, resourceDefinition, oldMetadata);
             metadataRepository.remove(uri);
             metadataRepository.save(new ArrayList<>(metadata), uri);
-            updateParent(metadata, uri, rd);
+            updateParent(metadata, uri, resourceDefinition);
             return metadata;
-        } catch (MetadataRepositoryException | MetadataServiceException e) {
-            throw (new MetadataServiceException(e.getMessage()));
+        }
+        catch (MetadataRepositoryException | MetadataServiceException exception) {
+            throw new MetadataServiceException(exception.getMessage());
         }
     }
 
@@ -150,14 +161,14 @@ public abstract class AbstractMetadataService implements MetadataService {
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         try {
-            Model metadata = retrieve(uri);
+            final Model metadata = retrieve(uri);
 
             // Delete all children
             for (ResourceDefinitionChild child : rd.getChildren()) {
-                String childRdUuid = child.getResourceDefinitionUuid();
-                ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childRdUuid);
+                final String childRdUuid = child.getResourceDefinitionUuid();
+                final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childRdUuid);
                 if (rdChild != null) {
-                    List<IRI> children = getChildren(metadata, i(child.getRelationUri()));
+                    final List<IRI> children = getChildren(metadata, i(child.getRelationUri()));
                     for (IRI childUri : children) {
                         delete(childUri, rdChild);
                     }
@@ -165,11 +176,12 @@ public abstract class AbstractMetadataService implements MetadataService {
             }
 
             // Remove reference at parent
-            Set<ResourceDefinition> rdParents = resourceDefinitionCache.getParentsByUuid(rd.getUuid());
+            final Set<ResourceDefinition> rdParents =
+                    resourceDefinitionCache.getParentsByUuid(rd.getUuid());
             // select parent based on URI prefix
             for (ResourceDefinition rdParent : rdParents) {
-                IRI parentUri = getParent(metadata);
-                Model parentMetadata = retrieve(parentUri);
+                final IRI parentUri = getParent(metadata);
+                final Model parentMetadata = retrieve(parentUri);
                 for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
                     if (rdChild.getResourceDefinitionUuid().equals(rd.getUuid())) {
                         parentMetadata.remove(null, i(rdChild.getRelationUri()), uri);
@@ -180,47 +192,54 @@ public abstract class AbstractMetadataService implements MetadataService {
 
             // Delete itself
             metadataRepository.remove(uri);
-
-        } catch (MetadataRepositoryException | MetadataServiceException e) {
-            throw (new MetadataServiceException(e.getMessage()));
+        }
+        catch (MetadataRepositoryException | MetadataServiceException exception) {
+            throw new MetadataServiceException(exception.getMessage());
         }
     }
 
-    protected void updateParent(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
-        IRI parent = MetadataGetter.getParent(metadata);
+    protected void updateParent(
+            Model metadata, IRI uri, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException {
+        final IRI parent = MetadataGetter.getParent(metadata);
         if (parent != null) {
-            ResourceDefinition rdParent = resourceDefinitionService.getByUrl(parent.toString());
+            final ResourceDefinition rdParent =
+                    resourceDefinitionService.getByUrl(parent.toString());
             if (rdParent != null) {
                 try {
-                    List<Statement> statements = new ArrayList<>();
+                    final List<Statement> statements = new ArrayList<>();
                     for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
-                        if (rdChild.getResourceDefinitionUuid().equals(rd.getUuid())) {
+                        if (rdChild.getResourceDefinitionUuid()
+                                .equals(resourceDefinition.getUuid())) {
                             statements.add(s(parent, i(rdChild.getRelationUri()), uri));
                         }
                     }
                     metadataRepository.removeStatement(parent, FDP.METADATAMODIFIED, null, parent);
                     statements.add(s(parent, FDP.METADATAMODIFIED, l(OffsetDateTime.now())));
                     metadataRepository.save(statements, parent);
-                } catch (MetadataRepositoryException e) {
+                }
+                catch (MetadataRepositoryException exception) {
                     throw new MetadataServiceException("Problem with updating parent timestamp");
                 }
-                Model parentMetadata = retrieve(parent);
+                final Model parentMetadata = retrieve(parent);
                 updateParent(parentMetadata, parent, rdParent);
             }
         }
     }
 
     private void addPermissions(IRI uri) {
-        Optional<User> oUser = currentUserService.getCurrentUser();
-        if (oUser.isEmpty()) {
+        final Optional<User> user = currentUserService.getCurrentUser();
+        if (user.isEmpty()) {
             return;
         }
-        User user = oUser.get();
-        memberService.createOwner(uri.stringValue(), Metadata.class, user.getUuid());
+        memberService.createOwner(uri.stringValue(), Metadata.class, user.get().getUuid());
     }
 
     private void addState(IRI uri) {
         metadataStateService.initState(uri);
     }
 
+    protected MemberService getMemberService() {
+        return memberService;
+    }
 }

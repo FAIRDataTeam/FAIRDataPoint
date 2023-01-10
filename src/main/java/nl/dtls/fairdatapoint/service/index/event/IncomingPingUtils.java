@@ -44,15 +44,16 @@ public class IncomingPingUtils {
     private ObjectMapper objectMapper;
 
     public Event prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
-        var incomingPing = new IncomingPing();
-        var ex = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
+        final IncomingPing incomingPing = new IncomingPing();
+        final Exchange ex = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
         incomingPing.setExchange(ex);
 
         ex.getRequest().setHeaders(getHeaders(request));
         ex.getRequest().setFromHttpServletRequest(request);
         try {
             ex.getRequest().setBody(objectMapper.writeValueAsString(reqDto));
-        } catch (JsonProcessingException e) {
+        }
+        catch (JsonProcessingException exception) {
             ex.getRequest().setBody(null);
         }
 
@@ -60,12 +61,12 @@ public class IncomingPingUtils {
     }
 
     private Map<String, List<String>> getHeaders(HttpServletRequest request) {
-        Map<String, List<String>> map = new HashMap<>();
-        Iterator<String> requestI = request.getHeaderNames().asIterator();
+        final Map<String, List<String>> map = new HashMap<>();
+        final Iterator<String> requestI = request.getHeaderNames().asIterator();
         while (requestI.hasNext()) {
-            String headerName = requestI.next();
-            List<String> headerValues = new ArrayList<>();
-            Iterator<String> headerI = request.getHeaders(headerName).asIterator();
+            final String headerName = requestI.next();
+            final List<String> headerValues = new ArrayList<>();
+            final Iterator<String> headerI = request.getHeaders(headerName).asIterator();
             while (headerI.hasNext()) {
                 headerValues.add(headerI.next());
             }

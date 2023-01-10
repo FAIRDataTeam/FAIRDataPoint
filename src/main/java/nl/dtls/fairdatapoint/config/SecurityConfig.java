@@ -34,6 +34,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    // TODO: deprecated WebSecurityConfigurerAdapter
+
+    private static final String MATCH_ALL = "/**";
 
     @Autowired
     private FilterConfigurer filterConfigurer;
@@ -52,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, MATCH_ALL).permitAll()
                 .antMatchers("/dashboard").authenticated()
                 .antMatchers("/users**").authenticated()
                 .antMatchers("/api-keys**").authenticated()
@@ -62,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/search**").permitAll()
                 .antMatchers("/index/admin**").authenticated()
                 .antMatchers("/index**").permitAll()
-                .antMatchers(HttpMethod.PUT, "/**").authenticated()
+                .antMatchers(HttpMethod.PUT, MATCH_ALL).authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .apply(filterConfigurer);

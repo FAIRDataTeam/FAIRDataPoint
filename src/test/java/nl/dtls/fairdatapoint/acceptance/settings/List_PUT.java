@@ -23,12 +23,10 @@
 package nl.dtls.fairdatapoint.acceptance.settings;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
-import nl.dtls.fairdatapoint.api.dto.settings.SettingsPingUpdateDTO;
-import nl.dtls.fairdatapoint.api.dto.settings.SettingsSearchDTO;
-import nl.dtls.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
+import nl.dtls.fairdatapoint.api.dto.settings.*;
 import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
+import nl.dtls.fairdatapoint.entity.settings.SettingsFormsAutocomplete;
 import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
 import nl.dtls.fairdatapoint.entity.settings.SettingsPing;
 import nl.dtls.fairdatapoint.service.settings.SettingsCache;
@@ -90,14 +88,27 @@ public class List_PUT extends WebIntegrationTest {
     private SettingsUpdateDTO customSettingsUpdateDTO() {
         Settings customSettings = customSettings();
         return new SettingsUpdateDTO(
+                null,
+                null,
                 customSettings.getMetadataMetrics(),
-                new SettingsPingUpdateDTO(
-                        customSettings.getPing().isEnabled(),
-                        customSettings.getPing().getEndpoints()
-                ),
-                new SettingsSearchDTO(
-                        Collections.emptyList()  // TODO!
-                )
+                SettingsPingUpdateDTO
+                        .builder()
+                        .enabled(customSettings.getPing().isEnabled())
+                        .endpoints(customSettings.getPing().getEndpoints())
+                        .build(),
+                SettingsSearchDTO
+                        .builder()
+                        .filters(Collections.emptyList())
+                        .build(),
+                SettingsFormsDTO
+                        .builder()
+                        .autocomplete(SettingsFormsAutocompleteDTO
+                                .builder()
+                                .searchNamespace(true)
+                                .sources(Collections.emptyList())
+                                .build()
+                        )
+                        .build()
         );
     }
 
@@ -105,13 +116,26 @@ public class List_PUT extends WebIntegrationTest {
         Settings customSettings = customSettings();
         return new SettingsUpdateDTO(
                 null,
-                new SettingsPingUpdateDTO(
-                        customSettings.getPing().isEnabled(),
-                        customSettings.getPing().getEndpoints()
-                ),
-                new SettingsSearchDTO(
-                        Collections.emptyList()  // TODO!
-                )
+                null,
+                null,
+                SettingsPingUpdateDTO
+                        .builder()
+                        .enabled(customSettings.getPing().isEnabled())
+                        .endpoints(customSettings.getPing().getEndpoints())
+                        .build(),
+                SettingsSearchDTO
+                        .builder()
+                        .filters(Collections.emptyList())
+                        .build(),
+                SettingsFormsDTO
+                        .builder()
+                        .autocomplete(SettingsFormsAutocompleteDTO
+                                .builder()
+                                .searchNamespace(true)
+                                .sources(Collections.emptyList())
+                                .build()
+                        )
+                        .build()
         );
     }
 

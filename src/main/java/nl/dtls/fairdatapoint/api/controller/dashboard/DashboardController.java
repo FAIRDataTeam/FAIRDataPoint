@@ -56,10 +56,12 @@ public class DashboardController {
     private DashboardService dashboardService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DashboardItemDTO>> getDashboard(HttpServletRequest request) throws MetadataServiceException {
-        IRI uri = i(getRequestURL(request, persistentUrl));
-        IRI fdpUri = removeLastPartOfIRI(uri);
-        List<DashboardItemDTO> dto = dashboardService.getDashboard(fdpUri);
+    public ResponseEntity<List<DashboardItemDTO>> getDashboard(
+            HttpServletRequest request
+    ) throws MetadataServiceException {
+        final IRI uri = i(getRequestURL(request, persistentUrl));
+        final IRI fdpUri = removeLastPartOfIRI(uri);
+        final List<DashboardItemDTO> dto = dashboardService.getDashboard(fdpUri);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

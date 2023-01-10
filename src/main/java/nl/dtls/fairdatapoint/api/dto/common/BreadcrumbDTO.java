@@ -33,8 +33,8 @@ import lombok.Setter;
 @Setter
 public class BreadcrumbDTO {
 
-    protected String label;
+    private String label;
 
-    protected String identifier;
+    private String identifier;
 
 }

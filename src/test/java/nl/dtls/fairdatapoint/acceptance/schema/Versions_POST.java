@@ -111,7 +111,7 @@ public class Versions_POST extends WebIntegrationTest {
         // GIVEN: prepare data
         metadataSchemaRepository.deleteAll();
         metadataSchemaDraftRepository.deleteAll();
-        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(true));
+        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(true));
         MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
         metadataSchemaDraftRepository.save(draft);
         MetadataSchemaReleaseDTO reqDto = reqDto("2.0.0", true);
@@ -144,7 +144,7 @@ public class Versions_POST extends WebIntegrationTest {
         // GIVEN: prepare data
         metadataSchemaRepository.deleteAll();
         metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.save(metadataSchemaFixtures.customSchema_v1(true));
+        metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(true));
         MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
         metadataSchemaDraftRepository.save(draft);
         MetadataSchemaReleaseDTO reqDto = reqDto("0.1.0", true);

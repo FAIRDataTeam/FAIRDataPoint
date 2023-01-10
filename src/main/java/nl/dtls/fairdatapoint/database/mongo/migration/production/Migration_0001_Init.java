@@ -37,72 +37,74 @@ import org.springframework.context.annotation.Profile;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0001_Init {
 
+    private static final String FIELD_UUID = "uuid";
+    private static final String FIELD_PERMISSIONS = "permissions";
+    private static final String FIELD_MASK = "mask";
+    private static final String FIELD_CODE = "code";
+    private static final String FIELD_CLASS = "_class";
+    private static final int MASK_W = 2;
+    private static final int MASK_C = 4;
+    private static final int MASK_D = 8;
+    private static final int MASK_A = 16;
+
     @ChangeSet(order = "0001", id = "0001_init", author = "migrationBot")
-    public void run(MongoDatabase db) {
-        MongoCollection<Document> userCol = db.getCollection("user");
+    public void run(MongoDatabase database) {
+        final MongoCollection<Document> userCol = database.getCollection("user");
         userCol.insertOne(userAlbert());
         userCol.insertOne(userNikola());
 
-        MongoCollection<Document> membershipCol = db.getCollection("membership");
+        final MongoCollection<Document> membershipCol = database.getCollection("membership");
         membershipCol.insertOne(membershipOwner());
         membershipCol.insertOne(membershipDataProvider());
     }
 
     private Document userAlbert() {
-        Document user = new Document();
-        user.append("uuid", KnownUUIDs.USER_ALBERT_UUID);
-        user.append("firstName", "Albert");
-        user.append("lastName", "Einstein");
-        user.append("email", "albert.einstein@example.com");
-        user.append("passwordHash", "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW"); // password
-        user.append("role", "ADMIN");
-        user.append("_class", "nl.dtls.fairdatapoint.entity.user.User");
-        return user;
+        return createUser(KnownUUIDs.USER_ALBERT_UUID, "Albert", "Einstein", "albert.einstein@example.com", "ADMIN");
     }
 
     private Document userNikola() {
-        Document user = new Document();
-        user.append("uuid", KnownUUIDs.USER_NIKOLA_UUID);
-        user.append("firstName", "Nikola");
-        user.append("lastName", "Tesla");
-        user.append("email", "nikola.tesla@example.com");
-        user.append("passwordHash", "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW"); // password
-        user.append("role", "USER");
-        user.append("_class", "nl.dtls.fairdatapoint.entity.user.User");
+        return createUser(KnownUUIDs.USER_NIKOLA_UUID, "Nikola", "Tesla", "nikola.tesla@example.com", "USER");
+    }
+
+    private Document createUser(String uuid, String firstName, String lastName, String email, String role) {
+        final Document user = new Document();
+        user.append(FIELD_UUID, uuid);
+        user.append("firstName", firstName);
+        user.append("lastName", lastName);
+        user.append("email", email);
+        user.append("passwordHash", "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW");
+        user.append("role", role);
+        user.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.user.User");
         return user;
     }
 
     private Document membershipOwner() {
-        Document user = new Document();
-        user.append("uuid", KnownUUIDs.MEMBERSHIP_OWNER_UUID);
-        user.append("name", "Owner");
-        BasicBSONList permissions = new BasicBSONList();
-        permissions.add(new BasicBSONObject().append("mask", 2).append("code", "W"));
-        permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));
-        permissions.add(new BasicBSONObject().append("mask", 8).append("code", "D"));
-        permissions.add(new BasicBSONObject().append("mask", 16).append("code", "A"));
-        user.append("permissions", permissions);
-        BasicBSONList allowedEntities = new BasicBSONList();
-        allowedEntities.add("CATALOG");
-        allowedEntities.add("DATASET");
-        allowedEntities.add("DISTRIBUTION");
-        user.append("allowedEntities", allowedEntities);
-        user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
-        return user;
+        return createMembership(KnownUUIDs.MEMBERSHIP_OWNER_UUID, "Owner", true);
     }
 
     private Document membershipDataProvider() {
-        Document user = new Document();
-        user.append("uuid", KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID);
-        user.append("name", "Data Provider");
-        BasicBSONList permissions = new BasicBSONList();
-        permissions.add(new BasicBSONObject().append("mask", 4).append("code", "C"));
-        user.append("permissions", permissions);
-        BasicBSONList allowedEntities = new BasicBSONList();
+        return createMembership(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID, "Data Provider", false);
+    }
+
+    private Document createMembership(String uuid, String name, boolean owner) {
+        final Document membership = new Document();
+        membership.append(FIELD_UUID, uuid);
+        membership.append("name", name);
+        final BasicBSONList permissions = new BasicBSONList();
+        permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_C).append(FIELD_CODE, "C"));
+        final BasicBSONList allowedEntities = new BasicBSONList();
         allowedEntities.add("CATALOG");
-        user.append("allowedEntities", allowedEntities);
-        user.append("_class", "nl.dtls.fairdatapoint.entity.membership.Membership");
-        return user;
+        if (owner) {
+            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_W).append(FIELD_CODE, "W"));
+            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_D).append(FIELD_CODE, "D"));
+            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_A).append(FIELD_CODE, "A"));
+            allowedEntities.add("DATASET");
+            allowedEntities.add("DISTRIBUTION");
+        }
+        membership.append(FIELD_PERMISSIONS, permissions);
+        membership.append("allowedEntities", allowedEntities);
+        membership.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.membership.Membership");
+        return membership;
     }
 
 }

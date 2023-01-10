@@ -55,7 +55,7 @@ public class AclMigration implements Migration {
     private AclRepository aclRepository;
 
     @Autowired
-    protected MemberService memberService;
+    private MemberService memberService;
 
     @Autowired
     private MongoAuthenticationService mongoAuthenticationService;
@@ -67,35 +67,37 @@ public class AclMigration implements Migration {
         aclRepository.deleteAll();
         aclCache.clearCache();
 
-        String albertUuid = userFixtures.albert().getUuid();
-        String nicolaUuid = userFixtures.nikola().getUuid();
-        String ownerUuid = membershipFixtures.owner().getUuid();
-        String dataProviderUuid = membershipFixtures.dataProvider().getUuid();
-        Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        final String albertUuid = userFixtures.albert().getUuid();
+        final String nicolaUuid = userFixtures.nikola().getUuid();
+        final String ownerUuid = membershipFixtures.owner().getUuid();
+        final String dataProviderUuid = membershipFixtures.dataProvider().getUuid();
+        final Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         // -- Catalog
-        String catalog1Id = format("%s/catalog/catalog-1", persistentUrl);
+        final String catalog1Id = format("%s/catalog/catalog-1", persistentUrl);
         memberService.createOwner(catalog1Id, Metadata.class, albertUuid);
-        memberService.createOrUpdateMember(catalog1Id, Metadata.class, nicolaUuid, dataProviderUuid);
+        memberService.createOrUpdateMember(
+                catalog1Id, Metadata.class, nicolaUuid, dataProviderUuid
+        );
 
-        String catalog2Id = format("%s/catalog/catalog-2", persistentUrl);
+        final String catalog2Id = format("%s/catalog/catalog-2", persistentUrl);
         memberService.createOwner(catalog2Id, Metadata.class, albertUuid);
 
         // -- Dataset
-        String dataset1Id = format("%s/dataset/dataset-1", persistentUrl);
+        final String dataset1Id = format("%s/dataset/dataset-1", persistentUrl);
         memberService.createOwner(dataset1Id, Metadata.class, albertUuid);
         memberService.createOrUpdateMember(dataset1Id, Metadata.class, nicolaUuid, ownerUuid);
 
-        String dataset2Id = format("%s/dataset/dataset-2", persistentUrl);
+        final String dataset2Id = format("%s/dataset/dataset-2", persistentUrl);
         memberService.createOwner(dataset2Id, Metadata.class, albertUuid);
 
         // -- Distribution
-        String distribution1Id = format("%s/distribution/distribution-1", persistentUrl);
+        final String distribution1Id = format("%s/distribution/distribution-1", persistentUrl);
         memberService.createOwner(distribution1Id, Metadata.class, albertUuid);
         memberService.createOrUpdateMember(distribution1Id, Metadata.class, nicolaUuid, ownerUuid);
 
-        String distribution2Id = format("%s/distribution/distribution-2", persistentUrl);
+        final String distribution2Id = format("%s/distribution/distribution-2", persistentUrl);
         memberService.createOwner(distribution2Id, Metadata.class, albertUuid);
     }
 

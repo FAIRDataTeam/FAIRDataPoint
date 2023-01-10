@@ -29,7 +29,6 @@ import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.settings.SettingsCache;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
@@ -37,14 +36,21 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collections;
 
-@ChangeUnit(id="Migration_0013_ComplexSearch", order = "0013", author = "migrationBot")
+@ChangeUnit(
+        id = "Migration_0013_ComplexSearch",
+        order = "0013",
+        author = "migrationBot"
+)
 @Profile(Profiles.PRODUCTION)
 public class Migration_0013_ComplexSearch {
 
-    private final MongoTemplate db;
+    private static final String COL_SETTINGS = "settings";
+    private static final String FIELD_SEARCH_FILTERS = "searchFilters";
+
+    private final MongoTemplate database;
 
     public Migration_0013_ComplexSearch(MongoTemplate template) {
-        this.db = template;
+        this.database = template;
     }
 
     @Execution
@@ -54,19 +60,19 @@ public class Migration_0013_ComplexSearch {
     }
 
     private void addSearchRelatedSettings() {
-        MongoCollection<Document> settingsCol = db.getCollection("settings");
+        final MongoCollection<Document> settingsCol = database.getCollection(COL_SETTINGS);
         settingsCol.updateMany(
-                Filters.not(Filters.exists("searchFilters")),
-                Updates.set("searchFilters", Collections.emptyList())
+                Filters.not(Filters.exists(FIELD_SEARCH_FILTERS)),
+                Updates.set(FIELD_SEARCH_FILTERS, Collections.emptyList())
         );
     }
 
     @RollbackExecution
     public void rollback() {
-        MongoCollection<Document> settingsCol = db.getCollection("settings");
+        final MongoCollection<Document> settingsCol = database.getCollection(COL_SETTINGS);
         settingsCol.updateMany(
-                Filters.exists("searchFilters"),
-                Updates.unset("searchFilters")
+                Filters.exists(FIELD_SEARCH_FILTERS),
+                Updates.unset(FIELD_SEARCH_FILTERS)
         );
     }
 }

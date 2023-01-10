@@ -36,9 +36,12 @@ public class PropertyConfig {
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer propsConfig
-                = new PropertySourcesPlaceholderConfigurer();
-        propsConfig.setLocations(new ClassPathResource(GIT_FILE), new ClassPathResource(BUILD_INFO_FILE));
+        final PropertySourcesPlaceholderConfigurer propsConfig =
+                new PropertySourcesPlaceholderConfigurer();
+        propsConfig.setLocations(
+                new ClassPathResource(GIT_FILE),
+                new ClassPathResource(BUILD_INFO_FILE)
+        );
         propsConfig.setIgnoreResourceNotFound(true);
         propsConfig.setIgnoreUnresolvablePlaceholders(true);
         return propsConfig;

@@ -27,7 +27,7 @@ import org.springframework.security.acls.model.Permission;
 
 public class UserPermission extends BasePermission {
 
-    public static final Permission INSERT = new UserPermission(1 << 5, 'I'); // 32
+    public static final Permission INSERT = new UserPermission(32, 'I');
 
     protected UserPermission(int mask) {
         super(mask);

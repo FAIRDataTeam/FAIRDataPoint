@@ -36,6 +36,11 @@ import java.util.List;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 public class IndexSettingsPing {
+
+    private static final int DEFAULT_VALID_DAYS = 7;
+    private static final int DEFAULT_LIMIT_DURATION_HOURS = 6;
+    private static final int DEFAULT_LIMIT_HITS = 10;
+
     @NotNull
     private Duration validDuration;
 
@@ -49,10 +54,10 @@ public class IndexSettingsPing {
     private List<String> denyList;
 
     public static IndexSettingsPing getDefault() {
-        IndexSettingsPing ping = new IndexSettingsPing();
-        ping.setValidDuration(Duration.ofDays(7));
-        ping.setRateLimitDuration(Duration.ofHours(6));
-        ping.setRateLimitHits(10);
+        final IndexSettingsPing ping = new IndexSettingsPing();
+        ping.setValidDuration(Duration.ofDays(DEFAULT_VALID_DAYS));
+        ping.setRateLimitDuration(Duration.ofHours(DEFAULT_LIMIT_DURATION_HOURS));
+        ping.setRateLimitHits(DEFAULT_LIMIT_HITS);
         ping.setDenyList(Collections.singletonList("^(http|https)://localhost(:[0-9]+){0,1}.*$"));
         return ping;
     }

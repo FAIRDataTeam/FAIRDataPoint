@@ -33,9 +33,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.*;
-import nl.dtls.fairdatapoint.entity.index.exception.IndexException;
+import nl.dtls.fairdatapoint.entity.index.exception.AbstractIndexException;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import org.eclipse.rdf4j.common.exception.RDF4JException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.query.MalformedQueryException;
@@ -63,9 +62,9 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 public class ExceptionControllerAdvice {
 
-    @ExceptionHandler({ValidationException.class})
+    @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody()
+    @ResponseBody
     @ApiResponse(
         responseCode = "400",
         description = "Bad request",
@@ -74,13 +73,13 @@ public class ExceptionControllerAdvice {
             schema = @Schema(implementation = ErrorDTO.class)
         )
     )
-    public ErrorDTO handleBadRequest(Exception e) {
-        log.warn(e.getMessage());
-        log.debug("Handling bad request (ValidationException)", e);
-        return new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage());
+    public ErrorDTO handleBadRequest(Exception exception) {
+        log.warn(exception.getMessage());
+        log.debug("Handling bad request (ValidationException)", exception);
+        return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
-    @ExceptionHandler({RdfValidationException.class})
+    @ExceptionHandler(RdfValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     @ApiResponse(
@@ -91,17 +90,19 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public Model handleBadRequest(RdfValidationException e) {
-        Model validationReportModel = e.getModel();
-        log.debug("Handling bad request (RdfValidationException)", e);
+    public Model handleBadRequest(RdfValidationException exception) {
+        final Model validationReportModel = exception.getModel();
+        log.debug("Handling bad request (RdfValidationException)", exception);
 
         // Log number of errors
-        IRI validationResultIri = i("http://www.w3.org/ns/shacl#ValidationResult");
-        int errorsCount = validationReportModel.filter(null, null, validationResultIri).size();
+        final IRI validationResultIri = i("http://www.w3.org/ns/shacl#ValidationResult");
+        final int errorsCount = validationReportModel.filter(
+                null, null, validationResultIri
+        ).size();
         log.warn(format("Number of error: %s", errorsCount));
 
         // Log validation errors
-        StringWriter serialized = new StringWriter();
+        final StringWriter serialized = new StringWriter();
         Rio.write(validationReportModel, serialized, RDFFormat.TURTLE, getWriterConfig());
         log.warn(serialized.toString());
 
@@ -119,12 +120,8 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleInvalidQuery(MalformedQueryException e) {
-        String message = "Invalid SPARQL query";
-        log.error(message);
-        log.debug("Handling invalid query (MalformedQueryException)", e);
-        Map<String, String> details = Map.of("sparql", e.getMessage(), "exception", e.getClass().getName());
-        return new ErrorDTO(HttpStatus.BAD_REQUEST, "Invalid SPARQL query", details);
+    public ErrorDTO handleInvalidQuery(MalformedQueryException exception) {
+        return handleInvalidSparqlQuery(exception);
     }
 
     @ExceptionHandler(QueryEvaluationException.class)
@@ -138,12 +135,8 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleInvalidQuery(QueryEvaluationException e) {
-        String message = "Invalid SPARQL query";
-        log.error(message);
-        log.debug("Handling invalid query (QueryEvaluationException)", e);
-        Map<String, String> details = Map.of("sparql", e.getMessage(), "exception", e.getClass().getName());
-        return new ErrorDTO(HttpStatus.BAD_REQUEST, "Invalid SPARQL query", details);
+    public ErrorDTO handleInvalidQuery(QueryEvaluationException exception) {
+        return handleInvalidSparqlQuery(exception);
     }
 
     @ExceptionHandler({BadCredentialsException.class, UnauthorizedException.class})
@@ -157,10 +150,10 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleUnauthorized(Exception e) {
-        log.error(e.getMessage());
-        log.debug("Handling unauthorized", e);
-        return new ErrorDTO(HttpStatus.UNAUTHORIZED, e.getMessage());
+    public ErrorDTO handleUnauthorized(Exception exception) {
+        log.error(exception.getMessage());
+        log.debug("Handling unauthorized", exception);
+        return new ErrorDTO(HttpStatus.UNAUTHORIZED, exception.getMessage());
     }
 
     @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
@@ -174,10 +167,10 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleForbidden(Exception e) {
-        log.error(e.getMessage());
-        log.debug("Handling forbidden", e);
-        return new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage());
+    public ErrorDTO handleForbidden(Exception exception) {
+        log.error(exception.getMessage());
+        log.debug("Handling forbidden", exception);
+        return new ErrorDTO(HttpStatus.FORBIDDEN, exception.getMessage());
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -191,13 +184,13 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleResourceNotFound(ResourceNotFoundException e) {
-        log.error(e.getMessage());
-        log.debug("Handling resource not found", e);
-        return new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage());
+    public ErrorDTO handleResourceNotFound(ResourceNotFoundException exception) {
+        log.error(exception.getMessage());
+        log.debug("Handling resource not found", exception);
+        return new ErrorDTO(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
-    @ExceptionHandler({MetadataServiceException.class})
+    @ExceptionHandler(MetadataServiceException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     @ApiResponse(
@@ -208,16 +201,27 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ErrorDTO handleInternalServerError(Exception e) {
-        log.error(e.getMessage());
-        log.debug("Handling internal server error (MetadataServiceException)", e);
-        return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    public ErrorDTO handleInternalServerError(Exception exception) {
+        log.error(exception.getMessage());
+        log.debug("Handling internal server error (MetadataServiceException)", exception);
+        return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
     }
 
-    @ExceptionHandler(IndexException.class)
-    public ResponseEntity<ErrorDTO> handleIndexException(IndexException e) {
-        log.debug("Handling index exception", e);
-        return new ResponseEntity<>(e.getErrorDTO(), e.getStatus());
+    @ExceptionHandler(AbstractIndexException.class)
+    public ResponseEntity<ErrorDTO> handleIndexException(AbstractIndexException exception) {
+        log.debug("Handling index exception", exception);
+        return new ResponseEntity<>(exception.getErrorDTO(), exception.getStatus());
+    }
+
+    private ErrorDTO handleInvalidSparqlQuery(Exception exception) {
+        final String message = "Invalid SPARQL query";
+        log.error(message);
+        log.debug("Handling invalid query ({})", exception.getClass().getName(), exception);
+        final Map<String, String> details = Map.of(
+                "sparql", exception.getMessage(),
+                "exception", exception.getClass().getName()
+        );
+        return new ErrorDTO(HttpStatus.BAD_REQUEST, message, details);
     }
 
 }

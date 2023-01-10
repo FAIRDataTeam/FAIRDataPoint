@@ -28,8 +28,8 @@
 package nl.dtls.fairdatapoint.service.metadata.exception;
 
 /**
- * @author Rajaram Kaliyaperumal <rr.kaliyaperumal@gmail.com>
- * @author Kees Burger <kees.burger@dtls.nl>
+ * @author Rajaram Kaliyaperumal
+ * @author Kees Burger
  * @version 0.1
  * @since 2015-11-25
  */

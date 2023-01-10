@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
 import nl.dtls.fairdatapoint.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -41,19 +42,24 @@ public class CurrentUserService {
     private UserRepository userRepository;
 
     public Optional<String> getCurrentUserUuid() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
-            Object principal = auth.getPrincipal();
+            final Object principal = auth.getPrincipal();
             if (principal instanceof org.springframework.security.core.userdetails.User) {
-                return of(((org.springframework.security.core.userdetails.User) principal).getUsername());
+                return of(((org.springframework.security.core.userdetails.User) principal)
+                        .getUsername());
             }
         }
         return empty();
     }
 
     public boolean isAdmin() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getAuthorities().stream().anyMatch(this::isAuthorityAdmin);
+    }
+
+    private boolean isAuthorityAdmin(GrantedAuthority authority) {
+        return authority.getAuthority().equals("ROLE_ADMIN");
     }
 
     public Optional<User> getCurrentUser() {

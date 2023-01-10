@@ -40,7 +40,9 @@ import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
 @Service
 public class MetadataSchemaFixtures {
 
-    private static final SemVer VERSION = new SemVer("1.0.0");
+    private static final String DEFAULT_VERSION = "1.0.0";
+
+    private static final SemVer VERSION = new SemVer(DEFAULT_VERSION);
 
     private MetadataSchema createSchemaFixture(
             String uuid,
@@ -93,8 +95,8 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema resourceSchema() {
-        String definition = loadClassResource("shape-resource.ttl", getClass());
-        MetadataSchema schema = createSchemaFixture(
+        final String definition = loadClassResource("shape-resource.ttl", getClass());
+        final MetadataSchema schema = createSchemaFixture(
                 KnownUUIDs.SCHEMA_RESOURCE_UUID,
                 KnownUUIDs.SCHEMA_V1_RESOURCE_UUID,
                 "Resource",
@@ -109,7 +111,7 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema fdpSchema() {
-        String definition = loadClassResource("shape-fdp.ttl", getClass());
+        final String definition = loadClassResource("shape-fdp.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_FDP_UUID,
                 KnownUUIDs.SCHEMA_V1_FDP_UUID,
@@ -123,7 +125,7 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema dataServiceSchema() {
-        String definition = loadClassResource("shape-data-service.ttl", getClass());
+        final String definition = loadClassResource("shape-data-service.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DATASERVICE_UUID,
                 KnownUUIDs.SCHEMA_V1_DATASERVICE_UUID,
@@ -137,7 +139,7 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema metadataServiceSchema() {
-        String definition = loadClassResource("shape-metadata-service.ttl", getClass());
+        final String definition = loadClassResource("shape-metadata-service.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
                 KnownUUIDs.SCHEMA_V1_METADATASERVICE_UUID,
@@ -151,7 +153,7 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema catalogSchema() {
-        String definition = loadClassResource("shape-catalog.ttl", getClass());
+        final String definition = loadClassResource("shape-catalog.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_CATALOG_UUID,
                 KnownUUIDs.SCHEMA_V1_CATALOG_UUID,
@@ -165,7 +167,7 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema datasetSchema() {
-        String definition = loadClassResource("shape-dataset.ttl", getClass());
+        final String definition = loadClassResource("shape-dataset.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DATASET_UUID,
                 KnownUUIDs.SCHEMA_V1_DATASET_UUID,
@@ -179,7 +181,7 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema distributionSchema() {
-        String definition = loadClassResource("shape-distribution.ttl", getClass());
+        final String definition = loadClassResource("shape-distribution.ttl", getClass());
         return createSchemaFixture(
                 KnownUUIDs.SCHEMA_DISTRIBUTION_UUID,
                 KnownUUIDs.SCHEMA_V1_DISTRIBUTION_UUID,
@@ -193,7 +195,7 @@ public class MetadataSchemaFixtures {
 
     @SneakyThrows
     public MetadataSchema customSchema() {
-        String definition = loadClassResource("shape-custom.ttl", getClass());
+        final String definition = loadClassResource("shape-custom.ttl", getClass());
         return createSchemaFixture(
                 "ceba9984-9838-4be2-a2a7-12213016fd96",
                 "ceba9984-9838-4be2-a2a7-12213016fd97",
@@ -206,53 +208,48 @@ public class MetadataSchemaFixtures {
     }
 
     @SneakyThrows
-    public MetadataSchema customSchemaEdited(){
-        String definition = loadClassResource("shape-custom-edited.ttl", getClass());
-        return createSchemaFixture(
-                customSchema().getUuid(),
-                "ceba9984-9838-4be2-a2a7-12213016fd98",
-                customSchema().getName(),
-                definition,
-                Set.of("http://example.org/Dog"),
-                Collections.singletonList(KnownUUIDs.SCHEMA_RESOURCE_UUID),
-                customSchema().getType()
-        );
+    public MetadataSchema customSchemaEdited() {
+        final String definition = loadClassResource("shape-custom-edited.ttl", getClass());
+        final MetadataSchema schema = customSchema();
+        schema.setVersionUuid("ceba9984-9838-4be2-a2a7-12213016fd98");
+        schema.setDefinition(definition);
+        return schema;
     }
 
     @SneakyThrows
     public MetadataSchemaDraft customSchemaDraft1() {
-        String definition = loadClassResource("shape-custom.ttl", getClass());
+        final MetadataSchema schema = customSchema();
         return createSchemaDraftFixture(
-                customSchema().getUuid(),
-                customSchema().getName(),
-                definition,
-                Set.of("http://example.org/Dog")
+                schema.getUuid(),
+                schema.getName(),
+                schema.getDefinition(),
+                schema.getTargetClasses()
         );
     }
 
     @SneakyThrows
     public MetadataSchemaDraft customSchemaDraft2() {
-        String definition = loadClassResource("shape-custom.ttl", getClass());
+        final MetadataSchema schema = customSchema();
         return createSchemaDraftFixture(
-                "ceba9984-9838-4be2-a2a7-12213016fd97",
+                schema.getUuid(),
                 "Custom Shape 2",
-                definition,
-                Set.of("http://example.org/Dog")
+                schema.getDefinition(),
+                schema.getTargetClasses()
         );
     }
 
     @SneakyThrows
-    public MetadataSchema customSchema_v1(boolean latest) {
-        MetadataSchema schema = customSchema();
+    public MetadataSchema customSchemaV1(boolean latest) {
+        final MetadataSchema schema = customSchema();
         schema.setName("Schema v1.0.0");
-        schema.setVersionString("1.0.0");
+        schema.setVersionString(DEFAULT_VERSION);
         schema.setLatest(latest);
         return schema;
     }
 
     @SneakyThrows
-    public MetadataSchema customSchema_v2(MetadataSchema previousVersion, boolean latest) {
-        MetadataSchema schema = customSchema();
+    public MetadataSchema customSchemaV2(MetadataSchema previousVersion, boolean latest) {
+        final MetadataSchema schema = customSchema();
         schema.setName("Schema v2.0.0");
         schema.setVersionString("2.0.0");
         schema.setLatest(latest);
@@ -262,8 +259,8 @@ public class MetadataSchemaFixtures {
     }
 
     @SneakyThrows
-    public MetadataSchema customSchema_v3(MetadataSchema previousVersion, boolean latest) {
-        MetadataSchema schema = customSchema();
+    public MetadataSchema customSchemaV3(MetadataSchema previousVersion, boolean latest) {
+        final MetadataSchema schema = customSchema();
         schema.setName("Schema v2.1.0");
         schema.setVersionString("2.1.0");
         schema.setLatest(latest);

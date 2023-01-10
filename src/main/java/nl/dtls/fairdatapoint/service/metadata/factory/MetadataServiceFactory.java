@@ -27,26 +27,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class MetadataServiceFactory {
 
     @Autowired
     @Qualifier("catalogMetadataService")
-    protected MetadataService catalogMetadataService;
+    private MetadataService catalogMetadataService;
 
     @Autowired
     @Qualifier("genericMetadataService")
-    protected MetadataService genericMetadataService;
+    private MetadataService genericMetadataService;
 
     public MetadataService getMetadataServiceByUrlPrefix(String urlPrefix) {
-        switch (urlPrefix) {
-            case "catalog":
-                return catalogMetadataService;
-            default:
-                return genericMetadataService;
+        if ("catalog".equals(urlPrefix)) {
+            return catalogMetadataService;
         }
+        return genericMetadataService;
     }
 
 }

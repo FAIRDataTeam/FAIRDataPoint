@@ -20,25 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.exception;
+package nl.dtls.fairdatapoint.entity.forms;
 
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import org.springframework.http.HttpStatus;
-
-public abstract class IndexException extends RuntimeException {
-
-    protected final HttpStatus status;
-
-    public IndexException(String message, HttpStatus status) {
-        super(message);
-        this.status = status;
-    }
-
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public ErrorDTO getErrorDTO() {
-        return new ErrorDTO(getStatus(), getMessage());
-    }
+public enum RdfEntitySourceType {
+    SPARQL,
+    NAMESPACE
 }

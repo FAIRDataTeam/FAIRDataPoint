@@ -34,14 +34,14 @@ import nl.dtls.fairdatapoint.entity.user.UserRole;
 @Setter
 public class UserDTO {
 
-    protected String uuid;
+    private String uuid;
 
-    protected String firstName;
+    private String firstName;
 
-    protected String lastName;
+    private String lastName;
 
-    protected String email;
+    private String email;
 
-    protected UserRole role;
+    private UserRole role;
 
 }

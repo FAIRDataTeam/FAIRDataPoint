@@ -34,7 +34,6 @@ import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
-import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -49,7 +48,6 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 public abstract class AbstractMetadataRepository {
@@ -58,8 +56,30 @@ public abstract class AbstractMetadataRepository {
     private static final String FIND_CHILD_TITLES = "findChildTitles.sparql";
     private static final String FIND_OBJECT_FOR_PREDICATE = "findObjectsForPredicate.sparql";
 
+    private static final String MSG_ERROR_RESOURCE = "Error retrieving resource: ";
+    private static final String MSG_ERROR_URI = "Error retrieving repository URI: ";
+    private static final String MSG_ERROR_REMOVE = "Error removing statement";
+    private static final String MSG_ERROR_REMOVE_ALL = "Error remove all: ";
+    private static final String MSG_ERROR_EXISTS = "Error check statement existence: ";
+    private static final String MSG_ERROR_SAVE = "Error storing statements: ";
+    private static final String MSG_ERROR_SPARQL_LOAD = "Error reading %s.sparql file (error: %s)";
+
+    private static final String FIELD_VALUE = "value";
+    private static final String FIELD_LABEL = "label";
+    private static final String FIELD_CHILD = "child";
+    private static final String FIELD_TITLE = "title";
+    private static final String FIELD_ENTITY = "entity";
+    private static final String FIELD_TYPE = "rdfType";
+    private static final String FIELD_DESCRIPTION = "description";
+    private static final String FIELD_REL_PRED = "relationPredicate";
+    private static final String FIELD_REL_OBJ = "relationObject";
+
     @Autowired
-    protected Repository repository;
+    private Repository repository;
+
+    protected Repository getRepository() {
+        return repository;
+    }
 
     public List<Resource> findResources() throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
@@ -67,8 +87,9 @@ public abstract class AbstractMetadataRepository {
             return Iterations.asList(
                     conn.getContextIDs()
             );
-        } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error retrieve resource :" + e.getMessage());
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
         }
     }
 
@@ -77,8 +98,9 @@ public abstract class AbstractMetadataRepository {
             return Iterations.asList(
                     conn.getStatements(null, null, null, context)
             );
-        } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error retrieve resource :" + e.getMessage());
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
         }
     }
 
@@ -89,43 +111,47 @@ public abstract class AbstractMetadataRepository {
                 Map.of("query", query)
         )
                 .stream()
-                .map(s -> new SearchResult(
-                                s.getValue("entity").stringValue(),
-                                s.getValue("rdfType").stringValue(),
-                                s.getValue("title").stringValue(),
-                                ofNullable(s.getValue("description")).map(Value::stringValue).orElse(""),
-                                new SearchResultRelation(
-                                        s.getValue("relationPredicate").stringValue(),
-                                        s.getValue("relationObject").stringValue())
-                        )
-                )
-                .collect(toList());
+                .map(item -> toSearchResult(item, true))
+                .toList();
     }
 
     public List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException {
         return runSparqlQuery(query)
                 .stream()
-                .map(s -> new SearchResult(
-                                s.getValue("entity").stringValue(),
-                                s.getValue("rdfType").stringValue(),
-                                s.getValue("title").stringValue(),
-                                ofNullable(s.getValue("description")).map(Value::stringValue).orElse(""),
-                                null
-                        )
-                )
+                .map(item -> toSearchResult(item, false))
                 .toList();
     }
 
-    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException {
-        Map<String, String> values = new HashMap<>();
+    private SearchResult toSearchResult(BindingSet item, boolean withRelation) {
+        SearchResultRelation relation = null;
+        if (withRelation) {
+            relation = new SearchResultRelation(
+                    item.getValue(FIELD_REL_PRED).stringValue(),
+                    item.getValue(FIELD_REL_OBJ).stringValue()
+            );
+        }
+        return new SearchResult(
+                item.getValue(FIELD_ENTITY).stringValue(),
+                item.getValue(FIELD_TYPE).stringValue(),
+                item.getValue(FIELD_TITLE).stringValue(),
+                ofNullable(item.getValue(FIELD_DESCRIPTION)).map(Value::stringValue).orElse(""),
+                relation
+        );
+    }
+
+    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri)
+            throws MetadataRepositoryException {
+        final Map<String, String> values = new HashMap<>();
         runSparqlQuery(
                 FIND_OBJECT_FOR_PREDICATE,
                 AbstractMetadataRepository.class,
                 Map.of("predicate", predicateUri)
         ).forEach(entry -> {
             values.put(
-                    entry.getValue("value").stringValue(),
-                    Optional.ofNullable(entry.getValue("label")).map(Value::stringValue).orElse(null)
+                    entry.getValue(FIELD_VALUE).stringValue(),
+                    Optional.ofNullable(entry.getValue(FIELD_LABEL))
+                            .map(Value::stringValue)
+                            .orElse(null)
             );
         });
         return values
@@ -135,44 +161,52 @@ public abstract class AbstractMetadataRepository {
                 .toList();
     }
 
-    public Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRepositoryException {
-        Map<String, String> titles = new HashMap<>();
+    public Map<String, String> findChildTitles(IRI parent, IRI relation)
+            throws MetadataRepositoryException {
+        final Map<String, String> titles = new HashMap<>();
 
-        var results = runSparqlQuery(FIND_CHILD_TITLES, AbstractMetadataRepository.class, Map.of(
-                "parent", parent,
-                "relation", relation
-        ));
+        final List<BindingSet> results = runSparqlQuery(
+                FIND_CHILD_TITLES,
+                AbstractMetadataRepository.class,
+                Map.of(
+                        "parent", parent,
+                        "relation", relation
+                ));
 
         for (var result : results) {
-            var childUri = result.getValue("child").stringValue();
-            var title = result.getValue("title").stringValue();
+            final String childUri = result.getValue(FIELD_CHILD).stringValue();
+            final String title = result.getValue(FIELD_TITLE).stringValue();
             titles.put(childUri, title);
         }
 
         return titles;
     }
 
-    public boolean checkExistence(Resource subject, IRI predicate, Value object) throws MetadataRepositoryException {
+    public boolean checkExistence(Resource subject, IRI predicate, Value object)
+            throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             return conn.hasStatement(subject, predicate, object, false);
-        } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error check statement existence :" + e.getMessage());
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_EXISTS + exception.getMessage());
         }
     }
 
     public void save(List<Statement> statements, IRI context) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.add(statements, context);
-        } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error storing statements :" + e.getMessage());
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_SAVE + exception.getMessage());
         }
     }
 
     public void removeAll() throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.clear();
-        } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error remove all :" + e.getMessage());
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_REMOVE_ALL + exception.getMessage());
         }
     }
 
@@ -180,39 +214,46 @@ public abstract class AbstractMetadataRepository {
         removeStatement(null, null, null, uri);
     }
 
-    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context) throws MetadataRepositoryException {
+    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+            throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.remove(subject, predicate, object, context);
-        } catch (RepositoryException e) {
-            throw (new MetadataRepositoryException("Error removing statement"));
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_REMOVE);
         }
     }
 
-    public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType, Map<String, Value> bindings) throws MetadataRepositoryException {
+    public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
+                                           Map<String, Value> bindings)
+            throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            String queryString = loadSparqlQuery(queryName, repositoryType);
-            TupleQuery query = conn.prepareTupleQuery(queryString);
+            final String queryString = loadSparqlQuery(queryName, repositoryType);
+            final TupleQuery query = conn.prepareTupleQuery(queryString);
             bindings.forEach(query::setBinding);
             return QueryResults.asList(query.evaluate());
-        } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error retrieve repository uri :" + e.getMessage());
-        } catch (IOException e) {
-            throw new MetadataRepositoryException(format("Error reading %s.sparql file (error: %s)", queryName,
-                    e.getMessage()));
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
+        }
+        catch (IOException exception) {
+            throw new MetadataRepositoryException(format(MSG_ERROR_SPARQL_LOAD, queryName,
+                    exception.getMessage()));
         }
     }
 
     public List<BindingSet> runSparqlQuery(String queryString) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            TupleQuery query = conn.prepareTupleQuery(queryString);
+            final TupleQuery query = conn.prepareTupleQuery(queryString);
             return query.evaluate().stream().toList();
-        } catch (RepositoryException e) {
-            throw new MetadataRepositoryException("Error retrieve repository uri :" + e.getMessage());
+        }
+        catch (RepositoryException exception) {
+            throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
         }
     }
 
     protected String loadSparqlQuery(String queryName, Class repositoryType) throws IOException {
-        URL fileURL = repositoryType.getResource(queryName);
+        final URL fileURL = repositoryType.getResource(queryName);
         return Resources.toString(fileURL, Charsets.UTF_8);
     }
 }

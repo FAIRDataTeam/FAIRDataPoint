@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/label")
 public class LabelController {
@@ -40,14 +42,14 @@ public class LabelController {
     private LabelService labelService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LabelDTO> getLabel(@RequestParam String iri,
-                                             @RequestParam(required = false, defaultValue = "en") String lang) {
-        var label = labelService.getLabel(iri, lang);
+    public ResponseEntity<LabelDTO> getLabel(
+            @RequestParam String iri,
+            @RequestParam(required = false, defaultValue = "en") String lang
+    ) {
+        final Optional<LabelDTO> label = labelService.getLabel(iri, lang);
 
-        if (label.isPresent()) {
-            return new ResponseEntity<>(label.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return label
+                .map(labelDTO -> new ResponseEntity<>(labelDTO, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

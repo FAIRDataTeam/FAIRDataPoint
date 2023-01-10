@@ -48,7 +48,7 @@ public class ErrorDTO {
     @JsonProperty
     private String error;
 
-    @JsonProperty()
+    @JsonProperty
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Map<String, ?> errors;
 
@@ -69,6 +69,4 @@ public class ErrorDTO {
     public ErrorDTO(HttpStatus status, String message) {
         this(status, message, null);
     }
-
-
 }

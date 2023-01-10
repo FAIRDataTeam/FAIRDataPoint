@@ -64,7 +64,7 @@ public class RdfConverter extends AbstractHttpMessageConverter<Model> {
     @Override
     protected void writeInternal(Model model, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        String rdf = RdfIOUtil.write(model, format);
+        final String rdf = RdfIOUtil.write(model, format);
         outputMessage.getBody().write(rdf.getBytes());
     }
 
@@ -76,7 +76,10 @@ public class RdfConverter extends AbstractHttpMessageConverter<Model> {
     }
 
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.mediaType(format.getDefaultFileExtension(), MediaType.parseMediaType(format.getDefaultMIMEType()));
+        configurer.mediaType(
+                format.getDefaultFileExtension(),
+                MediaType.parseMediaType(format.getDefaultMIMEType())
+        );
     }
 
 }

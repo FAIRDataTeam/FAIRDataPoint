@@ -40,38 +40,42 @@ import java.util.stream.Collectors;
 public class Migration_0010_FixShapeXsdPrefix {
 
     private static final String XSD_PREFIX = "@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .";
+    private static final String FIELD_UUID = "uuid";
+    private static final String FIELD_DEFINITION = "definition";
 
     @ChangeSet(order = "0010", id = "Migration_0010_FixShapeXsdPrefix", author = "migrationBot")
-    public void run(MongoDatabase db) {
-        fixShapePrefixes(db);
+    public void run(MongoDatabase database) {
+        fixShapePrefixes(database);
     }
 
-    private void fixShapePrefixes(MongoDatabase db) {
-        MongoCollection<Document> shapeCol = db.getCollection("shape");
-        List<String> faultyShapeUuids = List.of(
-                "2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660", // catalog
-                "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3", // dataset
-                "ebacbf83-cd4f-4113-8738-d73c0735b0ab"  // distribution
-        );
-        faultyShapeUuids.forEach(shapeUuid -> {
-            Document shape = shapeCol.find(Filters.eq("uuid", shapeUuid)).first();
-            if (shape != null) {
-                String definition = shape.getString("definition");
-                boolean isFaulty = definition.contains("xsd:") && !definition.contains("@prefix xsd:");
-                if (isFaulty) {
-                    List<String> lines = definition.lines().collect(Collectors.toList());
-                    int line = 0;
-                    while (lines.get(line).startsWith("@prefix")) {
-                        line++;
-                    }
-                    lines.add(line, XSD_PREFIX);
+    private void fixShapePrefixes(MongoDatabase database) {
+        // catalog
+        fixShape("2aa7ba63-d27a-4c0e-bfa6-3a4e250f4660", database);
+        // dataset
+        fixShape("866d7fb8-5982-4215-9c7c-18d0ed1bd5f3", database);
+        // distribution
+        fixShape("ebacbf83-cd4f-4113-8738-d73c0735b0ab", database);
+    }
 
-                    shapeCol.updateOne(
-                            Filters.eq("uuid", shapeUuid),
-                            Updates.set("definition", String.join("\n", lines))
-                    );
+    private void fixShape(String shapeUuid, MongoDatabase database) {
+        final MongoCollection<Document> shapeCol = database.getCollection("shape");
+        final Document shape = shapeCol.find(Filters.eq(FIELD_UUID, shapeUuid)).first();
+        if (shape != null) {
+            final String definition = shape.getString(FIELD_DEFINITION);
+            final boolean isFaulty = definition.contains("xsd:") && !definition.contains("@prefix xsd:");
+            if (isFaulty) {
+                final List<String> lines = definition.lines().collect(Collectors.toList());
+                int line = 0;
+                while (lines.get(line).startsWith("@prefix")) {
+                    line++;
                 }
+                lines.add(line, XSD_PREFIX);
+
+                shapeCol.updateOne(
+                        Filters.eq(FIELD_UUID, shapeUuid),
+                        Updates.set(FIELD_DEFINITION, String.join("\n", lines))
+                );
             }
-        });
+        }
     }
 }

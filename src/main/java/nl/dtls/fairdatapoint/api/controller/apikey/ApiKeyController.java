@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.api.controller.apikey;
 
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -47,23 +46,26 @@ public class ApiKeyController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ApiKeyDTO>> getApiKeys() {
-        List<ApiKeyDTO> dto = apiKeyService.getAll();
+        final List<ApiKeyDTO> dto = apiKeyService.getAll();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiKeyDTO> createApiKey() {
-        ApiKeyDTO dto = apiKeyService.create();
+        final ApiKeyDTO dto = apiKeyService.create();
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteApiKey(@PathVariable final String uuid) throws ResourceNotFoundException {
-        boolean result = apiKeyService.delete(uuid);
+    public ResponseEntity<Void> deleteApiKey(
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException {
+        final boolean result = apiKeyService.delete(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format("Api Key '%s' doesn't exist", uuid));
         }
     }

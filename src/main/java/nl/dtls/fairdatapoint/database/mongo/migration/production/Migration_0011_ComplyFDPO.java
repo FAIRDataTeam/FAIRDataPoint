@@ -43,19 +43,25 @@ import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0011_ComplyFDPO {
 
+    private static final String FIELD_UUID = "uuid";
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_CLASS = "_class";
+    private static final String FDP_NAME = "FAIR Data Point";
+
     @ChangeSet(order = "0011", id = "Migration_0011_ComplyFDPO", author = "migrationBot")
-    public void run(MongoDatabase db, ResourceDefinitionCache resourceDefinitionCache, ResourceDefinitionTargetClassesCache targetClassesCache) throws Exception {
-        updateShapes(db);
-        updateResourceDefinitions(db);
+    public void run(MongoDatabase database, ResourceDefinitionCache resourceDefinitionCache,
+                    ResourceDefinitionTargetClassesCache targetClassesCache) throws Exception {
+        updateShapes(database);
+        updateResourceDefinitions(database);
         resourceDefinitionCache.computeCache();
         targetClassesCache.computeCache();
     }
 
-    private void updateShapes(MongoDatabase db) throws Exception {
-        MongoCollection<Document> shapeCol = db.getCollection("shape");
+    private void updateShapes(MongoDatabase database) throws Exception {
+        final MongoCollection<Document> shapeCol = database.getCollection("shape");
 
         // Delete Repository Shape
-        shapeCol.deleteOne(new Document("uuid", KnownUUIDs.SCHEMA_REPOSITORY_UUID));
+        shapeCol.deleteOne(new Document(FIELD_UUID, KnownUUIDs.SCHEMA_REPOSITORY_UUID));
 
         // Insert New Shapes
         shapeCol.insertOne(dataServiceShape());
@@ -64,55 +70,46 @@ public class Migration_0011_ComplyFDPO {
     }
 
     private Document fdpShape() throws Exception {
-        String shaclDefinition = loadClassResource("0011_shape-fdp.ttl", getClass());
-        Document shape = new Document();
-        shape.append("uuid", KnownUUIDs.SCHEMA_FDP_UUID);
-        shape.append("name", "FAIR Data Point");
-        shape.append("type", "INTERNAL");
-        shape.append("definition", shaclDefinition);
-        shape.append("targetClasses", List.of("https://w3id.org/fdp/fdp-o#FAIRDataPoint"));
-        shape.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
-        return shape;
+        return createShape("0011_shape-fdp.ttl", KnownUUIDs.SCHEMA_FDP_UUID,
+                FDP_NAME, List.of(FDP.FAIRDATAPOINT.stringValue()));
     }
 
     private Document dataServiceShape() throws Exception {
-        String shaclDefinition = loadClassResource("0011_shape-data-service.ttl", getClass());
-        Document shape = new Document();
-        shape.append("uuid", KnownUUIDs.SCHEMA_DATASERVICE_UUID);
-        shape.append("name", "Data Service");
-        shape.append("type", "INTERNAL");
-        shape.append("definition", shaclDefinition);
-        shape.append("targetClasses", List.of("http://www.w3.org/ns/dcat#DataService"));
-        shape.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
-        return shape;
+        return createShape("0011_shape-data-service.ttl", KnownUUIDs.SCHEMA_DATASERVICE_UUID,
+                "Data Service", List.of(DCAT.DATA_SERVICE.stringValue()));
     }
 
     private Document metadataServiceShape() throws Exception {
-        String shaclDefinition = loadClassResource("0011_shape-metadata-service.ttl", getClass());
-        Document shape = new Document();
-        shape.append("uuid", KnownUUIDs.SCHEMA_METADATASERVICE_UUID);
-        shape.append("name", "Metadata Service");
+        return createShape("0011_shape-metadata-service.ttl", KnownUUIDs.SCHEMA_METADATASERVICE_UUID,
+                "Metadata Service", List.of(FDP.METADATASERVICE.stringValue()));
+    }
+
+    private Document createShape(String filename, String uuid, String name, List<String> classes) throws Exception {
+        final String shaclDefinition = loadClassResource(filename, getClass());
+        final Document shape = new Document();
+        shape.append(FIELD_UUID, uuid);
+        shape.append(FIELD_NAME, name);
         shape.append("type", "INTERNAL");
         shape.append("definition", shaclDefinition);
-        shape.append("targetClasses", List.of("https://w3id.org/fdp/fdp-o#MetadataService"));
-        shape.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
+        shape.append("targetClasses", classes);
+        shape.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.shape.Shape");
         return shape;
     }
 
-    private void updateResourceDefinitions(MongoDatabase db) {
-        MongoCollection<Document> rdCol = db.getCollection("resourceDefinition");
+    private void updateResourceDefinitions(MongoDatabase database) {
+        final MongoCollection<Document> rdCol = database.getCollection("resourceDefinition");
 
         // Delete Repository Shape
-        rdCol.deleteOne(new Document("uuid", KnownUUIDs.RD_REPOSITORY_UUID));
+        rdCol.deleteOne(new Document(FIELD_UUID, KnownUUIDs.RD_REPOSITORY_UUID));
 
         // Insert New Shapes
         rdCol.insertOne(fdpResourceDefinition());
     }
 
     private Document fdpResourceDefinition() {
-        Document definition = new Document();
-        definition.append("uuid", KnownUUIDs.RD_FDP_UUID);
-        definition.append("name", "FAIR Data Point");
+        final Document definition = new Document();
+        definition.append(FIELD_UUID, KnownUUIDs.RD_FDP_UUID);
+        definition.append(FIELD_NAME, FDP_NAME);
         definition.append("urlPrefix", "");
         definition.append("shapeUuids", List.of(
                 KnownUUIDs.SCHEMA_RESOURCE_UUID,
@@ -122,10 +119,10 @@ public class Migration_0011_ComplyFDPO {
         ));
 
         // Child
-        Document child = new Document();
+        final Document child = new Document();
         child.append("resourceDefinitionUuid", KnownUUIDs.RD_CATALOG_UUID);
         child.append("relationUri", FDP.METADATACATALOG.stringValue());
-        Document listView = new Document();
+        final Document listView = new Document();
         listView.append("title", "Catalogs");
         listView.append("tagsUri", DCAT.THEME_TAXONOMY.stringValue());
         listView.append("metadata", List.of());
@@ -135,7 +132,7 @@ public class Migration_0011_ComplyFDPO {
         // External Links
         definition.append("externalLinks", List.of());
 
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
+        definition.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 }

@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Document
 @NoArgsConstructor
@@ -41,9 +40,24 @@ import java.util.Map;
 @Builder(toBuilder = true)
 public class Settings {
 
+    private static final List<SettingsMetricsEntry> DEFAULT_METRICS = List.of(
+            new SettingsMetricsEntry(
+                    "https://purl.org/fair-metrics/FM_F1A",
+                    "https://www.ietf.org/rfc/rfc3986.txt"
+            ),
+            new SettingsMetricsEntry(
+                    "https://purl.org/fair-metrics/FM_A1.1",
+                    "https://www.wikidata.org/wiki/Q8777"
+            )
+    );
+
     @Id
     @JsonIgnore
-    protected ObjectId id;
+    private ObjectId id;
+
+    private String appTitle;
+
+    private String appSubtitle;
 
     private List<SettingsMetricsEntry> metadataMetrics;
 
@@ -51,19 +65,31 @@ public class Settings {
 
     private List<SettingsSearchFilter> searchFilters;
 
-    private static final List<SettingsMetricsEntry> DEFAULT_METRICS = List.of(
-            new SettingsMetricsEntry("https://purl.org/fair-metrics/FM_F1A", "https://www.ietf.org/rfc/rfc3986.txt"),
-            new SettingsMetricsEntry("https://purl.org/fair-metrics/FM_A1.1", "https://www.wikidata.org/wiki/Q8777")
-    );
+    private SettingsForms forms;
 
     public static Settings getDefault() {
-        return Settings.builder()
+        return Settings
+                .builder()
+                .appTitle(null)
+                .appSubtitle(null)
                 .metadataMetrics(DEFAULT_METRICS)
-                .ping(SettingsPing.builder()
+                .ping(SettingsPing
+                        .builder()
                         .enabled(true)
-                        .endpoints(List.of("https://home.fairdatapoint.org"))
-                        .build())
+                        .endpoints(Collections.emptyList())
+                        .build()
+                )
                 .searchFilters(Collections.emptyList())
+                .forms(SettingsForms
+                        .builder()
+                        .autocomplete(SettingsFormsAutocomplete
+                                .builder()
+                                .searchNamespace(true)
+                                .sources(Collections.emptyList())
+                                .build()
+                        )
+                        .build()
+                )
                 .build();
     }
 
@@ -72,5 +98,12 @@ public class Settings {
             return Collections.emptyList();
         }
         return searchFilters;
+    }
+
+    public SettingsForms getForms() {
+        if (forms == null) {
+            return getDefault().getForms();
+        }
+        return forms;
     }
 }

@@ -56,16 +56,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private ObjectMapper objectMapper;
 
     @Override
-    public void doFilterInternal(final HttpServletRequest request,
-                                 final HttpServletResponse response, final FilterChain fc)
-            throws IOException, ServletException {
-        String token = getToken(request);
+    public void doFilterInternal(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final FilterChain fc
+    ) throws IOException, ServletException {
+        final String token = getToken(request);
         if (tryWithUser(token) || tryWithApiKey(token)) {
             fc.doFilter(request, response);
-        } else {
+        }
+        else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON.toString());
-            ErrorDTO error = new ErrorDTO(HttpStatus.UNAUTHORIZED, "You have to be log in");
+            final ErrorDTO error = new ErrorDTO(HttpStatus.UNAUTHORIZED, "You have to be log in");
             objectMapper.writeValue(response.getWriter(), error);
         }
     }
@@ -73,11 +76,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private boolean tryWithUser(String token) {
         try {
             if (token != null && jwtService.validateToken(token)) {
-                Authentication auth = jwtService.getAuthentication(token);
+                final Authentication auth = jwtService.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
             return true;
-        } catch (UnauthorizedException e) {
+        }
+        catch (UnauthorizedException exception) {
             return false;
         }
     }
@@ -85,11 +89,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private boolean tryWithApiKey(String token) {
         try {
             if (token != null) {
-                Authentication auth = apiKeyService.getAuthentication(token);
+                final Authentication auth = apiKeyService.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
             return true;
-        } catch (UnauthorizedException e) {
+        }
+        catch (UnauthorizedException exception) {
             return false;
         }
     }

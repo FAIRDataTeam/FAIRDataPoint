@@ -44,14 +44,16 @@ public class MongoUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String uuid) {
-        Optional<User> oUser = repository.findByUuid(uuid);
+        final Optional<User> oUser = repository.findByUuid(uuid);
         if (oUser.isEmpty()) {
             throw new UnauthorizedException("User not found");
         }
-        User user = oUser.get();
-        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(format("ROLE_%s",
-                user.getRole().name())));
-        return new org.springframework.security.core.userdetails.User(user.getUuid(),
-                user.getPasswordHash(), authorities);
+        final User user = oUser.get();
+        final List<SimpleGrantedAuthority> authorities = List.of(
+                new SimpleGrantedAuthority(format("ROLE_%s", user.getRole().name()))
+        );
+        return new org.springframework.security.core.userdetails.User(
+                user.getUuid(), user.getPasswordHash(), authorities
+        );
     }
 }

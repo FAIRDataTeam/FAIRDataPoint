@@ -50,9 +50,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Slf4j
 @Service
@@ -72,7 +70,7 @@ public class ResetService {
     private IRI language;
 
     @Autowired
-    protected Repository repository;
+    private Repository repository;
 
     @Autowired
     private ApiKeyRepository apiKeyRepository;
@@ -172,9 +170,10 @@ public class ResetService {
 
     private void clearMetadata() throws MetadataServiceException {
         log.debug("Clearing metadata");
-        Optional<ResourceDefinition> rd = resourceDefinitionRepository.findByUrlPrefix("");
-        if (rd.isPresent()) {
-            genericMetadataService.delete(i(persistentUrl), rd.get());
+        final Optional<ResourceDefinition> resourceDefinition =
+                resourceDefinitionRepository.findByUrlPrefix("");
+        if (resourceDefinition.isPresent()) {
+            genericMetadataService.delete(i(persistentUrl), resourceDefinition.get());
             metadataRepository.deleteAll();
         }
     }
@@ -186,27 +185,29 @@ public class ResetService {
     }
 
     private void restoreDefaultMemberships() {
-        log.debug("Creating default users");
+        log.debug("Creating default memberships");
         membershipRepository.save(FactoryDefaults.MEMBERSHIP_OWNER);
         membershipRepository.save(FactoryDefaults.MEMBERSHIP_DATA_PROVIDER);
 
-        MongoCollection<Document> aclCol = mongoTemplate.getCollection("ACL");
+        final MongoCollection<Document> aclCol =
+                mongoTemplate.getCollection("ACL");
         aclCol.insertOne(FactoryDefaults.aclRepository(persistentUrl));
     }
 
     private void restoreDefaultMetadata() {
         log.debug("Creating default metadata");
         try (RepositoryConnection conn = repository.getConnection()) {
-            List<Statement> s = FactoryDefaults.fdpStatements(
+            final List<Statement> statements = FactoryDefaults.fdpStatements(
                     persistentUrl,
                     license,
                     language,
                     accessRightsDescription
             );
-            conn.add(s);
+            conn.add(statements);
             metadataRepository.save(FactoryDefaults.metadataRepository(persistentUrl));
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
+        }
+        catch (RepositoryException exception) {
+            log.error(exception.getMessage(), exception);
         }
     }
 

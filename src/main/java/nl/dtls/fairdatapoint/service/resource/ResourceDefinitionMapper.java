@@ -42,24 +42,29 @@ public class ResourceDefinitionMapper {
                 dto.getExternalLinks());
     }
 
-    public ResourceDefinitionChangeDTO toChangeDTO(ResourceDefinition rd) {
+    public ResourceDefinitionChangeDTO toChangeDTO(
+            ResourceDefinition resourceDefinition
+    ) {
         return new ResourceDefinitionChangeDTO(
-                rd.getName(),
-                rd.getUrlPrefix(),
-                rd.getMetadataSchemaUuids(),
-                rd.getChildren(),
-                rd.getExternalLinks());
+                resourceDefinition.getName(),
+                resourceDefinition.getUrlPrefix(),
+                resourceDefinition.getMetadataSchemaUuids(),
+                resourceDefinition.getChildren(),
+                resourceDefinition.getExternalLinks());
     }
 
-    public ResourceDefinitionDTO toDTO(ResourceDefinition rd, List<String> targetClassUris) {
+    public ResourceDefinitionDTO toDTO(
+            ResourceDefinition resourceDefinition,
+            List<String> targetClassUris
+    ) {
         return new ResourceDefinitionDTO(
-                rd.getUuid(),
-                rd.getName(),
-                rd.getUrlPrefix(),
-                rd.getMetadataSchemaUuids(),
+                resourceDefinition.getUuid(),
+                resourceDefinition.getName(),
+                resourceDefinition.getUrlPrefix(),
+                resourceDefinition.getMetadataSchemaUuids(),
                 targetClassUris,
-                rd.getChildren(),
-                rd.getExternalLinks()
+                resourceDefinition.getChildren(),
+                resourceDefinition.getExternalLinks()
         );
     }
 }

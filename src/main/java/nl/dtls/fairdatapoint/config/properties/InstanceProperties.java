@@ -35,9 +35,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "instance")
 public class InstanceProperties {
     private String clientUrl = "http://localhost:8080";
-    private String persistentUrl = null;
     private boolean behindProxy = true;
-    private boolean index = false;
+    private String persistentUrl;
+    private boolean index;
+
+    private String title = "FAIR Data Point";
+    private String subtitle = "Metadata for machines";
 
     public String getUrl() {
         if (persistentUrl == null || persistentUrl.isBlank()) {

@@ -26,7 +26,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
+import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,8 +48,10 @@ public class IndexEntryController {
     private IndexEntryService service;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<IndexEntryDTO> getEntriesPage(Pageable pageable,
-                                              @RequestParam(required = false, defaultValue = "") String state) {
+    public Page<IndexEntryDTO> getEntriesPage(
+            Pageable pageable,
+            @RequestParam(required = false, defaultValue = "") String state
+    ) {
         return service.getEntriesPageDTOs(pageable, state);
     }
 
@@ -56,9 +60,14 @@ public class IndexEntryController {
         return service.getEntryDetailDTO(uuid);
     }
 
+    @GetMapping(path = "/{uuid}/data", produces = "!application/json")
+    public Model getEntryData(@PathVariable final String uuid) throws MetadataRepositoryException {
+        return service.getEntryHarvestedData(uuid);
+    }
+
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteEntry(@PathVariable final String uuid) {
+    public void deleteEntry(@PathVariable final String uuid) throws MetadataRepositoryException {
         service.deleteEntry(uuid);
     }
 

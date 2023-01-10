@@ -31,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Client")
@@ -44,7 +43,7 @@ public class ConfigController {
 
     @GetMapping(path = "/bootstrap", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BootstrapConfigDTO> getBootstrapConfig() {
-        BootstrapConfigDTO dto = configService.getBootstrapConfig();
+        final BootstrapConfigDTO dto = configService.getBootstrapConfig();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

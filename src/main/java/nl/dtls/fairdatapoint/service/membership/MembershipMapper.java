@@ -37,7 +37,10 @@ public class MembershipMapper {
         return new MembershipDTO(
                 membership.getUuid(),
                 membership.getName(),
-                membership.getPermissions().stream().map(this::toPermissionDTO).collect(Collectors.toList()),
+                membership.getPermissions()
+                        .stream()
+                        .map(this::toPermissionDTO)
+                        .collect(Collectors.toList()),
                 membership.getAllowedEntities());
     }
 

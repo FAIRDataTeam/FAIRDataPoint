@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 @Service
 public class SearchSavedQueryService {
 
+    private static final String MSG_CANNOT_UPDATE = "User is not allowed to update the query";
+
     @Autowired
     private SearchSavedQueryRepository repository;
 
@@ -59,75 +61,103 @@ public class SearchSavedQueryService {
     private UserService userService;
 
     public List<SearchSavedQueryDTO> getAll() {
-        Optional<User> optionalUser = currentUserService.getCurrentUser();
-        Map<String, UserDTO> userMap = userService.getUsers().stream().collect(Collectors.toMap(UserDTO::getUuid, Function.identity()));
-        return repository.findAll()
+        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Map<String, UserDTO> userMap =
+                userService
+                        .getUsers()
+                        .stream()
+                        .collect(Collectors.toMap(UserDTO::getUuid, Function.identity()));
+        return repository
+                .findAll()
                 .parallelStream()
-                .filter(searchSavedQuery -> canSeeQuery(optionalUser, searchSavedQuery))
-                .map(searchSavedQuery -> mapper.toDTO(searchSavedQuery, userMap.get(searchSavedQuery.getUserUuid())))
+                .filter(query -> canSeeQuery(optionalUser, query))
+                .map(query -> mapper.toDTO(query, userMap.get(query.getUserUuid())))
                 .toList();
     }
 
     public Optional<SearchSavedQueryDTO> getSingle(String uuid) {
-        Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Optional<User> optionalUser = currentUserService.getCurrentUser();
         return repository.findByUuid(uuid)
                 .filter(searchSavedQuery -> canSeeQuery(optionalUser, searchSavedQuery))
                 .map(searchSavedQuery -> {
-                    UserDTO userDto = userService.getUserByUuid(searchSavedQuery.getUserUuid()).orElse(null);
+                    final UserDTO userDto =
+                            userService.getUserByUuid(searchSavedQuery.getUserUuid()).orElse(null);
                     return mapper.toDTO(searchSavedQuery, userDto);
                 });
     }
 
     public boolean delete(String uuid) {
-        Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
+        final Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
         if (optionalSearchQuery.isEmpty()) {
             return false;
         }
-        SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
-        Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
+        final Optional<User> optionalUser = currentUserService.getCurrentUser();
         if (!canManageQuery(optionalUser, searchSavedQuery)) {
-            throw new ForbiddenException("User is not allowed to update the query");
+            throw new ForbiddenException(MSG_CANNOT_UPDATE);
         }
         repository.delete(searchSavedQuery);
         return true;
     }
 
     public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        UserDTO userDto = userService.getCurrentUser().orElse(null);
-        SearchSavedQuery searchSavedQuery = repository.save(
+        final UserDTO userDto = userService.getCurrentUser().orElse(null);
+        final SearchSavedQuery searchSavedQuery = repository.save(
                 mapper.fromChangeDTO(reqDto, userDto)
         );
         return mapper.toDTO(searchSavedQuery, userDto);
     }
 
     public Optional<SearchSavedQueryDTO> update(String uuid, SearchSavedQueryChangeDTO reqDto) {
-        Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
+        final Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
         if (optionalSearchQuery.isEmpty()) {
             return Optional.empty();
         }
-        Optional<User> optionalUser = currentUserService.getCurrentUser();
-        SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
+        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
         if (!canManageQuery(optionalUser, searchSavedQuery)) {
-            throw new ForbiddenException("User is not allowed to update the query");
+            throw new ForbiddenException(MSG_CANNOT_UPDATE);
         }
-        SearchSavedQuery updatedQuery = repository.save(
+        final SearchSavedQuery updatedQuery = repository.save(
                 mapper.fromChangeDTO(searchSavedQuery, reqDto)
         );
-        UserDTO userDto = updatedQuery.getUserUuid() == null ? null : userService.getUserByUuid(updatedQuery.getUserUuid()).orElse(null);
-        return Optional.of(mapper.toDTO(updatedQuery, userDto));
+        if (updatedQuery.getUserUuid() == null) {
+            return Optional.of(mapper.toDTO(updatedQuery, null));
+        }
+        return Optional.of(mapper.toDTO(
+                updatedQuery,
+                userService
+                        .getUserByUuid(updatedQuery.getUserUuid())
+                        .orElse(null))
+        );
     }
 
     private boolean canSeeQuery(Optional<User> optionalUser, SearchSavedQuery query) {
-        return query.getType().equals(SearchSavedQueryType.PUBLIC) ||
-                optionalUser.filter(user -> user.getRole().equals(UserRole.ADMIN)).isPresent() ||
-                optionalUser.filter(user -> query.getType().equals(SearchSavedQueryType.INTERNAL) || Objects.equals(query.getUserUuid(), user.getUuid())).isPresent();
+        return query.getType().equals(SearchSavedQueryType.PUBLIC)
+                || optionalUser
+                    .filter(user -> user.getRole().equals(UserRole.ADMIN))
+                    .isPresent()
+                || optionalUser
+                    .filter(user -> isOwnOrInternal(user, query))
+                    .isPresent();
+    }
+
+    private boolean isOwnOrInternal(User user, SearchSavedQuery query) {
+        return query.getType().equals(SearchSavedQueryType.INTERNAL)
+                || Objects.equals(query.getUserUuid(), user.getUuid());
     }
 
     private boolean canManageQuery(Optional<User> optionalUser, SearchSavedQuery query) {
         if (optionalUser.isEmpty()) {
             return false;
         }
-        return optionalUser.filter(user -> user.getRole().equals(UserRole.ADMIN) ||
-                Objects.equals(query.getUserUuid(), user.getUuid())).isPresent();
+        return optionalUser
+                .filter(user -> isOwner(user, query))
+                .isPresent();
+    }
+
+    private boolean isOwner(User user, SearchSavedQuery query) {
+        return user.getRole().equals(UserRole.ADMIN)
+                || Objects.equals(query.getUserUuid(), user.getUuid());
     }
 }

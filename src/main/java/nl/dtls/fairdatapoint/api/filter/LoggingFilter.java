@@ -47,12 +47,12 @@ public class LoggingFilter extends OncePerRequestFilter {
     private UtilityService utilityService;
 
     @Override
-    public void doFilterInternal(final HttpServletRequest request,
-                                 final HttpServletResponse response, final FilterChain fc)
-            throws IOException, ServletException {
-
+    public void doFilterInternal(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final FilterChain fc
+    ) throws IOException, ServletException {
         ThreadContext.put("ipAddress", utilityService.getRemoteAddr(request));
-        ThreadContext.put("responseStatus", String.valueOf(response.getStatus()));
         ThreadContext.put("requestMethod", request.getMethod());
         ThreadContext.put("requestURI", request.getRequestURI());
         ThreadContext.put("requestProtocol", request.getProtocol());

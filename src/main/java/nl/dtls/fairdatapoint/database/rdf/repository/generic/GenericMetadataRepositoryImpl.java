@@ -59,15 +59,16 @@ public class GenericMetadataRepositoryImpl extends AbstractMetadataRepository im
     }
 
     @Override
-    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context) throws MetadataRepositoryException {
+    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+            throws MetadataRepositoryException {
         clearCatalogCache(context);
         super.removeStatement(subject, predicate, object, context);
     }
 
     private void clearCatalogCache(IRI uri) throws MetadataRepositoryException {
-        Model metadata = new LinkedHashModel();
+        final Model metadata = new LinkedHashModel();
         metadata.addAll(find(uri));
-        IRI parent = getParent(metadata);
+        final IRI parent = getParent(metadata);
         if (parent != null) {
             cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parent.stringValue());
         }

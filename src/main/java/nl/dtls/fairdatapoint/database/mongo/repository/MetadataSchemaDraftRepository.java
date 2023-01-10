@@ -27,7 +27,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface MetadataSchemaDraftRepository extends MongoRepository<MetadataSchemaDraft, String> {
+public interface MetadataSchemaDraftRepository
+        extends MongoRepository<MetadataSchemaDraft, String> {
 
     Optional<MetadataSchemaDraft> findByUuid(String uuid);
 

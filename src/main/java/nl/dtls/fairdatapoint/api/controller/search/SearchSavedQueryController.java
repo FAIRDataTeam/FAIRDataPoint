@@ -23,9 +23,12 @@
 package nl.dtls.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
+import nl.dtls.fairdatapoint.service.search.SearchService;
 import nl.dtls.fairdatapoint.service.search.query.SearchSavedQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,6 +53,9 @@ public class SearchSavedQueryController {
     @Autowired
     private SearchSavedQueryService searchSavedQueryService;
 
+    @Autowired
+    private SearchService searchService;
+
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
         return new ResponseEntity<>(searchSavedQueryService.getAll(), HttpStatus.OK);
@@ -59,10 +65,24 @@ public class SearchSavedQueryController {
     public ResponseEntity<SearchSavedQueryDTO> getSingle(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
-        Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
+        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
+            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
+        }
+    }
+
+    @PostMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SearchResultDTO>> search(
+            @PathVariable final String uuid
+    ) throws ResourceNotFoundException, MetadataRepositoryException {
+        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
+        if (oDto.isPresent()) {
+            return ResponseEntity.ok(searchService.search(oDto.get()));
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -72,7 +92,7 @@ public class SearchSavedQueryController {
     public ResponseEntity<SearchSavedQueryDTO> create(
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
-        SearchSavedQueryDTO dto = searchSavedQueryService.create(reqDto);
+        final SearchSavedQueryDTO dto = searchSavedQueryService.create(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
@@ -82,10 +102,11 @@ public class SearchSavedQueryController {
             @PathVariable final String uuid,
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
-        Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.update(uuid, reqDto);
+        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.update(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }
@@ -96,10 +117,11 @@ public class SearchSavedQueryController {
     public ResponseEntity<Void> delete(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
-        boolean result = searchSavedQueryService.delete(uuid);
+        final boolean result = searchSavedQueryService.delete(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
-        } else {
+        }
+        else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
         }
     }

@@ -45,9 +45,10 @@ public class GenericMetadataService extends AbstractMetadataService {
     public Model store(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         if (!rd.isRoot()) {
             // 1. Check permissions
-            String parentId = Optional.ofNullable(getParent(metadata))
+            final String parentId = Optional.ofNullable(getParent(metadata))
                     .orElseThrow(() -> new ValidationException("Metadata has no parent")).stringValue();
-            if (!(memberService.checkPermission(parentId, Metadata.class, BasePermission.CREATE) || memberService.checkRole(UserRole.ADMIN))) {
+            if (!(getMemberService().checkPermission(parentId, Metadata.class, BasePermission.CREATE)
+                    || getMemberService().checkRole(UserRole.ADMIN))) {
                 throw new ForbiddenException("You are not allow to add new entry");
             }
         }

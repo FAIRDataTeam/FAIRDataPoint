@@ -36,6 +36,7 @@ import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -43,10 +44,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 import static nl.dtls.fairdatapoint.util.RdfUtil.getObjectsBy;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
@@ -70,18 +69,20 @@ public class DashboardService {
     private ResourceDefinitionCache resourceDefinitionCache;
 
     public List<DashboardItemDTO> getDashboard(IRI repositoryUri) throws MetadataServiceException {
-        ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix("");
-        Model repository = metadataService.retrieve(repositoryUri);
-        return getDashboardItem(repositoryUri, repository, rd).getChildren();
+        final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix("");
+        final Model repository = metadataService.retrieve(repositoryUri);
+        return getDashboardItem(repositoryUri, repository, resourceDefinition).getChildren();
     }
 
-    private DashboardItemDTO getDashboardItem(IRI metadataUri, Model model, ResourceDefinition rd) throws MetadataServiceException {
-        List<DashboardItemDTO> children = new ArrayList<>();
-        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            IRI relationUri = i(rdChild.getRelationUri());
-            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(model, metadataUri, relationUri)) {
-                IRI childIri = i(childUri.stringValue());
-                DashboardItemDTO child = getDashboardItem(
+    private DashboardItemDTO getDashboardItem(
+            IRI metadataUri, Model model, ResourceDefinition resourceDefinition
+    ) throws MetadataServiceException {
+        final List<DashboardItemDTO> children = new ArrayList<>();
+        for (ResourceDefinitionChild rdChild : resourceDefinition.getChildren()) {
+            final IRI relationUri = i(rdChild.getRelationUri());
+            for (Value childUri : getObjectsBy(model, metadataUri, relationUri)) {
+                final IRI childIri = i(childUri.stringValue());
+                final DashboardItemDTO child = getDashboardItem(
                         childIri,
                         metadataService.retrieve(childIri),
                         resourceDefinitionCache.getByUuid(rdChild.getResourceDefinitionUuid())
@@ -90,19 +91,23 @@ public class DashboardService {
             }
         }
 
-        Optional<MemberDTO> oMember = memberService.getMemberForCurrentUser(metadataUri.stringValue(), Metadata.class);
-        Optional<MembershipDTO> membership = oMember.map(MemberDTO::getMembership);
-        Metadata state = metadataStateService.get(metadataUri);
+        final Optional<MemberDTO> member =
+                memberService.getMemberForCurrentUser(metadataUri.stringValue(), Metadata.class);
+        final Optional<MembershipDTO> membership = member.map(MemberDTO::getMembership);
+        final Metadata state = metadataStateService.get(metadataUri);
         return new DashboardItemDTO(
                 metadataUri.toString(),
                 getTitle(model).getLabel(),
                 children
                         .stream()
-                        .filter(e -> e.getMembership().isPresent() || e.getChildren().size() > 0)
-                        .collect(Collectors.toList()),
+                        .filter(this::childOnDashboard)
+                        .toList(),
                 membership,
                 state.getState()
         );
     }
 
+    private boolean childOnDashboard(DashboardItemDTO item) {
+        return item.getMembership().isPresent() || item.getChildren().size() > 0;
+    }
 }

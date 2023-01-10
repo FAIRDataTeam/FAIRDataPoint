@@ -34,13 +34,10 @@ import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
@@ -53,14 +50,15 @@ public class MetricsMetadataService {
     private SettingsService settingsService;
 
     public List<Metric> generateMetrics(@Nonnull IRI metadataURI) {
-        Settings settings = settingsService.getOrDefaults();
+        final Settings settings = settingsService.getOrDefaults();
         return settings.getMetadataMetrics().stream()
-                .map(entry ->
-                        new Metric(
-                                i(format("%s/metrics/%s", metadataURI.toString(), DigestUtils.md5Hex(entry.getMetricUri()))),
-                                i(entry.getResourceUri()),
-                                i(entry.getResourceUri())))
-                .collect(Collectors.toList());
+                .map(entry -> {
+                    return new Metric(
+                            i(format("%s/metrics/%s", metadataURI, DigestUtils.md5Hex(entry.getMetricUri()))),
+                            i(entry.getResourceUri()),
+                            i(entry.getResourceUri()));
+                })
+                .toList();
     }
 
 }

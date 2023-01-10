@@ -46,36 +46,47 @@ import java.util.stream.Stream;
 
 public class WebhookUtils {
 
-    private static final HttpClient client = HttpClient.newBuilder()
+    private static final HttpClient CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
-    private static boolean webhookMatches(Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent) {
-        boolean matchEvent = webhook.isAllEvents() || webhook.getEvents().contains(webhookEvent);
-        boolean matchEntry =
-                webhook.isAllEntries() || triggerEvent.getRelatedTo() == null || webhook.getEntries().contains(triggerEvent.getRelatedTo().getClientUrl());
+    private static boolean webhookMatches(
+            Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent
+    ) {
+        final boolean matchEvent = webhook.isAllEvents()
+                || webhook.getEvents().contains(webhookEvent);
+        final boolean matchEntry =
+                webhook.isAllEntries()
+                        || triggerEvent.getRelatedTo() == null
+                        || webhook.getEntries().contains(
+                                triggerEvent.getRelatedTo().getClientUrl());
         return matchEvent && matchEntry && webhook.isEnabled();
     }
 
     public static Stream<Webhook> filterMatching(List<Webhook> webhooks, WebhookEvent webhookEvent,
                                                  Event triggerEvent) {
-        return webhooks.parallelStream().filter(webhook -> WebhookUtils.webhookMatches(webhook, webhookEvent,
-                triggerEvent));
+        return webhooks
+                .parallelStream()
+                .filter(webhook -> {
+                    return WebhookUtils.webhookMatches(webhook, webhookEvent, triggerEvent);
+                });
     }
 
     public static String computeHashSignature(String value) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        final MessageDigest digest = MessageDigest.getInstance("SHA-1");
         digest.reset();
         digest.update(value.getBytes(StandardCharsets.UTF_8));
         return String.format("sha1=%040x", new BigInteger(1, digest.digest()));
     }
 
-    public static void postWebhook(Event event, Duration timeout, String payload, String signature) {
-        var ex = new Exchange(ExchangeDirection.OUTGOING);
+    public static void postWebhook(
+            Event event, Duration timeout, String payload, String signature
+    ) {
+        final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
         event.getWebhookTrigger().setExchange(ex);
         try {
-            HttpRequest request = HttpRequest.newBuilder()
+            final HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(event.getWebhookTrigger().getWebhook().getPayloadUrl()))
                     .timeout(timeout)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
@@ -84,18 +95,22 @@ public class WebhookUtils {
                     .build();
             ex.getRequest().setFromHttpRequest(request);
             ex.setState(ExchangeState.Requested);
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            final HttpResponse<String> response =
+                    CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
             ex.getResponse().setFromHttpResponse(response);
             ex.setState(ExchangeState.Retrieved);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException exception) {
             ex.setState(ExchangeState.Timeout);
             ex.setError("Timeout");
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException exception) {
             ex.setState(ExchangeState.Failed);
-            ex.setError("Invalid URI: " + e.getMessage());
-        } catch (IOException e) {
+            ex.setError("Invalid URI: " + exception.getMessage());
+        }
+        catch (IOException exception) {
             ex.setState(ExchangeState.Failed);
-            ex.setError("IO error: " + e.getMessage());
+            ex.setError("IO error: " + exception.getMessage());
         }
     }
 }

@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.entity.search;
 
-
 import lombok.*;
 import nl.dtls.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.bson.types.ObjectId;

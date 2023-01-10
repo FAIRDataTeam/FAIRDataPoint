@@ -32,57 +32,59 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserFixtures {
 
+    public static final String ADMIN_EMAIL = "admin@example.com";
+
+    public static final String ALBERT_EMAIL = "albert.einstein@example.com";
+
+    public static final String NIKOLA_EMAIL = "nikola.tesla@example.com";
+
+    public static final String ISAAC_EMAIL = "isaac.newton@example.com";
+
+    private static final String PASSWORD = "password";
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    public String adminEmail = "admin@example.com";
 
     public User admin() {
         return new User(
                 KnownUUIDs.USER_ADMIN_UUID,
                 "Admin",
                 "von Universe",
-                adminEmail,
-                passwordEncoder.encode("password"),
+                ADMIN_EMAIL,
+                passwordEncoder.encode(PASSWORD),
                 UserRole.ADMIN
         );
     }
-
-    public String albertEmail = "albert.einstein@example.com";
 
     public User albert() {
         return new User(
                 KnownUUIDs.USER_ALBERT_UUID,
                 "Albert",
                 "Einstein",
-                albertEmail,
-                passwordEncoder.encode("password"),
+                ALBERT_EMAIL,
+                passwordEncoder.encode(PASSWORD),
                 UserRole.USER
         );
     }
-
-    public String nikolaEmail = "nikola.tesla@example.com";
 
     public User nikola() {
         return new User(
                 KnownUUIDs.USER_NIKOLA_UUID,
                 "Nikola",
                 "Tesla",
-                nikolaEmail,
-                passwordEncoder.encode("password"),
+                NIKOLA_EMAIL,
+                passwordEncoder.encode(PASSWORD),
                 UserRole.USER
         );
     }
-
-    public String isaacEmail = "isaac.newton@example.com";
 
     public User isaac() {
         return new User(
                 KnownUUIDs.USER_ISAAC_UUID,
                 "Isaac",
                 "Newton",
-                isaacEmail,
-                passwordEncoder.encode("password"),
+                ISAAC_EMAIL,
+                passwordEncoder.encode(PASSWORD),
                 UserRole.USER
         );
     }

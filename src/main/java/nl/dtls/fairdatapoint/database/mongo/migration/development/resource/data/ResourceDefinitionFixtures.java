@@ -33,7 +33,7 @@ import java.util.List;
 @Service
 public class ResourceDefinitionFixtures {
 
-    public static String ONTOLOGY_DEFINITION_UUID = "4bc19f45-845d-48d6-ade7-ac2664563f60";
+    public static final String ONTOLOGY_DEFINITION_UUID = "4bc19f45-845d-48d6-ade7-ac2664563f60";
 
     public ResourceDefinition fdpDefinition() {
         return new ResourceDefinition(

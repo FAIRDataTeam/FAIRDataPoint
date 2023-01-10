@@ -32,12 +32,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class MongoAuthenticationService {
 
+    private static final String DEFAULT_CREDENTIALS = "";
+
     @Autowired
     private UserDetailsService userDetailsService;
 
     public Authentication getAuthentication(String userUuid) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userUuid);
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(userUuid);
+        return new UsernamePasswordAuthenticationToken(
+                userDetails, DEFAULT_CREDENTIALS, userDetails.getAuthorities()
+        );
     }
 
 }

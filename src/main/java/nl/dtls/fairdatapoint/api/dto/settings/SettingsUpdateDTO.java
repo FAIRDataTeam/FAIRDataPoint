@@ -35,6 +35,10 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class SettingsUpdateDTO {
 
+    private String appTitle;
+
+    private String appSubtitle;
+
     @NotNull
     private List<SettingsMetricsEntry> metadataMetrics;
 
@@ -43,4 +47,7 @@ public class SettingsUpdateDTO {
 
     @NotNull
     private SettingsSearchDTO search;
+
+    @NotNull
+    private SettingsFormsDTO forms;
 }
