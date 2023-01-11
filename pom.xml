@@ -71,7 +71,7 @@
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
         <plugin.git_commit_id.version>5.0.0</plugin.git_commit_id.version>
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
-        <plugin.checkstyle.version>3.2.0</plugin.checkstyle.version>
+        <plugin.checkstyle.version>3.2.1</plugin.checkstyle.version>
         <plugin.spotbugs.version>4.7.3.0</plugin.spotbugs.version>
 
         <!-- override for security -->
