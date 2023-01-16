@@ -50,6 +50,7 @@ public class Migration_0004_ResourceDefinition {
     private static final String FIELD_MASK = "mask";
     private static final String FIELD_CODE = "code";
     private static final String FIELD_CLASS = "_class";
+
     private static final int MASK_W = 2;
     private static final int MASK_C = 4;
     private static final int MASK_D = 8;
@@ -196,7 +197,7 @@ public class Migration_0004_ResourceDefinition {
         final BasicBSONList allowedEntities = new BasicBSONList();
         allowedEntities.add(KnownUUIDs.RD_CATALOG_UUID);
         if (owner) {
-            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_A).append(FIELD_CODE, "W"));
+            permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_W).append(FIELD_CODE, "W"));
             permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_D).append(FIELD_CODE, "D"));
             permissions.add(new BasicBSONObject().append(FIELD_MASK, MASK_A).append(FIELD_CODE, "A"));
             allowedEntities.add(KnownUUIDs.RD_DATASET_UUID);
