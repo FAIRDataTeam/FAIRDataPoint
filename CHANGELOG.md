@@ -8,6 +8,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.16.1]
+
+### Fixed
+
+- Permissions in DB migration (caused by refactoring)
+
 ## [1.16.0]
 
 ### Added
@@ -337,3 +343,4 @@ The first release of reference FAIR Data Point implementation.
 [1.14.0]: /../../tree/v1.14.0
 [1.15.0]: /../../tree/v1.15.0
 [1.16.0]: /../../tree/v1.16.0
+[1.16.1]: /../../tree/v1.16.1
