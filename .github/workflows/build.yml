@@ -28,7 +28,7 @@ jobs:
           mongo --eval "db.version()"
 
       - name: Set up JDK 17 (Temurin)
-        uses: actions/setup-java@v3.9.0
+        uses: actions/setup-java@v3.10.0
         with:
           java-version: '17'
           distribution: 'temurin'
