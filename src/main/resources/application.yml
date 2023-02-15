@@ -59,7 +59,7 @@ metadataProperties:
 
 openapi:
   title: FAIR Data Point API
-  version: 1.16.1
+  version: 1.16.2
   description: "The reference implementation of the metadata registration service: A service implementing the API specification. It contains an authentication system to allow maintainers to define and update metadata. Read-only access to the data is public."
   contact:
     name: Luiz Bonino
