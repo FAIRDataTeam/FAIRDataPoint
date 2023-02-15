@@ -49,7 +49,7 @@ public class MetadataSchemaShaclUtils {
 
     private static boolean isRootNodeOfTargetClass(Model model, String iri) {
         final IRI resource = i(iri);
-        for (Resource subject : model.filter(null, null, resource).subjects()) {
+        for (Resource subject : model.filter(null, SHACL.TARGET_CLASS, resource).subjects()) {
             if (model.contains(null, null, subject)) {
                 return false;
             }
