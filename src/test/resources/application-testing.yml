@@ -1,6 +1,7 @@
 instance:
   index: true
   clientUrl: http://localhost:8088
+  persistentUrl: http://localhost:8088
 
 server:
   port: 8088
