@@ -6,7 +6,7 @@ We support the latest major and minor version with patch versions that fix vulne
 
 | Version | Supported          |
 |---------| ------------------ |
-| 1.16.1  | :white_check_mark: |
+| 1.16.2  | :white_check_mark: |
 | < 1.16  | :x:                |
 
 ## Current Recommendations
