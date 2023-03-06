@@ -1,0 +1,19 @@
+---
+name: Specification error
+about: Identify an issue in the [FDP spec](https://specs.fairdatapoint.org/)
+title: ''
+labels: spec
+assignees: ''
+
+---
+
+**What section of the spec?**
+e.g. [2.1.2 Data access](https://specs.fairdatapoint.org/#dataaccess)
+
+**Is it a simple typo?**
+yes/no
+
+**Otherwise, what's the problem**
+
+**Proposed resolution**
+What text would you suggest?
