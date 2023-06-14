@@ -33,13 +33,13 @@ jobs:
 
       # (1) -> Prepare cache and Java
       - name: Cache ~/.m2
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
       - name: Cache JDK folder
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ~/jdk
           key: ${{ env.JDK_FILE }}
