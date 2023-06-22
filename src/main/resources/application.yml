@@ -1,7 +1,7 @@
 instance:
   index: ${FDP_INDEX:false}
   clientUrl: ${FDP_CLIENT_URL:http://localhost:8080}
-  persistentUrl: ${FDP_PERSISTENT_URL}
+  persistentUrl: ${FDP_PERSISTENT_URL:http://localhost:8080}
   behindProxy: ${FDP_BEHIND_PROXY:true}
   title: ${FDP_TITLE:FAIR Data Point}
   subtitle: ${FDP_SUBTITLE:Metadata for machines}
