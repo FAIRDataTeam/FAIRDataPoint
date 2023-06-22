@@ -131,8 +131,8 @@ public class ResetService {
             restoreDefaultMetadata();
         }
         if (reqDto.isResourceDefinitions()) {
-            clearMetadataSchemas();
             clearResourceDefinitions();
+            clearMetadataSchemas();
             restoreDefaultMetadataSchemas();
             restoreDefaultResourceDefinitions();
         }
