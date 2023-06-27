@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.schema;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.schema.*;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
@@ -40,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;

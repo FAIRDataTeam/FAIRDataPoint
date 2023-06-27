@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -55,6 +56,7 @@ public class WebConfig implements WebMvcConfigurer {
         converters.add(new StringHttpMessageConverter());
         converters.addAll(errorConverters);
         converters.addAll(rdfConverters);
+        converters.add(new ByteArrayHttpMessageConverter());
         converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
     }
 

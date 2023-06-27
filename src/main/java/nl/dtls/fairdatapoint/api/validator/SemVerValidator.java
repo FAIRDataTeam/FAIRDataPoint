@@ -22,10 +22,9 @@
  */
 package nl.dtls.fairdatapoint.api.validator;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import nl.dtls.fairdatapoint.entity.schema.SemVer;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class SemVerValidator implements ConstraintValidator<ValidSemVer, String> {
 

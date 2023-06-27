@@ -22,12 +22,12 @@
  */
 package nl.dtls.fairdatapoint.entity.index.http;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpEntity;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Map;

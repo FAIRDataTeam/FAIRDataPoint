@@ -22,9 +22,9 @@
  */
 package nl.dtls.fairdatapoint.entity.index.settings;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;

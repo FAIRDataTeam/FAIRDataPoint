@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.schema;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import nl.dtls.fairdatapoint.api.dto.schema.*;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
@@ -36,7 +37,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 

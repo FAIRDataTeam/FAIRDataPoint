@@ -22,12 +22,11 @@
  */
 package nl.dtls.fairdatapoint.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class UtilityService {

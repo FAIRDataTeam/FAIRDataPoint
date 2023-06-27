@@ -22,13 +22,12 @@
  */
 package nl.dtls.fairdatapoint.api.dto.schema;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.api.validator.ValidSemVer;
-
-import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.service.index.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.entity.index.event.IncomingPing;
@@ -32,7 +33,6 @@ import nl.dtls.fairdatapoint.entity.index.http.ExchangeDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service

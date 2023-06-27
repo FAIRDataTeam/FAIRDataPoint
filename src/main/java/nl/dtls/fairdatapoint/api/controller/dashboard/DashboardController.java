@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.dashboard;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import nl.dtls.fairdatapoint.service.dashboard.DashboardService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -36,7 +37,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;

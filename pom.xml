@@ -55,14 +55,16 @@
         <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Core -->
-        <springdoc.version>1.7.0</springdoc.version>
+        <springdoc.version>2.1.0</springdoc.version>
         <mongock.version>5.3.1</mongock.version>
-        <mongodb.spring-data.v3.version>3.4.5</mongodb.spring-data.v3.version>
+        <mongodb.spring-data.version>4.1.1</mongodb.spring-data.version>
         <rdf4j.version>4.3.2</rdf4j.version>
         <jwt.version>0.11.5</jwt.version>
         <lombok.version>1.18.28</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
-        <log4j2.version>2.17.1</log4j2.version>
+
+        <!-- Test -->
+        <httpclient5.version>5.2.1</httpclient5.version>
 
         <!-- Plugins -->
         <plugin.license.version>4.2</plugin.license.version>
@@ -73,10 +75,6 @@
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
         <plugin.checkstyle.version>3.3.0</plugin.checkstyle.version>
         <plugin.spotbugs.version>4.7.3.5</plugin.spotbugs.version>
-
-        <!-- override for security -->
-        <snakeyaml.version>1.31</snakeyaml.version>
-        <spring-security.version>5.7.5</spring-security.version>
     </properties>
 
     <repositories>
@@ -189,12 +187,12 @@
         </dependency>
         <dependency>
             <groupId>io.mongock</groupId>
-            <artifactId>mongodb-springdata-v3-driver</artifactId>
+            <artifactId>mongodb-springdata-v4-driver</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>${mongodb.spring-data.v3.version}</version>
+            <version>${mongodb.spring-data.version}</version>
         </dependency>
 
         <!-- ////////////////// -->
@@ -202,7 +200,7 @@
         <!-- ////////////////// -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
         <dependency>
@@ -277,6 +275,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -456,5 +460,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

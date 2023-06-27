@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import nl.dtls.fairdatapoint.api.dto.search.*;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.search.SearchService;
@@ -33,7 +34,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Tag(name = "Search")

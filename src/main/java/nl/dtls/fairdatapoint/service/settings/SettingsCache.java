@@ -22,14 +22,13 @@
  */
 package nl.dtls.fairdatapoint.service.settings;
 
+import jakarta.annotation.PostConstruct;
 import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.SETTINGS_CACHE;
 

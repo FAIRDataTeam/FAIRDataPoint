@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.index;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Tag(name = "Index")
 @RestController

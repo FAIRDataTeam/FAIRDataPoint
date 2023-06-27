@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.dto.index.entry;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,6 @@ import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
 import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.hibernate.validator.constraints.URL;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @NoArgsConstructor

@@ -22,14 +22,13 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.development;
 
+import jakarta.annotation.PostConstruct;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 @Service
 @DependsOn("mongockRunner")
