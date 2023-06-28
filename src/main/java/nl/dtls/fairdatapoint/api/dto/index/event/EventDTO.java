@@ -22,13 +22,13 @@
  */
 package nl.dtls.fairdatapoint.api.dto.index.event;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.entity.index.event.EventType;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @NoArgsConstructor

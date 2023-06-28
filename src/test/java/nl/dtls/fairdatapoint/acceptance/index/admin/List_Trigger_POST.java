@@ -130,7 +130,7 @@ public class List_Trigger_POST extends WebIntegrationTest {
 
     @Test
     @DisplayName("HTTP 400: malformed URL")
-    public void res403_malformedUrl() {
+    public void res400_malformedUrl() {
         // GIVEN: prepare data
         String clientUrl = "http://example.com";
         PingDTO reqDTO = reqDTO(clientUrl);

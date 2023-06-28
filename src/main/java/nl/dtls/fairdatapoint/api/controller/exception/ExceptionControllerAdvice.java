@@ -30,6 +30,7 @@ package nl.dtls.fairdatapoint.api.controller.exception;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.entity.exception.*;
@@ -46,6 +47,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -62,6 +64,23 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 public class ExceptionControllerAdvice {
 
+    @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
+    public ErrorDTO handleConstraintViolation(Exception exception) {
+        log.warn(exception.getMessage());
+        log.debug("Handling bad request (ConstraintViolation)", exception);
+        return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -73,7 +92,7 @@ public class ExceptionControllerAdvice {
             schema = @Schema(implementation = ErrorDTO.class)
         )
     )
-    public ErrorDTO handleBadRequest(Exception exception) {
+    public ErrorDTO handleValidationException(Exception exception) {
         log.warn(exception.getMessage());
         log.debug("Handling bad request (ValidationException)", exception);
         return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());
@@ -90,7 +109,7 @@ public class ExceptionControllerAdvice {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public Model handleBadRequest(RdfValidationException exception) {
+    public Model handleRdfValidationException(RdfValidationException exception) {
         final Model validationReportModel = exception.getModel();
         log.debug("Handling bad request (RdfValidationException)", exception);
 

@@ -23,52 +23,49 @@
 package nl.dtls.fairdatapoint.config;
 
 import nl.dtls.fairdatapoint.api.filter.FilterConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    // TODO: deprecated WebSecurityConfigurerAdapter
-
-    private static final String MATCH_ALL = "/**";
-
-    @Autowired
-    private FilterConfigurer filterConfigurer;
+public class SecurityConfig {
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, FilterConfigurer filterConfigurer) throws Exception {
         http
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, MATCH_ALL).permitAll()
-                .antMatchers("/dashboard").authenticated()
-                .antMatchers("/users**").authenticated()
-                .antMatchers("/api-keys**").authenticated()
-                .antMatchers("/users/**").authenticated()
-                .antMatchers("/memberships**").authenticated()
-                .antMatchers("/tokens").permitAll()
-                .antMatchers("/search**").permitAll()
-                .antMatchers("/index/admin**").authenticated()
-                .antMatchers("/index**").permitAll()
-                .antMatchers(HttpMethod.PUT, MATCH_ALL).authenticated()
-                .anyRequest().permitAll()
-                .and()
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionMgmt -> sessionMgmt.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        authz -> {
+                            authz
+                                    .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                    .requestMatchers("/dashboard").authenticated()
+                                    .requestMatchers("/users**").authenticated()
+                                    .requestMatchers("/api-keys**").authenticated()
+                                    .requestMatchers("/users/**").authenticated()
+                                    .requestMatchers("/memberships**").authenticated()
+                                    .requestMatchers("/tokens").permitAll()
+                                    .requestMatchers("/search**").permitAll()
+                                    .requestMatchers("/index/admin**").authenticated()
+                                    .requestMatchers("/index**").permitAll()
+                                    .requestMatchers(HttpMethod.PUT).authenticated()
+                                    .anyRequest().permitAll();
+                        }
+                )
                 .apply(filterConfigurer);
+        return http.build();
     }
-
 }

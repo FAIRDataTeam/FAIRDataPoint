@@ -22,12 +22,11 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.eclipse.rdf4j.model.IRI;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static nl.dtls.fairdatapoint.util.HttpUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;

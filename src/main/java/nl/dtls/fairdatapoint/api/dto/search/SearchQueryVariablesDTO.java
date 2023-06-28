@@ -22,9 +22,8 @@
  */
 package nl.dtls.fairdatapoint.api.dto.search;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor

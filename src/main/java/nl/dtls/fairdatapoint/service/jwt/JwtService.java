@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.jwt;
 
 import io.jsonwebtoken.*;
+import jakarta.annotation.PostConstruct;
 import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
 import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
@@ -37,7 +38,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Base64;

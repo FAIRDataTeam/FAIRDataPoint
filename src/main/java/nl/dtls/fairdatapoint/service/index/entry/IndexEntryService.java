@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.index.entry;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
@@ -47,7 +48,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.StreamSupport;
