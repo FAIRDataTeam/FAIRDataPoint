@@ -71,9 +71,9 @@ public class CatalogMetadataService extends AbstractMetadataService {
 
     @Override
     public Model update(
-            Model metadata, IRI uri, ResourceDefinition resourceDefinition
+            Model metadata, IRI uri, ResourceDefinition resourceDefinition, boolean validate
     ) throws MetadataServiceException {
         setThemeTaxonomies(metadata, uri, null);
-        return super.update(metadata, uri, resourceDefinition);
+        return super.update(metadata, uri, resourceDefinition, validate);
     }
 }

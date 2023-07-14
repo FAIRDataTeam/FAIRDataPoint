@@ -6,12 +6,12 @@ We support the latest major and minor version with patch versions that fix vulne
 
 | Version | Supported          |
 |---------| ------------------ |
-| 1.16.2  | :white_check_mark: |
-| < 1.16  | :x:                |
+| 1.17.0  | :white_check_mark: |
+| < 1.17  | :x:                |
 
 ## Current Recommendations
 
-* Use 1.16.1 with the newest dependencies (and no known vulnerabilities)
+* Use 1.17.0 with the newest dependencies (and no known vulnerabilities)
 
 ## Reporting a Vulnerability
 

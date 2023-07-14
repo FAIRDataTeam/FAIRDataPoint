@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -41,7 +42,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;

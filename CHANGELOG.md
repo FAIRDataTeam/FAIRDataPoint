@@ -8,6 +8,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.17.0]
+
+### Added
+
+- Support for configuration using environment variables
+
+### Changed
+
+- Updated to Spring Boot 3
+- Updated several other dependencies
+
+### Fixed
+
+- Reset metadata schema to defaults
+- Validation on metadata record deletion
+
 ## [1.16.2]
 
 ### Fixed
@@ -351,3 +367,4 @@ The first release of reference FAIR Data Point implementation.
 [1.16.0]: /../../tree/v1.16.0
 [1.16.1]: /../../tree/v1.16.1
 [1.16.2]: /../../tree/v1.16.2
+[1.17.0]: /../../tree/v1.17.0

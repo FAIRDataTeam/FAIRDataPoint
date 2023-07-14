@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.mongo.migration.development;
 
+import jakarta.annotation.PostConstruct;
 import nl.dtls.fairdatapoint.Profiles;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.acl.AclMigration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.ApiKeyMigration;
@@ -40,8 +41,6 @@ import nl.dtls.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 @Service
 @Profile(Profiles.NON_PRODUCTION)

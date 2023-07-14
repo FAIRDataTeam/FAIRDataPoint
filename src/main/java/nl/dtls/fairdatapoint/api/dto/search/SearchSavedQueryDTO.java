@@ -23,13 +23,13 @@
 package nl.dtls.fairdatapoint.api.dto.search;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQueryType;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @NoArgsConstructor

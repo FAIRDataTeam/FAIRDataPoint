@@ -22,10 +22,9 @@
  */
 package nl.dtls.fairdatapoint.api.dto.form;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import nl.dtls.fairdatapoint.api.validator.ValidIri;
-
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor

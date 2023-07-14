@@ -25,13 +25,13 @@ package nl.dtls.fairdatapoint.service.openapi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

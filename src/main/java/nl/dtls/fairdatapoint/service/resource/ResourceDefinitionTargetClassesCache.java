@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
+import jakarta.annotation.PostConstruct;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -31,7 +32,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_TARGET_CLASSES_CACHE;

@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 
+import jakarta.annotation.PostConstruct;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
@@ -30,7 +31,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.profile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import org.eclipse.rdf4j.model.IRI;
@@ -33,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 import static java.lang.String.format;

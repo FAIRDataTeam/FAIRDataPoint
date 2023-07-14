@@ -22,9 +22,9 @@
  */
 package nl.dtls.fairdatapoint.entity.index.entry;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 

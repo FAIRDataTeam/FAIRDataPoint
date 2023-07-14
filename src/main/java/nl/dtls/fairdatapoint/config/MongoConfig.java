@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.config;
 
 import io.mongock.api.config.LegacyMigration;
-import io.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
+import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;
 import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.runner.springboot.base.MongockInitializingBeanRunner;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
@@ -63,7 +63,7 @@ public class MongoConfig {
             MongoTemplate mongoTemplate
     ) {
         return MongockSpringboot.builder()
-                .setDriver(SpringDataMongoV3Driver.withDefaultLock(mongoTemplate))
+                .setDriver(SpringDataMongoV4Driver.withDefaultLock(mongoTemplate))
                 .addMigrationScanPackage(
                         "nl.dtls.fairdatapoint.database.mongo.migration.production"
                 )

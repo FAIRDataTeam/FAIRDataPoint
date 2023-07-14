@@ -22,12 +22,12 @@
  */
 package nl.dtls.fairdatapoint.entity.index.settings;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Document

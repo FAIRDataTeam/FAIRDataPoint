@@ -41,7 +41,7 @@ public interface MetadataService {
     ) throws MetadataServiceException;
 
     Model update(
-            Model model, IRI uri, ResourceDefinition resourceDefinition
+            Model model, IRI uri, ResourceDefinition resourceDefinition, boolean validate
     ) throws MetadataServiceException;
 
     void delete(IRI uri, ResourceDefinition resourceDefinition) throws MetadataServiceException;

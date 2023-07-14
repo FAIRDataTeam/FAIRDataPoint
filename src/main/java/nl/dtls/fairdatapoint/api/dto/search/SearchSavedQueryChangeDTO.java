@@ -22,12 +22,11 @@
  */
 package nl.dtls.fairdatapoint.api.dto.search;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQueryType;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor

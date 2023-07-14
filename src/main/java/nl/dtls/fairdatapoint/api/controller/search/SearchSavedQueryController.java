@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
@@ -37,7 +38,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 

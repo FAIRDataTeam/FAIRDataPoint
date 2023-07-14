@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
+        <version>3.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.16.2</version>
+    <version>1.17.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -55,28 +55,26 @@
         <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
 
         <!-- Core -->
-        <springdoc.version>1.6.14</springdoc.version>
-        <mongock.version>5.2.2</mongock.version>
-        <mongodb.spring-data.v3.version>3.4.5</mongodb.spring-data.v3.version>
-        <rdf4j.version>4.2.2</rdf4j.version>
+        <springdoc.version>2.1.0</springdoc.version>
+        <mongock.version>5.3.1</mongock.version>
+        <mongodb.spring-data.version>4.1.1</mongodb.spring-data.version>
+        <rdf4j.version>4.3.2</rdf4j.version>
         <jwt.version>0.11.5</jwt.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
-        <log4j2.version>2.17.1</log4j2.version>
+
+        <!-- Test -->
+        <httpclient5.version>5.2.1</httpclient5.version>
 
         <!-- Plugins -->
-        <plugin.license.version>4.1</plugin.license.version>
+        <plugin.license.version>4.2</plugin.license.version>
         <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <plugin.coveralls.version>4.3.0</plugin.coveralls.version>
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
-        <plugin.git_commit_id.version>5.0.0</plugin.git_commit_id.version>
+        <plugin.git_commit_id.version>6.0.0</plugin.git_commit_id.version>
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
-        <plugin.checkstyle.version>3.2.0</plugin.checkstyle.version>
-        <plugin.spotbugs.version>4.7.3.0</plugin.spotbugs.version>
-
-        <!-- override for security -->
-        <snakeyaml.version>1.31</snakeyaml.version>
-        <spring-security.version>5.7.5</spring-security.version>
+        <plugin.checkstyle.version>3.3.0</plugin.checkstyle.version>
+        <plugin.spotbugs.version>4.7.3.5</plugin.spotbugs.version>
     </properties>
 
     <repositories>
@@ -189,12 +187,12 @@
         </dependency>
         <dependency>
             <groupId>io.mongock</groupId>
-            <artifactId>mongodb-springdata-v3-driver</artifactId>
+            <artifactId>mongodb-springdata-v4-driver</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>${mongodb.spring-data.v3.version}</version>
+            <version>${mongodb.spring-data.version}</version>
         </dependency>
 
         <!-- ////////////////// -->
@@ -202,7 +200,7 @@
         <!-- ////////////////// -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
         <dependency>
@@ -277,6 +275,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -370,12 +374,12 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.6.0</version>
+                        <version>10.12.1</version>
                     </dependency>
                     <dependency>
                         <groupId>io.spring.javaformat</groupId>
                         <artifactId>spring-javaformat-checkstyle</artifactId>
-                        <version>0.0.35</version>
+                        <version>0.0.39</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -456,5 +460,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

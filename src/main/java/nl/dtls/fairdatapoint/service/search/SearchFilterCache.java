@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.search;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterCacheContainer;
 import nl.dtls.fairdatapoint.service.label.LabelService;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.config.CacheConfig.SEARCH_FILTERS_CACHE;

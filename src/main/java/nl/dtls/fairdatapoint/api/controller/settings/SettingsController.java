@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.settings;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Tag(name = "Client")
 @RestController
