@@ -42,21 +42,38 @@ security:
 
 # valid repository type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph}
 repository:
-  type: ${FDP_TRIPLE_STORE_TYPE:1}
-  native:
-    dir: ${FDP_TRIPLE_STORE_DIR:/tmp/fdp-store/}
-  agraph:
-    url: ${FDP_TRIPLE_STORE_URL:http://localhost:10035/repositories/fdp}
-    username: ${FDP_TRIPLE_STORE_USERNAME:user}
-    password: ${FDP_TRIPLE_STORE_PASSWORD:password}
-  graphDb:
-    url: ${FDP_TRIPLE_STORE_URL:http://localhost:7200}
-    repository: ${FDP_TRIPLE_STORE_REPOSITORY:test}
-    username: ${FDP_TRIPLE_STORE_USERNAME:user}
-    password: ${FDP_TRIPLE_STORE_PASSWORD:password}
-  blazegraph:
-    url: ${FDP_TRIPLE_STORE_URL:http://localhost:8888/blazegraph}
-    repository: ${FDP_TRIPLE_STORE_REPOSITORY:test}
+  main:
+    type: ${FDP_TRIPLE_STORE_TYPE:1}
+    native:
+      dir: ${FDP_TRIPLE_STORE_DIR:/tmp/fdp-store/}
+    agraph:
+      url: ${FDP_TRIPLE_STORE_URL:http://localhost:10035/repositories/fdp}
+      username: ${FDP_TRIPLE_STORE_USERNAME:user}
+      password: ${FDP_TRIPLE_STORE_PASSWORD:password}
+    graphDb:
+      url: ${FDP_TRIPLE_STORE_URL:http://localhost:7200}
+      repository: ${FDP_TRIPLE_STORE_REPOSITORY:test}
+      username: ${FDP_TRIPLE_STORE_USERNAME:user}
+      password: ${FDP_TRIPLE_STORE_PASSWORD:password}
+    blazegraph:
+      url: ${FDP_TRIPLE_STORE_URL:http://localhost:8888/blazegraph}
+      repository: ${FDP_TRIPLE_STORE_REPOSITORY:test}
+  drafts:
+    type: ${FDP_DRAFT_TRIPLE_STORE_TYPE:1}
+    native:
+      dir: ${FDP_DRAFT_TRIPLE_STORE_DIR:/tmp/fdp-store/}
+    agraph:
+      url: ${FDP_DRAFT_TRIPLE_STORE_URL:http://localhost:10035/repositories/fdp}
+      username: ${FDP_DRAFT_TRIPLE_STORE_USERNAME:user}
+      password: ${FDP_DRAFT_TRIPLE_STORE_PASSWORD:password}
+    graphDb:
+      url: ${FDP_DRAFT_TRIPLE_STORE_URL:http://localhost:7200}
+      repository: ${FDP_DRAFT_TRIPLE_STORE_REPOSITORY:test}
+      username: ${FDP_DRAFT_TRIPLE_STORE_USERNAME:user}
+      password: ${FDP_DRAFT_TRIPLE_STORE_PASSWORD:password}
+    blazegraph:
+      url: ${FDP_DRAFT_TRIPLE_STORE_URL:http://localhost:8888/blazegraph}
+      repository: ${FDP_DRAFT_TRIPLE_STORE_REPOSITORY:test}
 
 metadataProperties:
   language: ${FDP_METADATA_LANGUAGE:http://id.loc.gov/vocabulary/iso639-1/en}

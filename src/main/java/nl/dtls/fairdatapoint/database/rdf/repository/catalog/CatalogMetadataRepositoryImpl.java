@@ -23,17 +23,17 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 
 import jakarta.annotation.PostConstruct;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.rdf4j.repository.Repository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
@@ -43,24 +43,33 @@ public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository im
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "getDatasetThemesForCatalog.sparql";
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
+
+    public CatalogMetadataRepositoryImpl(ConcurrentMapCacheManager cacheManager,
+                                         Repository mainRepository, Repository draftsRepository) {
+        super(mainRepository, draftsRepository);
+        this.cacheManager = cacheManager;
+    }
 
     @PostConstruct
     public void init() {
         cacheManager.setCacheNames(List.of(CATALOG_THEMES_CACHE));
     }
 
-    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRepositoryException {
+    public List<IRI> getDatasetThemesForCatalog(IRI uri, RepositoryMode mode) throws MetadataRepositoryException {
         List<IRI> result = cache().get(uri.toString(), List.class);
         if (result != null) {
             return result;
         }
-        result = runSparqlQuery(GET_DATASET_THEMES_FOR_CATALOG, CatalogMetadataRepository.class, Map.of(
-                "catalog", uri))
+        result = runSparqlQuery(
+                GET_DATASET_THEMES_FOR_CATALOG,
+                CatalogMetadataRepository.class,
+                Map.of("catalog", uri),
+                mode
+        )
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
-                .collect(Collectors.toList());
+                .toList();
         cache().put(uri.toString(), result);
         return result;
     }

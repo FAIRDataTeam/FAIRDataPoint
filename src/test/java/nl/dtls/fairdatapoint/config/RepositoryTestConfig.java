@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class RepositoryTestConfig {
 
-    @Bean(initMethod = "initialize", destroyMethod = "shutDown")
+    @Bean(initMethod = "init", destroyMethod = "shutDown")
     public Repository repository() throws RepositoryException, RDFParseException {
         return new SailRepository(new MemoryStore());
     }

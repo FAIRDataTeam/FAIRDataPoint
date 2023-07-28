@@ -24,12 +24,11 @@ package nl.dtls.fairdatapoint.api.controller.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import nl.dtls.fairdatapoint.entity.user.User;
@@ -73,9 +72,6 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @RequestMapping("/")
 public class GenericController {
 
-    private static final String MSG_ERROR_DRAFT_FORBIDDEN =
-            "You are not allow to view this record in state DRAFT";
-
     @Autowired
     @Qualifier("persistentUrl")
     private String persistentUrl;
@@ -90,9 +86,6 @@ public class GenericController {
     private MetadataSchemaService metadataSchemaService;
 
     @Autowired
-    private MetadataStateService metadataStateService;
-
-    @Autowired
     private MetadataEnhancer metadataEnhancer;
 
     @Autowired
@@ -100,6 +93,9 @@ public class GenericController {
 
     @Autowired
     private GenericMetadataRepository metadataRepository;
+
+    @Autowired
+    private MetadataStateService metadataStateService;
 
     @Autowired
     private SearchFilterCache searchFilterCache;
@@ -130,28 +126,23 @@ public class GenericController {
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
+        // 2. Get entity (from repository based on permissions)
+        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        Model entity = metadataService.retrieve(entityUri);
+        final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
+        Model entity = metadataService.retrieve(entityUri, mode);
         resultRdf.addAll(entity);
 
-        // 3. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
-
-        // 4. Enhance
+        // 3. Enhance
         metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
 
-        // 5. Get parent
+        // 4. Get parent
         while (true) {
             final IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
             if (parentUri == null) {
                 break;
             }
-            final Model parent = metadataService.retrieve(parentUri);
+            final Model parent = metadataService.retrieve(parentUri, mode);
             resultRdf.addAll(parent);
             entity = parent;
             entityUri = parentUri;
@@ -179,34 +170,18 @@ public class GenericController {
         // 2. Get resource definition
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
-        // 3. Get entity
+        // 3. Get entity (from repository based on permissions)
+        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model entity = metadataService.retrieve(entityUri);
+        final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
+        final Model entity = metadataService.retrieve(entityUri, mode);
         resultRdf.addAll(entity);
 
-        // 4. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
-
-        // 5. Filter children
-        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            final IRI relationUri = i(rdChild.getRelationUri());
-            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
-                final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                if (!(childState.getState().equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent())) {
-                    resultRdf.remove(entityUri, relationUri, childUri);
-                }
-            }
-        }
-
-        // 6. Add links
+        // 4. Add links
         metadataEnhancer.enhanceWithLinks(entityUri, entity, rd, persistentUrl, resultRdf);
         metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
 
-        // 7. Create response
+        // 5. Create response
         return resultRdf;
     }
 
@@ -225,7 +200,6 @@ public class GenericController {
         }
 
         // 2. Init
-        // String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
@@ -341,18 +315,13 @@ public class GenericController {
         final String recordId = oRecordId.orElse("");
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
-        final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model entity = metadataService.retrieve(entityUri);
-
-        // 3. Check if it is draft
-        final Metadata state = metadataStateService.get(entityUri);
+        // 2. Get entity (from repository based on permissions)
         final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
+        final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
+        final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
+        final Model entity = metadataService.retrieve(entityUri, mode);
 
-        // 4. Get Children
+        // 3. Get Children
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
         final ResourceDefinition currentChildRd = resourceDefinitionService.getByUrlPrefix(childPrefix);
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
@@ -361,35 +330,41 @@ public class GenericController {
             if (rdChild.getResourceDefinitionUuid().equals(currentChildRd.getUuid())) {
                 final IRI relationUri = i(rdChild.getRelationUri());
 
-                // 4.1 Get all titles for sort
-                final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
+                // 3.1 Get all titles for sort
+                final Map<String, String> titles =
+                        metadataRepository.findChildTitles(entityUri, relationUri, RepositoryMode.COMBINED);
 
-                // 4.2 Get all children sorted
+                // 3.2 Get all children sorted
                 final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
                         .stream()
                         .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
                         .filter(childUri -> {
-                            if (oCurrentUser.isPresent()) {
-                                return true;
+                            try {
+                                return oCurrentUser.isPresent()
+                                        || metadataStateService.isPublished(i(childUri.stringValue()));
                             }
-                            final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                            return childState.getState().equals(MetadataState.PUBLISHED);
+                            catch (MetadataServiceException exc) {
+                                return false;
+                            }
                         })
                         .sorted((value1, value2) -> {
                             final String title1 = titles.get(value1.toString());
                             final String title2 = titles.get(value2.toString());
+                            if (title1 == null) {
+                                return -1;
+                            }
                             return title1.compareTo(title2);
                         })
                         .toList();
 
-                // 4.3 Retrieve children metadata only for requested page
+                // 3.3 Retrieve children metadata only for requested page
                 final int childrenCount = children.size();
                 children.stream().skip((long) page * size).limit(size)
                         .map(childUri -> retrieveChildModel(childMetadataService, childUri))
                         .flatMap(Optional::stream)
                         .forEach(resultRdf::addAll);
 
-                // 4.4 Set Link headers and send response
+                // 3.4 Set Link headers and send response
                 final HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(
                         "Link",

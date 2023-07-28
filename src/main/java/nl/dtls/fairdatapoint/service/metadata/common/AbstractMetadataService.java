@@ -23,8 +23,10 @@
 package nl.dtls.fairdatapoint.service.metadata.common;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataGetter;
@@ -34,7 +36,6 @@ import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
@@ -50,7 +51,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
@@ -60,6 +60,9 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 
 @Slf4j
 public abstract class AbstractMetadataService implements MetadataService {
+
+    private static final String MSG_ERROR_DRAFT_FORBIDDEN =
+            "You are not allow to view this record in state DRAFT";
 
     @Autowired
     @Qualifier("genericMetadataRepository")
@@ -81,17 +84,23 @@ public abstract class AbstractMetadataService implements MetadataService {
     private ResourceDefinitionCache resourceDefinitionCache;
 
     @Autowired
-    private MetadataStateService metadataStateService;
-
-    @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
     @Override
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
+        return retrieve(uri, RepositoryMode.COMBINED);
+    }
+
+    @Override
+    public Model retrieve(IRI uri, RepositoryMode mode) throws MetadataServiceException, ResourceNotFoundException {
         try {
             // 1. Get metadata
-            final List<Statement> statements = metadataRepository.find(uri);
+            final List<Statement> statements = metadataRepository.find(uri, mode);
             if (statements.isEmpty()) {
+                if (mode.equals(RepositoryMode.MAIN)
+                        && !metadataRepository.find(uri, RepositoryMode.DRAFTS).isEmpty()) {
+                    throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
+                }
                 throw new ResourceNotFoundException(
                         format("No metadata found for the uri '%s'", uri)
                 );
@@ -109,11 +118,16 @@ public abstract class AbstractMetadataService implements MetadataService {
 
     @Override
     public List<Model> retrieve(List<IRI> uris) {
+        return retrieve(uris, RepositoryMode.MAIN);
+    }
+
+    @Override
+    public List<Model> retrieve(List<IRI> uris, RepositoryMode mode) {
         return uris
                 .stream()
-                .map(suppress(this::retrieve))
+                .map(suppress(uri -> retrieve(uri, mode)))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -123,10 +137,9 @@ public abstract class AbstractMetadataService implements MetadataService {
         try {
             metadataValidator.validate(metadata, uri, resourceDefinition);
             metadataEnhancer.enhance(metadata, uri, resourceDefinition);
-            metadataRepository.save(new ArrayList<>(metadata), uri);
+            metadataRepository.save(new ArrayList<>(metadata), uri, RepositoryMode.DRAFTS);
             updateParent(metadata, uri, resourceDefinition);
             addPermissions(uri);
-            addState(uri);
             return metadata;
         }
         catch (MetadataRepositoryException exception) {
@@ -147,11 +160,18 @@ public abstract class AbstractMetadataService implements MetadataService {
             if (validate) {
                 metadataValidator.validate(metadata, uri, resourceDefinition);
             }
-            final Model oldMetadata = retrieve(uri);
-            metadataEnhancer.enhance(metadata, uri, resourceDefinition, oldMetadata);
-            metadataRepository.remove(uri);
-            metadataRepository.save(new ArrayList<>(metadata), uri);
-            updateParent(metadata, uri, resourceDefinition);
+            final Model oldMainMetadata = retrieve(uri, RepositoryMode.MAIN);
+            if (oldMainMetadata.isEmpty()) {
+                final Model oldDraftMetadata = retrieve(uri, RepositoryMode.DRAFTS);
+                metadataEnhancer.enhance(metadata, uri, resourceDefinition, oldDraftMetadata);
+                metadataRepository.remove(uri, RepositoryMode.DRAFTS);
+                metadataRepository.save(new ArrayList<>(metadata), uri, RepositoryMode.DRAFTS);
+            }
+            else {
+                metadataEnhancer.enhance(metadata, uri, resourceDefinition, oldMainMetadata);
+                metadataRepository.remove(uri, RepositoryMode.MAIN);
+                metadataRepository.save(new ArrayList<>(metadata), uri, RepositoryMode.MAIN);
+            }
             return metadata;
         }
         catch (MetadataRepositoryException | MetadataServiceException exception) {
@@ -193,7 +213,8 @@ public abstract class AbstractMetadataService implements MetadataService {
             }
 
             // Delete itself
-            metadataRepository.remove(uri);
+            metadataRepository.remove(uri, RepositoryMode.MAIN);
+            metadataRepository.remove(uri, RepositoryMode.DRAFTS);
         }
         catch (MetadataRepositoryException | MetadataServiceException exception) {
             throw new MetadataServiceException(exception.getMessage());
@@ -216,9 +237,21 @@ public abstract class AbstractMetadataService implements MetadataService {
                             statements.add(s(parent, i(rdChild.getRelationUri()), uri));
                         }
                     }
-                    metadataRepository.removeStatement(parent, FDP.METADATAMODIFIED, null, parent);
-                    statements.add(s(parent, FDP.METADATAMODIFIED, l(OffsetDateTime.now())));
-                    metadataRepository.save(statements, parent);
+                    final List<Statement> parentMetadata = metadataRepository.find(parent, RepositoryMode.MAIN);
+                    if (parentMetadata.isEmpty()) {
+                        metadataRepository.removeStatement(
+                                parent, FDP.METADATAMODIFIED, null, parent, RepositoryMode.DRAFTS
+                        );
+                        statements.add(s(parent, FDP.METADATAMODIFIED, l(OffsetDateTime.now())));
+                        metadataRepository.save(statements, parent, RepositoryMode.DRAFTS);
+                    }
+                    else {
+                        metadataRepository.removeStatement(
+                                parent, FDP.METADATAMODIFIED, null, parent, RepositoryMode.MAIN
+                        );
+                        statements.add(s(parent, FDP.METADATAMODIFIED, l(OffsetDateTime.now())));
+                        metadataRepository.save(statements, parent, RepositoryMode.MAIN);
+                    }
                 }
                 catch (MetadataRepositoryException exception) {
                     throw new MetadataServiceException("Problem with updating parent timestamp");
@@ -235,10 +268,6 @@ public abstract class AbstractMetadataService implements MetadataService {
             return;
         }
         memberService.createOwner(uri.stringValue(), Metadata.class, user.get().getUuid());
-    }
-
-    private void addState(IRI uri) {
-        metadataStateService.initState(uri);
     }
 
     protected MemberService getMemberService() {

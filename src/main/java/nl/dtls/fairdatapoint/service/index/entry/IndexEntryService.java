@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.entry.*;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -282,7 +283,7 @@ public class IndexEntryService {
                 .findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
         final Model model = new TreeModel();
-        model.addAll(genericMetadataRepository.find(i(entry.getClientUrl())));
+        model.addAll(genericMetadataRepository.find(i(entry.getClientUrl()), RepositoryMode.MAIN));
         return model;
     }
 

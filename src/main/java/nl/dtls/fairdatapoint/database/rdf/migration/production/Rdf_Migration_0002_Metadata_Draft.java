@@ -23,9 +23,6 @@
 package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
 import nl.dtls.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Resource;
@@ -42,19 +39,20 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration {
+    // TODO: squash RDF migrations
 
     @Autowired
-    private Repository repository;
+    private Repository mainRepository;
 
-    @Autowired
-    private MetadataRepository metadataRepository;
+    // @Autowired
+    // private MetadataRepository metadataRepository;
 
     public void runMigration() {
         createRepositoryInTripleStore();
     }
 
     private void createRepositoryInTripleStore() {
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             conn.getContextIDs()
                     .stream()
                     .forEach(this::saveMetadataForResource);
@@ -65,7 +63,7 @@ public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration
     }
 
     private void saveMetadataForResource(Resource resource) {
-        metadataRepository.save(new Metadata(null, resource.stringValue(), MetadataState.PUBLISHED));
+        // metadataRepository.save(new Metadata(null, resource.stringValue(), MetadataState.PUBLISHED));
     }
 
 }

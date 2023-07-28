@@ -25,10 +25,11 @@ package nl.dtls.fairdatapoint.acceptance.metadata.repository.meta;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_GET extends WebIntegrationTest {
 
     @Autowired
-    private MetadataFixtures metadataFixtures;
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     private URI url() {
         return URI.create("/meta");
@@ -73,10 +75,10 @@ public class List_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertEmptyMember(result.getBody().getMember());
         assertThat(result.getBody().getState(), is(equalTo(new MetaStateDTO(
-                metadataFixtures.fdpMetadata().getState(),
+                MetadataState.PUBLISHED,
                 Map.of(
-                        metadataFixtures.catalog1().getUri(), metadataFixtures.catalog1().getState(),
-                        metadataFixtures.catalog2().getUri(), metadataFixtures.catalog2().getState()
+                        persistentUrl + "/catalog/catalog-1", MetadataState.PUBLISHED,
+                        persistentUrl + "/catalog/catalog-2", MetadataState.DRAFT
                 )
         ))));
     }

@@ -49,7 +49,7 @@ public class Rdf_Migration_0005_FixMetadataVersion implements RdfProductionMigra
     private static final String MSG_REMOVE = "Removing: {} {} {}";
 
     @Autowired
-    private Repository repository;
+    private Repository mainRepository;
 
     public void runMigration() {
         updateVersionStatements();
@@ -57,7 +57,7 @@ public class Rdf_Migration_0005_FixMetadataVersion implements RdfProductionMigra
 
     private void updateVersionStatements() {
         // change dcterms:hasVersion to dcat:version property (if object is literal)
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             final RepositoryResult<Statement> queryResult = conn.getStatements(null, DCTERMS.HAS_VERSION, null);
             while (queryResult.hasNext()) {
                 final Statement st = queryResult.next();

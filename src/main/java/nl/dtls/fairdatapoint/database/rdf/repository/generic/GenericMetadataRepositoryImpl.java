@@ -27,10 +27,12 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.generic;
 
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -46,28 +48,32 @@ public class GenericMetadataRepositoryImpl extends AbstractMetadataRepository im
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
 
-    @Override
-    public void save(List<Statement> statements, IRI context) throws MetadataRepositoryException {
-        super.save(statements, context);
-        clearCatalogCache(context);
+    public GenericMetadataRepositoryImpl(Repository mainRepository, Repository draftsRepository) {
+        super(mainRepository, draftsRepository);
     }
 
     @Override
-    public void remove(IRI uri) throws MetadataRepositoryException {
-        clearCatalogCache(uri);
-        super.remove(uri);
+    public void save(List<Statement> statements, IRI context, RepositoryMode mode) throws MetadataRepositoryException {
+        super.save(statements, context, mode);
+        clearCatalogCache(context, mode);
     }
 
     @Override
-    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+    public void remove(IRI uri, RepositoryMode mode) throws MetadataRepositoryException {
+        clearCatalogCache(uri, mode);
+        super.remove(uri, mode);
+    }
+
+    @Override
+    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context, RepositoryMode mode)
             throws MetadataRepositoryException {
-        clearCatalogCache(context);
-        super.removeStatement(subject, predicate, object, context);
+        clearCatalogCache(context, mode);
+        super.removeStatement(subject, predicate, object, context, mode);
     }
 
-    private void clearCatalogCache(IRI uri) throws MetadataRepositoryException {
+    private void clearCatalogCache(IRI uri, RepositoryMode mode) throws MetadataRepositoryException {
         final Model metadata = new LinkedHashModel();
-        metadata.addAll(find(uri));
+        metadata.addAll(find(uri, mode));
         final IRI parent = getParent(metadata);
         if (parent != null) {
             cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parent.stringValue());

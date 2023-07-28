@@ -63,17 +63,18 @@ public class RdfEntitiesSparqlRetriever implements RdfEntitiesRetriever {
         final Repository repository = new SPARQLRepository(source.getSparqlEndpoint());
         try (RepositoryConnection conn = repository.getConnection()) {
             final TupleQuery query = conn.prepareTupleQuery(source.getSparqlQuery());
-            final TupleQueryResult result = query.evaluate();
             final Map<String, String> entities = new HashMap<>();
-            result
-                    .stream()
-                    .filter(bindings -> bindings.hasBinding(KEY_LABEL) && bindings.hasBinding(KEY_URI))
-                    .forEach(bindings -> {
-                        entities.put(
-                                bindings.getValue(KEY_URI).stringValue(),
-                                bindings.getValue(KEY_LABEL).stringValue()
-                        );
-                    });
+            try (TupleQueryResult result = query.evaluate()) {
+                result
+                        .stream()
+                        .filter(bindings -> bindings.hasBinding(KEY_LABEL) && bindings.hasBinding(KEY_URI))
+                        .forEach(bindings -> {
+                            entities.put(
+                                    bindings.getValue(KEY_URI).stringValue(),
+                                    bindings.getValue(KEY_LABEL).stringValue()
+                            );
+                        });
+            }
             return entities;
         }
         catch (Exception exception) {
@@ -84,29 +85,5 @@ public class RdfEntitiesSparqlRetriever implements RdfEntitiesRetriever {
     @Override
     public RdfEntitySourceType getSourceType() {
         return RdfEntitySourceType.SPARQL;
-    }
-
-    public static void main(String[] args) {
-        // TODO: remove (just for dev/testing out)
-        final RdfEntitiesSparqlRetriever retriever = new RdfEntitiesSparqlRetriever();
-        final Map<String, String> result = retriever.retrieve(
-                SettingsAutocompleteSource
-                        .builder()
-                        .rdfType("https://example.com/ontology#Country")
-                        .sparqlEndpoint("https://query.wikidata.org/sparql")
-                        .sparqlQuery("""
-                                SELECT DISTINCT ?entity ?entityLabel
-                                WHERE {
-                                  ?entity wdt:P31 wd:Q6256 .
-                                  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
-                                }
-                                """)
-                        .build()
-        );
-        if (result != null) {
-            result.forEach((entity, label) -> {
-                System.out.printf("%s => %s%n", entity, label);
-            });
-        }
     }
 }

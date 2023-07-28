@@ -48,9 +48,10 @@ import java.util.List;
 @Slf4j
 @Service
 public class Rdf_Migration_0001_Init implements RdfProductionMigration {
+    // TODO: squash RDF migrations
 
     @Autowired
-    private Repository repository;
+    private Repository mainRepository;
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -74,7 +75,7 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     }
 
     private void createRepositoryInTripleStore() {
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             final List<Statement> statements = FactoryDefaults.repositoryStatements(
                     persistentUrl,
                     license,
