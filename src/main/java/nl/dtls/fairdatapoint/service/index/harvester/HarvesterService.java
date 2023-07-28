@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.index.harvester;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import org.eclipse.rdf4j.model.IRI;
@@ -64,7 +65,7 @@ public class HarvesterService {
     private RestTemplate restTemplate;
 
     public void deleteHarvestedData(String clientUrl) throws MetadataRepositoryException {
-        genericMetadataRepository.remove(i(clientUrl));
+        genericMetadataRepository.remove(i(clientUrl), RepositoryMode.MAIN);
     }
 
     @Async
@@ -83,7 +84,7 @@ public class HarvesterService {
 
         // 3. Store data
         for (Map.Entry<String, Model> item : result.entrySet()) {
-            genericMetadataRepository.save(new ArrayList<>(item.getValue()), i(clientUrl));
+            genericMetadataRepository.save(new ArrayList<>(item.getValue()), i(clientUrl), RepositoryMode.MAIN);
         }
 
         log.info("Harvesting for '{}' completed", clientUrl);
@@ -106,7 +107,7 @@ public class HarvesterService {
             nodes.put(uri, model);
 
             final List<Resource> containers = getSubjectsBy(model, RDF.TYPE, LDP.DIRECT_CONTAINER);
-            if (containers.size() > 0) {
+            if (!containers.isEmpty()) {
                 // Get children through LDP links
                 for (Value container : containers) {
                     for (Value child : getObjectsBy(

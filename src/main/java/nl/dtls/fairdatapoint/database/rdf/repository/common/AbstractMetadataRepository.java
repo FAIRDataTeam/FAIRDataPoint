@@ -22,29 +22,25 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
 import nl.dtls.fairdatapoint.entity.search.SearchResult;
 import nl.dtls.fairdatapoint.entity.search.SearchResultRelation;
-import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
-import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
@@ -74,49 +70,73 @@ public abstract class AbstractMetadataRepository {
     private static final String FIELD_REL_PRED = "relationPredicate";
     private static final String FIELD_REL_OBJ = "relationObject";
 
-    @Autowired
-    private Repository repository;
+    private final Repository mainRepository;
 
-    protected Repository getRepository() {
-        return repository;
+    private final Repository draftsRepository;
+
+    public AbstractMetadataRepository(Repository mainRepository, Repository draftsRepository) {
+        this.mainRepository = mainRepository;
+        this.draftsRepository = draftsRepository;
     }
 
-    public List<Resource> findResources() throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-
-            return Iterations.asList(
-                    conn.getContextIDs()
-            );
-        }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
-        }
+    protected Repository getMainRepository() {
+        return mainRepository;
     }
 
-    public List<Statement> find(IRI context) throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            return Iterations.asList(
-                    conn.getStatements(null, null, null, context)
-            );
-        }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
-        }
+    protected Repository getDraftsRepository() {
+        return draftsRepository;
     }
 
-    public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
+    protected List<Repository> getRepositories(RepositoryMode mode) {
+        if (mode == RepositoryMode.DRAFTS) {
+            return List.of(getDraftsRepository());
+        }
+        if (mode == RepositoryMode.MAIN) {
+            return List.of(getMainRepository());
+        }
+        return List.of(getMainRepository(), getDraftsRepository());
+    }
+
+    public List<Resource> findResources(RepositoryMode mode) throws MetadataRepositoryException {
+        final List<Resource> result = new ArrayList<>();
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                result.addAll(conn.getContextIDs().stream().toList());
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
+            }
+        }
+        return result;
+    }
+
+    public List<Statement> find(IRI context, RepositoryMode mode) throws MetadataRepositoryException {
+        final List<Statement> result = new ArrayList<>();
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                result.addAll(conn.getStatements(null, null, null, context).stream().toList());
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
+            }
+        }
+        return result;
+    }
+
+    public List<SearchResult> findByLiteral(Literal query, RepositoryMode mode) throws MetadataRepositoryException {
         return runSparqlQuery(
                 FIND_ENTITY_BY_LITERAL,
                 AbstractMetadataRepository.class,
-                Map.of("query", query)
+                Map.of("query", query),
+                mode
         )
                 .stream()
                 .map(item -> toSearchResult(item, true))
                 .toList();
     }
 
-    public List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException {
-        return runSparqlQuery(query)
+    public List<SearchResult> findBySparqlQuery(String query, RepositoryMode mode) throws MetadataRepositoryException {
+        return runSparqlQuery(query, mode)
                 .stream()
                 .map(item -> toSearchResult(item, false))
                 .toList();
@@ -139,13 +159,14 @@ public abstract class AbstractMetadataRepository {
         );
     }
 
-    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri)
+    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri, RepositoryMode mode)
             throws MetadataRepositoryException {
         final Map<String, String> values = new HashMap<>();
         runSparqlQuery(
                 FIND_OBJECT_FOR_PREDICATE,
                 AbstractMetadataRepository.class,
-                Map.of("predicate", predicateUri)
+                Map.of("predicate", predicateUri),
+                mode
         ).forEach(entry -> {
             values.put(
                     entry.getValue(FIELD_VALUE).stringValue(),
@@ -161,7 +182,7 @@ public abstract class AbstractMetadataRepository {
                 .toList();
     }
 
-    public Map<String, String> findChildTitles(IRI parent, IRI relation)
+    public Map<String, String> findChildTitles(IRI parent, IRI relation, RepositoryMode mode)
             throws MetadataRepositoryException {
         final Map<String, String> titles = new HashMap<>();
 
@@ -171,89 +192,131 @@ public abstract class AbstractMetadataRepository {
                 Map.of(
                         "parent", parent,
                         "relation", relation
-                ));
+                ),
+                mode
+        );
 
         for (var result : results) {
             final String childUri = result.getValue(FIELD_CHILD).stringValue();
             final String title = result.getValue(FIELD_TITLE).stringValue();
-            titles.put(childUri, title);
+            if (childUri != null && title != null) {
+                titles.put(childUri, title);
+            }
         }
 
         return titles;
     }
 
-    public boolean checkExistence(Resource subject, IRI predicate, Value object)
+    public boolean checkExistence(Resource subject, IRI predicate, Value object, RepositoryMode mode)
             throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            return conn.hasStatement(subject, predicate, object, false);
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                if (conn.hasStatement(subject, predicate, object, false)) {
+                    return true;
+                }
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_EXISTS + exception.getMessage());
+            }
         }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_EXISTS + exception.getMessage());
+        return false;
+    }
+
+    public void save(List<Statement> statements, IRI context, RepositoryMode mode) throws MetadataRepositoryException {
+        if (mode.equals(RepositoryMode.COMBINED)) {
+            throw new MetadataRepositoryException("Save called on COMBINED repository");
+        }
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                conn.add(statements, context);
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_SAVE + exception.getMessage());
+            }
         }
     }
 
-    public void save(List<Statement> statements, IRI context) throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            conn.add(statements, context);
-        }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_SAVE + exception.getMessage());
-        }
-    }
-
-    public void removeAll() throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            conn.clear();
-        }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_REMOVE_ALL + exception.getMessage());
+    public void removeAll(RepositoryMode mode) throws MetadataRepositoryException {
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                conn.clear();
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_REMOVE_ALL + exception.getMessage());
+            }
         }
     }
 
-    public void remove(IRI uri) throws MetadataRepositoryException {
-        removeStatement(null, null, null, uri);
+    public void remove(IRI uri, RepositoryMode mode) throws MetadataRepositoryException {
+        removeStatement(null, null, null, uri, mode);
     }
 
-    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context, RepositoryMode mode)
             throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            conn.remove(subject, predicate, object, context);
-        }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_REMOVE);
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                conn.remove(subject, predicate, object, context);
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_REMOVE);
+            }
         }
     }
 
     public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
-                                           Map<String, Value> bindings)
+                                           Map<String, Value> bindings, RepositoryMode mode)
             throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            final String queryString = loadSparqlQuery(queryName, repositoryType);
-            final TupleQuery query = conn.prepareTupleQuery(queryString);
-            bindings.forEach(query::setBinding);
-            return QueryResults.asList(query.evaluate());
+        final List<BindingSet> result = new ArrayList<>();
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                final String queryString = loadSparqlQuery(queryName, repositoryType);
+                final TupleQuery query = conn.prepareTupleQuery(queryString);
+                bindings.forEach(query::setBinding);
+                try (TupleQueryResult repoResult = query.evaluate()) {
+                    result.addAll(repoResult.stream().toList());
+                }
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
+            }
+            catch (IOException exception) {
+                throw new MetadataRepositoryException(format(MSG_ERROR_SPARQL_LOAD, queryName,
+                        exception.getMessage()));
+            }
         }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
-        }
-        catch (IOException exception) {
-            throw new MetadataRepositoryException(format(MSG_ERROR_SPARQL_LOAD, queryName,
-                    exception.getMessage()));
-        }
+        return result;
     }
 
-    public List<BindingSet> runSparqlQuery(String queryString) throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            final TupleQuery query = conn.prepareTupleQuery(queryString);
-            return query.evaluate().stream().toList();
+    public List<BindingSet> runSparqlQuery(String queryString, RepositoryMode mode) throws MetadataRepositoryException {
+        final List<BindingSet> result = new ArrayList<>();
+        for (final Repository repo : getRepositories(mode)) {
+            try (RepositoryConnection conn = repo.getConnection()) {
+                final TupleQuery query = conn.prepareTupleQuery(queryString);
+                try (TupleQueryResult repoResult = query.evaluate()) {
+                    result.addAll(repoResult.stream().toList());
+                }
+            }
+            catch (RepositoryException exception) {
+                throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
+            }
         }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
-        }
+        return result;
     }
 
     protected String loadSparqlQuery(String queryName, Class repositoryType) throws IOException {
         final URL fileURL = repositoryType.getResource(queryName);
-        return Resources.toString(fileURL, Charsets.UTF_8);
+        return Resources.toString(fileURL, StandardCharsets.UTF_8);
+    }
+
+    public void moveToMain(IRI context) throws MetadataRepositoryException {
+        final List<Statement> statements = find(context, RepositoryMode.DRAFTS);
+        save(statements, context, RepositoryMode.MAIN);
+        remove(context, RepositoryMode.DRAFTS);
+    }
+
+    public void moveToDrafts(IRI context) throws MetadataRepositoryException {
+        final List<Statement> statements = find(context, RepositoryMode.MAIN);
+        save(statements, context, RepositoryMode.DRAFTS);
+        remove(context, RepositoryMode.MAIN);
     }
 }

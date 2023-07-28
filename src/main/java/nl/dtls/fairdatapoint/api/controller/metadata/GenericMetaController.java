@@ -30,14 +30,17 @@ import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaPathDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
+import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -77,6 +80,9 @@ public class GenericMetaController {
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @Operation(hidden = true)
     @GetMapping(path = {"meta", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/meta"})
     public MetaDTO getMeta(
@@ -93,8 +99,10 @@ public class GenericMetaController {
         ResourceDefinition definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get and check existence entity
+        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        Model entity = metadataService.retrieve(entityUri);
+        Model entity = metadataService.retrieve(entityUri, mode);
 
         // 4. Get member
         final String entityId = getMetadataIdentifier(entity).getIdentifier().getLabel();
@@ -103,7 +111,7 @@ public class GenericMetaController {
         final MemberDTO member = oMember.orElse(new MemberDTO(null, null));
 
         // 5. Get state
-        final MetaStateDTO state = metadataStateService.getState(entityUri, entity, definition);
+        final MetaStateDTO state = metadataStateService.getStateDTO(entityUri, entity, definition);
 
         // 6. Make path map
         final Map<String, MetaPathDTO> pathMap = new HashMap<>();

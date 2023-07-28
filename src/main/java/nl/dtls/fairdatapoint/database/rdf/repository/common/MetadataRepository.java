@@ -27,6 +27,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
 import nl.dtls.fairdatapoint.entity.search.SearchResult;
@@ -38,33 +39,37 @@ import java.util.Map;
 
 public interface MetadataRepository {
 
-    List<Resource> findResources() throws MetadataRepositoryException;
+    List<Resource> findResources(RepositoryMode mode) throws MetadataRepositoryException;
 
-    List<Statement> find(IRI context) throws MetadataRepositoryException;
+    List<Statement> find(IRI context, RepositoryMode mode) throws MetadataRepositoryException;
 
-    List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException;
+    List<SearchResult> findByLiteral(Literal query, RepositoryMode mode) throws MetadataRepositoryException;
 
-    List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException;
+    List<SearchResult> findBySparqlQuery(String query, RepositoryMode mode) throws MetadataRepositoryException;
 
-    List<SearchFilterValue> findByFilterPredicate(IRI predicateUri)
+    List<SearchFilterValue> findByFilterPredicate(IRI predicateUri, RepositoryMode mode)
             throws MetadataRepositoryException;
 
-    Map<String, String> findChildTitles(IRI parent, IRI relation)
+    Map<String, String> findChildTitles(IRI parent, IRI relation, RepositoryMode mode)
             throws MetadataRepositoryException;
 
-    boolean checkExistence(Resource subject, IRI predicate, Value object)
+    boolean checkExistence(Resource subject, IRI predicate, Value object, RepositoryMode mode)
             throws MetadataRepositoryException;
 
-    void save(List<Statement> statements, IRI context) throws MetadataRepositoryException;
+    void save(List<Statement> statements, IRI context, RepositoryMode mode) throws MetadataRepositoryException;
 
-    void removeAll() throws MetadataRepositoryException;
+    void removeAll(RepositoryMode mode) throws MetadataRepositoryException;
 
-    void remove(IRI uri) throws MetadataRepositoryException;
+    void remove(IRI uri, RepositoryMode mode) throws MetadataRepositoryException;
 
-    void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+    void removeStatement(Resource subject, IRI predicate, Value object, IRI context, RepositoryMode mode)
             throws MetadataRepositoryException;
 
     List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
-                                    Map<String, Value> bindings)
+                                    Map<String, Value> bindings, RepositoryMode mode)
             throws MetadataRepositoryException;
+
+    void moveToDrafts(IRI context) throws MetadataRepositoryException;
+
+    void moveToMain(IRI context) throws MetadataRepositoryException;
 }

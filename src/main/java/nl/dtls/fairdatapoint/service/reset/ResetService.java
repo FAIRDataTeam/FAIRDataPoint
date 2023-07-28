@@ -70,7 +70,10 @@ public class ResetService {
     private IRI language;
 
     @Autowired
-    private Repository repository;
+    private Repository mainRepository;
+
+    @Autowired
+    private Repository draftsRepository;
 
     @Autowired
     private ApiKeyRepository apiKeyRepository;
@@ -98,9 +101,6 @@ public class ResetService {
 
     @Autowired
     private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
-
-    @Autowired
-    private MetadataRepository metadataRepository;
 
     @Autowired
     private GenericMetadataService genericMetadataService;
@@ -169,12 +169,12 @@ public class ResetService {
     }
 
     private void clearMetadata() throws MetadataServiceException {
+        // TODO REPO: clear DRAFTS repository
         log.debug("Clearing metadata");
         final Optional<ResourceDefinition> resourceDefinition =
                 resourceDefinitionRepository.findByUrlPrefix("");
         if (resourceDefinition.isPresent()) {
             genericMetadataService.delete(i(persistentUrl), resourceDefinition.get());
-            metadataRepository.deleteAll();
         }
     }
 
@@ -196,7 +196,7 @@ public class ResetService {
 
     private void restoreDefaultMetadata() {
         log.debug("Creating default metadata");
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             final List<Statement> statements = FactoryDefaults.fdpStatements(
                     persistentUrl,
                     license,
@@ -204,7 +204,6 @@ public class ResetService {
                     accessRightsDescription
             );
             conn.add(statements);
-            metadataRepository.save(FactoryDefaults.metadataRepository(persistentUrl));
         }
         catch (RepositoryException exception) {
             log.error(exception.getMessage(), exception);

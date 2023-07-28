@@ -27,8 +27,8 @@ import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.service.member.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,9 +62,6 @@ public class List_GET extends WebIntegrationTest {
     @Autowired
     private MemberMapper memberMapper;
 
-    @Autowired
-    private MetadataFixtures metadataFixtures;
-
     private URI url(String id) {
         return URI.create(format("/distribution/%s/meta", id));
     }
@@ -91,7 +88,7 @@ public class List_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getMember(), is(equalTo(expMember)));
         assertThat(result.getBody().getState(), is(equalTo(new MetaStateDTO(
-                metadataFixtures.distribution1().getState(),
+                MetadataState.PUBLISHED,
                 Map.of()
         ))));
     }

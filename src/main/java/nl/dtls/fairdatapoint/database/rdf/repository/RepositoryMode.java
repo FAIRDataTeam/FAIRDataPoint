@@ -20,21 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.metadata;
+package nl.dtls.fairdatapoint.database.rdf.repository;
 
-import nl.dtls.fairdatapoint.database.common.migration.Migration;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class MetadataMigration implements Migration {
-
-    @Autowired
-    private MetadataRepository metadataRepository;
-
-    public void runMigration() {
-        metadataRepository.deleteAll();
-    }
-
+public enum RepositoryMode {
+    MAIN,
+    DRAFTS,
+    COMBINED
 }

@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.service.index.harvester;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactoryImpl;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -109,7 +110,7 @@ public class HarvesterServiceTest {
         harvesterService.harvest(repositoryUrl);
 
         // THEN:
-        verify(genericMetadataRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
+        verify(genericMetadataRepository, times(2)).save(anyList(), eq(i(repositoryUrl)), eq(RepositoryMode.MAIN));
     }
 
     @Test
@@ -122,7 +123,7 @@ public class HarvesterServiceTest {
         harvesterService.harvest(repositoryUrl);
 
         // THEN:
-        verify(genericMetadataRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
+        verify(genericMetadataRepository, times(1)).save(anyList(), eq(i(repositoryUrl)), eq(RepositoryMode.MAIN));
     }
 
     private void mockEndpoint(String url, Model body) {

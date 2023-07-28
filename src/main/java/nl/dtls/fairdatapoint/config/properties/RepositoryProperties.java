@@ -34,77 +34,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @ConfigurationProperties(prefix = "repository")
 public class RepositoryProperties {
-    // TODO: use polymorphism for types of repository
 
-    public static final int TYPE_IN_MEMORY = 1;
+    private RepositoryConnectionProperties main;
 
-    public static final int TYPE_NATIVE = 2;
-
-    public static final int TYPE_ALLEGRO = 3;
-
-    public static final int TYPE_GRAPHDB = 4;
-
-    public static final int TYPE_BLAZEGRAPH = 5;
-
-    private int type;
-    private RepositoryNativeProperties nativeRepo;
-    private RepositoryBasicProperties agraph;
-    private RepositoryBasicProperties graphDb;
-    private RepositoryBasicProperties blazegraph;
-
-    public void setNative(RepositoryNativeProperties repositoryNativeProperties) {
-        this.nativeRepo = repositoryNativeProperties;
-    }
-
-    public String getStringType() {
-        return switch (type) {
-            case TYPE_IN_MEMORY -> "InMemory";
-            case TYPE_NATIVE -> "Native";
-            case TYPE_ALLEGRO -> "AllegroGraph";
-            case TYPE_GRAPHDB -> "GraphDB";
-            case TYPE_BLAZEGRAPH -> "Blazegraph";
-            default -> "Invalid";
-        };
-    }
-
-    public String getDir() {
-        if (type == TYPE_NATIVE) {
-            return nativeRepo.getDir();
-        }
-        return null;
-    }
-
-    public String getUrl() {
-        return switch (type) {
-            case TYPE_ALLEGRO -> agraph.getUrl();
-            case TYPE_GRAPHDB -> graphDb.getUrl();
-            case TYPE_BLAZEGRAPH -> blazegraph.getUrl();
-            default -> null;
-        };
-    }
-
-    public String getRepository() {
-        return switch (type) {
-            case TYPE_ALLEGRO -> agraph.getRepository();
-            case TYPE_GRAPHDB -> graphDb.getRepository();
-            case TYPE_BLAZEGRAPH -> blazegraph.getRepository();
-            default -> null;
-        };
-    }
-
-    public String getUsername() {
-        return switch (type) {
-            case TYPE_ALLEGRO -> agraph.getUsername();
-            case TYPE_GRAPHDB -> graphDb.getUsername();
-            default -> null;
-        };
-    }
-
-    public String getPassword() {
-        return switch (type) {
-            case TYPE_ALLEGRO -> agraph.getPassword();
-            case TYPE_GRAPHDB -> graphDb.getPassword();
-            default -> null;
-        };
-    }
+    private RepositoryConnectionProperties drafts;
 }

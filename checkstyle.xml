@@ -311,7 +311,7 @@
         <module name="MutableException"/>
         <module name="OneTopLevelClass"/>
         <module name="ThrowsCount">
-            <property name="max" value="2"/>
+            <property name="max" value="4"/>
         </module>
         <module name="VisibilityModifier">
             <property name="ignoreAnnotationCanonicalNames"

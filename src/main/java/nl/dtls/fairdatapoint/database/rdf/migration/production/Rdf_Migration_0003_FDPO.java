@@ -51,6 +51,7 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.s;
 @Slf4j
 @Service
 public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
+    // TODO: squash RDF migrations
 
     private static final String LEGACY_CONFORMS_TO = "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata";
 
@@ -65,7 +66,7 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
     private static final String MSG_REMOVE = "Removing: {} {} {}";
 
     @Autowired
-    private Repository repository;
+    private Repository mainRepository;
 
     public void runMigration() {
         removeOldConformsTo();
@@ -76,7 +77,7 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
 
     private void removeOldConformsTo() {
         // remove conformsTo for repository if present (https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata)
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             final RepositoryResult<Statement> queryResult =
                     conn.getStatements(null, DCTERMS.CONFORMS_TO, i(LEGACY_CONFORMS_TO));
             while (queryResult.hasNext()) {
@@ -93,7 +94,7 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
     private void updateRepositoryStatements() {
         // change r3d:Repository -> fdp-o:FAIRDataPoint (and dcat:DataService + fdp-o:MetadataService?)
         final List<IRI> newTypes = List.of(DCAT.DATA_SERVICE, FDP.METADATASERVICE, FDP.FAIRDATAPOINT);
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             final RepositoryResult<Statement> queryResult = conn.getStatements(null, RDF.TYPE, R3D.REPOSITORY);
             while (queryResult.hasNext()) {
                 final Statement st = queryResult.next();
@@ -112,7 +113,7 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
 
     private void updateOldFdpoStatements() {
         // update old FDP-O generated metadata
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             RepositoryResult<Statement> queryResult = conn.getStatements(null, OLD_METADATA_IDENTIFIER, null);
             while (queryResult.hasNext()) {
                 final Statement st = queryResult.next();
@@ -145,7 +146,7 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
 
     private void updateRepositoryCatalogLinks() {
         // change r3d:dataCatalog to fdp-o:metadataCatalog property (between Repository/FDP and Catalogs)
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             final RepositoryResult<Statement> queryResult = conn.getStatements(null, R3D.DATACATALOG, null);
             while (queryResult.hasNext()) {
                 final Statement st = queryResult.next();

@@ -24,8 +24,6 @@ package nl.dtls.fairdatapoint.service.reset;
 
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.entity.resource.*;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
@@ -511,13 +509,6 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, publisherIri, RDF.TYPE, FOAF.AGENT, baseUrl);
         FactoryDefaults.add(s, publisherIri, FOAF.NAME, l(DEFAULT_PUBLISHER), baseUrl);
         return s;
-    }
-
-    public static Metadata metadataRepository(String persistentUrl) {
-        return Metadata.builder()
-                .uri(persistentUrl)
-                .state(MetadataState.PUBLISHED)
-                .build();
     }
 
     private static void add(List<Statement> statements, IRI predicate,
