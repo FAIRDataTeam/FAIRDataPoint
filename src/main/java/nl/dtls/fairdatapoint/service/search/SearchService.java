@@ -22,13 +22,11 @@
  */
 package nl.dtls.fairdatapoint.service.search;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import nl.dtls.fairdatapoint.api.dto.search.*;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterCacheContainer;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterType;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
@@ -37,7 +35,6 @@ import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -88,7 +86,7 @@ public class SearchService {
     }
 
     public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
-        final List<SearchResult> results = metadataRepository.findByLiteral(l(reqDto.getQuery()));
+        final List<SearchResult> results = metadataRepository.findByLiteral(l(reqDto.getQuery()), RepositoryMode.MAIN);
         return processSearchResults(results);
     }
 
@@ -101,7 +99,7 @@ public class SearchService {
         final SPARQLParser parser = new SPARQLParser();
         parser.parseQuery(query, persistentUrl);
         // Get and process results for query
-        final List<SearchResult> results = metadataRepository.findBySparqlQuery(query);
+        final List<SearchResult> results = metadataRepository.findBySparqlQuery(query, RepositoryMode.MAIN);
         return processSearchResults(results);
     }
 
@@ -150,7 +148,6 @@ public class SearchService {
     }
 
     private List<SearchFilterValue> queryFilterItems(String predicate) {
-        // TODO: filter related to DRAFT records
         final SearchFilterCacheContainer cacheContainer =
                 searchFilterCache.getFilter(predicate);
         if (cacheContainer != null) {
@@ -158,7 +155,7 @@ public class SearchService {
         }
         try {
             final List<SearchFilterValue> result =
-                    metadataRepository.findByFilterPredicate(i(predicate));
+                    metadataRepository.findByFilterPredicate(i(predicate), RepositoryMode.MAIN);
             searchFilterCache.setFilter(predicate, new SearchFilterCacheContainer(result));
             return result;
         }
@@ -178,7 +175,6 @@ public class SearchService {
                 )
                 .entrySet()
                 .parallelStream()
-                .filter(entry -> isUsableForFilter(i(entry.getKey())))
                 .map(entry -> searchMapper.toResultDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(SearchResultDTO::getUri, Function.identity()));
         return results
@@ -190,18 +186,6 @@ public class SearchService {
                 .toList();
     }
 
-    private boolean isUsableForFilter(IRI iri) {
-        try {
-            return !metadataStateService
-                    .get(iri)
-                    .getState()
-                    .equals(MetadataState.DRAFT);
-        }
-        catch (ResourceNotFoundException exception) {
-            return true;
-        }
-    }
-
     private String composeQuery(SearchQueryVariablesDTO reqDto) {
         final StrSubstitutor substitutor =
                 new StrSubstitutor(searchMapper.toSubstitutions(reqDto), "{{", "}}");
@@ -211,7 +195,7 @@ public class SearchService {
     private static String loadSparqlQueryTemplate() {
         try {
             final URL fileURL = SearchService.class.getResource(QUERY_TEMPLATE_NAME);
-            return Resources.toString(fileURL, Charsets.UTF_8);
+            return Resources.toString(fileURL, StandardCharsets.UTF_8);
         }
         catch (IOException exception) {
             throw new RuntimeException(

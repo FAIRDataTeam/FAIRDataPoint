@@ -24,13 +24,13 @@ package nl.dtls.fairdatapoint.acceptance.metadata.dataset.meta;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,6 +43,7 @@ import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
 import static nl.dtls.fairdatapoint.acceptance.metadata.Common.createMetadataStateAlreadyPublished;
 import static nl.dtls.fairdatapoint.acceptance.metadata.Common.createMetadataStateChangeToDraft;
+import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -51,10 +52,11 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_State_PUT extends WebIntegrationTest {
 
     @Autowired
-    private MetadataFixtures metadataFixtures;
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private GenericMetadataRepository repository;
 
     private URI url(String id) {
         return URI.create(format("/dataset/%s/meta/state", id));
@@ -66,7 +68,7 @@ public class List_State_PUT extends WebIntegrationTest {
 
     @Test
     @DisplayName("HTTP 200")
-    public void res200() {
+    public void res200() throws MetadataRepositoryException {
         // GIVEN:
         RequestEntity<MetaStateChangeDTO> request = RequestEntity
                 .put(url("dataset-1"))
@@ -76,10 +78,8 @@ public class List_State_PUT extends WebIntegrationTest {
         ParameterizedTypeReference<MetaStateChangeDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
-        // AND: Prepare database
-        Metadata metadata = metadataRepository.findByUri(metadataFixtures.dataset1().getUri()).get();
-        metadata.setState(MetadataState.DRAFT);
-        metadataRepository.save(metadata);
+        // AND: Prepare database (make it a draft)
+        repository.moveToDrafts(i(persistentUrl + "/dataset/dataset-1"));
 
         // WHEN:
         ResponseEntity<MetaStateChangeDTO> result = client.exchange(request, responseType);
@@ -91,13 +91,15 @@ public class List_State_PUT extends WebIntegrationTest {
 
     @Test
     @DisplayName("HTTP 400: Metadata is already published")
-    public void res400_already_published() {
+    public void res400_already_published() throws MetadataRepositoryException {
+        repository.moveToMain(i(persistentUrl + "/dataset/dataset-1"));
         createMetadataStateAlreadyPublished(client, url("dataset-1"));
     }
 
     @Test
     @DisplayName("HTTP 400: You can not change state to DRAFT")
-    public void res400_change_to_draft() {
+    public void res400_change_to_draft() throws MetadataRepositoryException {
+        repository.moveToDrafts(i(persistentUrl + "/dataset/dataset-1"));
         createMetadataStateChangeToDraft(client, url("dataset-1"));
     }
 

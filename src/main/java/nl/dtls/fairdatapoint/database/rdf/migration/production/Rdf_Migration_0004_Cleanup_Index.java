@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
@@ -46,9 +47,10 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 @Service
 public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration {
+    // TODO: squash RDF migrations
 
     @Autowired
-    private Repository repository;
+    private Repository mainRepository;
 
     @Autowired
     private GenericMetadataRepository genericMetadataRepository;
@@ -89,7 +91,7 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
             return;
         }
 
-        try (RepositoryConnection conn = repository.getConnection()) {
+        try (RepositoryConnection conn = mainRepository.getConnection()) {
             conn.getContextIDs()
                     .stream()
                     .filter(Value::isIRI)
@@ -98,7 +100,7 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
                     .forEach(contextId -> {
                         log.info("Deleting harvested records for '{}': {}", entry.getClientUrl(), contextId);
                         try {
-                            genericMetadataRepository.remove(i(contextId));
+                            genericMetadataRepository.remove(i(contextId), RepositoryMode.COMBINED);
                         }
                         catch (MetadataRepositoryException exception) {
                             throw new RuntimeException(exception);

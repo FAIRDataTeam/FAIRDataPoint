@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
 
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.TupleQuery;
@@ -80,10 +81,10 @@ public class CatalogMetadataRepositoryTest {
         when(cache.get(catalogUri.toString(), List.class)).thenReturn(Collections.emptyList());
 
         // WHEN:
-        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri, RepositoryMode.MAIN);
 
         // THEN:
-        verify(catalogMetadataRepository, never()).runSparqlQuery(any(), any(), any());
+        verify(catalogMetadataRepository, never()).runSparqlQuery(any(), any(), any(), eq(RepositoryMode.MAIN));
     }
 
     @Test
@@ -96,10 +97,10 @@ public class CatalogMetadataRepositoryTest {
         when(tupleQuery.evaluate()).thenReturn(tupleQueryResult);
 
         // WHEN:
-        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri, RepositoryMode.MAIN);
 
         // THEN:
-        verify(catalogMetadataRepository, times(1)).runSparqlQuery(any(), any(), any());
+        verify(catalogMetadataRepository, times(1)).runSparqlQuery(any(), any(), any(), eq(RepositoryMode.MAIN));
     }
 
 }

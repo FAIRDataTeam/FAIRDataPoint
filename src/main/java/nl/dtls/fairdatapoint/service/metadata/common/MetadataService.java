@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -35,6 +36,10 @@ public interface MetadataService {
     Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException;
 
     List<Model> retrieve(List<IRI> uri) throws MetadataServiceException, ResourceNotFoundException;
+
+    Model retrieve(IRI uri, RepositoryMode mode) throws MetadataServiceException, ResourceNotFoundException;
+
+    List<Model> retrieve(List<IRI> uri, RepositoryMode mode) throws MetadataServiceException, ResourceNotFoundException;
 
     Model store(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition

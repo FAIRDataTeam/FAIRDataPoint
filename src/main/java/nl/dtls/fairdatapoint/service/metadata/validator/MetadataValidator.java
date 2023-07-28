@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.validator;
 
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
@@ -90,7 +91,7 @@ public class MetadataValidator {
         try {
             // select parent based on URI prefix
             for (String rdfType : resourceDefinitionService.getTargetClassUris(rdParent)) {
-                if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
+                if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType), RepositoryMode.COMBINED)) {
                     throw new ValidationException(format("Parent is not of type (missing type: %s)", rdfType));
                 }
             }

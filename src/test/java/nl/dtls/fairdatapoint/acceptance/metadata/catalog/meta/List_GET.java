@@ -27,12 +27,13 @@ import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.service.member.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -63,7 +64,8 @@ public class List_GET extends WebIntegrationTest {
     private MemberMapper memberMapper;
 
     @Autowired
-    private MetadataFixtures metadataFixtures;
+    @Qualifier("persistentUrl")
+    private String persistentUrl;
 
     private URI url(String id) {
         return URI.create(format("/catalog/%s/meta", id));
@@ -91,10 +93,10 @@ public class List_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getMember(), is(equalTo(expMember)));
         assertThat(result.getBody().getState(), is(equalTo(new MetaStateDTO(
-                metadataFixtures.catalog1().getState(),
+                MetadataState.PUBLISHED,
                 Map.of(
-                        metadataFixtures.dataset1().getUri(), metadataFixtures.dataset1().getState(),
-                        metadataFixtures.dataset2().getUri(), metadataFixtures.dataset2().getState()
+                        persistentUrl + "/dataset/dataset-1", MetadataState.PUBLISHED,
+                        persistentUrl + "/dataset/dataset-2", MetadataState.DRAFT
                 )
         ))));
     }

@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.config;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.config.properties.RepositoryConnectionProperties;
 import nl.dtls.fairdatapoint.config.properties.RepositoryProperties;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -51,16 +52,25 @@ public class RepositoryConfig {
     @Autowired
     private RepositoryProperties repositoryProperties;
 
-    @Bean(initMethod = "init", destroyMethod = "shutDown")
-    public Repository repository(ApplicationContext context)
+    @Bean(initMethod = "init", destroyMethod = "shutDown", name = "mainRepository")
+    public Repository mainRepository(ApplicationContext context) throws RepositoryException {
+        return prepareRepository(context, repositoryProperties.getMain());
+    }
+
+    @Bean(initMethod = "init", destroyMethod = "shutDown", name = "draftsRepository")
+    public Repository draftsRepository(ApplicationContext context) throws RepositoryException {
+        return prepareRepository(context, repositoryProperties.getMain());
+    }
+
+    public Repository prepareRepository(ApplicationContext context, RepositoryConnectionProperties properties)
             throws RepositoryException {
 
-        final Repository repository = switch (repositoryProperties.getType()) {
-            case RepositoryProperties.TYPE_IN_MEMORY -> getInMemoryStore();
-            case RepositoryProperties.TYPE_NATIVE -> getNativeStore();
-            case RepositoryProperties.TYPE_ALLEGRO -> getAgraphRepository();
-            case RepositoryProperties.TYPE_GRAPHDB -> getGraphDBRepository();
-            case RepositoryProperties.TYPE_BLAZEGRAPH -> getBlazeGraphRepository();
+        final Repository repository = switch (properties.getType()) {
+            case RepositoryConnectionProperties.TYPE_IN_MEMORY -> getInMemoryStore();
+            case RepositoryConnectionProperties.TYPE_NATIVE -> getNativeStore(properties);
+            case RepositoryConnectionProperties.TYPE_ALLEGRO -> getAgraphRepository(properties);
+            case RepositoryConnectionProperties.TYPE_GRAPHDB -> getGraphDBRepository(properties);
+            case RepositoryConnectionProperties.TYPE_BLAZEGRAPH -> getBlazeGraphRepository(properties);
             default -> null;
         };
 
@@ -81,26 +91,26 @@ public class RepositoryConfig {
         return new SailRepository(store);
     }
 
-    private Repository getNativeStore() {
+    private Repository getNativeStore(RepositoryConnectionProperties properties) {
         log.info("Setting up Native Store");
-        if (!repositoryProperties.getNativeRepo().getDir().isEmpty()) {
-            final File dataDir = new File(repositoryProperties.getNativeRepo().getDir());
+        if (!properties.getNativeRepo().getDir().isEmpty()) {
+            final File dataDir = new File(properties.getNativeRepo().getDir());
             return new SailRepository(new NativeStore(dataDir));
         }
         log.warn("'repository.native.dir' is empty");
         return null;
     }
 
-    private Repository getAgraphRepository() {
+    private Repository getAgraphRepository(RepositoryConnectionProperties properties) {
         log.info("Setting up Allegro Graph Store");
-        if (!repositoryProperties.getAgraph().getUrl().isEmpty()) {
+        if (!properties.getAgraph().getUrl().isEmpty()) {
             final SPARQLRepository repository =
-                    new SPARQLRepository(repositoryProperties.getAgraph().getUrl());
-            if (!repositoryProperties.getAgraph().getUsername().isEmpty()
-                    && !repositoryProperties.getAgraph().getPassword().isEmpty()) {
+                    new SPARQLRepository(properties.getAgraph().getUrl());
+            if (!properties.getAgraph().getUsername().isEmpty()
+                    && !properties.getAgraph().getPassword().isEmpty()) {
                 repository.setUsernameAndPassword(
-                        repositoryProperties.getAgraph().getUsername(),
-                        repositoryProperties.getAgraph().getPassword()
+                        properties.getAgraph().getUsername(),
+                        properties.getAgraph().getPassword()
                 );
             }
             return repository;
@@ -109,17 +119,17 @@ public class RepositoryConfig {
         return null;
     }
 
-    private Repository getBlazeGraphRepository() {
+    private Repository getBlazeGraphRepository(RepositoryConnectionProperties properties) {
         log.info("Setting up Blaze Graph Store");
-        String blazegraphUrl = repositoryProperties.getBlazegraph().getUrl();
+        String blazegraphUrl = properties.getBlazegraph().getUrl();
         if (!blazegraphUrl.isEmpty()) {
             blazegraphUrl = removeLastSlash(blazegraphUrl);
             // Build url for blazegraph (Eg: http://localhost:8079/bigdata/namespace/test1/sparql)
             final StringBuilder urlBuilder = new StringBuilder();
             urlBuilder.append(blazegraphUrl);
             urlBuilder.append("/namespace/");
-            if (!repositoryProperties.getBlazegraph().getRepository().isEmpty()) {
-                urlBuilder.append(repositoryProperties.getBlazegraph().getRepository());
+            if (!properties.getBlazegraph().getRepository().isEmpty()) {
+                urlBuilder.append(properties.getBlazegraph().getRepository());
             }
             else {
                 urlBuilder.append("kb");
@@ -131,28 +141,28 @@ public class RepositoryConfig {
         return null;
     }
 
-    private Repository getGraphDBRepository() {
+    private Repository getGraphDBRepository(RepositoryConnectionProperties properties) {
         log.info("Setting up GraphDB Store");
         try {
             System.setProperty("org.eclipse.rdf4j.rio.binary.format_version", "1");
-            if (!repositoryProperties.getGraphDb().getUrl().isEmpty()
-                    && !repositoryProperties.getGraphDb().getRepository().isEmpty()) {
+            if (!properties.getGraphDb().getUrl().isEmpty()
+                    && !properties.getGraphDb().getRepository().isEmpty()) {
                 final RepositoryManager repositoryManager;
-                if (!repositoryProperties.getGraphDb().getUsername().isEmpty()
-                        && !repositoryProperties.getGraphDb().getPassword().isEmpty()) {
+                if (!properties.getGraphDb().getUsername().isEmpty()
+                        && !properties.getGraphDb().getPassword().isEmpty()) {
                     repositoryManager = RemoteRepositoryManager.getInstance(
-                            repositoryProperties.getGraphDb().getUrl(),
-                            repositoryProperties.getGraphDb().getUsername(),
-                            repositoryProperties.getGraphDb().getPassword()
+                            properties.getGraphDb().getUrl(),
+                            properties.getGraphDb().getUsername(),
+                            properties.getGraphDb().getPassword()
                     );
                 }
                 else {
                     repositoryManager = RemoteRepositoryManager.getInstance(
-                            repositoryProperties.getGraphDb().getUrl()
+                            properties.getGraphDb().getUrl()
                     );
                 }
                 return repositoryManager.getRepository(
-                        repositoryProperties.getGraphDb().getRepository()
+                        properties.getGraphDb().getRepository()
                 );
             }
             log.warn("'repository.graphDb.url' or 'repository.graphDb.repository' is empty");

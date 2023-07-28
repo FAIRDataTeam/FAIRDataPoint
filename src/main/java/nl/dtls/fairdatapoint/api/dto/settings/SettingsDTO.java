@@ -53,7 +53,9 @@ public class SettingsDTO {
 
     private SettingsPingDTO ping;
 
-    private SettingsRepositoryDTO repository;
+    private SettingsRepositoryDTO mainRepository;
+
+    private SettingsRepositoryDTO draftsRepository;
 
     private SettingsSearchDTO search;
 

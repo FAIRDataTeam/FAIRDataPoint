@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.metadata.catalog;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
@@ -48,10 +49,10 @@ public class CatalogMetadataService extends AbstractMetadataService {
     private CatalogMetadataRepository metadataRepository;
 
     @Override
-    public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
-        final Model catalog = super.retrieve(uri);
+    public Model retrieve(@Nonnull IRI uri, RepositoryMode mode) throws MetadataServiceException {
+        final Model catalog = super.retrieve(uri, mode);
         try {
-            final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
+            final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri, mode);
             setThemeTaxonomies(catalog, uri, themes);
         }
         catch (MetadataRepositoryException exception) {

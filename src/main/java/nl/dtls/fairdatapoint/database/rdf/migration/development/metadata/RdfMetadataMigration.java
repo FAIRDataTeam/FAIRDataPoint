@@ -27,6 +27,7 @@ import nl.dtls.fairdatapoint.database.common.migration.Migration;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
@@ -82,7 +83,7 @@ public class RdfMetadataMigration implements Migration {
     public void runMigration() {
         try {
             // 1. Remove all previous metadata
-            metadataRepository.removeAll();
+            metadataRepository.removeAll(RepositoryMode.COMBINED);
 
             // 2. Auth user
             final String adminUuid = userFixtures.admin().getUuid();

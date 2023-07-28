@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.metadata.catalog;
 
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepositoryImpl;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
@@ -74,13 +75,13 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
         // GIVEN: Retrieve catalog from Repository
         Model catalog = testMetadataFixtures.catalog1();
         List<Statement> catalogStatements = new ArrayList<>(catalog);
-        when(metadataRepository.find(getUri(catalog))).thenReturn(catalogStatements);
+        when(metadataRepository.find(getUri(catalog), RepositoryMode.COMBINED)).thenReturn(catalogStatements);
 
         // AND: Retrieve themes from datasets
         IRI theme1 = i("http://localhost/my_theme_1");
         IRI theme2_duplicated = i("http://localhost/my_theme_2_duplicated");
         List<IRI> themes = List.of(theme1, theme2_duplicated, theme2_duplicated);
-        when(catalogMetadataRepository.getDatasetThemesForCatalog(getUri(catalog))).thenReturn(themes);
+        when(catalogMetadataRepository.getDatasetThemesForCatalog(getUri(catalog), RepositoryMode.COMBINED)).thenReturn(themes);
 
         // WHEN:
         Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));

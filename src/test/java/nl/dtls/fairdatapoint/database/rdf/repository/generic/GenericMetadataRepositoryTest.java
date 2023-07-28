@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.generic;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
@@ -68,13 +69,13 @@ public class GenericMetadataRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri, RepositoryMode.MAIN);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
 
         // WHEN:
-        metadataRepository.save(new ArrayList<>(dataset), getUri(dataset));
+        metadataRepository.save(new ArrayList<>(dataset), getUri(dataset), RepositoryMode.MAIN);
 
         // THEN:
         assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
@@ -89,13 +90,13 @@ public class GenericMetadataRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri, RepositoryMode.MAIN);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
 
         // WHEN:
-        metadataRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
+        metadataRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset), RepositoryMode.MAIN);
 
         // THEN:
         assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
@@ -110,13 +111,13 @@ public class GenericMetadataRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri, RepositoryMode.MAIN);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
 
         // WHEN:
-        metadataRepository.remove(getUri(dataset));
+        metadataRepository.remove(getUri(dataset), RepositoryMode.MAIN);
 
         // THEN:
         assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));

@@ -22,106 +22,130 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.state;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
+import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.service.metadata.validator.MetadataStateValidator;
+import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 import static nl.dtls.fairdatapoint.util.RdfUtil.getObjectsBy;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
+@Slf4j
 @Service
 public class MetadataStateService {
 
-    private static final String MSG_NOT_FOUND = "Metadata info '%s' was not found";
+    @Autowired
+    @Qualifier("genericMetadataService")
+    private MetadataService metadataService;
 
     @Autowired
+    @Qualifier("genericMetadataRepository")
     private MetadataRepository metadataRepository;
-
-    @Autowired
-    private MetadataStateValidator metadataStateValidator;
 
     @Autowired
     private CurrentUserService currentUserService;
 
-    public Metadata get(IRI metadataUri) {
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
-        if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
+    public boolean isDraft(IRI uri) throws MetadataServiceException {
+        try {
+            return !metadataRepository.find(uri, RepositoryMode.DRAFTS).isEmpty();
         }
-        return oMetadata.get();
+        catch (MetadataRepositoryException exc) {
+            throw new MetadataServiceException(exc.getMessage());
+        }
     }
 
-    public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition definition) {
-        // 1. Return null if user is not log in
+    public boolean isPublished(IRI uri) throws MetadataServiceException {
+        try {
+            return !metadataRepository.find(uri, RepositoryMode.MAIN).isEmpty();
+        }
+        catch (MetadataRepositoryException exc) {
+            throw new MetadataServiceException(exc.getMessage());
+        }
+    }
+
+    public MetadataState getState(IRI entityUri) throws MetadataServiceException {
+        if (isDraft(entityUri)) {
+            return MetadataState.DRAFT;
+        }
+        return MetadataState.PUBLISHED;
+    }
+
+    public MetaStateDTO getStateDTO(
+            IRI entityUri, Model entity, ResourceDefinition definition
+    ) throws MetadataServiceException {
+        // 1. Return null if user is not logged in
         if (currentUserService.getCurrentUser().isEmpty()) {
             return null;
         }
+        final Model model = metadataService.retrieve(entityUri, RepositoryMode.COMBINED);
 
         // 2. Get metadata info for current
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
-        if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
-        }
-        final Metadata metadata = oMetadata.get();
+        final MetaStateDTO result = new MetaStateDTO();
+        result.setCurrent(getState(entityUri));
 
         // 3. Get metadata info for children
+        // TODO: make querying more efficient (query published and drafts, in 2 queries)
         final List<String> childrenUris = new ArrayList<>();
         for (ResourceDefinitionChild rdChild : definition.getChildren()) {
             final IRI relationUri = i(rdChild.getRelationUri());
-            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(model, metadataUri, relationUri)) {
+            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(model, entityUri, relationUri)) {
                 childrenUris.add(childUri.stringValue());
             }
         }
-        final Map<String, MetadataState> children =
-                metadataRepository.findByUriIn(childrenUris)
-                        .stream()
-                        .collect(Collectors.toMap(Metadata::getUri, Metadata::getState));
-
-        // 4. Build response
-        return new MetaStateDTO(
-                metadata.getState(),
-                children
-        );
+        final Map<String, MetadataState> children = new HashMap<>();
+        childrenUris.forEach(childUri -> {
+            try {
+                children.put(childUri, getState(i(childUri)));
+            }
+            catch (MetadataServiceException exc) {
+                log.warn("Failed to metadata check state: {} ({})", childUri, exc.getMessage());
+            }
+        });
+        result.setChildren(children);
+        return result;
     }
 
-    public void initState(IRI metadataUri) {
-        final Metadata metadata = new Metadata(null, metadataUri.stringValue(), MetadataState.DRAFT);
-        metadataRepository.save(metadata);
-    }
-
-    public void modifyState(IRI metadataUri, MetaStateChangeDTO reqDto) {
-        // 1. Get metadata info for current
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
-        if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
+    public void modifyState(IRI entityUri, MetaStateChangeDTO reqDto)
+            throws MetadataServiceException, ValidationException {
+        try {
+            if (isDraft(entityUri)) {
+                if (reqDto.getCurrent().equals(MetadataState.PUBLISHED)) {
+                    metadataRepository.moveToMain(entityUri);
+                }
+                else {
+                    throw new ValidationException("You can not change state to DRAFT");
+                }
+            }
+            else {
+                if (reqDto.getCurrent().equals(MetadataState.DRAFT)) {
+                    metadataRepository.moveToDrafts(entityUri);
+                }
+                else {
+                    throw new ValidationException("Metadata is already published");
+                }
+            }
         }
-        final Metadata metadata = oMetadata.get();
-
-        // 2. Validate
-        metadataStateValidator.validate(reqDto, metadata);
-
-        // 3. Update
-        metadata.setState(reqDto.getCurrent());
-        metadataRepository.save(metadata);
+        catch (MetadataRepositoryException exc) {
+            throw new MetadataServiceException(exc.getMessage());
+        }
     }
-
 }

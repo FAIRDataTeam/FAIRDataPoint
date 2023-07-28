@@ -88,15 +88,4 @@ public class RdfEntitiesNamespaceRetriever implements RdfEntitiesRetriever {
     public RdfEntitySourceType getSourceType() {
         return RdfEntitySourceType.NAMESPACE;
     }
-
-    public static void main(String[] args) {
-        // TODO: remove (just for dev/testing out)
-        final RdfEntitiesNamespaceRetriever retriever = new RdfEntitiesNamespaceRetriever();
-        final Map<String, String> result = retriever.retrieve("http://purl.org/dc/terms/AgentClass");
-        if (result != null) {
-            result.forEach((entity, label) -> {
-                System.out.printf("%s => %s%n", entity, label);
-            });
-        }
-    }
 }

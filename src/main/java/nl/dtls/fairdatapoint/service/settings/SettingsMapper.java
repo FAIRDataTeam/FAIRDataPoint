@@ -59,7 +59,8 @@ public class SettingsMapper {
                 .persistentUrl(instanceProperties.getPersistentUrl())
                 .metadataMetrics(settings.getMetadataMetrics())
                 .ping(toDTO(settings.getPing()))
-                .repository(getRepositoryDTO())
+                .mainRepository(getMainRepositoryDTO())
+                .draftsRepository(getDraftsRepositoryDTO())
                 .search(
                         SettingsSearchDTO
                                 .builder()
@@ -129,15 +130,27 @@ public class SettingsMapper {
                 .build();
     }
 
-    public SettingsRepositoryDTO getRepositoryDTO() {
+    public SettingsRepositoryDTO getMainRepositoryDTO() {
         return SettingsRepositoryDTO
                 .builder()
-                .type(repositoryProperties.getStringType())
-                .dir(repositoryProperties.getDir())
-                .url(repositoryProperties.getUrl())
-                .repository(repositoryProperties.getRepository())
-                .username(repositoryProperties.getUsername())
-                .password(repositoryProperties.getPassword() != null ? "<SECRET>" : null)
+                .type(repositoryProperties.getMain().getStringType())
+                .dir(repositoryProperties.getMain().getDir())
+                .url(repositoryProperties.getMain().getUrl())
+                .repository(repositoryProperties.getMain().getRepository())
+                .username(repositoryProperties.getMain().getUsername())
+                .password(redact(repositoryProperties.getMain().getPassword()))
+                .build();
+    }
+
+    public SettingsRepositoryDTO getDraftsRepositoryDTO() {
+        return SettingsRepositoryDTO
+                .builder()
+                .type(repositoryProperties.getDrafts().getStringType())
+                .dir(repositoryProperties.getDrafts().getDir())
+                .url(repositoryProperties.getDrafts().getUrl())
+                .repository(repositoryProperties.getDrafts().getRepository())
+                .username(repositoryProperties.getDrafts().getUsername())
+                .password(redact(repositoryProperties.getDrafts().getPassword()))
                 .build();
     }
 
@@ -242,5 +255,9 @@ public class SettingsMapper {
                 .enabled(settingsPing.isEnabled())
                 .endpoints(settingsPing.getEndpoints())
                 .build();
+    }
+
+    private String redact(String secret) {
+        return secret != null ? "<SECRET>" : null;
     }
 }

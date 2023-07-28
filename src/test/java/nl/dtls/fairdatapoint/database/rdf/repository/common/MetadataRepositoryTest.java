@@ -28,6 +28,7 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
@@ -62,7 +63,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(testMetadataFixtures.catalog1());
 
         // WHEN:
-        List<Statement> result = metadataRepository.find(context);
+        List<Statement> result = metadataRepository.find(context, RepositoryMode.MAIN);
 
         // THEN:
         assertThat(result.size(), is(equalTo(metadata.size())));
@@ -74,7 +75,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         IRI context = i("http://localhost/non-existing");
 
         // WHEN:
-        List<Statement> result = metadataRepository.find(context);
+        List<Statement> result = metadataRepository.find(context, RepositoryMode.MAIN);
 
         // THEN:
         assertThat(result.size(), is(equalTo(0)));
@@ -86,7 +87,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         Model metadata = testMetadataFixtures.catalog1();
 
         // WHEN:
-        boolean result = metadataRepository.checkExistence(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata));
+        boolean result = metadataRepository.checkExistence(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), RepositoryMode.MAIN);
 
         // THEN:
         assertThat(result, is(equalTo(true)));
@@ -100,10 +101,10 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         ArrayList<Statement> statements = new ArrayList<>(metadata);
 
         // WHEN:
-        metadataRepository.save(statements, context);
+        metadataRepository.save(statements, context, RepositoryMode.MAIN);
 
         // THEN:
-        assertThat(metadataRepository.find(context).size(), is(equalTo(28)));
+        assertThat(metadataRepository.find(context, RepositoryMode.MAIN).size(), is(equalTo(28)));
     }
 
     @Test
@@ -113,13 +114,13 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(metadataRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRepository.find(context, RepositoryMode.MAIN).size(), is(equalTo(metadata.size())));
 
         // WHEN:
-        metadataRepository.remove(context);
+        metadataRepository.remove(context, RepositoryMode.MAIN);
 
         // THEN:
-        assertThat(metadataRepository.find(context).size(), is(equalTo(0)));
+        assertThat(metadataRepository.find(context, RepositoryMode.MAIN).size(), is(equalTo(0)));
     }
 
     @Test
@@ -129,13 +130,13 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(metadataRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRepository.find(context, RepositoryMode.MAIN).size(), is(equalTo(metadata.size())));
 
         // WHEN:
-        metadataRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
+        metadataRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context, RepositoryMode.MAIN);
 
         // THEN:
-        assertThat(metadataRepository.find(context).size(), is(equalTo(metadata.size() - 1)));
+        assertThat(metadataRepository.find(context, RepositoryMode.MAIN).size(), is(equalTo(metadata.size() - 1)));
     }
 
 }
