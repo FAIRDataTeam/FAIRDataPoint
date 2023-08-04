@@ -35,6 +35,7 @@ import nl.dtls.fairdatapoint.entity.user.UserRole;
 import nl.dtls.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import nl.dtls.fairdatapoint.vocabulary.DATACITE;
+import nl.dtls.fairdatapoint.vocabulary.DCAT3;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.bson.BasicBSONObject;
@@ -450,7 +451,7 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, RDF.TYPE, i("http://www.w3.org/ns/dcat#Resource"), baseUrl);
         FactoryDefaults.add(s, DCTERMS.TITLE, l(DEFAULT_FDP_TITLE), baseUrl);
         FactoryDefaults.add(s, RDFS.LABEL, l(DEFAULT_FDP_TITLE), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.HAS_VERSION, l(1.0f), baseUrl);
+        FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
@@ -488,7 +489,7 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, RDF.TYPE, DCAT.RESOURCE, baseUrl);
         FactoryDefaults.add(s, DCTERMS.TITLE, l(DEFAULT_FDP_TITLE), baseUrl);
         FactoryDefaults.add(s, RDFS.LABEL, l(DEFAULT_FDP_TITLE), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.HAS_VERSION, l(1.0f), baseUrl);
+        FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);

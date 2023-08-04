@@ -26,7 +26,7 @@
     sh:maxCount 1 ;
     dash:editor dash:BlankNodeEditor ;
   ], [
-    sh:path dct:hasVersion ;
+    sh:path dcat:version ;
     sh:name "version" ;
     sh:nodeKind sh:Literal ;
     sh:minCount 1 ;
