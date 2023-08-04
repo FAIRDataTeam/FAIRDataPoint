@@ -100,7 +100,7 @@ public class ResourceDefinitionCache {
     }
 
     @Getter
-    private static class ResourceDefinitionParents {
+    private static final class ResourceDefinitionParents {
         private final Set<ResourceDefinition> parents = new HashSet<>();
 
         public void add(ResourceDefinition rdParent) {
