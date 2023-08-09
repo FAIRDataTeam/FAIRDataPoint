@@ -69,6 +69,9 @@ public class KnownUUIDs {
     public static final String SCHEMA_V1_RESOURCE_UUID =
             "71d77460-f919-4f72-b265-ed26567fe361";
 
+    public static final String SCHEMA_V2_RESOURCE_UUID =
+            "4c65bdf7-bb56-4bca-ae22-74977b148b16";
+
     public static final String SCHEMA_V1_FDP_UUID =
             "4e64208d-f102-45a0-96e3-17b002e6213e";
 

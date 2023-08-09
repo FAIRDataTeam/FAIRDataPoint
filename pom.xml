@@ -10,7 +10,7 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.17.0</version>
+    <version>1.17.1</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>

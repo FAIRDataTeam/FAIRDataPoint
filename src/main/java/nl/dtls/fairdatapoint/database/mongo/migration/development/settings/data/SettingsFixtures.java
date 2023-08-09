@@ -80,7 +80,7 @@ public class SettingsFixtures {
             .builder()
             .type(SearchFilterType.LITERAL)
             .label("Version")
-            .predicate("http://purl.org/dc/terms/hasVersion")
+            .predicate("http://www.w3.org/ns/dcat#version")
             .queryFromRecords(true)
             .presetValues(Collections.emptyList())
             .build();

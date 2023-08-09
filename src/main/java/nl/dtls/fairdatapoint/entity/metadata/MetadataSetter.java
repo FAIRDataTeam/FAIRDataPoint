@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.entity.metadata;
 
+import nl.dtls.fairdatapoint.vocabulary.DCAT3;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
 import nl.dtls.fairdatapoint.vocabulary.Sio;
 import org.eclipse.rdf4j.model.IRI;
@@ -79,7 +80,7 @@ public class MetadataSetter {
     }
 
     public static void setVersion(Model metadata, IRI uri, Literal version) {
-        update(metadata, uri, DCTERMS.HAS_VERSION, version);
+        update(metadata, uri, DCAT3.VERSION, version);
     }
 
     public static void setLanguage(Model metadata, IRI uri, IRI language) {
