@@ -8,6 +8,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 
+## [1.17.1]
+
+❗Manual check of custom and customized metadata schemas is required.
+
+### Fixed
+
+- Use `dcterms:hasVersion` has been changed to `dcat:version`
+
 ## [1.17.0]
 
 ### Added
@@ -368,3 +376,4 @@ The first release of reference FAIR Data Point implementation.
 [1.16.1]: /../../tree/v1.16.1
 [1.16.2]: /../../tree/v1.16.2
 [1.17.0]: /../../tree/v1.17.0
+[1.17.1]: /../../tree/v1.17.1
