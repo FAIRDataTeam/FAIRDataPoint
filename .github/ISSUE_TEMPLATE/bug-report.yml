@@ -1,0 +1,59 @@
+name: Bug report
+description: Create a report to help us improve
+title: "Bug appears"
+labels: ["Bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please check [existing issues](https://github.com/FAIRDataTeam/FAIRDataPoint/issues) to avoid duplication.
+  - type: dropdown
+    id: browser
+    attributes:
+      label: What components are related to the issue?
+      multiple: true
+      options:
+        - Metadata Records
+        - Metadata Schemas
+        - Resource Definitions
+        - Users and Permissions
+        - Settings
+        - Search
+        - API
+        - FDP Index
+        - Other (specify in text)
+  - type: dropdown
+    id: relation
+    attributes:
+      label: Which FDP are you using?
+      description: Select all that apply if you tried more.
+      multiple: true
+      options:
+        - My local instance
+        - FDP managed by someone else
+        - FDP that I manage
+  - type: textarea
+    id: version
+    attributes:
+      label: Version
+      description: Specify the version of FDP you are using (check "About" dialog in web UI)
+      render: plain text
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What steps you took? Also tell us, what did you expect to happen? Please add any relevant screenshots (but avoid sharing personal or sensitive information).
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output, e.g. from docker-compose logs (but avoid sharing personal or sensitive information). This will be automatically formatted into code, so no need for backticks.
+      render: plain text
+    

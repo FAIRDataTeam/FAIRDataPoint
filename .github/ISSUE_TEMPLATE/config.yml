@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: FDP Documentation
+    url: https://fairdatapoint.readthedocs.io/
+    about: Please check FDP Documentation before reporting an issue, especially if you have an issue with your custom deployment.
+  - name: FDP Specification
+    url: https://specs.fairdatapoint.org/
+    about: Please check FDP Specification first, if you have any question related to the architecture or how things work in FDP.
+  - name: FDP Specification Issues
+    url: https://github.com/fdp-specs/fdp-specs.github.io/issues
+    about: Please create new issues related to FDP Specification in its dedicated GitHub repository.
