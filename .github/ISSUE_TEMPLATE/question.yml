@@ -1,0 +1,17 @@
+name: Question
+description: Ask anything that is unclear
+title: "... ?"
+labels: ["Question"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check [previous questions](https://github.com/FAIRDataTeam/FAIRDataPoint/issues?q=is%3Aissue+label%3AQuestion+) first if you cannot already find an answer there.
+  - type: textarea
+    id: question
+    attributes:
+      label: What is your question?
+      description: Ask what you want to know... please formulate your question clearly so also others may check it later.
+    validations:
+      required: true
