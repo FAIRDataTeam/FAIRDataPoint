@@ -20,52 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.entry;
+package nl.dtls.fairdatapoint.api.dto.index.entry;
 
-import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 
-import java.time.Duration;
-import java.time.Instant;
-
-@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder
-public class IndexEntry {
+public class IndexEntryUpdateDTO {
 
-    @Id
-    private ObjectId id;
-
-    private String uuid;
-
-    private String clientUrl;
-
-    private IndexEntryState state = IndexEntryState.Unknown;
-
-    private IndexEntryPermit permit = IndexEntryPermit.PENDING;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Instant registrationTime;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Instant modificationTime;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Instant lastRetrievalTime;
-
-    private RepositoryMetadata currentMetadata;
-
-    public Duration getLastRetrievalAgo() {
-        if (lastRetrievalTime == null) {
-            return null;
-        }
-        return Duration.between(lastRetrievalTime, Instant.now());
-    }
+    private IndexEntryPermit permit;
 }

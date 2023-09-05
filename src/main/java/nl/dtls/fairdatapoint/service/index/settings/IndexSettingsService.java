@@ -26,8 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
+import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,9 @@ public class IndexSettingsService {
     @Autowired
     private IndexSettingsMapper mapper;
 
+    @Autowired
+    private InstanceProperties instanceProperties;
+
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
         log.info("Checking if ping.clientUrl is on deny list: " + ping.getClientUrl());
@@ -56,21 +62,33 @@ public class IndexSettingsService {
 
     @RequiredEnabledIndexFeature
     public IndexSettings getOrDefaults() {
-        return repository.findFirstBy().orElse(IndexSettings.getDefault());
+        return repository.findFirstBy().orElse(getDefaults());
     }
 
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO getCurrentSettings() {
-        return mapper.toDTO(getOrDefaults());
+        return mapper.toDTO(getOrDefaults(), getDefaults());
+    }
+
+    @RequiredEnabledIndexFeature
+    public IndexSettings getDefaults() {
+        final IndexSettings settings = new IndexSettings();
+        settings.setPing(IndexSettingsPing.getDefault());
+        settings.setRetrieval(IndexSettingsRetrieval.getDefault());
+        settings.setAutoPermit(instanceProperties.isIndexAutoPermit());
+        return settings;
     }
 
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO updateSettings(IndexSettingsUpdateDTO dto) {
-        return mapper.toDTO(repository.save(mapper.fromUpdateDTO(dto, getOrDefaults())));
+        return mapper.toDTO(
+                repository.save(mapper.fromUpdateDTO(dto, getOrDefaults())),
+                getDefaults()
+        );
     }
 
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO resetSettings() {
-        return updateSettings(mapper.toUpdateDTO(IndexSettings.getDefault()));
+        return updateSettings(mapper.toUpdateDTO(getDefaults()));
     }
 }

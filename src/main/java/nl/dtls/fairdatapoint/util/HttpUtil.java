@@ -72,7 +72,7 @@ public class HttpUtil {
         if (behindProxy) {
             for (String header : IP_HEADER_CANDIDATES) {
                 final String ipList = request.getHeader(header);
-                if (ipList != null && ipList.length() != 0 && !"unknown".equalsIgnoreCase(ipList)) {
+                if (ipList != null && !ipList.isEmpty() && !"unknown".equalsIgnoreCase(ipList)) {
                     return ipList.split(",")[0];
                 }
             }

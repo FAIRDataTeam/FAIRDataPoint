@@ -84,7 +84,12 @@ public class List_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: default settings")
     public void res200_defaultSettings() {
         // GIVEN: prepare data
-        IndexSettings settings = IndexSettings.getDefault();
+        IndexSettings settings = IndexSettings
+                .builder()
+                .ping(IndexSettingsPing.getDefault())
+                .retrieval(IndexSettingsRetrieval.getDefault())
+                .autoPermit(true)
+                .build();
         indexSettingsRepository.deleteAll();
 
         // AND: prepare request

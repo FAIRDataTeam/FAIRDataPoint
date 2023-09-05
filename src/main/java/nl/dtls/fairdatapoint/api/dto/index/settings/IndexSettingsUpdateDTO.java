@@ -41,4 +41,7 @@ public class IndexSettingsUpdateDTO {
     @Valid
     @NotNull
     private IndexSettingsPingDTO ping;
+
+    @NotNull
+    private Boolean autoPermit;
 }
