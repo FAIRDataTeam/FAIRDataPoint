@@ -24,32 +24,34 @@ package nl.dtls.fairdatapoint.service.index.entry;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO;
+import nl.dtls.fairdatapoint.api.dto.index.entry.*;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
+import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO.*;
@@ -61,6 +63,8 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 public class IndexEntryService {
 
     private static final String MSG_NOT_FOUND = "Index entry not found";
+
+    private static final String FILTER_ALL = "ALL";
 
     @Autowired
     private IndexEntryRepository repository;
@@ -80,47 +84,88 @@ public class IndexEntryService {
     @Autowired
     private HarvesterService harvesterService;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries() {
         return repository.findAll();
     }
 
     @RequiredEnabledIndexFeature
-    public List<IndexEntryDTO> getAllEntriesAsDTOs() {
+    public Iterable<IndexEntry> getAllEntries(String permitQuery) {
+        final List<IndexEntryPermit> permit = getPermits(permitQuery);
+        return repository.findAllByPermitIn(permit);
+    }
+
+    @RequiredEnabledIndexFeature
+    public List<IndexEntryDTO> getAllEntriesAsDTOs(String permitQuery) {
         final Instant validThreshold = getValidThreshold();
         return StreamSupport
-                .stream(getAllEntries().spliterator(), true)
+                .stream(getAllEntries(permitQuery).spliterator(), true)
                 .map(entry -> mapper.toDTO(entry, validThreshold))
                 .toList();
     }
 
     @RequiredEnabledIndexFeature
-    public Page<IndexEntry> getEntriesPage(Pageable pageable, String state) {
+    public Page<IndexEntry> getEntriesPage(Pageable pageable, String state, String permitQuery) {
+        return getEntriesPageWithPermits(pageable, state, getPermits(permitQuery));
+    }
+
+    private List<IndexEntryPermit> getPermits(String permitQuery) {
+        if (currentUserService.getCurrentUser().isEmpty()
+                || !currentUserService.getCurrentUser().get().isAdmin()) {
+            // not admin -> can use just ACCEPTED entries
+            return List.of(IndexEntryPermit.ACCEPTED);
+        }
+        final Set<String> permitStrings = Arrays
+                .stream(permitQuery.split(","))
+                .map(String::toUpperCase)
+                .collect(Collectors.toSet());
+        if (permitStrings.contains(FILTER_ALL)) {
+            return Arrays.stream(IndexEntryPermit.values()).toList();
+        }
+        return Arrays
+                .stream(IndexEntryPermit.values())
+                .filter(permitValue -> permitStrings.contains(permitValue.name()))
+                .toList();
+    }
+
+    private Page<IndexEntry> getEntriesPageWithPermits(Pageable pageable, String state,
+                                                       List<IndexEntryPermit> permit) {
         final Instant validThreshold = getValidThreshold();
         if (state.equalsIgnoreCase(ACTIVE.name())) {
-            return repository.findAllByStateEqualsAndLastRetrievalTimeAfter(pageable,
-                    IndexEntryState.Valid, validThreshold);
+            return repository.findAllByStateEqualsAndLastRetrievalTimeAfterAndPermitIn(
+                    pageable, IndexEntryState.Valid, validThreshold, permit
+            );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.INACTIVE.name())) {
-            return repository.findAllByStateEqualsAndLastRetrievalTimeBefore(pageable,
-                    IndexEntryState.Valid, validThreshold);
+            return repository.findAllByStateEqualsAndLastRetrievalTimeBeforeAndPermitIn(
+                    pageable, IndexEntryState.Valid, validThreshold, permit
+            );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.UNREACHABLE.name())) {
-            return repository.findAllByStateEquals(pageable, IndexEntryState.Unreachable);
+            return repository.findAllByStateEqualsAndPermitIn(
+                    pageable, IndexEntryState.Unreachable, permit
+            );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.INVALID.name())) {
-            return repository.findAllByStateEquals(pageable, IndexEntryState.Invalid);
+            return repository.findAllByStateEqualsAndPermitIn(
+                    pageable, IndexEntryState.Invalid, permit
+            );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.UNKNOWN.name())) {
-            return repository.findAllByStateEquals(pageable, IndexEntryState.Unknown);
+            return repository.findAllByStateEqualsAndPermitIn(
+                    pageable, IndexEntryState.Unknown, permit
+            );
         }
-        return repository.findAll(pageable);
+        return repository.findAllByPermitIn(pageable, permit);
     }
 
     @RequiredEnabledIndexFeature
-    public Page<IndexEntryDTO> getEntriesPageDTOs(Pageable pageable, String state) {
+    public Page<IndexEntryDTO> getEntriesPageDTOs(Pageable pageable, String state, String permitQuery) {
         final Instant validThreshold = getValidThreshold();
-        return getEntriesPage(pageable, state)
+        return getEntriesPage(pageable, state, permitQuery)
                 .map(entry -> mapper.toDTO(entry, validThreshold));
     }
 
@@ -141,20 +186,38 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
-    public IndexEntryInfoDTO getEntriesInfo() {
+    public IndexEntryInfoDTO getEntriesInfo(String permitQuery) {
+        final List<IndexEntryPermit> permit = getPermits(permitQuery);
         final Instant validThreshold = getValidThreshold();
         final Map<String, Long> entriesCount = new HashMap<>();
-        entriesCount.put("ALL", repository.count());
-        entriesCount.put(UNKNOWN.name(), repository.countAllByStateEquals(IndexEntryState.Unknown));
-        entriesCount.put(ACTIVE.name(),
-                repository.countAllByStateEqualsAndLastRetrievalTimeAfter(
-                        IndexEntryState.Valid, validThreshold));
-        entriesCount.put(INACTIVE.name(),
-                repository.countAllByStateEqualsAndLastRetrievalTimeBefore(
-                        IndexEntryState.Valid, validThreshold));
-        entriesCount.put(UNREACHABLE.name(), repository.countAllByStateEquals(
-                IndexEntryState.Unreachable));
-        entriesCount.put(INVALID.name(), repository.countAllByStateEquals(IndexEntryState.Invalid));
+        entriesCount.put(
+                FILTER_ALL,
+                repository.countAllByPermitIn(permit)
+        );
+        entriesCount.put(
+                UNKNOWN.name(),
+                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.Unknown, permit)
+        );
+        entriesCount.put(
+                ACTIVE.name(),
+                repository.countAllByStateEqualsAndLastRetrievalTimeAfterAndPermitIn(
+                        IndexEntryState.Valid, validThreshold, permit
+                )
+        );
+        entriesCount.put(
+                INACTIVE.name(),
+                repository.countAllByStateEqualsAndLastRetrievalTimeBeforeAndPermitIn(
+                        IndexEntryState.Valid, validThreshold, permit
+                )
+        );
+        entriesCount.put(
+                UNREACHABLE.name(),
+                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.Unreachable, permit)
+        );
+        entriesCount.put(
+                INVALID.name(),
+                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.Invalid, permit)
+        );
         return new IndexEntryInfoDTO(entriesCount);
     }
 
@@ -163,6 +226,7 @@ public class IndexEntryService {
         final String clientUrl = pingDTO.getClientUrl();
         final Optional<IndexEntry> entity = repository.findByClientUrl(clientUrl);
         final Instant now = Instant.now();
+        final IndexSettings settings = indexSettingsService.getOrDefaults();
 
         final IndexEntry entry;
         if (entity.isPresent()) {
@@ -175,6 +239,12 @@ public class IndexEntryService {
             entry.setUuid(UUID.randomUUID().toString());
             entry.setClientUrl(clientUrl);
             entry.setRegistrationTime(now);
+            if (settings.getAutoPermit()) {
+                entry.setPermit(IndexEntryPermit.ACCEPTED);
+            }
+            else {
+                entry.setPermit(IndexEntryPermit.PENDING);
+            }
         }
 
         entry.setModificationTime(now);
@@ -190,6 +260,17 @@ public class IndexEntryService {
         repository.delete(entry);
     }
 
+    @Async
+    public void harvest(String clientUrl) throws MetadataRepositoryException {
+        log.info("Checking index entry for '{}'", clientUrl);
+        final Optional<IndexEntry> indexEntry = getEntryByClientUrl(clientUrl);
+        if (indexEntry.isEmpty() || indexEntry.get().getPermit() != IndexEntryPermit.ACCEPTED) {
+            log.info("Skipping (not ACCEPTED entry) '{}'", clientUrl);
+            return;
+        }
+        harvesterService.harvest(clientUrl);
+    }
+
     private Instant getValidThreshold() {
         return Instant.now()
                 .minus(indexSettingsService.getOrDefaults().getPing().getValidDuration());
@@ -203,5 +284,18 @@ public class IndexEntryService {
         final Model model = new TreeModel();
         model.addAll(genericMetadataRepository.find(i(entry.getClientUrl())));
         return model;
+    }
+
+    public Optional<IndexEntryDetailDTO> updateEntry(String uuid, IndexEntryUpdateDTO reqDto) {
+        final Optional<IndexEntry> entry = getEntry(uuid);
+        if (entry.isPresent() && !reqDto.getPermit().equals(entry.get().getPermit())) {
+            entry.get().setPermit(reqDto.getPermit());
+            repository.save(entry.get());
+        }
+        return getEntryDetailDTO(uuid);
+    }
+
+    public Optional<IndexEntry> getEntryByClientUrl(String clientUrl) {
+        return repository.findByClientUrl(clientUrl);
     }
 }

@@ -38,6 +38,7 @@ public class InstanceProperties {
     private boolean behindProxy = true;
     private String persistentUrl;
     private boolean index;
+    private boolean indexAutoPermit;
 
     private String title = "FAIR Data Point";
     private String subtitle = "Metadata for machines";

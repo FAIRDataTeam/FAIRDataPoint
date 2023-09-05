@@ -1,5 +1,6 @@
 instance:
   index: ${FDP_INDEX:false}
+  indexAutoPermit: ${FDP_INDEX_AUTOPERMIT:true}
   clientUrl: ${FDP_CLIENT_URL:http://localhost:8080}
   persistentUrl: ${FDP_PERSISTENT_URL:http://localhost:8080}
   behindProxy: ${FDP_BEHIND_PROXY:true}

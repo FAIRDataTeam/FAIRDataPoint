@@ -54,18 +54,20 @@ public class IndexSettingsMapper {
         );
     }
 
-    public IndexSettingsDTO toDTO(IndexSettings indexSettings) {
+    public IndexSettingsDTO toDTO(IndexSettings indexSettings, IndexSettings defaults) {
         return new IndexSettingsDTO(
                 toRetrievalDTO(indexSettings.getRetrieval()),
                 toPingDTO(indexSettings.getPing()),
-                indexSettings.equals(IndexSettings.getDefault())
+                indexSettings.getAutoPermit(),
+                indexSettings.equals(defaults)
         );
     }
 
     public IndexSettingsUpdateDTO toUpdateDTO(IndexSettings indexSettings) {
         return new IndexSettingsUpdateDTO(
                 toRetrievalDTO(indexSettings.getRetrieval()),
-                toPingDTO(indexSettings.getPing())
+                toPingDTO(indexSettings.getPing()),
+                indexSettings.getAutoPermit()
         );
     }
 
@@ -97,6 +99,7 @@ public class IndexSettingsMapper {
                         .toBuilder()
                         .ping(fromDTO(dto.getPing(), indexSettings.getPing()))
                         .retrieval(fromDTO(dto.getRetrieval(), indexSettings.getRetrieval()))
+                        .autoPermit(dto.getAutoPermit())
                         .build();
     }
 }

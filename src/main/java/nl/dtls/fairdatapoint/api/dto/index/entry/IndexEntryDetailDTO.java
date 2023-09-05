@@ -28,6 +28,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.hibernate.validator.constraints.URL;
 
@@ -48,6 +49,9 @@ public class IndexEntryDetailDTO {
 
     @NotNull
     private IndexEntryStateDTO state;
+
+    @NotNull
+    private IndexEntryPermit permit;
 
     @NotNull
     private RepositoryMetadata currentMetadata;

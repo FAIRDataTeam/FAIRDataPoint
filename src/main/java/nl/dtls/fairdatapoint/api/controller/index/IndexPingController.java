@@ -35,8 +35,8 @@ import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.service.UtilityService;
+import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
-import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ public class IndexPingController {
     private WebhookService webhookService;
 
     @Autowired
-    private HarvesterService harvesterService;
+    private IndexEntryService indexEntryService;
 
     @Autowired
     private UtilityService utilityService;
@@ -100,7 +100,7 @@ public class IndexPingController {
         final Event event = eventService.acceptIncomingPing(reqDto, request);
         log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
-        harvesterService.harvest(reqDto.getClientUrl());
+        indexEntryService.harvest(reqDto.getClientUrl());
         webhookService.triggerWebhooks(event);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
