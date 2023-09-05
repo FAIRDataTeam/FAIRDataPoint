@@ -46,12 +46,8 @@ public class IndexSettings {
     @NotNull
     private IndexSettingsPing ping;
 
-    public static IndexSettings getDefault() {
-        final IndexSettings settings = new IndexSettings();
-        settings.setPing(IndexSettingsPing.getDefault());
-        settings.setRetrieval(IndexSettingsRetrieval.getDefault());
-        return settings;
-    }
+    @NotNull
+    private Boolean autoPermit;
 
     @Override
     public boolean equals(Object o) {

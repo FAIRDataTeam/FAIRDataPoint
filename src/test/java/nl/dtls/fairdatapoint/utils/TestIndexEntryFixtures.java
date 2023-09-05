@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.utils;
 
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
 
 import java.time.Instant;
@@ -40,6 +41,14 @@ public class TestIndexEntryFixtures {
         indexEntry.setModificationTime(timestamp);
         indexEntry.setRegistrationTime(timestamp);
         indexEntry.setState(IndexEntryState.Invalid);
+        indexEntry.setPermit(IndexEntryPermit.ACCEPTED);
+        return indexEntry;
+    }
+
+    private static IndexEntry newIndexEntry(String uuid, String clientUrl, Instant timestamp,
+                                            IndexEntryPermit permit) {
+        IndexEntry indexEntry = newIndexEntry(uuid, clientUrl, timestamp);
+        indexEntry.setPermit(permit);
         return indexEntry;
     }
 
@@ -53,6 +62,15 @@ public class TestIndexEntryFixtures {
                 newIndexEntry("09200532-18b4-4721-86dd-fbfa13ec78c3", "http://example.com", ref),
                 newIndexEntry("b6cfa934-dc67-4b88-b8f9-c63448c8272c", "http://test.com", ref.minusSeconds(1)),
                 newIndexEntry("da9ddfb8-6fdb-41b1-889e-387c8cbafc39", "http://localhost", ref.minusSeconds(2))
+        );
+    }
+
+    public static List<IndexEntry> entriesPermits() {
+        Instant ref = Instant.now();
+        return Arrays.asList(
+                newIndexEntry("09200532-18b4-4721-86dd-fbfa13ec78c3", "http://example.com/accepted", ref, IndexEntryPermit.ACCEPTED),
+                newIndexEntry("b6cfa934-dc67-4b88-b8f9-c63448c8272c", "http://example.com/rejected", ref, IndexEntryPermit.REJECTED),
+                newIndexEntry("da9ddfb8-6fdb-41b1-889e-387c8cbafc39", "http://example.com/pending", ref, IndexEntryPermit.PENDING)
         );
     }
 

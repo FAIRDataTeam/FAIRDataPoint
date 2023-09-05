@@ -26,6 +26,7 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.entity.index.event.EventType;
@@ -33,7 +34,6 @@ import nl.dtls.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -55,6 +55,9 @@ public class List_Trigger_POST extends WebIntegrationTest {
 
     @Autowired
     private IndexEntryRepository indexEntryRepository;
+
+    @Autowired
+    private IndexSettingsRepository indexSettingsRepository;
 
     private final ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
     };
@@ -153,6 +156,8 @@ public class List_Trigger_POST extends WebIntegrationTest {
     @DisplayName("HTTP 204: trigger one")
     public void res204_triggerOne() {
         // GIVEN: prepare data
+        indexEntryRepository.deleteAll();
+        indexSettingsRepository.deleteAll();
         IndexEntry entry = TestIndexEntryFixtures.entryExample();
         indexEntryRepository.save(entry);
         PingDTO reqDTO = reqDTO(entry.getClientUrl());
@@ -177,6 +182,8 @@ public class List_Trigger_POST extends WebIntegrationTest {
     @DisplayName("HTTP 404: trigger non-existing")
     public void res404_triggerOne() {
         // GIVEN: prepare data
+        indexEntryRepository.deleteAll();
+        indexSettingsRepository.deleteAll();
         IndexEntry entry = TestIndexEntryFixtures.entryExample();
         PingDTO reqDTO = reqDTO(entry.getClientUrl());
 

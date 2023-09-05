@@ -26,16 +26,14 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import nl.dtls.fairdatapoint.utils.CustomPageImpl;
 import nl.dtls.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -70,6 +68,12 @@ public class List_GET extends WebIntegrationTest {
         return UriComponentsBuilder.fromUri(url())
                 .queryParam("page", page)
                 .queryParam("size", size)
+                .build().toUri();
+    }
+
+    private URI urlWithPermit(String permitQuery) {
+        return UriComponentsBuilder.fromUri(url())
+                .queryParam("permit", permitQuery)
                 .build().toUri();
     }
 
@@ -222,5 +226,66 @@ public class List_GET extends WebIntegrationTest {
         assertThat("Number of elements is correct", result.getBody().getTotalElements(), is(equalTo(items)));
         assertThat("There is correct number of entries in the response", result.getBody().getContent().size(),
                 is(equalTo(lastSize)));
+    }
+
+    @Test
+    @DisplayName("HTTP 200: page accepted (default)")
+    public void res200_pageAcceptedDefault() {
+        // GIVEN: prepare data
+        indexEntryRepository.deleteAll();
+        List<IndexEntry> entries = TestIndexEntryFixtures.entriesPermits();
+        indexEntryRepository.saveAll(entries);
+
+        // AND: prepare request
+        RequestEntity<?> request = RequestEntity
+                .get(url())
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+
+        // WHEN
+        ResponseEntity<CustomPageImpl<IndexEntryDTO>> result = client.exchange(request, responseType);
+
+        // THEN
+        assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat("Response body is not null", result.getBody(), is(notNullValue()));
+        assertThat("Current page is the first page", result.getBody().isFirst(), is(Boolean.TRUE));
+        assertThat("Current page is the last page", result.getBody().isLast(), is(Boolean.TRUE));
+        assertThat("Current page is not empty", result.getBody().isEmpty(), is(Boolean.FALSE));
+        assertThat("Number of pages is 1", result.getBody().getTotalPages(), is(equalTo(1)));
+        assertThat("Number of elements is correct", result.getBody().getTotalElements(),
+                is(equalTo(Integer.toUnsignedLong(1))));
+        assertThat("There is correct number of entries in the response", result.getBody().getContent().get(0).getPermit(),
+                is(equalTo(IndexEntryPermit.ACCEPTED)));
+    }
+
+    @Test
+    @DisplayName("HTTP 200: page rejected (admin)")
+    public void res200_pageRejected() {
+        // GIVEN: prepare data
+        indexEntryRepository.deleteAll();
+        List<IndexEntry> entries = TestIndexEntryFixtures.entriesPermits();
+        indexEntryRepository.saveAll(entries);
+
+        // AND: prepare request
+        RequestEntity<?> request = RequestEntity
+                .get(urlWithPermit("rejected"))
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+
+        // WHEN
+        ResponseEntity<CustomPageImpl<IndexEntryDTO>> result = client.exchange(request, responseType);
+
+        // THEN
+        assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat("Response body is not null", result.getBody(), is(notNullValue()));
+        assertThat("Current page is the first page", result.getBody().isFirst(), is(Boolean.TRUE));
+        assertThat("Current page is the last page", result.getBody().isLast(), is(Boolean.TRUE));
+        assertThat("Current page is not empty", result.getBody().isEmpty(), is(Boolean.FALSE));
+        assertThat("Number of pages is 1", result.getBody().getTotalPages(), is(equalTo(1)));
+        assertThat("Number of elements is correct", result.getBody().getTotalElements(),
+                is(equalTo(Integer.toUnsignedLong(1))));
+        assertThat("There is correct number of entries in the response", result.getBody().getContent().get(0).getPermit(),
+                is(equalTo(IndexEntryPermit.REJECTED)));
     }
 }

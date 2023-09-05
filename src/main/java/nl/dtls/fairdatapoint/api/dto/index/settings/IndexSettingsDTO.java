@@ -40,5 +40,8 @@ public class IndexSettingsDTO {
     private IndexSettingsPingDTO ping;
 
     @NotNull
+    private Boolean autoPermit;
+
+    @NotNull
     private Boolean isDefault;
 }

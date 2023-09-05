@@ -61,4 +61,8 @@ public class User {
         this.passwordHash = passwordHash;
         this.role = role;
     }
+
+    public boolean isAdmin() {
+        return role.equals(UserRole.ADMIN);
+    }
 }

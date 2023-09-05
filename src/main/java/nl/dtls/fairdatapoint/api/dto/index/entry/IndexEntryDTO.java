@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import org.hibernate.validator.constraints.URL;
 
 @NoArgsConstructor
@@ -44,6 +45,9 @@ public class IndexEntryDTO {
 
     @NotNull
     private IndexEntryStateDTO state;
+
+    @NotNull
+    private IndexEntryPermit permit;
 
     @NotNull
     private String registrationTime;

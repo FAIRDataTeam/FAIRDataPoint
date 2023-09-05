@@ -23,13 +23,13 @@
 package nl.dtls.fairdatapoint.database.mongo.migration.development.index.entry.data;
 
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
 import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.HashMap;
-
-import static nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState.*;
 
 @Service
 public class IndexEntryFixtures {
@@ -41,10 +41,16 @@ public class IndexEntryFixtures {
                 clientUri,
                 new HashMap<>()
         );
-        return new IndexEntry(
-                "8987abc1-15a4-4752-903c-8f8a5882cca6", clientUri,
-                Valid, Instant.now(), Instant.now(), Instant.now(), repositoryData
-        );
+        return IndexEntry.builder()
+                .uuid("8987abc1-15a4-4752-903c-8f8a5882cca6")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Valid)
+                .permit(IndexEntryPermit.ACCEPTED)
+                .registrationTime(Instant.now())
+                .modificationTime(Instant.now())
+                .lastRetrievalTime(Instant.now())
+                .currentMetadata(repositoryData)
+                .build();
     }
 
     public IndexEntry entryActive2() {
@@ -55,10 +61,16 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         final Instant date = Instant.parse("2020-05-30T23:38:31.085Z");
-        return new IndexEntry(
-                "c912331f-4a77-4300-a469-dbaf5fc0b4e2", clientUri,
-                Valid, date, date, date, repositoryData
-        );
+        return IndexEntry.builder()
+                .uuid("c912331f-4a77-4300-a469-dbaf5fc0b4e2")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Valid)
+                .permit(IndexEntryPermit.ACCEPTED)
+                .registrationTime(date)
+                .modificationTime(date)
+                .lastRetrievalTime(date)
+                .currentMetadata(repositoryData)
+                .build();
     }
 
     public IndexEntry entryInactive() {
@@ -69,9 +81,16 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         final Instant date = Instant.parse("2020-05-30T23:38:23.085Z");
-        return new IndexEntry("b5851ebe-aacf-4de9-bf0a-3686e9256e73", clientUri,
-                Valid, date, date, date, repositoryData
-        );
+        return IndexEntry.builder()
+                .uuid("b5851ebe-aacf-4de9-bf0a-3686e9256e73")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Valid)
+                .permit(IndexEntryPermit.ACCEPTED)
+                .registrationTime(date)
+                .modificationTime(date)
+                .lastRetrievalTime(date)
+                .currentMetadata(repositoryData)
+                .build();
     }
 
     public IndexEntry entryUnreachable() {
@@ -81,10 +100,16 @@ public class IndexEntryFixtures {
                 clientUri,
                 new HashMap<>()
         );
-        return new IndexEntry(
-                "dae46b47-87fb-4fdf-995c-8aa3739a27fc", clientUri,
-                Unreachable, Instant.now(), Instant.now(), Instant.now(), repositoryData
-        );
+        return IndexEntry.builder()
+                .uuid("dae46b47-87fb-4fdf-995c-8aa3739a27fc")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Unreachable)
+                .permit(IndexEntryPermit.ACCEPTED)
+                .registrationTime(Instant.now())
+                .modificationTime(Instant.now())
+                .lastRetrievalTime(Instant.now())
+                .currentMetadata(repositoryData)
+                .build();
     }
 
     public IndexEntry entryInvalid() {
@@ -94,10 +119,16 @@ public class IndexEntryFixtures {
                 clientUri,
                 new HashMap<>()
         );
-        return new IndexEntry(
-                "b37e8c1f-ac0e-49f8-8e07-35571c4f8235", clientUri,
-                Invalid, Instant.now(), Instant.now(), Instant.now(), repositoryData
-        );
+        return IndexEntry.builder()
+                .uuid("b37e8c1f-ac0e-49f8-8e07-35571c4f8235")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Invalid)
+                .permit(IndexEntryPermit.ACCEPTED)
+                .registrationTime(Instant.now())
+                .modificationTime(Instant.now())
+                .lastRetrievalTime(Instant.now())
+                .currentMetadata(repositoryData)
+                .build();
     }
 
     public IndexEntry entryUnknown() {
@@ -107,10 +138,54 @@ public class IndexEntryFixtures {
                 clientUri,
                 new HashMap<>()
         );
-        return new IndexEntry(
-                "4471d7c5-8c5b-4581-a9bc-d175456492c4", clientUri,
-                Unknown, Instant.now(), Instant.now(), Instant.now(), repositoryData
+        return IndexEntry.builder()
+                .uuid("4471d7c5-8c5b-4581-a9bc-d175456492c4")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Unknown)
+                .permit(IndexEntryPermit.ACCEPTED)
+                .registrationTime(Instant.now())
+                .modificationTime(Instant.now())
+                .lastRetrievalTime(Instant.now())
+                .currentMetadata(repositoryData)
+                .build();
+    }
+
+    public IndexEntry entryRejected() {
+        final String clientUri = "https://example.com/valid-rejected-fairdatapoint";
+        final RepositoryMetadata repositoryData = new RepositoryMetadata(
+                RepositoryMetadata.CURRENT_VERSION,
+                clientUri,
+                new HashMap<>()
         );
+        return IndexEntry.builder()
+                .uuid("4471d7c5-8c5b-4581-a9bc-d175456492c5")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Valid)
+                .permit(IndexEntryPermit.REJECTED)
+                .registrationTime(Instant.now())
+                .modificationTime(Instant.now())
+                .lastRetrievalTime(Instant.now())
+                .currentMetadata(repositoryData)
+                .build();
+    }
+
+    public IndexEntry entryPending() {
+        final String clientUri = "https://example.com/valid-pending-fairdatapoint";
+        final RepositoryMetadata repositoryData = new RepositoryMetadata(
+                RepositoryMetadata.CURRENT_VERSION,
+                clientUri,
+                new HashMap<>()
+        );
+        return IndexEntry.builder()
+                .uuid("4471d7c5-8c5b-4581-a9bc-d175456492c6")
+                .clientUrl(clientUri)
+                .state(IndexEntryState.Valid)
+                .permit(IndexEntryPermit.PENDING)
+                .registrationTime(Instant.now())
+                .modificationTime(Instant.now())
+                .lastRetrievalTime(Instant.now())
+                .currentMetadata(repositoryData)
+                .build();
     }
 
 }
