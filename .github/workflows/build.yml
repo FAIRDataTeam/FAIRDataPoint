@@ -82,7 +82,7 @@ jobs:
 
       - name: Docker meta [test]
         id: meta-test
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.PUBLIC_IMAGE }}
@@ -111,7 +111,7 @@ jobs:
       - name: Docker meta [private]
         id: meta-private
         if: github.event_name == 'push' && env.PRIVATE_REGISTRY_URL != ''
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.PRIVATE_IMAGE }}
@@ -141,7 +141,7 @@ jobs:
       - name: Docker meta [public]
         id: meta-public
         if: github.event_name == 'push' && env.DOCKER_HUB_USERNAME != ''
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.PUBLIC_IMAGE }}
