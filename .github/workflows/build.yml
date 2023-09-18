@@ -90,7 +90,7 @@ jobs:
             type=sha
 
       - name: Docker build+push [test]
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile.build
@@ -120,7 +120,7 @@ jobs:
             type=semver,pattern={{version}}
 
       - name: Docker build+push [private]
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: github.event_name == 'push' && env.PRIVATE_REGISTRY_URL != '' && steps.meta-private.outputs.tags != ''
         with:
           context: .
@@ -153,7 +153,7 @@ jobs:
             type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
 
       - name: Docker build+push [public]
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: github.event_name == 'push' && env.DOCKER_HUB_USERNAME != '' && steps.meta-public.outputs.tags != ''
         with:
           context: .
