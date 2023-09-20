@@ -60,7 +60,7 @@
         <mongodb.spring-data.version>4.1.4</mongodb.spring-data.version>
         <rdf4j.version>4.3.6</rdf4j.version>
         <jwt.version>0.11.5</jwt.version>
-        <lombok.version>1.18.28</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
 
         <!-- Test -->
