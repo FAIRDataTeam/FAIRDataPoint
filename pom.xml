@@ -59,7 +59,7 @@
         <mongock.version>5.3.4</mongock.version>
         <mongodb.spring-data.version>4.1.4</mongodb.spring-data.version>
         <rdf4j.version>4.3.6</rdf4j.version>
-        <jwt.version>0.11.5</jwt.version>
+        <jwt.version>0.12.1</jwt.version>
         <lombok.version>1.18.30</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
 
