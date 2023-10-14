@@ -22,7 +22,7 @@
 #
 ################################################################################
 # BUILD STAGE
-FROM maven:3-eclipse-temurin-17-focal as builder
+FROM maven:3-eclipse-temurin-21-alpine as builder
 
 WORKDIR /builder
 
@@ -32,7 +32,7 @@ RUN mvn -q -B -U -ff -DskipTests package
 
 ################################################################################
 # RUN STAGE
-FROM eclipse-temurin:17-jdk-focal
+FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /fdp
 

@@ -15,6 +15,10 @@ jobs:
           - macos-12
     runs-on: ${{ matrix.os }}
 
+    env:
+      JAVA_DISTRIBUTION: temurin
+      JAVA_VERSION: 21
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -30,12 +34,12 @@ jobs:
         run: |
           mongo --eval "db.version()"
 
-      - name: Set up JDK 17 (Temurin)
+      - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
 
       - name: Compile
         run: |

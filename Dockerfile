@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 #
 
-FROM eclipse-temurin:17-jdk-focal
+FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /fdp
 

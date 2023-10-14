@@ -19,7 +19,7 @@ jobs:
 
     env:
       JAVA_DISTRIBUTION: temurin
-      JAVA_VERSION: 17
+      JAVA_VERSION: 21
 
     steps:
       - name: Checkout repository
