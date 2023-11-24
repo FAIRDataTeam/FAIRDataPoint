@@ -22,88 +22,68 @@
  */
 package nl.dtls.fairdatapoint.entity.settings;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
+import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
+import org.hibernate.annotations.Type;
 
-import java.util.Collections;
 import java.util.List;
 
-@Document
+@Entity(name = "Settings")
+@Table(name = "settings")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class Settings {
+@SuperBuilder(toBuilder = true)
+public class Settings extends BaseEntity {
 
-    private static final List<SettingsMetricsEntry> DEFAULT_METRICS = List.of(
-            new SettingsMetricsEntry(
-                    "https://purl.org/fair-metrics/FM_F1A",
-                    "https://www.ietf.org/rfc/rfc3986.txt"
-            ),
-            new SettingsMetricsEntry(
-                    "https://purl.org/fair-metrics/FM_A1.1",
-                    "https://www.wikidata.org/wiki/Q8777"
-            )
-    );
-
-    @Id
-    @JsonIgnore
-    private ObjectId id;
-
+    @Column(name = "app_title")
     private String appTitle;
 
+    @Column(name = "app_subtitle")
     private String appSubtitle;
 
-    private List<SettingsMetricsEntry> metadataMetrics;
+    @NotNull
+    @Column(name = "ping_enabled", nullable = false)
+    private Boolean pingEnabled;
 
-    private SettingsPing ping;
+    @NotNull
+    @Type(ListArrayType.class)
+    @Column(name = "ping_endpoints", columnDefinition="text[]", nullable = false)
+    private List<String> pingEndpoints;
 
+    @NotNull
+    @Column(name = "autocomplete_search_ns", nullable = false)
+    private Boolean autocompleteSearchNamespace;
+
+    @OrderBy("orderPriority")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "settings", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SettingsAutocompleteSource> autocompleteSources;
+
+    @OrderBy("orderPriority")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "settings", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SettingsMetric> metrics;
+
+    @OrderBy("orderPriority")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "settings", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SettingsSearchFilter> searchFilters;
 
-    private SettingsForms forms;
-
-    public static Settings getDefault() {
-        return Settings
-                .builder()
-                .appTitle(null)
-                .appSubtitle(null)
-                .metadataMetrics(DEFAULT_METRICS)
-                .ping(SettingsPing
-                        .builder()
-                        .enabled(true)
-                        .endpoints(Collections.emptyList())
-                        .build()
-                )
-                .searchFilters(Collections.emptyList())
-                .forms(SettingsForms
-                        .builder()
-                        .autocomplete(SettingsFormsAutocomplete
-                                .builder()
-                                .searchNamespace(true)
-                                .sources(Collections.emptyList())
-                                .build()
-                        )
-                        .build()
-                )
+    public static Settings defaultSettings() {
+        // TODO: improve default settings
+        return Settings.builder()
+                .appTitle("FAIR Data Point")
+                .appSubtitle("FAIR Data Point")
+                .pingEnabled(false)
+                .pingEndpoints(List.of())
+                .autocompleteSearchNamespace(true)
+                .autocompleteSources(List.of())
+                .metrics(List.of())
+                .searchFilters(List.of())
                 .build();
-    }
-
-    public List<SettingsSearchFilter> getSearchFilters() {
-        if (searchFilters == null) {
-            return Collections.emptyList();
-        }
-        return searchFilters;
-    }
-
-    public SettingsForms getForms() {
-        if (forms == null) {
-            return getDefault().getForms();
-        }
-        return forms;
     }
 }

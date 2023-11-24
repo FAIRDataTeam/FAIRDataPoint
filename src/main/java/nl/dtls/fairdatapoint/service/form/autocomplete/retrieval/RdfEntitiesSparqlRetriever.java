@@ -49,9 +49,7 @@ public class RdfEntitiesSparqlRetriever implements RdfEntitiesRetriever {
     public Map<String, String> retrieve(String rdfType) {
         return settingsService
                 .getOrDefaults()
-                .getForms()
-                .getAutocomplete()
-                .getSources()
+                .getAutocompleteSources()
                 .stream()
                 .filter(source -> source.getRdfType().equals(rdfType))
                 .findFirst()

@@ -22,17 +22,15 @@
  */
 package nl.dtls.fairdatapoint.service.reset;
 
-import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.reset.ResetDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.*;
+import nl.dtls.fairdatapoint.database.db.repository.*;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.generic.GenericMetadataService;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
-import org.bson.Document;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
@@ -41,9 +39,7 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
 
@@ -82,13 +78,10 @@ public class ResetService {
     private MembershipRepository membershipRepository;
 
     @Autowired
-    private AclRepository aclRepository;
-
-    @Autowired
     private AclCache aclCache;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserAccountRepository userRepository;
 
     @Autowired
     private MetadataSchemaRepository metadataSchemaRepository;
@@ -107,9 +100,6 @@ public class ResetService {
 
     @Autowired
     private SettingsService settingsService;
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     @PreAuthorize("hasRole('ADMIN')")
     public void resetToFactoryDefaults(ResetDTO reqDto) throws Exception {
@@ -149,7 +139,6 @@ public class ResetService {
         log.debug("Clearing memberships");
         membershipRepository.deleteAll();
         log.debug("Clearing ACL cache");
-        aclRepository.deleteAll();
         aclCache.clearCache();
     }
 
@@ -180,18 +169,12 @@ public class ResetService {
 
     private void restoreDefaultUsers() {
         log.debug("Creating default users");
-        userRepository.save(FactoryDefaults.USER_ALBERT);
-        userRepository.save(FactoryDefaults.USER_NIKOLA);
+        // TODO
     }
 
     private void restoreDefaultMemberships() {
         log.debug("Creating default memberships");
-        membershipRepository.save(FactoryDefaults.MEMBERSHIP_OWNER);
-        membershipRepository.save(FactoryDefaults.MEMBERSHIP_DATA_PROVIDER);
-
-        final MongoCollection<Document> aclCol =
-                mongoTemplate.getCollection("ACL");
-        aclCol.insertOne(FactoryDefaults.aclRepository(persistentUrl));
+        // TODO
     }
 
     private void restoreDefaultMetadata() {
@@ -212,20 +195,11 @@ public class ResetService {
 
     private void restoreDefaultMetadataSchemas() throws Exception {
         log.debug("Creating default metadata schemas");
-        metadataSchemaRepository.save(FactoryDefaults.schemaResource());
-        metadataSchemaRepository.save(FactoryDefaults.schemaDataService());
-        metadataSchemaRepository.save(FactoryDefaults.schemaMetadataService());
-        metadataSchemaRepository.save(FactoryDefaults.schemaFDP());
-        metadataSchemaRepository.save(FactoryDefaults.schemaCatalog());
-        metadataSchemaRepository.save(FactoryDefaults.schemaDataset());
-        metadataSchemaRepository.save(FactoryDefaults.schemaDistribution());
+        // TODO
     }
 
     private void restoreDefaultResourceDefinitions() {
         log.debug("Creating default resource definitions");
-        resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_FDP);
-        resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_CATALOG);
-        resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DATASET);
-        resourceDefinitionRepository.save(FactoryDefaults.RESOURCE_DEFINITION_DISTRIBUTION);
+        // TODO
     }
 }

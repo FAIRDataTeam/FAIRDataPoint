@@ -23,8 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestDelete;
@@ -46,18 +48,18 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("DELETE /resource-definitions/:resourceDefinitionUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    @Autowired
+    private ResourceDefinitionRepository resourceDefinitionRepository;
+
+    private URI url(UUID uuid) {
         return URI.create(format("/resource-definitions/%s", uuid));
     }
-
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     @Test
     @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .delete(url(resourceDefinition.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
@@ -70,26 +72,25 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
+        assertThat("No longer present", resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).isPresent(), is(equalTo(false)));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
-        createUserForbiddenTestDelete(client, url(resourceDefinition.getUuid()));
+        createUserForbiddenTestDelete(client, url(KnownUUIDs.RD_DISTRIBUTION_UUID));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_resourceDefinition() {
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
-        createUserForbiddenTestDelete(client, url(resourceDefinition.getUuid()));
+        createUserForbiddenTestDelete(client, url(KnownUUIDs.RD_DISTRIBUTION_UUID));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestDelete(client, url("nonExisting"));
+        createAdminNotFoundTestDelete(client, url(KnownUUIDs.NULL_UUID));
     }
 
 }

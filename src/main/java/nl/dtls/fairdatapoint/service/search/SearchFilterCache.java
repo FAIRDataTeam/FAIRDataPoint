@@ -23,7 +23,9 @@
 package nl.dtls.fairdatapoint.service.search;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.database.db.repository.SettingsSearchFilterRepository;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterCacheContainer;
 import nl.dtls.fairdatapoint.service.label.LabelService;
 import nl.dtls.fairdatapoint.service.settings.SettingsCache;
@@ -37,24 +39,23 @@ import static nl.dtls.fairdatapoint.config.CacheConfig.SEARCH_FILTERS_CACHE;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SearchFilterCache {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private SettingsCache settingsCache;
+    private final SettingsCache settingsCache;
 
-    @Autowired
-    private LabelService labelService;
+    private final LabelService labelService;
+
+    private final SettingsSearchFilterRepository settingsSearchFilterRepository;
 
     @PostConstruct
     public void clearCache() {
         cache().clear();
 
-        settingsCache
-                .getOrDefaults()
-                .getSearchFilters()
+        settingsSearchFilterRepository
+                .findAll()
                 .forEach(filter -> cache().put(filter.getPredicate(), null));
     }
 

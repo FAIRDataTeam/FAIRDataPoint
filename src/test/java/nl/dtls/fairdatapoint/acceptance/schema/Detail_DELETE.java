@@ -24,9 +24,9 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +37,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestDelete;
@@ -48,12 +49,9 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("DELETE /metadata-schemas/:schemaUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    private URI url(UUID uuid) {
         return URI.create(format("/metadata-schemas/%s", uuid));
     }
-
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
 
     @Autowired
     private MetadataSchemaRepository metadataSchemaRepository;
@@ -62,7 +60,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        MetadataSchema metadataSchema = metadataSchemaFixtures.customSchema();
+        MetadataSchema metadataSchema = metadataSchemaRepository.findByUuid(Common.SCHEMA_MULTI_UUID).get();
         metadataSchemaRepository.save(metadataSchema);
         RequestEntity<Void> request = RequestEntity
                 .delete(url(metadataSchema.getUuid()))
@@ -76,13 +74,14 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
+        assertThat(metadataSchemaRepository.findByUuid(Common.SCHEMA_MULTI_UUID).isEmpty(), is(true));
     }
 
     @Test
     @DisplayName("HTTP 400")
     public void res400_used() {
         // GIVEN:
-        MetadataSchema metadataSchema = metadataSchemaFixtures.datasetSchema();
+        MetadataSchema metadataSchema = metadataSchemaRepository.findByUuid(KnownUUIDs.SCHEMA_CATALOG_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .delete(url(metadataSchema.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
@@ -101,7 +100,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 400: Delete INTERNAL schema")
     public void res400_internal() {
         // GIVEN:
-        MetadataSchema metadataSchema = metadataSchemaFixtures.fdpSchema();
+        MetadataSchema metadataSchema = metadataSchemaRepository.findByUuid(Common.SCHEMA_INTERNAL_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .delete(url(metadataSchema.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
@@ -119,21 +118,20 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        MetadataSchema metadataSchema = metadataSchemaFixtures.datasetSchema();
-        createUserForbiddenTestDelete(client, url(metadataSchema.getUuid()));
+        createUserForbiddenTestDelete(client, url(UUID.randomUUID()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        MetadataSchema metadataSchema = metadataSchemaFixtures.datasetSchema();
-        createUserForbiddenTestDelete(client, url(metadataSchema.getUuid()));
+        MetadataSchema metadataSchema = null;
+        createUserForbiddenTestDelete(client, url(UUID.randomUUID()));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestDelete(client, url("nonExisting"));
+        createAdminNotFoundTestDelete(client, url(KnownUUIDs.NULL_UUID));
     }
 
 }

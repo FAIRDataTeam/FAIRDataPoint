@@ -27,16 +27,19 @@ import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsPingDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsRetrievalDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexPing;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexRetrieval;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Instant;
+
+import static nl.dtls.fairdatapoint.util.TimeUtils.now;
 
 @Service
 public class IndexSettingsMapper {
 
-    private IndexSettingsPingDTO toPingDTO(IndexSettingsPing indexSettingsPing) {
+    private IndexSettingsPingDTO toPingDTO(SettingsIndexPing indexSettingsPing) {
         return new IndexSettingsPingDTO(
                 indexSettingsPing.getValidDuration().toString(),
                 indexSettingsPing.getRateLimitDuration().toString(),
@@ -46,7 +49,7 @@ public class IndexSettingsMapper {
     }
 
     private IndexSettingsRetrievalDTO toRetrievalDTO(
-            IndexSettingsRetrieval indexSettingsRetrieval
+            SettingsIndexRetrieval indexSettingsRetrieval
     ) {
         return new IndexSettingsRetrievalDTO(
                 indexSettingsRetrieval.getRateLimitWait().toString(),
@@ -71,7 +74,7 @@ public class IndexSettingsMapper {
         );
     }
 
-    private IndexSettingsPing fromDTO(IndexSettingsPingDTO dto, IndexSettingsPing ping) {
+    private SettingsIndexPing fromDTO(IndexSettingsPingDTO dto, SettingsIndexPing ping) {
         return
                 ping
                         .toBuilder()
@@ -82,8 +85,8 @@ public class IndexSettingsMapper {
                         .build();
     }
 
-    private IndexSettingsRetrieval fromDTO(
-            IndexSettingsRetrievalDTO dto, IndexSettingsRetrieval retrieval
+    private SettingsIndexRetrieval fromDTO(
+            IndexSettingsRetrievalDTO dto, SettingsIndexRetrieval retrieval
     ) {
         return
                 retrieval
@@ -97,9 +100,14 @@ public class IndexSettingsMapper {
         return
                 indexSettings
                         .toBuilder()
-                        .ping(fromDTO(dto.getPing(), indexSettings.getPing()))
-                        .retrieval(fromDTO(dto.getRetrieval(), indexSettings.getRetrieval()))
+                        .pingValidDuration(dto.getPing().getValidDuration())
+                        .pingRateLimitDuration(dto.getPing().getRateLimitDuration())
+                        .pingValidDuration(dto.getPing().getValidDuration())
+                        .pingDenyList(dto.getPing().getDenyList())
+                        .retrievalRateLimitWait(dto.getRetrieval().getRateLimitWait())
+                        .retrievalTimeout(dto.getRetrieval().getTimeout())
                         .autoPermit(dto.getAutoPermit())
+                        .updatedAt(Instant.now())
                         .build();
     }
 }

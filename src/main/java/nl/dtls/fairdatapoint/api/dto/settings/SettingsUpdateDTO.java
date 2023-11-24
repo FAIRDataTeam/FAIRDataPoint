@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.api.dto.settings;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
+import nl.dtls.fairdatapoint.entity.settings.SettingsMetric;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class SettingsUpdateDTO {
     private String appSubtitle;
 
     @NotNull
-    private List<SettingsMetricsEntry> metadataMetrics;
+    private List<SettingsMetricDTO> metadataMetrics;
 
     @NotNull
     private SettingsPingUpdateDTO ping;

@@ -25,8 +25,9 @@ package nl.dtls.fairdatapoint.acceptance.user;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("PUT /users/current/password")
 public class Detail_Current_Password_PUT extends WebIntegrationTest {
 
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
     private URI url() {
         return URI.create("/users/current/password");
     }
@@ -54,14 +58,12 @@ public class Detail_Current_Password_PUT extends WebIntegrationTest {
         return new UserPasswordDTO("newPassword");
     }
 
-    @Autowired
-    private UserFixtures userFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        User user = userFixtures.albert();
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
         RequestEntity<UserPasswordDTO> request = RequestEntity
                 .put(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)

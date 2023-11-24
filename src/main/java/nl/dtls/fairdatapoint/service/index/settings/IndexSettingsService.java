@@ -22,33 +22,35 @@
  */
 package nl.dtls.fairdatapoint.service.index.settings;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexPing;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexRetrieval;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.regex.Pattern;
 
-@Service
+import static nl.dtls.fairdatapoint.util.TimeUtils.now;
+
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class IndexSettingsService {
 
-    @Autowired
-    private IndexSettingsRepository repository;
+    private final IndexSettingsRepository repository;
 
-    @Autowired
-    private IndexSettingsMapper mapper;
+    private final IndexSettingsMapper mapper;
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
@@ -62,7 +64,7 @@ public class IndexSettingsService {
 
     @RequiredEnabledIndexFeature
     public IndexSettings getOrDefaults() {
-        return repository.findFirstBy().orElse(getDefaults());
+        return repository.findByUuid(KnownUUIDs.SETTINGS_UUID).orElse(getDefaults());
     }
 
     @RequiredEnabledIndexFeature
@@ -73,8 +75,9 @@ public class IndexSettingsService {
     @RequiredEnabledIndexFeature
     public IndexSettings getDefaults() {
         final IndexSettings settings = new IndexSettings();
-        settings.setPing(IndexSettingsPing.getDefault());
-        settings.setRetrieval(IndexSettingsRetrieval.getDefault());
+        final Timestamp now = now();
+        settings.setPing(SettingsIndexPing.getDefault());
+        settings.setRetrieval(SettingsIndexRetrieval.getDefault());
         settings.setAutoPermit(instanceProperties.isIndexAutoPermit());
         return settings;
     }

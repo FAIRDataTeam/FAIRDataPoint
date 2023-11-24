@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.index.event.EventType;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEventType;
 
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ public class EventDTO {
     private UUID uuid;
 
     @NotNull
-    private EventType type;
+    private IndexEventType type;
 
     @NotNull
     private String created;

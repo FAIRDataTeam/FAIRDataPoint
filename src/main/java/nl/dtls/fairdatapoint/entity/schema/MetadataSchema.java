@@ -22,126 +22,36 @@
  */
 package nl.dtls.fairdatapoint.entity.schema;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
+import nl.dtls.fairdatapoint.entity.resource.MetadataSchemaUsage;
+
 import java.util.List;
-import java.util.Set;
 
-@Document
+@Entity(name = "MetadataSchema")
+@Table(name = "metadata_schema")
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
-public class MetadataSchema {
+@SuperBuilder
+public class MetadataSchema extends BaseEntity {
 
-    @Id
-    private ObjectId id;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schema")
+    private List<MetadataSchemaVersion> versions;
 
-    @Indexed
-    private String uuid;
+    @OrderBy("orderPriority")
+    @OneToMany(mappedBy = "extendedMetadataSchema", fetch = FetchType.LAZY)
+    private List<MetadataSchemaExtension> extensions;
 
-    @Indexed
-    private String versionUuid;
-
-    @Indexed
-    private String versionString;
-
-    @NotNull
-    @Transient
-    private SemVer version;
-
-    @NotNull
-    @NotBlank
-    private String name;
-
-    @NotNull
-    private String description;
-
-    @NotNull
-    private String definition;
-
-    @NotNull
-    private Set<String> targetClasses = new HashSet<>();
-
-    @NotNull
-    private List<String> extendSchemas = new ArrayList<>();
-
-    @NotNull
-    private MetadataSchemaType type;
-
-    private String origin;
-
-    private String importedFrom;
-
-    private boolean latest;
-
-    private boolean published;
-
-    private boolean abstractSchema;
-
-    private String suggestedResourceName;
-
-    private String suggestedUrlPrefix;
-
-    private Instant createdAt;
-
-    private String previousVersionUuid;
-
-    @PersistenceConstructor
-    public MetadataSchema(
-            ObjectId id, String uuid, String versionUuid, String versionString,
-            String name, String description, String definition, Set<String> targetClasses,
-            List<String> extendSchemas, MetadataSchemaType type, String origin,
-            String importedFrom, boolean latest, boolean published, boolean abstractSchema,
-            String suggestedResourceName, String suggestedUrlPrefix, Instant createdAt,
-            String previousVersionUuid
-    ) {
-        this.id = id;
-        this.uuid = uuid;
-        this.versionUuid = versionUuid;
-        this.versionString = versionString;
-        this.name = name;
-        this.description = description;
-        this.definition = definition;
-        this.targetClasses = targetClasses;
-        this.extendSchemas = extendSchemas;
-        this.type = type;
-        this.origin = origin;
-        this.importedFrom = importedFrom;
-        this.latest = latest;
-        this.published = published;
-        this.abstractSchema = abstractSchema;
-        this.suggestedResourceName = suggestedResourceName;
-        this.suggestedUrlPrefix = suggestedUrlPrefix;
-        this.createdAt = createdAt;
-        this.previousVersionUuid = previousVersionUuid;
-    }
-
-    public void setVersionString(String versionString) {
-        this.versionString = versionString;
-        this.version = new SemVer(versionString);
-    }
-
-    public void setVersion(SemVer version) {
-        this.version = version;
-        this.versionString = version.toString();
-    }
-
-    public SemVer getVersion() {
-        if (this.version == null) {
-            this.version = new SemVer(this.versionString);
-        }
-        return version;
-    }
+    @OrderBy("orderPriority")
+    @OneToMany(mappedBy = "usedMetadataSchema", fetch = FetchType.LAZY)
+    private List<MetadataSchemaUsage> usages;
 }

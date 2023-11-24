@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.service.search;
 
 import com.google.common.io.Resources;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.search.*;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
@@ -37,7 +38,6 @@ import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -54,30 +54,25 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
+@RequiredArgsConstructor
 public class SearchService {
 
     private static final String QUERY_TEMPLATE_NAME = "queryTemplate.sparql";
 
     private static final String QUERY_TEMPLATE = loadSparqlQueryTemplate();
 
-    @Autowired
-    private GenericMetadataRepository metadataRepository;
+    private final GenericMetadataRepository metadataRepository;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private SearchMapper searchMapper;
+    private final SearchMapper searchMapper;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
     public List<SearchResultDTO> search(
             SearchSavedQueryDTO searchSavedQueryDTO
@@ -129,7 +124,7 @@ public class SearchService {
                         .stream()
                         .map(SearchFilterItemDTO::getValue)
                         .collect(Collectors.toSet());
-        if (filter.isQueryFromRecords()) {
+        if (filter.getQueryRecords()) {
             final List<SearchFilterItemDTO> xvalues = new ArrayList<>();
             xvalues.addAll(result.getValues());
             xvalues.addAll(

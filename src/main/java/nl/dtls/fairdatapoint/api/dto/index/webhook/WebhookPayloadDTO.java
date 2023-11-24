@@ -24,12 +24,12 @@ package nl.dtls.fairdatapoint.api.dto.index.webhook;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import nl.dtls.fairdatapoint.entity.index.webhook.IndexWebhookEvent;
 
 @Data
 @NoArgsConstructor
 public class WebhookPayloadDTO {
-    private WebhookEvent event;
+    private IndexWebhookEvent event;
     private String uuid;
     private String clientUrl;
     private String timestamp;

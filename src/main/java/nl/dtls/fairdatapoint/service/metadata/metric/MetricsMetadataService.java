@@ -27,16 +27,16 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.metric;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.entity.metadata.Metric;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
+import nl.dtls.fairdatapoint.entity.settings.SettingsMetric;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -44,21 +44,23 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MetricsMetadataService {
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
-    public List<Metric> generateMetrics(@Nonnull IRI metadataURI) {
+    public List<Metric> generateMetrics(IRI metadataURI) {
         final Settings settings = settingsService.getOrDefaults();
-        return settings.getMetadataMetrics().stream()
-                .map(entry -> {
-                    return new Metric(
-                            i(format("%s/metrics/%s", metadataURI, DigestUtils.md5Hex(entry.getMetricUri()))),
-                            i(entry.getResourceUri()),
-                            i(entry.getResourceUri()));
-                })
+        return settings.getMetrics().stream()
+                .map(entry -> toMetric(entry, metadataURI))
                 .toList();
     }
 
+    private Metric toMetric(SettingsMetric metric, IRI metadataURI) {
+        return new Metric(
+                i(format("%s/metrics/%s", metadataURI, DigestUtils.md5Hex(metric.getMetricUri()))),
+                i(metric.getResourceUri()),
+                i(metric.getResourceUri())
+        );
+    }
 }

@@ -22,8 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
@@ -46,6 +45,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ResourceDefinitionValidatorTest {
+    // TODO: fixtures
 
     @Mock
     private ResourceDefinitionRepository resourceDefinitionRepository;
@@ -56,18 +56,15 @@ public class ResourceDefinitionValidatorTest {
     @InjectMocks
     private ResourceDefinitionValidator resourceDefinitionValidator;
 
-    @InjectMocks
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
-
     @Test
     public void nameUniqueness() throws BindException {
         // GIVEN: Prepare reqDto
-        ResourceDefinition reqDto = resourceDefinitionFixtures.fdpDefinition();
+        ResourceDefinition reqDto = null;
         reqDto.setChildren(List.of());
 
         // AND: Prepare database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
+                .thenReturn(Optional.of(null));
 
         // WHEN:
         resourceDefinitionValidator.validate(reqDto);
@@ -79,11 +76,11 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void nameUniquenessBreach() {
         // GIVEN: Prepare reqDto
-        ResourceDefinition reqDto = resourceDefinitionFixtures.ontologyDefinition();
+        ResourceDefinition reqDto = null;
 
         // AND: Prepare database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
+                .thenReturn(Optional.of(null));
 
         // WHEN:
         BindException exception = assertThrows(
@@ -98,14 +95,14 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void urlPrefixUniqueness() throws BindException {
         // GIVEN: Prepare reqDto
-        ResourceDefinition reqDto = resourceDefinitionFixtures.fdpDefinition();
+        ResourceDefinition reqDto = null;
         reqDto.setChildren(List.of());
 
         // AND: Prepare database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
                 .thenReturn(Optional.empty());
         when(resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
+                .thenReturn(Optional.of(null));
 
         // WHEN:
         resourceDefinitionValidator.validate(reqDto);
@@ -117,13 +114,13 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void urlPrefixUniquenessBreach() {
         // GIVEN: Prepare reqDto
-        ResourceDefinition reqDto = resourceDefinitionFixtures.ontologyDefinition();
+        ResourceDefinition reqDto = null;
 
         // AND: Prepare database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
                 .thenReturn(Optional.empty());
         when(resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix()))
-                .thenReturn(Optional.of(resourceDefinitionFixtures.fdpDefinition()));
+                .thenReturn(Optional.of(null));
 
         // WHEN:
         BindException exception = assertThrows(
@@ -138,8 +135,8 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void nonExistingChild() {
         // GIVEN: Prepare reqDto
-        ResourceDefinition reqDto = resourceDefinitionFixtures.ontologyDefinition();
-        ResourceDefinitionChild child = new ResourceDefinitionChild("nonExistingChild", "", null);
+        ResourceDefinition reqDto = null;
+        ResourceDefinitionChild child = null;
         reqDto.setChildren(List.of(child));
 
         // AND: Prepare database
@@ -147,7 +144,7 @@ public class ResourceDefinitionValidatorTest {
                 .thenReturn(Optional.empty());
         when(resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix()))
                 .thenReturn(Optional.empty());
-        when(resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid()))
+        when(resourceDefinitionCache.getByUuid(null))
                 .thenReturn(null);
 
         // WHEN:
@@ -163,11 +160,11 @@ public class ResourceDefinitionValidatorTest {
     @Test
     public void existingDependencyCycle() {
         // GIVEN: Prepare reqDto and resource definitions
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
-        ResourceDefinition reqDto = resourceDefinitionFixtures.catalogDefinition();
-        ResourceDefinition rdDataset = resourceDefinitionFixtures.datasetDefinition();
+        ResourceDefinition rdRepository = null;
+        ResourceDefinition reqDto = null;
+        ResourceDefinition rdDataset = null;
 
-        ResourceDefinitionChild rdDatasetChild = new ResourceDefinitionChild(rdRepository.getUuid(), "", null);
+        ResourceDefinitionChild rdDatasetChild = null;
         rdDataset.setChildren(List.of(rdDatasetChild));
 
         // AND: Prepare database

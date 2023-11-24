@@ -30,6 +30,8 @@ import lombok.Setter;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import org.hibernate.validator.constraints.URL;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -37,7 +39,7 @@ import org.hibernate.validator.constraints.URL;
 public class IndexEntryDTO {
 
     @NotNull
-    private String uuid;
+    private UUID uuid;
 
     @NotNull
     @URL

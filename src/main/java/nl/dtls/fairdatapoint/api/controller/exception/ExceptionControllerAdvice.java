@@ -78,6 +78,7 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleConstraintViolation(Exception exception) {
         log.warn(exception.getMessage());
         log.debug("Handling bad request (ConstraintViolation)", exception);
+        exception.printStackTrace();
         return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
@@ -95,6 +96,7 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleValidationException(Exception exception) {
         log.warn(exception.getMessage());
         log.debug("Handling bad request (ValidationException)", exception);
+        exception.printStackTrace();
         return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
@@ -112,6 +114,7 @@ public class ExceptionControllerAdvice {
     public Model handleRdfValidationException(RdfValidationException exception) {
         final Model validationReportModel = exception.getModel();
         log.debug("Handling bad request (RdfValidationException)", exception);
+        exception.printStackTrace();
 
         // Log number of errors
         final IRI validationResultIri = i("http://www.w3.org/ns/shacl#ValidationResult");
@@ -140,6 +143,7 @@ public class ExceptionControllerAdvice {
             )
     )
     public ErrorDTO handleInvalidQuery(MalformedQueryException exception) {
+        exception.printStackTrace();
         return handleInvalidSparqlQuery(exception);
     }
 
@@ -155,6 +159,7 @@ public class ExceptionControllerAdvice {
             )
     )
     public ErrorDTO handleInvalidQuery(QueryEvaluationException exception) {
+        exception.printStackTrace();
         return handleInvalidSparqlQuery(exception);
     }
 
@@ -172,6 +177,7 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleUnauthorized(Exception exception) {
         log.error(exception.getMessage());
         log.debug("Handling unauthorized", exception);
+        exception.printStackTrace();
         return new ErrorDTO(HttpStatus.UNAUTHORIZED, exception.getMessage());
     }
 
@@ -189,6 +195,7 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleForbidden(Exception exception) {
         log.error(exception.getMessage());
         log.debug("Handling forbidden", exception);
+        exception.printStackTrace();
         return new ErrorDTO(HttpStatus.FORBIDDEN, exception.getMessage());
     }
 
@@ -206,6 +213,7 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleResourceNotFound(ResourceNotFoundException exception) {
         log.error(exception.getMessage());
         log.debug("Handling resource not found", exception);
+        exception.printStackTrace();
         return new ErrorDTO(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
@@ -223,12 +231,14 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleInternalServerError(Exception exception) {
         log.error(exception.getMessage());
         log.debug("Handling internal server error (MetadataServiceException)", exception);
+        exception.printStackTrace();
         return new ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
     }
 
     @ExceptionHandler(AbstractIndexException.class)
     public ResponseEntity<ErrorDTO> handleIndexException(AbstractIndexException exception) {
         log.debug("Handling index exception", exception);
+        exception.printStackTrace();
         return new ResponseEntity<>(exception.getErrorDTO(), exception.getStatus());
     }
 

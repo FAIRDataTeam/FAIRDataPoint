@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.filter;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,17 +31,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class FilterConfigurer extends
         SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-    @Autowired
-    private JwtTokenFilter jwtTokenFilter;
+    private final JwtTokenFilter jwtTokenFilter;
 
-    @Autowired
-    private CORSFilter corsFilter;
+    private final CORSFilter corsFilter;
 
-    @Autowired
-    private LoggingFilter loggingFilter;
+    private final LoggingFilter loggingFilter;
 
     @Override
     public void configure(HttpSecurity http) {

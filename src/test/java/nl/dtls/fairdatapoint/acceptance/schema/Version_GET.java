@@ -24,9 +24,10 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,27 +48,20 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /metadata-schemas/:schemaUuid/versions/:version")
 public class Version_GET extends WebIntegrationTest {
 
-    private URI url(String uuid, String version) {
+    @Autowired
+    private MetadataSchemaVersionRepository metadataSchemaRepository;
+
+    private URI url(UUID uuid, String version) {
         return URI.create(format("/metadata-schemas/%s/versions/%s", uuid, version));
     }
-
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
-
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
-        // GIVEN: Prepare data
-        MetadataSchema schema = metadataSchemaFixtures.resourceSchema();
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(schema);
-
-        // AND: Prepare request
+        // GIVEN:
+        final MetadataSchemaVersion schema = metadataSchemaRepository.getLatestBySchemaUuid(KnownUUIDs.SCHEMA_FDP_UUID).get();
         RequestEntity<Void> request = RequestEntity
-                .get(url(schema.getUuid(), schema.getVersionString()))
+                .get(url(KnownUUIDs.SCHEMA_FDP_UUID, "1.0.0"))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .build();
@@ -85,14 +79,10 @@ public class Version_GET extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 200")
     public void res200_latest() {
-        // GIVEN: Prepare data
-        MetadataSchema schema = metadataSchemaFixtures.resourceSchema();
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(schema);
-
-        // AND: Prepare request
+        // GIVEN:
+        final MetadataSchemaVersion schema = metadataSchemaRepository.getLatestBySchemaUuid(KnownUUIDs.SCHEMA_FDP_UUID).get();
         RequestEntity<Void> request = RequestEntity
-                .get(url(schema.getUuid(), "latest"))
+                .get(url(KnownUUIDs.SCHEMA_FDP_UUID, "latest"))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .build();
@@ -110,22 +100,19 @@ public class Version_GET extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        MetadataSchema schema = metadataSchemaFixtures.resourceSchema();
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(schema);
-        createAdminNotFoundTestGet(client, url("nonExisting", "1.0.0"));
-        createAdminNotFoundTestGet(client, url(schema.getUuid(), "1.0.1"));
+        createAdminNotFoundTestGet(client, url(KnownUUIDs.NULL_UUID, "1.0.0"));
+        createAdminNotFoundTestGet(client, url(KnownUUIDs.SCHEMA_FDP_UUID, "1.0.1"));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestGet(client, url(UUID.randomUUID().toString(), "1.0.0"));
+        createNoUserForbiddenTestGet(client, url(UUID.randomUUID(), "1.0.0"));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestGet(client, url(UUID.randomUUID().toString(), "1.0.0"));
+        createUserForbiddenTestGet(client, url(UUID.randomUUID(), "1.0.0"));
     }
 }

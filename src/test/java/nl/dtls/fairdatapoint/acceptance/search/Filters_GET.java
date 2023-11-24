@@ -24,9 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.search;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.search.SearchFilterDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchQueryDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.SettingsRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

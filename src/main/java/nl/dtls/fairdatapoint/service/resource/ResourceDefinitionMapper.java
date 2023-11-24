@@ -22,49 +22,146 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.api.dto.resource.*;
+import nl.dtls.fairdatapoint.entity.resource.*;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ResourceDefinitionMapper {
 
-    public ResourceDefinition fromChangeDTO(ResourceDefinitionChangeDTO dto, String uuid) {
-        return new ResourceDefinition(
-                uuid,
-                dto.getName(),
-                dto.getUrlPrefix(),
-                dto.getMetadataSchemaUuids(),
-                dto.getChildren(),
-                dto.getExternalLinks());
+    public ResourceDefinition fromChangeDTO(ResourceDefinitionChangeDTO dto) {
+        return ResourceDefinition.builder()
+                .uuid(UUID.randomUUID())
+                .name(dto.getName())
+                .urlPrefix(dto.getUrlPrefix())
+                .build();
+    }
+
+    public ResourceDefinition fromChangeDTO(ResourceDefinitionChangeDTO dto, ResourceDefinition resourceDefinition) {
+        return resourceDefinition.toBuilder()
+                .name(dto.getName())
+                .urlPrefix(dto.getUrlPrefix())
+                .updatedAt(Instant.now())
+                .build();
     }
 
     public ResourceDefinitionChangeDTO toChangeDTO(
             ResourceDefinition resourceDefinition
     ) {
-        return new ResourceDefinitionChangeDTO(
-                resourceDefinition.getName(),
-                resourceDefinition.getUrlPrefix(),
-                resourceDefinition.getMetadataSchemaUuids(),
-                resourceDefinition.getChildren(),
-                resourceDefinition.getExternalLinks());
+        return ResourceDefinitionChangeDTO.builder()
+                .name(resourceDefinition.getName())
+                .urlPrefix(resourceDefinition.getUrlPrefix())
+                .metadataSchemaUuids(
+                        resourceDefinition
+                                .getMetadataSchemaUsages()
+                                .stream()
+                                .map(it -> it.getUsedMetadataSchema().getUuid())
+                                .toList()
+                )
+                .children(resourceDefinition.getChildren().stream().map(this::toChildDTO).toList())
+                .externalLinks(resourceDefinition.getExternalLinks().stream().map(this::toLinkDTO).toList())
+                .build();
     }
 
     public ResourceDefinitionDTO toDTO(
             ResourceDefinition resourceDefinition,
             List<String> targetClassUris
     ) {
-        return new ResourceDefinitionDTO(
-                resourceDefinition.getUuid(),
-                resourceDefinition.getName(),
-                resourceDefinition.getUrlPrefix(),
-                resourceDefinition.getMetadataSchemaUuids(),
-                targetClassUris,
-                resourceDefinition.getChildren(),
-                resourceDefinition.getExternalLinks()
-        );
+        return ResourceDefinitionDTO.builder()
+                .uuid(resourceDefinition.getUuid())
+                .name(resourceDefinition.getName())
+                .urlPrefix(resourceDefinition.getUrlPrefix())
+                .targetClassUris(targetClassUris)
+                .metadataSchemaUuids(
+                        resourceDefinition
+                                .getMetadataSchemaUsages()
+                                .stream()
+                                .map(it -> it.getUsedMetadataSchema().getUuid())
+                                .toList()
+                )
+                .children(resourceDefinition.getChildren().stream().map(this::toChildDTO).toList())
+                .externalLinks(resourceDefinition.getExternalLinks().stream().map(this::toLinkDTO).toList())
+                .build();
+    }
+
+    private ResourceDefinitionLinkDTO toLinkDTO(ResourceDefinitionLink link) {
+        return ResourceDefinitionLinkDTO.builder()
+                .title(link.getTitle())
+                .propertyUri(link.getPropertyUri())
+                .build();
+    }
+
+    private ResourceDefinitionChildDTO toChildDTO(ResourceDefinitionChild child) {
+        return ResourceDefinitionChildDTO.builder()
+                .resourceDefinitionUuid(child.getTarget().getUuid())
+                .relationUri(child.getRelationUri())
+                .listView(
+                        ResourceDefinitionChildListViewDTO.builder()
+                                .title(child.getTitle())
+                                .tagsUri(child.getTagsUri())
+                                .metadata(child.getMetadata().stream().map(this::toChildMetadataDTO).toList())
+                                .build()
+                )
+                .build();
+    }
+
+    private ResourceDefinitionChildListViewMetadataDTO toChildMetadataDTO(ResourceDefinitionChildMetadata metadata) {
+        return ResourceDefinitionChildListViewMetadataDTO.builder()
+                .title(metadata.getTitle())
+                .propertyUri(metadata.getPropertyUri())
+                .build();
+    }
+
+
+    public MetadataSchemaUsage toUsage(MetadataSchema schema, ResourceDefinition definition, int orderPriority) {
+        return MetadataSchemaUsage.builder()
+                .uuid(UUID.randomUUID())
+                .usedMetadataSchema(schema)
+                .resourceDefinition(definition)
+                .orderPriority(orderPriority)
+                .build();
+    }
+
+    public ResourceDefinitionLink toLink(ResourceDefinitionLinkDTO dto, ResourceDefinition definition, int orderPriority) {
+        return ResourceDefinitionLink.builder()
+                .uuid(UUID.randomUUID())
+                .title(dto.getTitle())
+                .propertyUri(dto.getPropertyUri())
+                .resourceDefinition(definition)
+                .orderPriority(orderPriority)
+                .createdAt(definition.getCreatedAt())
+                .updatedAt(definition.getUpdatedAt())
+                .build();
+    }
+
+    public ResourceDefinitionChild toChild(ResourceDefinitionChildDTO dto, ResourceDefinition source, ResourceDefinition target, int orderPriority) {
+        return ResourceDefinitionChild.builder()
+                .uuid(UUID.randomUUID())
+                .relationUri(dto.getRelationUri())
+                .title(dto.getListView().getTitle())
+                .tagsUri(dto.getListView().getTagsUri())
+                .source(source)
+                .target(target)
+                .orderPriority(orderPriority)
+                .createdAt(source.getCreatedAt())
+                .updatedAt(source.getUpdatedAt())
+                .build();
+    }
+
+    public ResourceDefinitionChildMetadata toChildMetadata(ResourceDefinitionChildListViewMetadataDTO dto, ResourceDefinitionChild child, int orderPriority) {
+        return ResourceDefinitionChildMetadata.builder()
+                .uuid(UUID.randomUUID())
+                .title(dto.getTitle())
+                .propertyUri(dto.getPropertyUri())
+                .child(child)
+                .orderPriority(orderPriority)
+                .createdAt(child.getCreatedAt())
+                .updatedAt(child.getUpdatedAt())
+                .build();
     }
 }

@@ -25,8 +25,9 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.http.*;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPost;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestPost;
@@ -45,19 +47,22 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("POST /metadata-schemas")
 public class List_POST extends WebIntegrationTest {
 
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
-
     private URI url() {
         return URI.create("/metadata-schemas");
     }
 
-    private MetadataSchemaChangeDTO reqDto(MetadataSchema metadataSchema) {
+    private MetadataSchemaChangeDTO reqDto() {
         return MetadataSchemaChangeDTO.builder()
-                .name(metadataSchema.getName())
+                .name("Example")
                 .description("")
                 .abstractSchema(false)
-                .definition(metadataSchema.getDefinition())
+                .extendsSchemaUuids(List.of(KnownUUIDs.SCHEMA_RESOURCE_UUID))
+                .definition("""
+                        @prefix :         <http://fairdatapoint.org/> .
+                        @prefix sh:       <http://www.w3.org/ns/shacl#> .
+                                                
+                        :ExampleShape a sh:NodeShape .
+                        """)
                 .extendsSchemaUuids(Collections.emptyList())
                 .build();
     }
@@ -66,8 +71,7 @@ public class List_POST extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        MetadataSchema metadataSchema = metadataSchemaFixtures.customSchema();
-        MetadataSchemaChangeDTO reqDto = reqDto(metadataSchema);
+        MetadataSchemaChangeDTO reqDto = reqDto();
 
         // AND: Prepare request
         RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
@@ -89,13 +93,13 @@ public class List_POST extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPost(client, url(), reqDto(metadataSchemaFixtures.customSchema()));
+        createNoUserForbiddenTestPost(client, url(), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestPost(client, url(), reqDto(metadataSchemaFixtures.customSchema()));
+        createUserForbiddenTestPost(client, url(), reqDto());
     }
 
 }

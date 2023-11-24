@@ -22,27 +22,27 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static nl.dtls.fairdatapoint.util.ValidationUtil.uniquenessValidationFailed;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionValidator {
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
     public void validate(ResourceDefinition reqDto) throws BindException {
         // Check uniqueness
@@ -66,7 +66,7 @@ public class ResourceDefinitionValidator {
 
         // Check existence of connected entities
         for (ResourceDefinitionChild child : reqDto.getChildren()) {
-            if (resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid()) == null) {
+            if (resourceDefinitionCache.getByUuid(child.getSource().getUuid()) == null) {
                 throw new ValidationException("Child doesn't exist");
             }
         }
@@ -79,7 +79,7 @@ public class ResourceDefinitionValidator {
             ResourceDefinition reqDto, List<ResourceDefinitionChild> children
     ) {
         for (ResourceDefinitionChild child : children) {
-            final String childUuid = child.getResourceDefinitionUuid();
+            final UUID childUuid = child.getSource().getUuid();
             if (reqDto.getUuid().equals(childUuid)) {
                 throw new ValidationException("Detect dependency cycle through child");
             }

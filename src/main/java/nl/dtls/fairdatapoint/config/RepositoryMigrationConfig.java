@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Profile;
 public class RepositoryMigrationConfig {
 
     @Bean
-    @DependsOn("mongockRunner")
     @Profile(Profiles.PRODUCTION)
     public RdfProductionMigrationRunner rdfProductionMigrationRunner(
             RdfMigrationRepository rdfMigrationRepository,

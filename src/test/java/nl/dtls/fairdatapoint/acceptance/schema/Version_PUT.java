@@ -25,9 +25,13 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaUpdateDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaState;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -48,7 +53,13 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("PUT /metadata-schemas/:schemaUuid/versions/:version")
 public class Version_PUT extends WebIntegrationTest {
 
-    private URI url(String uuid, String version) {
+    @Autowired
+    private MetadataSchemaRepository metadataSchemaRepository;
+
+    @Autowired
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
+
+    private URI url(UUID uuid, String version) {
         return URI.create(format("/metadata-schemas/%s/versions/%s", uuid, version));
     }
 
@@ -60,24 +71,16 @@ public class Version_PUT extends WebIntegrationTest {
         );
     }
 
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
-
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
-
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        MetadataSchema schema = metadataSchemaFixtures.customSchema();
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(schema);
+        MetadataSchemaVersion schema = createCustomSchema();
         MetadataSchemaUpdateDTO reqDto = reqDto();
 
         // AND: Prepare request
         RequestEntity<MetadataSchemaUpdateDTO> request = RequestEntity
-                .put(url(schema.getUuid(), schema.getVersionString()))
+                .put(url(schema.getSchema().getUuid(), schema.getVersion()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
@@ -96,22 +99,46 @@ public class Version_PUT extends WebIntegrationTest {
         assertThat(result.getBody().isAbstractSchema(), is(equalTo(schema.isAbstractSchema())));
     }
 
+    private MetadataSchemaVersion createCustomSchema() {
+        final MetadataSchema schema = metadataSchemaRepository.saveAndFlush(
+                MetadataSchema.builder()
+                        .uuid(UUID.randomUUID())
+                        .build()
+        );
+
+        return metadataSchemaVersionRepository.saveAndFlush(
+                MetadataSchemaVersion.builder()
+                        .uuid(UUID.randomUUID())
+                        .schema(schema)
+                        .version("0.1.0")
+                        .name("Custom schema")
+                        .state(MetadataSchemaState.DRAFT)
+                        .description("")
+                        .definition("")
+                        .targetClasses(List.of())
+                        .type(MetadataSchemaType.CUSTOM)
+                        .abstractSchema(false)
+                        .published(false)
+                        .build()
+        );
+    }
+
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestPut(client, url("nonExisting", "1.0.0"), reqDto());
+        createAdminNotFoundTestPut(client, url(KnownUUIDs.NULL_UUID, "1.0.0"), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPut(client, url(UUID.randomUUID().toString(), "1.0.0"), reqDto());
+        createNoUserForbiddenTestPut(client, url(UUID.randomUUID(), "1.0.0"), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestPut(client, url(UUID.randomUUID().toString(), "1.0.0"), reqDto());
+        createUserForbiddenTestPut(client, url(UUID.randomUUID(), "1.0.0"), reqDto());
     }
 }

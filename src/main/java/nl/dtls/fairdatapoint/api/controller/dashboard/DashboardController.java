@@ -24,12 +24,11 @@ package nl.dtls.fairdatapoint.api.controller.dashboard;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import nl.dtls.fairdatapoint.service.dashboard.DashboardService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,14 +45,12 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Tag(name = "Client")
 @RestController
 @RequestMapping("/dashboard")
+@RequiredArgsConstructor
 public class DashboardController {
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private DashboardService dashboardService;
+    private final DashboardService dashboardService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DashboardItemDTO>> getDashboard(

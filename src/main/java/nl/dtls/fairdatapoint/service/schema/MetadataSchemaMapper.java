@@ -23,38 +23,40 @@
 package nl.dtls.fairdatapoint.service.schema;
 
 import nl.dtls.fairdatapoint.api.dto.schema.*;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
+import nl.dtls.fairdatapoint.entity.schema.*;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class MetadataSchemaMapper {
 
-    public MetadataSchemaDraft fromChangeDTO(MetadataSchemaChangeDTO dto, String uuid) {
-        final Instant now = Instant.now();
-        return MetadataSchemaDraft.builder()
-                .uuid(uuid)
+    public MetadataSchemaVersion fromChangeDTO(
+            MetadataSchemaChangeDTO dto, MetadataSchema schema
+    ) {
+        return MetadataSchemaVersion.builder()
+                .uuid(UUID.randomUUID())
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .abstractSchema(dto.isAbstractSchema())
+                .type(MetadataSchemaType.CUSTOM)
+                .state(MetadataSchemaState.DRAFT)
+                .version("0.0.0")
                 .definition(dto.getDefinition())
-                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition()))
-                .extendSchemas(dto.getExtendsSchemaUuids())
+                .targetClasses(MetadataSchemaShaclUtils.extractTargetClasses(dto.getDefinition()).stream().toList())
                 .suggestedResourceName(dto.getSuggestedResourceName())
                 .suggestedUrlPrefix(dto.getSuggestedUrlPrefix())
-                .createdAt(now)
-                .updatedAt(now)
+                .schema(schema)
                 .build();
     }
 
-    public MetadataSchemaDraft fromChangeDTO(
-            MetadataSchemaChangeDTO dto, MetadataSchemaDraft draft
+    public MetadataSchemaVersion fromChangeDTO(
+            MetadataSchemaChangeDTO dto, MetadataSchemaVersion draft
     ) {
         return
                 draft
@@ -63,18 +65,19 @@ public class MetadataSchemaMapper {
                         .abstractSchema(dto.isAbstractSchema())
                         .description(dto.getDescription())
                         .definition(dto.getDefinition())
-                        .extendSchemas(dto.getExtendsSchemaUuids())
                         .targetClasses(
                                 MetadataSchemaShaclUtils
                                         .extractTargetClasses(dto.getDefinition())
+                                        .stream().toList()
                         )
                         .suggestedResourceName(dto.getSuggestedResourceName())
                         .suggestedUrlPrefix(dto.getSuggestedUrlPrefix())
+                        .updatedAt(Instant.now())
                         .build();
     }
 
     public MetadataSchemaDraftDTO toDraftDTO(
-            MetadataSchemaDraft draft, MetadataSchema lastVersion
+            MetadataSchemaVersion draft
     ) {
         return MetadataSchemaDraftDTO.builder()
                 .uuid(draft.getUuid())
@@ -82,32 +85,32 @@ public class MetadataSchemaMapper {
                 .description(draft.getDescription())
                 .abstractSchema(draft.isAbstractSchema())
                 .definition(draft.getDefinition())
-                .extendsSchemaUuids(draft.getExtendSchemas())
+                .extendsSchemaUuids(draft.getExtensions().stream().map(extension -> extension.getExtendedMetadataSchema().getUuid()).toList())
                 .suggestedResourceName(draft.getSuggestedResourceName())
                 .suggestedUrlPrefix(draft.getSuggestedUrlPrefix())
-                .lastVersion(lastVersion == null ? null : lastVersion.getVersionString())
+                .lastVersion(draft.getPreviousVersion() == null ? null : draft.getPreviousVersion().getVersion())
                 .build();
     }
 
-    public MetadataSchemaDraftDTO toDraftDTO(MetadataSchema schema) {
+    public MetadataSchemaDraftDTO toNewDraftDTO(MetadataSchemaVersion schema) {
         return MetadataSchemaDraftDTO.builder()
-                .uuid(schema.getUuid())
+                .uuid(schema.getSchema().getUuid())
                 .name(schema.getName())
                 .description(schema.getDescription())
                 .abstractSchema(schema.isAbstractSchema())
                 .definition(schema.getDefinition())
-                .extendsSchemaUuids(schema.getExtendSchemas())
+                .extendsSchemaUuids(schema.getExtensions().stream().map(extension -> extension.getExtendedMetadataSchema().getUuid()).toList())
                 .suggestedResourceName(schema.getSuggestedResourceName())
                 .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
-                .lastVersion(schema.getVersionString())
+                .lastVersion(schema.getVersion())
                 .build();
     }
 
-    public MetadataSchemaVersionDTO toVersionDTO(MetadataSchema schema) {
+    public MetadataSchemaVersionDTO toVersionDTO(MetadataSchemaVersion schema) {
         return MetadataSchemaVersionDTO.builder()
-                .uuid(schema.getUuid())
-                .versionUuid(schema.getVersionUuid())
-                .version(schema.getVersion().toString())
+                .uuid(schema.getSchema().getUuid())
+                .versionUuid(schema.getUuid())
+                .version(schema.getVersion())
                 .name(schema.getName())
                 .description(schema.getDescription())
                 .published(schema.isPublished())
@@ -118,61 +121,55 @@ public class MetadataSchemaMapper {
                 .importedFrom(schema.getImportedFrom())
                 .definition(schema.getDefinition())
                 .targetClasses(schema.getTargetClasses())
-                .extendsSchemaUuids(schema.getExtendSchemas())
+                .extendsSchemaUuids(schema.getExtensions().stream().map(extension -> extension.getExtendedMetadataSchema().getUuid()).toList())
                 .suggestedResourceName(schema.getSuggestedResourceName())
                 .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
-                .previousVersionUuid(schema.getPreviousVersionUuid())
+                .previousVersionUuid(schema.getPreviousVersion() == null ? null : schema.getPreviousVersion().getUuid())
                 .build();
     }
 
-    public MetadataSchema fromReleaseDTO(
-            MetadataSchemaReleaseDTO reqDto, MetadataSchemaDraft draft, String versionUuid
+    public MetadataSchemaVersion fromReleaseDTO(
+            MetadataSchemaReleaseDTO reqDto, MetadataSchemaVersion draft
     ) {
-        return MetadataSchema.builder()
-                .uuid(draft.getUuid())
-                .versionUuid(versionUuid)
-                .version(new SemVer(reqDto.getVersion()))
-                .versionString(reqDto.getVersion())
+        return draft.toBuilder()
+                .version(reqDto.getVersion())
+                .state(MetadataSchemaState.LATEST)
                 .type(MetadataSchemaType.CUSTOM)
                 .origin(null)
-                .name(draft.getName())
                 .description(reqDto.getDescription())
-                .definition(draft.getDefinition())
-                .targetClasses(draft.getTargetClasses())
-                .extendSchemas(draft.getExtendSchemas())
-                .abstractSchema(draft.isAbstractSchema())
                 .published(reqDto.isPublished())
-                .latest(true)
-                .previousVersionUuid(null)
-                .suggestedResourceName(draft.getSuggestedResourceName())
-                .suggestedUrlPrefix(draft.getSuggestedUrlPrefix())
-                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
     }
 
     public MetadataSchemaDTO toDTO(
-            MetadataSchema latest,
-            MetadataSchemaDraft draft,
-            List<MetadataSchema> schemaVersions,
-            List<MetadataSchema> childSchemas
+            MetadataSchemaVersion latest,
+            MetadataSchemaVersion draft,
+            List<MetadataSchemaVersion> schemaVersions,
+            List<MetadataSchemaVersion> childSchemas
     ) {
         if (latest != null) {
             return MetadataSchemaDTO.builder()
-                    .uuid(latest.getUuid())
+                    .uuid(latest.getSchema().getUuid())
                     .name(latest.getName())
                     .latest(toVersionDTO(latest))
-                    .draft(draft == null ? null : toDraftDTO(draft, latest))
+                    .draft(draft == null ? null : toDraftDTO(draft))
                     .versions(schemaVersions
                             .stream()
-                            .map(MetadataSchema::getVersion)
+                            .map(MetadataSchemaVersion::getSemVer)
                             .sorted()
                             .map(SemVer::toString)
                             .toList()
                     )
-                    .extendSchemaUuids(latest.getExtendSchemas())
+                    .extendSchemaUuids(latest
+                            .getExtensions()
+                            .stream()
+                            .map(extension -> extension.getExtendedMetadataSchema().getUuid())
+                            .toList()
+                    )
                     .childSchemaUuids(childSchemas
                             .stream()
-                            .map(MetadataSchema::getUuid)
+                            .map(child -> child.getSchema().getUuid())
                             .distinct()
                             .toList()
                     )
@@ -180,16 +177,16 @@ public class MetadataSchemaMapper {
         }
         if (draft != null) {
             return MetadataSchemaDTO.builder()
-                    .uuid(draft.getUuid())
+                    .uuid(draft.getSchema().getUuid())
                     .name(draft.getName())
                     .latest(null)
-                    .draft(toDraftDTO(draft, latest))
+                    .draft(toDraftDTO(draft))
                     .versions(schemaVersions
-                                    .stream()
-                                    .map(MetadataSchema::getVersion)
-                                    .sorted()
-                                    .map(SemVer::toString)
-                                    .toList()
+                            .stream()
+                            .map(MetadataSchemaVersion::getSemVer)
+                            .sorted()
+                            .map(SemVer::toString)
+                            .toList()
                     )
                     .extendSchemaUuids(Collections.emptyList())
                     .childSchemaUuids(Collections.emptyList())
@@ -198,7 +195,7 @@ public class MetadataSchemaMapper {
         return null;
     }
 
-    public MetadataSchema fromUpdateDTO(MetadataSchema schema, MetadataSchemaUpdateDTO reqDto) {
+    public MetadataSchemaVersion fromUpdateDTO(MetadataSchemaVersion schema, MetadataSchemaUpdateDTO reqDto) {
         return
                 schema
                         .toBuilder()
@@ -208,22 +205,20 @@ public class MetadataSchemaMapper {
                         .build();
     }
 
-    public MetadataSchemaDraft toDraft(MetadataSchema schema) {
-        return MetadataSchemaDraft.builder()
+    public MetadataSchemaVersion toDraft(MetadataSchemaVersion schema) {
+        return MetadataSchemaVersion.builder()
                 .uuid(schema.getUuid())
-                .name(schema.getName())
                 .name(schema.getName())
                 .description(schema.getDescription())
                 .abstractSchema(schema.isAbstractSchema())
                 .definition(schema.getDefinition())
-                .extendSchemas(schema.getExtendSchemas())
                 .suggestedResourceName(schema.getSuggestedResourceName())
                 .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
                 .build();
     }
 
     public MetadataSchemaVersionDTO toPublishedVersionDTO(
-            MetadataSchema schema, String persistentUrl
+            MetadataSchemaVersion schema, String persistentUrl
     ) {
         final MetadataSchemaVersionDTO dto = toVersionDTO(schema);
         if (dto.getOrigin() == null) {
@@ -233,46 +228,60 @@ public class MetadataSchemaMapper {
         return dto;
     }
 
-    public MetadataSchema fromRemoteVersion(MetadataSchemaVersionDTO remoteVersion) {
-        return MetadataSchema.builder()
-                .uuid(remoteVersion.getUuid())
-                .versionUuid(remoteVersion.getVersionUuid())
+    public MetadataSchemaVersion fromRemoteVersion(MetadataSchemaVersionDTO remoteVersion) {
+        return MetadataSchemaVersion.builder()
+                .uuid(remoteVersion.getVersionUuid())
                 .name(remoteVersion.getName())
                 .description(remoteVersion.getDescription())
                 .definition(remoteVersion.getDefinition())
-                .versionString(remoteVersion.getVersion())
+                .version(remoteVersion.getVersion())
                 .origin(remoteVersion.getOrigin())
                 .importedFrom(remoteVersion.getImportedFrom())
-                .extendSchemas(remoteVersion.getExtendsSchemaUuids())
-                .targetClasses(remoteVersion.getTargetClasses())
+                .targetClasses(remoteVersion.getTargetClasses().stream().toList())
                 .abstractSchema(remoteVersion.isAbstractSchema())
                 .published(false)
                 .suggestedResourceName(remoteVersion.getSuggestedResourceName())
                 .suggestedUrlPrefix(remoteVersion.getSuggestedUrlPrefix())
                 .type(MetadataSchemaType.REFERENCE)
-                .previousVersionUuid(remoteVersion.getPreviousVersionUuid())
-                .createdAt(Instant.now())
                 .build();
     }
 
-    public MetadataSchema fromRemoteVersion(
-            MetadataSchemaVersionDTO remoteVersion, MetadataSchema schema
+    public MetadataSchemaVersion fromRemoteVersion(
+            MetadataSchemaVersionDTO remoteVersion, MetadataSchemaVersion schema
     ) {
         return schema.toBuilder()
                 .name(remoteVersion.getName())
                 .description(remoteVersion.getDescription())
                 .definition(remoteVersion.getDefinition())
-                .extendSchemas(remoteVersion.getExtendsSchemaUuids())
                 .type(MetadataSchemaType.REFERENCE)
-                .targetClasses(remoteVersion.getTargetClasses())
+                .targetClasses(remoteVersion.getTargetClasses().stream().toList())
                 .abstractSchema(remoteVersion.isAbstractSchema())
                 .published(schema.isPublished())
                 .origin(remoteVersion.getOrigin())
                 .importedFrom(remoteVersion.getImportedFrom())
                 .suggestedUrlPrefix(remoteVersion.getSuggestedUrlPrefix())
                 .suggestedResourceName(remoteVersion.getSuggestedResourceName())
-                .versionString(remoteVersion.getVersion())
-                .createdAt(Instant.now())
+                .version(remoteVersion.getVersion())
+                .updatedAt(Instant.now())
+                .build();
+    }
+
+    public MetadataSchema newSchema(UUID uuid) {
+        return MetadataSchema.builder()
+                .uuid(uuid)
+                .build();
+    }
+
+    public MetadataSchema newSchema() {
+        return newSchema(UUID.randomUUID());
+    }
+
+    public MetadataSchemaExtension newExtension(MetadataSchemaVersion draft, MetadataSchema metadataSchema, int orderPriority) {
+        return MetadataSchemaExtension.builder()
+                .uuid(UUID.randomUUID())
+                .extendedMetadataSchema(metadataSchema)
+                .metadataSchemaVersion(draft)
+                .orderPriority(orderPriority)
                 .build();
     }
 }

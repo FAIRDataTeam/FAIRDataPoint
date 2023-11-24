@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.distribution.member;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +43,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("DELETE /distribution/:distributionId/members/:userUuid")
 public class Detail_DELETE extends WebIntegrationTest {
-
-    @Autowired
-    private UserFixtures userFixtures;
+    // TODO: fixtures
 
     private URI url(String distributionId, String userUuid) {
         return URI.create(format("/distribution/%s/members/%s", distributionId, userUuid));
@@ -66,7 +64,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     private void create_res204(String token) {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("distribution-1", userFixtures.nikola().getUuid()))
+                .delete(url("distribution-1", KnownUUIDs.USER_NIKOLA_UUID.toString()))
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -84,7 +82,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("distribution-2", userFixtures.nikola().getUuid()))
+                .delete(url("distribution-2", KnownUUIDs.USER_NIKOLA_UUID.toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -100,7 +98,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing distribution")
     public void res404_nonExistingCatalog() {
-        createUserNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
+        createUserNotFoundTestDelete(client, url("nonExisting", KnownUUIDs.USER_ALBERT_UUID.toString()));
     }
 
 }

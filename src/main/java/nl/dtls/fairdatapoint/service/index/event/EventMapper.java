@@ -23,8 +23,8 @@
 package nl.dtls.fairdatapoint.service.index.event;
 
 import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
-import nl.dtls.fairdatapoint.entity.index.event.AdminTrigger;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.entity.index.event.payload.AdminTrigger;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -33,23 +33,23 @@ public class EventMapper {
 
     private static final Integer VERSION = 1;
 
-    public EventDTO toDTO(Event event) {
+    public EventDTO toDTO(IndexEvent event) {
         return new EventDTO(
                 event.getUuid(),
                 event.getType(),
-                event.getCreated().toString(),
-                event.getFinished().toString()
+                event.getCreatedAt().toString(),
+                event.getFinishedAt().toString()
         );
     }
 
-    public Event toAdminTriggerEvent(
+    public IndexEvent toAdminTriggerEvent(
             Authentication authentication, String clientUrl, String remoteAddr
     ) {
         final AdminTrigger adminTrigger = new AdminTrigger();
         adminTrigger.setRemoteAddr(remoteAddr);
         adminTrigger.setTokenName(authentication.getName());
         adminTrigger.setClientUrl(clientUrl);
-        return new Event(VERSION, adminTrigger);
+        return new IndexEvent(VERSION, adminTrigger);
     }
 
 }

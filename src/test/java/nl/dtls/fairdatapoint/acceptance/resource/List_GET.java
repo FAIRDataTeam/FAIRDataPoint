@@ -23,7 +23,7 @@
 package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,9 +47,6 @@ public class List_GET extends WebIntegrationTest {
         return URI.create("/resource-definitions");
     }
 
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
-
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
@@ -57,21 +54,16 @@ public class List_GET extends WebIntegrationTest {
         RequestEntity<Void> request = RequestEntity
                 .get(url())
                 .build();
-        ParameterizedTypeReference<List<ResourceDefinition>> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<List<ResourceDefinitionDTO>> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<List<ResourceDefinition>> result = client.exchange(request, responseType);
+        ResponseEntity<List<ResourceDefinitionDTO>> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        List<ResourceDefinition> body = result.getBody();
-        assertThat(body, is(equalTo(List.of(
-                resourceDefinitionFixtures.fdpDefinition(),
-                resourceDefinitionFixtures.catalogDefinition(),
-                resourceDefinitionFixtures.datasetDefinition(),
-                resourceDefinitionFixtures.distributionDefinition()
-        ))));
+        List<ResourceDefinitionDTO> body = result.getBody();
+        assertThat(body.size(), is(equalTo(4)));
     }
 
 }

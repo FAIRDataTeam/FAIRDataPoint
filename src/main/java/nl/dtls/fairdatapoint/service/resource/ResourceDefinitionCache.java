@@ -24,29 +24,30 @@ package nl.dtls.fairdatapoint.service.resource;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionChildRepository;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionCache {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
+
+    private final ResourceDefinitionChildRepository resourceDefinitionChildRepository;
 
     @PostConstruct
     public void computeCache() {
@@ -65,21 +66,21 @@ public class ResourceDefinitionCache {
         });
         rds.forEach(resourceDefinition -> {
             cache.put(resourceDefinition.getUuid(), resourceDefinition);
-            resourceDefinition.getChildren()
+            resourceDefinitionChildRepository.findAllBySourceUuid(resourceDefinition.getUuid())
                     .forEach(child -> {
                         parentCache.get(
-                                child.getResourceDefinitionUuid(),
+                                child.getSource().getUuid(),
                                 ResourceDefinitionParents.class
                         ).add(resourceDefinition);
                     });
         });
     }
 
-    public ResourceDefinition getByUuid(String uuid) {
+    public ResourceDefinition getByUuid(UUID uuid) {
         return cache().get(uuid, ResourceDefinition.class);
     }
 
-    public Set<ResourceDefinition> getParentsByUuid(String uuid) {
+    public Set<ResourceDefinition> getParentsByUuid(UUID uuid) {
         var parents = parentCache().get(uuid, ResourceDefinitionParents.class);
         if (parents == null) {
             computeCache();

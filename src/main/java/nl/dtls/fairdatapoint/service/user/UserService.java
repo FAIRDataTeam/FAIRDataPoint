@@ -22,11 +22,11 @@
  */
 package nl.dtls.fairdatapoint.service.user;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.user.*;
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.member.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,112 +39,113 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private UserValidator userValidator;
+    private final UserValidator userValidator;
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
     public List<UserDTO> getUsers() {
         return
-                userRepository
+                userAccountRepository
                         .findAll()
                         .stream()
                         .map(userMapper::toDTO)
                         .toList();
     }
 
-    public Optional<UserDTO> getUserByUuid(String uuid) {
-        return
-                userRepository
-                        .findByUuid(uuid)
-                        .map(userMapper::toDTO);
+    public Optional<UserAccount> getUserAccountByUuid(UUID uuid) {
+        return userAccountRepository.findByUuid(uuid);
     }
 
-    public Optional<String> getCurrentUserUuid() {
+    public Optional<UserDTO> getUserDtoByUuid(UUID uuid) {
+        return getUserAccountByUuid(uuid).map(userMapper::toDTO);
+    }
+
+    public Optional<UUID> getCurrentUserUuid() {
         final Object principal =
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof org.springframework.security.core.userdetails.User) {
             return of(((org.springframework.security.core.userdetails.User) principal)
-                    .getUsername());
+                    .getUsername()).map(UUID::fromString);
         }
         return empty();
     }
 
-    public Optional<UserDTO> getCurrentUser() {
-        return getCurrentUserUuid().flatMap(this::getUserByUuid);
+    public Optional<UserAccount> getCurrentUserAccount() {
+        return getCurrentUserUuid().flatMap(this::getUserAccountByUuid);
+    }
+
+    public Optional<UserDTO> getCurrentUserDto() {
+        return getCurrentUserUuid().flatMap(this::getUserDtoByUuid);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserDTO createUser(UserCreateDTO reqDto) {
         userValidator.validateEmail(null, reqDto.getEmail());
-        final String uuid = UUID.randomUUID().toString();
-        final User user = userMapper.fromCreateDTO(reqDto, uuid);
-        userRepository.save(user);
+        final UserAccount user = userMapper.fromCreateDTO(reqDto);
+        userAccountRepository.save(user);
         return userMapper.toDTO(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<UserDTO> updateUser(String uuid, UserChangeDTO reqDto) {
-        final Optional<User> user = userRepository.findByUuid(uuid);
+    public Optional<UserDTO> updateUser(UUID uuid, UserChangeDTO reqDto) {
+        final Optional<UserAccount> user = userAccountRepository.findByUuid(uuid);
         if (user.isEmpty()) {
             return empty();
         }
         userValidator.validateEmail(uuid, reqDto.getEmail());
-        final User updatedUser = userMapper.fromChangeDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
+        final UserAccount updatedUser = userMapper.fromChangeDTO(reqDto, user.get());
+        userAccountRepository.save(updatedUser);
         return of(userMapper.toDTO(updatedUser));
     }
 
     public Optional<UserDTO> updateCurrentUser(UserProfileChangeDTO reqDto) {
-        final Optional<User> user =
-                getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
+        final Optional<UserAccount> user =
+                getCurrentUserUuid().flatMap(userAccountRepository::findByUuid);
         if (user.isEmpty()) {
             return empty();
         }
         userValidator.validateEmail(user.get().getUuid(), reqDto.getEmail());
-        final User updatedUser = userMapper.fromProfileChangeDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
+        final UserAccount updatedUser = userMapper.fromProfileChangeDTO(reqDto, user.get());
+        userAccountRepository.save(updatedUser);
         return of(userMapper.toDTO(updatedUser));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<UserDTO> updatePassword(String uuid, UserPasswordDTO reqDto) {
-        final Optional<User> user = userRepository.findByUuid(uuid);
+    public Optional<UserDTO> updatePassword(UUID uuid, UserPasswordDTO reqDto) {
+        final Optional<UserAccount> user = userAccountRepository.findByUuid(uuid);
         if (user.isEmpty()) {
             return empty();
         }
-        final User updatedUser = userMapper.fromPasswordDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
+        final UserAccount updatedUser = userMapper.fromPasswordDTO(reqDto, user.get());
+        userAccountRepository.save(updatedUser);
         return of(userMapper.toDTO(updatedUser));
     }
 
     public Optional<UserDTO> updatePasswordForCurrentUser(UserPasswordDTO reqDto) {
-        final Optional<User> user =
-                getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
+        final Optional<UserAccount> user =
+                getCurrentUserUuid().flatMap(userAccountRepository::findByUuid);
         if (user.isEmpty()) {
             return empty();
         }
-        final User updatedUser = userMapper.fromPasswordDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
+        final UserAccount updatedUser = userMapper.fromPasswordDTO(reqDto, user.get());
+        userAccountRepository.save(updatedUser);
         return of(userMapper.toDTO(updatedUser));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public boolean deleteUser(String uuid) {
-        final Optional<User> user = userRepository.findByUuid(uuid);
+    public boolean deleteUser(UUID uuid) {
+        final Optional<UserAccount> user = userAccountRepository.findByUuid(uuid);
         if (user.isEmpty()) {
             return false;
         }
-        userRepository.delete(user.get());
+        userAccountRepository.delete(user.get());
         memberService.deleteMembers(user.get());
         return true;
     }

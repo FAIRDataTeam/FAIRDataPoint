@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
@@ -31,7 +32,7 @@ import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -47,8 +48,6 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,35 +69,26 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Tag(name = "Metadata")
 @RestController
 @RequestMapping("/")
+@RequiredArgsConstructor
 public class GenericController {
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private final MetadataServiceFactory metadataServiceFactory;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private MetadataSchemaService metadataSchemaService;
+    private final MetadataSchemaService metadataSchemaService;
 
-    @Autowired
-    private MetadataEnhancer metadataEnhancer;
+    private final MetadataEnhancer metadataEnhancer;
 
-    @Autowired
-    private CurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
-    @Autowired
-    private GenericMetadataRepository metadataRepository;
+    private final GenericMetadataRepository metadataRepository;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
 
     @Operation(hidden = true)
     @GetMapping(path = {"/spec", "{oUrlPrefix:[^.]+}/spec"}, produces = "!application/json")
@@ -107,7 +97,7 @@ public class GenericController {
     ) {
         final String urlPrefix = oUrlPrefix.orElse("");
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
-        return metadataSchemaService.getShaclFromSchemas(rd.getMetadataSchemaUuids());
+        return metadataSchemaService.getShaclFromSchemaUsages(rd.getMetadataSchemaUsages());
     }
 
     @Operation(hidden = true, deprecated = true)
@@ -127,7 +117,7 @@ public class GenericController {
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Get entity (from repository based on permissions)
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> oCurrentUser = currentUserService.getCurrentUser();
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
         Model entity = metadataService.retrieve(entityUri, mode);
@@ -171,7 +161,7 @@ public class GenericController {
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get entity (from repository based on permissions)
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> oCurrentUser = currentUserService.getCurrentUser();
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
         final Model entity = metadataService.retrieve(entityUri, mode);
@@ -194,7 +184,7 @@ public class GenericController {
     ) throws MetadataServiceException {
         // 1. Check if user is authenticated
         //     - it can't be in SecurityConfig because the authentication is done based on content-type
-        final Optional<User> oUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> oUser = currentUserService.getCurrentUser();
         if (oUser.isEmpty()) {
             throw new ForbiddenException("You have to be login at first");
         }
@@ -316,7 +306,7 @@ public class GenericController {
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get entity (from repository based on permissions)
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> oCurrentUser = currentUserService.getCurrentUser();
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
         final Model entity = metadataService.retrieve(entityUri, mode);
@@ -327,7 +317,7 @@ public class GenericController {
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
 
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            if (rdChild.getResourceDefinitionUuid().equals(currentChildRd.getUuid())) {
+            if (rdChild.getTarget().getUuid().equals(currentChildRd.getUuid())) {
                 final IRI relationUri = i(rdChild.getRelationUri());
 
                 // 3.1 Get all titles for sort

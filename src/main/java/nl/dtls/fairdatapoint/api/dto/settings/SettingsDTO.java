@@ -24,7 +24,6 @@ package nl.dtls.fairdatapoint.api.dto.settings;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
 
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class SettingsDTO {
 
     private String appSubtitleFromConfig;
 
-    private List<SettingsMetricsEntry> metadataMetrics;
+    private List<SettingsMetricDTO> metadataMetrics;
 
     private SettingsPingDTO ping;
 

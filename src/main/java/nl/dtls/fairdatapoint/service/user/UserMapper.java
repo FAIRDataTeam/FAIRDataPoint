@@ -22,19 +22,23 @@
  */
 package nl.dtls.fairdatapoint.service.user;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.user.*;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.util.UUID;
+
+@Component
+@RequiredArgsConstructor
 public class UserMapper {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserDTO toDTO(User user) {
+    public UserDTO toDTO(UserAccount user) {
         return
                 new UserDTO(
                         user.getUuid(),
@@ -44,7 +48,7 @@ public class UserMapper {
                         user.getRole());
     }
 
-    public UserSimpleDTO toSimpleDTO(User user) {
+    public UserSimpleDTO toSimpleDTO(UserAccount user) {
         return
                 new UserSimpleDTO(
                         user.getUuid(),
@@ -53,10 +57,10 @@ public class UserMapper {
                         user.getEmail());
     }
 
-    public User fromCreateDTO(UserCreateDTO dto, String uuid) {
+    public UserAccount fromCreateDTO(UserCreateDTO dto) {
         return
-                new User(
-                        uuid,
+                new UserAccount(
+                        UUID.randomUUID(),
                         dto.getFirstName(),
                         dto.getLastName(),
                         dto.getEmail(),
@@ -64,7 +68,7 @@ public class UserMapper {
                         dto.getRole());
     }
 
-    public User fromChangeDTO(UserChangeDTO dto, User user) {
+    public UserAccount fromChangeDTO(UserChangeDTO dto, UserAccount user) {
         return
                 user
                         .toBuilder()
@@ -75,7 +79,7 @@ public class UserMapper {
                         .build();
     }
 
-    public User fromProfileChangeDTO(UserProfileChangeDTO dto, User user) {
+    public UserAccount fromProfileChangeDTO(UserProfileChangeDTO dto, UserAccount user) {
         return
                 user
                         .toBuilder()
@@ -85,7 +89,7 @@ public class UserMapper {
                         .build();
     }
 
-    public User fromPasswordDTO(UserPasswordDTO reqDto, User user) {
+    public UserAccount fromPasswordDTO(UserPasswordDTO reqDto, UserAccount user) {
         return
                 user
                         .toBuilder()

@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
@@ -40,21 +41,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
 @Tag(name = "Search")
 @RestController
 @RequestMapping("/search/query/saved")
+@RequiredArgsConstructor
 public class SearchSavedQueryController {
 
     private static final String NOT_FOUND_MSG = "Saved query '%s' doesn't exist";
 
-    @Autowired
-    private SearchSavedQueryService searchSavedQueryService;
+    private final SearchSavedQueryService searchSavedQueryService;
 
-    @Autowired
-    private SearchService searchService;
+    private final SearchService searchService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
@@ -63,7 +64,7 @@ public class SearchSavedQueryController {
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> getSingle(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
@@ -76,7 +77,7 @@ public class SearchSavedQueryController {
 
     @PostMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchResultDTO>> search(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException, MetadataRepositoryException {
         final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
@@ -99,7 +100,7 @@ public class SearchSavedQueryController {
     @PreAuthorize("isAuthenticated()")
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> update(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
         final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.update(uuid, reqDto);
@@ -115,7 +116,7 @@ public class SearchSavedQueryController {
     @DeleteMapping(path = "/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> delete(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final boolean result = searchSavedQueryService.delete(uuid);
         if (result) {

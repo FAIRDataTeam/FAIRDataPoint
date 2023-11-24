@@ -22,13 +22,22 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.generic;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
+import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
+import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
+import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
+import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.security.acls.domain.BasePermission;

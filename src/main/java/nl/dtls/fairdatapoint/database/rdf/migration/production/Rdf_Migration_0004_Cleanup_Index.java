@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
@@ -78,12 +78,12 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
     public void cleanupHarvestedRecordsFrom(IndexEntry entry) {
         log.debug("Deleting harvested records for '{}'", entry.getClientUrl());
 
-        if (entry.getCurrentMetadata() == null) {
+        if (entry.getMetadata() == null) {
             log.debug("Deleting harvested records for '{}': no metadata retrieved", entry.getClientUrl());
             return;
         }
 
-        final String repositoryUri = entry.getCurrentMetadata().getRepositoryUri();
+        final String repositoryUri = entry.getRepositoryUri();
         log.debug("Deleting harvested records for '{}': has repository URI '{}'", entry.getClientUrl(), repositoryUri);
 
         if (repositoryUri.equals(persistentUrl) || repositoryUri.equals(instanceProperties.getClientUrl())) {

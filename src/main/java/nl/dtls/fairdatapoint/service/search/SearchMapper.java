@@ -65,11 +65,11 @@ public class SearchMapper {
         return SearchFilterDTO
                 .builder()
                 .type(filter.getType())
-                .queryFromRecords(filter.isQueryFromRecords())
+                .queryFromRecords(filter.getQueryRecords())
                 .predicate(filter.getPredicate())
                 .label(filter.getLabel())
                 .values(filter
-                        .getPresetValues()
+                        .getItems()
                         .stream()
                         .map(this::toFilterItemDTO)
                         .toList()

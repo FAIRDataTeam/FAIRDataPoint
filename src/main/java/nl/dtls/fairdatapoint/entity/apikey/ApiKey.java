@@ -22,26 +22,28 @@
  */
 package nl.dtls.fairdatapoint.entity.apikey;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 
-@Document
+@Entity(name = "ApiKey")
+@Table(name = "api_key")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
-public class ApiKey {
+@SuperBuilder
+public class ApiKey extends BaseEntity {
 
-    @Id
-    private ObjectId id;
-
-    private String uuid;
-
-    private String userUuid;
-
+    @NotNull
+    @Column(name = "token", nullable = false)
     private String token;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "user_account_id", nullable = false)
+    private UserAccount userAccount;
 }

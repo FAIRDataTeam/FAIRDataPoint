@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.general;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -46,9 +45,6 @@ public class SecurityTest extends WebIntegrationTest {
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
-
-    @Autowired
-    private ApiKeyFixtures apiKeyFixtures;
 
     @Test
     public void postRequestsAreSecured() {
@@ -93,11 +89,12 @@ public class SecurityTest extends WebIntegrationTest {
         // GIVEN: Prepare data
         String reqDto = RdfIOUtil.write(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
         // AND: Prepare request
+        // TODO: API KEY OF ALBERT
         RequestEntity<String> request = RequestEntity
                 .post(URI.create("/distribution"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .header(HttpHeaders.ACCEPT, "text/turtle")
-                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", apiKeyFixtures.ALBERT_API_KEY))
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", "TODO"))
                 .body(reqDto);
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };

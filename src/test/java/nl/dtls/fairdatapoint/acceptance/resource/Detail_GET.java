@@ -23,8 +23,10 @@
 package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
@@ -44,36 +47,39 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /resource-definitions/:resourceDefinitionUuid")
 public class Detail_GET extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    @Autowired
+    private ResourceDefinitionRepository resourceDefinitionRepository;
+
+    private URI url(UUID uuid) {
         return URI.create(format("/resource-definitions/%s", uuid));
     }
-
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.fdpDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .get(url(resourceDefinition.getUuid()))
                 .build();
-        ParameterizedTypeReference<ResourceDefinition> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<ResourceDefinitionDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<ResourceDefinition> result = client.exchange(request, responseType);
+        ResponseEntity<ResourceDefinitionDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getBody(), is(equalTo(resourceDefinition)));
+        assertThat(result.getBody().getUuid(), is(equalTo(resourceDefinition.getUuid())));
+        assertThat(result.getBody().getName(), is(equalTo(resourceDefinition.getName())));
+        assertThat(result.getBody().getChildren().size(), is(equalTo(resourceDefinition.getChildren().size())));
+        assertThat(result.getBody().getExternalLinks().size(), is(equalTo(resourceDefinition.getExternalLinks().size())));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createUserNotFoundTestGet(client, url("nonExisting"));
+        createUserNotFoundTestGet(client, url(KnownUUIDs.NULL_UUID));
     }
 
 }

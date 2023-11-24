@@ -22,12 +22,15 @@
  */
 package nl.dtls.fairdatapoint.acceptance.schema;
 
+import jakarta.persistence.EntityManager;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaState;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +42,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -64,26 +68,13 @@ public class List_GET extends WebIntegrationTest {
     private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
-
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     @Test
     @DisplayName("HTTP 200: regular user")
     public void res200_regularUser() {
-        // GIVEN: prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.insert(metadataSchemaFixtures.resourceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.fdpSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.dataServiceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.metadataServiceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.catalogSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.datasetSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.distributionSchema());
-
-        // AND: prepare request
+        // GIVEN:
+        List<MetadataSchemaVersion> all = metadataSchemaVersionRepository.getAllLatest();
         RequestEntity<Void> request = RequestEntity
                 .get(url(false, true))
                 .build();
@@ -96,29 +87,22 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<MetadataSchemaDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(7)));
-        Common.compare(metadataSchemaFixtures.resourceSchema(), body.get(0));
-        Common.compare(metadataSchemaFixtures.fdpSchema(), body.get(1));
-        Common.compare(metadataSchemaFixtures.dataServiceSchema(), body.get(2));
-        Common.compare(metadataSchemaFixtures.metadataServiceSchema(), body.get(3));
-        Common.compare(metadataSchemaFixtures.catalogSchema(), body.get(4));
-        Common.compare(metadataSchemaFixtures.datasetSchema(), body.get(5));
-        Common.compare(metadataSchemaFixtures.distributionSchema(), body.get(6));
+        assertThat(body.size(), is(equalTo(12)));
+
+        Common.compare(all.get(0), body.get(0));
+        Common.compare(all.get(1), body.get(1));
+        Common.compare(all.get(2), body.get(2));
+        Common.compare(all.get(3), body.get(3));
+        Common.compare(all.get(4), body.get(4));
+        Common.compare(all.get(5), body.get(5));
+        Common.compare(all.get(6), body.get(6));
     }
 
     @Test
     @DisplayName("HTTP 200: regular user, no abstract")
     public void res200_regularUserNoAbstract() {
         // GIVEN: prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.insert(metadataSchemaFixtures.resourceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.fdpSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.dataServiceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.metadataServiceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.catalogSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.datasetSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.distributionSchema());
+        List<MetadataSchemaVersion> all = metadataSchemaVersionRepository.getAllLatest().stream().filter(v -> !v.isAbstractSchema()).toList();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
@@ -133,29 +117,20 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<MetadataSchemaDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(6)));
-        Common.compare(metadataSchemaFixtures.fdpSchema(), body.get(0));
-        Common.compare(metadataSchemaFixtures.dataServiceSchema(), body.get(1));
-        Common.compare(metadataSchemaFixtures.metadataServiceSchema(), body.get(2));
-        Common.compare(metadataSchemaFixtures.catalogSchema(), body.get(3));
-        Common.compare(metadataSchemaFixtures.datasetSchema(), body.get(4));
-        Common.compare(metadataSchemaFixtures.distributionSchema(), body.get(5));
+        assertThat(body.size(), is(equalTo(11)));
+
+        Common.compare(all.get(0), body.get(0));
+        Common.compare(all.get(1), body.get(1));
+        Common.compare(all.get(2), body.get(2));
+        Common.compare(all.get(3), body.get(3));
+        Common.compare(all.get(4), body.get(4));
+        Common.compare(all.get(5), body.get(5));
     }
 
     @Test
     @DisplayName("HTTP 200: admin with drafts")
     public void res200_adminDrafts() {
-        // GIVEN: prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.insert(metadataSchemaFixtures.resourceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.fdpSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.dataServiceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.metadataServiceSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.catalogSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.datasetSchema());
-        metadataSchemaRepository.insert(metadataSchemaFixtures.distributionSchema());
-        metadataSchemaDraftRepository.insert(metadataSchemaFixtures.customSchemaDraft1());
+        List<MetadataSchemaVersion> all = metadataSchemaVersionRepository.getAllLatest();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
@@ -171,26 +146,21 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<MetadataSchemaDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(8)));
-        Common.compare(metadataSchemaFixtures.resourceSchema(), body.get(0));
-        Common.compare(metadataSchemaFixtures.fdpSchema(), body.get(1));
-        Common.compare(metadataSchemaFixtures.dataServiceSchema(), body.get(2));
-        Common.compare(metadataSchemaFixtures.metadataServiceSchema(), body.get(3));
-        Common.compare(metadataSchemaFixtures.catalogSchema(), body.get(4));
-        Common.compare(metadataSchemaFixtures.datasetSchema(), body.get(5));
-        Common.compare(metadataSchemaFixtures.distributionSchema(), body.get(6));
-        Common.compare(metadataSchemaFixtures.customSchemaDraft1(), body.get(7));
-    }
+        assertThat(body.size(), is(equalTo(14)));
 
+        Common.compare(all.get(0), body.get(0));
+        Common.compare(all.get(1), body.get(1));
+        Common.compare(all.get(2), body.get(2));
+        Common.compare(all.get(3), body.get(3));
+        Common.compare(all.get(4), body.get(4));
+        Common.compare(all.get(5), body.get(5));
+        Common.compare(all.get(6), body.get(6));
+    }
 
     @Test
     @DisplayName("HTTP 403: unauthorized for drafts")
     public void res403_unauthorized() {
-        // GIVEN: prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.deleteAll();
-
-        // AND: prepare request
+        // GIVEN: request
         RequestEntity<Void> request = RequestEntity
                 .get(url(true, true))
                 .build();

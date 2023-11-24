@@ -23,9 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,27 +45,22 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("DELETE /metadata-schemas/:schemaUuid/draft")
 public class Draft_DELETE extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    private URI url(UUID uuid) {
         return URI.create(format("/metadata-schemas/%s/draft", uuid));
     }
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
-
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(draft.getUuid()))
+                .delete(url(draft.getSchema().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -76,25 +71,27 @@ public class Draft_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
-        assertThat(metadataSchemaDraftRepository.findAll().isEmpty(), is(true));
+        assertThat(metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).isPresent(), is(false));
+        assertThat(metadataSchemaVersionRepository.getLatestBySchemaUuid(Common.SCHEMA_MULTI_DRAFT_UUID).isPresent(), is(true));
+        assertThat(metadataSchemaVersionRepository.getDraftBySchemaUuid(Common.SCHEMA_MULTI_DRAFT_UUID).isPresent(), is(false));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestDelete(client, url("nonExisting"));
+        createAdminNotFoundTestDelete(client, url(KnownUUIDs.NULL_UUID));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestDelete(client, url(UUID.randomUUID().toString()));
+        createNoUserForbiddenTestDelete(client, url(UUID.randomUUID()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestDelete(client, url(UUID.randomUUID().toString()));
+        createUserForbiddenTestDelete(client, url(UUID.randomUUID()));
     }
 
 }

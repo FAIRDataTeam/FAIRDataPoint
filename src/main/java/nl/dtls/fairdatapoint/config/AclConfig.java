@@ -22,39 +22,39 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.acls.AclPermissionCacheOptimizer;
 import org.springframework.security.acls.AclPermissionEvaluator;
-import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.domain.*;
+import org.springframework.security.acls.jdbc.BasicLookupStrategy;
+import org.springframework.security.acls.jdbc.JdbcAclService;
+import org.springframework.security.acls.jdbc.JdbcMutableAclService;
 import org.springframework.security.acls.jdbc.LookupStrategy;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.AclService;
+import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
-import org.springframework.security.acls.mongodb.BasicLookupStrategy;
-import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import javax.sql.DataSource;
 
 import static java.lang.String.format;
 
 @Configuration
+@RequiredArgsConstructor
 public class AclConfig {
+    // TODO PG: check instantiation
 
     public static final String ACL_CACHE = "ACL_CACHE";
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-    @Autowired
-    private AclRepository aclRepository;
+    private final DataSource dataSource;
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
@@ -66,7 +66,12 @@ public class AclConfig {
 
     @Bean
     public AclService aclService(AclCache aclCache) {
-        return new MongoDBMutableAclService(aclRepository, lookupStrategy(aclCache), aclCache);
+        return new JdbcAclService(dataSource, lookupStrategy(aclCache));
+    }
+
+    @Bean
+    public MutableAclService mutableAclService(AclCache aclCache) {
+        return new JdbcMutableAclService(dataSource, lookupStrategy(aclCache), aclCache);
     }
 
     @Bean
@@ -98,8 +103,12 @@ public class AclConfig {
 
     @Bean
     public LookupStrategy lookupStrategy(AclCache aclCache) {
-        return new BasicLookupStrategy(mongoTemplate, aclCache, aclAuthorizationStrategy(),
-                permissionGrantingStrategy());
+        return new BasicLookupStrategy(
+                dataSource,
+                aclCache,
+                aclAuthorizationStrategy(),
+                new ConsoleAuditLogger()
+        );
     }
 
 }

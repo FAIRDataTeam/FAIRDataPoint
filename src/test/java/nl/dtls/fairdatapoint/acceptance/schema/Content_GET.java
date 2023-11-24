@@ -23,24 +23,11 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("GET /metadata-schemas/:schemaUuid")
 public class Content_GET extends WebIntegrationTest {
@@ -48,9 +35,6 @@ public class Content_GET extends WebIntegrationTest {
     private URI url(String uuid) {
         return URI.create(format("/metadata-schemas/%s", uuid));
     }
-
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
 
     // TODO
 

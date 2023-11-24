@@ -22,22 +22,24 @@
  */
 package nl.dtls.fairdatapoint.service.schema;
 
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.schema.*;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaExtensionRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaUsageRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
+import nl.dtls.fairdatapoint.entity.resource.MetadataSchemaUsage;
+import nl.dtls.fairdatapoint.entity.schema.*;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -52,218 +54,254 @@ import static java.util.Optional.of;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class MetadataSchemaService {
 
     private static final String MSG_ERROR_PARENTS_PUBLISH =
             "Cannot publish as not all parents (via extends) are published";
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository schemaRepository;
 
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private final MetadataSchemaVersionRepository versionRepository;
 
-    @Autowired
-    private MetadataSchemaMapper metadataSchemaMapper;
+    private final MetadataSchemaUsageRepository usageRepository;
 
-    @Autowired
-    private MetadataSchemaValidator metadataSchemaValidator;
+    private final MetadataSchemaExtensionRepository extensionRepository;
 
-    @Autowired
-    private ResourceDefinitionTargetClassesCache targetClassesCache;
+    private final MetadataSchemaMapper metadataSchemaMapper;
 
-    @Autowired
-    private String persistentUrl;
+    private final MetadataSchemaValidator metadataSchemaValidator;
+
+    private final ResourceDefinitionTargetClassesCache targetClassesCache;
+
+    private final String persistentUrl;
+
+    private final EntityManager entityManager;
 
     // ===============================================================================================
     // Schema drafts
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public MetadataSchemaDraftDTO createSchemaDraft(MetadataSchemaChangeDTO reqDto) {
-        final String uuid = UUID.randomUUID().toString();
-
         // Validate
         metadataSchemaValidator.validateAllExist(reqDto.getExtendsSchemaUuids());
+        final List<MetadataSchema> extendedSchemas = getAll(reqDto.getExtendsSchemaUuids());
 
-        final MetadataSchemaDraft draft = metadataSchemaMapper.fromChangeDTO(reqDto, uuid);
-        metadataSchemaDraftRepository.save(draft);
-        return metadataSchemaMapper.toDraftDTO(draft, null);
-    }
+        // create new MetadataSchema (bundle)
+        final MetadataSchema schema = schemaRepository.saveAndFlush(metadataSchemaMapper.newSchema());
+        entityManager.refresh(schema);
+        // create new MetadataSchemaVersion (draft)
+        final MetadataSchemaVersion draft = versionRepository.saveAndFlush(metadataSchemaMapper.fromChangeDTO(reqDto, schema));
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public Optional<MetadataSchemaDraftDTO> getSchemaDraft(String uuid) {
-        final Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
-        final Optional<MetadataSchema> oLatest = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
-        if (oDraft.isPresent()) {
-            return oDraft.map(draft -> metadataSchemaMapper.toDraftDTO(draft, oLatest.orElse(null)));
+        // create Extensions
+        draft.setExtensions(new ArrayList<>());
+        for (int index = 0; index < extendedSchemas.size(); index++) {
+            draft.getExtensions().add(metadataSchemaMapper.newExtension(draft, extendedSchemas.get(index), index));
         }
-        return oLatest.map(latest -> metadataSchemaMapper.toDraftDTO(latest));
+        extensionRepository.saveAllAndFlush(draft.getExtensions());
+
+        return metadataSchemaMapper.toDraftDTO(draft);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<MetadataSchemaDraftDTO> updateSchemaDraft(String uuid, MetadataSchemaChangeDTO reqDto) {
-        final Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
-        final Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
-        final MetadataSchemaDraft baseDraft;
+    public Optional<MetadataSchemaDraftDTO> getSchemaDraft(UUID uuid) {
+        final Optional<MetadataSchemaVersion> oDraft = versionRepository.getDraftBySchemaUuid(uuid);
+        final Optional<MetadataSchemaVersion> oLatest = versionRepository.getLatestBySchemaUuid(uuid);
+        if (oDraft.isPresent()) {
+            return oDraft.map(metadataSchemaMapper::toDraftDTO);
+        }
+        return oLatest.map(metadataSchemaMapper::toNewDraftDTO);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public Optional<MetadataSchemaDraftDTO> updateSchemaDraft(UUID uuid, MetadataSchemaChangeDTO reqDto) {
+        final Optional<MetadataSchemaVersion> oDraft = versionRepository.getDraftBySchemaUuid(uuid);
+        final Optional<MetadataSchemaVersion> oLatest = versionRepository.getLatestBySchemaUuid(uuid);
+        final MetadataSchemaVersion baseDraft;
         // Check if present
         if (oDraft.isPresent()) {
             baseDraft = oDraft.get();
         }
         else {
-            if (oSchema.isEmpty()) {
+            if (oLatest.isEmpty()) {
                 return empty();
             }
-            baseDraft = metadataSchemaMapper.toDraft(oSchema.get());
+            baseDraft = metadataSchemaMapper.toDraft(oLatest.get());
         }
         // Validate
         metadataSchemaValidator.validateAllExist(reqDto.getExtendsSchemaUuids());
         metadataSchemaValidator.validateNoExtendsCycle(uuid, reqDto.getExtendsSchemaUuids());
+        final List<MetadataSchema> extendedSchemas = getAll(reqDto.getExtendsSchemaUuids());
         // Save
-        final MetadataSchemaDraft updatedDraft = metadataSchemaMapper.fromChangeDTO(reqDto, baseDraft);
-        metadataSchemaDraftRepository.save(updatedDraft);
-        return of(metadataSchemaMapper.toDraftDTO(updatedDraft, oSchema.orElse(null)));
+        final MetadataSchemaVersion updatedDraft = versionRepository.saveAndFlush(
+                metadataSchemaMapper.fromChangeDTO(reqDto, baseDraft)
+        );
+
+        // Update schema extensions
+        extensionRepository.deleteAll(updatedDraft.getExtensions());
+        extensionRepository.saveAllAndFlush(extendedSchemas.stream().map(schema ->
+            metadataSchemaMapper.newExtension(updatedDraft, schema, 0)
+        ).toList());
+
+        entityManager.refresh(updatedDraft);
+
+        return of(metadataSchemaMapper.toDraftDTO(updatedDraft));
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public boolean deleteSchemaDraft(String uuid) {
-        final Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+    public boolean deleteSchemaDraft(UUID uuid) {
+        final Optional<MetadataSchemaVersion> oDraft = versionRepository.getDraftBySchemaUuid(uuid);
         if (oDraft.isEmpty()) {
             return false;
         }
-        metadataSchemaDraftRepository.delete(oDraft.get());
+        final MetadataSchemaVersion draft = oDraft.get();
+        boolean isOnlyVersion = draft.getSchema().getVersions().size() == 1;
+        extensionRepository.deleteAll(draft.getExtensions());
+        versionRepository.delete(draft);
+
+        if (isOnlyVersion) {
+            usageRepository.deleteAll(draft.getSchema().getUsages());
+            extensionRepository.deleteAll(draft.getSchema().getExtensions());
+            schemaRepository.delete(draft.getSchema());
+        }
         return true;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<MetadataSchemaDTO> releaseDraft(String uuid, MetadataSchemaReleaseDTO reqDto) {
-        final Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+    public Optional<MetadataSchemaDTO> releaseDraft(UUID uuid, MetadataSchemaReleaseDTO reqDto) {
+        final Optional<MetadataSchemaVersion> oDraft = versionRepository.getDraftBySchemaUuid(uuid);
         // Check if present
         if (oDraft.isEmpty()) {
             return empty();
         }
         // Update
-        final MetadataSchemaDraft draft = oDraft.get();
-        final String versionUuid = UUID.randomUUID().toString();
-        final MetadataSchema newLatest = metadataSchemaMapper.fromReleaseDTO(reqDto, draft, versionUuid);
-        final Optional<MetadataSchema> oLatest = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
-        oLatest.map(MetadataSchema::getVersionUuid).ifPresent(newLatest::setPreviousVersionUuid);
-        // Validate & Save
-        metadataSchemaValidator.validateAllExist(newLatest.getExtendSchemas());
+        final MetadataSchemaVersion newLatest = metadataSchemaMapper.fromReleaseDTO(reqDto, oDraft.get());
+        final Optional<MetadataSchemaVersion> oLatest = Optional.ofNullable(newLatest.getPreviousVersion());
         // validate all parents are published if publishing
         if (reqDto.isPublished()) {
-            final List<MetadataSchema> parents = resolveExtends(draft);
-            if (!parents.stream().allMatch(MetadataSchema::isPublished)) {
+            final List<MetadataSchemaVersion> parents = resolveExtends(newLatest);
+            if (!parents.stream().allMatch(MetadataSchemaVersion::isPublished)) {
                 throw new ValidationException(MSG_ERROR_PARENTS_PUBLISH);
             }
         }
         if (oLatest.isPresent()) {
-            final MetadataSchema oldLatest = oLatest.get();
-            oldLatest.setLatest(false);
+            final MetadataSchemaVersion oldLatest = oLatest.get();
+            oldLatest.setState(MetadataSchemaState.LEGACY);
             metadataSchemaValidator.validate(newLatest, oldLatest);
-            metadataSchemaRepository.save(oldLatest);
+            versionRepository.save(oldLatest);
         }
         else {
             metadataSchemaValidator.validate(newLatest);
         }
-        metadataSchemaRepository.save(newLatest);
-        metadataSchemaDraftRepository.delete(draft);
+        versionRepository.save(newLatest);
         // Update cache
         targetClassesCache.computeCache();
-        final List<MetadataSchema> versions = metadataSchemaRepository.findByUuid(uuid);
-        final List<MetadataSchema> childs = metadataSchemaRepository.findAllByExtendSchemasContains(uuid);
-        return of(metadataSchemaMapper.toDTO(newLatest, draft, versions, childs));
+        final List<MetadataSchemaVersion> versions = versionRepository.getBySchemaUuid(uuid);
+        final List<MetadataSchemaVersion> childs = extensionRepository
+                .findByExtendedMetadataSchema(newLatest.getSchema())
+                .stream()
+                .map(MetadataSchemaExtension::getMetadataSchemaVersion)
+                .toList();
+        return of(metadataSchemaMapper.toDTO(newLatest, null, versions, childs));
     }
 
     // ===============================================================================================
     // Schema versions
 
-    private Optional<MetadataSchema> getByUuidAndVersion(String uuid, String version) {
+    private Optional<MetadataSchemaVersion> getByUuidAndVersion(UUID uuid, String version) {
         if (Objects.equals(version, "latest")) {
-            return metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
+            return versionRepository.getLatestBySchemaUuid(uuid);
         }
-        return metadataSchemaRepository.findByUuidAndVersionString(uuid, version);
+        return versionRepository.getBySchemaUuidAndVersion(uuid, version);
     }
 
-    public Optional<MetadataSchemaVersionDTO> getVersion(String uuid, String version) {
+    public Optional<MetadataSchemaVersionDTO> getVersion(UUID uuid, String version) {
         return getByUuidAndVersion(uuid, version).map(metadataSchemaMapper::toVersionDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<MetadataSchemaVersionDTO> updateVersion(
-            String uuid, String version, MetadataSchemaUpdateDTO reqDto
+            UUID uuid, String version, MetadataSchemaUpdateDTO reqDto
     ) {
-        final Optional<MetadataSchema> oSchema = getByUuidAndVersion(uuid, version);
+        final Optional<MetadataSchemaVersion> oSchema = getByUuidAndVersion(uuid, version);
         if (oSchema.isEmpty()) {
             return empty();
         }
-        final MetadataSchema schema = oSchema.get();
+        final MetadataSchemaVersion schema = oSchema.get();
         // validate all parents are published if publishing
         if (!schema.isPublished() && reqDto.isPublished()) {
-            final List<MetadataSchema> parents = resolveExtends(schema);
-            if (!parents.stream().allMatch(MetadataSchema::isPublished)) {
+            final List<MetadataSchemaVersion> parents = resolveExtends(schema);
+            if (!parents.stream().allMatch(MetadataSchemaVersion::isPublished)) {
                 throw new ValidationException(MSG_ERROR_PARENTS_PUBLISH);
             }
         }
         // result
-        final MetadataSchema updatedSchema =
-                metadataSchemaRepository.save(metadataSchemaMapper.fromUpdateDTO(schema, reqDto));
+        final MetadataSchemaVersion updatedSchema =
+                versionRepository.saveAndFlush(metadataSchemaMapper.fromUpdateDTO(schema, reqDto));
         return of(metadataSchemaMapper.toVersionDTO(updatedSchema));
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public boolean deleteVersion(String uuid, String version) {
-        final Optional<MetadataSchema> oSchema = getByUuidAndVersion(uuid, version);
+    public boolean deleteVersion(UUID uuid, String version) {
+        final Optional<MetadataSchemaVersion> oSchema = getByUuidAndVersion(uuid, version);
         // Check if present
         if (oSchema.isEmpty()) {
             return false;
         }
         // Validate and fix links
-        final MetadataSchema schema = oSchema.get();
-        MetadataSchema previous = null;
-        if (schema.getPreviousVersionUuid() != null) {
-            previous = metadataSchemaRepository.findByVersionUuid(schema.getPreviousVersionUuid()).orElse(null);
-        }
-        final Optional<MetadataSchema> oNewer =
-                metadataSchemaRepository.findByPreviousVersionUuid(schema.getVersionUuid());
+        final MetadataSchemaVersion schema = oSchema.get();
+        boolean isOnlyVersion = schema.getSchema().getVersions().size() == 1;
         if (schema.isLatest()) {
-            if (previous == null) {
-                metadataSchemaValidator.validateNotUsed(uuid);
+            if (schema.getPreviousVersion() == null) {
+                metadataSchemaValidator.validateNotUsed(schema.getSchema());
             }
             else {
-                previous.setLatest(true);
-                metadataSchemaValidator.validateNoExtendsCycle(uuid, previous.getExtendSchemas());
-                metadataSchemaRepository.save(previous);
+                schema.getPreviousVersion().setState(MetadataSchemaState.LATEST);
+                metadataSchemaValidator.validateNoExtendsCycle(uuid,
+                        schema.getExtensions().stream().map(extension -> extension.getExtendedMetadataSchema().getUuid()).toList());
+                versionRepository.save(schema.getPreviousVersion());
             }
         }
-        else if (oNewer.isPresent()) {
-            final MetadataSchema newer = oNewer.get();
-            newer.setPreviousVersionUuid(previous == null ? null : previous.getVersionUuid());
-            metadataSchemaRepository.save(newer);
+        if (schema.getNextVersion() != null) {
+            schema.getNextVersion().setPreviousVersion(schema.getPreviousVersion());
+            versionRepository.save(schema.getNextVersion());
         }
-        metadataSchemaRepository.delete(schema);
+
+        versionRepository.delete(schema);
+        if (isOnlyVersion) {
+            usageRepository.deleteAll(schema.getSchema().getUsages());
+            extensionRepository.deleteAll(schema.getSchema().getExtensions());
+            schemaRepository.delete(schema.getSchema());
+        }
         return true;
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public boolean deleteSchemaFull(String uuid) {
-        final List<MetadataSchema> schemas = metadataSchemaRepository.findByUuid(uuid);
-        final Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+    public boolean deleteSchemaFull(UUID uuid) {
+        final Optional<MetadataSchema> oSchema = schemaRepository.findByUuid(uuid);
         // Check if present
-        if (schemas.isEmpty() && oDraft.isEmpty()) {
+        if (oSchema.isEmpty()) {
             return false;
         }
+        final MetadataSchema schema = oSchema.get();
         // Validate
-        metadataSchemaValidator.validateNotUsed(uuid);
-        if (schemas.stream().anyMatch(schema -> schema.getType() == MetadataSchemaType.INTERNAL)) {
+        metadataSchemaValidator.validateNotUsed(schema);
+        if (schema.getVersions().stream().anyMatch(version -> version.getType() == MetadataSchemaType.INTERNAL)) {
             throw new ValidationException("You can't delete INTERNAL Shape");
         }
         // Delete
-        if (!schemas.isEmpty()) {
-            metadataSchemaRepository.deleteAll(schemas);
-        }
-        oDraft.ifPresent(draft -> metadataSchemaDraftRepository.delete(draft));
+        versionRepository.deleteAll(schema.getVersions());
+        extensionRepository.deleteAll(schema.getExtensions());
+        usageRepository.deleteAll(schema.getUsages());
+        schemaRepository.delete(schema);
+        entityManager.flush();
         // Update cache
         targetClassesCache.computeCache();
         return true;
@@ -273,41 +311,48 @@ public class MetadataSchemaService {
     // Reading schemas
 
     public List<MetadataSchemaDTO> getSchemasWithoutDrafts(boolean includeAbstract) {
-        return metadataSchemaRepository
-                .findAllByLatestIsTrue()
+        return versionRepository
+                .findAllByState(MetadataSchemaState.LATEST)
                 .stream()
                 .filter(schema -> includeAbstract || !schema.isAbstractSchema())
                 .map(schema -> {
-                    final List<MetadataSchema> versions =
-                            metadataSchemaRepository.findByUuid(schema.getUuid());
-                    final List<MetadataSchema> children =
-                            metadataSchemaRepository.findAllByExtendSchemasContains(schema.getUuid());
+                    final List<MetadataSchemaVersion> versions =
+                            schema.getSchema().getVersions();
+                    final List<MetadataSchemaVersion> children =
+                            extensionRepository
+                                    .findByExtendedMetadataSchema(schema.getSchema())
+                                    .stream().map(MetadataSchemaExtension::getMetadataSchemaVersion)
+                                    .toList();
                     return metadataSchemaMapper.toDTO(schema, null, versions, children);
                 })
                 .toList();
     }
 
     public List<MetadataSchemaDTO> getSchemasWithDrafts(boolean includeAbstract) {
-        final Set<String> listedUuids = new HashSet<>();
-        final Stream<MetadataSchemaDTO> schemas = metadataSchemaRepository
-                .findAllByLatestIsTrue()
+        final Set<UUID> listedUuids = new HashSet<>();
+        final Stream<MetadataSchemaDTO> schemas = versionRepository
+                .findAllByState(MetadataSchemaState.LATEST)
                 .stream()
                 .filter(schema -> includeAbstract || !schema.isAbstractSchema())
                 .map(schema -> {
-                    final List<MetadataSchema> versions = metadataSchemaRepository.findByUuid(schema.getUuid());
-                    final List<MetadataSchema> children =
-                            metadataSchemaRepository.findAllByExtendSchemasContains(schema.getUuid());
-                    final Optional<MetadataSchemaDraft> oDraft =
-                            metadataSchemaDraftRepository.findByUuid(schema.getUuid());
-                    listedUuids.add(schema.getUuid());
+                    final List<MetadataSchemaVersion> versions =
+                            schema.getSchema().getVersions();
+                    final List<MetadataSchemaVersion> children =
+                            extensionRepository
+                                    .findByExtendedMetadataSchema(schema.getSchema())
+                                    .stream().map(MetadataSchemaExtension::getMetadataSchemaVersion)
+                                    .toList();
+                    final Optional<MetadataSchemaVersion> oDraft =
+                            versionRepository.getDraftBySchemaUuid(schema.getSchema().getUuid());
+                    listedUuids.add(schema.getSchema().getUuid());
                     return metadataSchemaMapper.toDTO(schema, oDraft.orElse(null), versions, children);
                 });
 
-        final Stream<MetadataSchemaDTO> drafts = metadataSchemaDraftRepository
-                .findAll()
+        final Stream<MetadataSchemaDTO> drafts = versionRepository
+                .findAllByState(MetadataSchemaState.DRAFT)
                 .stream()
                 .filter(draft -> {
-                    return !listedUuids.contains(draft.getUuid()) && (includeAbstract || !draft.isAbstractSchema());
+                    return !listedUuids.contains(draft.getSchema().getUuid()) && (includeAbstract || !draft.isAbstractSchema());
                 })
                 .map(draft -> {
                     return metadataSchemaMapper.toDTO(null, draft, Collections.emptyList(), Collections.emptyList());
@@ -315,84 +360,88 @@ public class MetadataSchemaService {
         return Stream.concat(schemas, drafts).toList();
     }
 
-    public Optional<MetadataSchemaDTO> getSchemaByUuid(String uuid) {
-        final Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
-        final Optional<MetadataSchemaDraft> oDraft = metadataSchemaDraftRepository.findByUuid(uuid);
+    public Optional<MetadataSchemaDTO> getSchemaByUuid(UUID uuid) {
+        final Optional<MetadataSchemaVersion> oSchema = versionRepository.getLatestBySchemaUuid(uuid);
+        final Optional<MetadataSchemaVersion> oDraft = versionRepository.getDraftBySchemaUuid(uuid);
         return oSchema.map(schema -> {
-            final List<MetadataSchema> versions =
-                    metadataSchemaRepository.findByUuid(schema.getUuid());
-            final List<MetadataSchema> children =
-                    metadataSchemaRepository.findAllByExtendSchemasContains(schema.getUuid());
+            final List<MetadataSchemaVersion> versions =
+                    schema.getSchema().getVersions();
+            final List<MetadataSchemaVersion> children =
+                    extensionRepository
+                            .findByExtendedMetadataSchema(schema.getSchema())
+                            .stream().map(MetadataSchemaExtension::getMetadataSchemaVersion)
+                            .toList();
             return metadataSchemaMapper.toDTO(schema, oDraft.orElse(null), versions, children);
         });
     }
 
-    public Optional<Model> getSchemaContentByUuid(String uuid) {
+    public Optional<Model> getSchemaContentByUuid(UUID uuid) {
         // TODO: cache (?)
-        final Optional<MetadataSchema> oSchema = metadataSchemaRepository.findByUuidAndLatestIsTrue(uuid);
+        final Optional<MetadataSchemaVersion> oSchema = versionRepository.getLatestBySchemaUuid(uuid);
         if (oSchema.isEmpty()) {
             return empty();
         }
-        final MetadataSchema schema = oSchema.get();
-        final List<MetadataSchema> schemas = resolveExtends(schema);
+        final MetadataSchemaVersion schema = oSchema.get();
+        final List<MetadataSchemaVersion> schemas = resolveExtends(schema);
         return of(mergeSchemaDefinitions(schemas));
     }
 
     public Model getShaclFromSchemas() {
-        return mergeSchemaDefinitions(metadataSchemaRepository.findAllByLatestIsTrue());
+        return mergeSchemaDefinitions(versionRepository.findAllByState(MetadataSchemaState.LATEST));
     }
 
     public Model getShaclFromSchemas(MetadataSchemaPreviewRequestDTO reqDto) {
         return getShaclFromSchemas(reqDto.getMetadataSchemaUuids());
     }
 
-    public Model getShaclFromSchemas(List<String> metadataSchemaUuids) {
-        final Set<String> schemaUuids = new HashSet<>(metadataSchemaUuids);
-        final List<MetadataSchema> schemas = schemaUuids
+    public Model getShaclFromSchemas(List<UUID> metadataSchemaUuids) {
+        final Set<UUID> schemaUuids = new HashSet<>(metadataSchemaUuids);
+        final List<MetadataSchemaVersion> schemas = schemaUuids
                 .stream()
                 .map(schemaUuid -> {
-                    return metadataSchemaRepository
-                                    .findByUuidAndLatestIsTrue(schemaUuid)
+                    return versionRepository
+                                    .getLatestBySchemaUuid(schemaUuid)
                                     .orElseThrow(() -> raiseNotFound(schemaUuid));
                 })
                 .toList();
         return mergeSchemaDefinitions(resolveExtends(schemas));
     }
 
-    private static ResourceNotFoundException raiseNotFound(String schemaUuid) {
+    public Model getShaclFromSchemaUsages(List<MetadataSchemaUsage> usages) {
+        return getShaclFromSchemas(usages.stream().map(usage -> usage.getUsedMetadataSchema().getUuid()).toList());
+    }
+
+    private static ResourceNotFoundException raiseNotFound(UUID schemaUuid) {
         return new ResourceNotFoundException(format("Metadata schema '%s' not found", schemaUuid));
     }
 
     // ===============================================================================================
     // Extends and SHACL manipulation
-    private List<MetadataSchema> resolveExtends(MetadataSchema schema) {
-        return resolveExtends(List.of(schema));
-    }
-
-    private List<MetadataSchema> resolveExtends(MetadataSchemaDraft draft) {
+    private List<MetadataSchemaVersion> resolveExtends(MetadataSchemaVersion draft) {
         return resolveExtends(
                 draft
-                        .getExtendSchemas()
+                        .getExtensions()
                         .stream()
-                        .map(schemaUuid -> metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid).orElse(null))
+                        .map(extension -> versionRepository.getLatestBySchemaUuid(extension.getExtendedMetadataSchema().getUuid()).orElse(null))
                         .toList()
         );
     }
 
-    private List<MetadataSchema> resolveExtends(List<MetadataSchema> schemas) {
-        final Map<String, MetadataSchema> allSchemas = metadataSchemaRepository
-                .findAllByLatestIsTrue()
+    private List<MetadataSchemaVersion> resolveExtends(List<MetadataSchemaVersion> schemas) {
+        final Map<UUID, MetadataSchemaVersion> allSchemas = versionRepository
+                .findAllByState(MetadataSchemaState.LATEST)
                 .stream()
-                .collect(Collectors.toMap(MetadataSchema::getUuid, Function.identity()));
-        final Set<String> addedSchemaUuids = new HashSet<>();
-        final List<MetadataSchema> result = new ArrayList<>();
+                .collect(Collectors.toMap(MetadataSchemaVersion::getUuid, Function.identity()));
+        final Set<UUID> addedSchemaUuids = new HashSet<>();
+        final List<MetadataSchemaVersion> result = new ArrayList<>();
         schemas.forEach(schema -> {
             addedSchemaUuids.add(schema.getUuid());
             result.add(schema);
         });
         int index = 0;
         while (index < result.size()) {
-            result.get(index).getExtendSchemas().forEach(extendUuid -> {
+            result.get(index).getExtensions().forEach(extension -> {
+                final UUID extendUuid = extension.getExtendedMetadataSchema().getUuid();
                 if (!addedSchemaUuids.contains(extendUuid) && allSchemas.containsKey(extendUuid)) {
                     result.add(allSchemas.get(extendUuid));
                 }
@@ -402,7 +451,7 @@ public class MetadataSchemaService {
         return result;
     }
 
-    private Model mergeSchemaDefinitions(List<MetadataSchema> schemas) {
+    private Model mergeSchemaDefinitions(List<MetadataSchemaVersion> schemas) {
         final Model model = new LinkedHashModel();
         schemas.stream()
                 .map(schema -> RdfIOUtil.read(schema.getDefinition(), ""))
@@ -414,7 +463,7 @@ public class MetadataSchemaService {
     // Importing and sharing
 
     public List<MetadataSchemaVersionDTO> getPublishedSchemas() {
-        return metadataSchemaRepository
+        return versionRepository
                 .findAllByPublishedIsTrue()
                 .stream()
                 .map(schema -> metadataSchemaMapper.toPublishedVersionDTO(schema, persistentUrl))
@@ -422,10 +471,10 @@ public class MetadataSchemaService {
     }
 
     private MetadataSchemaRemoteDTO toRemoteSchema(MetadataSchemaVersionDTO remoteDto) {
-        final Optional<MetadataSchema> localVersion =
-                metadataSchemaRepository.findByVersionUuid(remoteDto.getVersionUuid());
-        final List<MetadataSchema> localSchemas =
-                metadataSchemaRepository.findByUuid(remoteDto.getUuid());
+        final Optional<MetadataSchemaVersion> localVersion =
+                versionRepository.findByUuid(remoteDto.getVersionUuid());
+        final List<MetadataSchemaVersion> localSchemas =
+                versionRepository.getBySchemaUuid(remoteDto.getUuid());
         boolean isDirty = false;
         MetadataSchemaRemoteState status = MetadataSchemaRemoteState.NOT_IMPORTED;
         if (localVersion.isPresent()) {
@@ -460,16 +509,21 @@ public class MetadataSchemaService {
                 .toList();
     }
 
-    public List<MetadataSchema> importSchemas(String schemaUuid, List<MetadataSchemaVersionDTO> remoteVersions) {
+    @Transactional
+    public void importSchemaVersions(UUID schemaUuid, List<MetadataSchemaVersionDTO> remoteVersions,
+                                     Map<UUID, MetadataSchema> schemas) {
+        // prepare local schema
+        final MetadataSchema schema = schemas.get(schemaUuid);
         // prepare and check local versions
-        final Map<String, MetadataSchema> versions = metadataSchemaRepository
-                .findByUuid(schemaUuid)
+        final Map<UUID, MetadataSchemaVersion> versions = schema
+                .getVersions()
                 .stream()
-                .collect(toMap(MetadataSchema::getVersionUuid, Function.identity()));
-        if (versions.values().stream().anyMatch(version -> version.getType() == MetadataSchemaType.CUSTOM)) {
+                .collect(toMap(MetadataSchemaVersion::getUuid, Function.identity()));
+        if (versions.values().stream().anyMatch(version -> version.getType().equals(MetadataSchemaType.CUSTOM))) {
             throw new ValidationException(format("Schema has CUSTOM version(s): %s", schemaUuid));
         }
         // update from remote
+        // TODO: extensions using schemas map
         remoteVersions.forEach(remoteVersion -> {
             if (versions.containsKey(remoteVersion.getVersionUuid())) {
                 versions.put(remoteVersion.getVersionUuid(),
@@ -481,29 +535,29 @@ public class MetadataSchemaService {
             }
         });
         // fix versions chain
-        final Map<String, MetadataSchema> versionMap =
-                versions.values().stream().collect(toMap(MetadataSchema::getVersionString, Function.identity()));
+        final Map<String, MetadataSchemaVersion> versionMap =
+                versions.values().stream().collect(toMap(MetadataSchemaVersion::getVersion, Function.identity()));
         final List<String> versionsSorted =
                 versionMap.keySet().stream().map(SemVer::new).sorted().map(SemVer::toString).toList();
-        String previousVersionUuid = null;
+        MetadataSchemaVersion previousVersion = null;
         for (String version : versionsSorted) {
-            versionMap.get(version).setPreviousVersionUuid(previousVersionUuid);
-            versionMap.get(version).setLatest(false);
-            previousVersionUuid = versionMap.get(version).getVersionUuid();
+            versionMap.get(version).setPreviousVersion(previousVersion);
+            versionMap.get(version).setState(MetadataSchemaState.LEGACY);
+            previousVersion = versionMap.get(version);
         }
-        versionMap.get(versionsSorted.get(versionsSorted.size() - 1)).setLatest(true);
-        return versionMap.values().stream().toList();
+        versionMap.get(versionsSorted.get(versionsSorted.size() - 1)).setState(MetadataSchemaState.LATEST);
     }
 
-    public List<MetadataSchemaVersionDTO> importSchemas(@Valid List<MetadataSchemaVersionDTO> reqDtos) {
+    @Transactional
+    public List<MetadataSchemaVersionDTO> importSchemas(List<MetadataSchemaVersionDTO> reqDtos) {
         // Validate
-        reqDtos.forEach(dto -> metadataSchemaValidator.validate(dto));
-        final List<MetadataSchema> localLatestSchemas = metadataSchemaRepository.findAllByLatestIsTrue();
-        final Map<String, List<MetadataSchemaVersionDTO>> schemas =
+        reqDtos.forEach(metadataSchemaValidator::validate);
+        final List<MetadataSchemaVersion> localLatestSchemas = versionRepository.findAllByState(MetadataSchemaState.LATEST);
+        final Map<UUID, List<MetadataSchemaVersionDTO>> schemas =
                 reqDtos.stream().collect(groupingBy(MetadataSchemaVersionDTO::getUuid));
-        final Set<String> toBePresentUuids = localLatestSchemas
+        final Set<UUID> toBePresentUuids = localLatestSchemas
                 .stream()
-                .map(MetadataSchema::getUuid)
+                .map(MetadataSchemaVersion::getUuid)
                 .collect(Collectors.toSet());
         toBePresentUuids.addAll(schemas.keySet());
         reqDtos.forEach(dto -> {
@@ -511,28 +565,41 @@ public class MetadataSchemaService {
                 throw new ValidationException("Missing schema for extends relation");
             }
         });
-        final List<MetadataSchema> toSave = new ArrayList<>();
-        schemas.forEach((schemaUuid, versions) -> {
-            toSave.addAll(importSchemas(schemaUuid, versions));
-        });
-        metadataSchemaRepository.saveAll(toSave);
+        final Map<UUID, MetadataSchema> schemaMap = toBePresentUuids
+                .stream()
+                .map(this::prepareImportSchemas)
+                .collect(toMap(MetadataSchema::getUuid, Function.identity()));
+        schemas.forEach((schemaUuid, versions) -> importSchemaVersions(schemaUuid, versions, schemaMap));
+        entityManager.flush();
         return reqDtos
                 .parallelStream()
-                .map(version -> metadataSchemaRepository.findByVersionUuid(version.getVersionUuid()).orElse(null))
+                .map(version -> versionRepository.findByUuid(version.getVersionUuid()).orElse(null))
                 .filter(Objects::nonNull)
                 .map(metadataSchemaMapper::toVersionDTO)
                 .toList();
     }
 
+    private MetadataSchema prepareImportSchemas(UUID uuid) {
+        final Optional<MetadataSchema> oSchema = schemaRepository.findByUuid(uuid);
+        if (oSchema.isPresent()) {
+            return oSchema.get();
+        }
+        else {
+            final MetadataSchema schema = schemaRepository.saveAndFlush(metadataSchemaMapper.newSchema());
+            entityManager.refresh(schema);
+            return schema;
+        }
+    }
+
     private List<MetadataSchemaRemoteDTO> checkForUpdates(String fdpUrl) {
         try {
-            final Map<String, List<MetadataSchemaVersionDTO>> remoteSchemas = MetadataSchemaRetrievalUtils
+            final Map<UUID, List<MetadataSchemaVersionDTO>> remoteSchemas = MetadataSchemaRetrievalUtils
                     .retrievePublishedMetadataSchemas(fdpUrl)
                     .stream()
                     .collect(groupingBy(MetadataSchemaVersionDTO::getUuid));
             final List<MetadataSchemaVersionDTO> updates = new ArrayList<>();
             remoteSchemas.forEach((schemaUuid, remoteVersions) -> {
-                final List<MetadataSchema> localVersions = metadataSchemaRepository.findByUuid(schemaUuid);
+                final List<MetadataSchemaVersion> localVersions = versionRepository.getBySchemaUuid(schemaUuid);
                 final boolean hasCustom = localVersions
                         .stream()
                         .anyMatch(schema -> schema.getType() == MetadataSchemaType.CUSTOM);
@@ -540,9 +607,10 @@ public class MetadataSchemaService {
                         .stream()
                         .allMatch(schema -> schema.getImportedFrom().equals(fdpUrl));
                 if (!hasCustom && allImportedFromThis && !localVersions.isEmpty()) {
-                    final Set<String> localVersionUuids = localVersions
+                    final Set<UUID> localVersionUuids = localVersions
                             .stream()
-                            .map(MetadataSchema::getVersionUuid).collect(Collectors.toSet());
+                            .map(MetadataSchemaVersion::getUuid)
+                            .collect(Collectors.toSet());
                     updates.addAll(
                             remoteVersions
                                     .stream()
@@ -569,15 +637,19 @@ public class MetadataSchemaService {
     }
 
     public List<MetadataSchemaRemoteDTO> checkForUpdates() {
-        final Set<String> importSources = metadataSchemaRepository
+        final Set<String> importSources = versionRepository
                 .findAllByImportedFromIsNotNull()
                 .stream()
-                .map(MetadataSchema::getImportedFrom)
+                .map(MetadataSchemaVersion::getImportedFrom)
                 .collect(Collectors.toSet());
         return importSources
                 .stream()
                 .map(this::checkForUpdates)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    public List<MetadataSchema> getAll(List<UUID> metadataSchemaUuids) {
+        return schemaRepository.findAllById(metadataSchemaUuids);
     }
 }

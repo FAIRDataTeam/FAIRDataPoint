@@ -25,9 +25,10 @@ package nl.dtls.fairdatapoint.service.index.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.event.IncomingPing;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
+import nl.dtls.fairdatapoint.entity.index.event.payload.IncomingPing;
 import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeDirection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class IncomingPingUtils {
 
     private static final Integer VERSION = 1;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    public Event prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
+    public IndexEvent prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
         final IncomingPing incomingPing = new IncomingPing();
         final Exchange ex = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
         incomingPing.setExchange(ex);
@@ -57,7 +58,7 @@ public class IncomingPingUtils {
             ex.getRequest().setBody(null);
         }
 
-        return new Event(VERSION, incomingPing);
+        return new IndexEvent(VERSION, incomingPing);
     }
 
     private Map<String, List<String>> getHeaders(HttpServletRequest request) {

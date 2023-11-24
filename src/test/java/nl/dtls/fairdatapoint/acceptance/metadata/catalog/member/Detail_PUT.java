@@ -26,9 +26,8 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.service.member.MemberMapper;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +44,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("PUT /catalog/:catalogId/members/:userUuid")
 public class Detail_PUT extends WebIntegrationTest {
-
-    @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
+    // TODO: fixtures
 
     @Autowired
     private MemberMapper memberMapper;
@@ -60,7 +54,7 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     private MemberCreateDTO reqDto() {
-        return new MemberCreateDTO(membershipFixtures.owner().getUuid());
+        return new MemberCreateDTO(null);
     }
 
     @Test
@@ -78,7 +72,7 @@ public class Detail_PUT extends WebIntegrationTest {
     private void create_res200(String token) {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("catalog-1", userFixtures.nikola().getUuid()))
+                .put(url("catalog-1", KnownUUIDs.USER_NIKOLA_UUID.toString()))
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -86,7 +80,7 @@ public class Detail_PUT extends WebIntegrationTest {
         };
 
         // AND: prepare expectation
-        MemberDTO expDto = memberMapper.toDTO(userFixtures.nikola(), membershipFixtures.owner());
+        MemberDTO expDto = memberMapper.toDTO(null, null);
 
         // WHEN:
         ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
@@ -121,7 +115,7 @@ public class Detail_PUT extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("catalog-1", userFixtures.nikola().getUuid()))
+                .put(url("catalog-1", KnownUUIDs.USER_NIKOLA_UUID.toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -138,7 +132,7 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing catalog")
     public void res404_nonExistingCatalog() {
-        createUserNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid()), reqDto());
+        createUserNotFoundTestPut(client, url("nonExisting", KnownUUIDs.USER_ALBERT_UUID.toString()), reqDto());
     }
 
 }

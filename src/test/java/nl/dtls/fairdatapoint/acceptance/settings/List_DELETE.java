@@ -24,9 +24,10 @@ package nl.dtls.fairdatapoint.acceptance.settings;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.*;
 import nl.dtls.fairdatapoint.service.settings.SettingsCache;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,41 +62,11 @@ public class List_DELETE extends WebIntegrationTest {
         return URI.create("/settings");
     }
 
-    private Settings customSettings() {
-        return Settings.builder()
-                .metadataMetrics(
-                        List.of(new SettingsMetricsEntry(
-                                "http://example.com/metric",
-                                "http://example.com/resource"
-                        ))
-                )
-                .ping(SettingsPing.builder()
-                        .enabled(false)
-                        .endpoints(List.of(
-                                "https://home.fairdatapoint.org",
-                                "https://example.com/index"
-                        ))
-                        .build()
-                )
-                .searchFilters(Collections.emptyList())
-                .forms(SettingsForms
-                        .builder()
-                        .autocomplete(SettingsFormsAutocomplete
-                                .builder()
-                                .searchNamespace(true)
-                                .sources(Collections.emptyList())
-                                .build()
-                        )
-                        .build()
-                )
-                .build();
-    }
-
     @Test
     @DisplayName("HTTP 200: default settings")
     public void res200_defaultSettings() {
         // GIVEN: prepare data
-        Settings defaultSettings = Settings.getDefault();
+        Settings defaultSettings = Settings.defaultSettings();
         settingsRepository.deleteAll();
         settingsCache.updateCachedSettings();
 
@@ -112,19 +83,22 @@ public class List_DELETE extends WebIntegrationTest {
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Response contains default metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(defaultSettings.getMetadataMetrics())));
-        assertThat("Response contains default ping enabled", Objects.requireNonNull(result.getBody()).getPing().getEnabled(), is(equalTo(defaultSettings.getPing().isEnabled())));
-        assertThat("Response contains default ping endpoints", Objects.requireNonNull(result.getBody()).getPing().getEndpoints(), is(equalTo(defaultSettings.getPing().getEndpoints())));
+        assertThat("Response contains default metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(defaultSettings.getMetrics())));
+        assertThat("Response contains default ping enabled", Objects.requireNonNull(result.getBody()).getPing().getEnabled(), is(equalTo(defaultSettings.getPingEnabled())));
+        assertThat("Response contains default ping endpoints", Objects.requireNonNull(result.getBody()).getPing().getEndpoints(), is(equalTo(defaultSettings.getPingEndpoints())));
     }
 
     @Test
     @DisplayName("HTTP 200: custom settings")
     public void res200_customSettings() {
         // GIVEN: prepare data
-        Settings defaultSettings = Settings.getDefault();
-        Settings customSettings = customSettings();
-        settingsRepository.deleteAll();
-        settingsRepository.insert(customSettings);
+        Settings defaultSettings = Settings.defaultSettings();
+        Settings settings = settingsRepository.findByUuid(KnownUUIDs.NULL_UUID).get();
+        settings.setAppTitle("Custom title");
+        settings.setAppSubtitle("Custom subtitle");
+        settings.setPingEndpoints(List.of("http://example.com/ping"));
+        settings.setAutocompleteSearchNamespace(false);
+        settingsRepository.saveAndFlush(settings);
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -141,9 +115,9 @@ public class List_DELETE extends WebIntegrationTest {
         assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(1)));
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Response contains default metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(defaultSettings.getMetadataMetrics())));
-        assertThat("Response contains default ping enabled", Objects.requireNonNull(result.getBody()).getPing().getEnabled(), is(equalTo(defaultSettings.getPing().isEnabled())));
-        assertThat("Response contains default ping endpoints", Objects.requireNonNull(result.getBody()).getPing().getEndpoints(), is(equalTo(defaultSettings.getPing().getEndpoints())));
+        assertThat("Response contains default metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(defaultSettings.getMetrics())));
+        assertThat("Response contains default ping enabled", Objects.requireNonNull(result.getBody()).getPing().getEnabled(), is(equalTo(defaultSettings.getPingEnabled())));
+        assertThat("Response contains default ping endpoints", Objects.requireNonNull(result.getBody()).getPing().getEndpoints(), is(equalTo(defaultSettings.getPingEndpoints())));
     }
 
     @Test

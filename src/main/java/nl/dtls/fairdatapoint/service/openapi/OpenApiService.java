@@ -26,8 +26,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.log4j.Log4j2;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,27 +36,27 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
-@Log4j2
+@RequiredArgsConstructor
 public class OpenApiService {
 
     private static final String MSG_ADD = "Adding OpenAPI paths: {}";
     private static final String MSG_REMOVE = "Removing OpenAPI paths: {}";
 
-    @Autowired
-    private OpenAPI openAPI;
+    private final OpenAPI openAPI;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
     private Paths getGenericPaths() {
         return (Paths) openAPI.getExtensions().get("fdpGenericPaths");
     }
 
     private boolean isRelatedToResourceDefinition(PathItem pathItem, ResourceDefinition definition) {
-        final String rdUuid = (String) pathItem.getExtensions().getOrDefault("fdpResourceDefinition", "");
+        final UUID rdUuid = (UUID) pathItem.getExtensions().getOrDefault("fdpResourceDefinition", "");
         return rdUuid.equals(definition.getUuid());
     }
 

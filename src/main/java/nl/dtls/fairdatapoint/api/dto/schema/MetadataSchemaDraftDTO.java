@@ -28,6 +28,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class MetadataSchemaDraftDTO {
 
     @NotNull
     @NotBlank
-    private String uuid;
+    private UUID uuid;
 
     @NotNull
     @NotBlank
@@ -53,7 +54,7 @@ public class MetadataSchemaDraftDTO {
     private String definition;
 
     @NotNull
-    private List<String> extendsSchemaUuids;
+    private List<UUID> extendsSchemaUuids;
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private String suggestedResourceName;

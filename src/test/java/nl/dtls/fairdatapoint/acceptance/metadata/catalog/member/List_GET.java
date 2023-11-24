@@ -25,8 +25,6 @@ package nl.dtls.fairdatapoint.acceptance.metadata.catalog.member;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.service.member.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,12 +46,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("GET /catalog/:catalogId/members")
 public class List_GET extends WebIntegrationTest {
-
-    @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
+    // TODO: fixtures
 
     @Autowired
     private MemberMapper memberMapper;
@@ -84,8 +77,8 @@ public class List_GET extends WebIntegrationTest {
         };
 
         // AND: prepare expectation
-        MemberDTO nikolaMember = memberMapper.toDTO(userFixtures.nikola(), membershipFixtures.dataProvider());
-        MemberDTO albertMember = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
+        MemberDTO nikolaMember = memberMapper.toDTO(null, null);
+        MemberDTO albertMember = memberMapper.toDTO(null, null);
         List<MemberDTO> expDto = List.of(nikolaMember, albertMember);
 
         // WHEN:

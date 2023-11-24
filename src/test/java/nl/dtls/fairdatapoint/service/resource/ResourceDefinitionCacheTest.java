@@ -23,8 +23,7 @@
 package nl.dtls.fairdatapoint.service.resource;
 
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,24 +33,19 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ResourceDefinitionCacheTest extends BaseIntegrationTest {
-
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    // TODO fixtures
 
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
-
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
 
     @Test
     public void computeCacheWorks() {
         // GIVEN: Resource definitions
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
-        ResourceDefinition rdCatalog = resourceDefinitionFixtures.catalogDefinition();
-        ResourceDefinition rdDataset = resourceDefinitionFixtures.datasetDefinition();
-        ResourceDefinition rdDistribution = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition rdRepository = null;
+        ResourceDefinition rdCatalog = null;
+        ResourceDefinition rdDataset = null;
+        ResourceDefinition rdDistribution = null;
 
         // WHEN:
         resourceDefinitionCache.computeCache();

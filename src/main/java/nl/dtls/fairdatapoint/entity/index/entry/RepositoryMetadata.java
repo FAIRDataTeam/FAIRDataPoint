@@ -23,17 +23,19 @@
 package nl.dtls.fairdatapoint.entity.index.entry;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Builder
 public class RepositoryMetadata {
 
     public static final Integer CURRENT_VERSION = 1;
@@ -46,3 +48,4 @@ public class RepositoryMetadata {
     private Map<String, String> metadata = new HashMap<>();
 
 }
+

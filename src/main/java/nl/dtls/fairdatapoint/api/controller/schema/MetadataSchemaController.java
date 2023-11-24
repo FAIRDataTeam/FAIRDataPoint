@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.schema;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.schema.*;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
@@ -39,12 +40,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
 @Tag(name = "Metadata Model")
 @RestController
 @RequestMapping("/metadata-schemas")
+@RequiredArgsConstructor
 public class MetadataSchemaController {
 
     private static final String NOT_FOUND_MSG =
@@ -52,11 +55,9 @@ public class MetadataSchemaController {
     private static final String NOT_FOUND_VERSION_MSG =
             "Metadata Schema '%s' doesn't exist with version '%s'";
 
-    @Autowired
-    private MetadataSchemaService metadataSchemaService;
+    private final MetadataSchemaService metadataSchemaService;
 
-    @Autowired
-    private CurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaDTO>> getSchemas(
@@ -81,7 +82,7 @@ public class MetadataSchemaController {
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MetadataSchemaDTO> getSchema(@PathVariable final String uuid)
+    public ResponseEntity<MetadataSchemaDTO> getSchema(@PathVariable final UUID uuid)
             throws ResourceNotFoundException {
         final Optional<MetadataSchemaDTO> oDto = metadataSchemaService.getSchemaByUuid(uuid);
         if (oDto.isPresent()) {
@@ -102,7 +103,7 @@ public class MetadataSchemaController {
         "application/xml",
         "text/xml"
     })
-    public ResponseEntity<Model> getSchemaContent(@PathVariable final String uuid)
+    public ResponseEntity<Model> getSchemaContent(@PathVariable final UUID uuid)
             throws ResourceNotFoundException {
         final Optional<Model> oDto = metadataSchemaService.getSchemaContentByUuid(uuid);
         if (oDto.isPresent()) {
@@ -116,7 +117,7 @@ public class MetadataSchemaController {
     @DeleteMapping(path = "/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteSchemaFull(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final boolean result = metadataSchemaService.deleteSchemaFull(uuid);
         if (result) {
@@ -139,7 +140,7 @@ public class MetadataSchemaController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/{uuid}/draft", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MetadataSchemaDraftDTO> getSchemaDraft(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final Optional<MetadataSchemaDraftDTO> oDto = metadataSchemaService.getSchemaDraft(uuid);
         if (oDto.isPresent()) {
@@ -153,7 +154,7 @@ public class MetadataSchemaController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{uuid}/draft", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MetadataSchemaDraftDTO> updateSchemaDraft(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @RequestBody @Valid MetadataSchemaChangeDTO reqDto
     ) throws ResourceNotFoundException {
         final Optional<MetadataSchemaDraftDTO> oDto =
@@ -169,7 +170,7 @@ public class MetadataSchemaController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{uuid}/draft")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteSchemaDraft(@PathVariable final String uuid)
+    public ResponseEntity<Void> deleteSchemaDraft(@PathVariable final UUID uuid)
             throws ResourceNotFoundException {
         final boolean result = metadataSchemaService.deleteSchemaDraft(uuid);
         if (result) {
@@ -184,7 +185,7 @@ public class MetadataSchemaController {
     @PostMapping(path = "/{uuid}/versions")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<MetadataSchemaDTO> releaseSchemaVersion(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @RequestBody @Valid MetadataSchemaReleaseDTO reqDto
     ) throws ResourceNotFoundException {
         final Optional<MetadataSchemaDTO> oDto = metadataSchemaService.releaseDraft(uuid, reqDto);
@@ -199,7 +200,7 @@ public class MetadataSchemaController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/{uuid}/versions/{version}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MetadataSchemaVersionDTO> getSchemaVersion(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @PathVariable final String version
     ) throws ResourceNotFoundException {
         final Optional<MetadataSchemaVersionDTO> oDto =
@@ -215,7 +216,7 @@ public class MetadataSchemaController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{uuid}/versions/{version}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MetadataSchemaVersionDTO> updateSchemaVersion(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @PathVariable final String version,
             @RequestBody @Valid MetadataSchemaUpdateDTO reqDto
     ) throws ResourceNotFoundException {
@@ -233,7 +234,7 @@ public class MetadataSchemaController {
     @DeleteMapping(path = "/{uuid}/versions/{version}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteSchemaVersion(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @PathVariable final String version
     ) throws ResourceNotFoundException {
         final boolean result = metadataSchemaService.deleteVersion(uuid, version);

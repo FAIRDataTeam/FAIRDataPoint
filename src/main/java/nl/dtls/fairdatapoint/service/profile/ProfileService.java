@@ -22,9 +22,11 @@
  */
 package nl.dtls.fairdatapoint.service.profile;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -34,30 +36,26 @@ import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
 
 @Service
+@RequiredArgsConstructor
 public class ProfileService {
 
     private static final String PROFILE_PREFIX = "http://www.w3.org/ns/dx/prof/";
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaVersionRepository metadataSchemaRepository;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
     private Model getProfileForResourceDefinition(
             ResourceDefinition resourceDefinition, IRI uri
@@ -71,16 +69,16 @@ public class ProfileService {
                 i(format("%s/profile/core", persistentUrl))
         );
         resourceDefinition
-                .getMetadataSchemaUuids()
-                .forEach(schemaUuid -> {
-                    metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid).ifPresent(schema -> {
+                .getMetadataSchemaUsages()
+                .forEach(usage -> {
+                    metadataSchemaRepository.getLatestBySchemaUuid(usage.getUsedMetadataSchema().getUuid()).ifPresent(schema -> {
                         addSchemaToProfile(uri, profile, schema);
                     });
                 });
         return profile;
     }
 
-    private void addSchemaToProfile(IRI uri, Model profile, MetadataSchema schema) {
+    private void addSchemaToProfile(IRI uri, Model profile, MetadataSchemaVersion schema) {
         final ModelBuilder modelBuilder = new ModelBuilder();
         final Resource resource = bn();
         modelBuilder.subject(resource);
@@ -96,7 +94,7 @@ public class ProfileService {
         profile.addAll(new ArrayList<>(modelBuilder.build()));
     }
 
-    public Optional<Model> getProfileByUuid(String uuid, IRI uri) {
+    public Optional<Model> getProfileByUuid(UUID uuid, IRI uri) {
         return resourceDefinitionService
                 .getByUuid(uuid)
                 .map(definition -> getProfileForResourceDefinition(definition, uri));

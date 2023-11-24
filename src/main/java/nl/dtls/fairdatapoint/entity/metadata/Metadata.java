@@ -22,16 +22,5 @@
  */
 package nl.dtls.fairdatapoint.entity.metadata;
 
-import lombok.*;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder(toBuilder = true)
 public class Metadata {
-
-    private String uri;
-
-    private MetadataState state;
 }

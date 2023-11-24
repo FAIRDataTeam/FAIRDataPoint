@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.api.controller.label;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.label.LabelDTO;
 import nl.dtls.fairdatapoint.service.label.LabelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/label")
+@RequiredArgsConstructor
 public class LabelController {
-    @Autowired
-    private LabelService labelService;
+
+    private final LabelService labelService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LabelDTO> getLabel(

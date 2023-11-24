@@ -22,38 +22,53 @@
  */
 package nl.dtls.fairdatapoint.entity.search;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import nl.dtls.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import java.time.Instant;
-
-@Document
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity(name = "SearchSavedQuery")
+@Table(name = "search_saved_query")
 @Getter
 @Setter
-@Builder(toBuilder = true)
-public class SearchSavedQuery {
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder(toBuilder = true)
+public class SearchSavedQuery extends BaseEntity {
 
-    @Id
-    private ObjectId id;
-
-    private String uuid;
-
+    @NotNull
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @NotNull
+    @Column(name = "description", nullable = false)
     private String description;
 
-    private String userUuid;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "user_account_id", nullable = false)
+    private UserAccount userAccount;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "type", columnDefinition = "SAVED_QUERY_TYPE", nullable = false)
     private SearchSavedQueryType type;
 
-    private Instant createdAt;
+    @NotNull
+    @Column(name = "var_prefixes", nullable = false)
+    private String varPrefixes;
 
-    private Instant updatedAt;
+    @NotNull
+    @Column(name = "var_graph_pattern", nullable = false)
+    private String varGraphPattern;
 
-    private SearchQueryVariablesDTO variables;
+    @NotNull
+    @Column(name = "var_ordering", nullable = false)
+    private String varOrdering;
+
 }

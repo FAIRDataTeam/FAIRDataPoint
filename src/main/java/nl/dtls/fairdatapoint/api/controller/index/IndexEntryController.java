@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.index;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
@@ -31,7 +32,7 @@ import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryUpdateDTO;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
@@ -47,26 +48,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Tag(name = "Index")
 @RestController
 @RequestMapping("/index/entries")
+@RequiredArgsConstructor
 public class IndexEntryController {
 
-    @Autowired
-    private IndexEntryService service;
+    private final IndexEntryService service;
 
-    @Autowired
-    private HarvesterService harvesterService;
+    private final HarvesterService harvesterService;
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private WebhookService webhookService;
+    private final WebhookService webhookService;
 
-    @Autowired
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<IndexEntryDTO> getEntriesPage(
@@ -78,14 +76,14 @@ public class IndexEntryController {
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Optional<IndexEntryDetailDTO> getEntry(@PathVariable final String uuid) {
+    public Optional<IndexEntryDetailDTO> getEntry(@PathVariable final UUID uuid) {
         return service.getEntryDetailDTO(uuid);
     }
 
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<IndexEntryDetailDTO> updateEntry(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @RequestBody IndexEntryUpdateDTO reqDto,
             HttpServletRequest request
     ) throws MetadataRepositoryException {
@@ -93,7 +91,7 @@ public class IndexEntryController {
         if (resDto.isPresent()) {
             final String clientUrl = resDto.get().getClientUrl();
             if (resDto.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
-                final Event event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
+                final IndexEvent event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
                 webhookService.triggerWebhooks(event);
                 eventService.triggerMetadataRetrieval(event);
                 indexEntryService.harvest(clientUrl);
@@ -106,13 +104,13 @@ public class IndexEntryController {
     }
 
     @GetMapping(path = "/{uuid}/data", produces = "!application/json")
-    public Model getEntryData(@PathVariable final String uuid) throws MetadataRepositoryException {
+    public Model getEntryData(@PathVariable final UUID uuid) throws MetadataRepositoryException {
         return service.getEntryHarvestedData(uuid);
     }
 
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteEntry(@PathVariable final String uuid) throws MetadataRepositoryException {
+    public void deleteEntry(@PathVariable final UUID uuid) throws MetadataRepositoryException {
         service.deleteEntry(uuid);
     }
 

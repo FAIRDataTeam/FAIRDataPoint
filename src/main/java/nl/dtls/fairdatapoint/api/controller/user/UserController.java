@@ -24,11 +24,11 @@ package nl.dtls.fairdatapoint.api.controller.user;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.user.*;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,20 +36,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
 @Tag(name = "User Management")
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private static final String LOGIN_FIRST_MSG = "You have to be login at first";
 
     private static final String NOT_FOUND_MSG = "User '%s' doesn't exist";
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserDTO>> getUsers() {
@@ -66,7 +67,7 @@ public class UserController {
     @Tag(name = "Authentication and Authorization")
     @GetMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUserCurrent() throws ResourceNotFoundException {
-        final Optional<UserDTO> oDto = userService.getCurrentUser();
+        final Optional<UserDTO> oDto = userService.getCurrentUserDto();
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         }
@@ -77,9 +78,9 @@ public class UserController {
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUser(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
-        final Optional<UserDTO> oDto = userService.getUserByUuid(uuid);
+        final Optional<UserDTO> oDto = userService.getUserDtoByUuid(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         }
@@ -103,7 +104,7 @@ public class UserController {
 
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> putUser(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @RequestBody @Valid UserChangeDTO reqDto
     ) throws ResourceNotFoundException {
         final Optional<UserDTO> oDto = userService.updateUser(uuid, reqDto);
@@ -130,7 +131,7 @@ public class UserController {
 
     @PutMapping(path = "/{uuid}/password", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> putUserPassword(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @RequestBody @Valid UserPasswordDTO reqDto
     ) throws ResourceNotFoundException {
         final Optional<UserDTO> oDto = userService.updatePassword(uuid, reqDto);
@@ -145,7 +146,7 @@ public class UserController {
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteUser(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final boolean result = userService.deleteUser(uuid);
         if (result) {

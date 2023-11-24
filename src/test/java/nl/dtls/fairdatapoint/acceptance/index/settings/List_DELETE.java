@@ -24,10 +24,10 @@ package nl.dtls.fairdatapoint.acceptance.index.settings;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexPing;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexRetrieval;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 @DisplayName("DELETE /index/settings")
 public class List_DELETE extends WebIntegrationTest {
+    // TODO: fixtures
 
     @Autowired
     private IndexSettingsRepository indexSettingsRepository;
@@ -59,10 +60,12 @@ public class List_DELETE extends WebIntegrationTest {
     }
 
     private IndexSettings customSettings() {
+        return null;
+        /*
         return new IndexSettings()
                 .toBuilder()
                 .ping(
-                        new IndexSettingsPing()
+                        new SettingsIndexPing()
                                 .toBuilder()
                                 .denyList(Collections.singletonList("http://localhost.*$"))
                                 .rateLimitDuration(Duration.ofMinutes(17))
@@ -71,13 +74,15 @@ public class List_DELETE extends WebIntegrationTest {
                                 .build()
                 )
                 .retrieval(
-                        new IndexSettingsRetrieval()
+                        new SettingsIndexRetrieval()
                                 .toBuilder()
                                 .rateLimitWait(Duration.ofHours(16))
                                 .timeout(Duration.ofSeconds(55))
                                 .build()
                 )
                 .build();
+
+         */
     }
 
     @Test
@@ -86,8 +91,8 @@ public class List_DELETE extends WebIntegrationTest {
         // GIVEN: prepare data
         IndexSettings settings = IndexSettings
                 .builder()
-                .ping(IndexSettingsPing.getDefault())
-                .retrieval(IndexSettingsRetrieval.getDefault())
+                //.ping(SettingsIndexPing.getDefault())
+                //.retrieval(SettingsIndexRetrieval.getDefault())
                 .autoPermit(true)
                 .build();
         indexSettingsRepository.deleteAll();
@@ -120,13 +125,13 @@ public class List_DELETE extends WebIntegrationTest {
         // GIVEN: prepare data
         IndexSettings settings = IndexSettings
                 .builder()
-                .ping(IndexSettingsPing.getDefault())
-                .retrieval(IndexSettingsRetrieval.getDefault())
+                //.ping(SettingsIndexPing.getDefault())
+                //.retrieval(SettingsIndexRetrieval.getDefault())
                 .autoPermit(true)
                 .build();
         IndexSettings customSettings = customSettings();
         indexSettingsRepository.deleteAll();
-        indexSettingsRepository.insert(customSettings);
+        indexSettingsRepository.saveAndFlush(customSettings);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity

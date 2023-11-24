@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.common;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
@@ -32,7 +33,7 @@ import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataGetter;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -187,7 +188,7 @@ public abstract class AbstractMetadataService implements MetadataService {
 
             // Delete all children
             for (ResourceDefinitionChild child : rd.getChildren()) {
-                final String childRdUuid = child.getResourceDefinitionUuid();
+                final UUID childRdUuid = child.getTarget().getUuid();
                 final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childRdUuid);
                 if (rdChild != null) {
                     final List<IRI> children = getChildren(metadata, i(child.getRelationUri()));
@@ -205,7 +206,7 @@ public abstract class AbstractMetadataService implements MetadataService {
                 final IRI parentUri = getParent(metadata);
                 final Model parentMetadata = retrieve(parentUri);
                 for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
-                    if (rdChild.getResourceDefinitionUuid().equals(rd.getUuid())) {
+                    if (rdChild.getTarget().getUuid().equals(rd.getUuid())) {
                         parentMetadata.remove(null, i(rdChild.getRelationUri()), uri);
                         update(parentMetadata, parentUri, rdParent, false);
                     }
@@ -232,8 +233,7 @@ public abstract class AbstractMetadataService implements MetadataService {
                 try {
                     final List<Statement> statements = new ArrayList<>();
                     for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
-                        if (rdChild.getResourceDefinitionUuid()
-                                .equals(resourceDefinition.getUuid())) {
+                        if (rdChild.getTarget().getUuid().equals(resourceDefinition.getUuid())) {
                             statements.add(s(parent, i(rdChild.getRelationUri()), uri));
                         }
                     }
@@ -263,7 +263,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     }
 
     private void addPermissions(IRI uri) {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<UserAccount> user = currentUserService.getCurrentUser();
         if (user.isEmpty()) {
             return;
         }

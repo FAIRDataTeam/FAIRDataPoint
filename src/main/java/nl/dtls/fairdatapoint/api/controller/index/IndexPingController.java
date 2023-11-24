@@ -30,10 +30,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
 import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
@@ -48,19 +49,16 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/")
+@RequiredArgsConstructor
 public class IndexPingController {
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private WebhookService webhookService;
+    private final WebhookService webhookService;
 
-    @Autowired
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
-    @Autowired
-    private UtilityService utilityService;
+    private final UtilityService utilityService;
 
     @Operation(
             description = "Inform about running FAIR Data Point. It is expected to "
@@ -97,7 +95,7 @@ public class IndexPingController {
             HttpServletRequest request
     ) throws MetadataRepositoryException {
         log.info("Received ping from {}", utilityService.getRemoteAddr(request));
-        final Event event = eventService.acceptIncomingPing(reqDto, request);
+        final IndexEvent event = eventService.acceptIncomingPing(reqDto, request);
         log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(reqDto.getClientUrl());

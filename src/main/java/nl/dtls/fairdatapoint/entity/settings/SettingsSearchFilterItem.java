@@ -22,17 +22,35 @@
  */
 package nl.dtls.fairdatapoint.entity.settings;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
 
+@Entity(name = "SettingsSearchFilterItem")
+@Table(name = "settings_search_filter_item")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class SettingsSearchFilterItem {
+@SuperBuilder
+public class SettingsSearchFilterItem extends BaseEntity {
 
+    @NotNull
+    @Column(name = "value", nullable = false)
     private String value;
 
+    @NotNull
+    @Column(name = "label", nullable = false)
     private String label;
+
+    @NotNull
+    @Column(name = "order_priority", nullable = false)
+    private Integer orderPriority;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "filter_id", nullable = false)
+    private SettingsSearchFilter filter;
 }

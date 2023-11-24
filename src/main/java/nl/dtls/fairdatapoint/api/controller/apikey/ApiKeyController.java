@@ -23,6 +23,7 @@
 package nl.dtls.fairdatapoint.api.controller.apikey;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.apikey.ApiKeyService;
@@ -33,16 +34,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
 @Tag(name = "Authentication and Authorization")
 @RestController
 @RequestMapping("/api-keys")
+@RequiredArgsConstructor
 public class ApiKeyController {
 
-    @Autowired
-    private ApiKeyService apiKeyService;
+    private final ApiKeyService apiKeyService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ApiKeyDTO>> getApiKeys() {
@@ -59,7 +61,7 @@ public class ApiKeyController {
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteApiKey(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final boolean result = apiKeyService.delete(uuid);
         if (result) {

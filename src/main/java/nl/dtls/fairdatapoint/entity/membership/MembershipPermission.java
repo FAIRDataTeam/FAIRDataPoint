@@ -22,27 +22,38 @@
  */
 package nl.dtls.fairdatapoint.entity.membership;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
 
-@Document
-@NoArgsConstructor
-@AllArgsConstructor
+import java.util.UUID;
+
+@Entity(name = "MembershipPermission")
+@Table(name = "membership_permission")
 @Getter
 @Setter
-@Builder(toBuilder = true)
-public class MembershipPermission {
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class MembershipPermission extends BaseEntity {
 
-    @Id
-    private ObjectId id;
+    @NotNull
+    @Column(name = "mask", nullable = false)
+    private Integer mask;
 
-    private int mask;
+    @NotNull
+    @Column(name = "code", nullable = false)
+    private Character code;
 
-    private char code;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "membership_id", nullable = false)
+    private Membership membership;
 
     public MembershipPermission(int mask, char code) {
+        this.setUuid(UUID.randomUUID());
         this.mask = mask;
         this.code = code;
     }

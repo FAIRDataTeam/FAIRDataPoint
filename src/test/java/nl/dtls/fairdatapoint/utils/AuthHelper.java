@@ -22,32 +22,29 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import nl.dtls.fairdatapoint.service.security.AuthenticationService;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class AuthHelper {
 
-    @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    // TODO: fixtures
 
     public void authenticateAsAdmin() {
-        authenticate(userFixtures.admin().getUuid());
+        authenticate(KnownUUIDs.USER_ADMIN_UUID);
     }
 
     public void authenticateAsAlbert() {
-        authenticate(userFixtures.albert().getUuid());
+        authenticate(KnownUUIDs.USER_ALBERT_UUID);
     }
 
-    private void authenticate(String uuid) {
-        Authentication auth = mongoAuthenticationService.getAuthentication(uuid);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+    private void authenticate(UUID uuid) {
+        // TODO: implement
     }
 }

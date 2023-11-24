@@ -25,11 +25,11 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaReleaseDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 @DisplayName("POST /metadata-schemas/:schemaUuid/versions")
 public class Versions_POST extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    private URI url(UUID uuid) {
         return URI.create(format("/metadata-schemas/%s/versions", uuid));
     }
 
@@ -63,13 +63,10 @@ public class Versions_POST extends WebIntegrationTest {
     }
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
-
-    @Autowired
     private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     private final ParameterizedTypeReference<MetadataSchemaDTO> responseType =
             new ParameterizedTypeReference<>() {
@@ -79,15 +76,12 @@ public class Versions_POST extends WebIntegrationTest {
     @DisplayName("HTTP 200: publish new")
     public void res200_publishNew() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaDraftRepository.deleteAll();
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_DRAFT_V1_UUID).get();
         MetadataSchemaReleaseDTO reqDto = reqDto("0.1.0", true);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
-                .post(url(draft.getUuid()))
+                .post(url(draft.getSchema().getUuid()))
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(reqDto);
@@ -102,23 +96,22 @@ public class Versions_POST extends WebIntegrationTest {
         assertThat("Result is published", result.getBody().getLatest().isPublished(), is(equalTo(true)));
         assertThat("Result has correct name", result.getBody().getName(), is(equalTo(draft.getName())));
         assertThat("Result has correct version", result.getBody().getLatest().getVersion(), is(equalTo(reqDto.getVersion())));
-        assertThat("Metadata schema repository has one schema", metadataSchemaRepository.count(), is(equalTo(1L)));
+        assertThat("Metadata schema repository has one schema", metadataSchemaRepository.count(), is(equalTo(14L)));
+        assertThat("Draft is now latest version", metadataSchemaVersionRepository.findByUuid(draft.getUuid()).get().isDraft(), is(false));
+        assertThat("Draft is now latest version", metadataSchemaVersionRepository.findByUuid(draft.getUuid()).get().isLatest(), is(true));
     }
 
     @Test
     @DisplayName("HTTP 200: publish newer version")
     public void res200_publishNewerVersion() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaDraftRepository.deleteAll();
-        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(true));
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.save(draft);
-        MetadataSchemaReleaseDTO reqDto = reqDto("2.0.0", true);
+        MetadataSchemaVersion existing = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_V2_UUID).get();
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
+        MetadataSchemaReleaseDTO reqDto = reqDto("4.0.0", true);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
-                .post(url(draft.getUuid()))
+                .post(url(draft.getSchema().getUuid()))
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(reqDto);
@@ -133,25 +126,24 @@ public class Versions_POST extends WebIntegrationTest {
         assertThat("Result is published", result.getBody().getLatest().isPublished(), is(equalTo(true)));
         assertThat("Result has correct name", result.getBody().getName(), is(equalTo(draft.getName())));
         assertThat("Result has correct version", result.getBody().getLatest().getVersion(), is(equalTo(reqDto.getVersion())));
-        assertThat("Metadata schema repository has 2 schemas", metadataSchemaRepository.count(), is(equalTo(2L)));
-        assertThat("Older version is still stored", metadataSchemaRepository.findByUuidAndVersionString(schemaV1.getUuid(), schemaV1.getVersionString()).isPresent(), is(true));
-        assertThat("Older version is no longer the latest", metadataSchemaRepository.findByUuidAndVersionString(schemaV1.getUuid(), schemaV1.getVersionString()).get().isLatest(), is(false));
+        assertThat("Metadata schema repository has 2 schemas", metadataSchemaRepository.count(), is(equalTo(14L)));
+        assertThat("Older version is still stored", metadataSchemaVersionRepository.findByUuid(existing.getUuid()).isPresent(), is(true));
+        assertThat("Older version is no longer the latest", metadataSchemaVersionRepository.findByUuid(existing.getUuid()).get().isLatest(), is(false));
+        assertThat("Older version is still stored", metadataSchemaVersionRepository.findByUuid(draft.getUuid()).isPresent(), is(true));
+        assertThat("Older version is no longer the latest", metadataSchemaVersionRepository.findByUuid(draft.getUuid()).get().isDraft(), is(false));
+        assertThat("Older version is no longer the latest", metadataSchemaVersionRepository.findByUuid(draft.getUuid()).get().isLatest(), is(true));
     }
 
     @Test
     @DisplayName("HTTP 400: not newer version")
     public void res400_notNewerVersion() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(true));
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.save(draft);
-        MetadataSchemaReleaseDTO reqDto = reqDto("0.1.0", true);
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
+        MetadataSchemaReleaseDTO reqDto = reqDto("0.0.1", true);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
-                .post(url(draft.getUuid()))
+                .post(url(draft.getSchema().getUuid()))
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(reqDto);
@@ -166,18 +158,18 @@ public class Versions_POST extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createNoUserForbiddenTestPost(client, url("nonExisting"), reqDto("1.0.0", true));
+        createNoUserForbiddenTestPost(client, url(KnownUUIDs.NULL_UUID), reqDto("1.0.0", true));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPost(client, url(UUID.randomUUID().toString()), reqDto("1.0.0", true));
+        createNoUserForbiddenTestPost(client, url(UUID.randomUUID()), reqDto("1.0.0", true));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestPost(client, url(UUID.randomUUID().toString()), reqDto("1.0.0", true));
+        createUserForbiddenTestPost(client, url(UUID.randomUUID()), reqDto("1.0.0", true));
     }
 }

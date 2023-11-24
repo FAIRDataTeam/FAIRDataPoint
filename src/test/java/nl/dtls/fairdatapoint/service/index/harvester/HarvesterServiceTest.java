@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.service.index.harvester;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactoryImpl;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
@@ -84,16 +83,16 @@ public class HarvesterServiceTest {
     private Model catalog;
 
     @BeforeEach
-    private void setup() {
+    public void setup() {
         // Setup resource definition;
-        ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();
+        // TODO: fixtures
 
         // Setup RDF fixtures
         RdfMetadataFixtures fixtures = new RdfMetadataFixtures(new MetadataFactoryImpl());
 
         // Create repository
         repository = fixtures.fdpMetadata(repositoryUrl);
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
+        ResourceDefinition rdRepository = null;
 
         // Create catalog
         catalog = fixtures.catalog1(repositoryUrl, getUri(repository));

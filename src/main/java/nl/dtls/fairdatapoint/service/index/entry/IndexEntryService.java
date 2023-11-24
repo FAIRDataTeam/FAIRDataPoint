@@ -23,10 +23,12 @@
 package nl.dtls.fairdatapoint.service.index.entry;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.entry.*;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEventRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
@@ -34,21 +36,21 @@ import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
-import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
 import java.util.*;
@@ -57,36 +59,30 @@ import java.util.stream.StreamSupport;
 
 import static nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO.*;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.lwjgl.system.MemoryUtil.PAGE_SIZE;
 
 @Slf4j
 @Service
-@Validated
+@RequiredArgsConstructor
 public class IndexEntryService {
 
     private static final String MSG_NOT_FOUND = "Index entry not found";
 
     private static final String FILTER_ALL = "ALL";
 
-    @Autowired
-    private IndexEntryRepository repository;
+    private final IndexEntryRepository repository;
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
-    @Autowired
-    private EventService eventService;
+    private final IndexEventRepository eventRepository;
 
-    @Autowired
-    private IndexEntryMapper mapper;
+    private final IndexEntryMapper mapper;
 
-    @Autowired
-    private GenericMetadataRepository genericMetadataRepository;
+    private final GenericMetadataRepository genericMetadataRepository;
 
-    @Autowired
-    private HarvesterService harvesterService;
+    private final HarvesterService harvesterService;
 
-    @Autowired
-    private CurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries() {
@@ -136,28 +132,28 @@ public class IndexEntryService {
                                                        List<IndexEntryPermit> permit) {
         final Instant validThreshold = getValidThreshold();
         if (state.equalsIgnoreCase(ACTIVE.name())) {
-            return repository.findAllByStateEqualsAndLastRetrievalTimeAfterAndPermitIn(
-                    pageable, IndexEntryState.Valid, validThreshold, permit
+            return repository.findAllByStateEqualsAndLastRetrievalAtAfterAndPermitIn(
+                    pageable, IndexEntryState.VALID, validThreshold, permit
             );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.INACTIVE.name())) {
-            return repository.findAllByStateEqualsAndLastRetrievalTimeBeforeAndPermitIn(
-                    pageable, IndexEntryState.Valid, validThreshold, permit
+            return repository.findAllByStateEqualsAndLastRetrievalAtBeforeAndPermitIn(
+                    pageable, IndexEntryState.VALID, validThreshold, permit
             );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.UNREACHABLE.name())) {
             return repository.findAllByStateEqualsAndPermitIn(
-                    pageable, IndexEntryState.Unreachable, permit
+                    pageable, IndexEntryState.UNREACHABLE, permit
             );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.INVALID.name())) {
             return repository.findAllByStateEqualsAndPermitIn(
-                    pageable, IndexEntryState.Invalid, permit
+                    pageable, IndexEntryState.INVALID, permit
             );
         }
         if (state.equalsIgnoreCase(IndexEntryStateDTO.UNKNOWN.name())) {
             return repository.findAllByStateEqualsAndPermitIn(
-                    pageable, IndexEntryState.Unknown, permit
+                    pageable, IndexEntryState.UNKNOWN, permit
             );
         }
         return repository.findAllByPermitIn(pageable, permit);
@@ -171,19 +167,31 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
-    public Optional<IndexEntry> getEntry(String uuid) {
+    public Optional<IndexEntry> getEntry(UUID uuid) {
         return repository.findByUuid(uuid);
     }
 
     @RequiredEnabledIndexFeature
-    public Optional<IndexEntryDetailDTO> getEntryDetailDTO(String uuid) {
+    public Optional<IndexEntryDetailDTO> getEntryDetailDTO(UUID uuid) {
         final Instant validThreshold = getValidThreshold();
         return getEntry(uuid)
                 .map(entry -> {
                     return mapper.toDetailDTO(
-                            entry, eventService.getEvents(entry.getUuid()), validThreshold
+                            entry, getEvents(entry.getUuid()), validThreshold
                     );
                 });
+    }
+
+    @RequiredEnabledIndexFeature
+    private Iterable<IndexEvent> getEvents(UUID indexEntryUuid) {
+        return getEntry(indexEntryUuid)
+                .map(this::getEvents).orElse(Collections.emptyList());
+    }
+
+
+    public Iterable<IndexEvent> getEvents(IndexEntry indexEntry) {
+        return eventRepository.getAllByRelatedTo(indexEntry,
+                PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "created")));
     }
 
     @RequiredEnabledIndexFeature
@@ -197,27 +205,27 @@ public class IndexEntryService {
         );
         entriesCount.put(
                 UNKNOWN.name(),
-                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.Unknown, permit)
+                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.UNKNOWN, permit)
         );
         entriesCount.put(
                 ACTIVE.name(),
-                repository.countAllByStateEqualsAndLastRetrievalTimeAfterAndPermitIn(
-                        IndexEntryState.Valid, validThreshold, permit
+                repository.countAllByStateEqualsAndLastRetrievalAtAfterAndPermitIn(
+                        IndexEntryState.VALID, validThreshold, permit
                 )
         );
         entriesCount.put(
                 INACTIVE.name(),
-                repository.countAllByStateEqualsAndLastRetrievalTimeBeforeAndPermitIn(
-                        IndexEntryState.Valid, validThreshold, permit
+                repository.countAllByStateEqualsAndLastRetrievalAtBeforeAndPermitIn(
+                        IndexEntryState.VALID, validThreshold, permit
                 )
         );
         entriesCount.put(
                 UNREACHABLE.name(),
-                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.Unreachable, permit)
+                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.UNREACHABLE, permit)
         );
         entriesCount.put(
                 INVALID.name(),
-                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.Invalid, permit)
+                repository.countAllByStateEqualsAndPermitIn(IndexEntryState.INVALID, permit)
         );
         return new IndexEntryInfoDTO(entriesCount);
     }
@@ -226,7 +234,6 @@ public class IndexEntryService {
     public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Optional<IndexEntry> entity = repository.findByClientUrl(clientUrl);
-        final Instant now = Instant.now();
         final IndexSettings settings = indexSettingsService.getOrDefaults();
 
         final IndexEntry entry;
@@ -237,9 +244,9 @@ public class IndexEntryService {
         else {
             log.info("Storing new entry {}", clientUrl);
             entry = new IndexEntry();
-            entry.setUuid(UUID.randomUUID().toString());
+            entry.setUuid(UUID.randomUUID());
             entry.setClientUrl(clientUrl);
-            entry.setRegistrationTime(now);
+            entry.setCreatedAt(Instant.now());
             if (settings.getAutoPermit()) {
                 entry.setPermit(IndexEntryPermit.ACCEPTED);
             }
@@ -248,13 +255,13 @@ public class IndexEntryService {
             }
         }
 
-        entry.setModificationTime(now);
-        return repository.save(entry);
+        entry.setUpdatedAt(Instant.now());
+        return repository.saveAndFlush(entry);
     }
 
     @RequiredEnabledIndexFeature
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteEntry(String uuid) throws MetadataRepositoryException {
+    public void deleteEntry(UUID uuid) throws MetadataRepositoryException {
         final IndexEntry entry = repository.findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
         harvesterService.deleteHarvestedData(entry.getClientUrl());
@@ -278,7 +285,7 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
-    public Model getEntryHarvestedData(String uuid) throws MetadataRepositoryException {
+    public Model getEntryHarvestedData(UUID uuid) throws MetadataRepositoryException {
         final IndexEntry entry = repository
                 .findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
@@ -287,7 +294,7 @@ public class IndexEntryService {
         return model;
     }
 
-    public Optional<IndexEntryDetailDTO> updateEntry(String uuid, IndexEntryUpdateDTO reqDto) {
+    public Optional<IndexEntryDetailDTO> updateEntry(UUID uuid, IndexEntryUpdateDTO reqDto) {
         final Optional<IndexEntry> entry = getEntry(uuid);
         if (entry.isPresent() && !reqDto.getPermit().equals(entry.get().getPermit())) {
             entry.get().setPermit(reqDto.getPermit());

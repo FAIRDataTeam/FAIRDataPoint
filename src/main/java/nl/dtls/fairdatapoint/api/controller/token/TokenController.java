@@ -24,6 +24,7 @@ package nl.dtls.fairdatapoint.api.controller.token;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
 import nl.dtls.fairdatapoint.api.dto.auth.TokenDTO;
 import nl.dtls.fairdatapoint.service.jwt.JwtService;
@@ -38,10 +39,10 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Authentication and Authorization")
 @RestController
 @RequestMapping("/tokens")
+@RequiredArgsConstructor
 public class TokenController {
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TokenDTO> generateToken(@RequestBody @Valid AuthDTO reqDto) {

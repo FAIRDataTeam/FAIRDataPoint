@@ -22,9 +22,10 @@
  */
 package nl.dtls.fairdatapoint.acceptance.index.entry;
 
+import jakarta.transaction.Transactional;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -66,6 +67,9 @@ public class List_Info_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: list default")
     public void res200_listMany() {
         // GIVEN: Prepare request
+        indexEntryRepository.deleteAll();
+        List<IndexEntry> entries = TestIndexEntryFixtures.entriesDefault();
+        indexEntryRepository.saveAll(entries);
         RequestEntity<?> request = RequestEntity
                 .get(url())
                 .accept(MediaType.APPLICATION_JSON)

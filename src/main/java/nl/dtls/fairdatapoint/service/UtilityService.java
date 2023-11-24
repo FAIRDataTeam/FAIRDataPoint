@@ -23,16 +23,17 @@
 package nl.dtls.fairdatapoint.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UtilityService {
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
     public String getRemoteAddr(HttpServletRequest request) {
         return HttpUtil.getClientIpAddress(request, instanceProperties.isBehindProxy());

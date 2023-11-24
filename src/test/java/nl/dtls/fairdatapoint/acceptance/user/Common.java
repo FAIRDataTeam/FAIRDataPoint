@@ -26,7 +26,7 @@ import nl.dtls.fairdatapoint.api.dto.user.UserChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserProfileChangeDTO;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -52,7 +52,7 @@ public class Common {
         assertThat(dto.getEmail(), is(equalTo(entity.getEmail())));
     }
 
-    public static void compare(User entity, UserDTO dto) {
+    public static void compare(UserAccount entity, UserDTO dto) {
         assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
         assertThat(dto.getFirstName(), is(equalTo(entity.getFirstName())));
         assertThat(dto.getLastName(), is(equalTo(entity.getLastName())));

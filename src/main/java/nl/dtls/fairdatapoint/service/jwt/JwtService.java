@@ -25,18 +25,17 @@ package nl.dtls.fairdatapoint.service.jwt;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
 import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.service.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
@@ -44,7 +43,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
-@Component
+@Service
 public class JwtService {
 
     private static final Long DAY_MS = 24 * 60 * 60 * 1000L;
@@ -55,19 +54,22 @@ public class JwtService {
     @Value("${security.jwt.token.expiration:14}")
     private long expiration;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
 
     @Lazy
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private final AuthenticationService authenticationService;
 
     private JwtParser parser;
 
     private Key key;
+
+    public JwtService(UserAccountRepository userAccountRepository, AuthenticationManager authenticationManager, AuthenticationService authenticationService) {
+        this.userAccountRepository = userAccountRepository;
+        this.authenticationManager = authenticationManager;
+        this.authenticationService = authenticationService;
+    }
 
     @PostConstruct
     protected void init() {
@@ -77,7 +79,7 @@ public class JwtService {
     }
 
     public String createToken(AuthDTO authDTO) {
-        final Optional<User> user = userRepository.findByEmail(authDTO.getEmail());
+        final Optional<UserAccount> user = userAccountRepository.findByEmail(authDTO.getEmail());
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -90,7 +92,7 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(String token) {
-        return mongoAuthenticationService.getAuthentication(getUserUuid(token));
+        return authenticationService.getAuthentication(getUserUuid(token));
     }
 
     public String getUserUuid(String token) {
@@ -107,8 +109,8 @@ public class JwtService {
         }
     }
 
-    private String buildToken(User user) {
-        final Claims claims = Jwts.claims().subject(user.getUuid()).build();
+    private String buildToken(UserAccount user) {
+        final Claims claims = Jwts.claims().subject(user.getUuid().toString()).build();
         final Date now = new Date();
         final Date validity = new Date(now.getTime() + (expiration * DAY_MS));
         return Jwts.builder()
