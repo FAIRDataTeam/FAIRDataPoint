@@ -27,7 +27,8 @@ import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
 import nl.dtls.fairdatapoint.service.index.event.EventMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,31 +47,31 @@ public class IndexEntryMapper {
                 indexEntry.getUuid(),
                 indexEntry.getClientUrl(),
                 toStateDTO(indexEntry.getState(),
-                        indexEntry.getLastRetrievalTime(),
+                        indexEntry.getLastRetrievalAt(),
                         validThreshold),
                 indexEntry.getPermit(),
-                indexEntry.getRegistrationTime().toString(),
-                indexEntry.getModificationTime().toString()
+                indexEntry.getCreatedAt().toString(),
+                indexEntry.getUpdatedAt().toString()
         );
     }
 
     public IndexEntryDetailDTO toDetailDTO(
-            IndexEntry indexEntry, Iterable<Event> events, Instant validThreshold
+            IndexEntry indexEntry, Iterable<IndexEvent> events, Instant validThreshold
     ) {
         return new IndexEntryDetailDTO(
                 indexEntry.getUuid(),
                 indexEntry.getClientUrl(),
                 toStateDTO(indexEntry.getState(),
-                        indexEntry.getLastRetrievalTime(),
+                        indexEntry.getLastRetrievalAt(),
                         validThreshold),
                 indexEntry.getPermit(),
-                indexEntry.getCurrentMetadata(),
+                toRepositoryMetadata(indexEntry),
                 StreamSupport.stream(events.spliterator(), false)
                         .map(eventMapper::toDTO)
                         .toList(),
-                indexEntry.getRegistrationTime().toString(),
-                indexEntry.getModificationTime().toString(),
-                indexEntry.getLastRetrievalTime().toString()
+                indexEntry.getCreatedAt().toString(),
+                indexEntry.getUpdatedAt().toString(),
+                indexEntry.getLastRetrievalAt().toString()
         );
     }
 
@@ -78,13 +79,21 @@ public class IndexEntryMapper {
             IndexEntryState state, Instant lastRetrievalTime, Instant validThreshold
     ) {
         return switch (state) {
-            case Unknown -> IndexEntryStateDTO.UNKNOWN;
-            case Valid -> lastRetrievalTime.isAfter(validThreshold)
+            case UNKNOWN -> IndexEntryStateDTO.UNKNOWN;
+            case VALID -> lastRetrievalTime.isAfter(validThreshold)
                     ? IndexEntryStateDTO.ACTIVE
                     : IndexEntryStateDTO.INACTIVE;
-            case Invalid -> IndexEntryStateDTO.INVALID;
-            case Unreachable -> IndexEntryStateDTO.UNREACHABLE;
+            case INVALID -> IndexEntryStateDTO.INVALID;
+            case UNREACHABLE -> IndexEntryStateDTO.UNREACHABLE;
         };
+    }
+
+    private RepositoryMetadata toRepositoryMetadata(IndexEntry entry) {
+        return RepositoryMetadata.builder()
+                .repositoryUri(entry.getRepositoryUri())
+                .metadataVersion(entry.getMetadataVersion())
+                .metadata(entry.getMetadata())
+                .build();
     }
 
 }

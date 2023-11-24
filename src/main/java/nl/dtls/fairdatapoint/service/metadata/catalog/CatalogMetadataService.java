@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.catalog;
 
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
@@ -35,13 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.setThemeTaxonomies;
 
-@Service("catalogMetadataService")
 @Slf4j
+@Service("catalogMetadataService")
 public class CatalogMetadataService extends AbstractMetadataService {
 
     @Autowired

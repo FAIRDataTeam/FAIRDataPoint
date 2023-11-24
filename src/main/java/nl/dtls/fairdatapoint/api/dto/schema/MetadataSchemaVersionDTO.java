@@ -29,7 +29,7 @@ import lombok.*;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,17 +39,16 @@ import java.util.Set;
 public class MetadataSchemaVersionDTO {
 
     @NotNull
-    @NotBlank
-    private String uuid;
+    private UUID uuid;
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private String version;
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
-    private String versionUuid;
+    private UUID versionUuid;
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
-    private String previousVersionUuid;
+    private UUID previousVersionUuid;
 
     @NotNull
     @NotBlank
@@ -77,10 +76,10 @@ public class MetadataSchemaVersionDTO {
     private String description;
 
     @NotNull
-    private Set<String> targetClasses;
+    private List<String> targetClasses;
 
     @NotNull
-    private List<String> extendsSchemaUuids;
+    private List<UUID> extendsSchemaUuids;
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private String suggestedResourceName;

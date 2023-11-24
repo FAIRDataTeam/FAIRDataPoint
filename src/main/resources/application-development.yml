@@ -7,6 +7,11 @@ security:
       expiration: 999
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/fdp-dev
+  datasource:
+    url: jdbc:postgresql://localhost:54321/fdp
+    username: fdp
+    password: fdp
+  flyway:
+    locations: classpath:dev/db/migration,classpath:db/migration
+    fail-on-missing-locations: true
+    clean-disabled: false

@@ -22,7 +22,6 @@
  */
 package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
-import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.service.reset.FactoryDefaults;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
@@ -36,7 +35,6 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,7 +46,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class Rdf_Migration_0001_Init implements RdfProductionMigration {
-    // TODO: squash RDF migrations
+    // TODO: use data specs for initial data
 
     @Autowired
     private Repository mainRepository;
@@ -65,9 +63,6 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
     @Autowired
     private IRI language;
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     public void runMigration() {
         createRepositoryInTripleStore();
@@ -90,12 +85,13 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     }
 
     private void storePermissionForRepository() {
-        final MongoCollection<Document> aclCol = mongoTemplate.getCollection("ACL");
-        aclCol.insertOne(repositoryPermission());
+        // TODO
+        return;
     }
 
     private Document repositoryPermission() {
-        return FactoryDefaults.aclRepository(persistentUrl);
+        // TODO
+        return null;
     }
 
 }

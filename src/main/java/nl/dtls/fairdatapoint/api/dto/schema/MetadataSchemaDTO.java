@@ -28,6 +28,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class MetadataSchemaDTO {
 
     @NotNull
     @NotBlank
-    private String uuid;
+    private UUID uuid;
 
     @NotNull
     @NotBlank
@@ -54,8 +55,8 @@ public class MetadataSchemaDTO {
     private List<String> versions;
 
     @NotNull
-    private List<String> extendSchemaUuids;
+    private List<UUID> extendSchemaUuids;
 
     @NotNull
-    private List<String> childSchemaUuids;
+    private List<UUID> childSchemaUuids;
 }

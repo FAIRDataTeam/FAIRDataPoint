@@ -24,11 +24,11 @@ package nl.dtls.fairdatapoint.api.controller.resource;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,18 +37,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
 @Tag(name = "Metadata Model")
 @RestController
 @RequestMapping("/resource-definitions")
+@RequiredArgsConstructor
 public class ResourceDefinitionController {
 
     private static final String NOT_FOUND_MSG = "Resource Definition '%s' doesn't exist";
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ResourceDefinitionDTO>> getResourceDefinitions() {
@@ -66,7 +67,7 @@ public class ResourceDefinitionController {
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceDefinitionDTO> getResourceDefinition(
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.getDTOByUuid(uuid);
         if (oDto.isPresent()) {
@@ -79,7 +80,7 @@ public class ResourceDefinitionController {
 
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceDefinitionDTO> putResourceDefinitions(
-            @PathVariable final String uuid,
+            @PathVariable final UUID uuid,
             @RequestBody @Valid ResourceDefinitionChangeDTO reqDto
     ) throws ResourceNotFoundException, BindException {
         final Optional<ResourceDefinitionDTO> oDto = resourceDefinitionService.update(uuid, reqDto);
@@ -93,7 +94,7 @@ public class ResourceDefinitionController {
 
     @DeleteMapping(path = "/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteResourceDefinitions(@PathVariable final String uuid)
+    public ResponseEntity<Void> deleteResourceDefinitions(@PathVariable final UUID uuid)
             throws ResourceNotFoundException {
         final boolean result = resourceDefinitionService.deleteByUuid(uuid);
         if (result) {

@@ -24,9 +24,9 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,8 @@ import java.net.URI;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.*;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestGet;
+import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestGet;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -46,27 +47,22 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /metadata-schemas/:schemaUuid/draft")
 public class Draft_GET extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    private URI url(UUID uuid) {
         return URI.create(format("/metadata-schemas/%s/draft", uuid));
     }
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
-
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(draft.getUuid()))
+                .get(url(draft.getSchema().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .build();
@@ -84,18 +80,18 @@ public class Draft_GET extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestGet(client, url("nonExisting"));
+        createAdminNotFoundTestGet(client, url(KnownUUIDs.NULL_UUID));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestGet(client, url(UUID.randomUUID().toString()));
+        createNoUserForbiddenTestGet(client, url(UUID.randomUUID()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestGet(client, url(UUID.randomUUID().toString()));
+        createUserForbiddenTestGet(client, url(UUID.randomUUID()));
     }
 }

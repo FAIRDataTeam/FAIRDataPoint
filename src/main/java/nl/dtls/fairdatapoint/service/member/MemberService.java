@@ -22,58 +22,52 @@
  */
 package nl.dtls.fairdatapoint.service.member;
 
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MembershipRepository;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
 import nl.dtls.fairdatapoint.service.membership.PermissionService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.domain.MongoAcl;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.*;
-import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
 
-    @Autowired
-    private MongoDBMutableAclService aclService;
+    private final MutableAclService aclService;
 
-    @Autowired
-    private MembershipRepository membershipRepository;
+    private final MembershipRepository membershipRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    @Autowired
-    private CurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
-    @Autowired
-    private PermissionService permissionService;
+    private final PermissionService permissionService;
 
-    @Autowired
-    private MemberMapper memberMapper;
+    private final MemberMapper memberMapper;
 
-    @Autowired
-    private AclRepository aclRepository;
+    private final AclCache aclCache;
 
-    @Autowired
-    private AclCache aclCache;
+    private final EntityManager entityManager;
 
+    @Transactional
     @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> List<MemberDTO> getMembers(String entityId, Class<T> entityType) {
         final MutableAcl acl = retrieveAcl(entityId, entityType);
@@ -85,37 +79,39 @@ public class MemberService {
                 .stream()
                 .map(entry -> {
                     final Membership membership = deriveMembership(entry.getValue());
-                    final User user = userRepository.findByUuid(
-                            ((PrincipalSid) entry.getKey()).getPrincipal()
+                    final UserAccount user = userAccountRepository.findByUuid(
+                            UUID.fromString(((PrincipalSid) entry.getKey()).getPrincipal())
                     ).get();
                     return memberMapper.toDTO(user, membership);
                 })
                 .toList();
     }
 
+    @Transactional
     public <T> Optional<MemberDTO> getMemberForCurrentUser(String entityId, Class<T> entityType) {
         final MutableAcl acl = retrieveAcl(entityId, entityType);
-        final Optional<User> oUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> oUser = currentUserService.getCurrentUser();
         if (oUser.isEmpty()) {
             return Optional.empty();
         }
-        final User user = oUser.get();
+        final UserAccount user = oUser.get();
         final List<Permission> permissions = acl.getEntries()
                 .stream()
-                .filter(ace -> ace.getSid().equals(new PrincipalSid(user.getUuid())))
+                .filter(ace -> ace.getSid().equals(new PrincipalSid(user.getUuid().toString())))
                 .map(AccessControlEntry::getPermission)
-                .collect(Collectors.toList());
+                .toList();
 
-        if (permissions.size() > 0) {
+        if (!permissions.isEmpty()) {
             final Membership membership = deriveMembership(permissions);
             return Optional.of(memberMapper.toDTO(user, membership));
         }
         return Optional.empty();
     }
 
+    @Transactional
     @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
-    public <T> MemberDTO createOrUpdateMember(String entityId, Class<T> entityType, String userUuid,
-                                              String membershipUuid) {
+    public <T> MemberDTO createOrUpdateMember(String entityId, Class<T> entityType, UUID userUuid,
+                                              UUID membershipUuid) {
         // Get membership
         final Optional<Membership> oMembership = membershipRepository.findByUuid(membershipUuid);
         if (oMembership.isEmpty()) {
@@ -124,11 +120,11 @@ public class MemberService {
         final Membership membership = oMembership.get();
 
         // Get user
-        final Optional<User> oUser = userRepository.findByUuid(userUuid);
+        final Optional<UserAccount> oUser = userAccountRepository.findByUuid(userUuid);
         if (oUser.isEmpty()) {
             throw new ValidationException("User doesn't exist");
         }
-        final User user = oUser.get();
+        final UserAccount user = oUser.get();
 
         // Get ACL
         final MutableAcl acl = retrieveAcl(entityId, entityType);
@@ -148,15 +144,19 @@ public class MemberService {
         return memberMapper.toDTO(user, membership);
     }
 
-    public <T> void createOwner(String entityId, Class<T> entityType, String userUuid) {
+    @Transactional
+    public <T> void createOwner(String entityId, Class<T> entityType, UUID userUuid) {
         createPermission(entityId, entityType, userUuid, BasePermission.WRITE);
         createPermission(entityId, entityType, userUuid, BasePermission.CREATE);
         createPermission(entityId, entityType, userUuid, BasePermission.DELETE);
         createPermission(entityId, entityType, userUuid, BasePermission.ADMINISTRATION);
+
+        entityManager.flush();
     }
 
+    @Transactional
     public <T> void createPermission(
-            String entityId, Class<T> entityType, String userUuid, Permission permission
+            String entityId, Class<T> entityType, UUID userUuid, Permission permission
     ) {
         final MutableAcl acl = retrieveAcl(entityId, entityType);
         if (acl.getEntries().stream()
@@ -169,58 +169,61 @@ public class MemberService {
     }
 
     public boolean checkRole(UserRole role) {
-        // 1. Get user
-        final Optional<User> user = currentUserService.getCurrentUser();
-        if (user.isEmpty()) {
-            return false;
-        }
-
-        // 2. Validate
-        return user.get().getRole().equals(role);
+        return currentUserService.getCurrentUser()
+                .map(userAccount -> userAccount.getRole().equals(role))
+                .orElse(false);
     }
 
+    @Transactional
     public <T> boolean checkPermission(
             String entityId, Class<T> entityType, Permission permission
     ) {
-        final Optional<User> oUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> oUser = currentUserService.getCurrentUser();
         if (oUser.isEmpty()) {
             return false;
         }
-        final User user = oUser.get();
+        final UserAccount user = oUser.get();
 
         final MutableAcl acl = retrieveAcl(entityId, entityType);
         return acl.getEntries()
                 .stream()
-                .filter(ace -> ((PrincipalSid) ace.getSid()).getPrincipal().equals(user.getUuid()))
+                .filter(ace -> ((PrincipalSid) ace.getSid()).getPrincipal().equals(user.getUuid().toString()))
                 .map(AccessControlEntry::getPermission)
                 .anyMatch(permission2 -> permission2.getMask() == permission.getMask());
     }
 
-    public <T> void deleteMembers(User user) {
-        final List<MongoAcl> acls = aclRepository.findAll();
-        for (MongoAcl acl : acls) {
-            acl.getPermissions()
-                    .removeIf(permission -> permission.getSid().getName().equals(user.getUuid()));
-            aclRepository.save(acl);
-        }
+    @Transactional
+    public <T> void deleteMembers(UserAccount user) {
+        final Long sid = (Long) entityManager
+                .createNativeQuery("SELECT s.id FROM acl_sid s WHERE s.sid = :userUuid")
+                .setParameter("userUuid", user.getUuid().toString())
+                .getSingleResult();
+
+        entityManager.createNativeQuery("DELETE FROM acl_entry WHERE sid = :sid")
+                .setParameter("sid", sid)
+                .executeUpdate();
+
         aclCache.clearCache();
     }
 
+    @Transactional
     @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
-    public <T> void deleteMember(String entityId, Class<T> entityType, String userUuid) {
+    public <T> void deleteMember(String entityId, Class<T> entityType, UUID userUuid) {
         // Get ACL
         final MutableAcl acl = retrieveAcl(entityId, entityType);
 
         for (int i = acl.getEntries().size() - 1; i >= 0; i--) {
             final AccessControlEntry ace = acl.getEntries().get(i);
-            if (ace.getSid().equals(new PrincipalSid(userUuid))) {
+            if (ace.getSid().equals(new PrincipalSid(userUuid.toString()))) {
                 acl.deleteAce(i);
             }
         }
         aclService.updateAcl(acl);
+        entityManager.flush();
     }
 
-    private Membership deriveMembership(List<Permission> permissions) {
+    @Transactional
+    protected Membership deriveMembership(List<Permission> permissions) {
         final List<Membership> memberships = membershipRepository.findAll();
         for (Membership membership : memberships) {
             final List<MembershipPermission> membershipPermissions = membership.getPermissions();
@@ -241,7 +244,8 @@ public class MemberService {
         throw new IllegalArgumentException("Non-existing combination of permissions");
     }
 
-    private <T> MutableAcl retrieveAcl(String entityId, Class<T> entityType) {
+    @Transactional
+    protected <T> MutableAcl retrieveAcl(String entityId, Class<T> entityType) {
         final ObjectIdentity identity = new ObjectIdentityImpl(entityType, entityId);
         try {
             return (MutableAcl) aclService.readAclById(identity);
@@ -251,8 +255,7 @@ public class MemberService {
         }
     }
 
-    private void insertAce(MutableAcl acl, String userUuid, Permission permission) {
-        acl.insertAce(acl.getEntries().size(), permission, new PrincipalSid(userUuid), true);
+    private void insertAce(MutableAcl acl, UUID userUuid, Permission permission) {
+        acl.insertAce(acl.getEntries().size(), permission, new PrincipalSid(userUuid.toString()), true);
     }
-
 }

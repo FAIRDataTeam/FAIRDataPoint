@@ -26,10 +26,8 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserProfileChangeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
@@ -51,9 +49,6 @@ public class Detail_Current_PUT extends WebIntegrationTest {
     private UserProfileChangeDTO reqDto() {
         return new UserProfileChangeDTO("EDITED: Albert", "EDITED: Einstein", "albert.einstein.edited@example.com");
     }
-
-    @Autowired
-    private UserFixtures userFixtures;
 
     @Test
     @DisplayName("HTTP 200")

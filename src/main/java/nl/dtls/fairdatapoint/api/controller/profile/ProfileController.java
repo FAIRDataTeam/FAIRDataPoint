@@ -24,17 +24,17 @@ package nl.dtls.fairdatapoint.api.controller.profile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.service.profile.ProfileService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
@@ -43,14 +43,12 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 @Tag(name = "Client")
 @RestController
 @RequestMapping("/profile")
+@RequiredArgsConstructor
 public class ProfileController {
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
     @GetMapping(path = "/{uuid}", produces = {
         "text/turtle",
@@ -64,7 +62,7 @@ public class ProfileController {
     })
     public ResponseEntity<Model> getSchemaContent(
             HttpServletRequest request,
-            @PathVariable final String uuid
+            @PathVariable final UUID uuid
     ) throws ResourceNotFoundException {
         final IRI uri = i(getRequestURL(request, persistentUrl));
         final Optional<Model> oDto = profileService.getProfileByUuid(uuid, uri);

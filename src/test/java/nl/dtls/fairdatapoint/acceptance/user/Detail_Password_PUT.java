@@ -25,8 +25,9 @@ package nl.dtls.fairdatapoint.acceptance.user;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
@@ -49,7 +51,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("PUT /users/:userUuid/password")
 public class Detail_Password_PUT extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+    private URI url(UUID uuid) {
         return URI.create(format("/users/%s/password", uuid));
     }
 
@@ -57,14 +62,11 @@ public class Detail_Password_PUT extends WebIntegrationTest {
         return new UserPasswordDTO("newPassword");
     }
 
-    @Autowired
-    private UserFixtures userFixtures;
-
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        User user = userFixtures.albert();
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
         RequestEntity<UserPasswordDTO> request = RequestEntity
                 .put(url(user.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
@@ -83,21 +85,21 @@ public class Detail_Password_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        User user = userFixtures.albert();
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
         createNoUserForbiddenTestPut(client, url(user.getUuid()), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_user() {
-        User user = userFixtures.albert();
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
         createUserForbiddenTestPut(client, url(user.getUuid()), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestPut(client, url("nonExisting"), reqDto());
+        createAdminNotFoundTestPut(client, url(KnownUUIDs.NULL_UUID), reqDto());
     }
 
 }

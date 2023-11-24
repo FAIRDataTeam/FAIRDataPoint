@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.Model;
@@ -36,7 +35,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
 
 import java.net.URI;
@@ -53,13 +51,7 @@ public class List_POST extends WebIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
-    private AclRepository aclRepository;
-
-    @Autowired
     private AclCache aclCache;
-
-    @Autowired
-    private RdfMetadataMigration rdfMetadataMigration;
 
     private URI url() {
         return URI.create("/catalog");

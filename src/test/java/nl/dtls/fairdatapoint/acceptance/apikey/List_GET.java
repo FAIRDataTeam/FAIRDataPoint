@@ -24,10 +24,8 @@ package nl.dtls.fairdatapoint.acceptance.apikey;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,9 +47,6 @@ public class List_GET extends WebIntegrationTest {
         return URI.create("/api-keys");
     }
 
-    @Autowired
-    private ApiKeyFixtures apikeyFixtures;
-
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
@@ -70,7 +65,7 @@ public class List_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<ApiKeyDTO> body = result.getBody();
         assertThat(body.size(), is(equalTo(1)));
-        body.get(0).equals(apikeyFixtures.albertApiKey());
+        body.get(0).equals(null);
     }
 
     @Test

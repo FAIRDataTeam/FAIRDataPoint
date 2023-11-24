@@ -23,8 +23,8 @@
 package nl.dtls.fairdatapoint.entity.index.entry;
 
 public enum IndexEntryState {
-    Unknown,
-    Valid,
-    Unreachable,
-    Invalid
+    UNKNOWN,
+    VALID,
+    UNREACHABLE,
+    INVALID
 }

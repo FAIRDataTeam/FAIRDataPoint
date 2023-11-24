@@ -23,8 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.user;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,20 +48,21 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("DELETE /users/:userUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
     private URI url(String uuid) {
         return URI.create(format("/users/%s", uuid));
     }
-
-    @Autowired
-    private UserFixtures userFixtures;
 
     @Test
     @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        User user = userFixtures.albert();
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_NIKOLA_UUID).get();
+
         RequestEntity<Void> request = RequestEntity
-                .delete(url(user.getUuid()))
+                .delete(url(user.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -71,26 +73,26 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
+        assertThat(userAccountRepository.findByUuid(KnownUUIDs.USER_NIKOLA_UUID).isPresent(), is(equalTo(false)));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        User user = userFixtures.albert();
-        createNoUserForbiddenTestDelete(client, url(user.getUuid()));
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_NIKOLA_UUID).get();
+        createNoUserForbiddenTestDelete(client, url(user.getUuid().toString()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_user() {
-        User user = userFixtures.albert();
-        createUserForbiddenTestDelete(client, url(user.getUuid()));
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_NIKOLA_UUID).get();
+        createUserForbiddenTestDelete(client, url(user.getUuid().toString()));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestDelete(client, url("nonExisting"));
+        createAdminNotFoundTestDelete(client, url(KnownUUIDs.NULL_UUID.toString()));
     }
-
 }

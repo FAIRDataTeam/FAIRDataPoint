@@ -23,16 +23,25 @@
 package nl.dtls.fairdatapoint.service.resource;
 
 import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import nl.dtls.fairdatapoint.Profiles;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
+@ActiveProfiles(Profiles.TESTING)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+        properties = {"spring.main.allow-bean-definition-overriding=true"})
 public class ResourceDefinitionCacheTest extends BaseIntegrationTest {
 
     @Autowired
@@ -42,16 +51,21 @@ public class ResourceDefinitionCacheTest extends BaseIntegrationTest {
     private ResourceDefinitionCache resourceDefinitionCache;
 
     @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+    protected Flyway flyway;
 
+    @BeforeEach
+    public void setup() {
+        flyway.clean();
+        flyway.migrate();
+    }
 
     @Test
     public void computeCacheWorks() {
         // GIVEN: Resource definitions
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
-        ResourceDefinition rdCatalog = resourceDefinitionFixtures.catalogDefinition();
-        ResourceDefinition rdDataset = resourceDefinitionFixtures.datasetDefinition();
-        ResourceDefinition rdDistribution = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition rdRepository = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_FDP_UUID).get();
+        ResourceDefinition rdCatalog = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_CATALOG_UUID).get();
+        ResourceDefinition rdDataset = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DATASET_UUID).get();
+        ResourceDefinition rdDistribution = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
 
         // WHEN:
         resourceDefinitionCache.computeCache();

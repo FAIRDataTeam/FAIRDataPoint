@@ -22,19 +22,39 @@
  */
 package nl.dtls.fairdatapoint.entity.settings;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
 
+@Entity(name = "SettingsAutocompleteSource")
+@Table(name = "settings_autocomplete_source")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class SettingsAutocompleteSource {
+@SuperBuilder
+public class SettingsAutocompleteSource extends BaseEntity {
 
+    @NotNull
+    @Column(name = "rdf_type", nullable = false)
     private String rdfType;
 
+    @NotNull
+    @Column(name = "sparql_endpoint", nullable = false)
     private String sparqlEndpoint;
 
+    @NotNull
+    @Column(name = "sparql_query", nullable = false)
     private String sparqlQuery;
+
+    @NotNull
+    @Column(name = "order_priority", nullable = false)
+    private Integer orderPriority;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "settings_id", nullable = false)
+    private Settings settings;
 }

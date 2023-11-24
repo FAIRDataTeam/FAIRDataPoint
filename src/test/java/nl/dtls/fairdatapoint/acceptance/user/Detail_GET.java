@@ -24,8 +24,9 @@ package nl.dtls.fairdatapoint.acceptance.user;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestGet;
@@ -47,18 +49,18 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /users/:userUuid")
 public class Detail_GET extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+    private URI url(UUID uuid) {
         return URI.create(format("/users/%s", uuid));
     }
-
-    @Autowired
-    private UserFixtures userFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
-        User user = userFixtures.albert();
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .get(url(user.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
@@ -77,14 +79,14 @@ public class Detail_GET extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403")
     public void res403() {
-        User user = userFixtures.albert();
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
         createNoUserForbiddenTestGet(client, url(user.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createUserNotFoundTestGet(client, url("nonExisting"));
+        createUserNotFoundTestGet(client, url(KnownUUIDs.NULL_UUID));
     }
 
 }

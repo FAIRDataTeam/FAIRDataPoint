@@ -6,8 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
+        <!-- <Logger name="nl.dtls.fairdatapoint.api.controller.exception" level="DEBUG"/> -->
         <Logger name="org.springframework" level="off"/>
         <Root level="off"/>
     </Loggers>
 </Configuration>
-

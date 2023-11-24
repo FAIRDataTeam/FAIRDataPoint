@@ -22,17 +22,17 @@
  */
 package nl.dtls.fairdatapoint.service.apikey;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.ApiKeyRepository;
+import nl.dtls.fairdatapoint.database.db.repository.ApiKeyRepository;
 import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import nl.dtls.fairdatapoint.service.security.AuthenticationService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -42,58 +42,55 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ApiKeyService {
 
     private static final int TOKEN_SIZE = 128;
 
     private static final String MSG_LOGIN_FIRST = "You have to log in";
 
-    @Autowired
-    private ApiKeyRepository apiKeyRepository;
+    private final ApiKeyRepository apiKeyRepository;
 
-    @Autowired
-    private CurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private final AuthenticationService authenticationService;
 
-    @Autowired
-    private ApiKeyMapper apiKeyMapper;
+    private final ApiKeyMapper apiKeyMapper;
 
     public List<ApiKeyDTO> getAll() {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<UserAccount> user = currentUserService.getCurrentUser();
         if (user.isEmpty()) {
             throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
-        return apiKeyRepository.findByUserUuid(user.get().getUuid())
+        return user.get()
+                .getApiKeys()
                 .stream()
                 .map(apiKeyMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public ApiKeyDTO create() {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<UserAccount> user = currentUserService.getCurrentUser();
         if (user.isEmpty()) {
             throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
         final String generatedString = RandomStringUtils.random(TOKEN_SIZE, true, true);
-        final String uuid = UUID.randomUUID().toString();
-        final ApiKey apiKey = new ApiKey(null, uuid, user.get().getUuid(), generatedString);
+        final ApiKey apiKey = apiKeyMapper.createApiKey(user.get(), generatedString);
         apiKeyRepository.save(apiKey);
         return apiKeyMapper.toDTO(apiKey);
     }
 
-    public boolean delete(String uuid) {
+    public boolean delete(UUID uuid) {
         final Optional<ApiKey> apiKey = apiKeyRepository.findByUuid(uuid);
         if (apiKey.isEmpty()) {
             return false;
         }
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<UserAccount> user = currentUserService.getCurrentUser();
         if (user.isEmpty()) {
             throw new ForbiddenException(MSG_LOGIN_FIRST);
         }
         if (user.get().getRole().equals(UserRole.ADMIN)
-                || apiKey.get().getUserUuid().equals(user.get().getUuid())) {
+                || apiKey.get().getUserAccount().equals(user.get())) {
             apiKeyRepository.delete(apiKey.get());
             return true;
         }
@@ -107,7 +104,6 @@ public class ApiKeyService {
         if (apiKey.isEmpty()) {
             throw new UnauthorizedException("Invalid or non-existing API key");
         }
-        return mongoAuthenticationService.getAuthentication(apiKey.get().getUserUuid());
+        return authenticationService.getAuthentication(apiKey.get().getUserAccount().getUuid().toString());
     }
-
 }

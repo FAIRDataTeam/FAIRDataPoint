@@ -24,7 +24,7 @@ package nl.dtls.fairdatapoint.acceptance.index.entry;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import nl.dtls.fairdatapoint.utils.TestIndexEntryFixtures;

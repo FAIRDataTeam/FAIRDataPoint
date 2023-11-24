@@ -24,9 +24,9 @@ package nl.dtls.fairdatapoint.acceptance.search.query.saved;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.SearchSavedQueryRepository;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQuery;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -47,22 +47,18 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /search/query/saved/:uuid")
 public class Detail_GET extends WebIntegrationTest {
 
-    private URI url(String uuid) {
-        return URI.create("/search/query/saved/" + uuid);
+    private URI url(UUID uuid) {
+        return URI.create("/search/query/saved/" + uuid.toString());
     }
 
     @Autowired
     private SearchSavedQueryRepository searchSavedQueryRepository;
 
-    @Autowired
-    private SearchSavedQueryFixtures searchSavedQueryFixtures;
-
     @Test
     @DisplayName("HTTP 200: anonymous user, public query")
     public void res200_anonymousUserPublic() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPublic01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_PUBLIC_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
@@ -83,8 +79,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 404: anonymous user, internal query")
     public void res404_anonymousUserInternal() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryInternal01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_INTERNAL_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
@@ -104,8 +99,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 404: anonymous user, private query")
     public void res404_anonymousUserPrivate() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPrivate01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_PRIVATE_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
@@ -125,8 +119,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: user, public query")
     public void res200_userPublic() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPublic01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_PUBLIC_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
@@ -148,8 +141,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 404: user, internal query")
     public void res404_userInternal() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryInternal01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_INTERNAL_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
@@ -171,13 +163,12 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: owner, private query")
     public void res200_ownerPrivate() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPrivate01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_PRIVATE_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
                 .get(url(query.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -194,13 +185,12 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 404: non-owner, private query")
     public void res404_nonOwnerPrivate() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPrivate01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_PRIVATE_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
                 .get(url(query.getUuid()))
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
         };
@@ -216,8 +206,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: admin, private query")
     public void res200_adminPrivate() {
         // GIVEN: prepare data
-        searchSavedQueryRepository.deleteAll();
-        SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPrivate01());
+        SearchSavedQuery query = searchSavedQueryRepository.findByUuid(KnownUUIDs.SAVED_QUERY_PRIVATE_UUID).get();
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity

@@ -22,26 +22,53 @@
  */
 package nl.dtls.fairdatapoint.entity.settings;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
 import nl.dtls.fairdatapoint.entity.search.SearchFilterType;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.List;
 
+@Entity(name = "SettingsSearchFilter")
+@Table(name = "settings_search_filter")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class SettingsSearchFilter {
+@SuperBuilder
+public class SettingsSearchFilter extends BaseEntity {
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "type", columnDefinition = "SEARCH_FILTER_TYPE", nullable = false)
     private SearchFilterType type;
 
+    @NotNull
+    @Column(name = "label", nullable = false)
     private String label;
 
+    @NotNull
+    @Column(name = "predicate", nullable = false)
     private String predicate;
 
-    private List<SettingsSearchFilterItem> presetValues;
+    @NotNull
+    @Column(name = "query_records", nullable = false)
+    private Boolean queryRecords;
 
-    private boolean queryFromRecords;
+    @NotNull
+    @Column(name = "order_priority", nullable = false)
+    private Integer orderPriority;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "settings_id", nullable = false)
+    private Settings settings;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "filter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SettingsSearchFilterItem> items;
 }

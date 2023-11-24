@@ -26,9 +26,12 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.MembershipRepository;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.membership.Membership;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.member.MemberMapper;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestPut;
@@ -47,20 +51,20 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class Detail_PUT extends WebIntegrationTest {
 
     @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
-
-    @Autowired
     private MemberMapper memberMapper;
 
-    private URI url(String distributionId, String userUuid) {
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+    @Autowired
+    private MembershipRepository membershipRepository;
+
+    private URI url(String distributionId, UUID userUuid) {
         return URI.create(format("/distribution/%s/members/%s", distributionId, userUuid));
     }
 
     private MemberCreateDTO reqDto() {
-        return new MemberCreateDTO(membershipFixtures.owner().getUuid());
+        return new MemberCreateDTO(KnownUUIDs.MEMBERSHIP_OWNER_UUID.toString());
     }
 
     @Test
@@ -77,8 +81,10 @@ public class Detail_PUT extends WebIntegrationTest {
 
     private void create_res200(String token) {
         // GIVEN:
+        final UserAccount nikola = userAccountRepository.findByUuid(KnownUUIDs.USER_NIKOLA_UUID).get();
+        final Membership owner = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("distribution-1", userFixtures.nikola().getUuid()))
+                .put(url("distribution-1", KnownUUIDs.USER_NIKOLA_UUID))
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -86,7 +92,7 @@ public class Detail_PUT extends WebIntegrationTest {
         };
 
         // AND: prepare expectation
-        MemberDTO expDto = memberMapper.toDTO(userFixtures.nikola(), membershipFixtures.owner());
+        MemberDTO expDto = memberMapper.toDTO(nikola, owner);
 
         // WHEN:
         ResponseEntity<MemberDTO> result = client.exchange(request, responseType);
@@ -101,7 +107,7 @@ public class Detail_PUT extends WebIntegrationTest {
     public void res400_nonExistingUser() {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("distribution-1", "nonExisting"))
+                .put(url("distribution-1", KnownUUIDs.NULL_UUID))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -121,7 +127,7 @@ public class Detail_PUT extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("distribution-2", userFixtures.nikola().getUuid()))
+                .put(url("distribution-2", KnownUUIDs.USER_NIKOLA_UUID))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -138,7 +144,7 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing distribution")
     public void res404_nonExistingCatalog() {
-        createUserNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid()), reqDto());
+        createUserNotFoundTestPut(client, url("nonExisting", KnownUUIDs.USER_ALBERT_UUID), reqDto());
     }
 
 }

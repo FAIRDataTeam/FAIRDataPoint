@@ -4,3 +4,4 @@ target/
 # Netbeans
 nb-configuration\.xml
 /nbproject/
+*.iml

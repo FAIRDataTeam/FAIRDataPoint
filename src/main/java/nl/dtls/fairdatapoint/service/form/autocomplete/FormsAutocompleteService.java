@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.form.autocomplete;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
 import nl.dtls.fairdatapoint.api.dto.form.FormAutocompleteRequestDTO;
 import nl.dtls.fairdatapoint.entity.forms.RdfEntityCacheContainer;
@@ -30,7 +31,6 @@ import nl.dtls.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesName
 import nl.dtls.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesRetriever;
 import nl.dtls.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesSparqlRetriever;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -38,19 +38,16 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FormsAutocompleteService {
 
-    @Autowired
-    private FormsAutocompleteCache cache;
+    private final FormsAutocompleteCache cache;
 
-    @Autowired
-    private RdfEntitiesNamespaceRetriever namespaceRetriever;
+    private final RdfEntitiesNamespaceRetriever namespaceRetriever;
 
-    @Autowired
-    private RdfEntitiesSparqlRetriever sparqlRetriever;
+    private final RdfEntitiesSparqlRetriever sparqlRetriever;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
     public List<FormAutocompleteItemDTO> searchItems(FormAutocompleteRequestDTO reqDto) {
         RdfEntityCacheContainer container = cache.get(reqDto.getRdfType());
@@ -77,7 +74,7 @@ public class FormsAutocompleteService {
     public RdfEntityCacheContainer retrieveItems(String rdfType) {
         final Settings settings = settingsService.getOrDefaults();
         RdfEntityCacheContainer container = null;
-        if (settings.getForms().getAutocomplete().getSearchNamespace()) {
+        if (settings.getAutocompleteSearchNamespace()) {
             container = retrieveItems(rdfType, namespaceRetriever);
         }
         if (container == null) {

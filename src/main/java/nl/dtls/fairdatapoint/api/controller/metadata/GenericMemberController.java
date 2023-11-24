@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.api.controller.metadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -35,31 +36,27 @@ import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException
 import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
 import static nl.dtls.fairdatapoint.util.HttpUtil.getMetadataIRI;
 
 @Tag(name = "Authentication and Authorization")
 @RestController
+@RequiredArgsConstructor
 public class GenericMemberController {
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
-    @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private final MetadataServiceFactory metadataServiceFactory;
 
     @Operation(hidden = true)
     @GetMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}/members", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -88,7 +85,7 @@ public class GenericMemberController {
     public ResponseEntity<MemberDTO> putMember(
             @PathVariable final String urlPrefix,
             @PathVariable final String recordId,
-            @PathVariable final String userUuid,
+            @PathVariable final UUID userUuid,
             @RequestBody @Valid MemberCreateDTO reqBody
     ) throws MetadataServiceException {
         // 1. Init
@@ -101,7 +98,7 @@ public class GenericMemberController {
         // 3. Create / Update member
         final String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         final MemberDTO dto = memberService.createOrUpdateMember(entityId, Metadata.class, userUuid,
-                reqBody.getMembershipUuid());
+                UUID.fromString(reqBody.getMembershipUuid()));
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -111,7 +108,7 @@ public class GenericMemberController {
     public ResponseEntity<Void> deleteMember(
             @PathVariable final String urlPrefix,
             @PathVariable final String recordId,
-            @PathVariable final String userUuid
+            @PathVariable final UUID userUuid
     ) throws ResourceNotFoundException, MetadataServiceException {
         // 1. Init
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);

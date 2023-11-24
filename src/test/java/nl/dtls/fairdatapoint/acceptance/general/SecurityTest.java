@@ -23,7 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.general;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.ApiKeyRepository;
+import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -45,10 +47,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class SecurityTest extends WebIntegrationTest {
 
     @Autowired
-    private TestRdfMetadataFixtures testMetadataFixtures;
+    private ApiKeyRepository apiKeyRepository;
 
     @Autowired
-    private ApiKeyFixtures apiKeyFixtures;
+    private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Test
     public void postRequestsAreSecured() {
@@ -91,13 +93,14 @@ public class SecurityTest extends WebIntegrationTest {
     @Test
     public void apiKeyIsWorking() {
         // GIVEN: Prepare data
+        ApiKey apiKey = apiKeyRepository.findByUuid(KnownUUIDs.API_KEY_ALBERT_UUID).get();
         String reqDto = RdfIOUtil.write(testMetadataFixtures.c1_d1_distribution1(), RDFFormat.TURTLE);
         // AND: Prepare request
         RequestEntity<String> request = RequestEntity
                 .post(URI.create("/distribution"))
                 .header(HttpHeaders.CONTENT_TYPE, "text/turtle")
                 .header(HttpHeaders.ACCEPT, "text/turtle")
-                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", apiKeyFixtures.ALBERT_API_KEY))
+                .header(HttpHeaders.AUTHORIZATION, format("Bearer %s", apiKey.getToken()))
                 .body(reqDto);
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
         };

@@ -26,15 +26,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
 import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
 import nl.dtls.fairdatapoint.service.index.event.EventService;
 import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,19 +45,16 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/index/admin")
+@RequiredArgsConstructor
 public class IndexAdminController {
 
-    @Autowired
-    private UtilityService utilityService;
+    private final UtilityService utilityService;
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private WebhookService webhookService;
+    private final WebhookService webhookService;
 
-    @Autowired
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
     @Operation(hidden = true)
     @PostMapping("/trigger")
@@ -69,7 +66,7 @@ public class IndexAdminController {
     ) throws MetadataRepositoryException {
         log.info("Received ping trigger request from {}",
                 utilityService.getRemoteAddr(request));
-        final Event event = eventService.acceptAdminTrigger(request, reqDto);
+        final IndexEvent event = eventService.acceptAdminTrigger(request, reqDto);
         webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(reqDto.getClientUrl());
@@ -82,7 +79,7 @@ public class IndexAdminController {
     public void triggerMetadataRetrieveAll(HttpServletRequest request) {
         log.info("Received ping trigger all request from {}",
                 utilityService.getRemoteAddr(request));
-        final Event event = eventService.acceptAdminTriggerAll(request);
+        final IndexEvent event = eventService.acceptAdminTriggerAll(request);
         webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
     }
@@ -94,7 +91,7 @@ public class IndexAdminController {
     public void webhookPing(@RequestParam UUID webhook, HttpServletRequest request) {
         log.info("Received webhook {} ping trigger from {}",
                 webhook, utilityService.getRemoteAddr(request));
-        final Event event = webhookService.handleWebhookPing(request, webhook);
+        final IndexEvent event = webhookService.handleWebhookPing(request, webhook);
         webhookService.triggerWebhooks(event);
     }
 }

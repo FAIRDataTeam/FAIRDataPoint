@@ -22,77 +22,59 @@
  */
 package nl.dtls.fairdatapoint.service.search.query;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.SearchSavedQueryRepository;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQuery;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQueryType;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import nl.dtls.fairdatapoint.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class SearchSavedQueryService {
 
     private static final String MSG_CANNOT_UPDATE = "User is not allowed to update the query";
 
-    @Autowired
-    private SearchSavedQueryRepository repository;
+    private final SearchSavedQueryRepository repository;
 
-    @Autowired
-    private SearchSavedQueryMapper mapper;
+    private final SearchSavedQueryMapper mapper;
 
-    @Autowired
-    private CurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     public List<SearchSavedQueryDTO> getAll() {
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
-        final Map<String, UserDTO> userMap =
-                userService
-                        .getUsers()
-                        .stream()
-                        .collect(Collectors.toMap(UserDTO::getUuid, Function.identity()));
+        final Optional<UserAccount> optionalUser = currentUserService.getCurrentUser();
         return repository
                 .findAll()
                 .parallelStream()
                 .filter(query -> canSeeQuery(optionalUser, query))
-                .map(query -> mapper.toDTO(query, userMap.get(query.getUserUuid())))
+                .map(mapper::toDTO)
                 .toList();
     }
 
-    public Optional<SearchSavedQueryDTO> getSingle(String uuid) {
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+    public Optional<SearchSavedQueryDTO> getSingle(UUID uuid) {
+        final Optional<UserAccount> optionalUser = currentUserService.getCurrentUser();
         return repository.findByUuid(uuid)
                 .filter(searchSavedQuery -> canSeeQuery(optionalUser, searchSavedQuery))
-                .map(searchSavedQuery -> {
-                    final UserDTO userDto =
-                            userService.getUserByUuid(searchSavedQuery.getUserUuid()).orElse(null);
-                    return mapper.toDTO(searchSavedQuery, userDto);
-                });
+                .map(mapper::toDTO);
     }
 
-    public boolean delete(String uuid) {
+    public boolean delete(UUID uuid) {
         final Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
         if (optionalSearchQuery.isEmpty()) {
             return false;
         }
         final SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> optionalUser = currentUserService.getCurrentUser();
         if (!canManageQuery(optionalUser, searchSavedQuery)) {
             throw new ForbiddenException(MSG_CANNOT_UPDATE);
         }
@@ -101,38 +83,30 @@ public class SearchSavedQueryService {
     }
 
     public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        final UserDTO userDto = userService.getCurrentUser().orElse(null);
+        final UserAccount userAccount = userService.getCurrentUserAccount().orElse(null);
         final SearchSavedQuery searchSavedQuery = repository.save(
-                mapper.fromChangeDTO(reqDto, userDto)
+                mapper.fromChangeDTO(reqDto, userAccount)
         );
-        return mapper.toDTO(searchSavedQuery, userDto);
+        return mapper.toDTO(searchSavedQuery);
     }
 
-    public Optional<SearchSavedQueryDTO> update(String uuid, SearchSavedQueryChangeDTO reqDto) {
+    public Optional<SearchSavedQueryDTO> update(UUID uuid, SearchSavedQueryChangeDTO reqDto) {
         final Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
         if (optionalSearchQuery.isEmpty()) {
             return Optional.empty();
         }
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> optionalUser = currentUserService.getCurrentUser();
         final SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
         if (!canManageQuery(optionalUser, searchSavedQuery)) {
             throw new ForbiddenException(MSG_CANNOT_UPDATE);
         }
         final SearchSavedQuery updatedQuery = repository.save(
-                mapper.fromChangeDTO(searchSavedQuery, reqDto)
+                mapper.fromChangeDTO(searchSavedQuery, reqDto, searchSavedQuery.getUserAccount())
         );
-        if (updatedQuery.getUserUuid() == null) {
-            return Optional.of(mapper.toDTO(updatedQuery, null));
-        }
-        return Optional.of(mapper.toDTO(
-                updatedQuery,
-                userService
-                        .getUserByUuid(updatedQuery.getUserUuid())
-                        .orElse(null))
-        );
+        return Optional.of(mapper.toDTO(updatedQuery));
     }
 
-    private boolean canSeeQuery(Optional<User> optionalUser, SearchSavedQuery query) {
+    private boolean canSeeQuery(Optional<UserAccount> optionalUser, SearchSavedQuery query) {
         return query.getType().equals(SearchSavedQueryType.PUBLIC)
                 || optionalUser
                     .filter(user -> user.getRole().equals(UserRole.ADMIN))
@@ -142,12 +116,12 @@ public class SearchSavedQueryService {
                     .isPresent();
     }
 
-    private boolean isOwnOrInternal(User user, SearchSavedQuery query) {
+    private boolean isOwnOrInternal(UserAccount user, SearchSavedQuery query) {
         return query.getType().equals(SearchSavedQueryType.INTERNAL)
-                || Objects.equals(query.getUserUuid(), user.getUuid());
+                || Objects.equals(query.getUserAccount().getUuid(), user.getUuid());
     }
 
-    private boolean canManageQuery(Optional<User> optionalUser, SearchSavedQuery query) {
+    private boolean canManageQuery(Optional<UserAccount> optionalUser, SearchSavedQuery query) {
         if (optionalUser.isEmpty()) {
             return false;
         }
@@ -156,8 +130,8 @@ public class SearchSavedQueryService {
                 .isPresent();
     }
 
-    private boolean isOwner(User user, SearchSavedQuery query) {
+    private boolean isOwner(UserAccount user, SearchSavedQuery query) {
         return user.getRole().equals(UserRole.ADMIN)
-                || Objects.equals(query.getUserUuid(), user.getUuid());
+                || Objects.equals(query.getUserAccount().getUuid(), user.getUuid());
     }
 }

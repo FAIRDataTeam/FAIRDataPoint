@@ -23,9 +23,9 @@
 package nl.dtls.fairdatapoint.service.index.event;
 
 import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.event.EventType;
-import nl.dtls.fairdatapoint.entity.index.event.MetadataRetrieval;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEventType;
+import nl.dtls.fairdatapoint.entity.index.event.payload.MetadataRetrieval;
 import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeDirection;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
@@ -62,7 +62,7 @@ import java.util.Optional;
 
 public class MetadataRetrievalUtils {
 
-    private static final EventType EVENT_TYPE = EventType.MetadataRetrieval;
+    private static final IndexEventType EVENT_TYPE = IndexEventType.METADATA_RETRIEVAL;
 
     private static final Integer VERSION = 1;
 
@@ -84,50 +84,50 @@ public class MetadataRetrievalUtils {
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
-    public static boolean shouldRetrieve(Event triggerEvent, Duration rateLimitWait) {
+    public static boolean shouldRetrieve(IndexEvent triggerEvent, Duration rateLimitWait) {
         if (triggerEvent.getRelatedTo() == null) {
             return false;
         }
-        final Instant lastRetrieval = triggerEvent.getRelatedTo().getLastRetrievalTime();
+        final Instant lastRetrieval = triggerEvent.getRelatedTo().getLastRetrievalAt();
         if (lastRetrieval == null) {
             return true;
         }
         return Duration.between(lastRetrieval, Instant.now()).compareTo(rateLimitWait) > 0;
     }
 
-    public static Iterable<Event> prepareEvents(
-            Event triggerEvent, IndexEntryService indexEntryService
+    public static Iterable<IndexEvent> prepareEvents(
+            IndexEvent triggerEvent, IndexEntryService indexEntryService
     ) {
-        final ArrayList<Event> events = new ArrayList<>();
-        if (triggerEvent.getType() == EventType.IncomingPing) {
-            events.add(new Event(VERSION, triggerEvent,
+        final ArrayList<IndexEvent> events = new ArrayList<>();
+        if (triggerEvent.getType() == IndexEventType.INCOMING_PING) {
+            events.add(new IndexEvent(VERSION, triggerEvent,
                     triggerEvent.getRelatedTo(), new MetadataRetrieval()));
         }
-        else if (triggerEvent.getType() == EventType.AdminTrigger) {
-            if (triggerEvent.getAdminTrigger().getClientUrl() == null) {
+        else if (triggerEvent.getType() == IndexEventType.ADMIN_TRIGGER) {
+            if (triggerEvent.getPayload().getAdminTrigger().getClientUrl() == null) {
                 indexEntryService.getAllEntries().forEach(
                         entry -> {
                             events.add(
-                                    new Event(VERSION, triggerEvent,
+                                    new IndexEvent(VERSION, triggerEvent,
                                             entry, new MetadataRetrieval())
                             );
                         }
                 );
             }
             else {
-                events.add(new Event(VERSION, triggerEvent,
+                events.add(new IndexEvent(VERSION, triggerEvent,
                         triggerEvent.getRelatedTo(), new MetadataRetrieval()));
             }
         }
         return events;
     }
 
-    public static void retrieveRepositoryMetadata(Event event, Duration timeout) {
+    public static void retrieveRepositoryMetadata(IndexEvent event, Duration timeout) {
         if (event.getType() != EVENT_TYPE) {
             throw new IllegalArgumentException("Invalid event type");
         }
         final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
-        event.getMetadataRetrieval().setExchange(ex);
+        event.getPayload().getMetadataRetrieval().setExchange(ex);
         try {
             final HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(event.getRelatedTo().getClientUrl()))

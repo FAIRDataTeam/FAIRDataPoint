@@ -22,40 +22,44 @@
  */
 package nl.dtls.fairdatapoint.service.resource;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChildDTO;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static nl.dtls.fairdatapoint.util.ValidationUtil.uniquenessValidationFailed;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionValidator {
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private static final String ERR_DEP_CYCLE = "Detect dependency cycle through child";
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    public void validate(ResourceDefinition reqDto) throws BindException {
+    private final ResourceDefinitionCache resourceDefinitionCache;
+
+    public void validate(UUID uuid, ResourceDefinitionChangeDTO reqDto) throws BindException {
         // Check uniqueness
         final Optional<ResourceDefinition> resourceDefinitionByName =
                 resourceDefinitionRepository.findByName(reqDto.getName());
         if (resourceDefinitionByName.isPresent()
-                && !resourceDefinitionByName.get().getUuid().equals(reqDto.getUuid())) {
+                && !resourceDefinitionByName.get().getUuid().equals(uuid)) {
             uniquenessValidationFailed("name", reqDto);
         }
         final Optional<ResourceDefinition> resourceDefinitionByPrefix =
                 resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix());
         if (resourceDefinitionByPrefix.isPresent()
-                && !resourceDefinitionByPrefix.get().getUuid().equals(reqDto.getUuid())) {
+                && !resourceDefinitionByPrefix.get().getUuid().equals(uuid)) {
             uniquenessValidationFailed("urlPrefix", reqDto);
         }
 
@@ -65,30 +69,47 @@ public class ResourceDefinitionValidator {
         }
 
         // Check existence of connected entities
-        for (ResourceDefinitionChild child : reqDto.getChildren()) {
+        for (ResourceDefinitionChildDTO child : reqDto.getChildren()) {
             if (resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid()) == null) {
                 throw new ValidationException("Child doesn't exist");
             }
         }
 
         // Check existence of dependency cycles
-        validateDependencyCycles(reqDto, reqDto.getChildren());
+        validateDependencyCyclesChildDTO(uuid, reqDto.getChildren());
     }
 
-    private void validateDependencyCycles(
-            ResourceDefinition reqDto, List<ResourceDefinitionChild> children
+    private void validateDependencyCyclesChildDTO(
+            UUID uuid, List<ResourceDefinitionChildDTO> children
     ) {
-        for (ResourceDefinitionChild child : children) {
-            final String childUuid = child.getResourceDefinitionUuid();
-            if (reqDto.getUuid().equals(childUuid)) {
-                throw new ValidationException("Detect dependency cycle through child");
+        for (ResourceDefinitionChildDTO child : children) {
+            final UUID childUuid = child.getResourceDefinitionUuid();
+            if (childUuid.equals(uuid)) {
+                throw new ValidationException(ERR_DEP_CYCLE);
             }
 
             final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childUuid);
             if (rdChild.getChildren().isEmpty()) {
                 return;
             }
-            validateDependencyCycles(reqDto, rdChild.getChildren());
+            validateDependencyCyclesChild(uuid, rdChild.getChildren());
+        }
+    }
+
+    private void validateDependencyCyclesChild(
+            UUID uuid, List<ResourceDefinitionChild> children
+    ) {
+        for (ResourceDefinitionChild child : children) {
+            final UUID childUuid = child.getTarget().getUuid();
+            if (childUuid.equals(uuid)) {
+                throw new ValidationException(ERR_DEP_CYCLE);
+            }
+
+            final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childUuid);
+            if (rdChild.getChildren().isEmpty()) {
+                return;
+            }
+            validateDependencyCyclesChild(uuid, rdChild.getChildren());
         }
     }
 

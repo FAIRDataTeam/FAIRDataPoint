@@ -22,36 +22,42 @@
  */
 package nl.dtls.fairdatapoint.entity.membership;
 
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
+import org.hibernate.annotations.Type;
 
 import java.util.List;
+import java.util.UUID;
 
-@Document
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity(name = "Membership")
+@Table(name = "membership")
 @Getter
 @Setter
-@Builder(toBuilder = true)
-public class Membership {
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class Membership extends BaseEntity {
 
-    @Id
-    private ObjectId id;
-
-    private String uuid;
-
+    @NotNull
+    @Column(name = "name", nullable = false)
     private String name;
 
-    private List<MembershipPermission> permissions;
-
+    @NotNull
+    @Type(ListArrayType.class)
+    @Column(name = "allowed_entities", columnDefinition = "text[]", nullable = false)
     private List<String> allowedEntities;
 
-    public Membership(String uuid, String name,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "membership")
+    private List<MembershipPermission> permissions;
+
+    public Membership(UUID uuid, String name,
                       List<MembershipPermission> permissions,
                       List<String> allowedEntities) {
-        this.uuid = uuid;
+        this.setUuid(uuid);
         this.name = name;
         this.permissions = permissions;
         this.allowedEntities = allowedEntities;

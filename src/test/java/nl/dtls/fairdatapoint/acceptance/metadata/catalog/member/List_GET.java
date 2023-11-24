@@ -25,9 +25,12 @@ package nl.dtls.fairdatapoint.acceptance.metadata.catalog.member;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.MembershipRepository;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.membership.Membership;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.member.MemberMapper;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +53,13 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_GET extends WebIntegrationTest {
 
     @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
-
-    @Autowired
     private MemberMapper memberMapper;
+
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+    @Autowired
+    private MembershipRepository membershipRepository;
 
     private URI url(String id) {
         return URI.create(format("/catalog/%s/members", id));
@@ -76,6 +79,10 @@ public class List_GET extends WebIntegrationTest {
 
     private void create_res200(String token) {
         // GIVEN:
+        final UserAccount albert = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
+        final UserAccount nikola = userAccountRepository.findByUuid(KnownUUIDs.USER_NIKOLA_UUID).get();
+        final Membership owner = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
+        final Membership dataProvider = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .get(url("catalog-1"))
                 .header(HttpHeaders.AUTHORIZATION, token)
@@ -84,8 +91,8 @@ public class List_GET extends WebIntegrationTest {
         };
 
         // AND: prepare expectation
-        MemberDTO nikolaMember = memberMapper.toDTO(userFixtures.nikola(), membershipFixtures.dataProvider());
-        MemberDTO albertMember = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
+        MemberDTO nikolaMember = memberMapper.toDTO(nikola, dataProvider);
+        MemberDTO albertMember = memberMapper.toDTO(albert, owner);
         List<MemberDTO> expDto = List.of(nikolaMember, albertMember);
 
         // WHEN:

@@ -22,12 +22,13 @@
  */
 package nl.dtls.fairdatapoint.service.metadata.generic;
 
-import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import nl.dtls.fairdatapoint.utils.AuthHelper;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
@@ -48,7 +49,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GenericMetadataServiceTest extends BaseIntegrationTest {
+public class GenericMetadataServiceTest extends WebIntegrationTest {
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
@@ -65,7 +66,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     private AuthHelper authHelper;
 
     @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+    private ResourceDefinitionRepository resourceDefinitionRepository;
 
     @BeforeEach
     public void before() {
@@ -91,7 +92,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWorks() throws Exception {
         // GIVEN:
-        ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition metadataRd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
 
         // WHEN:
@@ -105,7 +106,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoParentURIThrowsError() {
         // GIVEN:
-        ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition metadataRd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setParent(metadata, getUri(metadata), null);
 
@@ -121,8 +122,9 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
 
     @Test
     public void storeWithWrongParentURIThrowsError() {
+        authHelper.authenticateAsAdmin();
         // GIVEN:
-        ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition metadataRd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         Model repository = testMetadataFixtures.fdpMetadata();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setParent(metadata, getUri(metadata), getUri(repository));
@@ -140,7 +142,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoMetadataIdentifier() throws Exception {
         // GIVEN:
-        ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition metadataRd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setMetadataIdentifier(metadata, getUri(metadata), null);
 
@@ -155,7 +157,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoLicense() throws Exception {
         // GIVEN:
-        ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition metadataRd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setLicence(metadata, getUri(metadata), null);
 
@@ -170,7 +172,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void storeWithNoLanguage() throws Exception {
         // GIVEN:
-        ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition metadataRd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setLanguage(metadata, getUri(metadata), null);
 
@@ -185,7 +187,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     @Test
     public void updateParent() throws Exception {
         // GIVEN:
-        ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition metadataRd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         Model repository = testMetadataFixtures.fdpMetadata();
         Model catalog = testMetadataFixtures.catalog1();
         Model dataset = testMetadataFixtures.c1_dataset1();

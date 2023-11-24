@@ -23,9 +23,9 @@
 package nl.dtls.fairdatapoint.api.controller.config;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.config.BootstrapConfigDTO;
 import nl.dtls.fairdatapoint.service.config.ConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Client")
 @RestController
 @RequestMapping("/configs")
+@RequiredArgsConstructor
 public class ConfigController {
 
-    @Autowired
-    private ConfigService configService;
+    private final ConfigService configService;
 
     @GetMapping(path = "/bootstrap", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BootstrapConfigDTO> getBootstrapConfig() {

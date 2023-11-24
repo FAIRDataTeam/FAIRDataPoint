@@ -6,12 +6,20 @@ instance:
 server:
   port: 8088
 
-spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/fdp-test
-
 security:
   jwt:
     token:
-      expiration: 9999
+      expiration: 1000000
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${FDP_POSTGRES_HOST:localhost}:${FDP_POSTGRES_PORT:54321}/${FDP_POSTGRES_DB:fdp_test}?preparedStatementCacheQueries=0
+    username: ${FDP_POSTGRES_USERNAME:fdp}
+    password: ${FDP_POSTGRES_PASSWORD:fdp}
+  flyway:
+    locations: classpath:test/db/migration,classpath:db/migration
+    fail-on-missing-locations: true
+    clean-disabled: false
+
+ping:
+  enabled: false
