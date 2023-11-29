@@ -56,7 +56,7 @@
 
         <!-- Core -->
         <springdoc.version>2.2.0</springdoc.version>
-        <mongock.version>5.3.5</mongock.version>
+        <mongock.version>5.3.6</mongock.version>
         <mongodb.spring-data.version>4.1.5</mongodb.spring-data.version>
         <rdf4j.version>4.3.8</rdf4j.version>
         <jwt.version>0.12.3</jwt.version>
