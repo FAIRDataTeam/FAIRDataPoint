@@ -425,8 +425,9 @@ public class GenericController {
 
     private void enhanceWithSignposting(HttpServletResponse response, IRI entityUri, Model resultRdf) {
         // author
-        Models.getProperty(resultRdf, entityUri, DCTERMS.PUBLISHER).ifPresent(pub ->
-                addSignpostingHeader(response, pub, "author"));
+        Models.getProperty(resultRdf, entityUri, DCTERMS.PUBLISHER).ifPresent(pub -> {
+            addSignpostingHeader(response, pub, "author");
+        });
 
         // cite-as
         addSignpostingHeader(response, entityUri, "cite-as");
@@ -435,12 +436,14 @@ public class GenericController {
         // TODO
 
         // type
-        Models.getProperties(resultRdf, entityUri, RDF.TYPE).forEach(type ->
-                addSignpostingHeader(response, type, "type"));
+        Models.getProperties(resultRdf, entityUri, RDF.TYPE).forEach(type -> {
+            addSignpostingHeader(response, type, "type");
+        });
 
         // license
-        Models.getPropertyIRI(resultRdf, entityUri, DCTERMS.LICENSE).ifPresent(license ->
-                addSignpostingHeader(response, license, "license"));
+        Models.getPropertyIRI(resultRdf, entityUri, DCTERMS.LICENSE).ifPresent(license -> {
+            addSignpostingHeader(response, license, "license");
+        });
 
         // item
         // TODO
