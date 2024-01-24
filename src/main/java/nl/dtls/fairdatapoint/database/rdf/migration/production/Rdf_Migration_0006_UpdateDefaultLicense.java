@@ -49,7 +49,7 @@ public class Rdf_Migration_0006_UpdateDefaultLicense implements RdfProductionMig
 
     @Override
     public void runMigration() {
-        final IRI newValue = Values.iri("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0");
+        final IRI newValue = Values.iri("http://purl.org/NET/rdflicense/cc-by-nc-nd3.0");
 
         try (RepositoryConnection conn = repository.getConnection()) {
             final RepositoryResult<Statement> queryResult = conn.getStatements(null, DCTERMS.LICENSE,
