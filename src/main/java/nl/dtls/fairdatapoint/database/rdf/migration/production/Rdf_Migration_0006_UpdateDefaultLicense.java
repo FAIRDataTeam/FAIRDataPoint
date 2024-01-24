@@ -61,7 +61,8 @@ public class Rdf_Migration_0006_UpdateDefaultLicense implements RdfProductionMig
                 log.debug("Removing: {} {} {}", st.getSubject(), st.getPredicate(), st.getObject());
                 conn.remove(st);
             }
-        } catch (RepositoryException exception) {
+        }
+        catch (RepositoryException exception) {
             log.error(exception.getMessage(), exception);
         }
     }
