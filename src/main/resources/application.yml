@@ -60,7 +60,7 @@ repository:
 
 metadataProperties:
   language: ${FDP_METADATA_LANGUAGE:http://id.loc.gov/vocabulary/iso639-1/en}
-  license: ${FDP_METADATA_LICENSE:http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0}
+  license: ${FDP_METADATA_LICENSE:http://purl.org/NET/rdflicense/cc-by-nc-nd3.0}
   accessRightsDescription: ${FDP_METADATA_ACCESS_RIGHTS:This resource has no access restriction}
 
 openapi:
