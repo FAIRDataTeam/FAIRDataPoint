@@ -23,8 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.apikey;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.ApiKeyRepository;
 import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestDelete;
@@ -47,18 +49,18 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("DELETE /api-keys/:apikeyUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    @Autowired
+    private ApiKeyRepository apiKeyRepository;
+
+    private URI url(UUID uuid) {
         return URI.create(format("/api-keys/%s", uuid));
     }
-
-    @Autowired
-    private ApiKeyFixtures apikeyFixtures;
 
     @Test
     @DisplayName("HTTP 204")
     public void res204() {
         // GIVEN:
-        ApiKey apikey = apikeyFixtures.albertApiKey();
+        final ApiKey apikey = apiKeyRepository.findByUuid(KnownUUIDs.API_KEY_ALBERT_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .delete(url(apikey.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
@@ -76,21 +78,21 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        ApiKey apikey = apikeyFixtures.albertApiKey();
+        final ApiKey apikey = apiKeyRepository.findByUuid(KnownUUIDs.API_KEY_ALBERT_UUID).get();
         createNoUserForbiddenTestDelete(client, url(apikey.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an owner")
     public void res403_apikey() {
-        ApiKey apikey = apikeyFixtures.nikolaApiKey();
+        final ApiKey apikey = apiKeyRepository.findByUuid(KnownUUIDs.API_KEY_NIKOLA_UUID).get();
         createUserForbiddenTestDelete(client, url(apikey.getUuid()));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestDelete(client, url("nonExisting"));
+        createAdminNotFoundTestDelete(client, url(KnownUUIDs.NULL_UUID));
     }
 
 }

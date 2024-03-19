@@ -26,10 +26,13 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.MembershipRepository;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.membership.Membership;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.member.MemberMapper;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +57,13 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_GET extends WebIntegrationTest {
 
     @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
-
-    @Autowired
     private MemberMapper memberMapper;
+
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+    @Autowired
+    private MembershipRepository membershipRepository;
 
     private URI url(String id) {
         return URI.create(format("/distribution/%s/meta", id));
@@ -70,6 +73,8 @@ public class List_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
+        final UserAccount albert = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
+        final Membership owner = membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
         RequestEntity<Void> request = RequestEntity
                 .get(url("distribution-1"))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
@@ -79,7 +84,7 @@ public class List_GET extends WebIntegrationTest {
         };
 
         // AND: prepare expectation
-        MemberDTO expMember = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
+        MemberDTO expMember = memberMapper.toDTO(albert, owner);
 
         // WHEN:
         ResponseEntity<MetaDTO> result = client.exchange(request, responseType);

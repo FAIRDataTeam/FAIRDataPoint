@@ -22,22 +22,39 @@
  */
 package nl.dtls.fairdatapoint.entity.resource;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import nl.dtls.fairdatapoint.api.validator.ValidIri;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
 
+@Entity(name = "ResourceDefinitionLink")
+@Table(name = "resource_definition_link")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-public class ResourceDefinitionLink {
+@SuperBuilder
+public class ResourceDefinitionLink extends BaseEntity {
 
     @NotBlank
+    @Column(name = "title", nullable = false)
     private String title;
 
     @NotBlank
     @ValidIri
+    @Column(name = "property_uri", nullable = false)
     private String propertyUri;
+
+    @NotNull
+    @Column(name = "order_priority", nullable = false)
+    private Integer orderPriority;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "resource_definition_id", nullable = false)
+    private ResourceDefinition resourceDefinition;
 
 }

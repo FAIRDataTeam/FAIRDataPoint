@@ -27,6 +27,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -48,7 +49,7 @@ public class MetadataSchemaChangeDTO {
     private String definition;
 
     @NotNull
-    private List<String> extendsSchemaUuids;
+    private List<UUID> extendsSchemaUuids;
 
     private String suggestedResourceName;
 

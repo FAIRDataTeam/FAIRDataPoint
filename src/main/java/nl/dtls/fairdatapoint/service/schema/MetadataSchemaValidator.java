@@ -22,36 +22,34 @@
  */
 package nl.dtls.fairdatapoint.service.schema;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaExtensionRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaExtension;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaState;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
 import nl.dtls.fairdatapoint.util.RdfIOUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
 @Component
+@RequiredArgsConstructor
 public class MetadataSchemaValidator {
 
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private final MetadataSchemaVersionRepository versionRepository;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
-
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final MetadataSchemaExtensionRepository extensionRepository;
 
     private void validateShacl(String shaclDefinition) {
         try {
@@ -62,36 +60,41 @@ public class MetadataSchemaValidator {
         }
     }
 
-    public void validateNotUsed(String uuid) {
-        final List<ResourceDefinition> resourceDefinitions =
-                resourceDefinitionRepository.findByMetadataSchemaUuidsIsContaining(uuid);
-        if (!resourceDefinitions.isEmpty()) {
+    public void validateNotUsed(MetadataSchema schema) {
+        if (!schema.getUsages().isEmpty()) {
             throw new ValidationException(
                     format("Schema is used in %d resource definitions",
-                            resourceDefinitions.size())
+                            schema.getUsages().size())
             );
         }
-        final List<MetadataSchema> children =
-                metadataSchemaRepository.findAllByExtendSchemasContains(uuid);
-        if (!children.isEmpty()) {
+        final List<MetadataSchemaExtension> extensions =
+                extensionRepository.findByExtendedMetadataSchema(schema);
+        if (!extensions.isEmpty()) {
             throw new ValidationException(
-                    format("Schema is used in %d other schemas", children.size())
+                    format("Schema is used in %d other schemas", extensions.size())
             );
         }
     }
 
-    public void validateNoExtendsCycle(String uuid, List<String> extendSchemaUuids) {
+    public void validateNoExtendsCycle(UUID uuid, List<UUID> extendSchemaUuids) {
         if (extendSchemaUuids.contains(uuid)) {
             throw new ValidationException("Extends-cycle detected for the metadata schema");
         }
         extendSchemaUuids.forEach(schemaUuid -> {
-            final Optional<MetadataSchema> oSchema =
-                    metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaUuid);
-            oSchema.ifPresent(schema -> validateNoExtendsCycle(uuid, schema.getExtendSchemas()));
+            final Optional<MetadataSchemaVersion> oSchema =
+                    versionRepository.getLatestBySchemaUuid(schemaUuid);
+            oSchema.ifPresent(schema -> {
+                validateNoExtendsCycle(uuid,
+                         schema.getExtensions()
+                                 .stream()
+                                 .map(extension -> extension.getExtendedMetadataSchema().getUuid())
+                                 .toList()
+                );
+            });
         });
     }
 
-    public void validate(MetadataSchema newVersion, MetadataSchema previousVersion) {
+    public void validate(MetadataSchemaVersion newVersion, MetadataSchemaVersion previousVersion) {
         // Check previous
         if (previousVersion != null) {
             if (previousVersion.getVersion().compareTo(newVersion.getVersion()) >= 0) {
@@ -105,8 +108,8 @@ public class MetadataSchemaValidator {
         validateShacl(newVersion.getDefinition());
     }
 
-    public void validate(MetadataSchema metadataSchema) {
-        validate(metadataSchema, null);
+    public void validate(MetadataSchemaVersion schemaVersion) {
+        validate(schemaVersion, null);
     }
 
     public void validate(MetadataSchemaVersionDTO reqDto) {
@@ -119,11 +122,11 @@ public class MetadataSchemaValidator {
         validateShacl(reqDto.getDefinition());
     }
 
-    private List<String> getMissingSchemaUuids(List<String> schemasUuids) {
-        final Set<String> existingUuids = metadataSchemaRepository
-                .findAllByLatestIsTrue()
+    private List<UUID> getMissingSchemaUuids(List<UUID> schemasUuids) {
+        final Set<UUID> existingUuids = versionRepository
+                .findAllByState(MetadataSchemaState.LATEST)
                 .stream()
-                .map(MetadataSchema::getUuid)
+                .map(ver -> ver.getSchema().getUuid())
                 .collect(Collectors.toSet());
         return schemasUuids
                 .stream()
@@ -131,8 +134,8 @@ public class MetadataSchemaValidator {
                 .toList();
     }
 
-    public void validateAllExist(List<String> schemasUuids) {
-        final List<String> missing = getMissingSchemaUuids(schemasUuids);
+    public void validateAllExist(List<UUID> schemasUuids) {
+        final List<UUID> missing = getMissingSchemaUuids(schemasUuids);
         if (!missing.isEmpty()) {
             throw new ValidationException(format("Metadata schemas not found: %s", missing));
         }

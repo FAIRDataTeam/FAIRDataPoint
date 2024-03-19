@@ -23,21 +23,22 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -45,13 +46,31 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /metadata-schemas/:schemaUuid")
 public class Content_GET extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    @Autowired
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
+
+    private URI url(UUID uuid) {
         return URI.create(format("/metadata-schemas/%s", uuid));
     }
 
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
+    @Test
+    @DisplayName("HTTP 200")
+    public void res200() {
+        // GIVEN:
+        MetadataSchemaVersion catalog = metadataSchemaVersionRepository.getLatestBySchemaUuid(KnownUUIDs.SCHEMA_CATALOG_UUID).get();
+        RequestEntity<Void> request = RequestEntity
+                .get(url(catalog.getSchema().getUuid()))
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.ACCEPT, "text/turtle")
+                .build();
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        };
 
-    // TODO
+        // WHEN:
+        ResponseEntity<String> result = client.exchange(request, responseType);
+
+        // THEN:
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+    }
 
 }

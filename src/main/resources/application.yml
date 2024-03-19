@@ -8,9 +8,23 @@ instance:
   subtitle: ${FDP_SUBTITLE:Metadata for machines}
 
 spring:
+  application:
+    name: fair-data-point
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:postgresql://${FDP_POSTGRES_HOST:postgres}:${FDP_POSTGRES_PORT:5432}/${FDP_POSTGRES_DB:fdp}
+    username: ${FDP_POSTGRES_USERNAME:postgres}
+    password: ${FDP_POSTGRES_PASSWORD:password}
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: none
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        enable_lazy_load_no_trans: true
+        jdbc:
+          time_zone: UTC
   data:
-    mongodb:
-      uri: mongodb://${FDP_MONGO_HOST:mongo}:${FDP_MONGO_PORT:27017}/${FDP_MONGO_DB:fdp}
     web:
       pageable:
         default-page-size: 50

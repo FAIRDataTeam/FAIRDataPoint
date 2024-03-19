@@ -26,8 +26,9 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,26 +48,33 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_POST extends WebIntegrationTest {
 
     @Autowired
-    private UserFixtures userFixtures;
+    private UserAccountRepository userAccountRepository;
 
     private URI url() {
         return URI.create("/users");
     }
 
     private UserCreateDTO reqDto() {
-        User user = userFixtures.isaac();
-        return new UserCreateDTO(user.getFirstName(), user.getLastName(), user.getEmail(), "password", user.getRole());
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ISAAC_UUID).get();
+        return UserCreateDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email("isaac2@example.com")
+                .password("password")
+                .role(user.getRole())
+                .build();
     }
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
+        final UserCreateDTO reqDto = reqDto();
         RequestEntity<UserCreateDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(reqDto());
+                .body(reqDto);
         ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
@@ -75,16 +83,21 @@ public class List_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        Common.compare(reqDto(), result.getBody());
+        Common.compare(reqDto, result.getBody());
     }
 
     @Test
     @DisplayName("HTTP 400: Email already exists")
     public void res400_emailAlreadyExists() {
         // GIVEN:
-        User user = userFixtures.albert();
-        UserCreateDTO reqDto = new UserCreateDTO(user.getFirstName(), user.getLastName(), user.getEmail(), "password"
-                , user.getRole());
+        UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
+        UserCreateDTO reqDto = UserCreateDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .password("password")
+                .role(user.getRole())
+                .build();
         RequestEntity<UserCreateDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)

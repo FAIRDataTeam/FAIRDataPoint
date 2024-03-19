@@ -22,19 +22,20 @@
  */
 package nl.dtls.fairdatapoint.utils;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactory;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 
-@Service
+@Component
 public class TestRdfMetadataFixtures extends RdfMetadataFixtures {
 
     public String alternativePersistentUrl = "https://lorentz.fair-dtls.surf-hosted.nl/fdp";
@@ -43,43 +44,42 @@ public class TestRdfMetadataFixtures extends RdfMetadataFixtures {
 
     private final MetadataEnhancer metadataEnhancer;
 
-    private final ResourceDefinitionFixtures resourceDefinitionFixtures;
+    @Autowired
+    private ResourceDefinitionRepository resourceDefinitionRepository;
 
     @Autowired
     public TestRdfMetadataFixtures(MetadataFactory metadataFactory,
                                    @Qualifier("persistentUrl") String persistentUrl,
-                                   MetadataEnhancer metadataEnhancer,
-                                   ResourceDefinitionFixtures resourceDefinitionFixtures) {
+                                   MetadataEnhancer metadataEnhancer) {
         super(metadataFactory);
         this.persistentUrl = persistentUrl;
         this.metadataEnhancer = metadataEnhancer;
-        this.resourceDefinitionFixtures = resourceDefinitionFixtures;
     }
 
     public Model fdpMetadata() {
         Model metadata = super.fdpMetadata(persistentUrl);
-        ResourceDefinition rd = resourceDefinitionFixtures.fdpDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_FDP_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog1() {
         Model metadata = super.catalog1(persistentUrl, getUri(fdpMetadata()));
-        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_CATALOG_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog2() {
         Model metadata = super.catalog2(persistentUrl, getUri(fdpMetadata()));
-        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_CATALOG_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model catalog3() {
         Model metadata = super.catalog3(persistentUrl, getUri(fdpMetadata()));
-        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_CATALOG_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
@@ -87,49 +87,49 @@ public class TestRdfMetadataFixtures extends RdfMetadataFixtures {
     public Model alternative_catalog3() {
         Model metadata = super.catalog3(alternativePersistentUrl,
                 getUri(super.fdpMetadata(alternativePersistentUrl)));
-        ResourceDefinition rd = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_CATALOG_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_dataset1() {
         Model metadata = super.dataset1(persistentUrl, getUri(catalog1()));
-        ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DATASET_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_dataset2() {
         Model metadata = super.dataset2(persistentUrl, getUri(catalog1()));
-        ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DATASET_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c2_dataset3() {
         Model metadata = super.dataset3(persistentUrl, getUri(catalog2()));
-        ResourceDefinition rd = resourceDefinitionFixtures.datasetDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DATASET_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_d1_distribution1() {
         Model metadata = super.distribution1(persistentUrl, getUri(c1_dataset1()));
-        ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_d1_distribution2() {
         Model metadata = super.distribution2(persistentUrl, getUri(c1_dataset1()));
-        ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }
 
     public Model c1_d2_distribution3() {
         Model metadata = super.distribution3(persistentUrl, getUri(c1_dataset2()));
-        ResourceDefinition rd = resourceDefinitionFixtures.distributionDefinition();
+        ResourceDefinition rd = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         metadataEnhancer.enhance(metadata, getUri(metadata), rd);
         return metadata;
     }

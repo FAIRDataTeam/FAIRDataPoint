@@ -23,9 +23,10 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,27 +50,26 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("DELETE /metadata-schemas/:schemaUuid/versions/:version")
 public class Version_DELETE extends WebIntegrationTest {
 
-    private URI url(String uuid, String version) {
-        return URI.create(format("/metadata-schemas/%s/versions/%s", uuid, version));
+    private URI url(UUID uuid, String version) {
+        return URI.create(format("/metadata-schemas/%s/versions/%s", uuid.toString(), version));
     }
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
+    private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     @Test
     @DisplayName("HTTP 200: delete single")
     public void res200_deleteSingle() {
         // GIVEN: Prepare data
-        metadataSchemaRepository.deleteAll();
-        MetadataSchema schema = metadataSchemaFixtures.customSchema();
-        metadataSchemaRepository.save(schema);
+        MetadataSchema schema = metadataSchemaRepository.findByUuid(Common.SCHEMA_SIMPLE_UUID).get();
+        MetadataSchemaVersion schemaV1 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_SIMPLE_V1_UUID).get();
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(schema.getUuid(), schema.getVersionString()))
+                .delete(url(schema.getUuid(), schemaV1.getVersion()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -80,21 +80,22 @@ public class Version_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
-        assertThat(metadataSchemaRepository.findAll().isEmpty(), is(true));
+        assertThat(metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_SIMPLE_V1_UUID).isPresent(), is(false));
+        assertThat(metadataSchemaRepository.findByUuid(Common.SCHEMA_SIMPLE_UUID).isPresent(), is(false));
     }
 
     @Test
     @DisplayName("HTTP 200: delete latest")
     public void res200_deleteLatest() {
         // GIVEN: Prepare data
-        metadataSchemaRepository.deleteAll();
-        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(false));
-        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV2(schemaV1, false));
-        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV3(schemaV2, true));
+        MetadataSchema schema = metadataSchemaRepository.findByUuid(Common.SCHEMA_MULTI_UUID).get();
+        MetadataSchemaVersion schemaV1 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V1_UUID).get();
+        MetadataSchemaVersion schemaV2 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V2_UUID).get();
+        MetadataSchemaVersion schemaV3 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V3_UUID).get();
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(schemaV3.getUuid(), schemaV3.getVersionString()))
+                .delete(url(schema.getUuid(), schemaV3.getVersion()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -106,24 +107,27 @@ public class Version_DELETE extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
         assertThat(metadataSchemaRepository.findAll().isEmpty(), is(false));
-        assertThat(metadataSchemaRepository.findAll().size(), is(equalTo(2)));
-        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).isPresent(), is(true));
-        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().getVersion(), is(equalTo(schemaV2.getVersion())));
-        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().isLatest(), is(true));
+
+        assertThat(metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V1_UUID).isPresent(), is(true));
+        assertThat(metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V2_UUID).isPresent(), is(true));
+        assertThat(metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V3_UUID).isPresent(), is(false));
+        assertThat(metadataSchemaVersionRepository.getLatestBySchemaUuid(Common.SCHEMA_MULTI_UUID).isPresent(), is(true));
+        assertThat(metadataSchemaVersionRepository.getLatestBySchemaUuid(Common.SCHEMA_MULTI_UUID).get().getVersion(), is(equalTo(schemaV2.getVersion())));
+        assertThat(metadataSchemaVersionRepository.getLatestBySchemaUuid(Common.SCHEMA_MULTI_UUID).get().isLatest(), is(true));
     }
 
     @Test
     @DisplayName("HTTP 200: delete non-latest")
     public void res200_deleteNonLatest() {
         // GIVEN: Prepare data
-        metadataSchemaRepository.deleteAll();
-        MetadataSchema schemaV1 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV1(false));
-        MetadataSchema schemaV2 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV2(schemaV1, false));
-        MetadataSchema schemaV3 = metadataSchemaRepository.save(metadataSchemaFixtures.customSchemaV3(schemaV2, true));
+        MetadataSchema schema = metadataSchemaRepository.findByUuid(Common.SCHEMA_MULTI_UUID).get();
+        MetadataSchemaVersion schemaV1 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V1_UUID).get();
+        MetadataSchemaVersion schemaV2 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V2_UUID).get();
+        MetadataSchemaVersion schemaV3 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V3_UUID).get();
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(schemaV2.getUuid(), schemaV2.getVersionString()))
+                .delete(url(schema.getUuid(), schemaV2.getVersion()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -135,27 +139,28 @@ public class Version_DELETE extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
         assertThat(metadataSchemaRepository.findAll().isEmpty(), is(false));
-        assertThat(metadataSchemaRepository.findAll().size(), is(equalTo(2)));
-        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).isPresent(), is(true));
-        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().getVersion(), is(equalTo(schemaV3.getVersion())));
-        assertThat(metadataSchemaRepository.findByUuidAndLatestIsTrue(schemaV3.getUuid()).get().isLatest(), is(true));
+
+        assertThat(metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_V2_UUID).isPresent(), is(false));
+        assertThat(metadataSchemaVersionRepository.getLatestBySchemaUuid(Common.SCHEMA_MULTI_UUID).isPresent(), is(true));
+        assertThat(metadataSchemaVersionRepository.getLatestBySchemaUuid(Common.SCHEMA_MULTI_UUID).get().getVersion(), is(equalTo(schemaV3.getVersion())));
+        assertThat(metadataSchemaVersionRepository.getLatestBySchemaUuid(Common.SCHEMA_MULTI_UUID).get().isLatest(), is(true));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestDelete(client, url("nonExisting", "1.0.0"));
+        createAdminNotFoundTestDelete(client, url(UUID.randomUUID(), "1.0.0"));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestDelete(client, url(UUID.randomUUID().toString(), "1.0.0"));
+        createNoUserForbiddenTestDelete(client, url(UUID.randomUUID(), "1.0.0"));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestDelete(client, url(UUID.randomUUID().toString(), "1.0.0"));
+        createUserForbiddenTestDelete(client, url(UUID.randomUUID(), "1.0.0"));
     }
 }

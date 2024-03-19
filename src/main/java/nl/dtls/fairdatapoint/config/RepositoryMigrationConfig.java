@@ -28,14 +28,12 @@ import nl.dtls.rdf.migration.runner.RdfProductionMigrationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class RepositoryMigrationConfig {
 
     @Bean
-    @DependsOn("mongockRunner")
     @Profile(Profiles.PRODUCTION)
     public RdfProductionMigrationRunner rdfProductionMigrationRunner(
             RdfMigrationRepository rdfMigrationRepository,

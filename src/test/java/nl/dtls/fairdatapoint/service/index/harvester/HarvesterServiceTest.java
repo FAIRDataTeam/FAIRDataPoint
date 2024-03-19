@@ -22,18 +22,12 @@
  */
 package nl.dtls.fairdatapoint.service.index.harvester;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactoryImpl;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
-import nl.dtls.fairdatapoint.service.profile.ProfileService;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
 import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,14 +57,8 @@ public class HarvesterServiceTest {
     @Mock
     private RestTemplate restTemplate;
 
-    @Mock
-    private ResourceDefinitionCache resourceDefinitionCache;
-
     @Spy
     private GenericMetadataRepository genericMetadataRepository;
-
-    @InjectMocks
-    private static MetadataEnhancer metadataEnhancer;
 
     @InjectMocks
     private HarvesterService harvesterService;
@@ -84,16 +72,12 @@ public class HarvesterServiceTest {
     private Model catalog;
 
     @BeforeEach
-    private void setup() {
-        // Setup resource definition;
-        ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();
-
+    public void setup() {
         // Setup RDF fixtures
         RdfMetadataFixtures fixtures = new RdfMetadataFixtures(new MetadataFactoryImpl());
 
         // Create repository
         repository = fixtures.fdpMetadata(repositoryUrl);
-        ResourceDefinition rdRepository = resourceDefinitionFixtures.fdpDefinition();
 
         // Create catalog
         catalog = fixtures.catalog1(repositoryUrl, getUri(repository));

@@ -3,3 +3,7 @@ instance:
 
 server:
   port: 80
+
+spring:
+  flyway:
+    locations: classpath:db/migration

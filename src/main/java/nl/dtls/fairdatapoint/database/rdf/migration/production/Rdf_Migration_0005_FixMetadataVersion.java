@@ -23,19 +23,9 @@
 package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.vocabulary.DCAT3;
 import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
 import nl.dtls.rdf.migration.runner.RdfProductionMigration;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
-import org.eclipse.rdf4j.repository.RepositoryResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.s;
 
 @RdfMigrationAnnotation(
         number = 5,
@@ -44,33 +34,8 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.s;
 @Slf4j
 @Service
 public class Rdf_Migration_0005_FixMetadataVersion implements RdfProductionMigration {
-
-    private static final String MSG_ADD = "Adding: {} {} {}";
-    private static final String MSG_REMOVE = "Removing: {} {} {}";
-
-    @Autowired
-    private Repository mainRepository;
+    // TODO: remove (use seed)
 
     public void runMigration() {
-        updateVersionStatements();
-    }
-
-    private void updateVersionStatements() {
-        // change dcterms:hasVersion to dcat:version property (if object is literal)
-        try (RepositoryConnection conn = mainRepository.getConnection()) {
-            final RepositoryResult<Statement> queryResult = conn.getStatements(null, DCTERMS.HAS_VERSION, null);
-            while (queryResult.hasNext()) {
-                final Statement st = queryResult.next();
-                if (st.getObject().isLiteral()) {
-                    log.debug(MSG_ADD, st.getSubject(), DCAT3.VERSION, st.getObject());
-                    conn.add(s(st.getSubject(), DCAT3.VERSION, st.getObject(), st.getSubject()));
-                    log.debug(MSG_REMOVE, st.getSubject(), st.getPredicate(), st.getObject());
-                    conn.remove(st);
-                }
-            }
-        }
-        catch (RepositoryException exception) {
-            log.error(exception.getMessage(), exception);
-        }
     }
 }

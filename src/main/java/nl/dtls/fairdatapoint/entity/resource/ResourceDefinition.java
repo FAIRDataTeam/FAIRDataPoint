@@ -22,53 +22,48 @@
  */
 package nl.dtls.fairdatapoint.entity.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Document
+@Entity(name = "ResourceDefinition")
+@Table(name = "resource_definition")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class ResourceDefinition {
+@SuperBuilder(toBuilder = true)
+public class ResourceDefinition extends BaseEntity {
 
     private static final String CATALOG_PREFIX = "catalog";
 
-    @Id
-    @JsonIgnore
-    private ObjectId id;
-
-    private String uuid;
-
+    @NotNull
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @NotNull
+    @Column(name = "url_prefix", nullable = false)
     private String urlPrefix;
 
-    private List<String> metadataSchemaUuids = new ArrayList<>();
+    @OrderBy("orderPriority")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "source", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ResourceDefinitionChild> children;
 
-    private List<ResourceDefinitionChild> children = new ArrayList<>();
+    @OrderBy("orderPriority")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "target")
+    private List<ResourceDefinitionChild> parents;
 
-    private List<ResourceDefinitionLink> externalLinks = new ArrayList<>();
+    @OrderBy("orderPriority")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resourceDefinition", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ResourceDefinitionLink> externalLinks;
 
-    public ResourceDefinition(
-            String uuid, String name, String urlPrefix, List<String> metadataSchemaUuids,
-            List<ResourceDefinitionChild> children, List<ResourceDefinitionLink> externalLinks
-    ) {
-        this.uuid = uuid;
-        this.name = name;
-        this.urlPrefix = urlPrefix;
-        this.metadataSchemaUuids = metadataSchemaUuids;
-        this.children = children;
-        this.externalLinks = externalLinks;
-    }
+    @OrderBy("orderPriority")
+    @OneToMany(mappedBy = "resourceDefinition", fetch = FetchType.LAZY)
+    private List<MetadataSchemaUsage> metadataSchemaUsages;
 
     public boolean isRoot() {
         return urlPrefix.isEmpty();

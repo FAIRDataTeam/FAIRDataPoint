@@ -8,10 +8,11 @@ jobs:
   test:
     name: Test
     strategy:
+      fail-fast: false
       matrix:
         os:
-          - ubuntu-20.04
-          # - windows-2022 (MongoDB issues in CI)
+          - ubuntu-22.04
+          - windows-2022
           - macos-12
     runs-on: ${{ matrix.os }}
 
@@ -25,14 +26,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up MongoDB
-        uses: ankane/setup-mongodb@v1
+      - name: Setup PostgreSQL DB
+        if: matrix.os != 'macos-12'  # macOS is too slow for tests in GitHub Actions
+        uses: ikalnytskyi/action-setup-postgres@v5
+        id: postgres
         with:
-          mongodb-version: '5.0'
-
-      - name: Check MongoDB
-        run: |
-          mongo --eval "db.version()"
+          username: fdp
+          password: fdp
+          database: fdp_test
+          port: 54321
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -46,8 +48,15 @@ jobs:
           mvn -q -U -B compile
 
       - name: Test
+        if: matrix.os != 'macos-12'  # macOS is too slow for tests in GitHub Actions
         run: |
           mvn -q -U -B test
+        env:
+          FDP_POSTGRES_HOST: localhost
+          FDP_POSTGRES_PORT: 54321
+          FDP_POSTGRES_DB: fdp_test
+          FDP_POSTGRES_USERNAME: fdp
+          FDP_POSTGRES_PASSWORD: fdp
 
       - name: Package
         run: |

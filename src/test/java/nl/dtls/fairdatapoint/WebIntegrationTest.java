@@ -22,14 +22,15 @@
  */
 package nl.dtls.fairdatapoint;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.MigrationRunner;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.AclMigration;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -39,33 +40,34 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
         properties = {"spring.main.allow-bean-definition-overriding=true"})
 @AutoConfigureMockMvc
+@DirtiesContext
 public abstract class WebIntegrationTest {
 
-    public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
-            ".eyJzdWIiOiI5NTU4OWU1MC1kMjYxLTQ5MmItODg1Mi05MzI0ZTlhNjZhNDIiLCJpYXQiOjE2MjA4Mzg3NjUsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
-            ".hF8SnFH_1m00bjQOja77OzPgpPbX-wJH8RUdcOOR7F-QrTRCqwOdrqDfgN1lFW0XrrIljIvYqCo20pcYTvh2Dw";
+    public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiI5NTU4OWU1MC1kMjYxLTQ5MmItODg1Mi05MzI0ZTlhNjZhNDIiLCJpYXQiOjE3MTAwNjIxMjEsImV4cCI6ODgxMTAwNjIxMjF9" +
+            ".yJJ8nnIWjF0OjwreTQz6s6nEgSICOE8VSV1Cjq70RmE";
 
-    public static final String ALBERT_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
-            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE2MjA4Mzg3NDUsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
-            ".jLq89vH-YVPzKDSe44dV8CA2jpb8Or_xPf2gboiwaMTZwF_riNaVGJaziw8uYHRAIMb4bFBBd6MHbDiwrLlZZg";
+    public static final String ALBERT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiI3ZTY0ODE4ZC02Mjc2LTQ2ZmItOGJiMS03MzJlNmUwOWY3ZTkiLCJpYXQiOjE3MTAwNjIwODIsImV4cCI6ODgxMTAwNjIwODJ9" +
+            ".xBT99pCVytFfg7qybVFsuPhtOTVG8tqgHVGidZXw-lA";
 
-    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
-            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE2MjA4Mzg3MDgsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
-            ".U3mPUE0fREeVlresvl6uHR-aTj3ATFYn7CsAJ0cyOhqvaICTvURewF8QPfw2WVZ4GGc8Ej46BqHI9rpwKqRxpQ";
+    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE3MTAwNjIxNjcsImV4cCI6ODgxMTAwNjIxNjd9" +
+            ".Jgnb1NauGNab7KX3Ym6qG5jRGnAWAISTxNASU9cnjN0";
 
     @Autowired
     protected TestRestTemplate client;
 
     @Autowired
-    protected MigrationRunner migrationRunner;
+    protected Flyway flyway;
 
     @Autowired
-    protected RdfDevelopmentMigrationRunner rdfDevelopmentMigrationRunner;
+    protected AclMigration aclMigration;
 
     @BeforeEach
     public void setup() {
-        migrationRunner.run();
-        rdfDevelopmentMigrationRunner.run();
+        flyway.clean();
+        flyway.migrate();
+        aclMigration.runMigration();
     }
-
 }

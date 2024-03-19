@@ -22,12 +22,12 @@
  */
 package nl.dtls.fairdatapoint.service.ping;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.config.properties.PingProperties;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -38,22 +38,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 @Service
+@RequiredArgsConstructor
 @ConditionalOnProperty(name = "ping.enabled", havingValue = "true", matchIfMissing = true)
 public class PingService {
 
-    @Autowired
-    private PingProperties pingProperties;
+    private final PingProperties pingProperties;
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
-    @Autowired
-    private RestTemplate client;
+    private final RestTemplate client;
 
     @Scheduled(
             initialDelayString = "${ping.initDelay:#{10*1000}}",
@@ -61,12 +58,12 @@ public class PingService {
     )
     public void ping() {
         final Settings settings = settingsService.getOrDefaults();
-        if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
+        if (!settings.getPingEnabled() || !pingProperties.isEnabled()) {
             return;
         }
         final List<String> endpoints = Stream.concat(
                 pingProperties.getEndpoints().stream(),
-                settings.getPing().getEndpoints().stream()
+                settings.getPingEndpoints().stream()
         ).distinct().toList();
         for (String endpoint : endpoints) {
             pingEndpoint(

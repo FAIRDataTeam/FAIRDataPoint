@@ -145,11 +145,11 @@ public class MetadataEnhancer {
     public void enhanceWithLinks(IRI entityUri, Model entity, ResourceDefinition definition, String url,
                                  Model resultRdf) {
         for (ResourceDefinitionChild child : definition.getChildren()) {
-            final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid());
+            final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getTarget().getUuid());
             final IRI container = i(format("%s/%s/", url, rdChild.getUrlPrefix()));
 
             resultRdf.add(container, RDF.TYPE, LDP.DIRECT_CONTAINER);
-            resultRdf.add(container, DCTERMS.TITLE, l(child.getListView().getTitle()));
+            resultRdf.add(container, DCTERMS.TITLE, l(child.getTitle()));
             resultRdf.add(container, LDP.MEMBERSHIP_RESOURCE, entityUri);
             resultRdf.add(container, LDP.HAS_MEMBER_RELATION, i(child.getRelationUri()));
             for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, i(child.getRelationUri()))) {

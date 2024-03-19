@@ -24,10 +24,11 @@ package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionMapper;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
@@ -48,9 +50,12 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class Detail_PUT extends WebIntegrationTest {
 
     @Autowired
+    private ResourceDefinitionRepository resourceDefinitionRepository;
+
+    @Autowired
     private ResourceDefinitionMapper resourceDefinitionMapper;
 
-    private URI url(String uuid) {
+    private URI url(UUID uuid) {
         return URI.create(format("/resource-definitions/%s", uuid));
     }
 
@@ -60,17 +65,11 @@ public class Detail_PUT extends WebIntegrationTest {
         return resourceDefinitionMapper.toChangeDTO(rd);
     }
 
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
-
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
-
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
 
         // AND: Prepare request
@@ -79,11 +78,11 @@ public class Detail_PUT extends WebIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
-        ParameterizedTypeReference<ResourceDefinition> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<ResourceDefinitionDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<ResourceDefinition> result = client.exchange(request, responseType);
+        ResponseEntity<ResourceDefinitionDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
@@ -94,22 +93,22 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: ResourceDefinition is not authenticated")
     public void res403_notAuthenticated() {
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         createNoUserForbiddenTestPut(client, url(resourceDefinition.getUuid()), reqDto(resourceDefinition));
     }
 
     @Test
     @DisplayName("HTTP 403: ResourceDefinition is not an admin")
     public void res403_resourceDefinition() {
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.catalogDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         createUserForbiddenTestPut(client, url(resourceDefinition.getUuid()), reqDto(resourceDefinition));
     }
 
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestPut(client, url("nonExisting"),
-                reqDto(resourceDefinitionFixtures.catalogDefinition()));
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
+        createAdminNotFoundTestPut(client, url(KnownUUIDs.NULL_UUID), reqDto(resourceDefinition));
     }
 
 }

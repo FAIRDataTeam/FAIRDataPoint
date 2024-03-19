@@ -25,19 +25,19 @@ package nl.dtls.fairdatapoint.service.index.webhook;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.webhook.WebhookPayloadDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.WebhookRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEventRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexWebhookRepository;
 import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
-import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexRetrieval;
+import nl.dtls.fairdatapoint.entity.index.webhook.IndexWebhook;
+import nl.dtls.fairdatapoint.entity.index.webhook.IndexWebhookEvent;
 import nl.dtls.fairdatapoint.service.UtilityService;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,31 +49,26 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class WebhookService {
 
     private static final String SECRET_PLACEHOLDER = "*** HIDDEN ***";
 
-    @Autowired
-    private WebhookMapper webhookMapper;
+    private final WebhookMapper webhookMapper;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private WebhookRepository webhookRepository;
+    private final IndexWebhookRepository webhookRepository;
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final IndexEventRepository eventRepository;
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
-    @Autowired
-    private UtilityService utilityService;
+    private final UtilityService utilityService;
 
     @RequiredEnabledIndexFeature
-    public void processWebhookTrigger(Event event) {
-        final IndexSettingsRetrieval retrievalSettings =
+    public void processWebhookTrigger(IndexEvent event) {
+        final SettingsIndexRetrieval retrievalSettings =
                 indexSettingsService.getOrDefaults().getRetrieval();
         event.execute();
         eventRepository.save(event);
@@ -102,14 +97,14 @@ public class WebhookService {
 
     @Async
     @RequiredEnabledIndexFeature
-    public void triggerWebhook(Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent) {
-        final Event event = webhookMapper.toTriggerEvent(webhook, webhookEvent, triggerEvent);
+    public void triggerWebhook(IndexWebhook webhook, IndexWebhookEvent webhookEvent, IndexEvent triggerEvent) {
+        final IndexEvent event = webhookMapper.toTriggerEvent(webhook, webhookEvent, triggerEvent);
         processWebhookTrigger(event);
     }
 
     @Async
     @RequiredEnabledIndexFeature
-    public void triggerWebhooks(WebhookEvent webhookEvent, Event triggerEvent) {
+    public void triggerWebhooks(IndexWebhookEvent webhookEvent, IndexEvent triggerEvent) {
         log.info("Triggered webhook event {} by event {}", webhookEvent, triggerEvent.getUuid());
         WebhookUtils
                 .filterMatching(webhookRepository.findAll(), webhookEvent, triggerEvent)
@@ -118,30 +113,30 @@ public class WebhookService {
 
     @Async
     @RequiredEnabledIndexFeature
-    public void triggerWebhooks(Event triggerEvent) {
+    public void triggerWebhooks(IndexEvent triggerEvent) {
         switch (triggerEvent.getType()) {
-            case AdminTrigger:
-                triggerWebhooks(WebhookEvent.AdminTrigger, triggerEvent);
+            case ADMIN_TRIGGER:
+                triggerWebhooks(IndexWebhookEvent.ADMIN_TRIGGER, triggerEvent);
                 break;
-            case IncomingPing:
-                triggerWebhooks(WebhookEvent.IncomingPing, triggerEvent);
-                if (triggerEvent.getIncomingPing().getNewEntry()) {
-                    triggerWebhooks(WebhookEvent.NewEntry, triggerEvent);
+            case INCOMING_PING:
+                triggerWebhooks(IndexWebhookEvent.INCOMING_PING, triggerEvent);
+                if (triggerEvent.getPayload().getIncomingPing().getNewEntry()) {
+                    triggerWebhooks(IndexWebhookEvent.NEW_ENTRY, triggerEvent);
                 }
                 break;
-            case MetadataRetrieval:
+            case METADATA_RETRIEVAL:
                 switch (triggerEvent.getRelatedTo().getState()) {
-                    case Valid -> triggerWebhooks(WebhookEvent.EntryValid, triggerEvent);
-                    case Invalid -> triggerWebhooks(WebhookEvent.EntryInvalid, triggerEvent);
-                    case Unreachable -> triggerWebhooks(
-                            WebhookEvent.EntryUnreachable, triggerEvent
+                    case VALID -> triggerWebhooks(IndexWebhookEvent.ENTRY_VALID, triggerEvent);
+                    case INVALID -> triggerWebhooks(IndexWebhookEvent.ENTRY_INVALID, triggerEvent);
+                    case UNREACHABLE -> triggerWebhooks(
+                            IndexWebhookEvent.ENTRY_UNREACHABLE, triggerEvent
                     );
                     default -> log.warn("Invalid state of MetadataRetrieval: {}",
                             triggerEvent.getRelatedTo().getState());
                 }
                 break;
-            case WebhookPing:
-                triggerWebhooks(WebhookEvent.WebhookPing, triggerEvent);
+            case WEBHOOK_PING:
+                triggerWebhooks(IndexWebhookEvent.WEBHOOK_PING, triggerEvent);
                 break;
             default:
                 log.warn("Invalid event type for webhook trigger: {}", triggerEvent.getType());
@@ -149,11 +144,11 @@ public class WebhookService {
     }
 
     @RequiredEnabledIndexFeature
-    public Event handleWebhookPing(HttpServletRequest request, UUID webhookUuid) {
+    public IndexEvent handleWebhookPing(HttpServletRequest request, UUID webhookUuid) {
         final Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
-        final Optional<Webhook> webhook = webhookRepository.findByUuid(webhookUuid);
-        final Event event = eventRepository.save(
+        final Optional<IndexWebhook> webhook = webhookRepository.findByUuid(webhookUuid);
+        final IndexEvent event = eventRepository.save(
                 webhookMapper.toPingEvent(
                         authentication,
                         webhookUuid,

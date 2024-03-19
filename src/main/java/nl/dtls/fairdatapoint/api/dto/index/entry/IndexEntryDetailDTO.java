@@ -33,6 +33,7 @@ import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,7 +42,7 @@ import java.util.List;
 public class IndexEntryDetailDTO {
 
     @NotNull
-    private String uuid;
+    private UUID uuid;
 
     @NotNull
     @URL

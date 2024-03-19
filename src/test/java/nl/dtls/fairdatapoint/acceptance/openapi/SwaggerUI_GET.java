@@ -23,8 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.openapi;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
-import nl.dtls.fairdatapoint.utils.CustomPageImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;

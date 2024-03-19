@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,5 +38,5 @@ import java.util.List;
 public class MetadataSchemaPreviewRequestDTO {
 
     @NotNull
-    private List<String> metadataSchemaUuids;
+    private List<UUID> metadataSchemaUuids;
 }

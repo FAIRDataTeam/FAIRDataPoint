@@ -28,6 +28,7 @@
 package nl.dtls.fairdatapoint.database.rdf.repository.common;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
@@ -35,6 +36,7 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,6 +57,15 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
+
+    @Autowired
+    private RdfMetadataMigration rdfMetadataMigration;
+
+    @BeforeEach
+    public void before() {
+        rdfMetadataMigration.clean();
+        rdfMetadataMigration.runMigration();
+    }
 
     @Test
     public void findWorks() throws Exception {

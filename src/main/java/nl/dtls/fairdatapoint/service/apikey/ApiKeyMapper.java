@@ -24,13 +24,23 @@ package nl.dtls.fairdatapoint.service.apikey;
 
 import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
 import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
-import org.springframework.stereotype.Service;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.util.UUID;
+
+@Component
 public class ApiKeyMapper {
 
     public ApiKeyDTO toDTO(ApiKey apiKey) {
         return new ApiKeyDTO(apiKey.getUuid(), apiKey.getToken());
     }
 
+    public ApiKey createApiKey(UserAccount userAccount, String token) {
+        return ApiKey.builder()
+                .uuid(UUID.randomUUID())
+                .token(token)
+                .userAccount(userAccount)
+                .build();
+    }
 }

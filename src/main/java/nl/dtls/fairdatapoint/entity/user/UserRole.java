@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.entity.user;
 
 public enum UserRole {
-
-    ADMIN, USER
-
+    ADMIN,
+    USER
 }

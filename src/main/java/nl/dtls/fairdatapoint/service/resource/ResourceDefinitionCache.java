@@ -24,29 +24,29 @@ package nl.dtls.fairdatapoint.service.resource;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionChildRepository;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionCache {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
+
+    private final ResourceDefinitionChildRepository resourceDefinitionChildRepository;
 
     @PostConstruct
     public void computeCache() {
@@ -59,27 +59,25 @@ public class ResourceDefinitionCache {
         parentCache.clear();
 
         // Add to cache
-        final List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
-        rds.forEach(resourceDefinition -> {
-            parentCache.put(resourceDefinition.getUuid(), new ResourceDefinitionParents());
-        });
-        rds.forEach(resourceDefinition -> {
-            cache.put(resourceDefinition.getUuid(), resourceDefinition);
-            resourceDefinition.getChildren()
-                    .forEach(child -> {
-                        parentCache.get(
-                                child.getResourceDefinitionUuid(),
-                                ResourceDefinitionParents.class
-                        ).add(resourceDefinition);
-                    });
-        });
+        resourceDefinitionChildRepository.getAllMappings()
+                        .forEach(mapping -> {
+                            if (parentCache.get(mapping.getTargetUuid(), ResourceDefinitionParents.class) == null) {
+                                parentCache.put(mapping.getTargetUuid(), new ResourceDefinitionParents());
+                            }
+                            parentCache
+                                    .get(mapping.getTargetUuid(), ResourceDefinitionParents.class)
+                                    .add(mapping.getSourceUuid());
+                        });
+
     }
 
-    public ResourceDefinition getByUuid(String uuid) {
-        return cache().get(uuid, ResourceDefinition.class);
+    public ResourceDefinition getByUuid(UUID uuid) {
+        // TODO: not needed anymore?
+        return resourceDefinitionRepository.findByUuid(uuid).orElse(null);
     }
 
-    public Set<ResourceDefinition> getParentsByUuid(String uuid) {
+    public Set<ResourceDefinition> getParentsByUuid(UUID uuid) {
+        // TODO: not needed anymore?
         var parents = parentCache().get(uuid, ResourceDefinitionParents.class);
         if (parents == null) {
             computeCache();
@@ -88,7 +86,11 @@ public class ResourceDefinitionCache {
                 return Collections.emptySet();
             }
         }
-        return parents.getParents();
+        return parents.getParents()
+                .stream()
+                .map(parentUuid -> resourceDefinitionRepository.findByUuid(parentUuid).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     private Cache cache() {
@@ -101,9 +103,9 @@ public class ResourceDefinitionCache {
 
     @Getter
     private static final class ResourceDefinitionParents {
-        private final Set<ResourceDefinition> parents = new HashSet<>();
+        private final Set<UUID> parents = new HashSet<>();
 
-        public void add(ResourceDefinition rdParent) {
+        public void add(UUID rdParent) {
             parents.add(rdParent);
         }
     }

@@ -24,18 +24,20 @@ package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata;
 
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
 import nl.dtls.fairdatapoint.database.common.migration.Migration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
 import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import nl.dtls.fairdatapoint.service.security.AuthenticationService;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +53,6 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 public class RdfMetadataMigration implements Migration {
 
     @Autowired
-    private GenericMetadataRepository metadataRepository;
-
-    @Autowired
     private RdfMetadataFixtures rdfMetadataFixtures;
 
     @Autowired
@@ -65,44 +64,60 @@ public class RdfMetadataMigration implements Migration {
     private MetadataService genericMetadataService;
 
     @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
-
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
-
-    @Autowired
     private MetadataStateService metadataStateService;
 
     @Autowired
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private ResourceDefinitionRepository resourceDefinitionRepository;
+
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+    @Autowired
+    @Qualifier("genericMetadataRepository")
+    private GenericMetadataRepository metadataRepository;
+
+    public void clean() {
+        try {
+            metadataRepository.removeAll(RepositoryMode.MAIN);
+            metadataRepository.removeAll(RepositoryMode.DRAFTS);
+            // TODO: delete acl?
+        }
+        catch (MetadataRepositoryException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
     public void runMigration() {
         try {
-            // 1. Remove all previous metadata
-            metadataRepository.removeAll(RepositoryMode.COMBINED);
-
-            // 2. Auth user
-            final String adminUuid = userFixtures.admin().getUuid();
-            final Authentication auth = mongoAuthenticationService.getAuthentication(adminUuid);
+            // Auth user
+            final UserAccount user = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
+            final Authentication auth = authenticationService.getAuthentication(user.getUuid().toString());
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-            // 3. Load metadata fixtures
+            // Load metadata fixtures
             importDefaultFixtures(persistentUrl);
         }
-        catch (MetadataServiceException | MetadataRepositoryException exception) {
+        catch (MetadataServiceException exception) {
             exception.printStackTrace();
         }
     }
 
     public void importDefaultFixtures(String fdpUrl) throws MetadataServiceException {
-        final ResourceDefinition fdpRd = resourceDefinitionFixtures.fdpDefinition();
-        final ResourceDefinition catalogRd = resourceDefinitionFixtures.catalogDefinition();
-        final ResourceDefinition datasetRd = resourceDefinitionFixtures.datasetDefinition();
-        final ResourceDefinition distributionRd = resourceDefinitionFixtures.distributionDefinition();
+        final ResourceDefinition fdpRd =
+                resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_FDP_UUID).get();
+        final ResourceDefinition catalogRd =
+                resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_CATALOG_UUID).get();
+        final ResourceDefinition datasetRd =
+                resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DATASET_UUID).get();
+        final ResourceDefinition distributionRd =
+                resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
 
         final Model fdpM = rdfMetadataFixtures.fdpMetadata(fdpUrl);
         final IRI fdpUri = getUri(fdpM);
@@ -136,5 +151,4 @@ public class RdfMetadataMigration implements Migration {
         final IRI distribution2Uri = getUri(distribution2);
         genericMetadataService.store(distribution2, distribution2Uri, distributionRd);
     }
-
 }

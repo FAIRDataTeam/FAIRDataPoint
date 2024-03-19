@@ -27,10 +27,11 @@ import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsPingDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsRetrievalDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexPing;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexRetrieval;
+import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsDefaults;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,9 @@ public class List_PUT extends WebIntegrationTest {
     @Autowired
     private IndexSettingsRepository indexSettingsRepository;
 
+    @Autowired
+    private IndexSettingsDefaults indexSettingsDefaults;
+
     private final ParameterizedTypeReference<IndexSettingsDTO> responseType =
             new ParameterizedTypeReference<>() {
             };
@@ -61,25 +65,34 @@ public class List_PUT extends WebIntegrationTest {
         return URI.create("/index/settings");
     }
 
+    private IndexSettings customSettings(IndexSettings indexSettings) {
+        indexSettings.setPing(
+                SettingsIndexPing.builder()
+                        .denyList(Collections.singletonList("http://localhost.*$"))
+                        .rateLimitDuration(Duration.ofMinutes(17))
+                        .validDuration(Duration.ofDays(5))
+                        .rateLimitHits(666)
+                        .build()
+        );
+        indexSettings.setRetrieval(
+                SettingsIndexRetrieval.builder()
+                        .rateLimitWait(Duration.ofHours(16))
+                        .timeout(Duration.ofSeconds(55))
+                        .build()
+        );
+        indexSettings.setAutoPermit(false);
+        return indexSettings;
+    }
+
     private IndexSettings customSettings1() {
         return new IndexSettings()
                 .toBuilder()
-                .ping(
-                        new IndexSettingsPing()
-                                .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
-                                .rateLimitDuration(Duration.ofMinutes(17))
-                                .validDuration(Duration.ofDays(5))
-                                .rateLimitHits(666)
-                                .build()
-                )
-                .retrieval(
-                        new IndexSettingsRetrieval()
-                                .toBuilder()
-                                .rateLimitWait(Duration.ofHours(16))
-                                .timeout(Duration.ofSeconds(55))
-                                .build()
-                )
+                .retrievalTimeout(Duration.ofSeconds(55).toString())
+                .retrievalRateLimitWait(Duration.ofHours(16).toString())
+                .pingValidDuration(Duration.ofDays(5).toString())
+                .pingRateLimitDuration(Duration.ofMinutes(17).toString())
+                .pingRateLimitHits(666)
+                .pingDenyList(Collections.singletonList("http://localhost.*$"))
                 .autoPermit(true)
                 .build();
     }
@@ -155,9 +168,9 @@ public class List_PUT extends WebIntegrationTest {
     public void res200_updateSettingsFromCustom() {
         // GIVEN: prepare data
         IndexSettingsUpdateDTO reqDTO = customSettingsUpdateDTO();
-        IndexSettings settings = customSettings1();
+        IndexSettings settings = customSettings(indexSettingsDefaults.getDefaults());
         indexSettingsRepository.deleteAll();
-        indexSettingsRepository.insert(customSettings2());
+        indexSettingsRepository.saveAndFlush(settings);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -174,12 +187,12 @@ public class List_PUT extends WebIntegrationTest {
         assertThat("Settings are created", indexSettingsRepository.findAll().size(), is(equalTo(1)));
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Response contains default valid duration", Objects.requireNonNull(result.getBody()).getPing().getValidDuration(), is(equalTo(settings.getPing().getValidDuration().toString())));
-        assertThat("Response contains default rate limit duration", Objects.requireNonNull(result.getBody()).getPing().getRateLimitDuration(), is(equalTo(settings.getPing().getRateLimitDuration().toString())));
-        assertThat("Response contains default rate limit hits", Objects.requireNonNull(result.getBody()).getPing().getRateLimitHits(), is(equalTo(settings.getPing().getRateLimitHits())));
-        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(settings.getPing().getDenyList())));
-        assertThat("Response contains default timeout", Objects.requireNonNull(result.getBody()).getRetrieval().getTimeout(), is(equalTo(settings.getRetrieval().getTimeout().toString())));
-        assertThat("Response contains default rate limit wait", Objects.requireNonNull(result.getBody()).getRetrieval().getRateLimitWait(), is(equalTo(settings.getRetrieval().getRateLimitWait().toString())));
+        assertThat("Response contains default valid duration", Objects.requireNonNull(result.getBody()).getPing().getValidDuration(), is(equalTo(reqDTO.getPing().getValidDuration())));
+        assertThat("Response contains default rate limit duration", Objects.requireNonNull(result.getBody()).getPing().getRateLimitDuration(), is(equalTo(reqDTO.getPing().getRateLimitDuration())));
+        assertThat("Response contains default rate limit hits", Objects.requireNonNull(result.getBody()).getPing().getRateLimitHits(), is(equalTo(reqDTO.getPing().getRateLimitHits())));
+        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(reqDTO.getPing().getDenyList())));
+        assertThat("Response contains default timeout", Objects.requireNonNull(result.getBody()).getRetrieval().getTimeout(), is(equalTo(reqDTO.getRetrieval().getTimeout())));
+        assertThat("Response contains default rate limit wait", Objects.requireNonNull(result.getBody()).getRetrieval().getRateLimitWait(), is(equalTo(reqDTO.getRetrieval().getRateLimitWait())));
     }
 
     @Test
@@ -210,7 +223,6 @@ public class List_PUT extends WebIntegrationTest {
     public void res400_invalidList() {
         // GIVEN: prepare data
         IndexSettingsUpdateDTO reqDTO = invalidUpdateDTO2();
-        indexSettingsRepository.deleteAll();
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity

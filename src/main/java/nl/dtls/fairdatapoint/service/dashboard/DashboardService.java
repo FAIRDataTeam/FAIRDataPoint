@@ -86,7 +86,7 @@ public class DashboardService {
                 final DashboardItemDTO child = getDashboardItem(
                         childIri,
                         metadataService.retrieve(childIri),
-                        resourceDefinitionCache.getByUuid(rdChild.getResourceDefinitionUuid())
+                        resourceDefinitionCache.getByUuid(rdChild.getTarget().getUuid())
                 );
                 children.add(child);
             }
@@ -109,6 +109,6 @@ public class DashboardService {
     }
 
     private boolean childOnDashboard(DashboardItemDTO item) {
-        return item.getMembership().isPresent() || item.getChildren().size() > 0;
+        return item.getMembership().isPresent() || !item.getChildren().isEmpty();
     }
 }

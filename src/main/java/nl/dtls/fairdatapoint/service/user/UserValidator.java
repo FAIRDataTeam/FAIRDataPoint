@@ -22,29 +22,29 @@
  */
 package nl.dtls.fairdatapoint.service.user;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
 import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
 @Service
+@RequiredArgsConstructor
 public class UserValidator {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    public void validateEmail(String uuid, String email) {
-        final Optional<User> userEmail = userRepository.findByEmail(email);
+    public void validateEmail(UUID uuid, String email) {
+        final Optional<UserAccount> userEmail = userAccountRepository.findByEmail(email);
         if (userEmail.isPresent() && !userEmail.get().getUuid().equals(uuid)) {
             throw new ValidationException(
                     format("Email '%s' is already taken", email)
             );
         }
     }
-
 }

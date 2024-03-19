@@ -22,32 +22,48 @@
  */
 package nl.dtls.fairdatapoint.service.settings;
 
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.api.controller.settings.SettingsDefaults;
+import nl.dtls.fairdatapoint.api.dto.search.SearchFilterDTO;
+import nl.dtls.fairdatapoint.api.dto.settings.SettingsAutocompleteSourceDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
+import nl.dtls.fairdatapoint.api.dto.settings.SettingsMetricDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.*;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
+import nl.dtls.fairdatapoint.entity.settings.SettingsAutocompleteSource;
+import nl.dtls.fairdatapoint.entity.settings.SettingsMetric;
 import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
-import nl.dtls.fairdatapoint.service.search.SearchFilterCache;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SettingsService {
 
-    @Autowired
-    private SettingsRepository repository;
+    private final SettingsRepository settingsRepository;
 
-    @Autowired
-    private SettingsMapper mapper;
+    private final SettingsMetricRepository metricRepository;
 
-    @Autowired
-    private SettingsCache settingsCache;
+    private final SettingsAutocompleteSourceRepository autocompleteSourceRepository;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SettingsSearchFilterRepository searchFilterRepository;
+
+    private final SettingsSearchFilterItemRepository searchFilterItemRepository;
+
+    private final SettingsMapper mapper;
+
+    private final SettingsCache settingsCache;
+
+    private final EntityManager entityManager;
+
+    private final SettingsDefaults settingsDefaults;
 
     public Settings getOrDefaults() {
         return settingsCache.getOrDefaults();
@@ -57,39 +73,90 @@ public class SettingsService {
         return mapper.toDTO(getOrDefaults());
     }
 
+    @Transactional
     public SettingsDTO updateSettings(SettingsUpdateDTO dto) {
         final Settings oldSettings = getOrDefaults();
-        final Settings newSettings = repository.save(mapper.fromUpdateDTO(dto, getOrDefaults()));
-        handleSearchFiltersChange(oldSettings, newSettings);
+
+        // update Settings
+        final Settings newSettings = mapper.fromUpdateDTO(dto, oldSettings);
+        settingsRepository.saveAndFlush(newSettings);
+
+        // update Metrics
+        final List<SettingsMetric> metrics = updateMetrics(dto, newSettings);
+        newSettings.setMetrics(metrics);
+
+        // update Autocomplete Sources
+        final List<SettingsAutocompleteSource> sources = updateSources(dto, newSettings);
+        newSettings.setAutocompleteSources(sources);
+
+        // update SearchFilters
+        final List<SettingsSearchFilter> searchFilters = updateSearchFilters(dto, newSettings);
+        newSettings.setSearchFilters(searchFilters);
+
         settingsCache.updateCachedSettings(newSettings);
         return mapper.toDTO(newSettings);
     }
 
-    private void handleSearchFiltersChange(Settings oldSettings, Settings newSettings) {
-        final Set<String> oldPredicateUris =
-                oldSettings
-                        .getSearchFilters()
-                        .stream()
-                        .map(SettingsSearchFilter::getPredicate)
-                        .collect(Collectors.toSet());
-        final Set<String> newPredicateUris =
-                newSettings
-                        .getSearchFilters()
-                        .stream()
-                        .map(SettingsSearchFilter::getPredicate)
-                        .collect(Collectors.toSet());
-        oldPredicateUris
-                .stream()
-                .filter(predicate -> !newPredicateUris.contains(predicate))
-                .forEach(searchFilterCache::clearFilter);
-        newPredicateUris
-                .stream()
-                .filter(predicate -> !oldPredicateUris.contains(predicate))
-                .forEach(searchFilterCache::clearFilter);
+    private List<SettingsMetric> updateMetrics(SettingsUpdateDTO dto, Settings settings) {
+        // Delete old
+        metricRepository.deleteAll(settings.getMetrics());
+        // Add new
+        final List<SettingsMetric> metrics = new ArrayList<>();
+        final List<SettingsMetricDTO> dtos = dto.getMetadataMetrics();
+        for (int index = 0; index < dtos.size(); index++) {
+            metrics.add(mapper.fromMetricDTO(dtos.get(index), index, settings));
+        }
+        return metricRepository.saveAll(metrics);
     }
 
+    private List<SettingsAutocompleteSource> updateSources(SettingsUpdateDTO dto, Settings settings) {
+        // Delete old
+        metricRepository.deleteAll(settings.getMetrics());
+        // Add new
+        final List<SettingsAutocompleteSource> metrics = new ArrayList<>();
+        final List<SettingsAutocompleteSourceDTO> dtos = dto.getForms().getAutocomplete().getSources();
+        for (int index = 0; index < dtos.size(); index++) {
+            metrics.add(mapper.fromAutocompleteSourceDTO(dtos.get(index), index, settings));
+        }
+        return autocompleteSourceRepository.saveAll(metrics);
+    }
+
+    private List<SettingsSearchFilter> updateSearchFilters(SettingsUpdateDTO dto, Settings settings) {
+        // Delete old
+        settings
+                .getSearchFilters()
+                .forEach(searchFilter -> searchFilterItemRepository.deleteAll(searchFilter.getItems()));
+        searchFilterRepository.deleteAll(settings.getSearchFilters());
+        // Add new
+        final List<SettingsSearchFilter> searchFilters = new ArrayList<>();
+        final List<SearchFilterDTO> dtos = dto.getSearch().getFilters();
+        for (int index = 0; index < dtos.size(); index++) {
+            searchFilters.add(mapper.fromSearchFilterDTO(dtos.get(index), index, settings));
+        }
+        searchFilterRepository.saveAllAndFlush(searchFilters);
+        for (SettingsSearchFilter searchFilter : searchFilters) {
+            entityManager.refresh(searchFilter);
+            searchFilterItemRepository.saveAllAndFlush(searchFilter.getItems());
+        }
+        return searchFilters;
+    }
+
+    @Transactional
     public SettingsDTO resetSettings() {
-        return updateSettings(mapper.toUpdateDTO(Settings.getDefault()));
+        final Optional<Settings> oldSettings = settingsRepository.findByUuid(KnownUUIDs.SETTINGS_UUID);
+
+        if (oldSettings.isPresent()) {
+            settingsRepository.delete(oldSettings.get());
+            entityManager.flush();
+        }
+
+        final Settings newSettings = settingsRepository.saveAndFlush(settingsDefaults.defaultSettings());
+        metricRepository.saveAll(settingsDefaults.defaultMetrics(newSettings));
+        entityManager.flush();
+        entityManager.refresh(newSettings);
+
+        settingsCache.updateCachedSettings(newSettings);
+        return mapper.toDTO(newSettings);
     }
 
 }

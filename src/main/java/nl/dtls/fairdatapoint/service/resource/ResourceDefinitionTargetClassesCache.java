@@ -23,11 +23,8 @@
 package nl.dtls.fairdatapoint.service.resource;
 
 import jakarta.annotation.PostConstruct;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.database.db.repository.*;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -37,16 +34,18 @@ import java.util.*;
 import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_TARGET_CLASSES_CACHE;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionTargetClassesCache {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
+
+    private final MetadataSchemaUsageRepository usageRepository;
+
+    private final MetadataSchemaExtensionRepository extensionRepository;
 
     @PostConstruct
     public void computeCache() {
@@ -57,45 +56,59 @@ public class ResourceDefinitionTargetClassesCache {
         cache.clear();
 
         // Add to cache
-        final List<ResourceDefinition> rds = resourceDefinitionRepository.findAll();
-        final Map<String, MetadataSchema> metadataSchemaMap = new HashMap<>();
-        metadataSchemaRepository.findAllByLatestIsTrue().forEach(schema -> {
-            final boolean isNewer = Optional.ofNullable(metadataSchemaMap.get(schema.getUuid()))
-                    .map(otherSchema -> otherSchema.getVersion().compareTo(schema.getVersion()) < 0)
-                    .orElse(false);
-            if (!metadataSchemaMap.containsKey(schema.getUuid()) || isNewer) {
-                metadataSchemaMap.put(schema.getUuid(), schema);
+        // - Get all latest metadata schemas and organize them by schema UUID
+        final Map<UUID, MetadataSchemaRepository.MetadataSchemaBasic> metadataSchemas = new HashMap<>();
+        metadataSchemaRepository.getBasicLatestMetadataSchemas().forEach(schema -> {
+            metadataSchemas.put(schema.getUuid(), schema);
+        });
+
+        // - Get all extensions
+        final Map<UUID, Set<UUID>> extensions = new HashMap<>();
+        metadataSchemas.forEach((schemaUuid, schema) -> {
+            extensions.put(schemaUuid, new HashSet<>());
+        });
+        extensionRepository.getBasicExtensionsForLatest().forEach(extension -> {
+            extensions.get(extension.getSchemaUuid()).add(extension.getExtendedMetadataSchemaUuid());
+        });
+
+        // - Resolve target classes
+        final Map<UUID, Set<String>> targetClasses = new HashMap<>();
+        metadataSchemas.forEach((schemaUuid, schema) -> {
+            targetClasses.put(schemaUuid, new HashSet<>(schema.getTargetClasses()));
+        });
+        metadataSchemas.forEach((schemaUuid, schema) -> {
+            final Queue<UUID> parentUuids = new LinkedList<>(extensions.get(schemaUuid));
+            final Set<UUID> visitedParents = new HashSet<>();
+            UUID parentUuid = null;
+            while (!parentUuids.isEmpty()) {
+                parentUuid = parentUuids.poll();
+                if (!visitedParents.contains(parentUuid)) {
+                    visitedParents.add(parentUuid);
+                    targetClasses.get(schemaUuid).addAll(metadataSchemas.get(parentUuid).getTargetClasses());
+                    parentUuids.addAll(extensions.get(parentUuid));
+                }
             }
         });
-        rds.forEach(resourceDefinition -> {
-            final Set<String> targetClassUris = new HashSet<>();
-            resourceDefinition.getMetadataSchemaUuids().forEach(schemaUuid -> {
-                if (metadataSchemaMap.containsKey(schemaUuid)) {
-                    targetClassUris.addAll(metadataSchemaMap.get(schemaUuid).getTargetClasses());
-                    final Queue<String> parentUuids =
-                            new LinkedList<>(metadataSchemaMap.get(schemaUuid).getExtendSchemas());
-                    final Set<String> visitedParents = new HashSet<>();
-                    String parentUuid = null;
-                    while (!parentUuids.isEmpty()) {
-                        parentUuid = parentUuids.poll();
-                        if (!visitedParents.contains(parentUuid)) {
-                            visitedParents.add(parentUuid);
-                            targetClassUris.addAll(
-                                    metadataSchemaMap.get(parentUuid).getTargetClasses()
-                            );
-                            parentUuids.addAll(
-                                    metadataSchemaMap.get(parentUuid).getExtendSchemas()
-                            );
-                        }
-                    }
-                }
-            });
-            cache.put(resourceDefinition.getUuid(), targetClassUris.stream().toList());
+
+        // - Resolve for resource definitions
+        final Map<UUID, Set<String>> resourceDefinitionTargetClasses = new HashMap<>();
+        resourceDefinitionRepository.findAll().forEach(resourceDefinition -> {
+            resourceDefinitionTargetClasses.put(resourceDefinition.getUuid(), new HashSet<>());
+        });
+        usageRepository.getBasicUsages().forEach(usage -> {
+            resourceDefinitionTargetClasses
+                    .get(usage.getResourceDefinitionUuid())
+                    .addAll(targetClasses.get(usage.getSchemaUuid()));
+        });
+
+        // - Add to cache
+        resourceDefinitionTargetClasses.forEach((resourceDefinitionUuid, classes) -> {
+            cache.put(resourceDefinitionUuid.toString(), classes);
         });
     }
 
-    public List<String> getByUuid(String uuid) {
-        return cache().get(uuid, List.class);
+    public Set<String> getByUuid(String uuid) {
+        return cache().get(uuid, Set.class);
     }
 
     private Cache cache() {

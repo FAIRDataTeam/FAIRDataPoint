@@ -24,9 +24,10 @@ package nl.dtls.fairdatapoint.acceptance.resource;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionMapper;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_POST extends WebIntegrationTest {
 
     @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+    private ResourceDefinitionRepository resourceDefinitionRepository;
 
     @Autowired
     private ResourceDefinitionMapper resourceDefinitionMapper;
@@ -55,14 +56,17 @@ public class List_POST extends WebIntegrationTest {
     }
 
     private ResourceDefinitionChangeDTO reqDto(ResourceDefinition resourceDefinition) {
-        return resourceDefinitionMapper.toChangeDTO(resourceDefinition);
+        final ResourceDefinitionChangeDTO dto = resourceDefinitionMapper.toChangeDTO(resourceDefinition);
+        dto.setName("Another Distribution");
+        dto.setUrlPrefix("another-distribution");
+        return dto;
     }
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        ResourceDefinition resourceDefinition = resourceDefinitionFixtures.ontologyDefinition();
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
 
         // AND: Prepare request
@@ -85,13 +89,15 @@ public class List_POST extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: ResourceDefinition is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPost(client, url(), reqDto(resourceDefinitionFixtures.ontologyDefinition()));
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
+        createNoUserForbiddenTestPost(client, url(), reqDto(resourceDefinition));
     }
 
     @Test
     @DisplayName("HTTP 403: ResourceDefinition is not an admin")
     public void res403_resourceDefinition() {
-        createUserForbiddenTestPost(client, url(), reqDto(resourceDefinitionFixtures.ontologyDefinition()));
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
+        createUserForbiddenTestPost(client, url(), reqDto(resourceDefinition));
     }
 
 }

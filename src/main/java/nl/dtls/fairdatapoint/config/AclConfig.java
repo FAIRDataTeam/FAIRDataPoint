@@ -22,39 +22,36 @@
  */
 package nl.dtls.fairdatapoint.config;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.acls.AclPermissionCacheOptimizer;
 import org.springframework.security.acls.AclPermissionEvaluator;
-import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.domain.*;
+import org.springframework.security.acls.jdbc.BasicLookupStrategy;
+import org.springframework.security.acls.jdbc.JdbcMutableAclService;
 import org.springframework.security.acls.jdbc.LookupStrategy;
 import org.springframework.security.acls.model.AclCache;
-import org.springframework.security.acls.model.AclService;
+import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
-import org.springframework.security.acls.mongodb.BasicLookupStrategy;
-import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import javax.sql.DataSource;
 
 import static java.lang.String.format;
 
 @Configuration
+@RequiredArgsConstructor
 public class AclConfig {
 
     public static final String ACL_CACHE = "ACL_CACHE";
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-    @Autowired
-    private AclRepository aclRepository;
+    private final DataSource dataSource;
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
@@ -65,8 +62,38 @@ public class AclConfig {
     }
 
     @Bean
-    public AclService aclService(AclCache aclCache) {
-        return new MongoDBMutableAclService(aclRepository, lookupStrategy(aclCache), aclCache);
+    public MutableAclService aclService(AclCache aclCache) {
+        final JdbcMutableAclService jdbcMutableAclService =
+                new JdbcMutableAclService(dataSource, lookupStrategy(aclCache), aclCache);
+
+        // from documentation
+        jdbcMutableAclService.setClassIdentityQuery("select currval(pg_get_serial_sequence('acl_class', 'id'))");
+        jdbcMutableAclService.setSidIdentityQuery("select currval(pg_get_serial_sequence('acl_sid', 'id'))");
+
+        // additional adjustments
+        jdbcMutableAclService.setObjectIdentityPrimaryKeyQuery(
+                """
+                SELECT acl_object_identity.id
+                FROM acl_object_identity, acl_class
+                WHERE acl_object_identity.object_id_class = acl_class.id
+                      AND acl_class.class = ?
+                      AND acl_object_identity.object_id_identity = CAST(? AS varchar);
+                """
+        );
+        jdbcMutableAclService.setFindChildrenQuery(
+                """
+                SELECT obj.object_id_identity AS obj_id, class.class AS class
+                FROM acl_object_identity obj, acl_object_identity parent, acl_class class
+                WHERE obj.parent_object = parent.id
+                      AND obj.object_id_class = class.id
+                      AND parent.object_id_identity = CAST(? AS varchar)
+                      AND parent.object_id_class = (SELECT id FROM acl_class WHERE acl_class.class = ?)
+                """
+        );
+
+        jdbcMutableAclService.setAclClassIdSupported(true);
+
+        return jdbcMutableAclService;
     }
 
     @Bean
@@ -98,8 +125,14 @@ public class AclConfig {
 
     @Bean
     public LookupStrategy lookupStrategy(AclCache aclCache) {
-        return new BasicLookupStrategy(mongoTemplate, aclCache, aclAuthorizationStrategy(),
-                permissionGrantingStrategy());
+        final BasicLookupStrategy basicLookupStrategy = new BasicLookupStrategy(
+                dataSource, aclCache,
+                aclAuthorizationStrategy(), new ConsoleAuditLogger());
+        final String lookupObjectIdentitiesWhereClause =
+                "(acl_object_identity.object_id_identity::varchar = ? and acl_class.class = ?)";
+        basicLookupStrategy.setLookupObjectIdentitiesWhereClause(lookupObjectIdentitiesWhereClause);
+        basicLookupStrategy.setAclClassIdSupported(true);
+        return basicLookupStrategy;
     }
 
 }

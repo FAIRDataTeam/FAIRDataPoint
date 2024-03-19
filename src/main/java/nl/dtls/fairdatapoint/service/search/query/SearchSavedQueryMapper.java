@@ -22,26 +22,38 @@
  */
 package nl.dtls.fairdatapoint.service.search.query;
 
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQuery;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.service.user.UserMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class SearchSavedQueryMapper {
+
+    private final UserMapper userMapper;
+
     public SearchSavedQueryDTO toDTO(
-            SearchSavedQuery query, UserDTO userDTO
+            SearchSavedQuery query
     ) {
         return SearchSavedQueryDTO.builder()
                 .uuid(query.getUuid())
                 .name(query.getName())
                 .description(query.getDescription())
-                .variables(query.getVariables())
-                .user(userDTO)
+                .variables(toVariablesDTO(query))
+                .user(
+                        Optional.ofNullable(query.getUserAccount())
+                                .map(userMapper::toDTO)
+                                .orElse(null)
+                )
                 .type(query.getType())
                 .createdAt(query.getCreatedAt())
                 .updatedAt(query.getUpdatedAt())
@@ -49,30 +61,45 @@ public class SearchSavedQueryMapper {
     }
 
     public SearchSavedQuery fromChangeDTO(
-            SearchSavedQueryChangeDTO reqDto, UserDTO userDto
+            SearchSavedQueryChangeDTO reqDto, UserAccount userAccount
     ) {
         return SearchSavedQuery.builder()
-                .uuid(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID())
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
                 .type(reqDto.getType())
-                .variables(reqDto.getVariables())
-                .userUuid(userDto == null ? null : userDto.getUuid())
+                .varPrefixes(reqDto.getVariables().getPrefixes())
+                .varGraphPattern(reqDto.getVariables().getGraphPattern())
+                .varOrdering(reqDto.getVariables().getOrdering())
+                .userAccount(userAccount)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
     }
 
     public SearchSavedQuery fromChangeDTO(
-            SearchSavedQuery query, SearchSavedQueryChangeDTO reqDto
+            SearchSavedQuery query, SearchSavedQueryChangeDTO reqDto,
+            UserAccount userAccount
     ) {
         return query.toBuilder()
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
-                .variables(reqDto.getVariables())
-                .userUuid(query.getUserUuid())
+                .varPrefixes(reqDto.getVariables().getPrefixes())
+                .varGraphPattern(reqDto.getVariables().getGraphPattern())
+                .varOrdering(reqDto.getVariables().getOrdering())
+                .userAccount(userAccount)
                 .type(reqDto.getType())
                 .updatedAt(Instant.now())
+                .build();
+    }
+
+    public SearchQueryVariablesDTO toVariablesDTO(
+            SearchSavedQuery query
+    ) {
+        return SearchQueryVariablesDTO.builder()
+                .prefixes(query.getVarPrefixes())
+                .graphPattern(query.getVarGraphPattern())
+                .ordering(query.getVarOrdering())
                 .build();
     }
 }

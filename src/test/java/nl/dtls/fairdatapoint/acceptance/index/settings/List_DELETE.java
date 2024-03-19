@@ -24,10 +24,11 @@ package nl.dtls.fairdatapoint.acceptance.index.settings;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexPing;
+import nl.dtls.fairdatapoint.entity.index.settings.SettingsIndexRetrieval;
+import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsDefaults;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class List_DELETE extends WebIntegrationTest {
     @Autowired
     private IndexSettingsRepository indexSettingsRepository;
 
+    @Autowired
+    private IndexSettingsDefaults indexSettingsDefaults;
+
     private final ParameterizedTypeReference<IndexSettingsDTO> responseType =
             new ParameterizedTypeReference<>() {
             };
@@ -58,38 +62,30 @@ public class List_DELETE extends WebIntegrationTest {
         return URI.create("/index/settings");
     }
 
-    private IndexSettings customSettings() {
-        return new IndexSettings()
-                .toBuilder()
-                .ping(
-                        new IndexSettingsPing()
-                                .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
-                                .rateLimitDuration(Duration.ofMinutes(17))
-                                .validDuration(Duration.ofDays(5))
-                                .rateLimitHits(666)
-                                .build()
-                )
-                .retrieval(
-                        new IndexSettingsRetrieval()
-                                .toBuilder()
-                                .rateLimitWait(Duration.ofHours(16))
-                                .timeout(Duration.ofSeconds(55))
-                                .build()
-                )
-                .build();
+    private IndexSettings customSettings(IndexSettings indexSettings) {
+        indexSettings.setPing(
+                SettingsIndexPing.builder()
+                        .denyList(Collections.singletonList("http://localhost.*$"))
+                        .rateLimitDuration(Duration.ofMinutes(17))
+                        .validDuration(Duration.ofDays(5))
+                        .rateLimitHits(666)
+                        .build()
+        );
+        indexSettings.setRetrieval(
+                SettingsIndexRetrieval.builder()
+                        .rateLimitWait(Duration.ofHours(16))
+                        .timeout(Duration.ofSeconds(55))
+                        .build()
+        );
+        indexSettings.setAutoPermit(false);
+        return indexSettings;
     }
 
     @Test
     @DisplayName("HTTP 200: default settings")
     public void res200_defaultSettings() {
         // GIVEN: prepare data
-        IndexSettings settings = IndexSettings
-                .builder()
-                .ping(IndexSettingsPing.getDefault())
-                .retrieval(IndexSettingsRetrieval.getDefault())
-                .autoPermit(true)
-                .build();
+        IndexSettings settings = indexSettingsDefaults.getDefaults();
         indexSettingsRepository.deleteAll();
 
         // AND: prepare request
@@ -118,15 +114,9 @@ public class List_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 200: custom settings")
     public void res200_customSettings() {
         // GIVEN: prepare data
-        IndexSettings settings = IndexSettings
-                .builder()
-                .ping(IndexSettingsPing.getDefault())
-                .retrieval(IndexSettingsRetrieval.getDefault())
-                .autoPermit(true)
-                .build();
-        IndexSettings customSettings = customSettings();
-        indexSettingsRepository.deleteAll();
-        indexSettingsRepository.insert(customSettings);
+        IndexSettings settings = indexSettingsDefaults.getDefaults();
+        IndexSettings newSettings = customSettings(indexSettingsDefaults.getDefaults());
+        indexSettingsRepository.saveAndFlush(newSettings);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity

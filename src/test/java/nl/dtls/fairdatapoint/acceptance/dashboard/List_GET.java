@@ -24,9 +24,9 @@ package nl.dtls.fairdatapoint.acceptance.dashboard;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.service.member.MemberService;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,9 +58,6 @@ public class List_GET extends WebIntegrationTest {
     @Autowired
     private MemberService memberService;
 
-    @Autowired
-    private UserFixtures userFixtures;
-
     @Test
     public void res200() {
         // GIVEN:
@@ -70,8 +67,7 @@ public class List_GET extends WebIntegrationTest {
                 .build();
         ParameterizedTypeReference<List<DashboardItemDTO>> responseType = new ParameterizedTypeReference<>() {
         };
-        String nikolaUuid = userFixtures.nikola().getUuid();
-        memberService.deleteMember(format("%s/catalog/catalog-1", persistentUrl), Metadata.class, nikolaUuid);
+        memberService.deleteMember(format("%s/catalog/catalog-1", persistentUrl), Metadata.class, KnownUUIDs.USER_NIKOLA_UUID);
 
         // WHEN:
         ResponseEntity<List<DashboardItemDTO>> result = client.exchange(request, responseType);

@@ -37,22 +37,24 @@ e.g. [app.fairdatapoint.org/swagger-ui.html](https://app.fairdatapoint.org/swagg
 ### Technology Stack
 
 - **Java** (JDK 21)
-- **MongoDB** (4.2)
+- **PostgreSQL** (15.0 or higher)
 - **Maven** (3.2.5 or higher)
 - **Docker** (19.03.0-ce or higher) - *for building Docker image only*
 
 ### Build & Run
 
-To run the application, a MongoDB instance is required to be running. To configure the MongoDB with standard
-connection (`mongodb://localhost:27017/fdp`), simply instruct Spring Boot to use the `development` profile. Then run:
+To run the application, a PostgreSQL DB instance is required to be running. To configure the database with standard
+connection (`postgresql://localhost:54321/fdp`, credentials `fdp:fdp`), simply instruct Spring Boot to use the 
+`development` profile. Then run:
 
 ```bash
 $ mvn spring-boot:run -Dspring-boot.run.profiles=development
 ```
 
 Alternatively, create an `application.yml` file in the project root
-and [configure the mongodb address](https://fairdatapoint.readthedocs.io/en/latest/deployment/advanced-configuration.html#mongo-db)
-, and then run:
+and [configure the database](https://fairdatapoint.readthedocs.io/en/latest/deployment/advanced-configuration.html)
+or use environment variables (`FDP_POSTGRES_HOST`, `FDP_POSTGRES_PORT`, `FDP_POSTGRES_DB`, `FDP_POSTGRES_USERNAME`, 
+and `FDP_POSTGRES_PASSWORD`; and then run:
 
 ```bash
 $ mvn spring-boot:run

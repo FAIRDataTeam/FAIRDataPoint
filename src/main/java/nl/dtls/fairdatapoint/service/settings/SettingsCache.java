@@ -23,29 +23,38 @@
 package nl.dtls.fairdatapoint.service.settings;
 
 import jakarta.annotation.PostConstruct;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.api.controller.settings.SettingsDefaults;
+import nl.dtls.fairdatapoint.database.db.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static nl.dtls.fairdatapoint.config.CacheConfig.SETTINGS_CACHE;
 
 @Service
+@RequiredArgsConstructor
 public class SettingsCache {
 
     private static final String SETTINGS_KEY = "settings";
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private SettingsRepository settingsRepository;
+    private final SettingsRepository settingsRepository;
+
+    private final SettingsDefaults settingsDefaults;
 
     @PostConstruct
     public void updateCachedSettings() {
-        updateCachedSettings(settingsRepository.findFirstBy().orElse(Settings.getDefault()));
+        updateCachedSettings(
+                settingsRepository
+                        .findByUuid(KnownUUIDs.SETTINGS_UUID)
+                        .orElse(settingsDefaults.getDefaults())
+        );
     }
 
     public void updateCachedSettings(Settings settings) {
@@ -60,7 +69,9 @@ public class SettingsCache {
     }
 
     public Settings getOrDefaults() {
-        return cache().get(SETTINGS_KEY, Settings.class);
+        return Optional
+                .ofNullable(cache().get(SETTINGS_KEY, Settings.class))
+                .orElse(settingsDefaults.getDefaults());
     }
 
     private Cache cache() {

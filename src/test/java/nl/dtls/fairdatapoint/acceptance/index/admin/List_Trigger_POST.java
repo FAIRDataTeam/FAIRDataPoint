@@ -24,12 +24,12 @@ package nl.dtls.fairdatapoint.acceptance.index.admin;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexEventRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.event.EventType;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEventType;
 import nl.dtls.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class List_Trigger_POST extends WebIntegrationTest {
 
     @Autowired
-    private EventRepository eventRepository;
+    private IndexEventRepository eventRepository;
 
     @Autowired
     private IndexEntryRepository indexEntryRepository;
@@ -170,12 +170,12 @@ public class List_Trigger_POST extends WebIntegrationTest {
 
         // WHEN
         ResponseEntity<Void> result = client.exchange(request, responseType);
-        List<Event> events = eventRepository.getAllByType(EventType.AdminTrigger);
+        List<IndexEvent> events = eventRepository.getAllByType(IndexEventType.ADMIN_TRIGGER);
 
         // THEN: 
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
         assertThat("One AdminTrigger event is created", events.size(), is(equalTo(1)));
-        assertThat("Records correct client URL", events.get(0).getAdminTrigger().getClientUrl(), is(equalTo(entry.getClientUrl())));
+        assertThat("Records correct client URL", events.get(0).getPayload().getAdminTrigger().getClientUrl(), is(equalTo(entry.getClientUrl())));
     }
 
     @Test
@@ -195,11 +195,11 @@ public class List_Trigger_POST extends WebIntegrationTest {
 
         // WHEN
         ResponseEntity<Void> result = client.exchange(request, responseType);
-        List<Event> events = eventRepository.getAllByType(EventType.AdminTrigger);
+        List<IndexEvent> events = eventRepository.getAllByType(IndexEventType.ADMIN_TRIGGER);
 
         // THEN: 
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
         assertThat("One AdminTrigger event is created", events.size(), is(equalTo(1)));
-        assertThat("Records correct client URL", events.get(0).getAdminTrigger().getClientUrl(), is(equalTo(entry.getClientUrl())));
+        assertThat("Records correct client URL", events.get(0).getPayload().getAdminTrigger().getClientUrl(), is(equalTo(entry.getClientUrl())));
     }
 }

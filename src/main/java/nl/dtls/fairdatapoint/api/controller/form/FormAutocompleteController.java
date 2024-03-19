@@ -24,10 +24,10 @@ package nl.dtls.fairdatapoint.api.controller.form;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
 import nl.dtls.fairdatapoint.api.dto.form.FormAutocompleteRequestDTO;
 import nl.dtls.fairdatapoint.service.form.autocomplete.FormsAutocompleteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,10 +41,10 @@ import java.util.List;
 @Tag(name = "Client")
 @RestController
 @RequestMapping("/forms")
+@RequiredArgsConstructor
 public class FormAutocompleteController {
 
-    @Autowired
-    private FormsAutocompleteService autocompleteService;
+    private final FormsAutocompleteService autocompleteService;
 
     @PostMapping(
             path = "/autocomplete",

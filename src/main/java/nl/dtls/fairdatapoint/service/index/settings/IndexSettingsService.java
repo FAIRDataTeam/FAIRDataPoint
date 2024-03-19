@@ -22,33 +22,29 @@
  */
 package nl.dtls.fairdatapoint.service.index.settings;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
 import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
 import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
 
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class IndexSettingsService {
 
-    @Autowired
-    private IndexSettingsRepository repository;
+    private final IndexSettingsRepository repository;
 
-    @Autowired
-    private IndexSettingsMapper mapper;
+    private final IndexSettingsMapper mapper;
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final IndexSettingsDefaults defaults;
 
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
@@ -62,33 +58,24 @@ public class IndexSettingsService {
 
     @RequiredEnabledIndexFeature
     public IndexSettings getOrDefaults() {
-        return repository.findFirstBy().orElse(getDefaults());
+        return repository.findByUuid(KnownUUIDs.SETTINGS_UUID).orElse(defaults.getDefaults());
     }
 
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO getCurrentSettings() {
-        return mapper.toDTO(getOrDefaults(), getDefaults());
-    }
-
-    @RequiredEnabledIndexFeature
-    public IndexSettings getDefaults() {
-        final IndexSettings settings = new IndexSettings();
-        settings.setPing(IndexSettingsPing.getDefault());
-        settings.setRetrieval(IndexSettingsRetrieval.getDefault());
-        settings.setAutoPermit(instanceProperties.isIndexAutoPermit());
-        return settings;
+        return mapper.toDTO(getOrDefaults(), defaults.getDefaults());
     }
 
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO updateSettings(IndexSettingsUpdateDTO dto) {
         return mapper.toDTO(
                 repository.save(mapper.fromUpdateDTO(dto, getOrDefaults())),
-                getDefaults()
+                defaults.getDefaults()
         );
     }
 
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO resetSettings() {
-        return updateSettings(mapper.toUpdateDTO(getDefaults()));
+        return updateSettings(mapper.toUpdateDTO(defaults.getDefaults()));
     }
 }

@@ -23,10 +23,9 @@
 package nl.dtls.fairdatapoint.acceptance.metadata.dataset.member;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,6 +33,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestDelete;
@@ -44,10 +44,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("DELETE /dataset/:datasetId/members/:userUuid")
 public class Detail_DELETE extends WebIntegrationTest {
 
-    @Autowired
-    private UserFixtures userFixtures;
-
-    private URI url(String datasetId, String userUuid) {
+    private URI url(String datasetId, UUID userUuid) {
         return URI.create(format("/dataset/%s/members/%s", datasetId, userUuid));
     }
 
@@ -66,7 +63,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     private void create_res204(String token) {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("dataset-1", userFixtures.nikola().getUuid()))
+                .delete(url("dataset-1", KnownUUIDs.USER_NIKOLA_UUID))
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -84,7 +81,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("dataset-2", userFixtures.nikola().getUuid()))
+                .delete(url("dataset-2", KnownUUIDs.USER_NIKOLA_UUID))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -100,7 +97,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing dataset")
     public void res404_nonExistingCatalog() {
-        createUserNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
+        createUserNotFoundTestDelete(client, url("nonExisting", KnownUUIDs.USER_NIKOLA_UUID));
     }
 
 }

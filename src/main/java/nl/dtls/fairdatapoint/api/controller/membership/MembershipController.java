@@ -23,9 +23,9 @@
 package nl.dtls.fairdatapoint.api.controller.membership;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
 import nl.dtls.fairdatapoint.service.membership.MembershipService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,10 +38,10 @@ import java.util.List;
 @Tag(name = "Authentication and Authorization")
 @RestController
 @RequestMapping("/memberships")
+@RequiredArgsConstructor
 public class MembershipController {
 
-    @Autowired
-    private MembershipService membershipService;
+    private final MembershipService membershipService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MembershipDTO>> getUsers() {

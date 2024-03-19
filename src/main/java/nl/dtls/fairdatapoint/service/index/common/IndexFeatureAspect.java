@@ -22,21 +22,21 @@
  */
 package nl.dtls.fairdatapoint.service.index.common;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.entity.exception.FeatureDisabledException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class IndexFeatureAspect {
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
     @SneakyThrows
     @Around("@annotation(nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature)")

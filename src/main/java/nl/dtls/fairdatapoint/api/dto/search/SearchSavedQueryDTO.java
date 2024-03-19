@@ -31,6 +31,7 @@ import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQueryType;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,7 +41,7 @@ import java.time.Instant;
 public class SearchSavedQueryDTO {
 
     @NotBlank
-    private String uuid;
+    private UUID uuid;
 
     @NotBlank
     private String name;

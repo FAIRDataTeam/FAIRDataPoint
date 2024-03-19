@@ -28,13 +28,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class UserDTO {
 
-    private String uuid;
+    private UUID uuid;
 
     private String firstName;
 

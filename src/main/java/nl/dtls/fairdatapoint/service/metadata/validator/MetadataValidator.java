@@ -82,7 +82,7 @@ public class MetadataValidator {
         if (rdParent
                 .getChildren()
                 .stream()
-                .noneMatch(rdChild -> rdChild.getResourceDefinitionUuid().equals(definition.getUuid()))
+                .noneMatch(rdChild -> rdChild.getTarget().equals(definition))
         ) {
             throw new ValidationException(format("Parent is not of correct type (RD: %s)", rdParent.getName()));
         }

@@ -24,13 +24,10 @@ package nl.dtls.fairdatapoint.acceptance.settings;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.settings.*;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
+import nl.dtls.fairdatapoint.database.db.repository.SettingsRepository;
 import nl.dtls.fairdatapoint.entity.settings.Settings;
-import nl.dtls.fairdatapoint.entity.settings.SettingsFormsAutocomplete;
-import nl.dtls.fairdatapoint.entity.settings.SettingsMetricsEntry;
-import nl.dtls.fairdatapoint.entity.settings.SettingsPing;
 import nl.dtls.fairdatapoint.service.settings.SettingsCache;
-import org.junit.jupiter.api.AfterAll;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,36 +62,16 @@ public class List_PUT extends WebIntegrationTest {
         return URI.create("/settings");
     }
 
-    private Settings customSettings() {
-        return Settings.builder()
-                .metadataMetrics(
-                        List.of(new SettingsMetricsEntry(
-                                "http://example.com/metric",
-                                "http://example.com/resource"
-                        ))
-                )
-                .ping(SettingsPing.builder()
-                        .enabled(false)
-                        .endpoints(List.of(
-                                "https://home.fairdatapoint.org",
-                                "https://example.com/index"
-                        ))
-                        .build()
-                )
-                .searchFilters(Collections.emptyList())
-                .build();
-    }
 
     private SettingsUpdateDTO customSettingsUpdateDTO() {
-        Settings customSettings = customSettings();
         return new SettingsUpdateDTO(
+                "My title",
                 null,
-                null,
-                customSettings.getMetadataMetrics(),
+                List.of(),
                 SettingsPingUpdateDTO
                         .builder()
-                        .enabled(customSettings.getPing().isEnabled())
-                        .endpoints(customSettings.getPing().getEndpoints())
+                        .enabled(true)
+                        .endpoints(List.of("http://example.com", "http://example.org"))
                         .build(),
                 SettingsSearchDTO
                         .builder()
@@ -113,15 +90,14 @@ public class List_PUT extends WebIntegrationTest {
     }
 
     private SettingsUpdateDTO invalidUpdateDTO() {
-        Settings customSettings = customSettings();
         return new SettingsUpdateDTO(
                 null,
                 null,
                 null,
                 SettingsPingUpdateDTO
                         .builder()
-                        .enabled(customSettings.getPing().isEnabled())
-                        .endpoints(customSettings.getPing().getEndpoints())
+                        .enabled(true)
+                        .endpoints(List.of("http://example.com", "http://example.org"))
                         .build(),
                 SettingsSearchDTO
                         .builder()
@@ -143,17 +119,16 @@ public class List_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 200: update settings")
     public void res200_updateSettings() {
         // GIVEN: prepare data
-        Settings settings = customSettings();
-        settingsRepository.deleteAll();
-        settingsRepository.insert(settings);
+        Settings settings = settingsRepository.findByUuid(KnownUUIDs.NULL_UUID).get();
         settingsCache.updateCachedSettings();
+        SettingsUpdateDTO dto = customSettingsUpdateDTO();
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
                 .put(url())
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(customSettingsUpdateDTO());
+                .body(dto);
 
         // WHEN
         ResponseEntity<SettingsDTO> result = client.exchange(request, responseType);
@@ -162,9 +137,10 @@ public class List_PUT extends WebIntegrationTest {
         assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(1)));
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Response contains custom metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(settings.getMetadataMetrics())));
-        assertThat("Response contains custom ping enabled", Objects.requireNonNull(result.getBody()).getPing().getEnabled(), is(equalTo(settings.getPing().isEnabled())));
-        assertThat("Response contains custom ping endpoints", Objects.requireNonNull(result.getBody()).getPing().getEndpoints(), is(equalTo(settings.getPing().getEndpoints())));
+        assertThat("Response contains custom app title", Objects.requireNonNull(result.getBody()).getAppTitle(), is(equalTo("My title")));
+        assertThat("Response contains custom metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(List.of())));
+        assertThat("Response contains custom ping enabled", Objects.requireNonNull(result.getBody()).getPing().getEnabled(), is(equalTo(dto.getPing().isEnabled())));
+        assertThat("Response contains custom ping endpoints", Objects.requireNonNull(result.getBody()).getPing().getEndpoints(), is(equalTo(dto.getPing().getEndpoints())));
     }
 
     @Test

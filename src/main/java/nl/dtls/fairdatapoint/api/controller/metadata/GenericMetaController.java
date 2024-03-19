@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.api.controller.metadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
 import nl.dtls.fairdatapoint.api.dto.metadata.MetaPathDTO;
@@ -33,7 +34,7 @@ import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.entity.metadata.Metadata;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.member.MemberService;
 import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
 import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -44,8 +45,6 @@ import nl.dtls.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -60,28 +59,22 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Metadata")
 @RestController
+@RequiredArgsConstructor
 public class GenericMetaController {
 
     private static final int SUPPORTED_URL_FRAGMENTS = 3;
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
-    @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private final MetadataServiceFactory metadataServiceFactory;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private CurrentUserService currentUserService;
+    private final CurrentUserService currentUserService;
 
     @Operation(hidden = true)
     @GetMapping(path = {"meta", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/meta"})
@@ -99,7 +92,7 @@ public class GenericMetaController {
         ResourceDefinition definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get and check existence entity
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final Optional<UserAccount> oCurrentUser = currentUserService.getCurrentUser();
         final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         Model entity = metadataService.retrieve(entityUri, mode);
@@ -117,7 +110,7 @@ public class GenericMetaController {
         final Map<String, MetaPathDTO> pathMap = new HashMap<>();
         while (true) {
             final MetaPathDTO entry = new MetaPathDTO();
-            entry.setResourceDefinitionUuid(definition.getUuid());
+            entry.setResourceDefinitionUuid(definition.getUuid().toString());
             entry.setTitle(getTitle(entity).stringValue());
             final IRI parentUri = i(getStringObjectBy(entity, entityUri, DCTERMS.IS_PART_OF));
             Optional.ofNullable(parentUri).map(IRI::toString).ifPresent(entry::setParent);

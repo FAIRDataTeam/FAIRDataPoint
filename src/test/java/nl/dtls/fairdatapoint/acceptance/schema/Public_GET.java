@@ -23,13 +23,10 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +38,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -53,10 +48,10 @@ import static org.hamcrest.core.IsNull.notNullValue;
 public class Public_GET extends WebIntegrationTest {
 
     @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
+    private MetadataSchemaRepository metadataSchemaRepository;
 
     private final ParameterizedTypeReference<List<MetadataSchemaVersionDTO>> responseType =
             new ParameterizedTypeReference<>() {
@@ -66,28 +61,15 @@ public class Public_GET extends WebIntegrationTest {
         return URI.create("/metadata-schemas/public");
     }
 
-    private MetadataSchema makeSchema(Boolean published) {
-        SemVer version = new SemVer("1.0.0");
-        return MetadataSchema.builder()
-                .uuid(UUID.randomUUID().toString())
-                .version(version)
-                .versionString(version.toString())
-                .versionUuid(UUID.randomUUID().toString())
-                .name(metadataSchemaFixtures.customSchema().getName())
-                .definition(metadataSchemaFixtures.customSchema().getDefinition())
-                .published(published)
-                .previousVersionUuid(null)
-                .targetClasses(Set.of())
-                .build();
-    }
-
     @Test
     @DisplayName("HTTP 200: no published")
     public void res200_noPublished() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
-        MetadataSchema metadataSchema = makeSchema(false);
-        metadataSchemaRepository.insert(metadataSchema);
+        final MetadataSchemaVersion published1 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_SIMPLE_V1_UUID).get();
+        final MetadataSchemaVersion published2 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_INTERNAL_V1_UUID).get();
+
+        metadataSchemaVersionRepository.deleteAll(List.of(published1, published2));
+        metadataSchemaRepository.deleteAll(List.of(published1.getSchema(), published2.getSchema()));
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -108,11 +90,8 @@ public class Public_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: published")
     public void res200_published() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
-        MetadataSchema metadataSchemaNotPublished = makeSchema(false);
-        MetadataSchema metadataSchemaPublished = makeSchema(true);
-        metadataSchemaRepository.insert(metadataSchemaNotPublished);
-        metadataSchemaRepository.insert(metadataSchemaPublished);
+        final MetadataSchemaVersion published1 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_SIMPLE_V1_UUID).get();
+        final MetadataSchemaVersion published2 = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_INTERNAL_V1_UUID).get();
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -126,8 +105,10 @@ public class Public_GET extends WebIntegrationTest {
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Result is an empty list", result.getBody().size(), is(equalTo(1)));
-        assertThat("UUID matches the published schema", result.getBody().get(0).getUuid(), is(equalTo(metadataSchemaPublished.getUuid())));
-        assertThat("UUID matches the published schema", result.getBody().get(0).getVersionUuid(), is(equalTo(metadataSchemaPublished.getVersionUuid())));
+        assertThat("Result is an empty list", result.getBody().size(), is(equalTo(2)));
+        assertThat("UUID matches the published schema", result.getBody().get(0).getUuid(), is(equalTo(published1.getSchema().getUuid())));
+        assertThat("UUID matches the published schema", result.getBody().get(0).getVersionUuid(), is(equalTo(published1.getUuid())));
+        assertThat("UUID matches the published schema", result.getBody().get(1).getUuid(), is(equalTo(published2.getSchema().getUuid())));
+        assertThat("UUID matches the published schema", result.getBody().get(1).getVersionUuid(), is(equalTo(published2.getUuid())));
     }
 }

@@ -23,11 +23,11 @@
 package nl.dtls.fairdatapoint.service.index.webhook;
 
 import nl.dtls.fairdatapoint.api.dto.index.webhook.WebhookPayloadDTO;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.event.WebhookPing;
-import nl.dtls.fairdatapoint.entity.index.event.WebhookTrigger;
-import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
+import nl.dtls.fairdatapoint.entity.index.event.payload.WebhookPing;
+import nl.dtls.fairdatapoint.entity.index.event.payload.WebhookTrigger;
+import nl.dtls.fairdatapoint.entity.index.webhook.IndexWebhook;
+import nl.dtls.fairdatapoint.entity.index.webhook.IndexWebhookEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -39,28 +39,28 @@ public class WebhookMapper {
 
     private static final Integer VERSION = 1;
 
-    public Event toTriggerEvent(Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent) {
+    public IndexEvent toTriggerEvent(IndexWebhook webhook, IndexWebhookEvent webhookEvent, IndexEvent triggerEvent) {
         final WebhookTrigger webhookTrigger = new WebhookTrigger();
         webhookTrigger.setWebhook(webhook);
         webhookTrigger.setMatchedEvent(webhookEvent);
-        return new Event(VERSION, webhookTrigger, triggerEvent);
+        return new IndexEvent(VERSION, webhookTrigger, triggerEvent);
     }
 
-    public Event toPingEvent(
+    public IndexEvent toPingEvent(
             Authentication authentication, UUID webhookUuid, String remoteAddr
     ) {
         final WebhookPing webhookPing = new WebhookPing();
         webhookPing.setWebhookUuid(webhookUuid);
         webhookPing.setRemoteAddr(remoteAddr);
         webhookPing.setTokenName(authentication.getName());
-        return new Event(VERSION, webhookPing);
+        return new IndexEvent(VERSION, webhookPing);
     }
 
-    public WebhookPayloadDTO toWebhookPayloadDTO(Event event) {
+    public WebhookPayloadDTO toWebhookPayloadDTO(IndexEvent event) {
         final WebhookPayloadDTO webhookPayload = new WebhookPayloadDTO();
-        webhookPayload.setEvent(event.getWebhookTrigger().getMatchedEvent());
+        webhookPayload.setEvent(event.getPayload().getWebhookTrigger().getMatchedEvent());
         webhookPayload.setClientUrl(event.getRelatedTo().getClientUrl());
-        webhookPayload.setSecret(event.getWebhookTrigger().getWebhook().getSecret());
+        webhookPayload.setSecret(event.getPayload().getWebhookTrigger().getWebhook().getSecret());
         webhookPayload.setUuid(event.getUuid().toString());
         webhookPayload.setTimestamp(Instant.now().toString());
         return webhookPayload;

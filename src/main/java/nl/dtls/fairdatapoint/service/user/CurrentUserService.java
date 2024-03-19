@@ -22,32 +22,33 @@
  */
 package nl.dtls.fairdatapoint.service.user;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 @Service
+@RequiredArgsConstructor
 public class CurrentUserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    public Optional<String> getCurrentUserUuid() {
+    public Optional<UUID> getCurrentUserUuid() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             final Object principal = auth.getPrincipal();
             if (principal instanceof org.springframework.security.core.userdetails.User) {
                 return of(((org.springframework.security.core.userdetails.User) principal)
-                        .getUsername());
+                        .getUsername()).map(UUID::fromString);
             }
         }
         return empty();
@@ -62,8 +63,7 @@ public class CurrentUserService {
         return authority.getAuthority().equals("ROLE_ADMIN");
     }
 
-    public Optional<User> getCurrentUser() {
-        return getCurrentUserUuid().flatMap(userRepository::findByUuid);
+    public Optional<UserAccount> getCurrentUser() {
+        return getCurrentUserUuid().flatMap(userAccountRepository::findByUuid);
     }
-
 }

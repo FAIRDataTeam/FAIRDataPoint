@@ -22,242 +22,184 @@
  */
 package nl.dtls.fairdatapoint.service.settings;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.search.SearchFilterDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchFilterItemDTO;
 import nl.dtls.fairdatapoint.api.dto.settings.*;
 import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
 import nl.dtls.fairdatapoint.config.properties.PingProperties;
+import nl.dtls.fairdatapoint.config.properties.RepositoryConnectionProperties;
 import nl.dtls.fairdatapoint.config.properties.RepositoryProperties;
 import nl.dtls.fairdatapoint.entity.settings.*;
 import nl.dtls.fairdatapoint.service.search.SearchMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
+@RequiredArgsConstructor
 public class SettingsMapper {
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
-    @Autowired
-    private PingProperties pingProperties;
+    private final PingProperties pingProperties;
 
-    @Autowired
-    private RepositoryProperties repositoryProperties;
+    private final RepositoryProperties repositoryProperties;
 
-    @Autowired
-    private SearchMapper searchMapper;
+    private final SearchMapper searchMapper;
 
     public SettingsDTO toDTO(Settings settings) {
-        return SettingsDTO
-                .builder()
+        return SettingsDTO.builder()
+                .clientUrl(instanceProperties.getClientUrl())
+                .persistentUrl(instanceProperties.getPersistentUrl())
                 .appTitle(settings.getAppTitle())
                 .appSubtitle(settings.getAppSubtitle())
                 .appTitleFromConfig(instanceProperties.getTitle())
                 .appSubtitleFromConfig(instanceProperties.getSubtitle())
-                .clientUrl(instanceProperties.getClientUrl())
-                .persistentUrl(instanceProperties.getPersistentUrl())
-                .metadataMetrics(settings.getMetadataMetrics())
-                .ping(toDTO(settings.getPing()))
-                .mainRepository(getMainRepositoryDTO())
-                .draftsRepository(getDraftsRepositoryDTO())
-                .search(
-                        SettingsSearchDTO
-                                .builder()
-                                .filters(settings
-                                        .getSearchFilters()
-                                        .stream()
-                                        .map(this::toDTO)
-                                        .toList()
-                                )
+                .metadataMetrics(settings.getMetrics().stream().map(this::toMetricDTO).toList())
+                .ping(toPingDTO(settings))
+                .mainRepository(toRepositoryDTO(repositoryProperties.getMain()))
+                .draftsRepository(toRepositoryDTO(repositoryProperties.getDrafts()))
+                .search(toSearchDTO(settings))
+                .forms(toFormsDTO(settings))
+                .build();
+    }
+
+    private SettingsFormsDTO toFormsDTO(Settings settings) {
+        return SettingsFormsDTO.builder()
+                .autocomplete(
+                        SettingsFormsAutocompleteDTO.builder()
+                                .searchNamespace(settings.getAutocompleteSearchNamespace())
+                                .sources(settings.getAutocompleteSources().stream().map(this::toSourceDTO).toList())
                                 .build()
                 )
-                .forms(toDTO(settings.getForms()))
                 .build();
     }
 
-    public SettingsFormsDTO toDTO(SettingsForms forms) {
-        return SettingsFormsDTO
-                .builder()
-                .autocomplete(toDTO(forms.getAutocomplete()))
+    private SettingsAutocompleteSourceDTO toSourceDTO(SettingsAutocompleteSource source) {
+        return SettingsAutocompleteSourceDTO.builder()
+                .rdfType(source.getRdfType())
+                .sparqlEndpoint(source.getSparqlEndpoint())
+                .sparqlQuery(source.getSparqlQuery())
                 .build();
     }
 
-    public SettingsFormsAutocompleteDTO toDTO(SettingsFormsAutocomplete autocomplete) {
-        return SettingsFormsAutocompleteDTO
-                .builder()
-                .searchNamespace(autocomplete.getSearchNamespace())
-                .sources(autocomplete.getSources().stream().map(this::toDTO).toList())
+    private SettingsSearchDTO toSearchDTO(Settings settings) {
+        return SettingsSearchDTO.builder()
+                .filters(settings.getSearchFilters().stream().map(this::toSearchFilterDTO).toList())
                 .build();
     }
 
-    public SettingsAutocompleteSourceDTO toDTO(SettingsAutocompleteSource autocomplete) {
-        return SettingsAutocompleteSourceDTO
-                .builder()
-                .rdfType(autocomplete.getRdfType())
-                .sparqlEndpoint(autocomplete.getSparqlEndpoint())
-                .sparqlQuery(autocomplete.getSparqlQuery())
+    private SearchFilterDTO toSearchFilterDTO(SettingsSearchFilter settingsSearchFilter) {
+        return SearchFilterDTO.builder()
+                .type(settingsSearchFilter.getType())
+                .label(settingsSearchFilter.getLabel())
+                .predicate(settingsSearchFilter.getPredicate())
+                .queryFromRecords(settingsSearchFilter.getQueryRecords())
+                .values(settingsSearchFilter.getItems().stream().map(this::toSearchFilterItemDTO).toList())
                 .build();
     }
 
-    public SearchFilterDTO toDTO(SettingsSearchFilter filter) {
-        return SearchFilterDTO
-                .builder()
-                .type(filter.getType())
-                .label(filter.getLabel())
-                .predicate(filter.getPredicate())
-                .values(filter.getPresetValues().stream().map(this::toDTO).toList())
-                .queryFromRecords(filter.isQueryFromRecords())
-                .build();
-    }
-
-    public SearchFilterItemDTO toDTO(SettingsSearchFilterItem filterItem) {
-        return SearchFilterItemDTO
-                .builder()
-                .label(filterItem.getLabel())
-                .value(filterItem.getValue())
+    private SearchFilterItemDTO toSearchFilterItemDTO(SettingsSearchFilterItem settingsSearchFilterItem) {
+        return SearchFilterItemDTO.builder()
+                .label(settingsSearchFilterItem.getLabel())
+                .value(settingsSearchFilterItem.getValue())
                 .preset(true)
                 .build();
     }
 
-    public SettingsPingDTO toDTO(SettingsPing settingsPing) {
-        return SettingsPingDTO
-                .builder()
-                .enabled(settingsPing.isEnabled())
-                .endpoints(settingsPing.getEndpoints())
+    private SettingsRepositoryDTO toRepositoryDTO(RepositoryConnectionProperties repo) {
+        return SettingsRepositoryDTO.builder()
+                .type(repo.getStringType())
+                .repository(repo.getRepository())
+                .dir(repo.getDir())
+                .url(repo.getUrl())
+                .username(repo.getUsername())
+                .password(redact(repo.getPassword()))
+                .build();
+    }
+
+    private SettingsPingDTO toPingDTO(Settings settings) {
+        return SettingsPingDTO.builder()
+                .enabled(settings.getPingEnabled())
+                .endpoints(settings.getPingEndpoints())
                 .endpointsFromConfig(pingProperties.getEndpoints())
                 .interval(pingProperties.getInterval().toString())
                 .build();
     }
 
-    public SettingsRepositoryDTO getMainRepositoryDTO() {
-        return SettingsRepositoryDTO
-                .builder()
-                .type(repositoryProperties.getMain().getStringType())
-                .dir(repositoryProperties.getMain().getDir())
-                .url(repositoryProperties.getMain().getUrl())
-                .repository(repositoryProperties.getMain().getRepository())
-                .username(repositoryProperties.getMain().getUsername())
-                .password(redact(repositoryProperties.getMain().getPassword()))
-                .build();
-    }
-
-    public SettingsRepositoryDTO getDraftsRepositoryDTO() {
-        return SettingsRepositoryDTO
-                .builder()
-                .type(repositoryProperties.getDrafts().getStringType())
-                .dir(repositoryProperties.getDrafts().getDir())
-                .url(repositoryProperties.getDrafts().getUrl())
-                .repository(repositoryProperties.getDrafts().getRepository())
-                .username(repositoryProperties.getDrafts().getUsername())
-                .password(redact(repositoryProperties.getDrafts().getPassword()))
-                .build();
-    }
-
-    public Settings fromUpdateDTO(SettingsUpdateDTO dto, Settings settings) {
-        return settings
-                .toBuilder()
-                .appTitle(dto.getAppTitle())
-                .appSubtitle(dto.getAppSubtitle())
-                .metadataMetrics(dto.getMetadataMetrics())
-                .ping(fromUpdateDTO(dto.getPing(), settings.getPing()))
-                .searchFilters(dto
-                        .getSearch()
-                        .getFilters()
-                        .stream()
-                        .map(this::fromUpdateDTO)
-                        .toList()
-                )
-                .forms(fromUpdateDTO(dto.getForms(), settings.getForms()))
-                .build();
-    }
-
-    public SettingsSearchFilter fromUpdateDTO(SearchFilterDTO dto) {
-        return SettingsSearchFilter
-                .builder()
-                .type(dto.getType())
-                .label(dto.getLabel())
-                .predicate(dto.getPredicate())
-                .queryFromRecords(dto.isQueryFromRecords())
-                .presetValues(dto
-                        .getValues()
-                        .stream()
-                        .map(this::fromUpdateDTO)
-                        .toList()
-                )
-                .build();
-    }
-
-    public SettingsSearchFilterItem fromUpdateDTO(SearchFilterItemDTO dto) {
-        return SettingsSearchFilterItem
-                .builder()
-                .label(dto.getLabel())
-                .value(dto.getValue())
-                .build();
-    }
-
-    public SettingsForms fromUpdateDTO(SettingsFormsDTO dto, SettingsForms forms) {
-        return forms
-                .toBuilder()
-                .autocomplete(fromUpdateDTO(dto.getAutocomplete(), forms.getAutocomplete()))
-                .build();
-    }
-
-    public SettingsFormsAutocomplete fromUpdateDTO(
-            SettingsFormsAutocompleteDTO dto, SettingsFormsAutocomplete autocomplete
-    ) {
-        return autocomplete
-                .toBuilder()
-                .searchNamespace(dto.getSearchNamespace())
-                .sources(dto.getSources().stream().map(this::fromUpdateDTO).toList())
-                .build();
-    }
-
-    public SettingsAutocompleteSource fromUpdateDTO(SettingsAutocompleteSourceDTO dto) {
-        return SettingsAutocompleteSource
-                .builder()
-                .rdfType(dto.getRdfType())
-                .sparqlEndpoint(dto.getSparqlEndpoint())
-                .sparqlQuery(dto.getSparqlQuery())
-                .build();
-    }
-
-    public SettingsPing fromUpdateDTO(SettingsPingUpdateDTO dto, SettingsPing settingsPing) {
-        return settingsPing
-                .toBuilder()
-                .enabled(dto.isEnabled())
-                .endpoints(dto.getEndpoints())
-                .build();
-    }
-
-    public SettingsUpdateDTO toUpdateDTO(Settings settings) {
-        return SettingsUpdateDTO
-                .builder()
-                .metadataMetrics(settings.getMetadataMetrics())
-                .ping(toUpdateDTO(settings.getPing()))
-                .search(SettingsSearchDTO
-                        .builder()
-                        .filters(settings
-                                        .getSearchFilters()
-                                        .stream()
-                                        .map(searchMapper::toFilterDTO)
-                                        .toList()
-                        )
-                        .build()
-                )
-                .forms(toDTO(settings.getForms()))
-                .build();
-    }
-
-    public SettingsPingUpdateDTO toUpdateDTO(SettingsPing settingsPing) {
-        return SettingsPingUpdateDTO
-                .builder()
-                .enabled(settingsPing.isEnabled())
-                .endpoints(settingsPing.getEndpoints())
+    public SettingsMetricDTO toMetricDTO(SettingsMetric metric) {
+        return SettingsMetricDTO.builder()
+                .metricUri(metric.getMetricUri())
+                .resourceUri(metric.getResourceUri())
                 .build();
     }
 
     private String redact(String secret) {
         return secret != null ? "<SECRET>" : null;
+    }
+
+    public Settings fromUpdateDTO(SettingsUpdateDTO dto, Settings settings) {
+        return settings.toBuilder()
+                .appTitle(dto.getAppTitle())
+                .appSubtitle(dto.getAppSubtitle())
+                .pingEnabled(dto.getPing().isEnabled())
+                .pingEndpoints(dto.getPing().getEndpoints())
+                .autocompleteSearchNamespace(dto.getForms().getAutocomplete().getSearchNamespace())
+                .updatedAt(Instant.now())
+                .build();
+    }
+
+    public SettingsMetric fromMetricDTO(SettingsMetricDTO dto, int orderPriority, Settings settings) {
+        return SettingsMetric.builder()
+                .metricUri(dto.getMetricUri())
+                .resourceUri(dto.getResourceUri())
+                .orderPriority(orderPriority)
+                .settings(settings)
+                .build();
+    }
+
+    public SettingsAutocompleteSource fromAutocompleteSourceDTO(
+            SettingsAutocompleteSourceDTO dto, int orderPriority, Settings settings
+    ) {
+        return SettingsAutocompleteSource.builder()
+                .rdfType(dto.getRdfType())
+                .sparqlEndpoint(dto.getSparqlEndpoint())
+                .sparqlQuery(dto.getSparqlQuery())
+                .orderPriority(orderPriority)
+                .settings(settings)
+                .build();
+    }
+
+    public SettingsSearchFilter fromSearchFilterDTO(
+            SearchFilterDTO dto, int orderPriority, Settings settings
+    ) {
+        final List<SettingsSearchFilterItem> items = new ArrayList<>();
+        final SettingsSearchFilter filter = SettingsSearchFilter.builder()
+                .queryRecords(dto.isQueryFromRecords())
+                .label(dto.getLabel())
+                .predicate(dto.getPredicate())
+                .type(dto.getType())
+                .orderPriority(orderPriority)
+                .settings(settings)
+                .build();
+        for (int index = 0; index < dto.getValues().size(); index++) {
+            items.add(fromSearchFilterItemDTO(dto.getValues().get(index), index, filter));
+        }
+        filter.setItems(items);
+        return filter;
+    }
+
+    private SettingsSearchFilterItem fromSearchFilterItemDTO(
+            SearchFilterItemDTO dto, int orderPriority, SettingsSearchFilter filter
+    ) {
+        return SettingsSearchFilterItem.builder()
+                .label(dto.getLabel())
+                .value(dto.getValue())
+                .orderPriority(orderPriority)
+                .filter(filter)
+                .build();
     }
 }

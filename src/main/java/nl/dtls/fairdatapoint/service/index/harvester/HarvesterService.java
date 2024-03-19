@@ -22,6 +22,7 @@
  */
 package nl.dtls.fairdatapoint.service.index.harvester;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
@@ -33,7 +34,6 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.LDP;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -54,15 +54,14 @@ import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class HarvesterService {
 
     private static final String DEFAULT_NAVIGATION_SHACL = "defaultNavigationShacl.ttl";
 
-    @Autowired
-    private GenericMetadataRepository genericMetadataRepository;
+    private final GenericMetadataRepository genericMetadataRepository;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public void deleteHarvestedData(String clientUrl) throws MetadataRepositoryException {
         genericMetadataRepository.remove(i(clientUrl), RepositoryMode.MAIN);

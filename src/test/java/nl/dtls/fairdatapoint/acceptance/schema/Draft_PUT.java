@@ -25,11 +25,11 @@ package nl.dtls.fairdatapoint.acceptance.schema;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaVersion;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("PUT /metadata-schemas/:schemaUuid/draft")
 public class Draft_PUT extends WebIntegrationTest {
 
-    private URI url(String uuid) {
+    private URI url(UUID uuid) {
         return URI.create(format("/metadata-schemas/%s/draft", uuid));
     }
 
@@ -68,10 +68,7 @@ public class Draft_PUT extends WebIntegrationTest {
     }
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
-
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     @Autowired
     private MetadataSchemaRepository metadataSchemaRepository;
@@ -80,14 +77,12 @@ public class Draft_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
         MetadataSchemaChangeDTO reqDto = reqDto();
 
         // AND: Prepare request
         RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
-                .put(url(draft.getUuid()))
+                .put(url(draft.getSchema().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
@@ -111,18 +106,14 @@ public class Draft_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 200: with extends")
     public void res200_extends() {
         // GIVEN: Prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.deleteAll();
-        MetadataSchema parentSchema = metadataSchemaFixtures.resourceSchema();
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.save(draft);
-        metadataSchemaRepository.save(parentSchema);
+        MetadataSchema parentSchema = metadataSchemaRepository.findByUuid(KnownUUIDs.SCHEMA_RESOURCE_UUID).get();
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
         MetadataSchemaChangeDTO reqDto = reqDto();
         reqDto.setExtendsSchemaUuids(List.of(parentSchema.getUuid()));
 
         // AND: Prepare request
         RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
-                .put(url(draft.getUuid()))
+                .put(url(draft.getSchema().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
@@ -142,17 +133,14 @@ public class Draft_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 400: non-existing schema")
     public void res400_nonExistingSchema() {
         // GIVEN: Prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.deleteAll();
-        MetadataSchema parentSchema = metadataSchemaFixtures.resourceSchema();
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.save(draft);
+        MetadataSchema parentSchema = metadataSchemaRepository.findByUuid(KnownUUIDs.SCHEMA_RESOURCE_UUID).get();
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
         MetadataSchemaChangeDTO reqDto = reqDto();
-        reqDto.setExtendsSchemaUuids(List.of(parentSchema.getUuid()));
+        reqDto.setExtendsSchemaUuids(List.of(parentSchema.getUuid(), KnownUUIDs.NULL_UUID));
 
         // AND: Prepare request
         RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
-                .put(url(draft.getUuid()))
+                .put(url(draft.getSchema().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
@@ -170,16 +158,13 @@ public class Draft_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 400: simple schema loop")
     public void res400_schemaLoopSimple() {
         // GIVEN: Prepare data
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaRepository.deleteAll();
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        metadataSchemaDraftRepository.save(draft);
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();
         MetadataSchemaChangeDTO reqDto = reqDto();
-        reqDto.setExtendsSchemaUuids(List.of(draft.getUuid()));
+        reqDto.setExtendsSchemaUuids(List.of(draft.getSchema().getUuid()));
 
         // AND: Prepare request
         RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
-                .put(url(draft.getUuid()))
+                .put(url(draft.getSchema().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
@@ -197,22 +182,14 @@ public class Draft_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 400: complex schema loop")
     public void res400_schemaLoopComplex() {
         // GIVEN: Prepare data
-        MetadataSchema resourceSchema = metadataSchemaFixtures.resourceSchema();
-        MetadataSchema catalogSchema = metadataSchemaFixtures.catalogSchema();
-        MetadataSchemaDraft draft = metadataSchemaFixtures.customSchemaDraft1();
-        catalogSchema.setExtendSchemas(List.of(resourceSchema.getUuid()));
-        resourceSchema.setExtendSchemas(List.of(draft.getUuid()));
-        metadataSchemaDraftRepository.deleteAll();
-        metadataSchemaDraftRepository.save(draft);
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(resourceSchema);
-        metadataSchemaRepository.save(catalogSchema);
+        MetadataSchema extendedSchema = metadataSchemaRepository.findByUuid(Common.SCHEMA_MULTI_EXTS_UUID).get();
+        MetadataSchemaVersion draft = metadataSchemaVersionRepository.findByUuid(Common.SCHEMA_MULTI_DRAFT_DRAFT_UUID).get();;
         MetadataSchemaChangeDTO reqDto = reqDto();
-        reqDto.setExtendsSchemaUuids(List.of(catalogSchema.getUuid()));
+        reqDto.setExtendsSchemaUuids(List.of(extendedSchema.getUuid()));
 
         // AND: Prepare request
         RequestEntity<MetadataSchemaChangeDTO> request = RequestEntity
-                .put(url(draft.getUuid()))
+                .put(url(draft.getSchema().getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
@@ -229,18 +206,18 @@ public class Draft_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404")
     public void res404() {
-        createAdminNotFoundTestPut(client, url("nonExisting"), reqDto());
+        createAdminNotFoundTestPut(client, url(KnownUUIDs.NULL_UUID), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
-        createNoUserForbiddenTestPut(client, url(UUID.randomUUID().toString()), reqDto());
+        createNoUserForbiddenTestPut(client, url(UUID.randomUUID()), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_notAdmin() {
-        createUserForbiddenTestPut(client, url(UUID.randomUUID().toString()), reqDto());
+        createUserForbiddenTestPut(client, url(UUID.randomUUID()), reqDto());
     }
 }

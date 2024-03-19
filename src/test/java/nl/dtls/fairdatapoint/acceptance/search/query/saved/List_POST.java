@@ -26,9 +26,7 @@ import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
-import nl.dtls.fairdatapoint.entity.search.SearchSavedQuery;
+import nl.dtls.fairdatapoint.database.db.repository.SearchSavedQueryRepository;
 import nl.dtls.fairdatapoint.entity.search.SearchSavedQueryType;
 import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +39,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

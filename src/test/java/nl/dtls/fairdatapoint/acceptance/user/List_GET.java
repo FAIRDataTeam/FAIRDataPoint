@@ -24,7 +24,9 @@ package nl.dtls.fairdatapoint.acceptance.user;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import nl.dtls.fairdatapoint.database.db.repository.UserAccountRepository;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
+import nl.dtls.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,17 +47,22 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @DisplayName("GET /users")
 public class List_GET extends WebIntegrationTest {
 
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
     private URI url() {
         return URI.create("/users");
     }
-
-    @Autowired
-    private UserFixtures userFixtures;
 
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN:
+        UserAccount userAdmin = userAccountRepository.findByUuid(KnownUUIDs.USER_ADMIN_UUID).get();
+        UserAccount userAlbert = userAccountRepository.findByUuid(KnownUUIDs.USER_ALBERT_UUID).get();
+        UserAccount userNikola = userAccountRepository.findByUuid(KnownUUIDs.USER_NIKOLA_UUID).get();
+        UserAccount userIsaac = userAccountRepository.findByUuid(KnownUUIDs.USER_ISAAC_UUID).get();
+
         RequestEntity<Void> request = RequestEntity
                 .get(url())
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
@@ -69,10 +76,11 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<UserDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(3)));
-        Common.compare(userFixtures.admin(), body.get(0));
-        Common.compare(userFixtures.albert(), body.get(1));
-        Common.compare(userFixtures.nikola(), body.get(2));
+        assertThat(body.size(), is(equalTo(4)));
+        Common.compare(userAdmin, body.get(0));
+        Common.compare(userAlbert, body.get(1));
+        Common.compare(userNikola, body.get(2));
+        Common.compare(userIsaac, body.get(3));
     }
 
     @Test

@@ -22,12 +22,12 @@
  */
 package nl.dtls.fairdatapoint.service.index.webhook;
 
-import nl.dtls.fairdatapoint.entity.index.event.Event;
+import nl.dtls.fairdatapoint.entity.index.event.IndexEvent;
 import nl.dtls.fairdatapoint.entity.index.http.Exchange;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeDirection;
 import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
-import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import nl.dtls.fairdatapoint.entity.index.webhook.IndexWebhook;
+import nl.dtls.fairdatapoint.entity.index.webhook.IndexWebhookEvent;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -52,20 +52,20 @@ public class WebhookUtils {
             .build();
 
     private static boolean webhookMatches(
-            Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent
+            IndexWebhook webhook, IndexWebhookEvent webhookEvent, IndexEvent triggerEvent
     ) {
-        final boolean matchEvent = webhook.isAllEvents()
+        final boolean matchEvent = webhook.getAllEvents()
                 || webhook.getEvents().contains(webhookEvent);
         final boolean matchEntry =
-                webhook.isAllEntries()
+                webhook.getAllEntries()
                         || triggerEvent.getRelatedTo() == null
                         || webhook.getEntries().contains(
                                 triggerEvent.getRelatedTo().getClientUrl());
-        return matchEvent && matchEntry && webhook.isEnabled();
+        return matchEvent && matchEntry && webhook.getEnabled();
     }
 
-    public static Stream<Webhook> filterMatching(List<Webhook> webhooks, WebhookEvent webhookEvent,
-                                                 Event triggerEvent) {
+    public static Stream<IndexWebhook> filterMatching(List<IndexWebhook> webhooks, IndexWebhookEvent webhookEvent,
+                                                      IndexEvent triggerEvent) {
         return webhooks
                 .parallelStream()
                 .filter(webhook -> {
@@ -81,13 +81,13 @@ public class WebhookUtils {
     }
 
     public static void postWebhook(
-            Event event, Duration timeout, String payload, String signature
+            IndexEvent event, Duration timeout, String payload, String signature
     ) {
         final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
-        event.getWebhookTrigger().setExchange(ex);
+        event.getPayload().getWebhookTrigger().setExchange(ex);
         try {
             final HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(event.getWebhookTrigger().getWebhook().getPayloadUrl()))
+                    .uri(URI.create(event.getPayload().getWebhookTrigger().getWebhook().getPayloadUrl()))
                     .timeout(timeout)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                     .header("X-Signature", signature)

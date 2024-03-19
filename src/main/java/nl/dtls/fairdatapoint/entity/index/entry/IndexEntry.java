@@ -22,50 +22,73 @@
  */
 package nl.dtls.fairdatapoint.entity.index.entry;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntity;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.Type;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
-@Document
+@Entity(name = "IndexEntry")
+@Table(name = "index_entry")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder
-public class IndexEntry {
+@SuperBuilder
+public class IndexEntry extends BaseEntity {
 
-    @Id
-    private ObjectId id;
+    public static final Integer CURRENT_VERSION = 1;
 
-    private String uuid;
-
+    @NotNull
+    @Column(name = "client_url", nullable = false)
     private String clientUrl;
 
-    private IndexEntryState state = IndexEntryState.Unknown;
+    @Column(name = "repository_uri")
+    private String repositoryUri;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "state", columnDefinition = "INDEX_ENTRY_STATE", nullable = false)
+    private IndexEntryState state = IndexEntryState.UNKNOWN;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "permit", columnDefinition = "INDEX_ENTRY_PERMIT", nullable = false)
     private IndexEntryPermit permit = IndexEntryPermit.PENDING;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Instant registrationTime;
+    @NotNull
+    @Column(name = "metadata_version", nullable = false)
+    private Integer metadataVersion = CURRENT_VERSION;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Instant modificationTime;
+    @Column(name = "last_retrieval_at")
+    private Instant lastRetrievalAt;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Instant lastRetrievalTime;
-
-    private RepositoryMetadata currentMetadata;
+    @NotNull
+    @Type(JsonBinaryType.class)
+    @Column(name = "metadata", columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> metadata = new HashMap<>();
 
     public Duration getLastRetrievalAgo() {
-        if (lastRetrievalTime == null) {
+        if (getLastRetrievalAt() == null) {
             return null;
         }
-        return Duration.between(lastRetrievalTime, Instant.now());
+        return Duration.between(getLastRetrievalAt(), Instant.now());
+    }
+
+    public void setCurrentMetadata(RepositoryMetadata repositoryMetadata) {
+        setRepositoryUri(repositoryMetadata.getRepositoryUri());
+        setMetadataVersion(repositoryMetadata.getMetadataVersion());
+        setMetadata(repositoryMetadata.getMetadata());
     }
 }

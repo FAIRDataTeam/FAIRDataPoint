@@ -25,23 +25,20 @@ package nl.dtls.fairdatapoint.api.dto.resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionLink;
+import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ResourceDefinitionDTO {
 
     @NotBlank
-    private String uuid;
+    private UUID uuid;
 
     @NotBlank
     private String name;
@@ -50,16 +47,16 @@ public class ResourceDefinitionDTO {
     private String urlPrefix;
 
     @NotNull
-    private List<String> metadataSchemaUuids;
+    private List<UUID> metadataSchemaUuids;
 
     @NotNull
     private List<String> targetClassUris;
 
     @NotNull
     @Valid
-    private List<ResourceDefinitionChild> children;
+    private List<ResourceDefinitionChildDTO> children;
 
     @NotNull
     @Valid
-    private List<ResourceDefinitionLink> externalLinks;
+    private List<ResourceDefinitionLinkDTO> externalLinks;
 }

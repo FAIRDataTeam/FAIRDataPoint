@@ -25,11 +25,13 @@ package nl.dtls.fairdatapoint.api.dto.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 public class UserSimpleDTO {
 
-    private String uuid;
+    private UUID uuid;
 
     private String firstName;
 

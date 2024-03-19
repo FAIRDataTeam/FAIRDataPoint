@@ -22,24 +22,23 @@
  */
 package nl.dtls.fairdatapoint.service.member;
 
+import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
 import nl.dtls.fairdatapoint.entity.membership.Membership;
-import nl.dtls.fairdatapoint.entity.user.User;
+import nl.dtls.fairdatapoint.entity.user.UserAccount;
 import nl.dtls.fairdatapoint.service.membership.MembershipMapper;
 import nl.dtls.fairdatapoint.service.user.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
+@RequiredArgsConstructor
 public class MemberMapper {
 
-    @Autowired
-    private MembershipMapper membershipMapper;
+    private final MembershipMapper membershipMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    public MemberDTO toDTO(User user, Membership membership) {
+    public MemberDTO toDTO(UserAccount user, Membership membership) {
         return
                 new MemberDTO(
                         userMapper.toSimpleDTO(user),

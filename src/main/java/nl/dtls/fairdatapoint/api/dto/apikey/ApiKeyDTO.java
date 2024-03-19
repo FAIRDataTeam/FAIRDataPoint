@@ -24,6 +24,8 @@ package nl.dtls.fairdatapoint.api.dto.apikey;
 
 import lombok.*;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -31,8 +33,7 @@ import lombok.*;
 @EqualsAndHashCode
 public class ApiKeyDTO {
 
-    private String uuid;
+    private UUID uuid;
 
     private String token;
-
 }

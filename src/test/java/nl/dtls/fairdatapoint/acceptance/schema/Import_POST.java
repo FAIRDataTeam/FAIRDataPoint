@@ -23,10 +23,10 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaRepository;
+import nl.dtls.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
+import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class Import_POST extends WebIntegrationTest {
     private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
+    private MetadataSchemaVersionRepository metadataSchemaVersionRepository;
 
     private final ParameterizedTypeReference<List<MetadataSchemaVersionDTO>> responseType =
             new ParameterizedTypeReference<>() {
@@ -60,38 +60,38 @@ public class Import_POST extends WebIntegrationTest {
     }
 
     private MetadataSchemaVersionDTO schemaPublicDTO1() {
-        String schemaUuid = UUID.randomUUID().toString();
-        String versionUuid = UUID.randomUUID().toString();
         return MetadataSchemaVersionDTO.builder()
-                .uuid(schemaUuid)
-                .versionUuid(versionUuid)
+                .uuid(UUID.randomUUID())
+                .versionUuid(UUID.randomUUID())
                 .previousVersionUuid(null)
+                .type(MetadataSchemaType.CUSTOM)
                 .importedFrom("http://example.com/remote-fdp")
                 .origin("http://example.com/remote-fdp")
                 .version("1.0.0")
-                .name(metadataSchemaFixtures.customSchema().getName())
-                .description(metadataSchemaFixtures.customSchema().getDescription())
-                .definition(metadataSchemaFixtures.customSchema().getDefinition())
-                .abstractSchema(metadataSchemaFixtures.customSchema().isAbstractSchema())
-                .extendsSchemaUuids(Collections.emptyList())
+                .name("Custom external schema 1")
+                .description("Custom external schema 2 description")
+                .definition("")
+                .abstractSchema(true)
+                .extendsSchemaUuids(List.of())
+                .targetClasses(List.of())
                 .build();
     }
 
     private MetadataSchemaVersionDTO schemaPublicDTO2() {
-        String schemaUuid = UUID.randomUUID().toString();
-        String versionUuid = UUID.randomUUID().toString();
         return MetadataSchemaVersionDTO.builder()
-                .uuid(schemaUuid)
-                .versionUuid(versionUuid)
+                .uuid(UUID.randomUUID())
+                .versionUuid(UUID.randomUUID())
                 .previousVersionUuid(null)
+                .type(MetadataSchemaType.CUSTOM)
                 .importedFrom("http://example.com/remote-fdp")
                 .origin("http://example.com/other-remote-fdp")
                 .version("1.2.3")
-                .name(metadataSchemaFixtures.customSchema().getName())
-                .description(metadataSchemaFixtures.customSchema().getDescription())
-                .definition(metadataSchemaFixtures.customSchema().getDefinition())
-                .abstractSchema(metadataSchemaFixtures.customSchema().isAbstractSchema())
-                .extendsSchemaUuids(Collections.emptyList())
+                .name("Custom external schema 2")
+                .description("Custom external schema 2 description")
+                .definition("")
+                .abstractSchema(false)
+                .extendsSchemaUuids(List.of())
+                .targetClasses(List.of())
                 .build();
     }
 
@@ -99,8 +99,9 @@ public class Import_POST extends WebIntegrationTest {
     @DisplayName("HTTP 200: empty import")
     public void res200_emptyImport() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         List<MetadataSchemaVersionDTO> reqDTOs = Collections.emptyList();
+        long schemas = metadataSchemaRepository.count();
+        long versions = metadataSchemaVersionRepository.count();
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -116,16 +117,18 @@ public class Import_POST extends WebIntegrationTest {
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Result is an empty list", result.getBody().size(), is(equalTo(0)));
-        assertThat("Metadata schema repository is empty", metadataSchemaRepository.count(), is(equalTo(0L)));
+        assertThat("Metadata schemas count is unchanged", metadataSchemaRepository.count(), is(equalTo(schemas)));
+        assertThat("Metadata schema versions count is unchanged", metadataSchemaVersionRepository.count(), is(equalTo(versions)));
     }
 
     @Test
     @DisplayName("HTTP 200: single import")
     public void res200_singleImport() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         MetadataSchemaVersionDTO schema = schemaPublicDTO1();
         List<MetadataSchemaVersionDTO> reqDTOs = Collections.singletonList(schema);
+        long schemas = metadataSchemaRepository.count();
+        long versions = metadataSchemaVersionRepository.count();
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -141,14 +144,14 @@ public class Import_POST extends WebIntegrationTest {
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Result contains one schema", result.getBody().size(), is(equalTo(1)));
-        assertThat("Schema is in the metadata schema repository", metadataSchemaRepository.count(), is(equalTo(1L)));
+        assertThat("Schema is in the metadata schema repository", metadataSchemaRepository.count(), is(equalTo(schemas + 1)));
+        assertThat("Schema version is in the metadata schema repository", metadataSchemaVersionRepository.count(), is(equalTo(versions + 1)));
     }
 
     @Test
     @DisplayName("HTTP 200: multiple import")
     public void res200_multipleImport() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         MetadataSchemaVersionDTO schema1 = schemaPublicDTO1();
         MetadataSchemaVersionDTO schema2 = schemaPublicDTO2();
         List<MetadataSchemaVersionDTO> reqDTOs = Arrays.asList(schema1, schema2);
@@ -167,14 +170,14 @@ public class Import_POST extends WebIntegrationTest {
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Result contains one schema", result.getBody().size(), is(equalTo(2)));
-        assertThat("Schema is in the metadata schema repository", metadataSchemaRepository.count(), is(equalTo(2L)));
+        assertThat("Schemas are in the repository", metadataSchemaRepository.count(), is(equalTo(16L)));
+        assertThat("Schema versions are in the repository", metadataSchemaVersionRepository.count(), is(equalTo(22L)));
     }
 
     @Test
     @DisplayName("HTTP 200: import versions of the same schema")
     public void res200_multipleVersions() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         MetadataSchemaVersionDTO schema1 = schemaPublicDTO1();
         MetadataSchemaVersionDTO schema2 = schemaPublicDTO2();
         schema2.setPreviousVersionUuid(schema1.getVersionUuid());
@@ -194,15 +197,15 @@ public class Import_POST extends WebIntegrationTest {
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
-        assertThat("Result contains one schema", result.getBody().size(), is(equalTo(2)));
-        assertThat("Schema is in the metadata schema repository", metadataSchemaRepository.count(), is(equalTo(2L)));
+        assertThat("Result contains two schemas", result.getBody().size(), is(equalTo(2)));
+        assertThat("Schema is in the repository", metadataSchemaRepository.count(), is(equalTo(15L)));
+        assertThat("Schema versions are in the repository", metadataSchemaVersionRepository.count(), is(equalTo(22L)));
     }
 
     @Test
     @DisplayName("HTTP 200: import with extends")
     public void res200_withExtends() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         MetadataSchemaVersionDTO schema1 = schemaPublicDTO1();
         MetadataSchemaVersionDTO schema2 = schemaPublicDTO2();
         schema2.setExtendsSchemaUuids(Collections.singletonList(schema1.getUuid()));
@@ -222,16 +225,17 @@ public class Import_POST extends WebIntegrationTest {
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Result contains one schema", result.getBody().size(), is(equalTo(2)));
-        assertThat("Schema is in the metadata schema repository", metadataSchemaRepository.count(), is(equalTo(2L)));
+        assertThat("Schemas are in the repository", metadataSchemaRepository.count(), is(equalTo(16L)));
+        assertThat("Schema versions are in the repository", metadataSchemaVersionRepository.count(), is(equalTo(22L)));
+        assertThat("Schema 2 extends schema 1", result.getBody().get(1).getExtendsSchemaUuids(), is(equalTo(Collections.singletonList(schema1.getUuid()))));
     }
 
     @Test
     @DisplayName("HTTP 400: missing extends")
     public void res400_missingExtends() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         MetadataSchemaVersionDTO schema1 = schemaPublicDTO1();
-        schema1.setExtendsSchemaUuids(Collections.singletonList(UUID.randomUUID().toString()));
+        schema1.setExtendsSchemaUuids(Collections.singletonList(UUID.randomUUID()));
         List<MetadataSchemaVersionDTO> reqDTOs = Collections.singletonList(schema1);
 
         // AND: prepare request
@@ -246,14 +250,13 @@ public class Import_POST extends WebIntegrationTest {
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
-        assertThat("Nothings changes in metadata schema repository", metadataSchemaRepository.count(), is(equalTo(0L)));
+        assertThat("Nothings changes in metadata schema repository", metadataSchemaRepository.count(), is(equalTo(14L)));
     }
 
     @Test
     @DisplayName("HTTP 403: no token")
     public void res403_noToken() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         MetadataSchemaVersionDTO schema = schemaPublicDTO1();
         List<MetadataSchemaVersionDTO> reqDTOs = Collections.singletonList(schema);
 
@@ -268,14 +271,13 @@ public class Import_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat("Metadata schema repository stays empty", metadataSchemaRepository.count(), is(equalTo(0L)));
+        assertThat("Metadata schema repository stays empty", metadataSchemaRepository.count(), is(equalTo(14L)));
     }
 
     @Test
     @DisplayName("HTTP 403: non-admin token")
     public void res403_nonAdminToken() {
         // GIVEN: prepare data
-        metadataSchemaRepository.deleteAll();
         MetadataSchemaVersionDTO schema1 = schemaPublicDTO1();
         MetadataSchemaVersionDTO schema2 = schemaPublicDTO2();
         List<MetadataSchemaVersionDTO> reqDTOs = Arrays.asList(schema1, schema2);
@@ -285,6 +287,7 @@ public class Import_POST extends WebIntegrationTest {
                 .post(url())
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(reqDTOs);
 
         // WHEN
@@ -292,6 +295,6 @@ public class Import_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat("Metadata schema repository stays empty", metadataSchemaRepository.count(), is(equalTo(0L)));
+        assertThat("Metadata schema repository stays empty", metadataSchemaRepository.count(), is(equalTo(14L)));
     }
 }

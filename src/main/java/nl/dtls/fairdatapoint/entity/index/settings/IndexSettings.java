@@ -22,47 +22,86 @@
  */
 package nl.dtls.fairdatapoint.entity.index.settings;
 
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.experimental.SuperBuilder;
+import nl.dtls.fairdatapoint.entity.base.BaseEntityCustomUUID;
+import org.hibernate.annotations.Type;
 
-import java.util.Objects;
+import java.time.Duration;
+import java.util.List;
 
-@Document
+@Entity(name = "IndexSettings")
+@Table(name = "index_settings")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder(toBuilder = true)
-public class IndexSettings {
-    @Id
-    private ObjectId id;
+@SuperBuilder(toBuilder = true)
+public class IndexSettings extends BaseEntityCustomUUID {
 
     @NotNull
-    private IndexSettingsRetrieval retrieval;
-
-    @NotNull
-    private IndexSettingsPing ping;
-
-    @NotNull
+    @Column(name = "auto_permit", nullable = false)
     private Boolean autoPermit;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final IndexSettings that = (IndexSettings) o;
-        return retrieval.equals(that.retrieval) && ping.equals(that.ping);
+    @NotNull
+    @Column(name = "retrieval_rate_limit_wait", nullable = false)
+    private String retrievalRateLimitWait;
+
+    @NotNull
+    @Column(name = "retrieval_timeout", nullable = false)
+    private String retrievalTimeout;
+
+    @NotNull
+    @Column(name = "ping_valid_duration", nullable = false)
+    private String pingValidDuration;
+
+    @NotNull
+    @Column(name = "ping_rate_limit_duration", nullable = false)
+    private String pingRateLimitDuration;
+
+    @NotNull
+    @Column(name = "ping_rate_limit_hits", nullable = false)
+    private Integer pingRateLimitHits;
+
+    @NotNull
+    @Type(ListArrayType.class)
+    @Column(name = "ping_deny_list", columnDefinition = "text[]", nullable = false)
+    private List<String> pingDenyList;
+
+    public SettingsIndexPing getPing() {
+        return SettingsIndexPing.builder()
+                .validDuration(Duration.parse(this.getPingValidDuration()))
+                .rateLimitDuration(Duration.parse(this.getPingRateLimitDuration()))
+                .rateLimitHits(this.getPingRateLimitHits())
+                .denyList(this.getPingDenyList())
+                .build();
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(retrieval, ping);
+    public void setPing(SettingsIndexPing ping) {
+        this.setPingValidDuration(ping.getValidDuration().toString());
+        this.setPingRateLimitDuration(ping.getRateLimitDuration().toString());
+        this.setPingRateLimitHits(ping.getRateLimitHits());
+        this.setPingDenyList(ping.getDenyList());
+    }
+
+    public SettingsIndexRetrieval getRetrieval() {
+        return SettingsIndexRetrieval.builder()
+                .rateLimitWait(Duration.parse(this.getRetrievalRateLimitWait()))
+                .timeout(Duration.parse(this.getRetrievalTimeout()))
+                .build();
+    }
+
+    public void setRetrieval(SettingsIndexRetrieval retrieval) {
+        this.setRetrievalRateLimitWait(retrieval.getRateLimitWait().toString());
+        this.setRetrievalTimeout(retrieval.getTimeout().toString());
+    }
+
+    public Boolean isSameAs(IndexSettings defaults) {
+        return getAutoPermit().equals(defaults.getAutoPermit())
+                && getPing().isSameAs(defaults.getPing())
+                && getRetrieval().isSameAs(defaults.getRetrieval());
     }
 }
