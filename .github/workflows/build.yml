@@ -12,24 +12,9 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          # - windows-2022 (cannot use Docker for postgres)
-          # - macos-12 (cannot use Docker for postgres)
+          - windows-2022
+          - macos-12
     runs-on: ${{ matrix.os }}
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: fdp_test
-          POSTGRES_USER: fdp
-          POSTGRES_PASSWORD: fdp
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 54321:5432
 
     env:
       JAVA_DISTRIBUTION: temurin
@@ -40,6 +25,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup PostgreSQL DB
+        if: matrix.os != 'macos-12'  # macOS is too slow for tests in GitHub Actions
+        uses: ikalnytskyi/action-setup-postgres@v5
+        id: postgres
+        with:
+          username: fdp
+          password: fdp
+          database: fdp_test
+          port: 54321
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -53,6 +48,7 @@ jobs:
           mvn -q -U -B compile
 
       - name: Test
+        if: matrix.os != 'macos-12'  # macOS is too slow for tests in GitHub Actions
         run: |
           mvn -q -U -B test
         env:
