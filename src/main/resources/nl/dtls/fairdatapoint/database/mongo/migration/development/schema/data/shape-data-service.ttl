@@ -11,10 +11,12 @@
     sh:path dcat:endpointURL ;
     sh:nodeKind sh:IRI ;
     sh:maxCount 1 ;
+    sh:order 20 ;
   ] , [
     sh:path dcat:endpointDescription ;
     sh:nodeKind sh:Literal ;
     sh:maxCount 1 ;
     dash:editor dash:TextAreaEditor ;
     dash:viewer dash:LiteralViewer ;
-] .
+    sh:order 21 ;
+  ] .

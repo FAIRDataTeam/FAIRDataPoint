@@ -13,33 +13,39 @@
     sh:maxCount 1 ;
     dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
+    sh:order 20 ;
   ], [
     sh:path dct:modified ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
+    sh:order 21 ;
   ],  [
     sh:path dcat:theme ;
     sh:nodeKind sh:IRI ;
     sh:minCount 1 ;
     dash:editor dash:URIEditor ;
     dash:viewer dash:LabelViewer ;
+    sh:order 22 ;
   ], [
     sh:path dcat:contactPoint ;
     sh:nodeKind sh:IRI ;
     sh:maxCount 1 ;
     dash:editor dash:URIEditor ;
     dash:viewer dash:LabelViewer ;
+    sh:order 23 ;
   ], [
     sh:path dcat:keyword ;
     sh:nodeKind sh:Literal ;
     dash:editor dash:TextFieldEditor ;
     dash:viewer dash:LiteralViewer ;
+    sh:order 24 ;
   ], [
     sh:path dcat:landingPage ;
     sh:nodeKind sh:IRI ;
     sh:maxCount 1 ;
     dash:editor dash:URIEditor ;
     dash:viewer dash:LabelViewer ;
+    sh:order 25 ;
   ] .

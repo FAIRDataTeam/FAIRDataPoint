@@ -14,17 +14,20 @@
     sh:minCount 1 ;
     sh:maxCount  1 ;
     dash:editor dash:TextFieldEditor ;
+    sh:order 1 ;
   ], [
     sh:path dct:description ;
     sh:nodeKind sh:Literal ;
     sh:maxCount 1 ;
     dash:editor dash:TextAreaEditor ;
+    sh:order 2 ;
   ], [
     sh:path dct:publisher ;
     sh:node :AgentShape ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
     dash:editor dash:BlankNodeEditor ;
+    sh:order 3 ;
   ], [
     sh:path dcat:version ;
     sh:name "version" ;
@@ -33,24 +36,28 @@
     sh:maxCount 1 ;
     dash:editor dash:TextFieldEditor ;
     dash:viewer dash:LiteralViewer ;
+    sh:order 4 ;
   ], [
     sh:path dct:language ;
     sh:nodeKind sh:IRI ;
     sh:maxCount 1 ;
     dash:editor dash:URIEditor ;
     dash:viewer dash:LabelViewer ;
+    sh:order 5 ;
   ], [
     sh:path dct:license ;
     sh:nodeKind sh:IRI ;
     sh:maxCount 1 ;
     dash:editor dash:URIEditor ;
     dash:viewer dash:LabelViewer ;
+    sh:order 6 ;
   ], [
     sh:path dct:rights ;
     sh:nodeKind sh:IRI ;
     sh:maxCount 1 ;
     dash:editor dash:URIEditor ;
     dash:viewer dash:LabelViewer ;
+    sh:order 7 ;
   ] .
 
 :AgentShape a sh:NodeShape ;

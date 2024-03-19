@@ -13,19 +13,23 @@
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     dash:viewer dash:LiteralViewer ;
+    sh:order 20 ;
   ], [
     sh:path dct:modified ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     dash:viewer dash:LiteralViewer ;
+    sh:order 21 ;
   ], [
     sh:path foaf:homePage ;
     sh:nodeKind sh:IRI ;
     sh:maxCount 1 ;
     dash:editor dash:URIEditor ;
     dash:viewer dash:LabelViewer ;
+    sh:order 22 ;
   ], [
     sh:path dcat:themeTaxonomy ;
     sh:nodeKind sh:IRI ;
     dash:viewer dash:LabelViewer ;
+    sh:order 23 ;
   ] .
