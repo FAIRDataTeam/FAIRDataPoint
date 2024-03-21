@@ -58,7 +58,7 @@
         <postgresql.version>42.7.3</postgresql.version>
         <rdf4j.version>4.3.8</rdf4j.version>
         <jwt.version>0.12.5</jwt.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
         <hypersistence.version>3.7.3</hypersistence.version>
 
