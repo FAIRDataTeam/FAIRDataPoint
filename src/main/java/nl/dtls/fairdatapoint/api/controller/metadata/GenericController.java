@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import nl.dtls.fairdatapoint.database.rdf.repository.RepositoryMode;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
@@ -46,7 +47,9 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.util.Models;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -149,7 +152,8 @@ public class GenericController {
     )
     public Model getMetaData(
             @PathVariable final Optional<String> oUrlPrefix,
-            @PathVariable final Optional<String> oRecordId
+            @PathVariable final Optional<String> oRecordId,
+            HttpServletResponse response
     ) throws MetadataServiceException {
         // 1. Init
         final Model resultRdf = new LinkedHashModel();
@@ -171,7 +175,9 @@ public class GenericController {
         metadataEnhancer.enhanceWithLinks(entityUri, entity, rd, persistentUrl, resultRdf);
         metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
 
-        // 5. Create response
+        enhanceWithSignposting(response, entityUri, resultRdf);
+
+        // 6. Create response
         return resultRdf;
     }
 
@@ -415,5 +421,38 @@ public class GenericController {
 
     private String createLink(String entityUrl, String childPrefix, int page, int size, String rel) {
         return format("<%s/page/%s?page=%d&size=%d>; rel=\"%s\"", entityUrl, childPrefix, page, size, rel);
+    }
+
+    private void enhanceWithSignposting(HttpServletResponse response, IRI entityUri, Model resultRdf) {
+        // author
+        Models.getProperty(resultRdf, entityUri, DCTERMS.PUBLISHER).ifPresent(pub -> {
+            addSignpostingHeader(response, pub, "author");
+        });
+
+        // cite-as
+        addSignpostingHeader(response, entityUri, "cite-as");
+
+        // describedby
+        // TODO
+
+        // type
+        Models.getProperties(resultRdf, entityUri, RDF.TYPE).forEach(type -> {
+            addSignpostingHeader(response, type, "type");
+        });
+
+        // license
+        Models.getPropertyIRI(resultRdf, entityUri, DCTERMS.LICENSE).ifPresent(license -> {
+            addSignpostingHeader(response, license, "license");
+        });
+
+        // item
+        // TODO
+
+        // collection
+        // TODO
+    }
+
+    private void addSignpostingHeader(HttpServletResponse response, Value link, String rel) {
+        response.addHeader(HttpHeaders.LINK, format("<%s>; rel=\"%s\"", link, rel));
     }
 }
