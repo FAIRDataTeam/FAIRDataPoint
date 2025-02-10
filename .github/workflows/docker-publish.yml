@@ -1,0 +1,15 @@
+name: Publish to Docker Hub
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+jobs:
+  test:
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v1
+  publish:
+    needs: test
+    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v1
+    secrets: inherit
