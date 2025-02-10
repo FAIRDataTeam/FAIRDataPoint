@@ -1,0 +1,12 @@
+# https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-java-with-maven
+
+name: Maven CI
+
+on:
+  - push
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  test:
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v1
