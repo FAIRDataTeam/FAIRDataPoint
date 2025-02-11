@@ -22,7 +22,8 @@ jobs:
     with:
       runner: ${{ matrix.runner }}
       java-version: ${{ matrix.java-version }}
-      mvn-options: '-D"spring.profiles.active"="testing"'
+      # quotes around spring.profiles.active are required for windows
+      mvn-options: '-D"spring.profiles.active"=testing'
       # db settings must match testing profile
       db-type: postgresql
       db-name: fdp_test
