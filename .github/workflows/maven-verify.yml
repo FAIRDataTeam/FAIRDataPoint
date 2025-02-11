@@ -18,7 +18,14 @@ jobs:
         java-version:
           - 21
     # todo: specify version instead of temporary branch
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@issue5-inputs
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@issue7-db
     with:
       runner: ${{ matrix.runner }}
       java-version: ${{ matrix.java-version }}
+      # db settings must match testing profile
+      db-type: postgresql
+      db-name: fdp_test
+      db-username: fdp
+      db-password: fdp
+      db-port: 54321
+      mvn-options: '-Dspring-boot.run.profiles=testing'
