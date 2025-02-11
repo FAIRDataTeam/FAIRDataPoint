@@ -1,6 +1,6 @@
 # https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-java-with-maven
 
-name: Maven CI
+name: Maven verify
 
 on:
   - push
@@ -22,10 +22,10 @@ jobs:
     with:
       runner: ${{ matrix.runner }}
       java-version: ${{ matrix.java-version }}
+      mvn-options: '-Dspring.profiles.active=testing'
       # db settings must match testing profile
       db-type: postgresql
       db-name: fdp_test
       db-username: fdp
       db-password: fdp
       db-port: 54321
-      mvn-options: '-Dspring-boot.run.profiles=testing'
