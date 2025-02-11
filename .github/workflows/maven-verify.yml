@@ -9,4 +9,5 @@ on:
 
 jobs:
   test:
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v1
+    # todo: specify version instead of temporary branch
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@issue5-inputs
