@@ -1,15 +1,17 @@
 name: Publish to Docker Hub
 
 on:
-  push:
-    branches:
-      - develop
-  pull_request:
+  release:
+    types: [created]
 
 jobs:
-  test:
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v1
+  # todo: enable test when test duration has been minimized
+  # test:
+  #   uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
   publish:
-    needs: test
-    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v1
+    # needs: test
+    # todo: use version instead of branch (after release of github-workflows v2)
+    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@main
     secrets: inherit
+    with:
+      push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
