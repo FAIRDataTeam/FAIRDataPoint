@@ -6,11 +6,13 @@ on:
     types: [created]
 
 jobs:
-  # todo: enable test when test duration has been minimized
-  # test:
-  #   uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
+  build:
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
+    with:
+      # todo: enable tests when test duration has been minimized
+      mvn-options: "-DskipTests"
   publish:
-    # needs: test
+    needs: build
     uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v2
     secrets: inherit
     with:
