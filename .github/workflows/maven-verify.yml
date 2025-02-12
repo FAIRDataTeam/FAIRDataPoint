@@ -17,8 +17,7 @@ jobs:
           - macos-14
         java-version:
           - 21
-    # todo: specify version instead of branch
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@main
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
     with:
       runner: ${{ matrix.runner }}
       java-version: ${{ matrix.java-version }}

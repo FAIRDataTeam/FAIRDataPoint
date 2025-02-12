@@ -11,8 +11,7 @@ jobs:
   #   uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
   publish:
     # needs: test
-    # todo: use version instead of branch (after release of github-workflows v2)
-    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@main
+    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v2
     secrets: inherit
     with:
       push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
