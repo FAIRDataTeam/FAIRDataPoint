@@ -60,7 +60,7 @@
         <rdf4j.version>5.1.1</rdf4j.version>
         <jwt.version>0.12.6</jwt.version>
         <lombok.version>1.18.36</lombok.version>
-        <hypersistence.version>3.9.0</hypersistence.version>
+        <hypersistence.version>3.9.2</hypersistence.version>
 
         <!-- Test -->
         <httpclient5.version>5.4.1</httpclient5.version>
