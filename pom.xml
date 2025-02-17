@@ -73,7 +73,7 @@
         <plugin.git_commit_id.version>9.0.1</plugin.git_commit_id.version>
         <plugin.rdf4j_generator.version>0.2.0</plugin.rdf4j_generator.version>
         <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
-        <plugin.spotbugs.version>4.8.6.6</plugin.spotbugs.version>
+        <plugin.spotbugs.version>4.9.1.0</plugin.spotbugs.version>
     </properties>
 
     <dependencies>
