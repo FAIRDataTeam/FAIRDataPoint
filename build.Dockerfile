@@ -21,6 +21,9 @@
 # THE SOFTWARE.
 #
 
+# https://docs.docker.com/reference/dockerfile/#syntax
+# syntax=docker/dockerfile:1
+
 ################################################################################
 # BUILD STAGE
 
