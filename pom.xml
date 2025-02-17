@@ -55,7 +55,7 @@
         <rdf-resolver.version>0.2.0</rdf-resolver.version>
         
         <!-- Core -->
-        <springdoc.version>2.8.4</springdoc.version>
+        <springdoc.version>2.8.5</springdoc.version>
         <postgresql.version>42.7.5</postgresql.version>
         <rdf4j.version>5.1.1</rdf4j.version>
         <jwt.version>0.12.6</jwt.version>
