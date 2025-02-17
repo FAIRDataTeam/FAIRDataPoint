@@ -1,9 +1,4 @@
+.git
 .github
 .idea
-LICENSE
-README.ms
-docs
-target/**
-!target/fdp-spring-boot.jar
-!target/classes/application-production.yml
-nb-configuration.xml
+target/
