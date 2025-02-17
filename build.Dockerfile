@@ -44,6 +44,5 @@ FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /fdp
 
 COPY --from=builder /builder/target/fdp-spring-boot.jar /fdp/app.jar
-COPY --from=builder /builder/target/classes/application-production.yml /fdp/application.yml
 
-ENTRYPOINT java -jar app.jar --spring.profiles.active=production --spring.config.location=classpath:/application.yml,classpath:/application-production.yml,file:/fdp/application.yml
+ENTRYPOINT ["java", "-jar", "app.jar"]

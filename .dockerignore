@@ -2,3 +2,4 @@
 .github
 .idea
 target/
+!target/fdp-spring-boot.jar
