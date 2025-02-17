@@ -20,5 +20,5 @@ jobs:
     uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v2
     secrets: inherit
     with:
-      file: './Dockerfile.build'
+      file: './build.Dockerfile'
       push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
