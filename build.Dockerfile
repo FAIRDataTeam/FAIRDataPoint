@@ -1,6 +1,6 @@
 #
 # The MIT License
-# Copyright © 2024 FAIR Data Team
+# Copyright © 2016-2024 FAIR Data Team
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +20,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+
 ################################################################################
 # BUILD STAGE
+
 FROM maven:3-eclipse-temurin-21-alpine as builder
 
 WORKDIR /builder
 
 ADD . /builder
 
-RUN mvn -q -B -U -ff -DskipTests package
+# https://maven.apache.org/ref/current/maven-embedder/cli.html
+RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests package
 
 ################################################################################
 # RUN STAGE
+
 FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /fdp
