@@ -9,8 +9,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Switched to Java 21 (LTS)
+- Update to Java 21 by @MarekSuchanek in #471
+- ??? (TODO)
+- Get FAIR Data Team dependencies from Maven Central repository by @dennisvang in #577
+- Fix issue templates by @dennisvang in #582
+- Update CORS configuration by @dennisvang in #578
+- Separate and reuse github workflows by @dennisvang in #617
+- Prevent duplicate workflow runs by @dennisvang in #628
+- Clean up Dockerfile by @dennisvang in #626
 
+## [1.17.2]
+
+### Fixed
+
+- Fix metadata schemas (defaults, ordering, FDP shape)
+- Default license in metadata schemas and configuration
 
 ## [1.17.1]
 
@@ -381,3 +394,4 @@ The first release of reference FAIR Data Point implementation.
 [1.16.2]: /../../tree/v1.16.2
 [1.17.0]: /../../tree/v1.17.0
 [1.17.1]: /../../tree/v1.17.1
+[1.17.2]: /../../tree/v1.17.2
