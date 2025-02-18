@@ -90,7 +90,7 @@ If you do not have Java and Maven locally, you can build the Docker image using 
 built `jar` file):
 
 ```bash
-$ docker build -f Dockerfile.build -t fairdatapoint:local .
+$ docker build -f Dockerfile -t fairdatapoint:local .
 ```
 
 ## Security
