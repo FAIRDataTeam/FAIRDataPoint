@@ -25,7 +25,7 @@
 # syntax=docker/dockerfile:1
 
 ################################################################################
-# BUILD STAGE
+# BUILD JAR
 
 FROM maven:3-eclipse-temurin-21-alpine AS builder
 
@@ -37,9 +37,14 @@ ADD . /builder
 RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests package
 
 ################################################################################
-# RUN STAGE
+# BUILD IMAGE
 
 FROM eclipse-temurin:21-jdk-alpine
+
+# add non-root user to run the app
+# https://spring.io/guides/gs/spring-boot-docker
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
 
 WORKDIR /fdp
 
