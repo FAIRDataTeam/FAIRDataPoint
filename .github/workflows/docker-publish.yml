@@ -5,6 +5,10 @@ on:
   release:
     types: [created]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
