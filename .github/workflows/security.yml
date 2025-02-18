@@ -92,7 +92,7 @@ jobs:
       - name: Docker build
         run: |
           docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
-          docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t fdp:snyk-test -f Dockerfile.build .
+          docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t fdp:snyk-test -f Dockerfile .
 
       - name: Perform Snyk Check (Docker)
         uses: snyk/actions/docker@master
