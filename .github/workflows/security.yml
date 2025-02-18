@@ -2,11 +2,15 @@ name: "Security Audit"
 
 on:
   push:
-    branches: [ develop, master ]
+    branches:
+      - develop
   pull_request:
-    branches: [ develop ]
   schedule:
     - cron: '23 4 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   codeql:
