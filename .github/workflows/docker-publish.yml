@@ -1,9 +1,13 @@
 name: Publish to Docker Hub
 
 on:
+  push:
+    branches:
+      - develop
   pull_request:
   release:
-    types: [created]
+    types:
+      - created
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,4 +25,4 @@ jobs:
     secrets: inherit
     with:
       file: './Dockerfile'
-      push: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+      push: ${{ github.event_name == 'push' || github.event_name == 'release' }}
