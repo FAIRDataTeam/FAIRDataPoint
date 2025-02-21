@@ -59,7 +59,7 @@ public class RepositoryConfig {
 
     @Bean(initMethod = "init", destroyMethod = "shutDown", name = "draftsRepository")
     public Repository draftsRepository(ApplicationContext context) throws RepositoryException {
-        return prepareRepository(context, repositoryProperties.getMain());
+        return prepareRepository(context, repositoryProperties.getDrafts());
     }
 
     public Repository prepareRepository(ApplicationContext context, RepositoryConnectionProperties properties)
