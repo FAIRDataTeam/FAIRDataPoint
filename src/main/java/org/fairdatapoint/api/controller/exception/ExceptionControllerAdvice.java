@@ -30,6 +30,7 @@ package org.fairdatapoint.api.controller.exception;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.api.dto.error.ErrorDTO;
@@ -42,6 +43,7 @@ import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -243,4 +245,9 @@ public class ExceptionControllerAdvice {
         return new ErrorDTO(HttpStatus.BAD_REQUEST, message, details);
     }
 
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY, reason = "Unknown field")
+    @ExceptionHandler(PropertyReferenceException.class)
+    public void handleUnknownField(HttpServletRequest request) {
+        log.error("Unknown field: {}", request.getRequestURL());
+    }
 }
