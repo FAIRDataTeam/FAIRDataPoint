@@ -50,8 +50,8 @@ public class IndexEntryMapper {
                         indexEntry.getLastRetrievalAt(),
                         validThreshold),
                 indexEntry.getPermit(),
-                indexEntry.getCreatedAt().toString(),
-                indexEntry.getUpdatedAt().toString()
+                indexEntry.getCreatedAt(),
+                indexEntry.getUpdatedAt()
         );
     }
 
@@ -69,18 +69,18 @@ public class IndexEntryMapper {
                 StreamSupport.stream(events.spliterator(), false)
                         .map(eventMapper::toDTO)
                         .toList(),
-                indexEntry.getCreatedAt().toString(),
-                indexEntry.getUpdatedAt().toString(),
-                indexEntry.getLastRetrievalAt().toString()
+                indexEntry.getCreatedAt(),
+                indexEntry.getUpdatedAt(),
+                indexEntry.getLastRetrievalAt()
         );
     }
 
     public IndexEntryStateDTO toStateDTO(
-            IndexEntryState state, Instant lastRetrievalTime, Instant validThreshold
+            IndexEntryState state, Instant lastRetrievalAt, Instant validThreshold
     ) {
         return switch (state) {
             case UNKNOWN -> IndexEntryStateDTO.UNKNOWN;
-            case VALID -> lastRetrievalTime.isAfter(validThreshold)
+            case VALID -> lastRetrievalAt.isAfter(validThreshold)
                     ? IndexEntryStateDTO.ACTIVE
                     : IndexEntryStateDTO.INACTIVE;
             case INVALID -> IndexEntryStateDTO.INVALID;

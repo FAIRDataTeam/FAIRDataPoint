@@ -32,6 +32,7 @@ import org.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import org.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.hibernate.validator.constraints.URL;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,12 +62,12 @@ public class IndexEntryDetailDTO {
     private List<EventDTO> events;
 
     @NotNull
-    private String registrationTime;
+    private Instant createdAt;
 
     @NotNull
-    private String modificationTime;
+    private Instant updatedAt;
 
     @NotNull
-    private String lastRetrievalTime;
+    private Instant lastRetrievalAt;
 
 }
