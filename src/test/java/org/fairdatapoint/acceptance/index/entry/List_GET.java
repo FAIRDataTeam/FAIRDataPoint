@@ -173,8 +173,8 @@ public class List_GET extends WebIntegrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'updatedAt,desc', OK",
-            "'modificationTime,desc', UNPROCESSABLE_ENTITY"
+            "'updatedAt,desc', OK",  // existing field
+            "'modificationTime,desc', UNPROCESSABLE_ENTITY"  // non-existent field
     })
     @DisplayName("HTTP 200: page few (sorted)")
     public void res200_pageFewSorted(String sortQuery, String expectedStatus) {
