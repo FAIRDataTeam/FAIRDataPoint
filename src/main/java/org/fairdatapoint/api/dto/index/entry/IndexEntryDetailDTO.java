@@ -32,7 +32,6 @@ import org.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import org.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.hibernate.validator.constraints.URL;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
