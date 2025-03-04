@@ -177,6 +177,7 @@ public class EventService {
                         event.getPayload().getMetadataRetrieval().setMetadata(metadata.get());
                         event.getRelatedTo().setCurrentMetadata(metadata.get());
                         event.getRelatedTo().setState(IndexEntryState.VALID);
+                        event.getRelatedTo().setLastRetrievalAt(Instant.now());
                         log.info("Storing metadata for {}", clientUrl);
                         indexEntryRepository.save(event.getRelatedTo());
                     }
@@ -201,7 +202,6 @@ public class EventService {
             log.info("Rate limit reached for {} (skipping metadata retrieval)", clientUrl);
             event.getPayload().getMetadataRetrieval().setError("Rate limit reached (skipping)");
         }
-        event.getRelatedTo().setCreatedAt(Instant.now());
         event.finish();
         final IndexEvent newEvent = eventRepository.save(event);
         indexEntryRepository.save(newEvent.getRelatedTo());
