@@ -50,8 +50,9 @@ public class IndexEntryMapper {
                         indexEntry.getLastRetrievalAt(),
                         validThreshold),
                 indexEntry.getPermit(),
-                indexEntry.getCreatedAt(),
-                indexEntry.getUpdatedAt()
+                // convert to ISO 8601
+                indexEntry.getCreatedAt().toString(),
+                indexEntry.getUpdatedAt().toString()
         );
     }
 
@@ -69,9 +70,10 @@ public class IndexEntryMapper {
                 StreamSupport.stream(events.spliterator(), false)
                         .map(eventMapper::toDTO)
                         .toList(),
-                indexEntry.getCreatedAt(),
-                indexEntry.getUpdatedAt(),
-                indexEntry.getLastRetrievalAt()
+                // convert to ISO 8601
+                indexEntry.getCreatedAt().toString(),
+                indexEntry.getUpdatedAt().toString(),
+                indexEntry.getLastRetrievalAt().toString()
         );
     }
 

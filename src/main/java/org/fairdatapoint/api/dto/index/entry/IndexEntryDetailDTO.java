@@ -62,12 +62,12 @@ public class IndexEntryDetailDTO {
     private List<EventDTO> events;
 
     @NotNull
-    private Instant createdAt;
+    private String createdAt;
 
     @NotNull
-    private Instant updatedAt;
+    private String updatedAt;
 
     @NotNull
-    private Instant lastRetrievalAt;
+    private String lastRetrievalAt;
 
 }

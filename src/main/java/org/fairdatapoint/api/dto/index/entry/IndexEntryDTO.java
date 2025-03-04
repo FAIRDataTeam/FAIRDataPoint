@@ -53,8 +53,8 @@ public class IndexEntryDTO {
     private IndexEntryPermit permit;
 
     @NotNull
-    private Instant createdAt;
+    private String createdAt;
 
     @NotNull
-    private Instant updatedAt;
+    private String updatedAt;
 }
