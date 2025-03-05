@@ -245,9 +245,9 @@ public class ExceptionControllerAdvice {
         return new ErrorDTO(HttpStatus.BAD_REQUEST, message, details);
     }
 
-    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY, reason = "Unknown field")
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY, reason = "Unknown property")
     @ExceptionHandler(PropertyReferenceException.class)
-    public void handleUnknownField(HttpServletRequest request) {
-        log.error("Unknown field: {}", request.getRequestURL());
+    public void handleUnknownField(HttpServletRequest request, Exception exception) {
+        log.error("Unknown property:\n\t{}\n\t{}", request.getRequestURL(), exception.getMessage());
     }
 }
