@@ -28,6 +28,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.base.BaseEntity;
+import org.fairdatapoint.entity.index.event.IndexEvent;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Type;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -36,6 +37,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Entity(name = "IndexEntry")
 @Table(name = "index_entry")
@@ -78,6 +80,9 @@ public class IndexEntry extends BaseEntity {
     @Type(JsonBinaryType.class)
     @Column(name = "metadata", columnDefinition = "jsonb", nullable = false)
     private Map<String, String> metadata = new HashMap<>();
+
+    @OneToMany(mappedBy = "relatedTo", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<IndexEvent> events;
 
     public Duration getLastRetrievalAgo() {
         if (getLastRetrievalAt() == null) {
