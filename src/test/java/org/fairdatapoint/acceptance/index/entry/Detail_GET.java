@@ -57,8 +57,8 @@ public class Detail_GET extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 200: get details")
-    public void res200_getDetails() {
+    @DisplayName("HTTP 200: get detail")
+    public void res200_getDetail() {
         // test for issue #643
 
         // GIVEN: prepare data
@@ -67,13 +67,13 @@ public class Detail_GET extends WebIntegrationTest {
         indexEntryRepository.save(entry);
 
         // AND: prepare request
-        RequestEntity request = RequestEntity
+        RequestEntity<Void> request = RequestEntity
                 .get(url(entry.getUuid()))
                 .accept(MediaType.APPLICATION_JSON)
                 .build();
 
         // WHEN
-        ResponseEntity result = client.exchange(request, responseType);
+        ResponseEntity<CustomPageImpl<IndexEntryDTO>> result = client.exchange(request, responseType);
 
         // THEN
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
