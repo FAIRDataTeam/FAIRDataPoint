@@ -36,6 +36,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,8 +82,8 @@ public class IndexEntry extends BaseEntity {
     @Column(name = "metadata", columnDefinition = "jsonb", nullable = false)
     private Map<String, String> metadata = new HashMap<>();
 
-    @OneToMany(mappedBy = "relatedTo", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<IndexEvent> events;
+    @OneToMany(mappedBy = "relatedTo", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<IndexEvent> events = new HashSet<>();
 
     public Duration getLastRetrievalAgo() {
         if (getLastRetrievalAt() == null) {
