@@ -44,6 +44,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +55,9 @@ import java.util.UUID;
 @RequestMapping("/index/entries")
 @RequiredArgsConstructor
 public class IndexEntryController {
+    private static final List<String> sortFields = List.of(
+            "clientUrl", "createdAt", "lastRetrievalAt", "permit", "status", "updatedAt"
+    );
 
     private final IndexEntryService service;
 
@@ -71,6 +75,14 @@ public class IndexEntryController {
             @RequestParam(required = false, defaultValue = "") String state,
             @RequestParam(required = false, defaultValue = "accepted") String permit
     ) {
+        // validate sort query parameters
+        // todo: implement validator for Pageable if used more often
+        pageable.getSort().stream().forEach(order -> {
+            if (! sortFields.contains(order.getProperty())) {
+                throw new ResponseStatusException(
+                        HttpStatus.UNPROCESSABLE_ENTITY, "Invalid sort parameter: " + order.getProperty());
+            }
+        });
         return service.getEntriesPageDTOs(pageable, state, permit);
     }
 
