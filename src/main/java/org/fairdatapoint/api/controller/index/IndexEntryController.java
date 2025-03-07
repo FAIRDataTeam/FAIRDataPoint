@@ -55,7 +55,7 @@ import java.util.UUID;
 @RequestMapping("/index/entries")
 @RequiredArgsConstructor
 public class IndexEntryController {
-    private static final List<String> sortFields = List.of(
+    private static final List<String> SORT_FIELDS = List.of(
             "clientUrl", "createdAt", "lastRetrievalAt", "permit", "status", "updatedAt"
     );
 
@@ -78,7 +78,7 @@ public class IndexEntryController {
         // validate sort query parameters
         // todo: implement validator for Pageable if used more often
         pageable.getSort().stream().forEach(order -> {
-            if (! sortFields.contains(order.getProperty())) {
+            if (!SORT_FIELDS.contains(order.getProperty())) {
                 throw new ResponseStatusException(
                         HttpStatus.UNPROCESSABLE_ENTITY, "Invalid sort parameter: " + order.getProperty());
             }
