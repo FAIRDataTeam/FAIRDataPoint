@@ -31,6 +31,8 @@ import org.fairdatapoint.utils.CustomPageImpl;
 import org.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -74,6 +76,12 @@ public class List_GET extends WebIntegrationTest {
     private URI urlWithPermit(String permitQuery) {
         return UriComponentsBuilder.fromUri(url())
                 .queryParam("permit", permitQuery)
+                .build().toUri();
+    }
+
+    private URI urlWithSorting(String sortQuery) {
+        return UriComponentsBuilder.fromUri(url())
+                .queryParam("sort", sortQuery)
                 .build().toUri();
     }
 
@@ -161,6 +169,39 @@ public class List_GET extends WebIntegrationTest {
             assertThat("Entry matches: " + entries.get(i).getClientUrl(),
                     result.getBody().getContent().get(i).getClientUrl(), is(equalTo(entries.get(i).getClientUrl())));
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'updatedAt,desc', OK",  // existing field
+            "'modificationTime,desc', UNPROCESSABLE_ENTITY"  // non-existent field
+    })
+    @DisplayName("HTTP 200: page few (sorted)")
+    public void res200_pageFewSorted(String sortQuery, String expectedStatus) {
+        // Test for issue #633
+        //
+        // https://www.rfc-editor.org/rfc/rfc9110.html
+        //
+        // todo: The res200_ naming convention is a bit restrictive and does not cover
+        //  multiple cases. Should we rename to regression tests or something?
+
+        // GIVEN: prepare data
+        indexEntryRepository.deleteAll();
+        List<IndexEntry> entries = TestIndexEntryFixtures.entriesFew();
+        indexEntryRepository.saveAll(entries);
+
+        // AND: prepare request
+        RequestEntity<?> request = RequestEntity
+                .get(urlWithSorting(sortQuery))
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+
+        // WHEN
+        ResponseEntity<CustomPageImpl<IndexEntryDTO>> result = client.exchange(request, responseType);
+
+        // THEN
+        assertThat("Correct response code is received",
+                result.getStatusCode(), is(equalTo(HttpStatus.valueOf(expectedStatus))));
     }
 
     @Test

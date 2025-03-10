@@ -52,8 +52,8 @@ public class IndexEntryDTO {
     private IndexEntryPermit permit;
 
     @NotNull
-    private String registrationTime;
+    private String createdAt;
 
     @NotNull
-    private String modificationTime;
+    private String updatedAt;
 }

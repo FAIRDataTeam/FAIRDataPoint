@@ -190,7 +190,7 @@ public class IndexEntryService {
 
     public Iterable<IndexEvent> getEvents(IndexEntry indexEntry) {
         return eventRepository.getAllByRelatedTo(indexEntry,
-                PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "created")));
+                PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt")));
     }
 
     @RequiredEnabledIndexFeature

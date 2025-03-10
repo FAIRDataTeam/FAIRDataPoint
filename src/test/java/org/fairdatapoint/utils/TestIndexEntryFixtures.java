@@ -40,6 +40,7 @@ public class TestIndexEntryFixtures {
         indexEntry.setClientUrl(clientUrl);
         indexEntry.setUpdatedAt(timestamp);
         indexEntry.setCreatedAt(timestamp);
+        indexEntry.setLastRetrievalAt(timestamp);
         indexEntry.setState(IndexEntryState.INVALID);
         indexEntry.setPermit(IndexEntryPermit.ACCEPTED);
         return indexEntry;

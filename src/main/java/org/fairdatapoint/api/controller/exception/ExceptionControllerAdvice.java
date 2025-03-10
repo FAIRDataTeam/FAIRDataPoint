@@ -242,5 +242,4 @@ public class ExceptionControllerAdvice {
         );
         return new ErrorDTO(HttpStatus.BAD_REQUEST, message, details);
     }
-
 }
