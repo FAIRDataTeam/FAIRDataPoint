@@ -53,8 +53,13 @@ $ cd spring-security-acl-mongodb
 $ mvn install
 ```
 
-To run the application, a MongoDB instance is required to be running. To configure the MongoDB with standard
-connection (`mongodb://localhost:27017/fdp`), simply instruct Spring Boot to use the `development` profile. Then run:
+### MongoDB
+
+To run the application, a MongoDB instance is required to be running. An instance can be started by running
+```bash
+docker-compose up
+```
+To configure the MongoDB with standard connection (`mongodb://localhost:27017/fdp`), simply instruct Spring Boot to use the `development` by running:
 
 ```bash
 $ mvn spring-boot:run -Dspring-boot.run.profiles=development
