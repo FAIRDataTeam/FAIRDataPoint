@@ -46,7 +46,7 @@ e.g. [app.fairdatapoint.org/swagger-ui.html](https://app.fairdatapoint.org/swagg
 To build the application, one dependency needs to be built and installed locally first.
 
 ```bash
-$ git clone git@github.com:FAIRDataTeam/spring-security-acl-mongodb.git
+$ git clone --branch v5.2.4 git@github.com:FAIRDataTeam/spring-security-acl-mongodb.git
 
 $ cd spring-security-acl-mongodb
 
