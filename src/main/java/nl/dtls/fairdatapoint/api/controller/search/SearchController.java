@@ -27,7 +27,10 @@ import jakarta.validation.Valid;
 import nl.dtls.fairdatapoint.api.dto.search.*;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.search.SearchService;
+
+import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +74,18 @@ public class SearchController {
     public ResponseEntity<List<SearchResultDTO>> searchWithQuery(
             @RequestBody @Valid SearchQueryVariablesDTO reqDto
     ) throws MetadataRepositoryException, MalformedQueryException {
-        return ResponseEntity.ok(searchService.search(reqDto));
+        return ResponseEntity.ok(searchService.legacySearch(reqDto));
+    }
+
+    @PostMapping(
+            path = "/genericQuery",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<BindingSet>> searchWithGenericQuery(
+            @RequestBody @Valid SearchQueryDTO query
+    ) throws MetadataRepositoryException, MalformedQueryException {
+        return ResponseEntity.ok(searchService.genericSearch(query));
     }
 
     @GetMapping(

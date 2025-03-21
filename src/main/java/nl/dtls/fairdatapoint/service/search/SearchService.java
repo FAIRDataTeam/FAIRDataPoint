@@ -38,7 +38,10 @@ import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.query.Binding;
+import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -84,7 +87,7 @@ public class SearchService {
     public List<SearchResultDTO> search(
             SearchSavedQueryDTO searchSavedQueryDTO
     ) throws MetadataRepositoryException {
-        return search(searchSavedQueryDTO.getVariables());
+        return legacySearch(searchSavedQueryDTO.getVariables());
     }
 
     public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
@@ -92,17 +95,29 @@ public class SearchService {
         return processSearchResults(results);
     }
 
-    public List<SearchResultDTO> search(
-            SearchQueryVariablesDTO reqDto
+    private void verifyQuery(
+            String query
     ) throws MetadataRepositoryException, MalformedQueryException {
-        // Compose query
-        final String query = composeQuery(reqDto);
-        // Verify query
         final SPARQLParser parser = new SPARQLParser();
         parser.parseQuery(query, persistentUrl);
-        // Get and process results for query
+    }
+
+    public List<SearchResultDTO> legacySearch(
+            SearchQueryVariablesDTO reqDto
+    ) throws MetadataRepositoryException, MalformedQueryException {
+        final String query = composeQuery(reqDto);
+        verifyQuery(query);
         final List<SearchResult> results = metadataRepository.findBySparqlQuery(query);
         return processSearchResults(results);
+    }
+
+    public List<BindingSet> genericSearch(
+            SearchQueryDTO searchQuery
+    ) throws MetadataRepositoryException, MalformedQueryException {
+        final String query = searchQuery.getQuery();
+        verifyQuery(query);
+        final List<BindingSet> results = metadataRepository.runSparqlQuery(query);
+        return results;
     }
 
     public SearchQueryTemplateDTO getSearchQueryTemplate() {

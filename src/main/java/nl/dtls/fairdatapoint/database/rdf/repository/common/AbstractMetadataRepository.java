@@ -34,6 +34,7 @@ import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.Optional;
 
@@ -121,6 +123,10 @@ public abstract class AbstractMetadataRepository {
                 .map(item -> toSearchResult(item, false))
                 .toList();
     }
+
+//    private GenericSearchResult toGenericSearchResult(BindingSet item) {
+//        Set<String> bindingNames = item.getBindingNames();
+//    }
 
     private SearchResult toSearchResult(BindingSet item, boolean withRelation) {
         SearchResultRelation relation = null;
