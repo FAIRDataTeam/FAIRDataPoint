@@ -78,7 +78,7 @@ public class SearchController {
     }
 
     @PostMapping(
-            path = "/genericQuery",
+            path = "/sparql",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
