@@ -36,7 +36,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Search")
 @RestController
@@ -81,10 +84,21 @@ public class SearchController {
             consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<BindingSet>> searchWithGenericQuery(
+    public ResponseEntity<List<Map<String, String>>> searchWithGenericQuery(
             @RequestBody @Valid String query
     ) throws MetadataRepositoryException, MalformedQueryException {
-        return ResponseEntity.ok(searchService.sparql(query));
+        // return ResponseEntity.ok(searchService.sparql(query));
+        List<BindingSet> bindingSets = searchService.sparql(query);
+        List<Map<String, String>> resps = new ArrayList<Map<String, String>>();
+        for (BindingSet set : bindingSets) {
+          HashMap<String, String> bindings = new HashMap<String, String>();
+          for (String name : set.getBindingNames()) {
+            bindings.put(name, set.getValue(name).toString());
+          }
+          resps.add(bindings);
+        }
+
+        return ResponseEntity.ok(resps);
     }
 
     @GetMapping(
