@@ -28,7 +28,6 @@ import nl.dtls.fairdatapoint.api.dto.search.*;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.service.search.SearchService;
 
-import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -36,8 +35,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,19 +81,9 @@ public class SearchController {
             consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<Map<String, String>>> sparql(@RequestBody @Valid String query) 
+    public ResponseEntity<Map<String, List<Map<String, Map<String, String>>>>> sparql(@RequestBody @Valid String query) 
       throws MetadataRepositoryException, MalformedQueryException {
-        List<BindingSet> bindingSets = searchService.sparqlSearch(query);
-        List<Map<String, String>> resps = new ArrayList<Map<String, String>>();
-        for (BindingSet set : bindingSets) {
-          HashMap<String, String> bindings = new HashMap<String, String>();
-          for (String name : set.getBindingNames()) {
-            bindings.put(name, set.getValue(name).toString());
-          }
-          resps.add(bindings);
-        }
-
-        return ResponseEntity.ok(resps);
+        return ResponseEntity.ok(Map.of("bindings", searchService.sparqlSearch(query)));
     }
 
     @GetMapping(

@@ -109,9 +109,10 @@ public class SearchService {
         return processSearchResults(results);
     }
 
-    public List<BindingSet> sparqlSearch(String query) throws MetadataRepositoryException, MalformedQueryException {
+    public List<Map<String, Map<String, String>>> sparqlSearch(String query) throws MetadataRepositoryException, MalformedQueryException {
         verifyQuery(query);
-        return metadataRepository.runSparqlQuery(query);
+        List<BindingSet> sets = metadataRepository.runSparqlQuery(query);
+        return searchMapper.toBindingList(sets);
     }
 
     public SearchQueryTemplateDTO getSearchQueryTemplate() {
