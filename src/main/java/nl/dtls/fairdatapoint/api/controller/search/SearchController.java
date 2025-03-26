@@ -30,7 +30,6 @@ import nl.dtls.fairdatapoint.service.search.SearchService;
 
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.MalformedQueryException;
-import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -79,13 +78,13 @@ public class SearchController {
 
     @PostMapping(
             path = "/sparql",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<BindingSet>> searchWithGenericQuery(
-            @RequestBody @Valid SearchQueryDTO query
+            @RequestBody @Valid String query
     ) throws MetadataRepositoryException, MalformedQueryException {
-        return ResponseEntity.ok(searchService.genericSearch(query));
+        return ResponseEntity.ok(searchService.sparql(query));
     }
 
     @GetMapping(

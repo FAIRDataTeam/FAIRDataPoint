@@ -69,6 +69,6 @@ public interface MetadataRepository {
                                     Map<String, Value> bindings)
             throws MetadataRepositoryException;
 
-    List<BindingSet> runSparqlQuery(String queryName)
+    List<BindingSet> runSparqlQuery(String query)
             throws MetadataRepositoryException;
 }

@@ -38,10 +38,8 @@ import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.query.Binding;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.MalformedQueryException;
-import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -111,12 +109,10 @@ public class SearchService {
         return processSearchResults(results);
     }
 
-    public List<BindingSet> genericSearch(
-            SearchQueryDTO searchQuery
-    ) throws MetadataRepositoryException, MalformedQueryException {
-        final String query = searchQuery.getQuery();
+    public List<BindingSet> sparql(String query) throws MetadataRepositoryException, MalformedQueryException {
         verifyQuery(query);
         final List<BindingSet> results = metadataRepository.runSparqlQuery(query);
+        System.out.println(results);
         return results;
     }
 
