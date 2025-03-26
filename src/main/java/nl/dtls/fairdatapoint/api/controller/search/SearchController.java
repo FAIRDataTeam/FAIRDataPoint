@@ -76,7 +76,7 @@ public class SearchController {
     public ResponseEntity<List<SearchResultDTO>> searchWithQuery(
             @RequestBody @Valid SearchQueryVariablesDTO reqDto
     ) throws MetadataRepositoryException, MalformedQueryException {
-        return ResponseEntity.ok(searchService.legacySearch(reqDto));
+        return ResponseEntity.ok(searchService.search(reqDto));
     }
 
     @PostMapping(
@@ -84,11 +84,9 @@ public class SearchController {
             consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<Map<String, String>>> searchWithGenericQuery(
-            @RequestBody @Valid String query
-    ) throws MetadataRepositoryException, MalformedQueryException {
-        // return ResponseEntity.ok(searchService.sparql(query));
-        List<BindingSet> bindingSets = searchService.sparql(query);
+    public ResponseEntity<List<Map<String, String>>> sparql(@RequestBody @Valid String query) 
+      throws MetadataRepositoryException, MalformedQueryException {
+        List<BindingSet> bindingSets = searchService.sparqlSearch(query);
         List<Map<String, String>> resps = new ArrayList<Map<String, String>>();
         for (BindingSet set : bindingSets) {
           HashMap<String, String> bindings = new HashMap<String, String>();

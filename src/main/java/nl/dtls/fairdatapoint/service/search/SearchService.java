@@ -85,7 +85,7 @@ public class SearchService {
     public List<SearchResultDTO> search(
             SearchSavedQueryDTO searchSavedQueryDTO
     ) throws MetadataRepositoryException {
-        return legacySearch(searchSavedQueryDTO.getVariables());
+        return search(searchSavedQueryDTO.getVariables());
     }
 
     public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
@@ -100,7 +100,7 @@ public class SearchService {
         parser.parseQuery(query, persistentUrl);
     }
 
-    public List<SearchResultDTO> legacySearch(
+    public List<SearchResultDTO> search(
             SearchQueryVariablesDTO reqDto
     ) throws MetadataRepositoryException, MalformedQueryException {
         final String query = composeQuery(reqDto);
@@ -109,11 +109,9 @@ public class SearchService {
         return processSearchResults(results);
     }
 
-    public List<BindingSet> sparql(String query) throws MetadataRepositoryException, MalformedQueryException {
+    public List<BindingSet> sparqlSearch(String query) throws MetadataRepositoryException, MalformedQueryException {
         verifyQuery(query);
-        final List<BindingSet> results = metadataRepository.runSparqlQuery(query);
-        System.out.println(results);
-        return results;
+        return metadataRepository.runSparqlQuery(query);
     }
 
     public SearchQueryTemplateDTO getSearchQueryTemplate() {
