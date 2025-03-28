@@ -1,6 +1,9 @@
 services:
      fdp:
-         image: fairdata/fairdatapoint:1.16
+         # image: fairdata/fairdatapoint:1.16
+         build:
+           context: .
+           dockerfile: Dockerfile
          volumes:
              - ./application.yml:/fdp/application.yml:ro
              - ./rdf/data:/fdp/fdp-store
