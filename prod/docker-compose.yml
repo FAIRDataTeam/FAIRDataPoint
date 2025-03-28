@@ -12,10 +12,15 @@ services:
          environment:
              - FDP_HOST=fdp
          volumes:
-             # Mount new logo file to assets in the container
-             - ./eh-next_logo.png:/usr/share/nginx/html/assets/my-logo.png:ro
-             # Mount _variables.scss so that styles are regenerated
-             - ./_variables.scss:/src/scss/custom/_variables.scss:ro
+            # Mount new logo file to assets in the container
+            - type: bind
+              source: ./eh-next_logo.png
+              target: /usr/share/nginx/html/assets/my-logo.png, readonly
+
+            # Mount _variables.scss so that styles are regenerated
+            - type: bind
+              source: ./_variables.scss
+              target: /src/scss/custom/_variables.scss, readonly
 
      mongo:
          image: mongo:4.2.24
