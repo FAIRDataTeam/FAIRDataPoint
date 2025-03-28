@@ -35,6 +35,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Search")
 @RestController
@@ -72,6 +73,16 @@ public class SearchController {
             @RequestBody @Valid SearchQueryVariablesDTO reqDto
     ) throws MetadataRepositoryException, MalformedQueryException {
         return ResponseEntity.ok(searchService.search(reqDto));
+    }
+
+    @PostMapping(
+            path = "/sparql",
+            consumes = MediaType.TEXT_PLAIN_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Map<String, List<Map<String, Map<String, String>>>>> sparql(@RequestBody @Valid String query) 
+      throws MetadataRepositoryException, MalformedQueryException {
+        return ResponseEntity.ok(Map.of("bindings", searchService.sparqlSearch(query)));
     }
 
     @GetMapping(

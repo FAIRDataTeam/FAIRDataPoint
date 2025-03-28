@@ -38,6 +38,7 @@ import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
 import nl.dtls.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,17 +93,26 @@ public class SearchService {
         return processSearchResults(results);
     }
 
+    private void verifyQuery(
+            String query
+    ) throws MetadataRepositoryException, MalformedQueryException {
+        final SPARQLParser parser = new SPARQLParser();
+        parser.parseQuery(query, persistentUrl);
+    }
+
     public List<SearchResultDTO> search(
             SearchQueryVariablesDTO reqDto
     ) throws MetadataRepositoryException, MalformedQueryException {
-        // Compose query
         final String query = composeQuery(reqDto);
-        // Verify query
-        final SPARQLParser parser = new SPARQLParser();
-        parser.parseQuery(query, persistentUrl);
-        // Get and process results for query
+        verifyQuery(query);
         final List<SearchResult> results = metadataRepository.findBySparqlQuery(query);
         return processSearchResults(results);
+    }
+
+    public List<Map<String, Map<String, String>>> sparqlSearch(String query) throws MetadataRepositoryException, MalformedQueryException {
+        verifyQuery(query);
+        List<BindingSet> sets = metadataRepository.runSparqlQuery(query);
+        return searchMapper.toBindingList(sets);
     }
 
     public SearchQueryTemplateDTO getSearchQueryTemplate() {

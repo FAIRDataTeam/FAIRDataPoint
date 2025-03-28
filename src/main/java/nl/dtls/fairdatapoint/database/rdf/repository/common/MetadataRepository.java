@@ -32,6 +32,7 @@ import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
 import nl.dtls.fairdatapoint.entity.search.SearchResult;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 
 import java.util.List;
 import java.util.Map;
@@ -66,5 +67,8 @@ public interface MetadataRepository {
 
     List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
                                     Map<String, Value> bindings)
+            throws MetadataRepositoryException;
+
+    List<BindingSet> runSparqlQuery(String query)
             throws MetadataRepositoryException;
 }

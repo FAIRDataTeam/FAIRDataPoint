@@ -27,11 +27,22 @@ import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
 import nl.dtls.fairdatapoint.entity.search.SearchResult;
 import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
 import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.util.Literals;
+import org.eclipse.rdf4j.model.vocabulary.XSD;
+import org.eclipse.rdf4j.query.BindingSet;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class SearchMapper {
@@ -101,5 +112,46 @@ public class SearchMapper {
                 "graphPattern", reqDto.getGraphPattern() + FRAGMENT_SUFFIX,
                 "ordering", reqDto.getOrdering() + FRAGMENT_SUFFIX
         );
+  }
+
+  public List<Map<String, Map<String, String>>> toBindingList(List<BindingSet> sets) {
+    return sets.stream().map(set -> {
+      return set.getBindingNames()
+          .stream()
+          .collect(Collectors.toMap(Function.identity(), name -> {
+            return renderValue(set.getValue(name));
+          }));
+    }).toList();
+  }
+
+  private Map<String, String> renderValue(Value value) {
+    if (value instanceof IRI) {
+      return Map.of(
+          "type", "uri",
+          "value", ((IRI) value).toString());
+    } else if (value instanceof BNode) {
+      return Map.of(
+          "type", "bnode",
+          "value", ((BNode) value).getID());
+    } else if (value instanceof Literal) {
+      final Literal lit = (Literal) value;
+      HashMap<String, String> result = new HashMap<>();
+      result.put("type", "literal");
+      result.put("value", lit.getLabel());
+
+      if (Literals.isLanguageLiteral(lit)) {
+        result.put("xml:lang", lit.getLanguage().orElse(null));
+      } else {
+        final IRI datatype = lit.getDatatype();
+        final boolean ignoreDatatype = datatype.equals(XSD.STRING);
+        if (!ignoreDatatype) {
+          result.put("datatype", datatype.stringValue());
+        }
+      }
+
+      return result;
+    } else {
+      return Map.of("value", value.toString());
     }
+  }
 }
