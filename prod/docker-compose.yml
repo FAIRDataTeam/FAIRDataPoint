@@ -1,0 +1,23 @@
+services:
+     fdp:
+         image: fairdata/fairdatapoint:1.16
+         volumes:
+             - ./application.yml:/fdp/application.yml:ro
+             - ./rdf/data:/fdp/fdp-store
+
+     fdp-client:
+         image: fairdata/fairdatapoint-client:1.16
+         ports:
+             - 80:80
+         environment:
+             - FDP_HOST=fdp
+         volumes:
+             # Mount new logo file to assets in the container
+             - ./eh-next_logo.png:/usr/share/nginx/html/assets/my-logo.png:ro
+             # Mount _variables.scss so that styles are regenerated
+             - ./_variables.scss:/src/scss/custom/_variables.scss:ro
+
+     mongo:
+         image: mongo:4.2.24
+         volumes:
+             - ./mongo/data:/data/db

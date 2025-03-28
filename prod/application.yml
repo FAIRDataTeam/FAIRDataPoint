@@ -1,0 +1,26 @@
+# application.yml
+instance:
+    index: false
+    clientUrl: http://fdpdemo.envri.eu
+
+repository:
+    type: 2
+    native:
+        dir: /fdp/fdp-store
+
+metadataProperties:
+    language: http://id.loc.gov/vocabulary/iso639-1/en
+    license: https://rdflicense.appspot.com/rdflicense/cc-by-nc-4.0
+    accessRightsDescription: This resource has no access restriction
+
+metadataMetrics:
+    https://purl.org/fair-metrics/FM_F1A: https://www.ietf.org/rfc/rfc3986.txt
+    https://purl.org/fair-metrics/FM_A1.1: https://www.wikidata.org/wiki/Q8777
+
+spring:
+    data:
+        mongodb:
+            uri: mongodb://mongo:27017/fdp
+
+ping:
+    enabled: false
