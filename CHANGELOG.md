@@ -9,12 +9,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Add permits for index entries by @MarekSuchanek in #454
 - Update to Java 21 by @MarekSuchanek in #471
-- ??? (TODO)
+- Use dedicated repository for drafts by @MarekSuchanek in #479
+- Add initial signposting headers by @kburger in #493
+- Migrate to PostgreSQL by @MarekSuchanek in #519
+- Update of core dependencies (mainly Spring Boot v3.2 -> v3.4 and RDF4J v4 -> v5) by @MarekSuchanek in #597
 - Get FAIR Data Team dependencies from Maven Central repository by @dennisvang in #577
 - Fix issue templates by @dennisvang in #582
 - Update CORS configuration by @dennisvang in #578
-- Separate and reuse github workflows by @dennisvang in #617
+- Separate and reuse GitHub workflows by @dennisvang in #617
 - Prevent duplicate workflow runs by @dennisvang in #628
 - Clean up Dockerfile by @dennisvang in #626
 - Fix index API by @dennisvang in #637 (backward incompatible)
