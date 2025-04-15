@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Prevent duplicate workflow runs by @dennisvang in #628
 - Clean up Dockerfile by @dennisvang in #626
 - Fix index API by @dennisvang in #637 (backward incompatible)
+- Fix saving metadata schema (draft and publish) by @MarekSuchanek in #XXX
 
 ## [1.17.2]
 

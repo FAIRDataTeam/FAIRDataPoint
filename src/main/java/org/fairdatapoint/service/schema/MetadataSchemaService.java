@@ -186,6 +186,7 @@ public class MetadataSchemaService {
         if (reqDto.isPublished()) {
             final List<MetadataSchemaVersion> parents = resolveExtends(newLatest);
             if (!parents.stream().allMatch(MetadataSchemaVersion::isPublished)) {
+                System.out.println("aaaa");
                 throw new ValidationException(MSG_ERROR_PARENTS_PUBLISH);
             }
         }
@@ -237,6 +238,7 @@ public class MetadataSchemaService {
         if (!schema.isPublished() && reqDto.isPublished()) {
             final List<MetadataSchemaVersion> parents = resolveExtends(schema);
             if (!parents.stream().allMatch(MetadataSchemaVersion::isPublished)) {
+                System.out.println("bbbb");
                 throw new ValidationException(MSG_ERROR_PARENTS_PUBLISH);
             }
         }

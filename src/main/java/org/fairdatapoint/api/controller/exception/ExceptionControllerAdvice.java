@@ -76,6 +76,7 @@ public class ExceptionControllerAdvice {
             )
     )
     public ErrorDTO handleConstraintViolation(Exception exception) {
+        exception.printStackTrace();
         log.warn(exception.getMessage());
         log.debug("Handling bad request (ConstraintViolation)", exception);
         return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());

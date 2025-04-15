@@ -78,7 +78,7 @@ public class MetadataSchemaMapper {
             MetadataSchemaVersion draft
     ) {
         return MetadataSchemaDraftDTO.builder()
-                .uuid(draft.getUuid())
+                .uuid(draft.getSchema().getUuid())
                 .name(draft.getName())
                 .description(draft.getDescription())
                 .abstractSchema(draft.isAbstractSchema())
@@ -231,6 +231,10 @@ public class MetadataSchemaMapper {
                 .definition(schema.getDefinition())
                 .suggestedResourceName(schema.getSuggestedResourceName())
                 .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
+                .schema(schema.getSchema())
+                .state(MetadataSchemaState.DRAFT)
+                .type(MetadataSchemaType.CUSTOM)
+                .version(schema.getVersion())
                 .build();
     }
 
