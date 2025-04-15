@@ -31,7 +31,6 @@ import org.fairdatapoint.config.properties.PingProperties;
 import org.fairdatapoint.config.properties.RepositoryConnectionProperties;
 import org.fairdatapoint.config.properties.RepositoryProperties;
 import org.fairdatapoint.entity.settings.*;
-import org.fairdatapoint.service.search.SearchMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -47,8 +46,6 @@ public class SettingsMapper {
     private final PingProperties pingProperties;
 
     private final RepositoryProperties repositoryProperties;
-
-    private final SearchMapper searchMapper;
 
     public SettingsDTO toDTO(Settings settings) {
         return SettingsDTO.builder()
@@ -142,12 +139,14 @@ public class SettingsMapper {
     }
 
     public Settings fromUpdateDTO(SettingsUpdateDTO dto, Settings settings) {
-        return settings.toBuilder()
+        return Settings.builder()
+                .uuid(settings.getUuid())
                 .appTitle(dto.getAppTitle())
                 .appSubtitle(dto.getAppSubtitle())
                 .pingEnabled(dto.getPing().isEnabled())
                 .pingEndpoints(dto.getPing().getEndpoints())
                 .autocompleteSearchNamespace(dto.getForms().getAutocomplete().getSearchNamespace())
+                .createdAt(settings.getCreatedAt())
                 .updatedAt(Instant.now())
                 .build();
     }
