@@ -90,9 +90,6 @@ public class MetadataEnhancer {
 
         // Populate with current data from the triple store
         setIssued(metadata, uri, l(getIssued(oldMetadata)));
-        if (definition.isCatalog()) {
-            setMetadataIssued(metadata, uri, l(getMetadataIssued(oldMetadata)));
-        }
     }
 
     public void enhance(Model metadata, IRI uri, ResourceDefinition definition) {
@@ -136,10 +133,6 @@ public class MetadataEnhancer {
         final OffsetDateTime timestamp = OffsetDateTime.now();
         setIssued(metadata, uri, l(timestamp));
         setModified(metadata, uri, l(timestamp));
-        if (definition.isCatalog()) {
-            setMetadataIssued(metadata, uri, l(timestamp));
-            setMetadataModified(metadata, uri, l(timestamp));
-        }
     }
 
     public void enhanceWithLinks(IRI entityUri, Model entity, ResourceDefinition definition, String url,

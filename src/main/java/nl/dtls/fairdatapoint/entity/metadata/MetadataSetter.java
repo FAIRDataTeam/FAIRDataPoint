@@ -105,14 +105,6 @@ public class MetadataSetter {
         update(metadata, uri, FDP.METADATAMODIFIED, dateTime);
     }
 
-    public static void setMetadataIssued(Model metadata, IRI uri, Literal dataRecordIssued) {
-        update(metadata, uri, DCTERMS.ISSUED, dataRecordIssued);
-    }
-
-    public static void setMetadataModified(Model metadata, IRI uri, Literal dataRecordModified) {
-        update(metadata, uri, DCTERMS.MODIFIED, dataRecordModified);
-    }
-
     // ------------------------------------------------------------------------------
     //  Custom
     // ------------------------------------------------------------------------------
