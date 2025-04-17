@@ -28,12 +28,12 @@ import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
-import nl.dtls.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
+import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

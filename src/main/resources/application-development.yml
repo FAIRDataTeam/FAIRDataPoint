@@ -1,6 +1,9 @@
 ping:
   enabled: false
 
+instance:
+    clientUrl: http://localhost:8081
+
 security:
   jwt:
     token:

@@ -73,7 +73,7 @@ public class JwtService {
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
-        parser = Jwts.parserBuilder().setSigningKey(key).build();
+        parser = Jwts.parser().setSigningKey(key).build();
     }
 
     public String createToken(AuthDTO authDTO) {
@@ -108,7 +108,7 @@ public class JwtService {
     }
 
     private String buildToken(User user) {
-        final Claims claims = Jwts.claims().setSubject(user.getUuid());
+        final Claims claims = Jwts.claims().setSubject(user.getUuid()).build();
         final Date now = new Date();
         final Date validity = new Date(now.getTime() + (expiration * DAY_MS));
         return Jwts.builder()

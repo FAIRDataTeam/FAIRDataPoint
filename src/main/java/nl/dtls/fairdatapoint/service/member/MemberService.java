@@ -32,15 +32,15 @@ import nl.dtls.fairdatapoint.entity.user.User;
 import nl.dtls.fairdatapoint.entity.user.UserRole;
 import nl.dtls.fairdatapoint.service.membership.PermissionService;
 import nl.dtls.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.security.acls.dao.AclRepository;
+import org.fairdatateam.security.acls.domain.MongoAcl;
+import org.fairdatateam.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.dao.AclRepository;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.domain.MongoAcl;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.*;
-import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

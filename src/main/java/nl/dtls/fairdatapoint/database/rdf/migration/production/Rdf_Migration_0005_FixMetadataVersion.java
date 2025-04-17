@@ -24,14 +24,14 @@ package nl.dtls.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.dtls.fairdatapoint.vocabulary.DCAT3;
-import nl.dtls.rdf.migration.entity.RdfMigrationAnnotation;
-import nl.dtls.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
+import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
