@@ -63,7 +63,7 @@
         <hypersistence.version>3.9.9</hypersistence.version>
 
         <!-- Test -->
-        <httpclient5.version>5.4.3</httpclient5.version>
+        <httpclient5.version>5.4.4</httpclient5.version>
 
         <!-- Plugins -->
         <plugin.license.version>5.0.0</plugin.license.version>
