@@ -77,9 +77,15 @@ public class SettingsService {
     public SettingsDTO updateSettings(SettingsUpdateDTO dto) {
         final Settings oldSettings = getOrDefaults();
 
+        // delete old Settings
+        final Optional<Settings> oldPersistedSettings = settingsRepository.findByUuid(KnownUUIDs.SETTINGS_UUID);
+        if (oldPersistedSettings.isPresent()) {
+            settingsRepository.delete(oldPersistedSettings.get());
+            entityManager.flush();
+        }
+
         // update Settings
-        final Settings newSettings = mapper.fromUpdateDTO(dto, oldSettings);
-        settingsRepository.saveAndFlush(newSettings);
+        final Settings newSettings = settingsRepository.saveAndFlush(mapper.fromUpdateDTO(dto, oldSettings));
 
         // update Metrics
         final List<SettingsMetric> metrics = updateMetrics(dto, newSettings);
@@ -98,8 +104,6 @@ public class SettingsService {
     }
 
     private List<SettingsMetric> updateMetrics(SettingsUpdateDTO dto, Settings settings) {
-        // Delete old
-        metricRepository.deleteAll(settings.getMetrics());
         // Add new
         final List<SettingsMetric> metrics = new ArrayList<>();
         final List<SettingsMetricDTO> dtos = dto.getMetadataMetrics();
@@ -110,8 +114,6 @@ public class SettingsService {
     }
 
     private List<SettingsAutocompleteSource> updateSources(SettingsUpdateDTO dto, Settings settings) {
-        // Delete old
-        metricRepository.deleteAll(settings.getMetrics());
         // Add new
         final List<SettingsAutocompleteSource> metrics = new ArrayList<>();
         final List<SettingsAutocompleteSourceDTO> dtos = dto.getForms().getAutocomplete().getSources();
@@ -122,9 +124,6 @@ public class SettingsService {
     }
 
     private List<SettingsSearchFilter> updateSearchFilters(SettingsUpdateDTO dto, Settings settings) {
-        // Delete old
-        searchFilterRepository.deleteAll(settings.getSearchFilters());
-        entityManager.flush();
         // Add new
         final List<SettingsSearchFilter> searchFilters = new ArrayList<>();
         final List<SearchFilterDTO> dtos = dto.getSearch().getFilters();

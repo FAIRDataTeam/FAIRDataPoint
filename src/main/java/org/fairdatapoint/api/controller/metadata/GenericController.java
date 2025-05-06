@@ -349,7 +349,10 @@ public class GenericController {
                             if (title1 == null) {
                                 return -1;
                             }
-                            return title1.compareTo(title2);
+                            if (title2 == null) {
+                                return 1;
+                            }
+                            return title1.compareToIgnoreCase(title2);
                         })
                         .toList();
 
