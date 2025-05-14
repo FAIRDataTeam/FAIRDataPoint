@@ -223,18 +223,14 @@ public class MetadataSchemaMapper {
     }
 
     public MetadataSchemaVersion toDraft(MetadataSchemaVersion schema) {
-        return MetadataSchemaVersion.builder()
-                .uuid(schema.getUuid())
-                .name(schema.getName())
-                .description(schema.getDescription())
-                .abstractSchema(schema.isAbstractSchema())
-                .definition(schema.getDefinition())
-                .suggestedResourceName(schema.getSuggestedResourceName())
-                .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
-                .schema(schema.getSchema())
+        return schema.toBuilder()
+                .origin(null)
+                .importedFrom(null)
+                .previousVersion(schema)
                 .state(MetadataSchemaState.DRAFT)
                 .type(MetadataSchemaType.CUSTOM)
-                .version(schema.getVersion())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
     }
 
