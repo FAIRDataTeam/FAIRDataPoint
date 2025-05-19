@@ -285,7 +285,7 @@
                         <exclude>**/*.json</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>.dockerignore</exclude>
-                        <exclude>Dockerfile.build</exclude>
+                        <exclude>Dockerfile</exclude>
                     </excludes>
                 </configuration>
                 <executions>
