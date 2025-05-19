@@ -25,10 +25,10 @@ package nl.dtls.fairdatapoint.service.label;
 import static java.util.function.Predicate.isEqual;
 import static nl.dtls.fairdatapoint.config.CacheConfig.LABEL_CACHE;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import com.github.fairdevkit.rdf.resolver.api.ResourceResolver;
-import com.github.fairdevkit.rdf.resolver.core.ContentNegotiationStrategy;
-import com.github.fairdevkit.rdf.resolver.core.CoreResourceResolver;
-import com.github.fairdevkit.rdf.resolver.core.PathExtensionStrategy;
+import org.fairdatateam.rdf.resolver.api.ResourceResolver;
+import org.fairdatateam.rdf.resolver.core.ContentNegotiationStrategy;
+import org.fairdatateam.rdf.resolver.core.CoreResourceResolver;
+import org.fairdatateam.rdf.resolver.core.PathExtensionStrategy;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;

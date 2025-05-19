@@ -33,14 +33,14 @@ import org.springframework.security.access.expression.method.DefaultMethodSecuri
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.acls.AclPermissionCacheOptimizer;
 import org.springframework.security.acls.AclPermissionEvaluator;
-import org.springframework.security.acls.dao.AclRepository;
+import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.LookupStrategy;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
-import org.springframework.security.acls.mongodb.BasicLookupStrategy;
-import org.springframework.security.acls.mongodb.MongoDBMutableAclService;
+import org.fairdatateam.security.acls.mongodb.BasicLookupStrategy;
+import org.fairdatateam.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import static java.lang.String.format;
