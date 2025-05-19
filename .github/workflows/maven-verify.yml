@@ -22,7 +22,7 @@ jobs:
           - windows-2022
           - macos-14
         java-version:
-          - 21
+          - 17
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
     with:
       runner: ${{ matrix.runner }}

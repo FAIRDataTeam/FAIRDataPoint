@@ -17,6 +17,7 @@ jobs:
   verify:
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
     with:
+      java-version: 17
       # todo: enable tests when test duration has been minimized
       mvn-options: "-DskipTests"
   publish:
