@@ -18,15 +18,19 @@ jobs:
     strategy:
       matrix:
         runner:
-          - ubuntu-24.04
-          - windows-2022
-          - macos-14
+          # https://github.com/ankane/setup-mongodb?tab=readme-ov-file#versions
+          - os: ubuntu-24.04
+            mongo: 8
+          - os: windows-2022
+            mongo: 5
+          - os: macos-14
+            mongo: 8
         java-version:
           - 17
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
     with:
-      runner: ${{ matrix.runner }}
+      runner: ${{ matrix.runner.os }}
       java-version: ${{ matrix.java-version }}
       # db settings must match testing profile
       db-type: mongodb
-      db-version: 8  # see https://github.com/ankane/setup-mongodb/issues/6
+      db-version: ${{ matrix.runner.mongo }}  # see https://github.com/ankane/setup-mongodb/issues/6
