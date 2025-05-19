@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Get FAIRDataTeam packages from Maven Central instead of private Nexus repo (backport)
+
+### Changed
+
+- Cleaned up Dockerfile (backport)
+
 ## [1.17.2]
 
 ### Fixed
