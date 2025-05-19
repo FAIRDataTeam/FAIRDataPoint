@@ -29,3 +29,4 @@ jobs:
       java-version: ${{ matrix.java-version }}
       # db settings must match testing profile
       db-type: mongodb
+      db-version: 8  # see https://github.com/ankane/setup-mongodb/issues/6
