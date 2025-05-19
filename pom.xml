@@ -51,8 +51,9 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Project related -->
-        <spring.rdf.migration.version>1.2.0.RELEASE</spring.rdf.migration.version>
-        <spring.security.acl.mongo.version>5.2.4.RELEASE</spring.security.acl.mongo.version>
+        <spring.rdf.migration.version>2.0.0</spring.rdf.migration.version>
+        <rdf-resolver.version>0.2.0</rdf-resolver.version>
+        <spring.security.acl.mongodb.version>6.0.0</spring.security.acl.mongodb.version>
 
         <!-- Core -->
         <springdoc.version>2.1.0</springdoc.version>
@@ -61,7 +62,6 @@
         <rdf4j.version>4.3.2</rdf4j.version>
         <jwt.version>0.11.5</jwt.version>
         <lombok.version>1.18.28</lombok.version>
-        <rdf-resolver.version>0.1.2-SNAPSHOT</rdf-resolver.version>
 
         <!-- Test -->
         <httpclient5.version>5.2.1</httpclient5.version>
@@ -76,33 +76,6 @@
         <plugin.checkstyle.version>3.3.0</plugin.checkstyle.version>
         <plugin.spotbugs.version>4.7.3.5</plugin.spotbugs.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <name>Central Repository</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>nexus-releases</id>
-            <name>Nexus Releases</name>
-            <url>https://nexus.internal.fairdatapoint.org/repository/maven-releases/</url>
-        </repository>
-        <repository>
-            <id>nexus-snapshots</id>
-            <name>Nexus Snapshots</name>
-            <url>https://nexus.internal.fairdatapoint.org/repository/maven-snapshots/</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -122,9 +95,24 @@
         <!--   Project related  -->
         <!-- ////////////////// -->
         <dependency>
-            <groupId>nl.dtls</groupId>
+            <groupId>org.fairdatateam.rdf</groupId>
             <artifactId>spring-rdf-migration</artifactId>
             <version>${spring.rdf.migration.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fairdatateam.rdf</groupId>
+            <artifactId>rdf-resource-resolver-core</artifactId>
+            <version>${rdf-resolver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fairdatateam.rdf</groupId>
+            <artifactId>rdf-resource-resolver-api</artifactId>
+            <version>${rdf-resolver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fairdatateam.security</groupId>
+            <artifactId>spring-security-acl-mongodb</artifactId>
+            <version>${spring.security.acl.mongodb.version}</version>
         </dependency>
 
         <!-- ////////////////// -->
@@ -171,11 +159,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-acl-mongodb</artifactId>
-            <version>${spring.security.acl.mongo.version}</version>
         </dependency>
 
         <!-- ////////////////// -->
@@ -246,16 +229,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.fairdevkit</groupId>
-            <artifactId>rdf-resource-resolver-core</artifactId>
-            <version>${rdf-resolver.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.fairdevkit</groupId>
-            <artifactId>rdf-resource-resolver-api</artifactId>
-            <version>${rdf-resolver.version}</version>
         </dependency>
 
         <!-- ////////////////// -->
