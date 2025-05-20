@@ -1,0 +1,29 @@
+name: Publish to Docker Hub
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+  release:
+    types:
+      - created
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
+    with:
+      java-version: 17
+      # todo: enable tests when test duration has been minimized
+      mvn-options: "-DskipTests"
+  publish:
+    needs: verify
+    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v2
+    secrets: inherit
+    with:
+      file: './Dockerfile'
+      push: ${{ github.event_name == 'push' || github.event_name == 'release' }}

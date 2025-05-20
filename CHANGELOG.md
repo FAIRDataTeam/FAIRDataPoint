@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Cleaned up Dockerfile (backport)
+- Separate Github workflows for test and publish (backport)
 
 ## [1.17.2]
 
