@@ -20,7 +20,8 @@ FROM eclipse-temurin:17-jdk-focal
 
 # add non-root user to run the app
 # https://spring.io/guides/gs/spring-boot-docker
-RUN addgroup -S spring && adduser -S spring -G spring
+# on ubuntu the following creates a group with the same name as user
+RUN adduser spring --system --group
 USER spring:spring
 
 WORKDIR /fdp
