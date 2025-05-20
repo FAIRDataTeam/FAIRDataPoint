@@ -4,7 +4,7 @@
 ################################################################################
 # BUILD JAR
 
-FROM maven:3-eclipse-temurin-17-alpine AS builder
+FROM maven:3-eclipse-temurin-17-focal AS builder
 
 WORKDIR /builder
 
@@ -16,7 +16,7 @@ RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests package
 ################################################################################
 # BUILD IMAGE
 
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk-focal
 
 # add non-root user to run the app
 # https://spring.io/guides/gs/spring-boot-docker
