@@ -27,7 +27,7 @@ jobs:
             mongo: 8
         java-version:
           - 17
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@issue23  #v2
     with:
       runner: ${{ matrix.runner.os }}
       java-version: ${{ matrix.java-version }}
