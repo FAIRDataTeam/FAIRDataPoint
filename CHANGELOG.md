@@ -15,6 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Cleaned up Dockerfile (backport)
 - Separate Github workflows for test and publish (backport)
+- Upgraded to Java JDK 21 (LTS)
+- Upgraded to latest dependencies
 
 ## [1.17.2]
 

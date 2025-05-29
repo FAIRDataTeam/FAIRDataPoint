@@ -23,7 +23,6 @@
 package nl.dtls.fairdatapoint.acceptance.schema;
 
 import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
 import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
 import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
 import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
@@ -73,6 +72,8 @@ public class Import_POST extends WebIntegrationTest {
                 .description(metadataSchemaFixtures.customSchema().getDescription())
                 .definition(metadataSchemaFixtures.customSchema().getDefinition())
                 .abstractSchema(metadataSchemaFixtures.customSchema().isAbstractSchema())
+                .type(metadataSchemaFixtures.customSchema().getType())
+                .targetClasses(metadataSchemaFixtures.customSchema().getTargetClasses())
                 .extendsSchemaUuids(Collections.emptyList())
                 .build();
     }
@@ -91,6 +92,8 @@ public class Import_POST extends WebIntegrationTest {
                 .description(metadataSchemaFixtures.customSchema().getDescription())
                 .definition(metadataSchemaFixtures.customSchema().getDefinition())
                 .abstractSchema(metadataSchemaFixtures.customSchema().isAbstractSchema())
+                .type(metadataSchemaFixtures.customSchema().getType())
+                .targetClasses(metadataSchemaFixtures.customSchema().getTargetClasses())
                 .extendsSchemaUuids(Collections.emptyList())
                 .build();
     }

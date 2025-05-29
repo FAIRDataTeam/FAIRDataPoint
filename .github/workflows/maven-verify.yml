@@ -26,7 +26,7 @@ jobs:
           - os: macos-14
             mongo: 8
         java-version:
-          - 17
+          - 21
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
     with:
       runner: ${{ matrix.runner.os }}

@@ -59,6 +59,7 @@ public class MetadataSchemaFixtures {
                 .version(VERSION)
                 .versionString(VERSION.toString())
                 .name(name)
+                .description("")
                 .definition(definition)
                 .targetClasses(targetClasses)
                 .extendSchemas(extendsSchemas)
