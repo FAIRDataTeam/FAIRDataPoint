@@ -26,6 +26,8 @@ import org.fairdatapoint.Profiles;
 import org.fairdatapoint.acceptance.schema.Common;
 import org.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
 import org.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
+import org.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
+import org.fairdatapoint.entity.schema.MetadataSchemaVersion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -33,11 +35,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ActiveProfiles(Profiles.TESTING)
@@ -47,25 +48,32 @@ public class MetadataSchemaServiceTests {
     @Autowired
     private MetadataSchemaService service;
 
+    @Autowired
+    private MetadataSchemaVersionRepository versionRepository;
+
     @Test
     @WithMockUser(roles = {"ADMIN"})
-    public void changeExistingSchema() throws Exception {
+    public void testChangeExistingSchema() throws Exception {
         // reproduces #660
 
         // GIVEN: existing schema version (without existing draft) and changes to be made
-        UUID uuid = Common.SCHEMA_SIMPLE_UUID;
+        UUID schemaUuid = Common.SCHEMA_SIMPLE_UUID;
         MetadataSchemaChangeDTO changeDTO = MetadataSchemaChangeDTO.builder()
-                .name("test")
-                .description("")
-                .definition("")
                 .abstractSchema(false)
-                .extendsSchemaUuids(new ArrayList<>())
+                .definition("")
+                .description("")
+                .extendsSchemaUuids(List.of())
+                .name("test")
+                .suggestedResourceName(null)
+                .suggestedUrlPrefix(null)
                 .build();
 
         // WHEN: changes are applied to existing schema
-        Optional<MetadataSchemaDraftDTO> updatedDraft = service.updateSchemaDraft(uuid, changeDTO);
+        MetadataSchemaDraftDTO updatedDraft = service.updateSchemaDraft(schemaUuid, changeDTO).orElseThrow();
 
         // THEN: draft schema is created with updated properties
-        assertEquals(updatedDraft.map(MetadataSchemaDraftDTO::getName).orElse(""), changeDTO.getName());
+        MetadataSchemaVersion draftVersion = versionRepository.getDraftBySchemaUuid(schemaUuid).orElseThrow();
+        assertEquals(updatedDraft.getName(), changeDTO.getName());
+        assertEquals(updatedDraft.getName(), draftVersion.getName());
     }
 }
