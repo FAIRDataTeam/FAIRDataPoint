@@ -117,39 +117,38 @@ public final class DATACITE {
     /** <tt>http://purl.org/spar/datacite/usesIdentifierScheme</tt> */
     public static final IRI USESIDENTIFIERSCHEME;
 
-
     static {
-        ValueFactory VF = SimpleValueFactory.getInstance();
+        final ValueFactory factory = SimpleValueFactory.getInstance();
 
-        ALTERNATERESOURCEIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/AlternateResourceIdentifier");
-        LIST = VF.createIRI("http://purl.org/co/List");
-        PRIMARYRESOURCEIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/PrimaryResourceIdentifier");
-        LITERAL = VF.createIRI("http://www.essepuntato.it/2010/06/literalreification/Literal");
-        FUNDERIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/FunderIdentifier");
-        METADATASCHEME = VF.createIRI("http://purl.org/spar/datacite/MetadataScheme");
-        ORGANIZATIONIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/OrganizationIdentifier");
-        PERSONALIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/PersonalIdentifier");
-        CONCEPT = VF.createIRI("http://www.w3.org/2004/02/skos/core#Concept");
-        FUNDERIDENTIFIERSCHEME = VF.createIRI("http://purl.org/spar/datacite/FunderIdentifierScheme");
-        IDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/Identifier");
-        ORGANIZATIONIDENTIFIERSCHEME = VF.createIRI("http://purl.org/spar/datacite/OrganizationIdentifierScheme");
-        AGENTIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/AgentIdentifier");
-        DESCRIPTIONTYPE = VF.createIRI("http://purl.org/spar/datacite/DescriptionType");
-        AGENTIDENTIFIERSCHEME = VF.createIRI("http://purl.org/spar/datacite/AgentIdentifierScheme");
-        IDENTIFIERSCHEME = VF.createIRI("http://purl.org/spar/datacite/IdentifierScheme");
-        RESOURCEIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/ResourceIdentifier");
-        PERSONALIDENTIFIERSCHEME = VF.createIRI("http://purl.org/spar/datacite/PersonalIdentifierScheme");
-        RESOURCEIDENTIFIERSCHEME = VF.createIRI("http://purl.org/spar/datacite/ResourceIdentifierScheme");
-        HASCREATORLIST = VF.createIRI("http://purl.org/spar/datacite/hasCreatorList");
-        HASGENERALRESOURCETYPE = VF.createIRI("http://purl.org/spar/datacite/hasGeneralResourceType");
-        USESMETADATASCHEME = VF.createIRI("http://purl.org/spar/datacite/usesMetadataScheme");
-        HASURL = VF.createIRI("http://purl.org/spar/fabio/hasURL");
-        TOPOBJECTPROPERTY = VF.createIRI("http://www.w3.org/2002/07/owl#topObjectProperty");
-        HASDESCRIPTION = VF.createIRI("http://purl.org/spar/datacite/hasDescription");
-        HASDESCRIPTIONTYPE = VF.createIRI("http://purl.org/spar/datacite/hasDescriptionType");
-        TYPE = VF.createIRI("http://purl.org/dc/terms/type");
-        HASIDENTIFIER = VF.createIRI("http://purl.org/spar/datacite/hasIdentifier");
-        USESIDENTIFIERSCHEME = VF.createIRI("http://purl.org/spar/datacite/usesIdentifierScheme");
+        ALTERNATERESOURCEIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/AlternateResourceIdentifier");
+        LIST = factory.createIRI("http://purl.org/co/List");
+        PRIMARYRESOURCEIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/PrimaryResourceIdentifier");
+        LITERAL = factory.createIRI("http://www.essepuntato.it/2010/06/literalreification/Literal");
+        FUNDERIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/FunderIdentifier");
+        METADATASCHEME = factory.createIRI("http://purl.org/spar/datacite/MetadataScheme");
+        ORGANIZATIONIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/OrganizationIdentifier");
+        PERSONALIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/PersonalIdentifier");
+        CONCEPT = factory.createIRI("http://www.w3.org/2004/02/skos/core#Concept");
+        FUNDERIDENTIFIERSCHEME = factory.createIRI("http://purl.org/spar/datacite/FunderIdentifierScheme");
+        IDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/Identifier");
+        ORGANIZATIONIDENTIFIERSCHEME = factory.createIRI("http://purl.org/spar/datacite/OrganizationIdentifierScheme");
+        AGENTIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/AgentIdentifier");
+        DESCRIPTIONTYPE = factory.createIRI("http://purl.org/spar/datacite/DescriptionType");
+        AGENTIDENTIFIERSCHEME = factory.createIRI("http://purl.org/spar/datacite/AgentIdentifierScheme");
+        IDENTIFIERSCHEME = factory.createIRI("http://purl.org/spar/datacite/IdentifierScheme");
+        RESOURCEIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/ResourceIdentifier");
+        PERSONALIDENTIFIERSCHEME = factory.createIRI("http://purl.org/spar/datacite/PersonalIdentifierScheme");
+        RESOURCEIDENTIFIERSCHEME = factory.createIRI("http://purl.org/spar/datacite/ResourceIdentifierScheme");
+        HASCREATORLIST = factory.createIRI("http://purl.org/spar/datacite/hasCreatorList");
+        HASGENERALRESOURCETYPE = factory.createIRI("http://purl.org/spar/datacite/hasGeneralResourceType");
+        USESMETADATASCHEME = factory.createIRI("http://purl.org/spar/datacite/usesMetadataScheme");
+        HASURL = factory.createIRI("http://purl.org/spar/fabio/hasURL");
+        TOPOBJECTPROPERTY = factory.createIRI("http://www.w3.org/2002/07/owl#topObjectProperty");
+        HASDESCRIPTION = factory.createIRI("http://purl.org/spar/datacite/hasDescription");
+        HASDESCRIPTIONTYPE = factory.createIRI("http://purl.org/spar/datacite/hasDescriptionType");
+        TYPE = factory.createIRI("http://purl.org/dc/terms/type");
+        HASIDENTIFIER = factory.createIRI("http://purl.org/spar/datacite/hasIdentifier");
+        USESIDENTIFIERSCHEME = factory.createIRI("http://purl.org/spar/datacite/usesIdentifierScheme");
 
     }
 

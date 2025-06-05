@@ -75,25 +75,24 @@ public final class FDP {
     /** <tt>https://w3id.org/fdp/fdp-o#metadataModified</tt> */
     public static final IRI METADATAMODIFIED;
 
-
     static {
-        ValueFactory VF = SimpleValueFactory.getInstance();
+        final ValueFactory factory = SimpleValueFactory.getInstance();
 
-        DEPRECATEDCLASSES = VF.createIRI("https://w3id.org/fdp/fdp-o#DeprecatedClasses");
-        FAIRDATAPOINT = VF.createIRI("https://w3id.org/fdp/fdp-o#FAIRDataPoint");
-        METADATA = VF.createIRI("https://w3id.org/fdp/fdp-o#Metadata");
-        METADATASERVICE = VF.createIRI("https://w3id.org/fdp/fdp-o#MetadataService");
-        DEPRECATEDOBJECTPROPERTIES = VF.createIRI("https://w3id.org/fdp/fdp-o#deprecatedObjectProperties");
-        FDPIDENTIFIER = VF.createIRI("https://w3id.org/fdp/fdp-o#fdpIdentifier");
-        METADATACATALOG = VF.createIRI("https://w3id.org/fdp/fdp-o#metadataCatalog");
-        METADATAIDENTIFIER = VF.createIRI("https://w3id.org/fdp/fdp-o#metadataIdentifier");
-        SERVESMETADATA = VF.createIRI("https://w3id.org/fdp/fdp-o#servesMetadata");
-        FDPENDDATE = VF.createIRI("https://w3id.org/fdp/fdp-o#fdpEndDate");
-        FDPSOFTWAREVERSION = VF.createIRI("https://w3id.org/fdp/fdp-o#fdpSoftwareVersion");
-        FDPSTARTDATE = VF.createIRI("https://w3id.org/fdp/fdp-o#fdpStartDate");
-        FDPUILANGUAGE = VF.createIRI("https://w3id.org/fdp/fdp-o#fdpUILanguage");
-        METADATAISSUED = VF.createIRI("https://w3id.org/fdp/fdp-o#metadataIssued");
-        METADATAMODIFIED = VF.createIRI("https://w3id.org/fdp/fdp-o#metadataModified");
+        DEPRECATEDCLASSES = factory.createIRI("https://w3id.org/fdp/fdp-o#DeprecatedClasses");
+        FAIRDATAPOINT = factory.createIRI("https://w3id.org/fdp/fdp-o#FAIRDataPoint");
+        METADATA = factory.createIRI("https://w3id.org/fdp/fdp-o#Metadata");
+        METADATASERVICE = factory.createIRI("https://w3id.org/fdp/fdp-o#MetadataService");
+        DEPRECATEDOBJECTPROPERTIES = factory.createIRI("https://w3id.org/fdp/fdp-o#deprecatedObjectProperties");
+        FDPIDENTIFIER = factory.createIRI("https://w3id.org/fdp/fdp-o#fdpIdentifier");
+        METADATACATALOG = factory.createIRI("https://w3id.org/fdp/fdp-o#metadataCatalog");
+        METADATAIDENTIFIER = factory.createIRI("https://w3id.org/fdp/fdp-o#metadataIdentifier");
+        SERVESMETADATA = factory.createIRI("https://w3id.org/fdp/fdp-o#servesMetadata");
+        FDPENDDATE = factory.createIRI("https://w3id.org/fdp/fdp-o#fdpEndDate");
+        FDPSOFTWAREVERSION = factory.createIRI("https://w3id.org/fdp/fdp-o#fdpSoftwareVersion");
+        FDPSTARTDATE = factory.createIRI("https://w3id.org/fdp/fdp-o#fdpStartDate");
+        FDPUILANGUAGE = factory.createIRI("https://w3id.org/fdp/fdp-o#fdpUILanguage");
+        METADATAISSUED = factory.createIRI("https://w3id.org/fdp/fdp-o#metadataIssued");
+        METADATAMODIFIED = factory.createIRI("https://w3id.org/fdp/fdp-o#metadataModified");
 
     }
 
