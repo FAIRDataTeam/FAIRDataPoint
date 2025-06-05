@@ -28,8 +28,8 @@
 package org.fairdatapoint.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+
+import static org.fairdatapoint.util.ValueFactoryHelper.i;
 
 /**
  * Semanticscience Integrated Ontology
@@ -40,12 +40,11 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
  * @version 0.1
  * @since 2018-01-17
  */
-public class Sio {
+public class SIO {
 
-    public static final ValueFactory VF = SimpleValueFactory.getInstance();
-    public static final String PREFIX = "sio";
     public static final String NAMESPACE = "http://semanticscience.org/resource/";
-    public static final IRI REFERS_TO = VF.createIRI(NAMESPACE + "SIO_000628");
-    public static final IRI IS_ABOUT = VF.createIRI(NAMESPACE + "SIO_000332");
+
+    public static final IRI IS_ABOUT = i(NAMESPACE + "SIO_000332");
+    public static final IRI REFERS_TO = i(NAMESPACE + "SIO_000628");
 
 }
