@@ -24,7 +24,7 @@ package org.fairdatapoint.entity.metadata;
 
 import org.fairdatapoint.vocabulary.DCAT3;
 import org.fairdatapoint.vocabulary.FDP;
-import org.fairdatapoint.vocabulary.Sio;
+import org.fairdatapoint.vocabulary.SIO;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
@@ -122,12 +122,12 @@ public class MetadataSetter {
     }
 
     public static void setMetrics(Model metadata, IRI uri, List<Metric> metrics) {
-        metadata.remove(null, Sio.IS_ABOUT, null);
-        metadata.remove(null, Sio.REFERS_TO, null);
+        metadata.remove(null, SIO.IS_ABOUT, null);
+        metadata.remove(null, SIO.REFERS_TO, null);
         metrics.forEach(metric -> {
-            metadata.add(uri, Sio.REFERS_TO, metric.getUri());
-            metadata.add(metric.getUri(), Sio.IS_ABOUT, metric.getMetricType());
-            metadata.add(metric.getUri(), Sio.REFERS_TO, metric.getValue());
+            metadata.add(uri, SIO.REFERS_TO, metric.getUri());
+            metadata.add(metric.getUri(), SIO.IS_ABOUT, metric.getMetricType());
+            metadata.add(metric.getUri(), SIO.REFERS_TO, metric.getValue());
         });
     }
 
