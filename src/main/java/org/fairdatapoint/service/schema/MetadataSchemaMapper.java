@@ -230,7 +230,7 @@ public class MetadataSchemaMapper {
      * @return       a new draft schema version based on the input schema version
      */
     public MetadataSchemaVersion toDraft(MetadataSchemaVersion schema) {
-        Instant now = Instant.now();
+        final Instant now = Instant.now();
         return schema.toBuilder()
                 .origin(null)
                 .importedFrom(null)
