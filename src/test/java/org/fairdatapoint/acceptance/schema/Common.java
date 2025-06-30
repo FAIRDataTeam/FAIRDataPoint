@@ -84,7 +84,7 @@ public class Common {
     }
 
     public static void compare(MetadataSchemaVersion entity, MetadataSchemaDraftDTO dto) {
-        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
+        assertThat(dto.getUuid(), is(equalTo(entity.getSchema().getUuid())));
         assertThat(dto.getName(), is(equalTo(entity.getName())));
         assertThat(dto.getDefinition(), is(equalTo(entity.getDefinition())));
     }

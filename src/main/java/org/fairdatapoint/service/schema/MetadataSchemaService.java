@@ -124,19 +124,22 @@ public class MetadataSchemaService {
         final MetadataSchemaVersion baseDraft;
         // Check if present
         if (oDraft.isPresent()) {
+            // Continue with existing draft
             baseDraft = oDraft.get();
         }
         else {
             if (oLatest.isEmpty()) {
                 return empty();
             }
+            // There is no draft yet, so we create a shallow copy of the
+            // latest schema version to use as the basis for a new draft
             baseDraft = metadataSchemaMapper.toDraft(oLatest.get());
         }
-        // Validate
+        // Validate schema extensions
         metadataSchemaValidator.validateAllExist(reqDto.getExtendsSchemaUuids());
         metadataSchemaValidator.validateNoExtendsCycle(uuid, reqDto.getExtendsSchemaUuids());
         final List<MetadataSchema> extendedSchemas = getAll(reqDto.getExtendsSchemaUuids());
-        // Save
+        // Save draft version
         final MetadataSchemaVersion updatedDraft = versionRepository.saveAndFlush(
                 metadataSchemaMapper.fromChangeDTO(reqDto, baseDraft)
         );
