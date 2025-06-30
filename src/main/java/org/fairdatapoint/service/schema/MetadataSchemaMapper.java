@@ -235,6 +235,7 @@ public class MetadataSchemaMapper {
                 .origin(null)
                 .importedFrom(null)
                 .previousVersion(schema)
+                .published(false)
                 .state(MetadataSchemaState.DRAFT)
                 .type(MetadataSchemaType.CUSTOM)
                 .createdAt(now)
