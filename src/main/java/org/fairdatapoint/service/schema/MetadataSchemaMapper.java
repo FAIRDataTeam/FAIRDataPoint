@@ -223,14 +223,15 @@ public class MetadataSchemaMapper {
     }
 
     public MetadataSchemaVersion toDraft(MetadataSchemaVersion schema) {
+        Instant now = Instant.now();
         return schema.toBuilder()
                 .origin(null)
                 .importedFrom(null)
                 .previousVersion(schema)
                 .state(MetadataSchemaState.DRAFT)
                 .type(MetadataSchemaType.CUSTOM)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
     }
 
