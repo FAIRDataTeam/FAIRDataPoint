@@ -222,6 +222,13 @@ public class MetadataSchemaMapper {
                         .build();
     }
 
+    /**
+     * Returns a shallow copy of the specified schema version,
+     * with relevant fields modified to indicate new draft status.
+     *
+     * @param schema the schema version to base the new draft on
+     * @return       a new draft schema version based on the input schema version
+     */
     public MetadataSchemaVersion toDraft(MetadataSchemaVersion schema) {
         Instant now = Instant.now();
         return schema.toBuilder()
