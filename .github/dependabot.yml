@@ -6,7 +6,6 @@ updates:
     # Check the registry for updates every week
     schedule:
       interval: "weekly"
-    target-branch: "develop"
     # Add these labels to PRs
     labels:
       - "dependencies"
@@ -22,6 +21,5 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "develop"
     labels:
       - "dependencies"
