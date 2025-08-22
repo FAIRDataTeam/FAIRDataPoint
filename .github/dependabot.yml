@@ -1,12 +1,22 @@
 version: 2
 updates:
   - package-ecosystem: "maven"
+    # Look for `requirements.*` files in the `root` directory
     directory: "/"
+    # Check the registry for updates every week
     schedule:
       interval: "daily"
     target-branch: "develop"
+    # Add these labels to PRs
     labels:
       - "dependencies"
+    # Group minor and patch dependencies, but create separate PRs for updates that do not match any grouping rule.
+    groups:
+      minor-or-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
