@@ -7,10 +7,10 @@ updates:
     # Check the registry for updates every week
     schedule:
       interval: "weekly"
-    # Add these labels to PRs
+    # Add labels to generated PRs
     labels:
       - "dependencies"
-    # Group minor and patch dependencies, except for spring-boot-starter-parent updates,
+    # Group minor updates and patch updates, except for spring-boot-starter-parent updates,
     # and create separate PRs for updates that do not match any grouping rule.
     groups:
       minor-or-patch:
