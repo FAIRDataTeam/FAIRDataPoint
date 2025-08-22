@@ -10,13 +10,16 @@ updates:
     # Add these labels to PRs
     labels:
       - "dependencies"
-    # Group minor and patch dependencies, but create separate PRs for updates that do not match any grouping rule.
+    # Group minor and patch dependencies, except for spring-boot-starter-parent updates,
+    # and create separate PRs for updates that do not match any grouping rule.
     groups:
       minor-or-patch:
         applies-to: version-updates
         update-types:
           - "minor"
           - "patch"
+        exclude-patterns:
+          - "spring-boot-starter-parent"
 
   - package-ecosystem: "github-actions"
     directory: "/"
