@@ -5,7 +5,7 @@ updates:
     directory: "/"
     # Check the registry for updates every week
     schedule:
-      interval: "daily"
+      interval: "weekly"
     target-branch: "develop"
     # Add these labels to PRs
     labels:
