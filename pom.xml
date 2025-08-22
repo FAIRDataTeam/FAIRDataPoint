@@ -6,6 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.0</version>
+        <!-- spring-boot managed dependencies: https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.fairdatapoint</groupId>
@@ -60,7 +61,7 @@
         <rdf4j.version>5.1.3</rdf4j.version>
         <jwt.version>0.12.6</jwt.version>
         <lombok.version>1.18.38</lombok.version>
-        <hypersistence.version>3.9.10</hypersistence.version>
+        <hypersistence.version>3.10.3</hypersistence.version>
 
         <!-- Plugins -->
         <plugin.license.version>5.0.0</plugin.license.version>
