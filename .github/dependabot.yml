@@ -19,7 +19,7 @@ updates:
           - "minor"
           - "patch"
         exclude-patterns:
-          - "spring-boot-starter-parent"
+          - "*spring-boot-starter-parent*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
