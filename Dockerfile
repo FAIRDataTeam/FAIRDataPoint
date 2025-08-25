@@ -4,8 +4,6 @@
 ################################################################################
 # BUILD JAR
 
-ARG PROJECT_VERSION
-
 FROM maven:3-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /builder
@@ -13,6 +11,7 @@ WORKDIR /builder
 ADD . /builder
 
 # https://maven.apache.org/ref/current/maven-embedder/cli.html
+ARG PROJECT_VERSION
 RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevision=${PROJECT_VERSION} package
 
 ################################################################################
