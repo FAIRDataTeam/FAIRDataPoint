@@ -26,3 +26,5 @@ jobs:
     with:
       file: './Dockerfile'
       push: ${{ github.event_name == 'push' || github.event_name == 'release' }}
+      build-args: |
+        "PROJECT_VERSION=${{ github.ref_name }}"
