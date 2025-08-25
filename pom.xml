@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.fairdatateam</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.20.0</version>
+    <version>${revision}</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -45,6 +45,8 @@
     <properties>
         <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- revision defaults to the major version, and should be overridden during build, e.g. `mvn -Drevision=1.20.2 ...` -->
+        <revision>1</revision>
 
         <!-- Maven -->
         <maven.compiler.source>21</maven.compiler.source>
