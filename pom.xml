@@ -46,8 +46,8 @@
     <properties>
         <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- revision defaults to the major version, and should be overridden during build, e.g. `mvn -Drevision=2.3.4 ...` -->
-        <revision>2</revision>
+        <!-- revision should be overridden during build, e.g. `mvn -Drevision=v2.3.4 ...` -->
+        <revision>dev</revision>
 
         <!-- Maven -->
         <maven.compiler.source>21</maven.compiler.source>
