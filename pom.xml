@@ -362,6 +362,10 @@
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <generateGitPropertiesFilename>${project.build.outputDirectory}/META-INF/git.properties</generateGitPropertiesFilename>
                     <commitIdGenerationMode>full</commitIdGenerationMode>
+                    <!-- include lightweight tags in git describe (github release creates lightweight tags) -->
+                    <gitDescribe>
+                        <tags>true</tags>
+                    </gitDescribe>
                 </configuration>
             </plugin>
             <plugin>
