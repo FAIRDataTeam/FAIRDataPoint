@@ -21,7 +21,7 @@
     dash:viewer dash:LabelViewer ;
   ], [
     sh:path r3d:startDate ;
-    sh:datatype xsd:dateTime ;
+    sh:datatype xsd:date ;
     sh:maxCount 1 ;
     dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
