@@ -36,12 +36,12 @@
     sh:path fdp:metadataIssued ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
-    dash:editor dash:DatePickerEditor ;
+    dash:editor dash:DateTimePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ] , [
     sh:path fdp:metadataModified ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
-    dash:editor dash:DatePickerEditor ;
+    dash:editor dash:DateTimePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ] .

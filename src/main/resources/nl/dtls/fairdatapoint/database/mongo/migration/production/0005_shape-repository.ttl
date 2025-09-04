@@ -29,7 +29,7 @@
     sh:path r3d:lastUpdate ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
-    dash:editor dash:DatePickerEditor ;
+    dash:editor dash:DateTimePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ], [
     sh:path r3d:institutionCountry ;

@@ -10,13 +10,13 @@
     sh:path dct:issued ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
-    dash:editor dash:DatePickerEditor ;
+    dash:editor dash:DateTimePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ], [
     sh:path dct:modified ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
-    dash:editor dash:DatePickerEditor ;
+    dash:editor dash:DateTimePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ],  [
     sh:path dcat:theme ;
