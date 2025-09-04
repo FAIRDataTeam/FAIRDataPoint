@@ -56,7 +56,7 @@
         <rdf-resolver.version>0.2.0</rdf-resolver.version>
         
         <!-- Core -->
-        <springdoc.version>2.8.11</springdoc.version>
+        <springdoc.version>2.8.12</springdoc.version>
         <postgresql.version>42.7.7</postgresql.version>
         <rdf4j.version>5.1.4</rdf4j.version>
         <jwt.version>0.13.0</jwt.version>
@@ -328,7 +328,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>11.0.0</version>
+                        <version>11.0.1</version>
                     </dependency>
                     <dependency>
                         <groupId>io.spring.javaformat</groupId>
