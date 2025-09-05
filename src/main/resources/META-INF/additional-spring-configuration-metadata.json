@@ -16,6 +16,11 @@
       "description": "Turn on if you want to run FAIR Data Point as FAIR Data Point Index"
     },
     {
+      "name": "instance.indexAutoPermit",
+      "type": "java.lang.Boolean",
+      "description": "Turn on if you want automatically permit new entries that ping the Index"
+    },
+    {
       "name": "security.jwt.token.secret-key",
       "type": "java.lang.String",
       "description": "Secret string used for JWT signing and validation (we recommend to generate some randomly)."

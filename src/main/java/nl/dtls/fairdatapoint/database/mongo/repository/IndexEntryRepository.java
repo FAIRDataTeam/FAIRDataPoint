@@ -23,12 +23,14 @@
 package nl.dtls.fairdatapoint.database.mongo.repository;
 
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 public interface IndexEntryRepository extends MongoRepository<IndexEntry, String> {
@@ -37,18 +39,30 @@ public interface IndexEntryRepository extends MongoRepository<IndexEntry, String
 
     Optional<IndexEntry> findByClientUrl(String clientUrl);
 
-    Page<IndexEntry> findAllByStateEquals(Pageable pageable, IndexEntryState state);
+    Page<IndexEntry> findAllByStateEqualsAndPermitIn(
+            Pageable pageable, IndexEntryState state, List<IndexEntryPermit> permit
+    );
 
-    Page<IndexEntry> findAllByStateEqualsAndLastRetrievalTimeBefore(Pageable pageable, IndexEntryState state,
-                                                                    Instant when);
+    Page<IndexEntry> findAllByStateEqualsAndLastRetrievalTimeBeforeAndPermitIn(
+            Pageable pageable, IndexEntryState state, Instant when, List<IndexEntryPermit> permit
+    );
 
-    Page<IndexEntry> findAllByStateEqualsAndLastRetrievalTimeAfter(Pageable pageable, IndexEntryState state,
-                                                                   Instant when);
+    Page<IndexEntry> findAllByStateEqualsAndLastRetrievalTimeAfterAndPermitIn(
+            Pageable pageable, IndexEntryState state, Instant when, List<IndexEntryPermit> permit
+    );
 
-    long countAllByStateEquals(IndexEntryState state);
+    Page<IndexEntry> findAllByPermitIn(Pageable pageable, List<IndexEntryPermit> permit);
 
-    long countAllByStateEqualsAndLastRetrievalTimeAfter(IndexEntryState state, Instant when);
+    Iterable<IndexEntry> findAllByPermitIn(List<IndexEntryPermit> permit);
 
-    long countAllByStateEqualsAndLastRetrievalTimeBefore(IndexEntryState state, Instant when);
+    long countAllByPermitIn(List<IndexEntryPermit> permit);
 
+    long countAllByStateEqualsAndPermitIn(IndexEntryState state, List<IndexEntryPermit> permit);
+
+    long countAllByStateEqualsAndLastRetrievalTimeAfterAndPermitIn(
+            IndexEntryState state, Instant when, List<IndexEntryPermit> permit);
+
+    long countAllByStateEqualsAndLastRetrievalTimeBeforeAndPermitIn(
+            IndexEntryState state, Instant when, List<IndexEntryPermit> permit
+    );
 }

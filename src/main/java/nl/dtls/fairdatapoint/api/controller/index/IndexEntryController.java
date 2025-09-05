@@ -23,17 +23,26 @@
 package nl.dtls.fairdatapoint.api.controller.index;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
 import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
+import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryUpdateDTO;
+import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
+import nl.dtls.fairdatapoint.entity.index.event.Event;
 import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
+import nl.dtls.fairdatapoint.service.index.event.EventService;
+import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
+import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,17 +56,53 @@ public class IndexEntryController {
     @Autowired
     private IndexEntryService service;
 
+    @Autowired
+    private HarvesterService harvesterService;
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private WebhookService webhookService;
+
+    @Autowired
+    private IndexEntryService indexEntryService;
+
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<IndexEntryDTO> getEntriesPage(
             Pageable pageable,
-            @RequestParam(required = false, defaultValue = "") String state
+            @RequestParam(required = false, defaultValue = "") String state,
+            @RequestParam(required = false, defaultValue = "accepted") String permit
     ) {
-        return service.getEntriesPageDTOs(pageable, state);
+        return service.getEntriesPageDTOs(pageable, state, permit);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Optional<IndexEntryDetailDTO> getEntry(@PathVariable final String uuid) {
         return service.getEntryDetailDTO(uuid);
+    }
+
+    @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public Optional<IndexEntryDetailDTO> updateEntry(
+            @PathVariable final String uuid,
+            @RequestBody IndexEntryUpdateDTO reqDto,
+            HttpServletRequest request
+    ) throws MetadataRepositoryException {
+        final Optional<IndexEntryDetailDTO> resDto = service.updateEntry(uuid, reqDto);
+        if (resDto.isPresent()) {
+            final String clientUrl = resDto.get().getClientUrl();
+            if (resDto.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
+                final Event event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
+                webhookService.triggerWebhooks(event);
+                eventService.triggerMetadataRetrieval(event);
+                indexEntryService.harvest(clientUrl);
+            }
+            else {
+                harvesterService.deleteHarvestedData(clientUrl);
+            }
+        }
+        return resDto;
     }
 
     @GetMapping(path = "/{uuid}/data", produces = "!application/json")
@@ -72,12 +117,16 @@ public class IndexEntryController {
     }
 
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<IndexEntryDTO> getEntriesAll() {
-        return service.getAllEntriesAsDTOs();
+    public List<IndexEntryDTO> getEntriesAll(
+            @RequestParam(required = false, defaultValue = "accepted") String permit
+    ) {
+        return service.getAllEntriesAsDTOs(permit);
     }
 
     @GetMapping(path = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
-    public IndexEntryInfoDTO getEntriesInfo() {
-        return service.getEntriesInfo();
+    public IndexEntryInfoDTO getEntriesInfo(
+            @RequestParam(required = false, defaultValue = "accepted") String permit
+    ) {
+        return service.getEntriesInfo(permit);
     }
 }
