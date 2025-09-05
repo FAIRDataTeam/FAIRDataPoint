@@ -7,16 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
+## [1.18.0]
 
-- Get FAIRDataTeam packages from Maven Central instead of private Nexus repo (backport)
+## [1.17.6]
 
-### Changed
+## [1.17.5]
 
-- Cleaned up Dockerfile (backport)
-- Separate Github workflows for test and publish (backport)
-- Upgraded to Java JDK 21 (LTS)
-- Upgraded to latest dependencies
+## [1.17.4]
+
+## [1.17.3]
+
+From `1.17.3` upwards, changes are logged using github releases. Click the headers to see changes.
 
 ## [1.17.2]
 
@@ -394,3 +395,9 @@ The first release of reference FAIR Data Point implementation.
 [1.16.2]: /../../tree/v1.16.2
 [1.17.0]: /../../tree/v1.17.0
 [1.17.1]: /../../tree/v1.17.1
+[1.17.2]: /../../tree/v1.17.2
+[1.17.3]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.17.3
+[1.17.4]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.17.4
+[1.17.5]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.17.5
+[1.17.6]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.17.6
+[1.18.0]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.18.0
