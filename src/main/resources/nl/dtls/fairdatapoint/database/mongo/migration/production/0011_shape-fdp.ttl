@@ -9,13 +9,13 @@
   sh:targetClass fdp:FAIRDataPoint ;
   sh:property [
     sh:path fdp:startDate ;
-    sh:datatype xsd:date ;
+    sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ] , [
     sh:path fdp:endDate ;
-    sh:datatype xsd:date ;
+    sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
@@ -36,12 +36,12 @@
     sh:path fdp:metadataIssued ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
-    dash:editor dash:DateTimePickerEditor ;
+    dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ] , [
     sh:path fdp:metadataModified ;
     sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
-    dash:editor dash:DateTimePickerEditor ;
+    dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
   ] .

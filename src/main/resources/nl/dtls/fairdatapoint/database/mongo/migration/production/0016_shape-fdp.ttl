@@ -9,14 +9,14 @@
   sh:targetClass fdp:FAIRDataPoint ;
   sh:property [
     sh:path fdp:startDate ;
-    sh:datatype xsd:date ;
+    sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
     sh:order 40 ;
   ] , [
     sh:path fdp:endDate ;
-    sh:datatype xsd:date ;
+    sh:datatype xsd:dateTime ;
     sh:maxCount 1 ;
     dash:editor dash:DatePickerEditor ;
     dash:viewer dash:LiteralViewer ;
