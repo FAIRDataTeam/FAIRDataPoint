@@ -34,19 +34,19 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @ChangeUnit(
-        id = "Migration_0016_IndexSettingsAutoPermit",
-        order = "0016",
+        id = "Migration_0018_IndexSettingsAutoPermit",
+        order = "0018",
         author = "migrationBot"
 )
 @Profile(Profiles.PRODUCTION)
-public class Migration_0016_IndexSettingsAutoPermit {
+public class Migration_0018_IndexSettingsAutoPermit {
 
     private static final String FIELD_AUTO_PERMIT = "autoPermit";
     private static final String COL_INDEX_SETTINGS = "indexSettings";
 
     private final MongoTemplate database;
 
-    public Migration_0016_IndexSettingsAutoPermit(MongoTemplate template) {
+    public Migration_0018_IndexSettingsAutoPermit(MongoTemplate template) {
         this.database = template;
     }
 
