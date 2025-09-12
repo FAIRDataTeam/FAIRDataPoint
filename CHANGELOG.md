@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.18.1]
+
 ## [1.18.0]
 
 ## [1.17.6]
@@ -401,3 +403,4 @@ The first release of reference FAIR Data Point implementation.
 [1.17.5]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.17.5
 [1.17.6]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.17.6
 [1.18.0]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.18.0
+[1.18.1]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases/tag/v1.18.1
