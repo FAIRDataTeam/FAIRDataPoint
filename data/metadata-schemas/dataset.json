@@ -1,0 +1,18 @@
+{
+  "uuid": "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "name": "Dataset",
+      "definitionFile": "dataset.ttl",
+      "abstractSchema": false,
+      "type": "INTERNAL",
+      "state": "LATEST",
+      "extendsSchemaUuids": [
+        "6a668323-3936-4b53-8380-a4fd2ed082ee"
+      ],
+      "suggestedResourceName": "Dataset",
+      "suggestedUrlPrefix": "dataset"
+    }
+  ]
+}

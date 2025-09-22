@@ -1,0 +1,18 @@
+{
+  "uuid": "a92958ab-a414-47e6-8e17-68ba96ba3a2b",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "name": "FAIR Data Point",
+      "definitionFile": "fdp.ttl",
+      "abstractSchema": false,
+      "type": "INTERNAL",
+      "state": "LATEST",
+      "extendsSchemaUuids": [
+        "6f7a5a76-6185-4bd0-9fe9-62ecc90c9bad"
+      ],
+      "suggestedResourceName": "FAIR Data Point",
+      "suggestedUrlPrefix": ""
+    }
+  ]
+}

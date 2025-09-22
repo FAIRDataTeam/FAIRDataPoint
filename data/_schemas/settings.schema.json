@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Settings",
+  "type": "object",
+  "properties": {
+    "appTitle": {
+      "type": "string",
+      "description": "Title of the application",
+      "default": "FAIR Data Point"
+    },
+    "appSubtitle": {
+      "type": "string",
+      "description": "Subtitle of the application",
+      "default": "Metadata for Machines"
+    },
+    "pingEnabled": {
+      "type": "boolean",
+      "description": "Enable or disable the ping feature"
+    },
+    "pingEndpoints": {
+      "type": "array",
+      "description": "List of endpoints to ping",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "autocompleteSearchNamespace": {
+      "type": "boolean",
+      "description": "Enable or disable namespace autocomplete in search",
+      "default": true
+    },
+    "autocompleteSources": {
+      "type": "array",
+      "description": "List of sources for autocomplete",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rdfType": {
+            "type": "string",
+            "description": "RDF type for the autocomplete source"
+          },
+          "sparqlEndpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sparqlQuery": {
+            "type": "string",
+            "description": "SPARQL query to fetch autocomplete suggestions"
+          }
+        },
+        "required": ["rdfType", "sparqlEndpoint", "sparqlQuery"],
+        "additionalProperties": false
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "description": "List of metrics to be collected",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metricUri": {
+            "type": "string",
+            "format": "uri",
+            "description": "URI of the metric"
+          },
+          "resourceUri": {
+            "type": "string",
+            "format": "uri",
+            "description": "URI of the resource associated with the metric"
+          }
+        },
+        "required": ["metricUri", "resourceUri"],
+        "additionalProperties": false
+      }
+    },
+    "searchFilters": {
+      "type": "array",
+      "description": "List of search filters",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of the filter (e.g., 'dropdown', 'checkbox')"
+          },
+          "label": {
+            "type": "string",
+            "description": "Label for the filter"
+          },
+          "predicate": {
+            "type": "string",
+            "format": "uri",
+            "description": "Predicate URI for the filter"
+          },
+          "queryFromRecords": {
+            "type": "boolean",
+            "description": "Whether to query from records"
+          },
+          "values": {
+            "type": "array",
+            "description": "List of values for the filter",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value of the filter option"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Label for the filter option"
+                },
+                "preset": {
+                  "type": "boolean",
+                  "description": "Whether this option is a preset",
+                  "default": true
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "type",
+          "label",
+          "predicate",
+          "queryFromRecords",
+          "values"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

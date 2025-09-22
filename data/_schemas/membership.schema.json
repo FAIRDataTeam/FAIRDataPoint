@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Membership",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of membership"
+    },
+    "allowedEntities": {
+      "type": "array",
+      "description": "UUIDs for resource definitions related to this membership",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "description": "Permissions associated with this membership",
+      "items": {
+        "type": "object",
+        "properties": {
+          "mask": {
+            "type": "integer",
+            "description": "Permission mask value"
+          },
+          "code": {
+            "type": "string",
+            "description": "Permission code (character)",
+            "enum": ["C", "W", "D", "A"]
+          }
+        },
+        "required": ["mask", "code"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["name", "allowedEntities", "permissions"],
+  "additionalProperties": false
+}

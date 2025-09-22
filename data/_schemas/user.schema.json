@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UserWithApiKeys",
+  "type": "object",
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the user"
+    },
+    "firstName": {
+      "type": "string",
+      "description": "First name of the user"
+    },
+    "lastName": {
+      "type": "string",
+      "description": "Last name of the user"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address of the user"
+    },
+    "password": {
+      "type": "string",
+      "description": "Password of the user"
+    },
+    "role": {
+      "type": "string",
+      "enum": ["USER", "ADMIN"],
+      "description": "Role assigned to the user"
+    },
+    "apiKeyTokens": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of API key tokens for the user",
+      "default": []
+    }
+  },
+  "required": ["email", "password"],
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "name": "Resource",
+      "definitionFile": "resource.ttl",
+      "abstractSchema": true,
+      "type": "INTERNAL",
+      "state": "LATEST"
+    }
+  ]
+}

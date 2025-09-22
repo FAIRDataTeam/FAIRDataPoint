@@ -111,3 +111,7 @@ springdoc:
 
 server:
   forward-headers-strategy: framework
+
+bootstrap:
+  enabled: true
+  data-path: '/data'

@@ -25,6 +25,7 @@ package org.fairdatapoint.service.resource;
 import org.fairdatapoint.api.dto.resource.*;
 import org.fairdatapoint.entity.resource.*;
 import org.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatapoint.service.boostrap.fixtures.ResourceDefinitionFixture;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -166,6 +167,16 @@ public class ResourceDefinitionMapper {
                 .orderPriority(orderPriority)
                 .createdAt(child.getCreatedAt())
                 .updatedAt(child.getUpdatedAt())
+                .build();
+    }
+
+    public ResourceDefinition fromResourceDefinitionFixture(ResourceDefinitionFixture resourceDefinitionFixture) {
+        return ResourceDefinition.builder()
+                .uuid(null)
+                .name(resourceDefinitionFixture.getName())
+                .urlPrefix(resourceDefinitionFixture.getUrlPrefix())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
     }
 }

@@ -1,0 +1,18 @@
+{
+  "uuid": "89d94c1b-f6ff-4545-ba9b-120b2d1921d0",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "name": "Data Service",
+      "definitionFile": "data-service.ttl",
+      "abstractSchema": false,
+      "type": "INTERNAL",
+      "state": "LATEST",
+      "extendsSchemaUuids": [
+        "6a668323-3936-4b53-8380-a4fd2ed082ee"
+      ],
+      "suggestedResourceName": "Data Service",
+      "suggestedUrlPrefix": "data-service"
+    }
+  ]
+}

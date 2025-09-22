@@ -1,0 +1,9 @@
+{
+  "name": "Data Provider",
+  "allowedEntities": [
+    "a0949e72-4466-4d53-8900-9436d1049a4b"
+  ],
+  "permissions": [
+    { "mask": 4, "code": "C" }
+  ]
+}

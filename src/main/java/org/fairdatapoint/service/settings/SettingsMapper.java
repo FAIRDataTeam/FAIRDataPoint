@@ -31,6 +31,7 @@ import org.fairdatapoint.config.properties.PingProperties;
 import org.fairdatapoint.config.properties.RepositoryConnectionProperties;
 import org.fairdatapoint.config.properties.RepositoryProperties;
 import org.fairdatapoint.entity.settings.*;
+import org.fairdatapoint.service.boostrap.fixtures.*;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -191,7 +192,7 @@ public class SettingsMapper {
         return filter;
     }
 
-    private SettingsSearchFilterItem fromSearchFilterItemDTO(
+    public SettingsSearchFilterItem fromSearchFilterItemDTO(
             SearchFilterItemDTO dto, int orderPriority, SettingsSearchFilter filter
     ) {
         return SettingsSearchFilterItem.builder()
@@ -199,6 +200,18 @@ public class SettingsMapper {
                 .value(dto.getValue())
                 .orderPriority(orderPriority)
                 .filter(filter)
+                .build();
+    }
+
+    public Settings fromSettingsFixture(SettingsFixture settingsFixture) {
+        return Settings.builder()
+                .appTitle(settingsFixture.getAppTitle())
+                .appSubtitle(settingsFixture.getAppSubtitle())
+                .pingEnabled(settingsFixture.getPingEnabled())
+                .pingEndpoints(settingsFixture.getPingEndpoints())
+                .autocompleteSearchNamespace(settingsFixture.getAutocompleteSearchNamespace())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
     }
 }

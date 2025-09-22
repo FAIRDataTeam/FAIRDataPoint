@@ -25,6 +25,7 @@ package org.fairdatapoint.service.user;
 import lombok.RequiredArgsConstructor;
 import org.fairdatapoint.api.dto.user.*;
 import org.fairdatapoint.entity.user.UserAccount;
+import org.fairdatapoint.service.boostrap.fixtures.UserFixture;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -61,6 +62,17 @@ public class UserMapper {
                 .email(dto.getEmail())
                 .passwordHash(passwordEncoder.encode(dto.getPassword()))
                 .role(dto.getRole())
+                .build();
+    }
+
+    public UserAccount fromFixture(UserFixture fixture) {
+        return UserAccount.builder()
+                .uuid(null)
+                .firstName(fixture.getFirstName())
+                .lastName(fixture.getLastName())
+                .email(fixture.getEmail())
+                .passwordHash(passwordEncoder.encode(fixture.getPassword()))
+                .role(fixture.getRole())
                 .build();
     }
 
