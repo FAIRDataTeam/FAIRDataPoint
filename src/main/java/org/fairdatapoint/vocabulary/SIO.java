@@ -28,31 +28,23 @@
 package org.fairdatapoint.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+
+import static org.fairdatapoint.util.ValueFactoryHelper.i;
 
 /**
- * WebAccessControl vocabulary.
+ * Semanticscience Integrated Ontology
  *
- * @see <a href="https://www.w3.org/wiki/WebAccessControl">WebAccessControl Vocabulary</a>
+ * @see <a href="https://bioportal.bioontology.org/ontologies/SIO">Semanticscience Integrated Ontology</a>
  * @author Rajaram Kaliyaperumal
  * @author Kees Burger
  * @version 0.1
- * @since 2017-02-22
+ * @since 2018-01-17
  */
-public class WebAccessControl {
+public class SIO {
 
-    public static final ValueFactory VF = SimpleValueFactory.getInstance();
+    public static final String NAMESPACE = "http://semanticscience.org/resource/";
 
-    public static final String PREFIX = "acl";
-    public static final String NAMESPACE = "http://www.w3.org/ns/auth/acl#";
-
-    public static final IRI AUTHORIZATION = VF.createIRI(NAMESPACE + "Authorization");
-    public static final IRI ACCESS_APPEND = VF.createIRI(NAMESPACE + "Append");
-    public static final IRI ACCESS_WRITE = VF.createIRI(NAMESPACE + "Write");
-    public static final IRI ACCESS_READ = VF.createIRI(NAMESPACE + "Read");
-    public static final IRI ACCESS_MODE = VF.createIRI(NAMESPACE + "mode");
-    public static final IRI ACCESS_AGENT = VF.createIRI(NAMESPACE + "agent");
-    public static final IRI ACCESS_TO = VF.createIRI(NAMESPACE + "accessTo");
+    public static final IRI IS_ABOUT = i(NAMESPACE + "SIO_000332");
+    public static final IRI REFERS_TO = i(NAMESPACE + "SIO_000628");
 
 }

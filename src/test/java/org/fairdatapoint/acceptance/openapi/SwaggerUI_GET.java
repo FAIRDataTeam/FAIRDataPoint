@@ -25,6 +25,7 @@ package org.fairdatapoint.acceptance.openapi;
 import org.fairdatapoint.WebIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -59,7 +60,8 @@ public class SwaggerUI_GET extends WebIntegrationTest {
                 .build();
 
         // WHEN
-        ResponseEntity<String> result = client.exchange(request, new ParameterizedTypeReference<>() {});
+        ResponseEntity<String> result = client.withRedirects(ClientHttpRequestFactorySettings.Redirects.DONT_FOLLOW)
+                .exchange(request, new ParameterizedTypeReference<>() {});
 
         // THEN
         assertThat("Response code is FOUND", result.getStatusCode(), is(equalTo(HttpStatus.FOUND)));

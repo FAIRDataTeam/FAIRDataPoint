@@ -26,6 +26,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Use correct properties for draftsRepository by @dennisvang in #631
 - Clean up Dockerfile by @dennisvang in #626
 - Fix index API by @dennisvang in #637 (backward incompatible)
+- Fix listing metadata records after publish by @MarekSuchanek in #658
+- Fix saving settings by @MarekSuchanek in #657
+- Fix saving metadata schema (draft and publish) by @MarekSuchanek in #672
 
 ## [1.17.2]
 

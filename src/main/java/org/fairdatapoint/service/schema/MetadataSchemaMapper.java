@@ -78,7 +78,7 @@ public class MetadataSchemaMapper {
             MetadataSchemaVersion draft
     ) {
         return MetadataSchemaDraftDTO.builder()
-                .uuid(draft.getUuid())
+                .uuid(draft.getSchema().getUuid())
                 .name(draft.getName())
                 .description(draft.getDescription())
                 .abstractSchema(draft.isAbstractSchema())
@@ -222,15 +222,24 @@ public class MetadataSchemaMapper {
                         .build();
     }
 
+    /**
+     * Returns a shallow copy of the specified schema version,
+     * with relevant fields modified to indicate new draft status.
+     *
+     * @param schema the schema version to base the new draft on
+     * @return       a new draft schema version based on the input schema version
+     */
     public MetadataSchemaVersion toDraft(MetadataSchemaVersion schema) {
-        return MetadataSchemaVersion.builder()
-                .uuid(schema.getUuid())
-                .name(schema.getName())
-                .description(schema.getDescription())
-                .abstractSchema(schema.isAbstractSchema())
-                .definition(schema.getDefinition())
-                .suggestedResourceName(schema.getSuggestedResourceName())
-                .suggestedUrlPrefix(schema.getSuggestedUrlPrefix())
+        final Instant now = Instant.now();
+        return schema.toBuilder()
+                .origin(null)
+                .importedFrom(null)
+                .previousVersion(schema)
+                .published(false)
+                .state(MetadataSchemaState.DRAFT)
+                .type(MetadataSchemaType.CUSTOM)
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
     }
 

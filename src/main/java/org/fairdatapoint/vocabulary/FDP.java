@@ -20,32 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.fairdatapoint.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
-/**
- * Semanticscience Integrated Ontology
- *
- * @see <a href="https://bioportal.bioontology.org/ontologies/SIO">Semanticscience Integrated Ontology</a>
- * @author Rajaram Kaliyaperumal
- * @author Kees Burger
- * @version 0.1
- * @since 2018-01-17
- */
-public class Sio {
+import static org.fairdatapoint.util.ValueFactoryHelper.i;
 
-    public static final ValueFactory VF = SimpleValueFactory.getInstance();
-    public static final String PREFIX = "sio";
-    public static final String NAMESPACE = "http://semanticscience.org/resource/";
-    public static final IRI REFERS_TO = VF.createIRI(NAMESPACE + "SIO_000628");
-    public static final IRI IS_ABOUT = VF.createIRI(NAMESPACE + "SIO_000332");
+public final class FDP {
+
+    public static final String NAMESPACE = "https://w3id.org/fdp/fdp-o#";
+
+    public static final IRI FAIRDATAPOINT = i(NAMESPACE + "FAIRDataPoint");
+    public static final IRI FDPSOFTWAREVERSION = i(NAMESPACE + "fdpSoftwareVersion");
+    public static final IRI METADATACATALOG = i(NAMESPACE + "metadataCatalog");
+    public static final IRI METADATAIDENTIFIER = i(NAMESPACE + "metadataIdentifier");
+    public static final IRI METADATAISSUED = i(NAMESPACE + "metadataIssued");
+    public static final IRI METADATAMODIFIED = i(NAMESPACE + "metadataModified");
+    public static final IRI METADATASERVICE = i(NAMESPACE + "MetadataService");
 
 }
