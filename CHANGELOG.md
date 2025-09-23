@@ -1,6 +1,8 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+>[!IMPORTANT]
+>Starting with v1.17.3, all changes are logged in the [releases] section, based on pull requests.
+>This changelog file has therefore been deprecated. It is only preserved for reference.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -407,3 +409,5 @@ The first release of reference FAIR Data Point implementation.
 [1.17.0]: /../../tree/v1.17.0
 [1.17.1]: /../../tree/v1.17.1
 [1.17.2]: /../../tree/v1.17.2
+
+[releases]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases
