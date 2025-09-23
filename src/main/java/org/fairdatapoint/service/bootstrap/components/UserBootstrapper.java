@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.components;
+package org.fairdatapoint.service.bootstrap.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +31,9 @@ import org.fairdatapoint.entity.apikey.ApiKey;
 import org.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatapoint.entity.user.UserAccount;
 import org.fairdatapoint.service.apikey.ApiKeyMapper;
-import org.fairdatapoint.service.boostrap.BootstrapContext;
-import org.fairdatapoint.service.boostrap.fixtures.SearchSavedQueryFixture;
-import org.fairdatapoint.service.boostrap.fixtures.UserFixture;
+import org.fairdatapoint.service.bootstrap.BootstrapContext;
+import org.fairdatapoint.service.bootstrap.fixtures.SearchSavedQueryFixture;
+import org.fairdatapoint.service.bootstrap.fixtures.UserFixture;
 import org.fairdatapoint.service.search.query.SearchSavedQueryMapper;
 import org.fairdatapoint.service.user.UserMapper;
 import org.springframework.data.jpa.repository.JpaRepository;

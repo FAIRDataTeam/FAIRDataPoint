@@ -20,30 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.fixtures;
+package org.fairdatapoint.service.bootstrap.fixtures;
 
 import lombok.Data;
-import org.fairdatapoint.entity.schema.MetadataSchemaState;
-import org.fairdatapoint.entity.schema.MetadataSchemaType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
-public class MetadataSchemaVersionFixture {
-    private String version;
-    private String name;
-    private String description = "";
-    private String definition;
-    private String definitionFile;
-    private MetadataSchemaType type = MetadataSchemaType.CUSTOM;
-    private String origin;
-    private String importedFrom;
-    private MetadataSchemaState state = MetadataSchemaState.LATEST;
-    private Boolean published = false;
-    private Boolean abstractSchema = false;
-    private String suggestedResourceName;
-    private String suggestedUrlPrefix;
-    private List<UUID> extendsSchemaUuids = new ArrayList<>();
+public class RecordsFixture {
+    private List<RecordFixture> records = new ArrayList<>();
+    private String persistentUrlVar = "{{ persistentUrl }}";
 }

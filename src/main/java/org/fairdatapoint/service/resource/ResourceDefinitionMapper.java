@@ -25,7 +25,7 @@ package org.fairdatapoint.service.resource;
 import org.fairdatapoint.api.dto.resource.*;
 import org.fairdatapoint.entity.resource.*;
 import org.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatapoint.service.boostrap.fixtures.ResourceDefinitionFixture;
+import org.fairdatapoint.service.bootstrap.fixtures.ResourceDefinitionFixture;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

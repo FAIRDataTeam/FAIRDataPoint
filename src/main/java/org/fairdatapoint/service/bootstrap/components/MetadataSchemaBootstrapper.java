@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.components;
+package org.fairdatapoint.service.bootstrap.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +28,8 @@ import org.fairdatapoint.database.db.repository.MetadataSchemaExtensionRepositor
 import org.fairdatapoint.database.db.repository.MetadataSchemaRepository;
 import org.fairdatapoint.database.db.repository.MetadataSchemaVersionRepository;
 import org.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatapoint.service.boostrap.BootstrapContext;
-import org.fairdatapoint.service.boostrap.fixtures.MetadataSchemaFixture;
+import org.fairdatapoint.service.bootstrap.BootstrapContext;
+import org.fairdatapoint.service.bootstrap.fixtures.MetadataSchemaFixture;
 import org.fairdatapoint.service.schema.MetadataSchemaMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;

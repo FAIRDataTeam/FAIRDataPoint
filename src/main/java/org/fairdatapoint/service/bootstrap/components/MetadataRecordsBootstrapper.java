@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.components;
+package org.fairdatapoint.service.bootstrap.components;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.model.Model;
@@ -29,8 +29,8 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.fairdatapoint.database.rdf.repository.RepositoryMode;
 import org.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import org.fairdatapoint.service.boostrap.BootstrapContext;
-import org.fairdatapoint.service.boostrap.fixtures.RecordsFixture;
+import org.fairdatapoint.service.bootstrap.BootstrapContext;
+import org.fairdatapoint.service.bootstrap.fixtures.RecordsFixture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 

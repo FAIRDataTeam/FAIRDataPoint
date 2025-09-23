@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.components;
+package org.fairdatapoint.service.bootstrap.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.database.db.repository.MembershipPermissionRepository;
 import org.fairdatapoint.database.db.repository.MembershipRepository;
 import org.fairdatapoint.entity.membership.Membership;
-import org.fairdatapoint.service.boostrap.BootstrapContext;
-import org.fairdatapoint.service.boostrap.fixtures.MembershipFixture;
+import org.fairdatapoint.service.bootstrap.BootstrapContext;
+import org.fairdatapoint.service.bootstrap.fixtures.MembershipFixture;
 import org.fairdatapoint.service.membership.MembershipMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;

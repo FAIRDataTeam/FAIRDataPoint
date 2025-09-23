@@ -20,24 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.fixtures;
+package org.fairdatapoint.service.bootstrap.fixtures;
 
 import lombok.Data;
-import org.fairdatapoint.api.dto.search.SearchFilterDTO;
-import org.fairdatapoint.api.dto.settings.SettingsAutocompleteSourceDTO;
-import org.fairdatapoint.api.dto.settings.SettingsMetricDTO;
+import org.fairdatapoint.api.dto.resource.ResourceDefinitionChildDTO;
+import org.fairdatapoint.api.dto.resource.ResourceDefinitionLinkDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
-public class SettingsFixture {
-    private String appTitle = "FAIR Data Point";
-    private String appSubtitle = "Metadata for Machines";
-    private Boolean pingEnabled = true;
-    private List<String> pingEndpoints = new ArrayList<>();
-    private Boolean autocompleteSearchNamespace = true;
-    private List<SettingsAutocompleteSourceDTO> autocompleteSources = new ArrayList<>();
-    private List<SettingsMetricDTO> metrics = new ArrayList<>();
-    private List<SearchFilterDTO> searchFilters = new ArrayList<>();
+public class ResourceDefinitionFixture {
+    private UUID uuid = UUID.randomUUID();
+    private String name;
+    private String urlPrefix;
+    private List<ResourceDefinitionChildDTO> children = new ArrayList<>();
+    private List<ResourceDefinitionLinkDTO> externalLinks = new ArrayList<>();
+    private List<UUID> metadataSchemaUuids = new ArrayList<>();
 }

@@ -24,7 +24,7 @@ package org.fairdatapoint.service.schema;
 
 import org.fairdatapoint.api.dto.schema.*;
 import org.fairdatapoint.entity.schema.*;
-import org.fairdatapoint.service.boostrap.fixtures.MetadataSchemaVersionFixture;
+import org.fairdatapoint.service.bootstrap.fixtures.MetadataSchemaVersionFixture;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

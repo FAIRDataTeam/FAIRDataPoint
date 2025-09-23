@@ -20,22 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.fixtures;
+package org.fairdatapoint.service.bootstrap;
 
-import lombok.Data;
-import org.fairdatapoint.api.dto.resource.ResourceDefinitionChildDTO;
-import org.fairdatapoint.api.dto.resource.ResourceDefinitionLinkDTO;
+import lombok.RequiredArgsConstructor;
+import org.fairdatapoint.config.properties.BootstrapProperties;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+@Component
+@RequiredArgsConstructor
+public class BootstrapRunner implements ApplicationRunner {
+    private final BootstrapProperties bootstrapProperties;
+    private final BootstrapService bootstrapService;
 
-@Data
-public class ResourceDefinitionFixture {
-    private UUID uuid = UUID.randomUUID();
-    private String name;
-    private String urlPrefix;
-    private List<ResourceDefinitionChildDTO> children = new ArrayList<>();
-    private List<ResourceDefinitionLinkDTO> externalLinks = new ArrayList<>();
-    private List<UUID> metadataSchemaUuids = new ArrayList<>();
+    @Override
+    public void run(final org.springframework.boot.ApplicationArguments args) {
+        if (bootstrapProperties.isEnabled()) {
+            bootstrapService.bootstrapFromDir(bootstrapProperties.getDataPath());
+        }
+    }
+
 }

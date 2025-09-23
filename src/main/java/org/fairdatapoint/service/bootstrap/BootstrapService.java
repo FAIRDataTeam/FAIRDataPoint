@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap;
+package org.fairdatapoint.service.bootstrap;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatapoint.service.boostrap.components.*;
+import org.fairdatapoint.service.bootstrap.components.*;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
