@@ -26,7 +26,7 @@ import org.fairdatapoint.api.dto.membership.MembershipDTO;
 import org.fairdatapoint.api.dto.membership.MembershipPermissionDTO;
 import org.fairdatapoint.entity.membership.Membership;
 import org.fairdatapoint.entity.membership.MembershipPermission;
-import org.fairdatapoint.service.boostrap.fixtures.MembershipFixture;
+import org.fairdatapoint.service.bootstrap.fixtures.MembershipFixture;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

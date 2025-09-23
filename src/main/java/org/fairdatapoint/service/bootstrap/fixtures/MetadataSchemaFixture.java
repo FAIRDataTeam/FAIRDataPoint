@@ -20,17 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.fixtures;
+package org.fairdatapoint.service.bootstrap.fixtures;
 
 import lombok.Data;
-import org.fairdatapoint.entity.search.SearchSavedQueryType;
+
+import java.util.List;
+import java.util.UUID;
 
 @Data
-public class SearchSavedQueryFixture {
-    private String name;
-    private String description;
-    private SearchSavedQueryType type;
-    private String prefixes;
-    private String graphPattern;
-    private String ordering;
+public class MetadataSchemaFixture {
+    private UUID uuid = UUID.randomUUID();
+    private List<MetadataSchemaVersionFixture> versions;
 }

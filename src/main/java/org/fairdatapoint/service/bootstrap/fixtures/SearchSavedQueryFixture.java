@@ -20,20 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap;
+package org.fairdatapoint.service.bootstrap.fixtures;
 
 import lombok.Data;
-import org.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatapoint.entity.user.UserAccount;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import org.fairdatapoint.entity.search.SearchSavedQueryType;
 
 @Data
-public class BootstrapContext {
-    private Map<UUID, UserAccount> users = new HashMap<>();
-    private Map<UUID, MetadataSchema> metadataSchemas = new HashMap<>();
-    private Map<UUID, ResourceDefinition> resourceDefinitions = new HashMap<>();
+public class SearchSavedQueryFixture {
+    private String name;
+    private String description;
+    private SearchSavedQueryType type;
+    private String prefixes;
+    private String graphPattern;
+    private String ordering;
 }

@@ -20,24 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap;
+package org.fairdatapoint.service.bootstrap;
 
-import lombok.RequiredArgsConstructor;
-import org.fairdatapoint.config.properties.BootstrapProperties;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
+import lombok.Data;
+import org.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatapoint.entity.user.UserAccount;
 
-@Component
-@RequiredArgsConstructor
-public class BootstrapRunner implements ApplicationRunner {
-    private final BootstrapProperties bootstrapProperties;
-    private final BootstrapService bootstrapService;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-    @Override
-    public void run(final org.springframework.boot.ApplicationArguments args) {
-        if (bootstrapProperties.isEnabled()) {
-            bootstrapService.bootstrapFromDir(bootstrapProperties.getDataPath());
-        }
-    }
-
+@Data
+public class BootstrapContext {
+    private Map<UUID, UserAccount> users = new HashMap<>();
+    private Map<UUID, MetadataSchema> metadataSchemas = new HashMap<>();
+    private Map<UUID, ResourceDefinition> resourceDefinitions = new HashMap<>();
 }

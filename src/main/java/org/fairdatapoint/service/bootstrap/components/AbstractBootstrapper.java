@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.components;
+package org.fairdatapoint.service.bootstrap.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatapoint.service.boostrap.BootstrapContext;
+import org.fairdatapoint.service.bootstrap.BootstrapContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.IOException;

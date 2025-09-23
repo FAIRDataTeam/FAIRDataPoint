@@ -20,15 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.fixtures;
+package org.fairdatapoint.service.bootstrap.fixtures;
 
 import lombok.Data;
+import org.fairdatapoint.entity.user.UserRole;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
-public class RecordsFixture {
-    private List<RecordFixture> records = new ArrayList<>();
-    private String persistentUrlVar = "{{ persistentUrl }}";
+public class UserFixture {
+    private UUID uuid = UUID.randomUUID();
+    private String firstName = "";
+    private String lastName = "";
+    private String email;
+    private String password;
+    private UserRole role = UserRole.USER;
+    private List<String> apiKeyTokens = new ArrayList<>();
+    private List<SearchSavedQueryFixture> savedQueries = new ArrayList<>();
 }

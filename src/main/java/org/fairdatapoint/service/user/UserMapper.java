@@ -25,7 +25,7 @@ package org.fairdatapoint.service.user;
 import lombok.RequiredArgsConstructor;
 import org.fairdatapoint.api.dto.user.*;
 import org.fairdatapoint.entity.user.UserAccount;
-import org.fairdatapoint.service.boostrap.fixtures.UserFixture;
+import org.fairdatapoint.service.bootstrap.fixtures.UserFixture;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

@@ -20,17 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.boostrap.fixtures;
+package org.fairdatapoint.service.bootstrap.components;
 
-import lombok.Data;
-import org.fairdatapoint.api.dto.membership.MembershipPermissionDTO;
+import org.fairdatapoint.service.bootstrap.BootstrapContext;
 
-import java.util.List;
-import java.util.UUID;
+import java.nio.file.Path;
 
-@Data
-public class MembershipFixture {
-    private String name;
-    private List<UUID> allowedEntities;
-    private List<MembershipPermissionDTO> permissions;
+public interface IBootstrapper {
+
+    void bootstrapAllFromDir(Path dirPath, BootstrapContext context);
+
+    void bootstrapFromJson(Path resourcePath, BootstrapContext context);
 }
