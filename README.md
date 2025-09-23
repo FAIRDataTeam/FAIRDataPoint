@@ -112,8 +112,9 @@ documentation.
 
 ## Contributing
 
-We maintain a [CHANGELOG](CHANGELOG.md), you should also take a look at our [Contributing guidelines](CONTRIBUTING.md)
-and [Code of Conduct](CODE_OF_CONDUCT.md).
+All contributions take place via pull requests, and changes are logged using the [releases] page.
+For releases older than v1.17.3, you can take a look at the old [changelog](CHANGELOG.md) file.
+Also take a look at our [Contributing guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Citation
 
@@ -134,3 +135,5 @@ The following paper can be cite as a reference paper for the FAIR Data Point:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for more details.
+
+[releases]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases
