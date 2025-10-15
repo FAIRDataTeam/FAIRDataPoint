@@ -1,0 +1,15 @@
+[
+  {
+    "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
+    "uuid": "e5e16561-97db-4518-a41e-2cc8736ec06f",
+    "name": "All datasets",
+    "description": "Quickly query all datasets (DCAT)",
+    "type": "PUBLIC",
+    "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
+    "varGraphPattern": "?entity rdf:type dcat:Dataset .",
+    "varOrdering": "ASC(?title)",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  }
+]

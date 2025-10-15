@@ -1,0 +1,10 @@
+[
+  {
+    "_class" : "org.fairdatapoint.entity.apikey.ApiKey",
+    "uuid":  "761aa902-8a0a-4a19-9c81-4e106c579b29",
+    "token": "example-token",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  }
+]

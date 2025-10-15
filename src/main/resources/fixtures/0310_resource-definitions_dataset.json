@@ -1,0 +1,43 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinition",
+    "uuid": "2f08228e-1789-40f8-84cd-28e3288c3604",
+    "name": "Dataset",
+    "urlPrefix": "dataset"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinitionChild",
+    "uuid": "9f138a13-9d45-4371-b763-0a3b9e0ec912",
+    "source": {
+      "uuid": "2f08228e-1789-40f8-84cd-28e3288c3604"
+    },
+    "target": {
+      "uuid": "02c649de-c579-43bb-b470-306abdc808c7"
+    },
+    "relationUri": "http://www.w3.org/ns/dcat#distribution",
+    "title": "Distributions",
+    "tagsUri": null,
+    "orderPriority": 0
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinitionChildMetadata",
+    "uuid": "723e95d3-1696-45e2-9429-f6e98e3fb893",
+    "child": {
+      "uuid": "9f138a13-9d45-4371-b763-0a3b9e0ec912"
+    },
+    "title": "Media Type",
+    "propertyUri": "http://www.w3.org/ns/dcat#mediaType",
+    "orderPriority": 0
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.MetadataSchemaUsage",
+    "uuid": "b8a0ed37-42a1-487e-8842-09fe082c4cc6",
+    "resourceDefinition": {
+      "uuid": "2f08228e-1789-40f8-84cd-28e3288c3604"
+    },
+    "usedMetadataSchema": {
+      "uuid": "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3"
+    },
+    "orderPriority": 0
+  }
+]

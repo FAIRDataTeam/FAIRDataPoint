@@ -24,7 +24,6 @@ package org.fairdatapoint.service.bootstrap.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatapoint.service.bootstrap.BootstrapContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.IOException;
@@ -41,7 +40,7 @@ public abstract class AbstractBootstrapper implements IBootstrapper {
     }
 
     @Override
-    public void bootstrapAllFromDir(Path dirPath, BootstrapContext context) {
+    public void bootstrapAllFromDir(Path dirPath) {
         if (!Files.isDirectory(dirPath)) {
             log.info("Directory {} does not exist, nothing to bootstrap", dirPath);
             return;
@@ -50,7 +49,7 @@ public abstract class AbstractBootstrapper implements IBootstrapper {
             initBootstrap();
             paths.filter(Files::isRegularFile)
                     .filter(path -> path.toString().endsWith(".json"))
-                    .forEach(path -> bootstrapFromJson(path, context));
+                    .forEach(path -> bootstrapFromJson(path));
             finalizeBootstrap();
         }
         catch (IOException exception) {

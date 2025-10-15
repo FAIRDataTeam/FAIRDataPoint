@@ -68,6 +68,6 @@ public class ResourceDefinitionChild extends BaseEntity {
     private ResourceDefinition target;
 
     @OrderBy("orderPriority")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "child")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResourceDefinitionChildMetadata> metadata;
 }

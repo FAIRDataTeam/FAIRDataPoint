@@ -1,0 +1,42 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "a92958ab-a414-47e6-8e17-68ba96ba3a2b"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "4e64208d-f102-45a0-96e3-17b002e6213e",
+    "schema": {
+      "uuid": "a92958ab-a414-47e6-8e17-68ba96ba3a2b"
+    },
+    "version": "1.0.0",
+    "name": "FAIR Data Point",
+    "description": "",
+    "definition": "@prefix :         <http://fairdatapoint.org/> .\n@prefix dash:     <http://datashapes.org/dash#> .\n@prefix dct:      <http://purl.org/dc/terms/> .\n@prefix fdp:      <https://w3id.org/fdp/fdp-o#> .\n@prefix sh:       <http://www.w3.org/ns/shacl#> .\n@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n\n:FDPShape a sh:NodeShape ;\n          sh:targetClass fdp:FAIRDataPoint ;\n          sh:property [\n                sh:path fdp:startDate ;\n                sh:datatype xsd:date ;\n                sh:maxCount 1 ;\n                dash:editor dash:DatePickerEditor ;\n                dash:viewer dash:LiteralViewer ;\n                sh:order 40 ;\n            ] , [\n                sh:path fdp:endDate ;\n                sh:datatype xsd:date ;\n                sh:maxCount 1 ;\n                dash:editor dash:DatePickerEditor ;\n                dash:viewer dash:LiteralViewer ;\n                sh:order 41 ;\n            ] , [\n                sh:path fdp:uiLanguage ;\n                sh:nodeKind sh:IRI ;\n                sh:maxCount 1 ;\n                sh:defaultValue <http://id.loc.gov/vocabulary/iso639-1/en>;\n                dash:editor dash:URIEditor ;\n                dash:viewer dash:LabelViewer ;\n                sh:order 42 ;\n            ] , [\n                sh:path fdp:metadataIdentifier ;\n                sh:nodeKind sh:IRI ;\n                sh:maxCount 1 ;\n                dash:editor dash:URIEditor ;\n                dash:viewer dash:LabelViewer ;\n                sh:order 43 ;\n            ] .\n",
+    "targetClasses": [
+      "http://www.w3.org/ns/dcat#Resource",
+      "http://www.w3.org/ns/dcat#DataService",
+      "https://w3id.org/fdp/fdp-o#MetadataService",
+      "https://w3id.org/fdp/fdp-o#FAIRDataPoint"
+    ],
+    "type": "INTERNAL",
+    "origin": null,
+    "importedFrom": null,
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false,
+    "suggestedResourceName": null,
+    "suggestedUrlPrefix": null
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "afebd441-8aa5-464d-bc3c-033f175449b4",
+    "metadataSchemaVersion": {
+      "uuid": "4e64208d-f102-45a0-96e3-17b002e6213e"
+    },
+    "extendedMetadataSchema": {
+      "uuid": "6f7a5a76-6185-4bd0-9fe9-62ecc90c9bad"
+    },
+    "orderPriority": 0
+  }
+]

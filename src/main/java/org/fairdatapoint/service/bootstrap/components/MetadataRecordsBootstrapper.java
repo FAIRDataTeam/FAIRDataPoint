@@ -29,7 +29,6 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.fairdatapoint.database.rdf.repository.RepositoryMode;
 import org.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import org.fairdatapoint.service.bootstrap.BootstrapContext;
 import org.fairdatapoint.service.bootstrap.fixtures.RecordsFixture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
@@ -61,7 +60,7 @@ public class MetadataRecordsBootstrapper extends AbstractBootstrapper {
     }
 
     @Override
-    public void bootstrapFromJson(Path resourcePath, BootstrapContext context) {
+    public void bootstrapFromJson(Path resourcePath) {
         if (!resourcePath.getFileName().toString().equals("records.json")) {
             log.warn("Skipping file {}: only records.json is supported for records bootstrapping", resourcePath);
             return;

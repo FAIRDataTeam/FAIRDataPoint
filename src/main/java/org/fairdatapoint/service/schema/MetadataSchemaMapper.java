@@ -24,7 +24,6 @@ package org.fairdatapoint.service.schema;
 
 import org.fairdatapoint.api.dto.schema.*;
 import org.fairdatapoint.entity.schema.*;
-import org.fairdatapoint.service.bootstrap.fixtures.MetadataSchemaVersionFixture;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -313,26 +312,6 @@ public class MetadataSchemaMapper {
                 .extendedMetadataSchema(metadataSchema)
                 .metadataSchemaVersion(version)
                 .orderPriority(orderPriority)
-                .build();
-    }
-
-    public MetadataSchemaVersion fromMetadataSchemaVersionFixture(MetadataSchemaVersionFixture versionFixture,
-                                                                  MetadataSchema metadataSchema) {
-        final List<String> targetClasses =
-                MetadataSchemaShaclUtils.extractTargetClasses(versionFixture.getDefinition()).stream().toList();
-        return MetadataSchemaVersion.builder()
-                .uuid(UUID.randomUUID())
-                .name(versionFixture.getName())
-                .description(versionFixture.getDescription())
-                .abstractSchema(versionFixture.getAbstractSchema())
-                .type(MetadataSchemaType.CUSTOM)
-                .state(MetadataSchemaState.LATEST)
-                .version(versionFixture.getVersion())
-                .definition(versionFixture.getDefinition())
-                .targetClasses(targetClasses)
-                .suggestedResourceName(versionFixture.getSuggestedResourceName())
-                .suggestedUrlPrefix(versionFixture.getSuggestedUrlPrefix())
-                .schema(metadataSchema)
                 .build();
     }
 }

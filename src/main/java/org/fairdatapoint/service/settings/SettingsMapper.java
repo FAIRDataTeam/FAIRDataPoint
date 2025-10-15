@@ -202,16 +202,4 @@ public class SettingsMapper {
                 .filter(filter)
                 .build();
     }
-
-    public Settings fromSettingsFixture(SettingsFixture settingsFixture) {
-        return Settings.builder()
-                .appTitle(settingsFixture.getAppTitle())
-                .appSubtitle(settingsFixture.getAppSubtitle())
-                .pingEnabled(settingsFixture.getPingEnabled())
-                .pingEndpoints(settingsFixture.getPingEndpoints())
-                .autocompleteSearchNamespace(settingsFixture.getAutocompleteSearchNamespace())
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .build();
-    }
 }

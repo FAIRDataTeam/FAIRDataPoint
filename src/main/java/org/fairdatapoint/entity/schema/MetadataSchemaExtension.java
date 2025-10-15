@@ -25,6 +25,7 @@ package org.fairdatapoint.entity.schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.fairdatapoint.entity.base.CustomGeneratedUUID;
 
 import java.util.UUID;
 
@@ -38,7 +39,7 @@ import java.util.UUID;
 public class MetadataSchemaExtension {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @CustomGeneratedUUID
     @NotNull
     @Column(name = "uuid", nullable = false, updatable = false)
     private UUID uuid;

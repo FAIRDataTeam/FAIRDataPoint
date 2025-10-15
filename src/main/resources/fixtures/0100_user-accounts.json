@@ -1,0 +1,20 @@
+[
+  {
+    "_class" : "org.fairdatapoint.entity.user.UserAccount",
+    "uuid":  "7e64818d-6276-46fb-8bb1-732e6e09f7e9",
+    "firstName": "Albert",
+    "lastName": "Einstein",
+    "email": "albert.einstein@example.org",
+    "passwordHash": "$2a$10$hZF1abbZ48Tf.3RndC9W6OlDt6gnBoD/2HbzJayTs6be7d.5DbpnW",
+    "role": "ADMIN"
+  },
+  {
+    "_class" : "org.fairdatapoint.entity.user.UserAccount",
+    "uuid":  "b5b92c69-5ed9-4054-954d-0121c29b6800",
+    "firstName": "Nikola",
+    "lastName": "Tesla",
+    "email": "nikola.tesla@example.org",
+    "passwordHash": "$2a$10$tMbZUZg9AbYL514R.hZ0tuzvfZJR5NQhSVeJPTQhNwPf6gv/cvrna",
+    "role": "USER"
+  }
+]

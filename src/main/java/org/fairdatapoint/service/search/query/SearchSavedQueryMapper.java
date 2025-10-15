@@ -28,7 +28,6 @@ import org.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatapoint.entity.user.UserAccount;
-import org.fairdatapoint.service.bootstrap.fixtures.SearchSavedQueryFixture;
 import org.fairdatapoint.service.user.UserMapper;
 import org.springframework.stereotype.Component;
 
@@ -100,21 +99,6 @@ public class SearchSavedQueryMapper {
                 .prefixes(query.getVarPrefixes())
                 .graphPattern(query.getVarGraphPattern())
                 .ordering(query.getVarOrdering())
-                .build();
-    }
-
-    public SearchSavedQuery fromFixture(SearchSavedQueryFixture fixture, UserAccount userAccount) {
-        return SearchSavedQuery.builder()
-                .uuid(null)
-                .name(fixture.getName())
-                .description(fixture.getDescription())
-                .type(fixture.getType())
-                .varPrefixes(fixture.getPrefixes())
-                .varGraphPattern(fixture.getGraphPattern())
-                .varOrdering(fixture.getOrdering())
-                .userAccount(userAccount)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
                 .build();
     }
 }

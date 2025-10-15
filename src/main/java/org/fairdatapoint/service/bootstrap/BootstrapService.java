@@ -34,19 +34,11 @@ import java.nio.file.Path;
 @Service
 @RequiredArgsConstructor
 public class BootstrapService {
-    private final UserBootstrapper userBootstrapper;
-    private final SettingsBootstrapper settingsBootstrapper;
-    private final MembershipBootstrapper membershipBootstrapper;
     private final MetadataRecordsBootstrapper metadataRecordsBootstrapper;
-    private final MetadataSchemaBootstrapper metadataSchemaBootstrapper;
-    private final MetadataSchemaVersionsBootstrapper metadataSchemaVersionsBootstrapper;
-    private final ResourceDefinitionBootstrapper resourceDefinitionBootstrapper;
-    private final ResourceDefinitionChildrenBootstrapper resourceDefinitionChildrenBootstrapper;
 
     @Transactional
     public void bootstrapFromDir(String dataPath) {
         final Path basePath = Path.of(dataPath);
-        final BootstrapContext context = new BootstrapContext();
         log.info("Bootstrap process started");
 
         if (!basePath.toFile().exists() || !basePath.toFile().isDirectory()) {
@@ -54,53 +46,9 @@ public class BootstrapService {
             return;
         }
 
-        // Settings
-        if (settingsBootstrapper.shouldBootstrap()) {
-            settingsBootstrapper.bootstrapFromJson(basePath.resolve("settings"), context);
-        }
-        else {
-            log.info("Settings already exist, skipping settings bootstrapping");
-        }
-
-        // User (and related entities)
-        if (userBootstrapper.shouldBootstrap()) {
-            userBootstrapper.bootstrapAllFromDir(basePath.resolve("users"), context);
-        }
-        else {
-            log.info("Users already exist, skipping user bootstrapping");
-        }
-
-        // Metadata Schemas
-        if (metadataSchemaBootstrapper.shouldBootstrap()) {
-            final Path dir = basePath.resolve("metadata-schemas");
-            metadataSchemaBootstrapper.bootstrapAllFromDir(dir, context);
-            metadataSchemaVersionsBootstrapper.bootstrapAllFromDir(dir, context);
-        }
-        else {
-            log.info("Metadata Schemas already exist, skipping metadata schema bootstrapping");
-        }
-
-        // Resource Definitions
-        if (resourceDefinitionBootstrapper.shouldBootstrap()) {
-            final Path dir = basePath.resolve("resource-definitions");
-            resourceDefinitionBootstrapper.bootstrapAllFromDir(dir, context);
-            resourceDefinitionChildrenBootstrapper.bootstrapAllFromDir(dir, context);
-        }
-        else {
-            log.info("Resource Definitions already exist, skipping resource definition bootstrapping");
-        }
-
-        // Memberships
-        if (membershipBootstrapper.shouldBootstrap()) {
-            membershipBootstrapper.bootstrapAllFromDir(basePath.resolve("memberships"), context);
-        }
-        else {
-            log.info("Memberships already exist, skipping membership bootstrapping");
-        }
-
         // RDF Records
         if (metadataRecordsBootstrapper.shouldBootstrap()) {
-            metadataRecordsBootstrapper.bootstrapAllFromDir(basePath.resolve("records"), context);
+            metadataRecordsBootstrapper.bootstrapAllFromDir(basePath.resolve("records"));
         }
         else {
             log.info("Metadata Records already exist, skipping metadata records bootstrapping");

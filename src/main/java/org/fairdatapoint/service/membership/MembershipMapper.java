@@ -26,7 +26,6 @@ import org.fairdatapoint.api.dto.membership.MembershipDTO;
 import org.fairdatapoint.api.dto.membership.MembershipPermissionDTO;
 import org.fairdatapoint.entity.membership.Membership;
 import org.fairdatapoint.entity.membership.MembershipPermission;
-import org.fairdatapoint.service.bootstrap.fixtures.MembershipFixture;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -55,13 +54,6 @@ public class MembershipMapper {
                 .membership(membership)
                 .code(permission.getCode())
                 .mask(permission.getMask())
-                .build();
-    }
-
-    public Membership fromFixture(MembershipFixture membershipFixture) {
-        return Membership.builder()
-                .name(membershipFixture.getName())
-                .allowedEntities(membershipFixture.getAllowedEntities().stream().map(UUID::toString).toList())
                 .build();
     }
 }

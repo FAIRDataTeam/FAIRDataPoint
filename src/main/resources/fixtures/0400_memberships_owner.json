@@ -1,0 +1,48 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.membership.Membership",
+    "uuid": "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8",
+    "name": "Owner",
+    "allowedEntities": [
+      "a0949e72-4466-4d53-8900-9436d1049a4b",
+      "2f08228e-1789-40f8-84cd-28e3288c3604",
+      "02c649de-c579-43bb-b470-306abdc808c7"
+    ]
+  },
+  {
+    "_class": "org.fairdatapoint.entity.membership.MembershipPermission",
+    "uuid": "e0d9f853-637b-4c50-9ad9-07b6349bf76f",
+    "membership": {
+      "uuid": "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8"
+    },
+    "mask": 2,
+    "code": "W"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.membership.MembershipPermission",
+    "uuid": "de4e4f85-f11d-475b-b6f0-33bdfe5f923a",
+    "membership": {
+      "uuid": "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8"
+    },
+    "mask": 4,
+    "code": "C"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.membership.MembershipPermission",
+    "uuid": "60bebbf0-210d-4b05-af85-ca1b58546261",
+    "membership": {
+      "uuid": "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8"
+    },
+    "mask": 8,
+    "code": "D"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.membership.MembershipPermission",
+    "uuid": "36c3b6e9-f2e3-48b7-bae1-4dc3196a3657",
+    "membership": {
+      "uuid": "49f2bcfd-ef0a-4a3a-a1a3-0fc72a6892a8"
+    },
+    "mask": 16,
+    "code": "A"
+  }
+]

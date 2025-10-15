@@ -1,0 +1,40 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "ebacbf83-cd4f-4113-8738-d73c0735b0ab"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "3cda8cd3-b08b-4797-822d-d3f3e83c466a",
+    "schema": {
+      "uuid": "ebacbf83-cd4f-4113-8738-d73c0735b0ab"
+    },
+    "version": "1.0.0",
+    "name": "Distribution",
+    "description": "",
+    "definition": "@prefix :         <http://fairdatapoint.org/> .\n@prefix dash:     <http://datashapes.org/dash#> .\n@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n@prefix dct:      <http://purl.org/dc/terms/> .\n@prefix sh:       <http://www.w3.org/ns/shacl#> .\n@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n\n:DistributionShape a sh:NodeShape ;\n                   sh:targetClass dcat:Distribution ;\n                   sh:property [\n                         sh:path dct:issued ;\n                         sh:datatype xsd:dateTime ;\n                         sh:maxCount 1 ;\n                         dash:editor dash:DateTimePickerEditor ;\n                         dash:viewer dash:LiteralViewer ;\n                         sh:order 20 ;\n                     ], [\n                         sh:path dct:modified ;\n                         sh:datatype xsd:dateTime ;\n                         sh:maxCount 1 ;\n                         dash:editor dash:DateTimePickerEditor ;\n                         dash:viewer dash:LiteralViewer ;\n                         sh:order 21 ;\n                     ], [\n                         sh:path dcat:accessURL ;\n                         sh:nodeKind sh:IRI ;\n                         sh:maxCount 1 ;\n                         dash:editor dash:URIEditor ;\n                         sh:order 22 ;\n                     ], [\n                         sh:path dcat:downloadURL ;\n                         sh:nodeKind sh:IRI ;\n                         sh:maxCount 1 ;\n                         dash:editor dash:URIEditor ;\n                         sh:order 23 ;\n                     ], [\n                         sh:path dcat:mediaType ;\n                         sh:nodeKind sh:Literal ;\n                         sh:minCount 1 ;\n                         sh:maxCount 1 ;\n                         dash:editor dash:TextFieldEditor ;\n                         dash:viewer dash:LiteralViewer ;\n                         sh:order 24 ;\n                     ], [\n                         sh:path dcat:format ;\n                         sh:nodeKind sh:Literal ;\n                         sh:maxCount 1 ;\n                         dash:editor dash:TextFieldEditor ;\n                         dash:viewer dash:LiteralViewer ;\n                         sh:order 25 ;\n                     ], [\n                         sh:path dcat:byteSize ;\n                         sh:nodeKind sh:Literal ;\n                         sh:maxCount 1 ;\n                         dash:editor dash:TextFieldEditor ;\n                         dash:viewer dash:LiteralViewer ;\n                         sh:order 26 ;\n                     ] .\n",
+    "targetClasses": [
+      "http://www.w3.org/ns/dcat#Resource",
+      "http://www.w3.org/ns/dcat#Distribution"
+    ],
+    "type": "INTERNAL",
+    "origin": null,
+    "importedFrom": null,
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false,
+    "suggestedResourceName": "Distribution",
+    "suggestedUrlPrefix": "distribution"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "a3b16a4e-cac7-4b71-a3de-94bb86714b5b",
+    "metadataSchemaVersion": {
+      "uuid": "3cda8cd3-b08b-4797-822d-d3f3e83c466a"
+    },
+    "extendedMetadataSchema": {
+      "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee"
+    },
+    "orderPriority": 0
+  }
+]

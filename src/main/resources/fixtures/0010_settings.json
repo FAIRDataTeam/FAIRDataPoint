@@ -1,0 +1,33 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.settings.Settings",
+    "uuid": "00000000-0000-0000-0000-000000000000",
+    "appTitle": "FAIR Data Point",
+    "appSubtitle": "Metadata for Machines",
+    "pingEnabled": true,
+    "pingEndpoints": [
+      "https://home.fairdatapoint.org"
+    ],
+    "autocompleteSearchNamespace": true
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsMetric",
+    "uuid": "8435491b-c16c-4457-ae94-e0f4128603d5",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "metricUri": "https://purl.org/fair-metrics/FM_F1A",
+    "resourceUri": "https://www.ietf.org/rfc/rfc3986.txt",
+    "orderPriority": 0
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsMetric",
+    "uuid": "af93d36a-0af0-4054-8c00-2675d460b231",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "metricUri": "https://purl.org/fair-metrics/FM_A1.1",
+    "resourceUri": "https://www.wikidata.org/wiki/Q8777",
+    "orderPriority": 0
+  }
+]

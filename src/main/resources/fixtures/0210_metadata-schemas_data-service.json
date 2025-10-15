@@ -1,0 +1,40 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "89d94c1b-f6ff-4545-ba9b-120b2d1921d0"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "9111d436-fe58-4bd5-97ae-e6f86bc2997a",
+    "schema": {
+      "uuid": "89d94c1b-f6ff-4545-ba9b-120b2d1921d0"
+    },
+    "version": "1.0.0",
+    "name": "Data Service",
+    "description": "",
+    "definition": "@prefix :         <http://fairdatapoint.org/> .\n@prefix dash:     <http://datashapes.org/dash#> .\n@prefix dcat:     <http://www.w3.org/ns/dcat#> .\n@prefix dct:      <http://purl.org/dc/terms/> .\n@prefix sh:       <http://www.w3.org/ns/shacl#> .\n@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .\n\n:DataServiceShape a sh:NodeShape ;\n                  sh:targetClass dcat:DataService ;\n                  sh:property [\n                        sh:path dcat:endpointURL ;\n                        sh:nodeKind sh:IRI ;\n                        sh:maxCount 1 ;\n                        sh:order 20 ;\n                    ] , [\n                        sh:path dcat:endpointDescription ;\n                        sh:nodeKind sh:Literal ;\n                        sh:maxCount 1 ;\n                        dash:editor dash:TextAreaEditor ;\n                        dash:viewer dash:LiteralViewer ;\n                        sh:order 21 ;\n                    ] .\n",
+    "targetClasses": [
+      "http://www.w3.org/ns/dcat#Resource",
+      "http://www.w3.org/ns/dcat#DataService"
+    ],
+    "type": "INTERNAL",
+    "origin": null,
+    "importedFrom": null,
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false,
+    "suggestedResourceName": null,
+    "suggestedUrlPrefix": null
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "2efc8366-541d-493f-8661-69ad8f72dfa1",
+    "metadataSchemaVersion": {
+      "uuid": "9111d436-fe58-4bd5-97ae-e6f86bc2997a"
+    },
+    "extendedMetadataSchema": {
+      "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee"
+    },
+    "orderPriority": 0
+  }
+]

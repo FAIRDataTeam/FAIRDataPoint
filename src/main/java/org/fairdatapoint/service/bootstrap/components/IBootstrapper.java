@@ -22,13 +22,11 @@
  */
 package org.fairdatapoint.service.bootstrap.components;
 
-import org.fairdatapoint.service.bootstrap.BootstrapContext;
-
 import java.nio.file.Path;
 
 public interface IBootstrapper {
 
-    void bootstrapAllFromDir(Path dirPath, BootstrapContext context);
+    void bootstrapAllFromDir(Path dirPath);
 
-    void bootstrapFromJson(Path resourcePath, BootstrapContext context);
+    void bootstrapFromJson(Path resourcePath);
 }

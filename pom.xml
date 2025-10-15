@@ -61,6 +61,7 @@
         <jwt.version>0.12.6</jwt.version>
         <lombok.version>1.18.38</lombok.version>
         <hypersistence.version>3.9.10</hypersistence.version>
+        <jackson.version>3.0.0</jackson.version>
 
         <!-- Test -->
         <httpclient5.version>5.5</httpclient5.version>
@@ -206,6 +207,11 @@
             <groupId>io.hypersistence</groupId>
             <artifactId>hypersistence-utils-hibernate-63</artifactId>
             <version>${hypersistence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
