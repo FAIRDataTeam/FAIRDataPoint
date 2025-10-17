@@ -22,6 +22,7 @@
  */
 package org.fairdatapoint.config;
 
+import org.fairdatapoint.config.properties.BootstrapProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -36,6 +37,11 @@ import java.util.Comparator;
 @Configuration
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+    private final BootstrapProperties bootstrapProperties;
+
+    public BootstrapConfig(BootstrapProperties bootstrapProperties) {
+        this.bootstrapProperties = bootstrapProperties;
+    }
 
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
