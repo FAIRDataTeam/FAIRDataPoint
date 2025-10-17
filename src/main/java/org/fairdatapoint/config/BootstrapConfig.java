@@ -31,6 +31,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -48,7 +49,9 @@ public class BootstrapConfig {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
         // load all json resources from the fixtures dir
         try {
-            final Resource[] resources = resourceResolver.getResources("classpath:fixtures/*.json");
+            // collect fixture resources
+            final Path fixturesPath = Path.of(bootstrapProperties.getDbFixturesPath(), "*.json");
+            final Resource[] resources = resourceResolver.getResources("file:" + fixturesPath);
             // sort resources to guarantee lexicographic order
             Arrays.sort(
                     resources,

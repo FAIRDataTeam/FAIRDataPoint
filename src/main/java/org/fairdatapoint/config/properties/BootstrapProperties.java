@@ -36,4 +36,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class BootstrapProperties {
     private boolean enabled;
     private String dataPath;
+    private String dbFixturesPath;
 }

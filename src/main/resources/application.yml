@@ -115,3 +115,4 @@ server:
 bootstrap:
   enabled: true
   data-path: '/data'
+  db-fixtures-path: "fixtures"
