@@ -28,7 +28,6 @@ import org.fairdatapoint.entity.membership.Membership;
 import org.fairdatapoint.entity.membership.MembershipPermission;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
