@@ -27,22 +27,14 @@ public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
     final String filename = "0001-whatever.json";
 
     @Test
-    public void testFilenameRequired() {
-        assertThrows(
-                Exception.class,
-                () -> repository.save(new AppliedFixture()),
-                "filename is required, but no exception was raised"
-        );
-    }
-
-    @Test
     public void testSave() {
         AppliedFixture appliedFixture = repository.save(new AppliedFixture(filename));
         assertEquals(filename, appliedFixture.getFilename());
+        assertEquals(1, repository.count());
     }
 
     @Test
-    public void testSaveDuplicateFilename() {
+    public void testSaveWithExistingFilename() {
         this.entityManager.persist(new AppliedFixture(filename));
         assertEquals(1, repository.count());
 //        repository.save(new AppliedFixture(filename));
@@ -55,7 +47,16 @@ public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
     }
 
     @Test
-    public void testFindByFilenameExists() {
+    public void testSaveWithoutFilename() {
+        assertThrows(
+                Exception.class,
+                () -> repository.save(new AppliedFixture()),
+                "filename was not provided, but no exception was raised"
+        );
+    }
+
+    @Test
+    public void testFindByFilenameWithExistingFilename() {
         this.entityManager.persist(new AppliedFixture(filename));
         Optional<AppliedFixture> appliedFixture = repository.findByFilename(filename);
         assertTrue(appliedFixture.isPresent());
