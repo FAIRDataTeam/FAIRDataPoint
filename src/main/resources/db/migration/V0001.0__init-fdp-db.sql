@@ -436,3 +436,14 @@ create table acl_entry(
                           constraint foreign_fk_4 foreign key(acl_object_identity) references acl_object_identity(id),
                           constraint foreign_fk_5 foreign key(sid) references acl_sid(id)
 );
+
+-- history of applied fixtures
+
+CREATE TABLE IF NOT EXISTS applied_fixture
+(
+    uuid       UUID        NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
+    filename   TEXT        NOT NULL UNIQUE,
+    PRIMARY KEY (uuid)
+);
