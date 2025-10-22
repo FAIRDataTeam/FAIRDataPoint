@@ -7,7 +7,6 @@ import org.fairdatapoint.entity.bootstrap.AppliedFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
@@ -16,26 +15,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @AutoConfigureTestEntityManager
-@Transactional // for TestEntityManager
+@Transactional
 public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
     @Autowired
     AppliedFixtureRepository repository;
-
-    @Autowired
-    private TestEntityManager entityManager;
 
     final String filename = "0001-whatever.json";
 
     @Test
     public void testSave() {
-        AppliedFixture appliedFixture = repository.save(new AppliedFixture(filename));
+        AppliedFixture appliedFixture = repository.saveAndFlush(new AppliedFixture(filename));
         assertEquals(filename, appliedFixture.getFilename());
         assertEquals(1, repository.count());
     }
 
     @Test
     public void testSaveWithExistingFilename() {
-        this.entityManager.persist(new AppliedFixture(filename));
+        repository.saveAndFlush(new AppliedFixture(filename));
         assertEquals(1, repository.count());
         assertThrows(
                 DataIntegrityViolationException.class,
@@ -55,7 +51,7 @@ public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
 
     @Test
     public void testFindByFilenameWithExistingFilename() {
-        this.entityManager.persist(new AppliedFixture(filename));
+        repository.saveAndFlush(new AppliedFixture(filename));
         Optional<AppliedFixture> appliedFixture = repository.findByFilename(filename);
         assertTrue(appliedFixture.isPresent());
     }

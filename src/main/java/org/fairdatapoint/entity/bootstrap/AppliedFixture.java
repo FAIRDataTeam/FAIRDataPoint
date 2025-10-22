@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.fairdatapoint.entity.base.BaseEntity;
 
-
 @Entity
 @Getter
 @Setter
