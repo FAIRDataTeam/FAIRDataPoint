@@ -113,7 +113,6 @@ server:
   forward-headers-strategy: framework
 
 bootstrap:
-  enabled: true
   # TODO: consistent naming for rdf data path and db fixtures path
   data-path: '/data'
   db-fixtures-path: "fixtures"
