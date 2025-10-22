@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @AutoConfigureTestEntityManager
-@Transactional
+@Transactional // for TestEntityManager
 public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
     @Autowired
     AppliedFixtureRepository repository;
@@ -37,11 +37,9 @@ public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
     public void testSaveWithExistingFilename() {
         this.entityManager.persist(new AppliedFixture(filename));
         assertEquals(1, repository.count());
-//        repository.save(new AppliedFixture(filename));
-//        assertEquals(1, repository.count());
         assertThrows(
                 DataIntegrityViolationException.class,
-                () -> repository.save(new AppliedFixture(filename)),
+                () -> repository.saveAndFlush(new AppliedFixture(filename)),
                 "filename is not unique, but no exception was raised"
         );
     }
@@ -50,7 +48,7 @@ public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
     public void testSaveWithoutFilename() {
         assertThrows(
                 Exception.class,
-                () -> repository.save(new AppliedFixture()),
+                () -> repository.saveAndFlush(new AppliedFixture()),
                 "filename was not provided, but no exception was raised"
         );
     }
