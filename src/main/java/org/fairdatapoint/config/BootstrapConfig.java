@@ -36,6 +36,17 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * The {@code BootstrapConfig} class configures a repository populator to load initial data into the relational database, based on JSON fixture files.
+ * Bootstrapping is disabled by default, and should only be enabled once, on the very first run of the application.
+ * It can also be enabled on subsequent runs, but then it will overwrite any changes that may have been made by users.
+ * To enable on the first run, set the env variable {@code BOOTSTRAP_ENABLED=true} on the command line, before running the app.
+ * When using e.g. docker compose, you can define {@code BOOTSTRAP_ENABLED: ${BOOTSTRAP_ENABLED:-false}} in the {@code environment} section and then set up the stack by running {@code BOOTSTRAP_ENABLED=true docker compose up -d}.
+ * The default fixtures are located in the {@code <project-root>/fixtures} directory.
+ * To add custom fixtures and/or override any of the default fixtures in a docker compose setup, we can bind-mount individual fixture files.
+ * For example: {@code ./my-fixtures/0100_user-accounts.json:/fdp/fixtures/0100_user-accounts.json:ro}
+ * Note that bind-mounting the entire directory, instead of individual files, would hide all default files.
+ */
 @Configuration
 @Slf4j
 public class BootstrapConfig {
