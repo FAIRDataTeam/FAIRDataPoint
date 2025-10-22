@@ -22,6 +22,7 @@
  */
 package org.fairdatapoint.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 @Configuration
+@Slf4j
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     private final boolean bootstrapEnabled;
@@ -53,6 +55,7 @@ public class BootstrapConfig {
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
         if  (bootstrapEnabled) {
+            log.info("Bootstrap repository populator enabled");
             try {
                 // collect fixture resources
                 final Path fixturesPath = dbFixturesPath.resolve("*.json");
@@ -70,6 +73,8 @@ public class BootstrapConfig {
             catch (IOException exception) {
                 exception.printStackTrace();
             }
+        } else {
+            log.info("Bootstrap repository populator disabled");
         }
 
         return factory;
