@@ -22,7 +22,7 @@
  */
 package org.fairdatapoint.config;
 
-import org.fairdatapoint.config.properties.BootstrapProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -38,33 +38,40 @@ import java.util.Comparator;
 @Configuration
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-    private final BootstrapProperties bootstrapProperties;
+    private final boolean bootstrapEnabled;
+    private final Path dbFixturesPath;
 
-    public BootstrapConfig(BootstrapProperties bootstrapProperties) {
-        this.bootstrapProperties = bootstrapProperties;
+    public BootstrapConfig(
+            @Value("${bootstrap.enabled:false}") boolean bootstrapEnabled,
+            @Value("${bootstrap.db-fixtures-path}") String dbFixturesDir
+    ) {
+        this.bootstrapEnabled = bootstrapEnabled;
+        this.dbFixturesPath = Path.of(dbFixturesDir);
     }
 
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        // load all json resources from the fixtures dir
-        try {
-            // collect fixture resources
-            final Path fixturesPath = Path.of(bootstrapProperties.getDbFixturesPath(), "*.json");
-            final Resource[] resources = resourceResolver.getResources("file:" + fixturesPath);
-            // sort resources to guarantee lexicographic order
-            Arrays.sort(
-                    resources,
-                    Comparator.comparing(
-                            Resource::getFilename,
-                            Comparator.nullsLast(String::compareTo)
-                    )
-            );
-            factory.setResources(resources);
+        if  (bootstrapEnabled) {
+            try {
+                // collect fixture resources
+                final Path fixturesPath = dbFixturesPath.resolve("*.json");
+                final Resource[] resources = resourceResolver.getResources("file:" + fixturesPath);
+                // sort resources to guarantee lexicographic order
+                Arrays.sort(
+                        resources,
+                        Comparator.comparing(
+                                Resource::getFilename,
+                                Comparator.nullsLast(String::compareTo)
+                        )
+                );
+                factory.setResources(resources);
+            }
+            catch (IOException exception) {
+                exception.printStackTrace();
+            }
         }
-        catch (IOException exception) {
-            exception.printStackTrace();
-        }
+
         return factory;
     }
 }
