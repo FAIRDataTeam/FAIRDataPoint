@@ -45,7 +45,7 @@ public class BootstrapConfig {
 
     public BootstrapConfig(
             @Value("${bootstrap.enabled:false}") boolean bootstrapEnabled,
-            @Value("${bootstrap.db-fixtures-path}") String dbFixturesDir
+            @Value("${bootstrap.db-fixtures-dir}") String dbFixturesDir
     ) {
         this.bootstrapEnabled = bootstrapEnabled;
         this.dbFixturesPath = Path.of(dbFixturesDir);
