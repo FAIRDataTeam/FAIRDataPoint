@@ -27,6 +27,5 @@ WORKDIR /fdp
 
 COPY --from=builder /builder/target/fdp-spring-boot.jar /fdp/app.jar
 COPY --from=builder /builder/fixtures /fdp/fixtures
-# TODO: copy the (rdf) "data" dir as well, or move that into the fixtures dir, e.g. fixtures/rdf and fixtures/db
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
