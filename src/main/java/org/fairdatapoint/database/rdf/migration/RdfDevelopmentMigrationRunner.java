@@ -35,6 +35,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+/**
+ * Loads initial RDF data for development.
+ * TODO: remove all classes and files related to RDF migration, in favor of the fixtures-based approach.
+ * @deprecated use RDF fixtures instead, see {@link org.fairdatapoint.service.bootstrap bootstrap package}
+ */
+@Deprecated(forRemoval = true, since = "1")
 @Service
 @Profile(Profiles.NON_PRODUCTION)
 public class RdfDevelopmentMigrationRunner {
