@@ -20,22 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.database.rdf.migration.production;
+package org.fairdatapoint.service.bootstrap;
 
-import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import org.fairdatapoint.config.properties.BootstrapProperties;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 
-@RdfMigrationAnnotation(
-        number = 5,
-        name = "Fix Metadata Version",
-        description = "Use dcat:version instead of dcterms:hasVersion")
-@Slf4j
-@Service
-public class Rdf_Migration_0005_FixMetadataVersion implements RdfProductionMigration {
-    // TODO: remove (use seed)
+@Component
+@RequiredArgsConstructor
+public class BootstrapRunner implements ApplicationRunner {
+    private final BootstrapProperties bootstrapProperties;
+    private final BootstrapService bootstrapService;
 
-    public void runMigration() {
+    @Override
+    public void run(final org.springframework.boot.ApplicationArguments args) {
+        if (bootstrapProperties.isEnabled()) {
+            bootstrapService.bootstrapFromDir(bootstrapProperties.getDataPath());
+        }
     }
+
 }

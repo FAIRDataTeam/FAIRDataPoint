@@ -35,6 +35,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "bootstrap")
 public class BootstrapProperties {
     private boolean enabled;
+    private String dataPath;
     // directories relative to project root
     private String dbFixturesDir;
 }

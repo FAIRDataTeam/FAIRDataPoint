@@ -20,29 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.config;
+package org.fairdatapoint.service.bootstrap.components;
 
-import org.fairdatapoint.Profiles;
-import org.fairdatateam.rdf.migration.database.RdfMigrationRepository;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigrationRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import java.nio.file.Path;
 
-@Configuration
-public class RepositoryMigrationConfig {
+public interface IBootstrapper {
 
-    @Bean
-    @Profile(Profiles.PRODUCTION)
-    public RdfProductionMigrationRunner rdfProductionMigrationRunner(
-            RdfMigrationRepository rdfMigrationRepository,
-            ApplicationContext appContext
-    ) {
-        final RdfProductionMigrationRunner mr =
-                new RdfProductionMigrationRunner(rdfMigrationRepository, appContext);
-        mr.run();
-        return mr;
-    }
+    void bootstrapAllFromDir(Path dirPath);
 
+    void bootstrapFromJson(Path resourcePath);
 }

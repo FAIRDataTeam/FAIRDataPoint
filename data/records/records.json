@@ -1,0 +1,10 @@
+{
+  "records": [
+    {
+      "file": "repository.ttl",
+      "repository": "main",
+      "uri": "{{ persistentUrl }}"
+    }
+  ],
+  "persistentUrlVar": "{{ persistentUrl }}"
+}

@@ -20,22 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.database.rdf.migration.production;
+package org.fairdatapoint.service.bootstrap.fixtures;
 
-import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
-import org.springframework.stereotype.Service;
+import lombok.Data;
 
-@RdfMigrationAnnotation(
-        number = 3,
-        name = "FDPO Compliance",
-        description = "Comply with FDP-O Metadata Service")
-@Slf4j
-@Service
-public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
-    // TODO: remove (use seed)
+import java.util.ArrayList;
+import java.util.List;
 
-    public void runMigration() {
-    }
+@Data
+public class RecordsFixture {
+    private List<RecordFixture> records = new ArrayList<>();
+    private String persistentUrlVar = "{{ persistentUrl }}";
 }

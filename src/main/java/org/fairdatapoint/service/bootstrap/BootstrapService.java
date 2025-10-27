@@ -20,22 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.database.rdf.migration.production;
+package org.fairdatapoint.service.bootstrap;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
+import org.fairdatapoint.service.bootstrap.components.*;
 import org.springframework.stereotype.Service;
 
-@RdfMigrationAnnotation(
-        number = 4,
-        name = "Cleanup Index",
-        description = "Cleanup harvested record stored in separate named graphs")
+import java.nio.file.Path;
+
 @Slf4j
 @Service
-public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration {
-    // TODO: remove (use seed)
+@RequiredArgsConstructor
+public class BootstrapService {
+    private final MetadataRecordsBootstrapper metadataRecordsBootstrapper;
 
-    public void runMigration() {
+    @Transactional
+    public void bootstrapFromDir(String dataPath) {
+        final Path basePath = Path.of(dataPath);
+        log.info("Bootstrap process started");
+
+        if (!basePath.toFile().exists() || !basePath.toFile().isDirectory()) {
+            log.warn("Bootstrap directory {} does not exist or is not a directory, skipping bootstrapping", dataPath);
+            return;
+        }
+
+        // RDF Records
+        if (metadataRecordsBootstrapper.shouldBootstrap()) {
+            metadataRecordsBootstrapper.bootstrapAllFromDir(basePath.resolve("records"));
+        }
+        else {
+            log.info("Metadata Records already exist, skipping metadata records bootstrapping");
+        }
+
+        log.info("Bootstrap process finished");
     }
 }

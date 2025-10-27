@@ -31,6 +31,7 @@ import org.fairdatapoint.config.properties.PingProperties;
 import org.fairdatapoint.config.properties.RepositoryConnectionProperties;
 import org.fairdatapoint.config.properties.RepositoryProperties;
 import org.fairdatapoint.entity.settings.*;
+import org.fairdatapoint.service.bootstrap.fixtures.*;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
