@@ -60,7 +60,6 @@
         <postgresql.version>42.7.7</postgresql.version>
         <rdf4j.version>5.1.4</rdf4j.version>
         <jwt.version>0.13.0</jwt.version>
-        <lombok.version>1.18.38</lombok.version>
         <hypersistence.version>3.10.3</hypersistence.version>
 
         <!-- Plugins -->
@@ -190,7 +189,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
