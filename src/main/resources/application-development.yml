@@ -12,6 +12,9 @@ spring:
     username: fdp
     password: fdp
   flyway:
-    locations: classpath:dev/db/migration,classpath:db/migration
+    locations: classpath:db/migration
     fail-on-missing-locations: true
     clean-disabled: false
+
+bootstrap:
+  enabled: true
