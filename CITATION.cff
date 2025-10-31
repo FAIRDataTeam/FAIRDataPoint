@@ -29,6 +29,10 @@ authors:
     family-names: Slifka
     orcid: 'https://orcid.org/0000-0002-4941-0575'
     affiliation: Czech Technical University in Prague
+  - given-names: Dennis
+    family-names: van Gerwen
+    affiliation: Leiden University Medical Center
+    orcid: https://orcid.org/0000-0002-7360-8303
   - given-names: Mark
     family-names: Wilkinson
     affiliation: Universidad Politécnica de Madrid (UPM)
