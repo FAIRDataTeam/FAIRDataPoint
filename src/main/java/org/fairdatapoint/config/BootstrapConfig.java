@@ -36,7 +36,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * The {@code BootstrapConfig} class configures a repository populator to load initial data into the relational
@@ -75,12 +74,9 @@ public class BootstrapConfig {
             log.info("Bootstrap repository populator enabled");
             try {
                 // collect fixture resources
-                final Stream<String> locationPatterns = this.dbFixturesDirs.stream()
-                        .map(Path::of)
-                        .map(path -> "file:" + path.resolve("*.json"));
                 final List<Resource> resources = new ArrayList<>();
-//                locationPatterns.forEach(locationPattern -> resources.addAll(resourceResolver.getResources(locationPattern)));
-                for (String locationPattern : locationPatterns.toList()) {
+                for (String dir : this.dbFixturesDirs) {
+                    final String locationPattern = "file:" + Path.of(dir).resolve("*.json");
                     resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
                 }
                 // sort resources to guarantee lexicographic order
