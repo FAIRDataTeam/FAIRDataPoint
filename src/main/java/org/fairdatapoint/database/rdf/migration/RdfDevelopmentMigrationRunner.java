@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile(Profiles.NON_PRODUCTION)
+@Profile("none")
 public class RdfDevelopmentMigrationRunner {
 
     @Value("${spring.profiles.active}")
