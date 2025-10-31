@@ -28,6 +28,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -36,5 +38,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class BootstrapProperties {
     private boolean enabled;
     // directories relative to project root
-    private String dbFixturesDir;
+    private List<String> dbFixturesDirs;
 }
