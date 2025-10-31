@@ -36,7 +36,7 @@ import java.util.List;
 @Setter
 @ConfigurationProperties(prefix = "bootstrap")
 public class BootstrapProperties {
-    private boolean enabled;
+    private boolean enabled = false;
     // directories relative to project root
     private List<String> dbFixturesDirs;
 }
