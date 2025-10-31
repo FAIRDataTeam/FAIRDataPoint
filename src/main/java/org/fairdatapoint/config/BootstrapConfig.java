@@ -23,7 +23,7 @@
 package org.fairdatapoint.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.fairdatapoint.config.properties.BootstrapProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -56,27 +56,23 @@ import java.util.List;
 @Slf4j
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-    private final boolean bootstrapEnabled;
-    private final List<String> dbFixturesDirs;
+    private final BootstrapProperties bootstrap;
 
-    public BootstrapConfig(
-            @Value("${bootstrap.enabled:false}") boolean bootstrapEnabled,
-            @Value("${bootstrap.db-fixtures-dirs}") List<String> dbFixturesDirs
-    ) {
-        this.bootstrapEnabled = bootstrapEnabled;
-        this.dbFixturesDirs = dbFixturesDirs;
+    public BootstrapConfig(BootstrapProperties bootstrapProperties) {
+        this.bootstrap = bootstrapProperties;
     }
 
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        if (bootstrapEnabled) {
+        if (this.bootstrap.isEnabled()) {
             log.info("Bootstrap repository populator enabled");
             try {
                 // collect fixture resources
+                System.out.println(this.bootstrap.getDbFixturesDirs());
                 final List<Resource> resources = new ArrayList<>();
-                for (String dir : this.dbFixturesDirs) {
-                    final String locationPattern = "file:" + Path.of(dir).resolve("*.json");
+                for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
+                    final String locationPattern = "file:" + Path.of(fixturesDir).resolve("*.json");
                     resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
                 }
                 // sort resources to guarantee lexicographic order
