@@ -56,10 +56,10 @@
         <rdf-resolver.version>0.2.0</rdf-resolver.version>
         
         <!-- Core -->
-        <springdoc.version>2.8.12</springdoc.version>
-        <rdf4j.version>5.1.4</rdf4j.version>
+        <springdoc.version>2.8.13</springdoc.version>
+        <rdf4j.version>5.2.0</rdf4j.version>
         <jwt.version>0.13.0</jwt.version>
-        <hypersistence.version>3.10.3</hypersistence.version>
+        <hypersistence.version>3.11.0</hypersistence.version>
 
         <!-- Plugins -->
         <plugin.license.version>5.0.0</plugin.license.version>
@@ -68,7 +68,7 @@
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
         <plugin.git_commit_id.version>9.0.2</plugin.git_commit_id.version>
         <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
-        <plugin.spotbugs.version>4.9.4.1</plugin.spotbugs.version>
+        <plugin.spotbugs.version>4.9.8.1</plugin.spotbugs.version>
     </properties>
 
     <dependencies>
