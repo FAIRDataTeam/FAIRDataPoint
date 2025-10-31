@@ -33,8 +33,10 @@ import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFacto
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * The {@code BootstrapConfig} class configures a repository populator to load initial data into the relational
@@ -56,14 +58,14 @@ import java.util.Comparator;
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     private final boolean bootstrapEnabled;
-    private final Path dbFixturesPath;
+    private final List<String> dbFixturesDirs;
 
     public BootstrapConfig(
             @Value("${bootstrap.enabled:false}") boolean bootstrapEnabled,
-            @Value("${bootstrap.db-fixtures-dir}") String dbFixturesDir
+            @Value("${bootstrap.db-fixtures-dirs}") List<String> dbFixturesDirs
     ) {
         this.bootstrapEnabled = bootstrapEnabled;
-        this.dbFixturesPath = Path.of(dbFixturesDir);
+        this.dbFixturesDirs = dbFixturesDirs;
     }
 
     @Bean
@@ -73,17 +75,20 @@ public class BootstrapConfig {
             log.info("Bootstrap repository populator enabled");
             try {
                 // collect fixture resources
-                final Path fixturesPath = dbFixturesPath.resolve("*.json");
-                final Resource[] resources = resourceResolver.getResources("file:" + fixturesPath);
+                final Stream<String> locationPatterns = this.dbFixturesDirs.stream()
+                        .map(Path::of)
+                        .map(path -> "file:" + path.resolve("*.json"));
+                final List<Resource> resources = new ArrayList<>();
+//                locationPatterns.forEach(locationPattern -> resources.addAll(resourceResolver.getResources(locationPattern)));
+                for (String locationPattern : locationPatterns.toList()) {
+                    resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
+                }
                 // sort resources to guarantee lexicographic order
-                Arrays.sort(
-                        resources,
-                        Comparator.comparing(
-                                Resource::getFilename,
-                                Comparator.nullsLast(String::compareTo)
-                        )
-                );
-                factory.setResources(resources);
+                resources.sort(Comparator.comparing(
+                        Resource::getFilename,
+                        Comparator.nullsLast(String::compareTo)
+                ));
+                factory.setResources(resources.toArray(new Resource[0]));
             }
             catch (IOException exception) {
                 exception.printStackTrace();
