@@ -12,21 +12,21 @@ authors:
     family-names: Bonino da Silva Santos
     email: l.o.boninodasilvasantos@utwente.nl
     affiliation: University of Twente
-    orcid: 'https://orcid.org/0000-0002-1164-1351'
+    orcid: https://orcid.org/0000-0002-1164-1351
   - given-names: Kees
     family-names: Burger
     affiliation: Leiden University Medical Center
   - given-names: Rajaram
     family-names: Kaliyaperumal
-    affiliation: 'Leiden University Medical Center '
-    orcid: 'https://orcid.org/0000-0002-1215-167X'
+    affiliation: Leiden University Medical Center
+    orcid: https://orcid.org/0000-0002-1215-167X
   - given-names: Marek
     family-names: Suchánek
     affiliation: Czech Technical University in Prague
-    orcid: 'https://orcid.org/0000-0001-7525-9218'
+    orcid: https://orcid.org/0000-0001-7525-9218
   - given-names: Jan
     family-names: Slifka
-    orcid: 'https://orcid.org/0000-0002-4941-0575'
+    orcid: https://orcid.org/0000-0002-4941-0575
     affiliation: Czech Technical University in Prague
   - given-names: Dennis
     family-names: van Gerwen
@@ -35,7 +35,7 @@ authors:
   - given-names: Mark
     family-names: Wilkinson
     affiliation: Universidad Politécnica de Madrid (UPM)
-    orcid: 'https://orcid.org/0000-0001-6960-357X'
+    orcid: https://orcid.org/0000-0001-6960-357X
 identifiers:
   - type: doi
     value: 10.5281/zenodo.17119592
