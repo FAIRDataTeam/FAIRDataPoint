@@ -8,9 +8,9 @@ on:
       - develop
   pull_request:
     paths-ignore:
-      - "**/*.cff"
-      - "**/*.md"
-      - "**/LICENSE"
+      - "**.cff"
+      - "**.md"
+      - "LICENSE"
   workflow_dispatch:
 
 concurrency:
