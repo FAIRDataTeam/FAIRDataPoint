@@ -10,6 +10,7 @@ on:
     paths-ignore:
       - "**/*.cff"
       - "**/*.md"
+      - "**/LICENSE"
   workflow_dispatch:
 
 concurrency:

@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - "**/*.cff"
       - "**/*.md"
+      - "**/LICENSE"
   release:
     types:
       - created
