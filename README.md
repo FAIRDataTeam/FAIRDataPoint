@@ -156,7 +156,7 @@ services:
 ### Customizing initial data
 
 There are several ways to extend or override the initial data loaded during the bootstrapping process.
-For development, the simplest way is to copy the contents of the fixtures dir into a new directory, e.g. `custom-fixtures`, and then modify or add files as necessary.
+For development, the simplest way is to copy the contents of the [fixtures] dir into a new directory, e.g. `custom-fixtures`, and then modify or add files as necessary.
 The `bootstrap.db-fixtures-dir` option (`BOOTSTRAP_DBFIXTURESDIR`) can then be used to point to the new directory:
 
 ```bash
