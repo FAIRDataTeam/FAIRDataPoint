@@ -118,7 +118,7 @@ Also take a look at our [Contributing guidelines](CONTRIBUTING.md) and [Code of 
 
 ## Citation
 
-The following paper can be cite as a reference paper for the FAIR Data Point:
+The following paper can be cited as a reference paper for the FAIR Data Point:
 
     @article{10.1162/dint_a_00160,
     author = {Bonino da Silva Santos, Luiz Olavo and Burger, Kees and Kaliyaperumal, Rajaram and Wilkinson, Mark D.},
