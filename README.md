@@ -112,8 +112,9 @@ By default, the following user accounts are created when the FDP runs for the fi
     - Username: `nikola.tesla@example.org`
     - Password: `password`
 
->[!IMPORTANT]
+>[!WARNING]
 >These accounts are convenient for local testing, but they need to be removed, or changed, before exposing the FDP to the public internet.
+>See [Customizing initial data](#customizing-initial-data) for instructions.
 
 ## Initial data 
 
