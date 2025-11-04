@@ -87,7 +87,9 @@ public class BootstrapConfig {
                 // remove resources that have been applied already
                 final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
                         .map(FixtureHistory::getFilename).toList();
-                resources.removeIf(resource -> appliedFixtures.contains(resource.getFilename()));
+                if (resources.removeIf(resource -> appliedFixtures.contains(resource.getFilename()))) {
+                    log.info("skipping fixtures that have been applied already");
+                }
                 // sort resources to guarantee lexicographic order
                 resources.sort(Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
                 // add resources to factory
