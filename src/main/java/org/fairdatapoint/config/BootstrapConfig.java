@@ -22,16 +22,21 @@
  */
 package org.fairdatapoint.config;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
 import org.fairdatapoint.entity.bootstrap.FixtureHistory;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
+import org.springframework.data.repository.init.RepositoriesPopulatedEvent;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -61,6 +66,7 @@ public class BootstrapConfig {
     private final FixtureHistoryRepository fixtureHistoryRepository;
     private final boolean bootstrapEnabled;
     private final Path dbFixturesPath;
+    private final List<Resource> resources = new ArrayList<>();
 
     public BootstrapConfig(
             FixtureHistoryRepository fixtureHistoryRepository,
@@ -80,11 +86,10 @@ public class BootstrapConfig {
             try {
                 // collect fixture resources
                 final Path fixturesPath = dbFixturesPath.resolve("*.json");
-                final List<Resource> resources = new ArrayList<>(
-                        // wrapped in ArrayList because List.of() returns immutable
-                        List.of(resourceResolver.getResources("file:" + fixturesPath))
-                );
+                resources.addAll(List.of(resourceResolver.getResources("file:" + fixturesPath)));
                 // remove resources that have been applied already
+                // todo: add a "force" config property that forces all fixtures to be (re)applied?
+                //  or just rely on manual edit of the fixture history table?
                 final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
                         .map(FixtureHistory::getFilename).toList();
                 final List<Resource> resourcesToSkip = resources.stream()
@@ -107,4 +112,23 @@ public class BootstrapConfig {
 
         return factory;
     }
+
+    @Component
+    public class RepositoriesPopulatedEventListener implements ApplicationListener<RepositoriesPopulatedEvent> {
+        @Override
+        public void onApplicationEvent(@NotNull RepositoriesPopulatedEvent event) {
+            log.info("Repositories populated");
+            // Create fixture history records for all resources that have been applied.
+            // todo: This assumes that all items in the resources list have been successfully applied. However, I'm not
+            //  certain if this can be guaranteed. Should we find a way to override, for example, the
+            //  ResourceReaderRepositoryPopulator.persist() method, so the history record is added there? This would be
+            //  more complex...
+            for (final Resource resource : resources) {
+                final String filename = resource.getFilename();
+                final FixtureHistory fixtureHistory = fixtureHistoryRepository.save(new FixtureHistory(filename));
+                log.debug("Fixture history updated: {} ({})", fixtureHistory.getFilename(), fixtureHistory.getUuid());
+            }
+        }
+    }
+
 }
