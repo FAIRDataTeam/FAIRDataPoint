@@ -2,8 +2,8 @@ package org.fairdatapoint.database.db.repository.bootstrap;
 
 import jakarta.transaction.Transactional;
 import org.fairdatapoint.BaseIntegrationTest;
-import org.fairdatapoint.database.db.repository.AppliedFixtureRepository;
-import org.fairdatapoint.entity.bootstrap.AppliedFixture;
+import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
+import org.fairdatapoint.entity.bootstrap.FixtureHistory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
@@ -16,26 +16,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestEntityManager
 @Transactional
-public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
+public class FixtureHistoryRepositoryTests extends BaseIntegrationTest {
     @Autowired
-    AppliedFixtureRepository repository;
+    FixtureHistoryRepository repository;
 
     final String filename = "0001-whatever.json";
 
     @Test
     public void testSave() {
-        AppliedFixture appliedFixture = repository.saveAndFlush(new AppliedFixture(filename));
-        assertEquals(filename, appliedFixture.getFilename());
+        FixtureHistory fixtureHistory = repository.saveAndFlush(new FixtureHistory(filename));
+        assertEquals(filename, fixtureHistory.getFilename());
         assertEquals(1, repository.count());
     }
 
     @Test
     public void testSaveWithExistingFilename() {
-        repository.saveAndFlush(new AppliedFixture(filename));
+        repository.saveAndFlush(new FixtureHistory(filename));
         assertEquals(1, repository.count());
         assertThrows(
                 DataIntegrityViolationException.class,
-                () -> repository.saveAndFlush(new AppliedFixture(filename)),
+                () -> repository.saveAndFlush(new FixtureHistory(filename)),
                 "filename is not unique, but no exception was raised"
         );
     }
@@ -44,15 +44,15 @@ public class AppliedFixtureRepositoryTests extends BaseIntegrationTest {
     public void testSaveWithoutFilename() {
         assertThrows(
                 Exception.class,
-                () -> repository.saveAndFlush(new AppliedFixture()),
+                () -> repository.saveAndFlush(new FixtureHistory()),
                 "filename was not provided, but no exception was raised"
         );
     }
 
     @Test
     public void testFindByFilenameWithExistingFilename() {
-        repository.saveAndFlush(new AppliedFixture(filename));
-        Optional<AppliedFixture> appliedFixture = repository.findByFilename(filename);
+        repository.saveAndFlush(new FixtureHistory(filename));
+        Optional<FixtureHistory> appliedFixture = repository.findByFilename(filename);
         assertTrue(appliedFixture.isPresent());
     }
 }

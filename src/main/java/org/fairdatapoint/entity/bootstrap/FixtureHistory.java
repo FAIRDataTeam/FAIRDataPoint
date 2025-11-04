@@ -14,7 +14,7 @@ import org.fairdatapoint.entity.base.BaseEntity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppliedFixture extends BaseEntity {
+public class FixtureHistory extends BaseEntity {
 
     @NotNull
     @Column(unique = true)

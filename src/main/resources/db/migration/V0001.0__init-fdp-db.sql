@@ -439,7 +439,7 @@ create table acl_entry(
 
 -- history of applied fixtures
 
-CREATE TABLE IF NOT EXISTS applied_fixture
+CREATE TABLE IF NOT EXISTS fixture_history
 (
     uuid       UUID        NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
