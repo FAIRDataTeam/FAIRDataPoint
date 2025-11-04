@@ -23,6 +23,8 @@
 package org.fairdatapoint.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
+import org.fairdatapoint.entity.bootstrap.FixtureHistory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +35,9 @@ import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFacto
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * The {@code BootstrapConfig} class configures a repository populator to load initial data into the relational
@@ -55,15 +58,18 @@ import java.util.Comparator;
 @Slf4j
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+    private final FixtureHistoryRepository fixtureHistoryRepository;
     private final boolean bootstrapEnabled;
     private final Path dbFixturesPath;
 
     public BootstrapConfig(
+            FixtureHistoryRepository fixtureHistoryRepository,
             @Value("${bootstrap.enabled:false}") boolean bootstrapEnabled,
             @Value("${bootstrap.db-fixtures-dir}") String dbFixturesDir
     ) {
         this.bootstrapEnabled = bootstrapEnabled;
         this.dbFixturesPath = Path.of(dbFixturesDir);
+        this.fixtureHistoryRepository = fixtureHistoryRepository;
     }
 
     @Bean
@@ -74,16 +80,18 @@ public class BootstrapConfig {
             try {
                 // collect fixture resources
                 final Path fixturesPath = dbFixturesPath.resolve("*.json");
-                final Resource[] resources = resourceResolver.getResources("file:" + fixturesPath);
-                // sort resources to guarantee lexicographic order
-                Arrays.sort(
-                        resources,
-                        Comparator.comparing(
-                                Resource::getFilename,
-                                Comparator.nullsLast(String::compareTo)
-                        )
+                final List<Resource> resources = new ArrayList<>(
+                        // wrapped in ArrayList because List.of() returns immutable
+                        List.of(resourceResolver.getResources("file:" + fixturesPath))
                 );
-                factory.setResources(resources);
+                // remove resources that have been applied already
+                final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
+                        .map(FixtureHistory::getFilename).toList();
+                resources.removeIf(resource -> appliedFixtures.contains(resource.getFilename()));
+                // sort resources to guarantee lexicographic order
+                resources.sort(Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
+                // add resources to factory
+                factory.setResources(resources.toArray(new Resource[0]));
             }
             catch (IOException exception) {
                 exception.printStackTrace();
