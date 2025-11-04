@@ -1,4 +1,4 @@
-package org.fairdatapoint.acceptance.bootstrap;
+package org.fairdatapoint.database.db.repository.bootstrap;
 
 import jakarta.transaction.Transactional;
 import org.fairdatapoint.BaseIntegrationTest;
