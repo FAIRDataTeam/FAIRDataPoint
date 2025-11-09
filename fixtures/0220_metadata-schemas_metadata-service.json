@@ -12,7 +12,7 @@
     "version": "1.0.0",
     "name": "Metadata Service",
     "description": "",
-    "definition": "@prefix :         <http://fairdatapoint.org/> .\n@prefix fdp:      <https://w3id.org/fdp/fdp-o#> .\n@prefix sh:       <http://www.w3.org/ns/shacl#> .\n\n:MetadataServiceShape a sh:NodeShape ;\n                      sh:targetClass fdp:MetadataService .\n",
+    "definition": "@prefix :    <http://fairdatapoint.org/> .\n@prefix fdp: <https://w3id.org/fdp/fdp-o#> .\n@prefix sh:  <http://www.w3.org/ns/shacl#> .\n\n:MetadataServiceShape a sh:NodeShape ;\n  sh:targetClass fdp:MetadataService .\n",
     "targetClasses": [
       "http://www.w3.org/ns/dcat#Resource",
       "http://www.w3.org/ns/dcat#DataService",
