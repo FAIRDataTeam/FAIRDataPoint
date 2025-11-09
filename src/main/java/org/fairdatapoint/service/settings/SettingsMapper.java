@@ -191,7 +191,7 @@ public class SettingsMapper {
         return filter;
     }
 
-    public SettingsSearchFilterItem fromSearchFilterItemDTO(
+    private SettingsSearchFilterItem fromSearchFilterItemDTO(
             SearchFilterItemDTO dto, int orderPriority, SettingsSearchFilter filter
     ) {
         return SettingsSearchFilterItem.builder()
