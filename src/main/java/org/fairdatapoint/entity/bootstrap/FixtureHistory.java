@@ -20,32 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.membership;
+package org.fairdatapoint.entity.bootstrap;
 
-import org.fairdatapoint.api.dto.membership.MembershipDTO;
-import org.fairdatapoint.api.dto.membership.MembershipPermissionDTO;
-import org.fairdatapoint.entity.membership.Membership;
-import org.fairdatapoint.entity.membership.MembershipPermission;
-import org.springframework.stereotype.Service;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.fairdatapoint.entity.base.BaseEntity;
 
-import java.util.stream.Collectors;
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class FixtureHistory extends BaseEntity {
 
-@Service
-public class MembershipMapper {
+    @NotNull
+    @Column(unique = true)
+    private String filename;
 
-    public MembershipDTO toDTO(Membership membership) {
-        return new MembershipDTO(
-                membership.getUuid(),
-                membership.getName(),
-                membership.getPermissions()
-                        .stream()
-                        .map(this::toPermissionDTO)
-                        .collect(Collectors.toList()),
-                membership.getAllowedEntities());
-    }
-
-    public MembershipPermissionDTO toPermissionDTO(MembershipPermission permission) {
-        return new MembershipPermissionDTO(permission.getMask(), permission.getCode());
-    }
 }
-

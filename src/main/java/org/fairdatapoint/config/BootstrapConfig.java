@@ -22,14 +22,21 @@
  */
 package org.fairdatapoint.config;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.config.properties.BootstrapProperties;
+import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
+import org.fairdatapoint.entity.bootstrap.FixtureHistory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
+import org.springframework.data.repository.init.RepositoriesPopulatedEvent;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -57,9 +64,12 @@ import java.util.List;
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     private final BootstrapProperties bootstrap;
+    private final FixtureHistoryRepository fixtureHistoryRepository;
+    private final List<Resource> resources = new ArrayList<>();
 
-    public BootstrapConfig(BootstrapProperties bootstrapProperties) {
+    public BootstrapConfig(BootstrapProperties bootstrapProperties, FixtureHistoryRepository fixtureHistoryRepository) {
         this.bootstrap = bootstrapProperties;
+        this.fixtureHistoryRepository = fixtureHistoryRepository;
     }
 
     @Bean
@@ -70,20 +80,25 @@ public class BootstrapConfig {
             try {
                 // collect fixture resources
                 System.out.println(this.bootstrap.getDbFixturesDirs());
-                final List<Resource> resources = new ArrayList<>();
                 for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
                     final String locationPattern = "file:" + Path.of(fixturesDir).resolve("*.json");
                     resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
                 }
+                // remove resources that have been applied already
+                final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
+                        .map(FixtureHistory::getFilename).toList();
+                final List<Resource> resourcesToSkip = resources.stream()
+                        .filter(resource -> appliedFixtures.contains(resource.getFilename())).toList();
+                resources.removeAll(resourcesToSkip);
                 // sort resources to guarantee lexicographic order
-                resources.sort(Comparator.comparing(
-                        Resource::getFilename,
-                        Comparator.nullsLast(String::compareTo)
-                ));
+                resources.sort(Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
+                // add resources to factory
+                log.info("Applying {} db fixtures ({} have been applied already)",
+                        resources.size(), resourcesToSkip.size());
                 factory.setResources(resources.toArray(new Resource[0]));
             }
             catch (IOException exception) {
-                exception.printStackTrace();
+                log.error("Failed to load relational database fixtures", exception);
             }
         }
         else {
@@ -91,5 +106,22 @@ public class BootstrapConfig {
         }
 
         return factory;
+    }
+
+    @Component
+    public class RepositoriesPopulatedEventListener implements ApplicationListener<RepositoriesPopulatedEvent> {
+        @Override
+        public void onApplicationEvent(@NotNull RepositoriesPopulatedEvent event) {
+            log.info("Repositories populated");
+            // Create fixture history records for all resources that have been applied.
+            // Note: This assumes that all items in the resources list have been *successfully* applied. However, I'm
+            // not sure if this can be guaranteed. If it does turn out to be a problem, we could try e.g. extending the
+            // ResourceReaderRepositoryPopulator.persist() method, so the history record is added there.
+            for (final Resource resource : resources) {
+                final String filename = resource.getFilename();
+                final FixtureHistory fixtureHistory = fixtureHistoryRepository.save(new FixtureHistory(filename));
+                log.debug("Fixture history updated: {} ({})", fixtureHistory.getFilename(), fixtureHistory.getUuid());
+            }
+        }
     }
 }

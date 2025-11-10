@@ -20,32 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatapoint.service.membership;
+package org.fairdatapoint.database.db.repository;
 
-import org.fairdatapoint.api.dto.membership.MembershipDTO;
-import org.fairdatapoint.api.dto.membership.MembershipPermissionDTO;
-import org.fairdatapoint.entity.membership.Membership;
-import org.fairdatapoint.entity.membership.MembershipPermission;
-import org.springframework.stereotype.Service;
+import org.fairdatapoint.database.db.repository.base.BaseRepository;
+import org.fairdatapoint.entity.bootstrap.FixtureHistory;
+import org.springframework.stereotype.Repository;
 
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@Service
-public class MembershipMapper {
-
-    public MembershipDTO toDTO(Membership membership) {
-        return new MembershipDTO(
-                membership.getUuid(),
-                membership.getName(),
-                membership.getPermissions()
-                        .stream()
-                        .map(this::toPermissionDTO)
-                        .collect(Collectors.toList()),
-                membership.getAllowedEntities());
-    }
-
-    public MembershipPermissionDTO toPermissionDTO(MembershipPermission permission) {
-        return new MembershipPermissionDTO(permission.getMask(), permission.getCode());
-    }
+@Repository
+public interface FixtureHistoryRepository extends BaseRepository<FixtureHistory> {
+    Optional<FixtureHistory> findByFilename(String filename);
 }
-
