@@ -47,13 +47,5 @@ public class MembershipMapper {
     public MembershipPermissionDTO toPermissionDTO(MembershipPermission permission) {
         return new MembershipPermissionDTO(permission.getMask(), permission.getCode());
     }
-
-    public MembershipPermission permissionFromDTO(Membership membership, MembershipPermissionDTO permission) {
-        return MembershipPermission.builder()
-                .membership(membership)
-                .code(permission.getCode())
-                .mask(permission.getMask())
-                .build();
-    }
 }
 

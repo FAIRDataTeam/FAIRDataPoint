@@ -103,7 +103,7 @@ public class BootstrapConfig {
                 factory.setResources(resources.toArray(new Resource[0]));
             }
             catch (IOException exception) {
-                exception.printStackTrace();
+                log.error("Failed to load relational database fixtures", exception);
             }
         }
         else {
