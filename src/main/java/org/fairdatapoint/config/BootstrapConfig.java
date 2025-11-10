@@ -88,8 +88,6 @@ public class BootstrapConfig {
                 final Path fixturesPath = dbFixturesPath.resolve("*.json");
                 resources.addAll(List.of(resourceResolver.getResources("file:" + fixturesPath)));
                 // remove resources that have been applied already
-                // todo: add a "force" config property that forces all fixtures to be (re)applied?
-                //  or just rely on manual edit of the fixture history table?
                 final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
                         .map(FixtureHistory::getFilename).toList();
                 final List<Resource> resourcesToSkip = resources.stream()
@@ -119,10 +117,9 @@ public class BootstrapConfig {
         public void onApplicationEvent(@NotNull RepositoriesPopulatedEvent event) {
             log.info("Repositories populated");
             // Create fixture history records for all resources that have been applied.
-            // todo: This assumes that all items in the resources list have been successfully applied. However, I'm not
-            //  certain if this can be guaranteed. Should we find a way to override, for example, the
-            //  ResourceReaderRepositoryPopulator.persist() method, so the history record is added there? This would be
-            //  more complex...
+            // Note: This assumes that all items in the resources list have been *successfully* applied. However, I'm
+            // not sure if this can be guaranteed. If it does turn out to be a problem, we could try e.g. extending the
+            // ResourceReaderRepositoryPopulator.persist() method, so the history record is added there.
             for (final Resource resource : resources) {
                 final String filename = resource.getFilename();
                 final FixtureHistory fixtureHistory = fixtureHistoryRepository.save(new FixtureHistory(filename));
