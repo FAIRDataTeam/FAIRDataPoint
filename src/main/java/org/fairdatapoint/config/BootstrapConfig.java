@@ -79,7 +79,8 @@ public class BootstrapConfig {
             log.info("Bootstrap repository populator enabled");
             try {
                 // collect fixture resources
-                System.out.println(this.bootstrap.getDbFixturesDirs());
+                log.debug("Looking for fixtures in the following directories: {}",
+                        String.join(", ", this.bootstrap.getDbFixturesDirs()));
                 for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
                     final String locationPattern = "file:" + Path.of(fixturesDir).resolve("*.json");
                     resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
