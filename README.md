@@ -101,14 +101,80 @@ and [Bearer Token Authentication](https://swagger.io/docs/specification/authenti
 token can be retrieved using `/tokens` endpoint where you send username and password. For details, visit the OpenAPI
 documentation.
 
-**Default users**
+### Default users
+
+By default, the following user accounts are created when the FDP runs for the first time:
 
 - **ADMIN:**
-    - Username: `albert.einstein@example.com`
+    - Username: `albert.einstein@example.org`
     - Password: `password`
 - **USER:**
-    - Username: `nikola.tesla@example.com`
+    - Username: `nikola.tesla@example.org`
     - Password: `password`
+
+>[!WARNING]
+>These accounts are convenient for local testing, but they need to be removed, or changed, before exposing the FDP to the public internet.
+>See [Customizing initial data](#customizing-initial-data) for instructions.
+
+## Initial data 
+
+When the FDP runs for the *first time*, with an *empty database*, it needs to set up some initial data.
+The initial data include the default user accounts, default metadata schemas, default resource definitions, and more.
+The default initial data are defined in JSON format, in the [fixtures] directory.
+The process of an application setting up its own initial data is called *bootstrapping*.
+
+### How to enable bootstrapping
+
+If we use the `development` profile, bootstrapping is done automatically whenever the FDP is (re)started, overwriting any existing data.
+
+However, when running with the default or `production` profiles, the bootstrapping process is disabled, to prevent overwriting existing data.
+In this case, bootstrapping needs to be enabled explicitly on the first run of the FDP.
+
+To enable bootstrapping from the command line, we can set a configuration option:
+
+```bash
+$ mvn spring-boot:run -Dbootstrap.enabled=true
+```
+
+or we can set the same option using an environment variable:
+
+```bash
+BOOTSTRAP_ENABLED=true mvn spring-boot:run ...
+```
+
+The latter approach can also be used when running the FDP container with the `docker compose` command, assuming we have the following:
+
+```yaml
+# compose.yaml
+services:
+  fdp:
+    ...
+    environment:
+      BOOTSTRAP_ENABLED: ${BOOTSTRAP_ENABLED:=false}
+      ...
+```
+
+### Customizing initial data
+
+There are several ways to extend or override the initial data loaded during the bootstrapping process.
+For development, the simplest way is to copy the contents of the [fixtures] dir into a new directory, e.g. `custom-fixtures`, and then modify or add files as necessary.
+The `bootstrap.db-fixtures-dir` option (`BOOTSTRAP_DBFIXTURESDIR`) can then be used to point to the new directory:
+
+```bash
+$ mvn spring-boot:run -Dbootstrap.enabled=true -Dbootstrap.db-fixtures-dir=custom-fixtures
+```
+
+When running an FDP docker container, we can easily override individual files (or the whole directory) using bind-mounts.
+In this case there is no need to override the `bootstrap.db-fixtures-dir` config setting.
+Here's an example using compose:
+
+```yaml
+services:
+  fdp:
+    ...
+    volumes:
+      - ./custom-fixtures/0100_user-accounts.json:/fdp/fixtures/0100_user-accounts.json:ro
+```
 
 ## Contributing
 
@@ -134,3 +200,5 @@ The following paper can be cite as a reference paper for the FAIR Data Point:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for more details.
+
+[fixtures]: ./fixtures
