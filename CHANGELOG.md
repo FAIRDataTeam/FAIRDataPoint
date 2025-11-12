@@ -1,6 +1,8 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+>[!IMPORTANT]
+>Starting with v1.17.3, all changes are logged in the [releases] section, based on pull requests.
+>This changelog file has therefore been deprecated. It is only preserved for reference.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,13 +11,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Add permits for index entries by @MarekSuchanek in #454
+- Improve GitHub Issues templates by @MarekSuchanek in #448
 - Update to Java 21 by @MarekSuchanek in #471
-- ??? (TODO)
+- Use dedicated repository for drafts by @MarekSuchanek in #479
+- Add initial signposting headers by @kburger in #493
+- Update namespace and license by @MarekSuchanek in #537
+- Migrate to PostgreSQL by @MarekSuchanek in #519
+- Update of core dependencies (mainly Spring Boot v3.2 -> v3.4 and RDF4J v4 -> v5) by @MarekSuchanek in #597
 - Get FAIR Data Team dependencies from Maven Central repository by @dennisvang in #577
 - Fix issue templates by @dennisvang in #582
 - Update CORS configuration by @dennisvang in #578
-- Separate and reuse github workflows by @dennisvang in #617
+- Fix saving settings and schema extends by @MarekSuchanek in #611
+- Separate and reuse GitHub workflows by @dennisvang in #617
 - Prevent duplicate workflow runs by @dennisvang in #628
+- Use correct properties for draftsRepository by @dennisvang in #631
 - Clean up Dockerfile by @dennisvang in #626
 - Fix index API by @dennisvang in #637 (backward incompatible)
 - Fix listing metadata records after publish by @MarekSuchanek in #658
@@ -399,3 +409,5 @@ The first release of reference FAIR Data Point implementation.
 [1.17.0]: /../../tree/v1.17.0
 [1.17.1]: /../../tree/v1.17.1
 [1.17.2]: /../../tree/v1.17.2
+
+[releases]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases

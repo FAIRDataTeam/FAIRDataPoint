@@ -1,36 +1,39 @@
-# This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to generate yours today!
+# https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md
 
 cff-version: 1.2.0
 title: FAIR Data Point
-message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
+message: If you use this software, please cite it using the metadata from this file.
 type: software
 authors:
   - given-names: Luiz Olavo
     family-names: Bonino da Silva Santos
     email: l.o.boninodasilvasantos@utwente.nl
-    affiliation: University of Twente
+    affiliation: University of Twente (UT)
     orcid: 'https://orcid.org/0000-0002-1164-1351'
   - given-names: Kees
     family-names: Burger
-    affiliation: Leiden University Medical Center
+    affiliation: Leiden University Medical Center (LUMC)
   - given-names: Rajaram
     family-names: Kaliyaperumal
-    affiliation: 'Leiden University Medical Center '
-    email: r.kaliyaperumal@lumc.nl
+    affiliation: Leiden University Medical Center (LUMC)
     orcid: 'https://orcid.org/0000-0002-1215-167X'
   - given-names: Marek
     family-names: Suchánek
-    affiliation: Czech Technical University in Prague
+    affiliation: Czech Technical University in Prague (CTU)
     orcid: 'https://orcid.org/0000-0001-7525-9218'
   - given-names: Jan
     family-names: Slifka
     orcid: 'https://orcid.org/0000-0002-4941-0575'
-    affiliation: Czech Technical University in Prague
+    affiliation: Czech Technical University in Prague (CTU)
+  - given-names: Dennis
+    family-names: van Gerwen
+    affiliation: Leiden University Medical Center (LUMC)
+    orcid: 'https://orcid.org/0000-0002-7360-8303'
   - given-names: Mark
     family-names: Wilkinson
     affiliation: Universidad Politécnica de Madrid (UPM)
     orcid: 'https://orcid.org/0000-0001-6960-357X'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.17119592
 license: MIT

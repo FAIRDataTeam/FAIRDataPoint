@@ -5,7 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.7</version>
+        <!-- spring-boot managed dependencies: https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.fairdatapoint</groupId>
@@ -55,15 +56,10 @@
         <rdf-resolver.version>0.2.0</rdf-resolver.version>
         
         <!-- Core -->
-        <springdoc.version>2.8.8</springdoc.version>
-        <postgresql.version>42.7.6</postgresql.version>
-        <rdf4j.version>5.1.3</rdf4j.version>
-        <jwt.version>0.12.6</jwt.version>
-        <lombok.version>1.18.38</lombok.version>
-        <hypersistence.version>3.9.10</hypersistence.version>
-
-        <!-- Test -->
-        <httpclient5.version>5.5</httpclient5.version>
+        <springdoc.version>2.8.14</springdoc.version>
+        <rdf4j.version>5.2.0</rdf4j.version>
+        <jwt.version>0.13.0</jwt.version>
+        <hypersistence.version>3.12.0</hypersistence.version>
 
         <!-- Plugins -->
         <plugin.license.version>5.0.0</plugin.license.version>
@@ -72,7 +68,7 @@
         <plugin.javax_xml_bind.version>2.3.1</plugin.javax_xml_bind.version>
         <plugin.git_commit_id.version>9.0.2</plugin.git_commit_id.version>
         <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
-        <plugin.spotbugs.version>4.9.3.0</plugin.spotbugs.version>
+        <plugin.spotbugs.version>4.9.8.1</plugin.spotbugs.version>
     </properties>
 
     <dependencies>
@@ -192,7 +188,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -211,7 +206,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -237,8 +231,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>${httpclient5.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -332,12 +324,12 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.25.0</version>
+                        <version>12.1.1</version>
                     </dependency>
                     <dependency>
                         <groupId>io.spring.javaformat</groupId>
                         <artifactId>spring-javaformat-checkstyle</artifactId>
-                        <version>0.0.46</version>
+                        <version>0.0.47</version>
                     </dependency>
                 </dependencies>
             </plugin>

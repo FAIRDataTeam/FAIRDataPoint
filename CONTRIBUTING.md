@@ -5,6 +5,9 @@ method with the owners of this repository before making a change.
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
+All changes must be made via pull requests.
+This allows us to generate a consistent changelog during the release process.
+
 ## Pull Request Process
 
 1. Ensure any unnecessary install or build dependencies and other files are removed before the end of the layer when
@@ -40,7 +43,7 @@ the [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflo
 * Release Candidates - X.Y.Z-rc.N should be created if don’t expect any problems (in that case use alpha or beta), and
   make a walkthrough to verify its functionality according to the manuals finally - it also verifies that the
   documentation is up to date with the new version.
-* [CHANGELOG.md](https://keepachangelog.com/en/1.0.0/ )
+* Changes are logged via GitHub [releases], based on pull requests.
 * GitHub releases and tags - make the release using GitHub (or hub extension), CI will automatically upload ZIP and TGZ
   distribution files there - better verify.
 * Docker Hub image - in case of release, Docker image with the same tag will be created automatically.
@@ -50,3 +53,5 @@ the [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflo
 
 Also, never forget to update the
 joint [FAIR Data Point documentation](https://github.com/FAIRDataTeam/FAIRDataPoint-Docs)!
+
+[releases]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases
