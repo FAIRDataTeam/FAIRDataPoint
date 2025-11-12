@@ -23,6 +23,3 @@ spring:
 
 ping:
   enabled: false
-
-bootstrap:
-  enabled: false
