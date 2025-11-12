@@ -19,7 +19,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          - windows-2022
+          - windows-2025
           - macos-14
         java-version:
           - 21
