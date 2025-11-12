@@ -18,6 +18,7 @@ jobs:
     strategy:
       matrix:
         runner:
+          # https://github.com/actions/runner-images
           - ubuntu-24.04
           - windows-2025
           - macos-14
