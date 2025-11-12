@@ -7,6 +7,10 @@ on:
     branches:
       - develop
   pull_request:
+    paths-ignore:
+      - "**.cff"
+      - "**.md"
+      - "LICENSE"
   workflow_dispatch:
 
 concurrency:
@@ -18,8 +22,9 @@ jobs:
     strategy:
       matrix:
         runner:
+          # https://github.com/actions/runner-images
           - ubuntu-24.04
-          - windows-2022
+          - windows-2025
           - macos-14
         java-version:
           - 21

@@ -5,6 +5,10 @@ on:
     branches:
       - develop
   pull_request:
+    paths-ignore:
+      - "**.cff"
+      - "**.md"
+      - "LICENSE"
   release:
     types:
       - created
