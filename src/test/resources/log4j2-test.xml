@@ -9,9 +9,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.springframework" level="warn"/>
-        <Logger name="org.springframework.data.repository" level="info"/>
-        <Root level="warn">
+        <!-- we can change the logging level for individual packages as follows, whenever necessary -->
+        <Logger name="org.springframework" level="error"/>
+        <Logger name="org.springframework.data.repository" level="error"/>
+        <!-- set root level to error to limit the amount of test output clutter -->
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
