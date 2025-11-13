@@ -20,6 +20,8 @@ spring:
     locations: classpath:test/db/migration,classpath:db/migration
     fail-on-missing-locations: true
     clean-disabled: false
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 
 ping:
   enabled: false
