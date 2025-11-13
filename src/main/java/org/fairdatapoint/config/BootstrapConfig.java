@@ -81,9 +81,9 @@ public class BootstrapConfig {
                 log.info("Looking for db fixtures in the following directories: {}",
                         String.join(", ", this.bootstrap.getDbFixturesDirs()));
                 for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
-                    String locationPattern = "file:" + Path.of(fixturesDir).resolve(".json");
-                    // ugly workaround for Path.resolve("*.json") failure on windows
-                    locationPattern = locationPattern.replaceAll(".json$", "*.json");
+                    // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
+                    // Note that Path.of(fixturesDir).resolve("*.json") could work on unix but fails on windows.
+                    final String locationPattern = "file:" + Path.of(fixturesDir) + "/*.json";
                     resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
                 }
                 // remove resources that have been applied already
