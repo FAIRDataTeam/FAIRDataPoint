@@ -6,10 +6,12 @@
         </Console>
     </Appenders>
     <Loggers>
-        <!-- <Logger name="org.fairdatapoint.api.controller.exception" level="DEBUG"/> -->
+        <!-- set log levels for individual packages (add or change as needed) -->
         <Logger name="org.springframework" level="error"/>
         <Logger name="org.springframework.data.repository" level="error"/>
-        <!-- set root level to error to limit the amount of test output clutter -->
+        <!-- suppress "expected" error messages to prevent confusion when reading successful test results -->
+        <Logger name="org.fairdatapoint.api.controller.exception" level="fatal"/>
+        <!-- set root level to limit the amount of test output clutter -->
         <Root level="error">
             <AppenderRef ref="console-log"/>
         </Root>
