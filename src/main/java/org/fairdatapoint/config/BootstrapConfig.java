@@ -24,10 +24,9 @@ package org.fairdatapoint.config;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatapoint.config.properties.BootstrapProperties;
 import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
 import org.fairdatapoint.entity.bootstrap.FixtureHistory;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,30 +62,30 @@ import java.util.List;
 @Slf4j
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+    private final BootstrapProperties bootstrap;
     private final FixtureHistoryRepository fixtureHistoryRepository;
-    private final boolean bootstrapEnabled;
-    private final Path dbFixturesPath;
     private final List<Resource> resources = new ArrayList<>();
 
-    public BootstrapConfig(
-            FixtureHistoryRepository fixtureHistoryRepository,
-            @Value("${bootstrap.enabled:false}") boolean bootstrapEnabled,
-            @Value("${bootstrap.db-fixtures-dir}") String dbFixturesDir
-    ) {
-        this.bootstrapEnabled = bootstrapEnabled;
-        this.dbFixturesPath = Path.of(dbFixturesDir);
+    public BootstrapConfig(BootstrapProperties bootstrapProperties, FixtureHistoryRepository fixtureHistoryRepository) {
+        this.bootstrap = bootstrapProperties;
         this.fixtureHistoryRepository = fixtureHistoryRepository;
     }
 
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        if (bootstrapEnabled) {
+        if (this.bootstrap.isEnabled()) {
             log.info("Bootstrap repository populator enabled");
             try {
                 // collect fixture resources
-                final Path fixturesPath = dbFixturesPath.resolve("*.json");
-                resources.addAll(List.of(resourceResolver.getResources("file:" + fixturesPath)));
+                log.info("Looking for db fixtures in the following directories: {}",
+                        String.join(", ", this.bootstrap.getDbFixturesDirs()));
+                for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
+                    // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
+                    // Note that Path.of(fixturesDir).resolve("*.json") could work on unix but fails on windows.
+                    final String locationPattern = "file:" + Path.of(fixturesDir) + "/*.json";
+                    resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
+                }
                 // remove resources that have been applied already
                 final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
                         .map(FixtureHistory::getFilename).toList();
@@ -127,5 +126,4 @@ public class BootstrapConfig {
             }
         }
     }
-
 }

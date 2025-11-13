@@ -113,4 +113,6 @@ server:
   forward-headers-strategy: framework
 
 bootstrap:
-  db-fixtures-dir: "fixtures"
+  enabled: true
+  db-fixtures-dirs:
+    - "fixtures"

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestEntityManager
 @Transactional
+@TestPropertySource(properties = "bootstrap.enabled=false")
 public class FixtureHistoryRepositoryTests extends BaseIntegrationTest {
     @Autowired
     FixtureHistoryRepository repository;
