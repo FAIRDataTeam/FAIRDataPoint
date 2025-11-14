@@ -40,3 +40,4 @@ jobs:
       db-username: fdp
       db-password: fdp
       db-port: 54321
+      db-version: 17
