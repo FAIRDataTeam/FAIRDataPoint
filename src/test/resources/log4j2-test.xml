@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn">
+<Configuration status="WARN">
     <Appenders>
         <Console name="console-log" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
@@ -7,12 +7,9 @@
     </Appenders>
     <Loggers>
         <!-- set log levels for individual packages (add or change as needed) -->
-        <Logger name="org.springframework" level="error"/>
-        <Logger name="org.springframework.data.repository" level="error"/>
-        <!-- suppress "expected" error messages to prevent confusion when reading successful test results -->
-        <Logger name="org.fairdatapoint.api.controller.exception" level="fatal"/>
-        <!-- set root level to limit the amount of test output clutter -->
-        <Root level="error">
+        <Logger name="org.springframework" level="off"/>
+        <!-- set root log level to limit the amount of test output clutter -->
+        <Root level="off">
             <AppenderRef ref="console-log"/>
         </Root>
     </Loggers>
