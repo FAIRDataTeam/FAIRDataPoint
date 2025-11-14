@@ -110,7 +110,7 @@ public class BootstrapConfig {
     public class RepositoriesPopulatedEventListener implements ApplicationListener<RepositoriesPopulatedEvent> {
         @Override
         public void onApplicationEvent(@NotNull RepositoriesPopulatedEvent event) {
-            log.info("Repositories populated");
+            log.info("Repository populator finished.");
             // Create fixture history records for all resources that have been applied.
             // Note: This assumes that all items in the resources list have been *successfully* applied. However, I'm
             // not sure if this can be guaranteed. If it does turn out to be a problem, we could try e.g. extending the
