@@ -114,5 +114,5 @@ server:
 
 bootstrap:
   enabled: true
-  db-fixtures-dirs:
+  locations:
     - "fixtures"

@@ -26,6 +26,6 @@ ping:
 
 bootstrap:
   enabled: true
-  db-fixtures-dirs:
+  locations:
     - fixtures
     - test-fixtures

@@ -75,9 +75,9 @@ public class BootstrapConfig {
             log.info("Bootstrap repository populator enabled");
             try {
                 // collect fixture resources
-                log.info("Looking for db fixtures in the following directories: {}",
-                        String.join(", ", this.bootstrap.getDbFixturesDirs()));
-                for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
+                log.info("Looking for db fixtures in the following locations: {}",
+                        String.join(", ", this.bootstrap.getLocations()));
+                for (String fixturesDir : this.bootstrap.getLocations()) {
                     // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
                     // Note that Path.of(fixturesDir).resolve("*.json") could work on unix but fails on windows.
                     final String locationPattern = "file:" + Path.of(fixturesDir) + "/*.json";

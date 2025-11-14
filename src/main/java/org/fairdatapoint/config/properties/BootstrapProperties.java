@@ -38,6 +38,6 @@ import java.util.List;
 public class BootstrapProperties {
     // boolean defaults to false
     private boolean enabled;
-    // directories relative to project root
-    private List<String> dbFixturesDirs;
+    // locations to search for fixtures
+    private List<String> locations;
 }
