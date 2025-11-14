@@ -80,8 +80,7 @@ public class BootstrapConfig {
                 for (String location : this.bootstrap.getLocations()) {
                     // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
                     // Note that Path.of(location).resolve("*.json") could work on unix but fails on windows.
-                    final String locationPattern = "file:" + Path.of(location) + "/*.json";
-                    resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
+                    resources.addAll(List.of(resourceResolver.getResources(Path.of(location) + "/*.json")));
                 }
                 // remove resources that have been applied already
                 final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
