@@ -1,0 +1,93 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.user.UserAccount",
+    "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9",
+    "firstName": "Albert",
+    "lastName": "Einstein",
+    "email": "albert.einstein@example.org",
+    "passwordHash": "$2a$10$hZF1abbZ48Tf.3RndC9W6OlDt6gnBoD/2HbzJayTs6be7d.5DbpnW",
+    "role": "USER"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.user.UserAccount",
+    "uuid": "b5b92c69-5ed9-4054-954d-0121c29b6800",
+    "firstName": "Nikola",
+    "lastName": "Tesla",
+    "email": "nikola.tesla@example.org",
+    "passwordHash": "$2a$10$tMbZUZg9AbYL514R.hZ0tuzvfZJR5NQhSVeJPTQhNwPf6gv/cvrna",
+    "role": "USER"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.user.UserAccount",
+    "uuid": "8d1a4c06-bb0e-4d03-a01f-14fa49bbc152",
+    "firstName": "Isaac",
+    "lastName": "Newton",
+    "email": "isaac.newton@example.org",
+    "passwordHash": "$2a$10$DLkI7NAZDzWVaKG1lVtloeoPNLPoAgDDBqQKQiSAYDZXrf2QKkuHC",
+    "role": "USER"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.user.UserAccount",
+    "uuid": "95589e50-d261-492b-8852-9324e9a66a42",
+    "firstName": "Admin",
+    "lastName": "von Universe",
+    "email": "admin@example.org",
+    "passwordHash": "$2a$10$L.0OZ8QjV3yLhoCDvU04gu.WP1wGQih41MsBdvtQOshJJntaugBxe",
+    "role": "ADMIN"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.apikey.ApiKey",
+    "uuid": "a1c00673-24c5-4e0a-bdbe-22e961ee7548",
+    "token": "a274793046e34a219fd0ea6362fcca61a001500b71724f4c973a017031653c20",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  },
+  {
+    "_class": "org.fairdatapoint.entity.apikey.ApiKey",
+    "uuid": "62657760-21fe-488c-a0ea-f612a70493da",
+    "token": "dd5dc3b53b6145cfa9f6c58b72ebad21cd2f860ace62451ba4e3c74a0e63540a",
+    "userAccount": {
+      "uuid": "b5b92c69-5ed9-4054-954d-0121c29b6800"
+    }
+  },
+  {
+    "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
+    "uuid": "d31e3da1-2cfa-4b55-a8cb-71d1acf01aef",
+    "name": "All datasets",
+    "description": "Quickly query all datasets (DCAT)",
+    "type": "PUBLIC",
+    "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
+    "varGraphPattern": "?entity rdf:type dcat:Dataset .",
+    "varOrdering": "ASC(?title)",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  },
+  {
+    "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
+    "uuid": "c7d0b6a0-5b0a-4b0e-9b0a-9b0a9b0a9b0a",
+    "name": "All distributions",
+    "description": "Quickly query all distributions (DCAT)",
+    "type": "INTERNAL",
+    "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
+    "varGraphPattern": "?entity rdf:type dcat:Distribution .",
+    "varOrdering": "ASC(?title)",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  },
+  {
+    "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
+    "uuid": "97da9119-834e-4687-8321-3df157547178",
+    "name": "Things with data",
+    "description": "This is private query of Nikola Tesla!",
+    "type": "PRIVATE",
+    "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
+    "varGraphPattern": "?entity ?relationPredicate ?relationObject .\nFILTER isLiteral(?relationObject)\nFILTER CONTAINS(LCASE(str(?relationObject)), LCASE(\"data\"))",
+    "varOrdering": "ASC(?title)",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  }
+]
