@@ -28,7 +28,7 @@ jobs:
           - macos-14
         java-version:
           - 21
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v3
     with:
       runner: ${{ matrix.runner }}
       java-version: ${{ matrix.java-version }}

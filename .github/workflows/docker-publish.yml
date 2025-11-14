@@ -19,13 +19,13 @@ concurrency:
 
 jobs:
   verify:
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v3
     with:
       # todo: enable tests when test duration has been minimized
       mvn-options: "-DskipTests"
   publish:
     needs: verify
-    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v2
+    uses: FAIRDataTeam/github-workflows/.github/workflows/docker-publish.yml@v3
     secrets: inherit
     with:
       file: './Dockerfile'
