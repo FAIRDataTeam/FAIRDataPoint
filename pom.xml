@@ -85,6 +85,12 @@
             <groupId>org.fairdatateam.rdf</groupId>
             <artifactId>rdf-resource-resolver-core</artifactId>
             <version>${rdf-resolver.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.fairdatateam.rdf</groupId>
