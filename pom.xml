@@ -87,6 +87,7 @@
             <version>${rdf-resolver.version}</version>
             <exclusions>
                 <exclusion>
+                    <!-- excluded to avoid potential conflict w.r.t. Standard Commons Logging discovery and spring-jcl -->
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
@@ -106,6 +107,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
                 <exclusion>
+                    <!-- excluded because we're using spring-boot-starter-log4j2 instead (see spring-boot logging docs) -->
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
