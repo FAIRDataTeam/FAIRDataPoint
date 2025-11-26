@@ -248,12 +248,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- todo: do we still need this now that we have spring-boot-starter-security-test? -->
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
         </dependency>
