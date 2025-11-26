@@ -222,6 +222,7 @@
         <!-- ////////////////// -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <!-- todo: do we still need this when using spring-boot 4 test companion modules? -->
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
             <exclusions>
@@ -242,6 +243,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- todo: do we still need this now that we have spring-boot-starter-security-test? -->
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
