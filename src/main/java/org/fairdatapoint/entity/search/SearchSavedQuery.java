@@ -28,8 +28,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.base.BaseEntity;
 import org.fairdatapoint.entity.user.UserAccount;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity(name = "SearchSavedQuery")
 @Table(name = "search_saved_query")
@@ -55,7 +55,7 @@ public class SearchSavedQuery extends BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "type", columnDefinition = "SAVED_QUERY_TYPE", nullable = false)
     private SearchSavedQueryType type;
 

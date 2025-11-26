@@ -29,8 +29,8 @@ import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.apikey.ApiKey;
 import org.fairdatapoint.entity.base.BaseEntity;
 import org.fairdatapoint.entity.search.SearchSavedQuery;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 import java.util.UUID;
@@ -62,7 +62,7 @@ public class UserAccount extends BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "user_role", columnDefinition = "USER_ROLE", nullable = false)
     private UserRole role;
 

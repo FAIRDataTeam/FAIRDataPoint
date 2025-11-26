@@ -29,9 +29,9 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.base.BaseEntity;
 import org.fairdatapoint.entity.index.event.IndexEvent;
-import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -60,13 +60,13 @@ public class IndexEntry extends BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "state", columnDefinition = "INDEX_ENTRY_STATE", nullable = false)
     private IndexEntryState state = IndexEntryState.UNKNOWN;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "permit", columnDefinition = "INDEX_ENTRY_PERMIT", nullable = false)
     private IndexEntryPermit permit = IndexEntryPermit.PENDING;
 
