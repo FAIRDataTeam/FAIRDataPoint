@@ -33,6 +33,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.util.UUID;
 
+/**
+ * Custom UUID generator that allows for assigned UUIDs.
+ * If a UUID is already assigned to the entity, it will be used as is.
+ * Otherwise, a new UUID will be generated using the specified strategy.
+ * This is needed because the default UuidGenerator does not allow for assigned identifiers
+ * that we want to support in some cases such as populating initial data fixtures.
+ */
 public class CustomUuidGenerator extends UuidGenerator {
 
     public CustomUuidGenerator(

@@ -1,0 +1,11 @@
+[
+  {
+    "_class" : "org.fairdatapoint.entity.user.UserAccount",
+    "uuid":  "e8f98d8e-0c4f-4a4b-9cc7-dd884f0c75ee",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.org",
+    "passwordHash": "$2a$10$hZF1abbZ48Tf.3RndC9W6OlDt6gnBoD/2HbzJayTs6be7d.5DbpnW",
+    "role": "USER"
+  }
+]

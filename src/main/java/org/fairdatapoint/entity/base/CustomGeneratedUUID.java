@@ -33,6 +33,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Custom annotation to mark a field or method for automatic UUID generation using a custom generator.
+ */
 @IdGeneratorType(CustomUuidGenerator.class)
 @ValueGenerationType(generatedBy = CustomUuidGenerator.class)
 @Target({ElementType.FIELD, ElementType.METHOD})
