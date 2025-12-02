@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -74,7 +75,7 @@ public class BootstrapConfig {
      */
     public Resource[] getNewResources() {
         // use TreeSet with comparator for lexicographic order and uniqueness
-        TreeSet<Resource> resources = new TreeSet<>(
+        final SortedSet<Resource> resources = new TreeSet<>(
                 Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
         // collect fixture resources from specified directories
         log.info("Looking for db fixtures in the following directories: {}",

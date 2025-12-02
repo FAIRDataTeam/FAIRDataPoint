@@ -69,7 +69,7 @@ public class ResetService {
     private MembershipPermissionRepository membershipPermissionRepository;
 
     @Autowired
-    ResourceReaderRepositoryPopulator populator;
+    private ResourceReaderRepositoryPopulator populator;
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -195,7 +195,7 @@ public class ResetService {
     protected void restoreDefaultUsers() {
         log.debug("Creating default users");
         //
-        String[] filenames = {"0100_user-accounts.json", "0110_api-keys.json", "0120_saved-queries.json"};
+        final String[] filenames = {"0100_user-accounts.json", "0110_api-keys.json", "0120_saved-queries.json"};
         removeFromFixtureHistory(filenames);
         // getNewResources will pick up on the cleared filenames
         populator.setResources(bootstrapConfig.getNewResources());
@@ -204,7 +204,7 @@ public class ResetService {
 
     private void restoreDefaultMemberships() {
         log.debug("Creating default memberships");
-        String[] filenames = {"0400_memberships_owner.json", "0410_memberships_data-provider.json"};
+        final String[] filenames = {"0400_memberships_owner.json", "0410_memberships_data-provider.json"};
         removeFromFixtureHistory(filenames);
         populator.setResources(bootstrapConfig.getNewResources());
         populator.populate(new Repositories(applicationContext));
