@@ -69,7 +69,7 @@ public class BootstrapConfig {
     }
 
     @Bean
-    public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
+    public Jackson2RepositoryPopulatorFactoryBean repositoryPopulatorFactoryBean() {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
         if (this.bootstrap.isEnabled()) {
             log.info("Bootstrap repository populator enabled");
