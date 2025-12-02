@@ -24,6 +24,7 @@ package org.fairdatapoint.service.reset;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.api.dto.reset.ResetDTO;
+import org.fairdatapoint.config.BootstrapConfig;
 import org.fairdatapoint.database.db.repository.*;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatapoint.service.metadata.exception.MetadataServiceException;
@@ -39,6 +40,9 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
@@ -51,6 +55,21 @@ import static org.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 @Service
 public class ResetService {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private BootstrapConfig bootstrapConfig;
+
+    @Autowired
+    private FixtureHistoryRepository fixtureHistoryRepository;
+
+    @Autowired
+    private MembershipPermissionRepository membershipPermissionRepository;
+
+    @Autowired
+    ResourceReaderRepositoryPopulator populator;
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -136,6 +155,8 @@ public class ResetService {
     }
 
     private void clearMemberships() {
+        log.debug("Clearing membership permissions");
+        membershipPermissionRepository.deleteAll();
         log.debug("Clearing memberships");
         membershipRepository.deleteAll();
         log.debug("Clearing ACL cache");
@@ -166,14 +187,27 @@ public class ResetService {
         }
     }
 
-    private void restoreDefaultUsers() {
+    protected void removeFromFixtureHistory(String[] filenames) {
+        log.debug("Removing filenames from fixture history: {}", String.join(", ", filenames));
+        fixtureHistoryRepository.deleteByFilenameIn(filenames);
+    }
+
+    protected void restoreDefaultUsers() {
         log.debug("Creating default users");
-        // TODO: data seed from specs
+        //
+        String[] filenames = {"0100_user-accounts.json", "0110_api-keys.json", "0120_saved-queries.json"};
+        removeFromFixtureHistory(filenames);
+        // getNewResources will pick up on the cleared filenames
+        populator.setResources(bootstrapConfig.getNewResources());
+        populator.populate(new Repositories(applicationContext));
     }
 
     private void restoreDefaultMemberships() {
         log.debug("Creating default memberships");
-        // TODO: data seed from specs
+        String[] filenames = {"0400_memberships_owner.json", "0410_memberships_data-provider.json"};
+        removeFromFixtureHistory(filenames);
+        populator.setResources(bootstrapConfig.getNewResources());
+        populator.populate(new Repositories(applicationContext));
     }
 
     private void restoreDefaultMetadata() {
