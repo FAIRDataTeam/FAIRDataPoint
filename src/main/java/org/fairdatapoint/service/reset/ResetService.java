@@ -106,7 +106,19 @@ public class ResetService {
     private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
+    private MetadataSchemaUsageRepository metadataSchemaUsageRepository;
+
+    @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
+
+    @Autowired
+    private ResourceDefinitionChildRepository resourceDefinitionChildRepository;
+
+    @Autowired
+    private ResourceDefinitionChildMetadataRepository resourceDefinitionChildMetadataRepository;
+
+    @Autowired
+    private ResourceDefinitionLinkRepository resourceDefinitionLinkRepository;
 
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
@@ -128,23 +140,20 @@ public class ResetService {
         }
         if (reqDto.isUsers() || reqDto.isMetadata()) {
             clearMemberships();
-            restoreDefaultMemberships();
         }
         if (reqDto.isUsers()) {
             clearApiKeys();
             clearUsers();
-            restoreDefaultUsers();
         }
         if (reqDto.isMetadata()) {
             clearMetadata();
             restoreDefaultMetadata();
         }
         if (reqDto.isResourceDefinitions()) {
-            clearResourceDefinitions();
-            clearMetadataSchemas();
-            restoreDefaultMetadataSchemas();
-            restoreDefaultResourceDefinitions();
+            clearMetadataSchemasAndResourceDefinitions();
         }
+        // restoreDefaultFixtures is safe to call even if there are no changes
+        restoreDefaultFixtures();
         resourceDefinitionCache.computeCache();
         resourceDefinitionTargetClassesCache.computeCache();
     }
@@ -152,6 +161,7 @@ public class ResetService {
     private void clearApiKeys() {
         log.debug("Clearing API keys");
         apiKeyRepository.deleteAll();
+        removeFromFixtureHistory(new String[]{"0110_api-keys.json"});
     }
 
     private void clearMemberships() {
@@ -161,21 +171,35 @@ public class ResetService {
         membershipRepository.deleteAll();
         log.debug("Clearing ACL cache");
         aclCache.clearCache();
+        removeFromFixtureHistory(new String[]{"0400_memberships_owner.json", "0410_memberships_data-provider.json"});
     }
 
     private void clearUsers() {
         log.debug("Clearing users");
         userRepository.deleteAll();
+        removeFromFixtureHistory(new String[]{"0100_user-accounts.json", "0120_saved-queries.json"});
     }
 
-    private void clearMetadataSchemas() {
-        log.debug("Clearing metadata schemas");
+    private void clearMetadataSchemasAndResourceDefinitions() {
+        log.debug("Clearing metadata schemas and resource definitions");
+        metadataSchemaUsageRepository.deleteAll();
         metadataSchemaRepository.deleteAll();
-    }
-
-    private void clearResourceDefinitions() {
-        log.debug("Clearing resource definitions");
+        resourceDefinitionChildMetadataRepository.deleteAll();
+        resourceDefinitionChildRepository.deleteAll();
+        resourceDefinitionLinkRepository.deleteAll();
         resourceDefinitionRepository.deleteAll();
+        removeFromFixtureHistory(new String[]{
+                "0200_metadata-schemas_resource.json",
+                "0210_metadata-schemas_data-service.json",
+                "0220_metadata-schemas_metadata-service.json",
+                "0230_metadata-schemas_fdp.json",
+                "0240_metadata-schemas_catalog.json",
+                "0250_metadata-schemas_dataset.json",
+                "0260_metadata-schemas_distribution.json",
+                "0300_resource-definitions_distribution.json",
+                "0310_resource-definitions_dataset.json",
+                "0320_resource-definitions_catalog.json",
+                "0330_resource-definitions_repository.json"});
     }
 
     private void clearMetadata() throws MetadataServiceException {
@@ -192,20 +216,9 @@ public class ResetService {
         fixtureHistoryRepository.deleteByFilenameIn(filenames);
     }
 
-    protected void restoreDefaultUsers() {
-        log.debug("Creating default users");
-        //
-        final String[] filenames = {"0100_user-accounts.json", "0110_api-keys.json", "0120_saved-queries.json"};
-        removeFromFixtureHistory(filenames);
-        // getNewResources will pick up on the cleared filenames
-        populator.setResources(bootstrapConfig.getNewResources());
-        populator.populate(new Repositories(applicationContext));
-    }
-
-    private void restoreDefaultMemberships() {
-        log.debug("Creating default memberships");
-        final String[] filenames = {"0400_memberships_owner.json", "0410_memberships_data-provider.json"};
-        removeFromFixtureHistory(filenames);
+    protected void restoreDefaultFixtures() {
+        log.debug("Restoring default fixtures");
+        // getNewResources() checks the updated fixture history
         populator.setResources(bootstrapConfig.getNewResources());
         populator.populate(new Repositories(applicationContext));
     }
@@ -224,15 +237,5 @@ public class ResetService {
         catch (RepositoryException exception) {
             log.error(exception.getMessage(), exception);
         }
-    }
-
-    private void restoreDefaultMetadataSchemas() throws Exception {
-        log.debug("Creating default metadata schemas");
-        // TODO: data seed from specs
-    }
-
-    private void restoreDefaultResourceDefinitions() {
-        log.debug("Creating default resource definitions");
-        // TODO: data seed from specs
     }
 }
