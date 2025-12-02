@@ -189,17 +189,17 @@ public class ResetService {
         resourceDefinitionLinkRepository.deleteAll();
         resourceDefinitionRepository.deleteAll();
         removeFromFixtureHistory(new String[]{
-                "0200_metadata-schemas_resource.json",
-                "0210_metadata-schemas_data-service.json",
-                "0220_metadata-schemas_metadata-service.json",
-                "0230_metadata-schemas_fdp.json",
-                "0240_metadata-schemas_catalog.json",
-                "0250_metadata-schemas_dataset.json",
-                "0260_metadata-schemas_distribution.json",
-                "0300_resource-definitions_distribution.json",
-                "0310_resource-definitions_dataset.json",
-                "0320_resource-definitions_catalog.json",
-                "0330_resource-definitions_repository.json"});
+            "0200_metadata-schemas_resource.json",
+            "0210_metadata-schemas_data-service.json",
+            "0220_metadata-schemas_metadata-service.json",
+            "0230_metadata-schemas_fdp.json",
+            "0240_metadata-schemas_catalog.json",
+            "0250_metadata-schemas_dataset.json",
+            "0260_metadata-schemas_distribution.json",
+            "0300_resource-definitions_distribution.json",
+            "0310_resource-definitions_dataset.json",
+            "0320_resource-definitions_catalog.json",
+            "0330_resource-definitions_repository.json"});
     }
 
     private void clearMetadata() throws MetadataServiceException {
