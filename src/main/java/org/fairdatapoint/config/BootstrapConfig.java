@@ -39,9 +39,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * The {@code BootstrapConfig} class configures a repository populator that loads initial data into the relational
@@ -61,11 +61,45 @@ public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     private final BootstrapProperties bootstrap;
     private final FixtureHistoryRepository fixtureHistoryRepository;
-    private final List<Resource> resources = new ArrayList<>();
 
     public BootstrapConfig(BootstrapProperties bootstrapProperties, FixtureHistoryRepository fixtureHistoryRepository) {
         this.bootstrap = bootstrapProperties;
         this.fixtureHistoryRepository = fixtureHistoryRepository;
+    }
+
+    /**
+     * Creates a sorted array of unique fixture resources, representing files in the specified fixtures directories.
+     * Checks the fixture history repository for files that have already been applied, and removes them from the array.
+     * @return sorted array of unique Resource objects
+     */
+    public Resource[] getNewResources() {
+        // use TreeSet with comparator for lexicographic order and uniqueness
+        TreeSet<Resource> resources = new TreeSet<>(
+                Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
+        // collect fixture resources from specified directories
+        log.info("Looking for db fixtures in the following directories: {}",
+                String.join(", ", this.bootstrap.getDbFixturesDirs()));
+        for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
+            // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
+            // Note that Path.of(fixturesDir).resolve("*.json") could work on unix but fails on windows.
+            final String locationPattern = "file:" + Path.of(fixturesDir) + "/*.json";
+            try {
+                resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
+            }
+            catch (IOException exception) {
+                log.error("Failed to resolve fixture resources", exception);
+            }
+        }
+        // remove resources that have been applied already
+        final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
+                .map(FixtureHistory::getFilename).toList();
+        final List<Resource> resourcesToSkip = resources.stream()
+                .filter(resource -> appliedFixtures.contains(resource.getFilename())).toList();
+        resourcesToSkip.forEach(resources::remove);
+        // return the result
+        log.info("Found {} new db fixture files ({} have been applied already)",
+                resources.size(), resourcesToSkip.size());
+        return resources.toArray(new Resource[0]);
     }
 
     @Bean
@@ -73,37 +107,12 @@ public class BootstrapConfig {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
         if (this.bootstrap.isEnabled()) {
             log.info("Bootstrap repository populator enabled");
-            try {
-                // collect fixture resources
-                log.info("Looking for db fixtures in the following directories: {}",
-                        String.join(", ", this.bootstrap.getDbFixturesDirs()));
-                for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
-                    // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
-                    // Note that Path.of(fixturesDir).resolve("*.json") could work on unix but fails on windows.
-                    final String locationPattern = "file:" + Path.of(fixturesDir) + "/*.json";
-                    resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
-                }
-                // remove resources that have been applied already
-                final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
-                        .map(FixtureHistory::getFilename).toList();
-                final List<Resource> resourcesToSkip = resources.stream()
-                        .filter(resource -> appliedFixtures.contains(resource.getFilename())).toList();
-                resources.removeAll(resourcesToSkip);
-                // sort resources to guarantee lexicographic order
-                resources.sort(Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
-                // add resources to factory
-                log.info("Applying {} db fixtures ({} have been applied already)",
-                        resources.size(), resourcesToSkip.size());
-                factory.setResources(resources.toArray(new Resource[0]));
-            }
-            catch (IOException exception) {
-                log.error("Failed to load relational database fixtures", exception);
-            }
+            // add resources to factory
+            factory.setResources(getNewResources());
         }
         else {
             log.info("Bootstrap repository populator disabled");
         }
-
         return factory;
     }
 
@@ -116,7 +125,7 @@ public class BootstrapConfig {
             // Note: This assumes that all items in the resources list have been *successfully* applied. However, I'm
             // not sure if this can be guaranteed. If it does turn out to be a problem, we could try e.g. extending the
             // ResourceReaderRepositoryPopulator.persist() method, so the history record is added there.
-            for (final Resource resource : resources) {
+            for (final Resource resource : getNewResources()) {
                 final String filename = resource.getFilename();
                 final FixtureHistory fixtureHistory = fixtureHistoryRepository.save(new FixtureHistory(filename));
                 log.debug("Fixture history updated: {} ({})", fixtureHistory.getFilename(), fixtureHistory.getUuid());
