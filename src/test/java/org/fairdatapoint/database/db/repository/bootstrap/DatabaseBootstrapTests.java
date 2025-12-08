@@ -43,12 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @AutoConfigureTestEntityManager
 @Transactional
-@TestPropertySource(
-        properties = """
-            bootstrap.enabled=true
-            bootstrap.db-fixtures-dirs=src/test/resources/fixtures
-        """
-)
+@TestPropertySource(properties = "bootstrap.locations[0]=file:src/test/resources/fixtures")
 public class DatabaseBootstrapTests extends BaseIntegrationTest {
     @Autowired
     private UserAccountRepository userAccountRepository;
