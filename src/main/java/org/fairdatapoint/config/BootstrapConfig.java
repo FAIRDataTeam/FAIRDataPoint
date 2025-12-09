@@ -78,9 +78,11 @@ public class BootstrapConfig {
                 log.info("Looking for db fixtures in the following locations: {}",
                         String.join(", ", this.bootstrap.getLocations()));
                 for (String location : this.bootstrap.getLocations()) {
-                    // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
-                    // Note that Path.of(location).resolve("*.json") could work on unix but fails on windows.
-                    resources.addAll(List.of(resourceResolver.getResources(Path.of(location) + "/*.json")));
+                    // Only look for JSON files. Notes:
+                    // - Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
+                    // - Path.of(location).resolve("*.json") could work on Unix but fails on Windows.
+                    final String pattern = location.endsWith(".json") ? location : Path.of(location) + "/*.json";
+                    resources.addAll(List.of(resourceResolver.getResources(pattern)));
                 }
                 // remove resources that have been applied already
                 final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
