@@ -35,6 +35,7 @@
     "passwordHash": "$2a$10$L.0OZ8QjV3yLhoCDvU04gu.WP1wGQih41MsBdvtQOshJJntaugBxe",
     "role": "ADMIN"
   },
+
   {
     "_class": "org.fairdatapoint.entity.apikey.ApiKey",
     "uuid": "a1c00673-24c5-4e0a-bdbe-22e961ee7548",
@@ -51,6 +52,7 @@
       "uuid": "b5b92c69-5ed9-4054-954d-0121c29b6800"
     }
   },
+
   {
     "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
     "uuid": "d31e3da1-2cfa-4b55-a8cb-71d1acf01aef",
@@ -85,6 +87,32 @@
     "type": "PRIVATE",
     "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
     "varGraphPattern": "?entity ?relationPredicate ?relationObject .\nFILTER isLiteral(?relationObject)\nFILTER CONTAINS(LCASE(str(?relationObject)), LCASE(\"data\"))",
+    "varOrdering": "ASC(?title)",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  },
+  {
+    "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
+    "uuid": "4c57eff3-4608-40ae-85af-b442cfea0746",
+    "name": "Some query 1",
+    "description": "Example query",
+    "type": "PUBLIC",
+    "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
+    "varGraphPattern": "?entity rdf:type dcat:Dataset .",
+    "varOrdering": "ASC(?title)",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  },
+  {
+    "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
+    "uuid": "4c57eff3-4608-40ae-85af-b442cfea0746",
+    "name": "Some query 2",
+    "description": "Example query (with same UUID as previous)",
+    "type": "PUBLIC",
+    "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
+    "varGraphPattern": "?entity rdf:type dcat:Dataset .",
     "varOrdering": "ASC(?title)",
     "userAccount": {
       "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
