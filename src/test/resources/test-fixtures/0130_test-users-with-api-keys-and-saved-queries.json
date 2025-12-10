@@ -97,12 +97,12 @@
     "uuid": "4c57eff3-4608-40ae-85af-b442cfea0746",
     "name": "Some query 1",
     "description": "Example query",
-    "type": "PUBLIC",
+    "type": "PRIVATE",
     "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
     "varGraphPattern": "?entity rdf:type dcat:Dataset .",
     "varOrdering": "ASC(?title)",
     "userAccount": {
-      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+      "uuid": "8d1a4c06-bb0e-4d03-a01f-14fa49bbc152"
     }
   },
   {
@@ -110,12 +110,12 @@
     "uuid": "4c57eff3-4608-40ae-85af-b442cfea0746",
     "name": "Some query 2",
     "description": "Example query (with same UUID as previous)",
-    "type": "PUBLIC",
+    "type": "PRIVATE",
     "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
     "varGraphPattern": "?entity rdf:type dcat:Dataset .",
     "varOrdering": "ASC(?title)",
     "userAccount": {
-      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+      "uuid": "8d1a4c06-bb0e-4d03-a01f-14fa49bbc152"
     }
   }
 ]
