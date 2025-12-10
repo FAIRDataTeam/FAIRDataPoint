@@ -1,6 +1,15 @@
 [
   {
     "_class": "org.fairdatapoint.entity.user.UserAccount",
+    "uuid": "95589e50-d261-492b-8852-9324e9a66a42",
+    "firstName": "Admin",
+    "lastName": "von Universe",
+    "email": "admin@example.com",
+    "passwordHash": "$2a$10$L.0OZ8QjV3yLhoCDvU04gu.WP1wGQih41MsBdvtQOshJJntaugBxe",
+    "role": "ADMIN"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.user.UserAccount",
     "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9",
     "firstName": "Albert",
     "lastName": "Einstein",
@@ -25,15 +34,6 @@
     "email": "isaac.newton@example.com",
     "passwordHash": "$2a$10$DLkI7NAZDzWVaKG1lVtloeoPNLPoAgDDBqQKQiSAYDZXrf2QKkuHC",
     "role": "USER"
-  },
-  {
-    "_class": "org.fairdatapoint.entity.user.UserAccount",
-    "uuid": "95589e50-d261-492b-8852-9324e9a66a42",
-    "firstName": "Admin",
-    "lastName": "von Universe",
-    "email": "admin@example.com",
-    "passwordHash": "$2a$10$L.0OZ8QjV3yLhoCDvU04gu.WP1wGQih41MsBdvtQOshJJntaugBxe",
-    "role": "ADMIN"
   },
 
   {
