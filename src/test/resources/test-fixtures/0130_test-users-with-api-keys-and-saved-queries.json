@@ -83,7 +83,7 @@
     "_class" : "org.fairdatapoint.entity.search.SearchSavedQuery",
     "uuid": "97da9119-834e-4687-8321-3df157547178",
     "name": "Things with data",
-    "description": "This is private query of Nikola Tesla!",
+    "description": "This is a private query of Albert Einstein",
     "type": "PRIVATE",
     "varPrefixes": "PREFIX dcat: <http://www.w3.org/ns/dcat#>",
     "varGraphPattern": "?entity ?relationPredicate ?relationObject .\nFILTER isLiteral(?relationObject)\nFILTER CONTAINS(LCASE(str(?relationObject)), LCASE(\"data\"))",
