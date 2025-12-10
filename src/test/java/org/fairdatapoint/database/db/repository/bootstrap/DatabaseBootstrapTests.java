@@ -54,7 +54,7 @@ public class DatabaseBootstrapTests extends BaseIntegrationTest {
     @Autowired
     private SearchSavedQueryRepository searchSavedQueryRepository;
 
-    private final String einsteinEmail = "albert.einstein@example.org";
+    private final String einsteinEmail = "albert.einstein@example.com";
 
     @Test
     public void testSingleEntityBootstrap() {
@@ -80,7 +80,7 @@ public class DatabaseBootstrapTests extends BaseIntegrationTest {
         final Optional<SearchSavedQuery> savedQuery = searchSavedQueryRepository.findByUuid(
                 UUID.fromString("4c57eff3-4608-40ae-85af-b442cfea0746"));
         assertTrue(savedQuery.isPresent());
-        assertEquals("isaac.newton@example.org", savedQuery.get().getUserAccount().getEmail());
+        assertEquals("isaac.newton@example.com", savedQuery.get().getUserAccount().getEmail());
         assertEquals("Some query 2", savedQuery.get().getName());
     }
 }

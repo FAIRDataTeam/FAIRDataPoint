@@ -4,7 +4,7 @@
     "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9",
     "firstName": "Albert",
     "lastName": "Einstein",
-    "email": "albert.einstein@example.org",
+    "email": "albert.einstein@example.com",
     "passwordHash": "$2a$10$hZF1abbZ48Tf.3RndC9W6OlDt6gnBoD/2HbzJayTs6be7d.5DbpnW",
     "role": "USER"
   },
@@ -13,7 +13,7 @@
     "uuid": "b5b92c69-5ed9-4054-954d-0121c29b6800",
     "firstName": "Nikola",
     "lastName": "Tesla",
-    "email": "nikola.tesla@example.org",
+    "email": "nikola.tesla@example.com",
     "passwordHash": "$2a$10$tMbZUZg9AbYL514R.hZ0tuzvfZJR5NQhSVeJPTQhNwPf6gv/cvrna",
     "role": "USER"
   },
@@ -22,7 +22,7 @@
     "uuid": "8d1a4c06-bb0e-4d03-a01f-14fa49bbc152",
     "firstName": "Isaac",
     "lastName": "Newton",
-    "email": "isaac.newton@example.org",
+    "email": "isaac.newton@example.com",
     "passwordHash": "$2a$10$DLkI7NAZDzWVaKG1lVtloeoPNLPoAgDDBqQKQiSAYDZXrf2QKkuHC",
     "role": "USER"
   },
@@ -31,7 +31,7 @@
     "uuid": "95589e50-d261-492b-8852-9324e9a66a42",
     "firstName": "Admin",
     "lastName": "von Universe",
-    "email": "admin@example.org",
+    "email": "admin@example.com",
     "passwordHash": "$2a$10$L.0OZ8QjV3yLhoCDvU04gu.WP1wGQih41MsBdvtQOshJJntaugBxe",
     "role": "ADMIN"
   },
