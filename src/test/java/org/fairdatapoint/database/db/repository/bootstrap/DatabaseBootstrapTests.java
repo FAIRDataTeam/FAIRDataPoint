@@ -34,19 +34,12 @@ import org.fairdatapoint.entity.apikey.ApiKey;
 import org.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatapoint.entity.user.UserAccount;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.File;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -106,20 +99,5 @@ public class DatabaseBootstrapTests extends BaseIntegrationTest {
     public void testValidateFixtureFilenameInvalid() {
         final String invalidFilename = "0100_search_invalid_description.json";
         assertThrows(ValidationException.class, () -> bootstrapConfig.validateFixtureFilename(invalidFilename));
-    }
-
-    @ParameterizedTest
-    @MethodSource("listDefaultFixtureFilenames")
-    public void testValidateDefaultFixtureFilenames(String filename) {
-        assertDoesNotThrow(() -> bootstrapConfig.validateFixtureFilename(filename));
-    }
-
-    private static Set<String> listDefaultFixtureFilenames() {
-        final String defaultFixturesLocation = "fixtures";
-        return Stream.of(Objects.requireNonNull(new File(defaultFixturesLocation).listFiles()))
-                .filter(File::isFile)
-                .map(File::getName)
-                .filter(filename -> filename.endsWith(".json"))
-                .collect(Collectors.toSet());
     }
 }

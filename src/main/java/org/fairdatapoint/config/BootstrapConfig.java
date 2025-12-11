@@ -40,10 +40,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * The {@code BootstrapConfig} class configures a repository populator that loads initial data into the relational
@@ -69,6 +66,11 @@ public class BootstrapConfig {
         this.fixtureHistoryRepository = fixtureHistoryRepository;
     }
 
+    /**
+     * Raises a ValidationException if the filename does not match the specified regular expression.
+     * This is required to ensure that the reset service works as expected.
+     * @param filename name of a fixture file
+     */
     public void validateFixtureFilename(String filename) {
         final String pattern = "^(?<order>[0-9]{4})_(?<package>[a-z]+)_(?<description>[a-zA-Z0-9\\-]+)\\.json$";
         if (!filename.matches(pattern)) {
@@ -105,6 +107,8 @@ public class BootstrapConfig {
         final List<Resource> resourcesToSkip = resources.stream()
                 .filter(resource -> appliedFixtures.contains(resource.getFilename())).toList();
         resourcesToSkip.forEach(resources::remove);
+        // validate filenames
+        resources.forEach(resource -> validateFixtureFilename(Objects.requireNonNull(resource.getFilename())));
         // return the result
         log.info("Found {} new db fixture files ({} have been applied already)",
                 resources.size(), resourcesToSkip.size());
