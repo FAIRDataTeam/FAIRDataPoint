@@ -34,5 +34,5 @@ public interface FixtureHistoryRepository extends BaseRepository<FixtureHistory>
     Optional<FixtureHistory> findByFilename(String filename);
 
     @Transactional
-    void deleteByFilenameIn(String[] filenames);
+    void deleteByFilenameContains(String packageName);
 }

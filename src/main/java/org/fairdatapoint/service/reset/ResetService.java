@@ -161,7 +161,7 @@ public class ResetService {
     private void clearApiKeys() {
         log.debug("Clearing API keys");
         apiKeyRepository.deleteAll();
-        removeFromFixtureHistory(new String[]{"0110_api-keys.json"});
+        removeFromFixtureHistory(new String[]{"apikey"});
     }
 
     private void clearMemberships() {
@@ -169,15 +169,15 @@ public class ResetService {
         membershipPermissionRepository.deleteAll();
         log.debug("Clearing memberships");
         membershipRepository.deleteAll();
+        removeFromFixtureHistory(new String[]{"membership"});
         log.debug("Clearing ACL cache");
         aclCache.clearCache();
-        removeFromFixtureHistory(new String[]{"0400_memberships_owner.json", "0410_memberships_data-provider.json"});
     }
 
     private void clearUsers() {
         log.debug("Clearing users");
         userRepository.deleteAll();
-        removeFromFixtureHistory(new String[]{"0100_user-accounts.json", "0120_saved-queries.json"});
+        removeFromFixtureHistory(new String[]{"user", "search"});
     }
 
     private void clearMetadataSchemasAndResourceDefinitions() {
@@ -188,18 +188,7 @@ public class ResetService {
         resourceDefinitionChildRepository.deleteAll();
         resourceDefinitionLinkRepository.deleteAll();
         resourceDefinitionRepository.deleteAll();
-        removeFromFixtureHistory(new String[]{
-            "0200_metadata-schemas_resource.json",
-            "0210_metadata-schemas_data-service.json",
-            "0220_metadata-schemas_metadata-service.json",
-            "0230_metadata-schemas_fdp.json",
-            "0240_metadata-schemas_catalog.json",
-            "0250_metadata-schemas_dataset.json",
-            "0260_metadata-schemas_distribution.json",
-            "0300_resource-definitions_distribution.json",
-            "0310_resource-definitions_dataset.json",
-            "0320_resource-definitions_catalog.json",
-            "0330_resource-definitions_repository.json"});
+        removeFromFixtureHistory(new String[]{"schema", "resource"});
     }
 
     private void clearMetadata() throws MetadataServiceException {
@@ -211,9 +200,11 @@ public class ResetService {
         }
     }
 
-    protected void removeFromFixtureHistory(String[] filenames) {
-        log.debug("Removing filenames from fixture history: {}", String.join(", ", filenames));
-        fixtureHistoryRepository.deleteByFilenameIn(filenames);
+    protected void removeFromFixtureHistory(String[] packageNames) {
+        log.debug("Removing fixture history for the following packages: {}", String.join(", ", packageNames));
+        for (String packageName : packageNames) {
+            fixtureHistoryRepository.deleteByFilenameContains("_" + packageName + "_");
+        }
     }
 
     protected void restoreDefaultFixtures() {
