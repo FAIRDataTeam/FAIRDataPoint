@@ -68,6 +68,11 @@ public class BootstrapConfig {
         this.fixtureHistoryRepository = fixtureHistoryRepository;
     }
 
+    public boolean checkFixtureFilename(String filename) {
+        final String pattern = "^(?<order>[0-9]{4})_(?<package>[a-z]+)_(?<description>[a-zA-Z0-9\\-]+)\\.json$";
+        return filename.matches(pattern);
+    }
+
     /**
      * Creates a sorted array of unique fixture resources, representing files in the specified fixtures directories.
      * Checks the fixture history repository for files that have already been applied, and removes them from the array.

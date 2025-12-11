@@ -25,6 +25,7 @@ package org.fairdatapoint.database.db.repository.bootstrap;
 
 import jakarta.transaction.Transactional;
 import org.fairdatapoint.BaseIntegrationTest;
+import org.fairdatapoint.config.BootstrapConfig;
 import org.fairdatapoint.database.db.repository.ApiKeyRepository;
 import org.fairdatapoint.database.db.repository.SearchSavedQueryRepository;
 import org.fairdatapoint.database.db.repository.UserAccountRepository;
@@ -32,14 +33,24 @@ import org.fairdatapoint.entity.apikey.ApiKey;
 import org.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatapoint.entity.user.UserAccount;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.test.context.TestPropertySource;
 
+import java.awt.*;
+import java.io.File;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @AutoConfigureTestEntityManager
 @Transactional
@@ -50,6 +61,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         """
 )
 public class DatabaseBootstrapTests extends BaseIntegrationTest {
+    @Autowired
+    private BootstrapConfig bootstrapConfig;
+
     @Autowired
     private UserAccountRepository userAccountRepository;
 
@@ -82,5 +96,27 @@ public class DatabaseBootstrapTests extends BaseIntegrationTest {
         assertEquals(true, savedQuery.isPresent());
         assertEquals("john.doe@example.org", savedQuery.get().getUserAccount().getEmail());
         assertEquals("Some query 2", savedQuery.get().getName());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0120_search_valid-description.json, true", "0120_search_invalid_description.json, false"})
+    public void testCheckFixtureFilename(String filename, String valid) {
+        assertEquals(Boolean.valueOf(valid), bootstrapConfig.checkFixtureFilename(filename));
+    }
+
+    @ParameterizedTest
+    @MethodSource("listDefaultFixtureFilenames")
+    public void testDefaultFixtureFilenames(String filename) {
+        assertTrue(bootstrapConfig.checkFixtureFilename(filename));
+    }
+
+
+    private static Set<String> listDefaultFixtureFilenames() {
+        final String defaultFixturesLocation = "fixtures";
+        return Stream.of(Objects.requireNonNull(new File(defaultFixturesLocation).listFiles()))
+                .filter(File::isFile)
+                .map(File::getName)
+                .filter(filename -> filename.endsWith(".json"))
+                .collect(Collectors.toSet());
     }
 }
