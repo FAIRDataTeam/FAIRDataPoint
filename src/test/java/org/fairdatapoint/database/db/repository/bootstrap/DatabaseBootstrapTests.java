@@ -24,6 +24,7 @@ package org.fairdatapoint.database.db.repository.bootstrap;
 
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import org.fairdatapoint.BaseIntegrationTest;
 import org.fairdatapoint.config.BootstrapConfig;
 import org.fairdatapoint.database.db.repository.ApiKeyRepository;
@@ -34,13 +35,11 @@ import org.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatapoint.entity.user.UserAccount;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.test.context.TestPropertySource;
 
-import java.awt.*;
 import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,8 +48,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestEntityManager
 @Transactional
@@ -98,18 +96,23 @@ public class DatabaseBootstrapTests extends BaseIntegrationTest {
         assertEquals("Some query 2", savedQuery.get().getName());
     }
 
-    @ParameterizedTest
-    @CsvSource({"0120_search_valid-description.json, true", "0120_search_invalid_description.json, false"})
-    public void testCheckFixtureFilename(String filename, String valid) {
-        assertEquals(Boolean.valueOf(valid), bootstrapConfig.checkFixtureFilename(filename));
+    @Test
+    public void testValidateFixtureFilenameValid() {
+        final String validFilename = "0100_search_valid-description.json";
+        assertDoesNotThrow(() -> bootstrapConfig.validateFixtureFilename(validFilename));
+    }
+
+    @Test
+    public void testValidateFixtureFilenameInvalid() {
+        final String invalidFilename = "0100_search_invalid_description.json";
+        assertThrows(ValidationException.class, () -> bootstrapConfig.validateFixtureFilename(invalidFilename));
     }
 
     @ParameterizedTest
     @MethodSource("listDefaultFixtureFilenames")
-    public void testDefaultFixtureFilenames(String filename) {
-        assertTrue(bootstrapConfig.checkFixtureFilename(filename));
+    public void testValidateDefaultFixtureFilenames(String filename) {
+        assertDoesNotThrow(() -> bootstrapConfig.validateFixtureFilename(filename));
     }
-
 
     private static Set<String> listDefaultFixtureFilenames() {
         final String defaultFixturesLocation = "fixtures";

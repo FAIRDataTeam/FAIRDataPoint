@@ -22,6 +22,7 @@
  */
 package org.fairdatapoint.config;
 
+import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.config.properties.BootstrapProperties;
@@ -68,9 +69,11 @@ public class BootstrapConfig {
         this.fixtureHistoryRepository = fixtureHistoryRepository;
     }
 
-    public boolean checkFixtureFilename(String filename) {
+    public void validateFixtureFilename(String filename) {
         final String pattern = "^(?<order>[0-9]{4})_(?<package>[a-z]+)_(?<description>[a-zA-Z0-9\\-]+)\\.json$";
-        return filename.matches(pattern);
+        if (!filename.matches(pattern)) {
+            throw new ValidationException("Filename %s does not match pattern %s".formatted(filename, pattern));
+        }
     }
 
     /**
