@@ -202,6 +202,7 @@ public class ResetService {
     }
 
     protected void restoreDefaultFixtures() {
+        // TODO: move to BootstrapService class?
         log.debug("Restoring default fixtures");
         // getNewResources() checks the updated fixture history
         populator.setResources(bootstrapConfig.getNewResources());

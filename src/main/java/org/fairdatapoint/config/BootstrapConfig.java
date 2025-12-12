@@ -70,6 +70,7 @@ public class BootstrapConfig {
      * @return sorted array of unique Resource objects
      */
     public Resource[] getNewResources() {
+        // TODO: move this into the BootstrapService class?
         // use TreeSet with comparator for lexicographic order and uniqueness
         final SortedSet<Resource> resources = new TreeSet<>(
                 Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
