@@ -83,12 +83,12 @@ public class FixtureHistoryRepositoryTests extends BaseIntegrationTest {
     }
 
     @Test
-    public void testDeleteByFilenameIn() {
+    public void testDeleteByFilenameContains() {
         // prepare
         repository.saveAndFlush(new FixtureHistory(filename));
         assertEquals(1, repository.count());
         // test
-        repository.deleteByFilenameIn(new String[] {filename});
+        repository.deleteByFilenameContains("whatever");
         assertEquals(0, repository.count());
     }
 }
