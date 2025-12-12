@@ -203,7 +203,7 @@ public class ResetService {
     protected void removeFromFixtureHistory(String[] packageNames) {
         log.debug("Removing fixture history for the following packages: {}", String.join(", ", packageNames));
         for (String packageName : packageNames) {
-            fixtureHistoryRepository.deleteByFilenameContains("_" + packageName + "_");
+            fixtureHistoryRepository.deleteByFilenameContains("_%s_".formatted(packageName));
         }
     }
 

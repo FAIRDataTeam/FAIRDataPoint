@@ -67,12 +67,14 @@ public class BootstrapConfig {
     }
 
     /**
-     * Raises a ValidationException if the filename does not match the specified regular expression.
-     * This is required to ensure that the reset service works as expected.
+     * Raises a ValidationException if the filename does not match the specified regular expression pattern.
+     * The package name part is required to ensure that the reset service works as expected.
      * @param filename name of a fixture file
      */
     public void validateFixtureFilename(String filename) {
-        final String pattern = "^(?<order>[0-9]{4})_(?<package>[a-z]+)_(?<description>[a-zA-Z0-9\\-]+)\\.json$";
+        final String pattern = "^(?<order>[0-9]{4})"
+            + "_(?<package>apikey|membership|resource|schema|search|settings|user)_"
+            + "(?<description>[a-zA-Z0-9\\-]+)\\.json$";
         if (!filename.matches(pattern)) {
             throw new ValidationException("Filename %s does not match pattern %s".formatted(filename, pattern));
         }
