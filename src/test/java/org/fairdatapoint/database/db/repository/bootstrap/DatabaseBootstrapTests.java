@@ -53,9 +53,6 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 public class DatabaseBootstrapTests extends BaseIntegrationTest {
     @Autowired
-    private BootstrapConfig bootstrapConfig;
-
-    @Autowired
     private UserAccountRepository userAccountRepository;
 
     @Autowired
@@ -87,17 +84,5 @@ public class DatabaseBootstrapTests extends BaseIntegrationTest {
         assertEquals(true, savedQuery.isPresent());
         assertEquals("john.doe@example.org", savedQuery.get().getUserAccount().getEmail());
         assertEquals("Some query 2", savedQuery.get().getName());
-    }
-
-    @Test
-    public void testValidateFixtureFilenameValid() {
-        final String validFilename = "0100_search_valid-description.json";
-        assertDoesNotThrow(() -> bootstrapConfig.validateFixtureFilename(validFilename));
-    }
-
-    @Test
-    public void testValidateFixtureFilenameInvalid() {
-        final String invalidFilename = "0100_search_invalid_description.json";
-        assertThrows(ValidationException.class, () -> bootstrapConfig.validateFixtureFilename(invalidFilename));
     }
 }

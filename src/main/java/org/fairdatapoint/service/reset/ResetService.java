@@ -27,6 +27,7 @@ import org.fairdatapoint.api.dto.reset.ResetDTO;
 import org.fairdatapoint.config.BootstrapConfig;
 import org.fairdatapoint.database.db.repository.*;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatapoint.service.bootstrap.BootstrapService;
 import org.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.fairdatapoint.service.metadata.generic.GenericMetadataService;
 import org.fairdatapoint.service.resource.ResourceDefinitionCache;
@@ -63,7 +64,7 @@ public class ResetService {
     private BootstrapConfig bootstrapConfig;
 
     @Autowired
-    private FixtureHistoryRepository fixtureHistoryRepository;
+    private BootstrapService bootstrapService;
 
     @Autowired
     private MembershipPermissionRepository membershipPermissionRepository;
@@ -161,7 +162,7 @@ public class ResetService {
     private void clearApiKeys() {
         log.debug("Clearing API keys");
         apiKeyRepository.deleteAll();
-        removeFromFixtureHistory(new String[]{"apikey"});
+        bootstrapService.removeFromHistory(new String[]{"apikey"});
     }
 
     private void clearMemberships() {
@@ -169,7 +170,7 @@ public class ResetService {
         membershipPermissionRepository.deleteAll();
         log.debug("Clearing memberships");
         membershipRepository.deleteAll();
-        removeFromFixtureHistory(new String[]{"membership"});
+        bootstrapService.removeFromHistory(new String[]{"membership"});
         log.debug("Clearing ACL cache");
         aclCache.clearCache();
     }
@@ -177,7 +178,7 @@ public class ResetService {
     private void clearUsers() {
         log.debug("Clearing users");
         userRepository.deleteAll();
-        removeFromFixtureHistory(new String[]{"user", "search"});
+        bootstrapService.removeFromHistory(new String[]{"user", "search"});
     }
 
     private void clearMetadataSchemasAndResourceDefinitions() {
@@ -188,7 +189,7 @@ public class ResetService {
         resourceDefinitionChildRepository.deleteAll();
         resourceDefinitionLinkRepository.deleteAll();
         resourceDefinitionRepository.deleteAll();
-        removeFromFixtureHistory(new String[]{"schema", "resource"});
+        bootstrapService.removeFromHistory(new String[]{"schema", "resource"});
     }
 
     private void clearMetadata() throws MetadataServiceException {
@@ -197,13 +198,6 @@ public class ResetService {
                 resourceDefinitionRepository.findByUrlPrefix("");
         if (resourceDefinition.isPresent()) {
             genericMetadataService.delete(i(persistentUrl), resourceDefinition.get());
-        }
-    }
-
-    protected void removeFromFixtureHistory(String[] packageNames) {
-        log.debug("Removing fixture history for the following packages: {}", String.join(", ", packageNames));
-        for (String packageName : packageNames) {
-            fixtureHistoryRepository.deleteByFilenameContains("_%s_".formatted(packageName));
         }
     }
 

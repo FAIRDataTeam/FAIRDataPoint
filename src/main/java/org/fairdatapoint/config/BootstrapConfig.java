@@ -22,12 +22,10 @@
  */
 package org.fairdatapoint.config;
 
-import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.config.properties.BootstrapProperties;
-import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
-import org.fairdatapoint.entity.bootstrap.FixtureHistory;
+import org.fairdatapoint.service.bootstrap.BootstrapService;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,25 +57,11 @@ import java.util.*;
 public class BootstrapConfig {
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     private final BootstrapProperties bootstrap;
-    private final FixtureHistoryRepository fixtureHistoryRepository;
+    private final BootstrapService bootstrapService;
 
-    public BootstrapConfig(BootstrapProperties bootstrapProperties, FixtureHistoryRepository fixtureHistoryRepository) {
+    public BootstrapConfig(BootstrapProperties bootstrapProperties, BootstrapService bootstrapService) {
         this.bootstrap = bootstrapProperties;
-        this.fixtureHistoryRepository = fixtureHistoryRepository;
-    }
-
-    /**
-     * Raises a ValidationException if the filename does not match the specified regular expression pattern.
-     * The package name part is required to ensure that the reset service works as expected.
-     * @param filename name of a fixture file
-     */
-    public void validateFixtureFilename(String filename) {
-        final String pattern = "^(?<order>[0-9]{4})"
-            + "_(?<package>apikey|membership|resource|schema|search|settings|user)_"
-            + "(?<description>[a-zA-Z0-9\\-]+)\\.json$";
-        if (!filename.matches(pattern)) {
-            throw new ValidationException("Filename %s does not match pattern %s".formatted(filename, pattern));
-        }
+        this.bootstrapService = bootstrapService;
     }
 
     /**
@@ -104,13 +88,11 @@ public class BootstrapConfig {
             }
         }
         // remove resources that have been applied already
-        final List<String> appliedFixtures = fixtureHistoryRepository.findAll().stream()
-                .map(FixtureHistory::getFilename).toList();
+        final List<String> appliedFixtures = bootstrapService.getAppliedFixtures();
         final List<Resource> resourcesToSkip = resources.stream()
-                .filter(resource -> appliedFixtures.contains(resource.getFilename())).toList();
+                .filter(resource -> appliedFixtures.contains(resource.getFilename()))
+                .toList();
         resourcesToSkip.forEach(resources::remove);
-        // validate filenames
-        resources.forEach(resource -> validateFixtureFilename(Objects.requireNonNull(resource.getFilename())));
         // return the result
         log.info("Found {} new db fixture files ({} have been applied already)",
                 resources.size(), resourcesToSkip.size());
@@ -141,9 +123,7 @@ public class BootstrapConfig {
             // not sure if this can be guaranteed. If it does turn out to be a problem, we could try e.g. extending the
             // ResourceReaderRepositoryPopulator.persist() method, so the history record is added there.
             for (final Resource resource : getNewResources()) {
-                final String filename = resource.getFilename();
-                final FixtureHistory fixtureHistory = fixtureHistoryRepository.save(new FixtureHistory(filename));
-                log.debug("Fixture history updated: {} ({})", fixtureHistory.getFilename(), fixtureHistory.getUuid());
+                bootstrapService.addToHistory(resource.getFilename());
             }
         }
     }
