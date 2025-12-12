@@ -58,21 +58,6 @@ import static org.fairdatapoint.util.ValueFactoryHelper.i;
 public class ResetService {
 
     @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private BootstrapConfig bootstrapConfig;
-
-    @Autowired
-    private BootstrapService bootstrapService;
-
-    @Autowired
-    private MembershipPermissionRepository membershipPermissionRepository;
-
-    @Autowired
-    private ResourceReaderRepositoryPopulator populator;
-
-    @Autowired
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
@@ -92,7 +77,22 @@ public class ResetService {
     private Repository draftsRepository;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private BootstrapConfig bootstrapConfig;
+
+    @Autowired
+    private BootstrapService bootstrapService;
+
+    @Autowired
+    private ResourceReaderRepositoryPopulator populator;
+
+    @Autowired
     private ApiKeyRepository apiKeyRepository;
+
+    @Autowired
+    private MembershipPermissionRepository membershipPermissionRepository;
 
     @Autowired
     private MembershipRepository membershipRepository;
