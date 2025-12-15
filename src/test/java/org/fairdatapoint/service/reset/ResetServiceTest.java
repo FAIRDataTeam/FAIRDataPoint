@@ -28,6 +28,7 @@ import org.fairdatapoint.database.db.repository.*;
 import org.fairdatapoint.database.db.repository.base.BaseRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class ResetServiceTest extends BaseIntegrationTest {
     @Autowired
     private UserAccountRepository userAccountRepository;
 
+    @WithMockUser(roles = {"ADMIN"})
     @Test
     public void testResetToFactoryDefaultsAll() throws Exception {
         // given: some of the repositories have been modified (emptied in this case)
