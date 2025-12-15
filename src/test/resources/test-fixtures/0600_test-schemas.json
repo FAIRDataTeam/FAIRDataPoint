@@ -1,0 +1,271 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "e8b34158-3858-45c7-8e3e-d1e671dd9929"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "53619e58-2bb0-4baf-afd8-00c5d01ff8a8",
+    "schema": { "uuid": "e8b34158-3858-45c7-8e3e-d1e671dd9929" },
+    "version": "0.1.0",
+    "name": "Custom schema",
+    "description": "Custom schema V1",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LATEST",
+    "published": true,
+    "abstractSchema": false
+  },
+
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "bfa79edf-00b7-4a04-b5a6-a5144f1a77b7"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "cb9f6cd7-97af-45d0-b23d-d0aab23607d8",
+    "schema": { "uuid": "bfa79edf-00b7-4a04-b5a6-a5144f1a77b7" },
+    "version": "0.1.0",
+    "name": "Custom schema",
+    "description": "Custom schema V1",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "DRAFT",
+    "published": false,
+    "abstractSchema": false
+  },
+
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "fe98adbb-6a2c-4c7a-b2b2-a72db5140c61"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "f0a4b358-69a3-44e6-9436-c68a56a9f2f2",
+    "schema": { "uuid": "fe98adbb-6a2c-4c7a-b2b2-a72db5140c61" },
+    "version": "0.1.0",
+    "name": "Custom schema",
+    "description": "Custom schema V1",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "INTERNAL",
+    "state": "LATEST",
+    "published": true,
+    "abstractSchema": false
+  },
+
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "978e5c1c-268d-4822-b60b-07d3eccc6896"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "d7acec53-5ac9-4502-9bfa-92d1e9f79a24",
+    "schema": { "uuid": "978e5c1c-268d-4822-b60b-07d3eccc6896" },
+    "version": "0.1.0",
+    "name": "Custom schema",
+    "description": "Custom schema V1",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LEGACY",
+    "published": false,
+    "abstractSchema": false
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "67896adc-b431-431d-8296-f0b80d8de412",
+    "schema": { "uuid": "978e5c1c-268d-4822-b60b-07d3eccc6896" },
+    "previousVersion": { "uuid": "d7acec53-5ac9-4502-9bfa-92d1e9f79a24" },
+    "version": "0.2.0",
+    "name": "Custom schema",
+    "description": "Custom schema V2",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LEGACY",
+    "published": false,
+    "abstractSchema": false
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "c62d4a97-baac-40b8-b6ea-e43b06ec78bd",
+    "schema": { "uuid": "978e5c1c-268d-4822-b60b-07d3eccc6896" },
+    "previousVersion": { "uuid": "67896adc-b431-431d-8296-f0b80d8de412" },
+    "version": "0.3.0",
+    "name": "Custom schema",
+    "description": "Custom schema V3",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false
+  },
+
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "e7078309-cb4c-47b9-9ef8-057487b3da58"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "a17c25ad-e8d3-4338-bb3e-eda76d2fc32c",
+    "schema": { "uuid": "e7078309-cb4c-47b9-9ef8-057487b3da58" },
+    "version": "0.0.0",
+    "name": "Custom schema",
+    "description": "Custom schema draft",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "DRAFT",
+    "published": false,
+    "abstractSchema": false
+  },
+
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "123e48d2-9995-4b44-8b2c-9c81bdbf2dd2"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "fb24f92b-187f-4d53-b744-73024b537f30",
+    "schema": { "uuid": "123e48d2-9995-4b44-8b2c-9c81bdbf2dd2" },
+    "version": "0.1.0",
+    "name": "Custom schema",
+    "description": "Custom schema V1",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LEGACY",
+    "published": false,
+    "abstractSchema": false
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "6011adfa-f8da-478d-86ea-84bb644b458b",
+    "schema": { "uuid": "123e48d2-9995-4b44-8b2c-9c81bdbf2dd2" },
+    "previousVersion": { "uuid": "fb24f92b-187f-4d53-b744-73024b537f30" },
+    "version": "0.2.0",
+    "name": "Custom schema",
+    "description": "Custom schema V2",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "6b84ec86-2096-48db-bfc7-23506b8c080c",
+    "schema": { "uuid": "123e48d2-9995-4b44-8b2c-9c81bdbf2dd2" },
+    "previousVersion": { "uuid": "6011adfa-f8da-478d-86ea-84bb644b458b" },
+    "version": "0.0.0",
+    "name": "Custom schema",
+    "description": "Custom schema draft",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "DRAFT",
+    "published": false,
+    "abstractSchema": false
+  },
+
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "7c8b8699-ca9f-4d14-86e2-2299b27c5711"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "4e44fb19-b9e0-46e9-957a-e7aa3adac7bf",
+    "schema": { "uuid": "7c8b8699-ca9f-4d14-86e2-2299b27c5711" },
+    "version": "0.1.0",
+    "name": "Custom schema",
+    "description": "Custom schema V1",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LEGACY",
+    "published": false,
+    "abstractSchema": false
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "abcf3a21-6f9a-45dc-a71a-4dde4440c81a",
+    "schema": { "uuid": "7c8b8699-ca9f-4d14-86e2-2299b27c5711" },
+    "previousVersion": { "uuid": "4e44fb19-b9e0-46e9-957a-e7aa3adac7bf" },
+    "version": "0.2.0",
+    "name": "Custom schema",
+    "description": "Custom schema V2",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "1bdca611-c96e-4304-b1f3-030d282ef529",
+    "metadataSchemaVersion": { "uuid": "abcf3a21-6f9a-45dc-a71a-4dde4440c81a" },
+    "extendedMetadataSchema": { "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee" },
+    "orderPriority": 0
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "1bdca611-c96e-4304-b1f3-030d282ef530",
+    "metadataSchemaVersion": { "uuid": "abcf3a21-6f9a-45dc-a71a-4dde4440c81a" },
+    "extendedMetadataSchema": { "uuid": "123e48d2-9995-4b44-8b2c-9c81bdbf2dd2" },
+    "orderPriority": 1
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "a6d609ff-905f-4edd-bdb1-2dce000c9a45",
+    "schema": { "uuid": "7c8b8699-ca9f-4d14-86e2-2299b27c5711" },
+    "previousVersion": { "uuid": "abcf3a21-6f9a-45dc-a71a-4dde4440c81a" },
+    "version": "0.0.0",
+    "name": "Custom schema",
+    "description": "Custom schema draft",
+    "definition": "",
+    "targetClasses": [
+      "http://www.w3.org/2000/01/rdf-schema#Class"
+    ],
+    "type": "CUSTOM",
+    "state": "DRAFT",
+    "published": false,
+    "abstractSchema": false
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "53e3db46-8fe4-47ce-873e-ed7db94e73b3",
+    "metadataSchemaVersion": { "uuid": "a6d609ff-905f-4edd-bdb1-2dce000c9a45" },
+    "extendedMetadataSchema": { "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee" },
+    "orderPriority": 0
+  }
+]

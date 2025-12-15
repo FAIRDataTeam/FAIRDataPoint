@@ -24,19 +24,17 @@ package org.fairdatapoint.database.db.repository.bootstrap;
 
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import org.fairdatapoint.BaseIntegrationTest;
-import org.fairdatapoint.config.BootstrapConfig;
 import org.fairdatapoint.database.db.repository.ApiKeyRepository;
 import org.fairdatapoint.database.db.repository.SearchSavedQueryRepository;
 import org.fairdatapoint.database.db.repository.UserAccountRepository;
 import org.fairdatapoint.entity.apikey.ApiKey;
 import org.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatapoint.entity.user.UserAccount;
+import org.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -45,12 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestEntityManager
 @Transactional
-@TestPropertySource(
-        properties = """
-            bootstrap.enabled=true
-            bootstrap.db-fixtures-dirs=src/test/resources/fixtures
-        """
-)
 public class DatabaseBootstrapTests extends BaseIntegrationTest {
     @Autowired
     private UserAccountRepository userAccountRepository;
@@ -61,28 +53,33 @@ public class DatabaseBootstrapTests extends BaseIntegrationTest {
     @Autowired
     private SearchSavedQueryRepository searchSavedQueryRepository;
 
+    private final String einsteinEmail = "albert.einstein@example.com";
+
     @Test
     public void testSingleEntityBootstrap() {
-        final Optional<UserAccount> userAccount = userAccountRepository.findByEmail("john.doe@example.org");
-        assertEquals(true, userAccount.isPresent());
-        assertEquals("John", userAccount.get().getFirstName());
-        assertEquals("Doe", userAccount.get().getLastName());
-        assertEquals(UUID.fromString("e8f98d8e-0c4f-4a4b-9cc7-dd884f0c75ee"), userAccount.get().getUuid());
+        final Optional<UserAccount> userAccount = userAccountRepository.findByEmail(einsteinEmail);
+        assertTrue(userAccount.isPresent());
+        assertEquals("Albert", userAccount.get().getFirstName());
+        assertEquals("Einstein", userAccount.get().getLastName());
+        assertEquals(KnownUUIDs.USER_ALBERT_UUID, userAccount.get().getUuid());
     }
 
     @Test
     public void testRelatedEntityBootstrap() {
-        final Optional<ApiKey> apiKey = apiKeyRepository.findByToken("testing-token");
-        assertEquals(true, apiKey.isPresent());
-        assertEquals("john.doe@example.org", apiKey.get().getUserAccount().getEmail());
-        assertEquals(UUID.fromString("9d734008-91bb-47e3-97aa-2f537e67d9e6"), apiKey.get().getUuid());
+        final UUID einsteinApiKeyUuid = UUID.fromString("a1c00673-24c5-4e0a-bdbe-22e961ee7548");
+        final String einsteinApiKeyToken = "a274793046e34a219fd0ea6362fcca61a001500b71724f4c973a017031653c20";
+        final Optional<ApiKey> apiKey = apiKeyRepository.findByToken(einsteinApiKeyToken);
+        assertTrue(apiKey.isPresent());
+        assertEquals(einsteinEmail, apiKey.get().getUserAccount().getEmail());
+        assertEquals(einsteinApiKeyUuid, apiKey.get().getUuid());
     }
 
     @Test
     public void testDuplicateIdEntityOverwriteBootstrap() {
-        final Optional<SearchSavedQuery> savedQuery = searchSavedQueryRepository.findByUuid(UUID.fromString("4c57eff3-4608-40ae-85af-b442cfea0746"));
-        assertEquals(true, savedQuery.isPresent());
-        assertEquals("john.doe@example.org", savedQuery.get().getUserAccount().getEmail());
+        final Optional<SearchSavedQuery> savedQuery = searchSavedQueryRepository.findByUuid(
+                UUID.fromString("4c57eff3-4608-40ae-85af-b442cfea0746"));
+        assertTrue(savedQuery.isPresent());
+        assertEquals("isaac.newton@example.com", savedQuery.get().getUserAccount().getEmail());
         assertEquals("Some query 2", savedQuery.get().getName());
     }
 }

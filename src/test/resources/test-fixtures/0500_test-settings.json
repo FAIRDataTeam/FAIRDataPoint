@@ -1,0 +1,140 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.settings.Settings",
+    "uuid": "00000000-0000-0000-0000-000000000000",
+    "appTitle": "FAIR Data Point",
+    "appSubtitle": "FDP Development Instance",
+    "pingEnabled": false,
+    "pingEndpoints": [
+      "https://home.fairdatapoint.org"
+    ],
+    "autocompleteSearchNamespace": true
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsAutocompleteSource",
+    "uuid": "d4045a98-dd25-493e-a0b1-d704921c0930",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "rdfType": "http://www.w3.org/2000/01/rdf-schema#Class",
+    "sparqlEndpoint": "http://localhost:3030/ds/query",
+    "sparqlQuery": "SELECT DISTINCT ?uri ?label\nWHERE { ?uri a <http://www.w3.org/2000/01/rdf-schema#Class> .\n?uri <http://www.w3.org/2000/01/rdf-schema#label> ?label .\nFILTER regex(?label, \".*%s.*\", \"i\") }\nORDER BY ?label",
+    "orderPriority": 1
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsMetric",
+    "uuid": "8435491b-c16c-4457-ae94-e0f4128603d5",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "metricUri": "https://purl.org/fair-metrics/FM_F1A",
+    "resourceUri": "https://www.ietf.org/rfc/rfc3986.txt",
+    "orderPriority": 1
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsMetric",
+    "uuid": "af93d36a-0af0-4054-8c00-2675d460b231",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "metricUri": "https://purl.org/fair-metrics/FM_A1.1",
+    "resourceUri": "https://www.wikidata.org/wiki/Q8777",
+    "orderPriority": 2
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilter",
+    "uuid": "57a98728-ce8c-4e7f-b0f8-94e2668b44d3",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "type": "IRI",
+    "label": "Type",
+    "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "queryRecords": false,
+    "orderPriority": 1
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilterItem",
+    "uuid": "b48c2c7f-d7fb-47ae-a72c-b1b360e16f6e",
+    "filter": {
+      "uuid": "57a98728-ce8c-4e7f-b0f8-94e2668b44d3"
+    },
+    "label": "Catalog",
+    "value": "http://www.w3.org/ns/dcat#Catalog",
+    "orderPriority": 1
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilterItem",
+    "uuid": "3e1598ac-9d29-47f0-8e7b-3c26ca0134a0",
+    "filter": {
+      "uuid": "57a98728-ce8c-4e7f-b0f8-94e2668b44d3"
+    },
+    "label": "Dataset",
+    "value": "http://www.w3.org/ns/dcat#Dataset",
+    "orderPriority": 2
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilterItem",
+    "uuid": "5697d8d9-f09d-4ebe-b834-b37eb0624c3f",
+    "filter": {
+      "uuid": "57a98728-ce8c-4e7f-b0f8-94e2668b44d3"
+    },
+    "label": "Distribution",
+    "value": "http://www.w3.org/ns/dcat#Distribution",
+    "orderPriority": 3
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilterItem",
+    "uuid": "022c3bc6-0598-408c-8d2e-b486dafb73dd",
+    "filter": {
+      "uuid": "57a98728-ce8c-4e7f-b0f8-94e2668b44d3"
+    },
+    "label": "Data Service",
+    "value": "http://www.w3.org/ns/dcat#DataService",
+    "orderPriority": 4
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilterItem",
+    "uuid": "7cee5591-8620-4fea-b883-a94285012b8d",
+    "filter": {
+      "uuid": "57a98728-ce8c-4e7f-b0f8-94e2668b44d3"
+    },
+    "label": "Metadata Service",
+    "value": "https://w3id.org/fdp/fdp-o#MetadataService",
+    "orderPriority": 5
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilterItem",
+    "uuid": "9d661dca-8017-4dba-b930-cd2834ea59e8",
+    "filter": {
+      "uuid": "57a98728-ce8c-4e7f-b0f8-94e2668b44d3"
+    },
+    "label": "FAIR Data Point",
+    "value": "https://w3id.org/fdp/fdp-o#FAIRDataPoint",
+    "orderPriority": 6
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilter",
+    "uuid": "26913eb3-67dd-45c9-b8ff-4c97e8162a9b",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "type": "IRI",
+    "label": "License",
+    "predicate": "http://purl.org/dc/terms/license",
+    "queryRecords": true,
+    "orderPriority": 2
+  },
+  {
+    "_class": "org.fairdatapoint.entity.settings.SettingsSearchFilter",
+    "uuid": "cb25afb4-6169-42f8-bde5-181c803773a8",
+    "settings": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "type": "IRI",
+    "label": "Version",
+    "predicate": "http://www.w3.org/ns/dcat#version",
+    "queryRecords": true,
+    "orderPriority": 3
+  }
+]

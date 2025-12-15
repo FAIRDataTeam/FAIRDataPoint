@@ -37,8 +37,10 @@ import org.springframework.data.repository.init.RepositoriesPopulatedEvent;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * The {@code BootstrapConfig} class configures a repository populator that loads initial data into the relational
@@ -75,12 +77,15 @@ public class BootstrapConfig {
         final SortedSet<Resource> resources = new TreeSet<>(
                 Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
         // collect fixture resources from specified directories
-        log.info("Looking for db fixtures in the following directories: {}",
-                String.join(", ", this.bootstrap.getDbFixturesDirs()));
-        for (String fixturesDir : this.bootstrap.getDbFixturesDirs()) {
-            // Path.of() removes trailing slashes, so it is safe to concatenate "/*.json".
-            // Note that Path.of(fixturesDir).resolve("*.json") could work on unix but fails on windows.
-            final String locationPattern = "file:" + Path.of(fixturesDir) + "/*.json";
+        log.info("Looking for db fixtures in the following locations: {}",
+                String.join(", ", this.bootstrap.getLocations()));
+        for (String location : this.bootstrap.getLocations()) {
+            // Only look for JSON files
+            String locationPattern = location;
+            if (!locationPattern.endsWith(".json")) {
+                // naive append may lead to redundant slashes, but the OS ignores those
+                locationPattern += "/*.json";
+            }
             try {
                 resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
             }
@@ -118,7 +123,7 @@ public class BootstrapConfig {
     public class RepositoriesPopulatedEventListener implements ApplicationListener<RepositoriesPopulatedEvent> {
         @Override
         public void onApplicationEvent(@NotNull RepositoriesPopulatedEvent event) {
-            log.info("Repositories populated");
+            log.info("Repository populator finished.");
             // Create fixture history records for all resources that have been applied.
             // Note: This assumes that all items in the resources list have been *successfully* applied. However, I'm
             // not sure if this can be guaranteed. If it does turn out to be a problem, we could try e.g. extending the
