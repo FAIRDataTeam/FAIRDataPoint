@@ -1,0 +1,18 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.apikey.ApiKey",
+    "uuid": "a1c00673-24c5-4e0a-bdbe-22e961ee7548",
+    "token": "a274793046e34a219fd0ea6362fcca61a001500b71724f4c973a017031653c20",
+    "userAccount": {
+      "uuid": "7e64818d-6276-46fb-8bb1-732e6e09f7e9"
+    }
+  },
+  {
+    "_class": "org.fairdatapoint.entity.apikey.ApiKey",
+    "uuid": "62657760-21fe-488c-a0ea-f612a70493da",
+    "token": "dd5dc3b53b6145cfa9f6c58b72ebad21cd2f860ace62451ba4e3c74a0e63540a",
+    "userAccount": {
+      "uuid": "b5b92c69-5ed9-4054-954d-0121c29b6800"
+    }
+  }
+]
