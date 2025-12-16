@@ -22,29 +22,35 @@
  */
 package org.fairdatapoint.database.db.repository.bootstrap;
 
-import jakarta.transaction.Transactional;
-import org.fairdatapoint.BaseIntegrationTest;
+import jakarta.persistence.EntityManagerFactory;
 import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
 import org.fairdatapoint.entity.bootstrap.FixtureHistory;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.TestPropertySource;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DataJpaTest
+public class FixtureHistoryRepositoryTests {
+    final String filename = "0001-whatever.json";
 
-@AutoConfigureTestEntityManager
-@Transactional
-@TestPropertySource(properties = "bootstrap.enabled=false")
-public class FixtureHistoryRepositoryTests extends BaseIntegrationTest {
     @Autowired
     FixtureHistoryRepository repository;
 
-    final String filename = "0001-whatever.json";
+    @Autowired
+    EntityManagerFactory entityManagerFactory;
+
+    @BeforeEach
+    public void removeAllEntities() {
+        // remove all data without dropping entire tables
+        // based on https://vladmihalcea.com/clean-up-test-data-spring/
+        entityManagerFactory.unwrap(SessionFactoryImplementor.class).getSchemaManager().truncateMappedObjects();
+    }
 
     @Test
     public void testSave() {
