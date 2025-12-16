@@ -22,6 +22,7 @@
  */
 package org.fairdatapoint.database.rdf.migration.development.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
 import org.fairdatapoint.database.common.migration.Migration;
 import org.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
@@ -49,6 +50,7 @@ import org.springframework.stereotype.Service;
 import static org.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 import static org.fairdatapoint.util.ValueFactoryHelper.i;
 
+@Slf4j
 @Service
 public class RdfMetadataMigration implements Migration {
 
@@ -104,8 +106,8 @@ public class RdfMetadataMigration implements Migration {
             // Load metadata fixtures
             importDefaultFixtures(persistentUrl);
         }
-        catch (MetadataServiceException exception) {
-            exception.printStackTrace();
+        catch (Exception exception) {
+            log.warn("Failed to run RDF development migration:", exception);
         }
     }
 
