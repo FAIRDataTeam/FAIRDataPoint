@@ -20,6 +20,9 @@ spring:
     locations: classpath:db/migration
     fail-on-missing-locations: true
     clean-disabled: false
+  test:
+    database:
+      replace: none
 
 ping:
   enabled: false

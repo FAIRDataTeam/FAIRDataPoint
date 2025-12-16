@@ -42,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @ActiveProfiles(Profiles.TESTING)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest
 public class MetadataSchemaServiceTests {
     @Autowired
