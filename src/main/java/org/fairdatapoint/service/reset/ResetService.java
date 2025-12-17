@@ -24,7 +24,6 @@ package org.fairdatapoint.service.reset;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.api.dto.reset.ResetDTO;
-import org.fairdatapoint.config.BootstrapConfig;
 import org.fairdatapoint.database.db.repository.*;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatapoint.service.bootstrap.BootstrapService;
@@ -41,9 +40,6 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
-import org.springframework.data.repository.support.Repositories;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
@@ -77,16 +73,7 @@ public class ResetService {
     private Repository draftsRepository;
 
     @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private BootstrapConfig bootstrapConfig;
-
-    @Autowired
     private BootstrapService bootstrapService;
-
-    @Autowired
-    private ResourceReaderRepositoryPopulator populator;
 
     @Autowired
     private ApiKeyRepository apiKeyRepository;
@@ -187,11 +174,9 @@ public class ResetService {
     }
 
     protected void restoreDefaultFixtures() {
-        // TODO: move to BootstrapService class?
         log.debug("Restoring default fixtures");
-        // getNewResources() checks the updated fixture history
-        populator.setResources(bootstrapConfig.getNewResources());
-        populator.populate(new Repositories(applicationContext));
+        // loadFixtures() checks the updated fixture history
+        bootstrapService.loadFixtures();
     }
 
     private void restoreDefaultMetadata() {

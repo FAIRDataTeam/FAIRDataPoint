@@ -29,89 +29,52 @@ import org.fairdatapoint.service.bootstrap.BootstrapService;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 import org.springframework.data.repository.init.RepositoriesPopulatedEvent;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 /**
  * The {@code BootstrapConfig} class configures a repository populator that loads initial data into the relational
  * database, based on JSON fixture files.
+ * The fixture filenames must match the regular expression pattern specified in {@code BootstrapService},
+ * which can be described as {@code <zero-padded-number>_<entity-package-name>_<description>.json}.
  * The default fixture files are located in the {@code <project-root>/fixtures} directory.
- * Additional fixture directories can also be specified, using the {@code dbFixturesDirs} property.
+ * Additional fixture directories can also be specified, using the {@code bootstrap.locations} property.
  * Fixture files are collected from all specified directories and are applied in lexicographic order.
- * A FixtureHistory repository keeps track of fixture files that have been applied, so they are only applied once.
+ * A fixture history repository keeps track of fixture files that have been applied, so they are only applied once.
  * To add custom fixtures and/or override any of the default fixtures in a docker compose setup, we can bind-mount
  * individual fixture files or entire directories.
- * For example: {@code ./my-fixtures/0100_user-accounts.json:/fdp/fixtures/0100_user-accounts.json:ro}
+ * For example: {@code ./my-fixtures/0100_user_user-accounts.json:/fdp/fixtures/0100_user_user-accounts.json:ro}
  * Note that bind-mounting the entire directory, instead of individual files, would hide all default files.
  */
 @Configuration
 @Slf4j
 public class BootstrapConfig {
-    private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-    private final BootstrapProperties bootstrap;
+    private final BootstrapProperties bootstrapProperties;
     private final BootstrapService bootstrapService;
 
+    /**
+     * Constructor (autowired).
+     * @param bootstrapProperties Bootstrap properties.
+     * @param bootstrapService Bootstrap service.
+     */
     public BootstrapConfig(BootstrapProperties bootstrapProperties, BootstrapService bootstrapService) {
-        this.bootstrap = bootstrapProperties;
+        this.bootstrapProperties = bootstrapProperties;
         this.bootstrapService = bootstrapService;
     }
 
     /**
-     * Creates a sorted array of unique fixture resources, representing files in the specified fixtures directories.
-     * Checks the fixture history repository for files that have already been applied, and removes them from the array.
-     * @return sorted array of unique Resource objects
+     * Sets up a factory bean which creates a repository populator that takes care of loading initial data
+     * from JSON fixture files into the relational database.
+     * @return Repository populator factory bean.
      */
-    public Resource[] getNewResources() {
-        // TODO: move this into the BootstrapService class?
-        // use TreeSet with comparator for lexicographic order and uniqueness
-        final SortedSet<Resource> resources = new TreeSet<>(
-                Comparator.comparing(Resource::getFilename, Comparator.nullsLast(String::compareTo)));
-        // collect fixture resources from specified directories
-        log.info("Looking for db fixtures in the following locations: {}",
-                String.join(", ", this.bootstrap.getLocations()));
-        for (String location : this.bootstrap.getLocations()) {
-            // Only look for JSON files
-            String locationPattern = location;
-            if (!locationPattern.endsWith(".json")) {
-                // naive append may lead to redundant slashes, but the OS ignores those
-                locationPattern += "/*.json";
-            }
-            try {
-                resources.addAll(List.of(resourceResolver.getResources(locationPattern)));
-            }
-            catch (IOException exception) {
-                log.error("Failed to resolve fixture resources", exception);
-            }
-        }
-        // remove resources that have been applied already
-        final List<String> appliedFixtures = bootstrapService.getAppliedFixtures();
-        final List<Resource> resourcesToSkip = resources.stream()
-                .filter(resource -> appliedFixtures.contains(resource.getFilename()))
-                .toList();
-        resourcesToSkip.forEach(resources::remove);
-        // return the result
-        log.info("Found {} new db fixture files ({} have been applied already)",
-                resources.size(), resourcesToSkip.size());
-        return resources.toArray(new Resource[0]);
-    }
-
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulatorFactoryBean() {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        if (this.bootstrap.isEnabled()) {
+        if (bootstrapProperties.isEnabled()) {
             log.info("Bootstrap repository populator enabled");
             // add resources to factory
-            factory.setResources(getNewResources());
+            factory.setResources(bootstrapService.getNewResources());
         }
         else {
             log.info("Bootstrap repository populator disabled");
@@ -119,18 +82,15 @@ public class BootstrapConfig {
         return factory;
     }
 
+    /**
+     * Updates the fixture history after the repository populator has finished.
+     */
     @Component
     public class RepositoriesPopulatedEventListener implements ApplicationListener<RepositoriesPopulatedEvent> {
         @Override
         public void onApplicationEvent(@NotNull RepositoriesPopulatedEvent event) {
             log.info("Repository populator finished.");
-            // Create fixture history records for all resources that have been applied.
-            // Note: This assumes that all items in the resources list have been *successfully* applied. However, I'm
-            // not sure if this can be guaranteed. If it does turn out to be a problem, we could try e.g. extending the
-            // ResourceReaderRepositoryPopulator.persist() method, so the history record is added there.
-            for (final Resource resource : getNewResources()) {
-                bootstrapService.addToHistory(resource.getFilename());
-            }
+            bootstrapService.updateHistory();
         }
     }
 }
