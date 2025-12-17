@@ -24,11 +24,12 @@ package org.fairdatapoint.config;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatapoint.config.properties.BootstrapProperties;
+import org.fairdatapoint.Profiles;
 import org.fairdatapoint.service.bootstrap.BootstrapService;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 import org.springframework.data.repository.init.RepositoriesPopulatedEvent;
 import org.springframework.stereotype.Component;
@@ -46,20 +47,19 @@ import org.springframework.stereotype.Component;
  * individual fixture files or entire directories.
  * For example: {@code ./my-fixtures/0100_user_user-accounts.json:/fdp/fixtures/0100_user_user-accounts.json:ro}
  * Note that bind-mounting the entire directory, instead of individual files, would hide all default files.
+ * If necessary, bootstrapping can be disabled by activating the {@code "bootstrap-disabled"} profile.
  */
 @Configuration
+@Profile(Profiles.NOT_BOOTSTRAP_DISABLED)
 @Slf4j
 public class BootstrapConfig {
-    private final BootstrapProperties bootstrapProperties;
     private final BootstrapService bootstrapService;
 
     /**
      * Constructor (autowired).
-     * @param bootstrapProperties Bootstrap properties.
      * @param bootstrapService Bootstrap service.
      */
-    public BootstrapConfig(BootstrapProperties bootstrapProperties, BootstrapService bootstrapService) {
-        this.bootstrapProperties = bootstrapProperties;
+    public BootstrapConfig(BootstrapService bootstrapService) {
         this.bootstrapService = bootstrapService;
     }
 
@@ -71,14 +71,8 @@ public class BootstrapConfig {
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulatorFactoryBean() {
         final Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        if (bootstrapProperties.isEnabled()) {
-            log.info("Bootstrap repository populator enabled");
-            // add resources to factory
-            factory.setResources(bootstrapService.getNewResources());
-        }
-        else {
-            log.info("Bootstrap repository populator disabled");
-        }
+        // add resources to the populator factory
+        factory.setResources(bootstrapService.getNewResources());
         return factory;
     }
 

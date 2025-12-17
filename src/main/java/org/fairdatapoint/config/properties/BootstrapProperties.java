@@ -36,8 +36,6 @@ import java.util.List;
 @Setter
 @ConfigurationProperties(prefix = "bootstrap")
 public class BootstrapProperties {
-    // boolean defaults to false
-    private boolean enabled;
     // locations to search for fixtures, for example, file:fixtures, relative to project root,
     // or classpath:fixtures (see PathMatchingResourcePatternResolver docs for valid patterns)
     private List<String> locations;
