@@ -40,6 +40,7 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
@@ -74,6 +75,9 @@ public class ResetService {
 
     @Autowired
     private BootstrapService bootstrapService;
+
+    @Autowired
+    private ResourceReaderRepositoryPopulator populator;
 
     @Autowired
     private ApiKeyRepository apiKeyRepository;
@@ -116,10 +120,12 @@ public class ResetService {
         }
         if (reqDto.isUsers() || reqDto.isMetadata()) {
             clearMemberships();
+            bootstrapService.repopulate(new String[]{"membership"}, populator);
         }
         if (reqDto.isUsers()) {
             clearApiKeys();
             clearUsers();
+            bootstrapService.repopulate(new String[]{"apikey", "user", "search"}, populator);
         }
         if (reqDto.isMetadata()) {
             clearMetadata();
@@ -127,9 +133,8 @@ public class ResetService {
         }
         if (reqDto.isResourceDefinitions()) {
             clearMetadataSchemasAndResourceDefinitions();
+            bootstrapService.repopulate(new String[]{"schema", "resource"}, populator);
         }
-        // restoreDefaultFixtures is safe to call even if there are no changes
-        restoreDefaultFixtures();
         resourceDefinitionCache.computeCache();
         resourceDefinitionTargetClassesCache.computeCache();
     }
@@ -137,7 +142,6 @@ public class ResetService {
     private void clearApiKeys() {
         log.debug("Clearing API keys");
         apiKeyRepository.deleteAll();
-        bootstrapService.removeFromHistory(new String[]{"apikey"});
     }
 
     private void clearMemberships() {
@@ -145,7 +149,6 @@ public class ResetService {
         membershipPermissionRepository.deleteAll();
         log.debug("Clearing memberships");
         membershipRepository.deleteAll();
-        bootstrapService.removeFromHistory(new String[]{"membership"});
         log.debug("Clearing ACL cache");
         aclCache.clearCache();
     }
@@ -153,7 +156,6 @@ public class ResetService {
     private void clearUsers() {
         log.debug("Clearing users");
         userRepository.deleteAll();
-        bootstrapService.removeFromHistory(new String[]{"user", "search"});
     }
 
     private void clearMetadataSchemasAndResourceDefinitions() {
@@ -161,7 +163,6 @@ public class ResetService {
         // note these rely on cascade delete
         metadataSchemaRepository.deleteAll();
         resourceDefinitionRepository.deleteAll();
-        bootstrapService.removeFromHistory(new String[]{"schema", "resource"});
     }
 
     private void clearMetadata() throws MetadataServiceException {
@@ -171,12 +172,6 @@ public class ResetService {
         if (resourceDefinition.isPresent()) {
             genericMetadataService.delete(i(persistentUrl), resourceDefinition.get());
         }
-    }
-
-    protected void restoreDefaultFixtures() {
-        log.debug("Restoring default fixtures");
-        // loadFixtures() checks the updated fixture history
-        bootstrapService.loadFixtures();
     }
 
     private void restoreDefaultMetadata() {

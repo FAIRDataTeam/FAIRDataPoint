@@ -51,8 +51,6 @@ public class BootstrapService {
 
     private final FixtureHistoryRepository fixtureHistoryRepository;
 
-    private final ResourceReaderRepositoryPopulator populator;
-
     private final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
     private final String packageNameFormat = "_%s_";
@@ -64,18 +62,15 @@ public class BootstrapService {
      * @param applicationContext Spring application context
      * @param bootstrapProperties Bootstrap properties
      * @param fixtureHistoryRepository Fixture history repository
-     * @param populator Repository populator
      */
     public BootstrapService(
             ApplicationContext applicationContext,
             BootstrapProperties bootstrapProperties,
-            FixtureHistoryRepository fixtureHistoryRepository,
-            ResourceReaderRepositoryPopulator populator
+            FixtureHistoryRepository fixtureHistoryRepository
     ) {
         this.applicationContext = applicationContext;
         this.bootstrapProperties = bootstrapProperties;
         this.fixtureHistoryRepository = fixtureHistoryRepository;
-        this.populator = populator;
     }
 
     /**
@@ -185,10 +180,13 @@ public class BootstrapService {
     }
 
     /**
-     * Loads data from JSON fixture files into the relational database.
-     * Only new fixture files are loaded, i.e., files that have not been applied before.
+     * Reloads data from JSON fixture files into the relational database.
+     * This works by clearing history records for the specified packages and then re-running the repository populator.
+     * Note that it may be necessary to delete existing entities from the relevant repositories first.
+     * @param packageNames Array of names of entity packages to be repopulated
      */
-    public void loadFixtures() {
+    public void repopulate(String[] packageNames, ResourceReaderRepositoryPopulator populator) {
+        removeFromHistory(packageNames);
         populator.setResources(getNewResources());
         populator.populate(new Repositories(applicationContext));
     }
