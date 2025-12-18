@@ -26,18 +26,18 @@ import org.fairdatapoint.BaseIntegrationTest;
 import org.fairdatapoint.api.dto.reset.ResetDTO;
 import org.fairdatapoint.database.db.repository.*;
 import org.fairdatapoint.database.db.repository.base.BaseRepository;
+import org.fairdatapoint.entity.base.BaseEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResetServiceTest extends BaseIntegrationTest {
-    @Autowired
-    private ResetService resetService;
 
     @Autowired
     private ApiKeyRepository apiKeyRepository;
@@ -52,6 +52,9 @@ public class ResetServiceTest extends BaseIntegrationTest {
     private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
+    private ResetService resetService;
+
+    @Autowired
     private ResourceDefinitionChildRepository resourceDefinitionChildRepository;
 
     @Autowired
@@ -60,10 +63,10 @@ public class ResetServiceTest extends BaseIntegrationTest {
     @Autowired
     private UserAccountRepository userAccountRepository;
 
-    @WithMockUser(roles = {"ADMIN"})
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     public void testResetToFactoryDefaultsAll() throws Exception {
-        // given: some of the repositories have been modified (emptied in this case)
+        // given: repositories have been populated *before* reference time
         final List<BaseRepository<?>> repositories = List.of(
                 apiKeyRepository,
                 membershipPermissionRepository,
@@ -73,11 +76,32 @@ public class ResetServiceTest extends BaseIntegrationTest {
                 resourceDefinitionRepository,
                 userAccountRepository
         );
-        repositories.forEach(BaseRepository::deleteAll);
-        repositories.forEach(repository -> assertEquals(0, repository.count()));
-        // test: default repository content is restored
+        Instant referenceTime = Instant.now();
+        checkEntityCreationTimes(repositories, referenceTime, true);
+        // when: everything is reset
         ResetDTO resetAll = new ResetDTO(true, true, true, true);
         resetService.resetToFactoryDefaults(resetAll);
-        repositories.forEach(repository -> assertTrue(repository.count() > 0));
+        // then: repositories have been repopulated *after* reference time (actually "not before")
+        checkEntityCreationTimes(repositories, referenceTime, false);
+    }
+
+    private void checkEntityCreationTimes(
+            List<BaseRepository<?>> repositories,
+            Instant referenceTime,
+            boolean before
+    ) {
+        repositories.forEach(repository -> {
+            // repository should be non-empty
+            assertTrue(repository.count() > 0);
+            // all entities should have creation time before (or not before) reference time
+            for (Object entity : repository.findAll()) {
+                if (entity instanceof BaseEntity) {
+                    assertEquals(before, ((BaseEntity) entity).getCreatedAt().isBefore(referenceTime));
+                }
+                else {
+                    throw new RuntimeException("Unexpected entity type: " + entity.getClass());
+                }
+            }
+        });
     }
 }
