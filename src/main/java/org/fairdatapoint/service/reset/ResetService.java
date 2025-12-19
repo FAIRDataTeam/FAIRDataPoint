@@ -159,9 +159,10 @@ public class ResetService {
     }
 
     private void clearMetadataSchemasAndResourceDefinitions() {
-        log.debug("Clearing metadata schemas and resource definitions");
         // note these rely on cascade delete
+        log.debug("Clearing metadata schemas");
         metadataSchemaRepository.deleteAll();
+        log.debug("Clearing resource definitions");
         resourceDefinitionRepository.deleteAll();
     }
 
