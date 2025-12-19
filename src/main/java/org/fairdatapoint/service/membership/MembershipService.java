@@ -56,35 +56,39 @@ public class MembershipService {
         final UUID uuid = resourceDefinition.getUuid();
 
         // Add to owner
-        final Membership owner =
-                membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
-        addEntityIfMissing(owner, uuid.toString());
-        membershipRepository.save(owner);
+        membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID)
+                .ifPresent(owner -> {
+                    addEntityIfMissing(owner, uuid.toString());
+                    membershipRepository.save(owner);
+                });
 
         // Add to data provider
         if (resourceDefinition.isCatalog()) {
-            final Membership dataProvider =
-                    membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
-            addEntityIfMissing(dataProvider, uuid.toString());
-            membershipRepository.save(dataProvider);
+            membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID)
+                    .ifPresent(dataProvider -> {
+                        addEntityIfMissing(dataProvider, uuid.toString());
+                        membershipRepository.save(dataProvider);
+                    });
         }
     }
 
     public void removeFromMembership(ResourceDefinition resourceDefinition) {
         final UUID uuid = resourceDefinition.getUuid();
 
-        // Add to owner
-        final Membership owner =
-                membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
-        removeEntityIfPresent(owner, uuid.toString());
-        membershipRepository.save(owner);
+        // Remove from owner
+        membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID)
+                .ifPresent(owner -> {
+                    removeEntityIfPresent(owner, uuid.toString());
+                    membershipRepository.save(owner);
+                });
 
-        // Add to data provider
+        // Remove from data provider
         if (resourceDefinition.isCatalog()) {
-            final Membership dataProvider =
-                    membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
-            removeEntityIfPresent(dataProvider, uuid.toString());
-            membershipRepository.save(dataProvider);
+            membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID)
+                    .ifPresent(dataProvider -> {
+                        removeEntityIfPresent(dataProvider, uuid.toString());
+                        membershipRepository.save(dataProvider);
+                    });
         }
     }
 
