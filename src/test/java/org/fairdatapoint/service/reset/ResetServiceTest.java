@@ -30,6 +30,7 @@ import org.fairdatapoint.entity.base.BaseEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -64,6 +65,7 @@ public class ResetServiceTest extends BaseIntegrationTest {
     private UserAccountRepository userAccountRepository;
 
     @Test
+    @Transactional
     @WithMockUser(roles = {"ADMIN"})
     public void testResetToFactoryDefaultsAll() throws Exception {
         // given: repositories have been populated *before* reference time
