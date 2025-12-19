@@ -166,14 +166,15 @@ public class BootstrapService {
     }
 
     /**
-     * Creates fixture history records for all new resources.
-     * This assumes that all new resources have been applied successfully.
+     * Creates fixture history records for all specified resources.
+     * This assumes that all specified resources have been applied successfully.
+     * @param resources Array of {@code Resource} objects
      */
-    public void updateHistory() {
-        // Note that it may not be guaranteed that all new resources have been applied successfully at this point.
+    public void updateHistory(Resource[] resources) {
+        // Note that it may not be guaranteed that all specified resources have been applied successfully at this point.
         // If this turns out to be a problem, we could try e.g. adding the history record by extending the
         // ResourceReaderRepositoryPopulator.persist() method.
-        for (final Resource resource : getNewResources()) {
+        for (final Resource resource : resources) {
             addToHistory(resource.getFilename());
             log.debug("Fixture history updated: {}", resource.getFilename());
         }

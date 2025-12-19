@@ -29,9 +29,14 @@ import org.fairdatapoint.service.bootstrap.BootstrapService;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 import org.springframework.data.repository.init.RepositoriesPopulatedEvent;
+import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+import java.util.Collection;
 
 /**
  * The {@code BootstrapConfig} class configures a repository populator that loads initial data into the relational
@@ -90,7 +95,21 @@ public class BootstrapConfig {
         @Override
         public void onApplicationEvent(@NotNull RepositoriesPopulatedEvent event) {
             log.info("Repository populator finished.");
-            bootstrapService.updateHistory();
+            if (event.getSource() instanceof ResourceReaderRepositoryPopulator populator) {
+                try {
+                    // use reflection to make the private resources field accessible
+                    final Field resourcesField = populator.getClass().getDeclaredField("resources");
+                    resourcesField.setAccessible(true);
+                    // add the populator's resources to history
+                    if (resourcesField.get(populator) instanceof Collection<?> collection) {
+                        log.info("Updating fixture history with {} resources", collection.size());
+                        bootstrapService.updateHistory(collection.toArray(new Resource[0]));
+                    }
+                }
+                catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException exception) {
+                    log.error("Failed to access resources field of ResourceReaderRepositoryPopulator", exception);
+                }
+            }
         }
     }
 }
