@@ -34,6 +34,4 @@ public class Profiles {
 
     public static final String NON_PRODUCTION = "!production";
 
-    public static final String NOT_BOOTSTRAP_DISABLED = "!bootstrap-disabled";
-
 }

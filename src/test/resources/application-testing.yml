@@ -25,6 +25,7 @@ ping:
   enabled: false
 
 bootstrap:
+  enabled: true
   locations:
     - file:fixtures
     - classpath:test-fixtures
