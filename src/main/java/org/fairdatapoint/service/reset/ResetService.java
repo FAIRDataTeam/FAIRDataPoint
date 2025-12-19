@@ -107,19 +107,7 @@ public class ResetService {
     private MetadataSchemaRepository metadataSchemaRepository;
 
     @Autowired
-    private MetadataSchemaUsageRepository metadataSchemaUsageRepository;
-
-    @Autowired
     private ResourceDefinitionRepository resourceDefinitionRepository;
-
-    @Autowired
-    private ResourceDefinitionChildRepository resourceDefinitionChildRepository;
-
-    @Autowired
-    private ResourceDefinitionChildMetadataRepository resourceDefinitionChildMetadataRepository;
-
-    @Autowired
-    private ResourceDefinitionLinkRepository resourceDefinitionLinkRepository;
 
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
@@ -183,11 +171,8 @@ public class ResetService {
 
     private void clearMetadataSchemasAndResourceDefinitions() {
         log.debug("Clearing metadata schemas and resource definitions");
-        metadataSchemaUsageRepository.deleteAll();
+        // note these rely on cascade delete
         metadataSchemaRepository.deleteAll();
-        resourceDefinitionChildMetadataRepository.deleteAll();
-        resourceDefinitionChildRepository.deleteAll();
-        resourceDefinitionLinkRepository.deleteAll();
         resourceDefinitionRepository.deleteAll();
         bootstrapService.removeFromHistory(new String[]{"schema", "resource"});
     }
