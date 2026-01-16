@@ -57,9 +57,9 @@
         
         <!-- Core -->
         <springdoc.version>2.8.14</springdoc.version>
-        <rdf4j.version>5.2.0</rdf4j.version>
+        <rdf4j.version>5.2.2</rdf4j.version>
         <jwt.version>0.13.0</jwt.version>
-        <hypersistence.version>3.12.0</hypersistence.version>
+        <hypersistence.version>3.14.1</hypersistence.version>
 
         <!-- Plugins -->
         <plugin.license.version>5.0.0</plugin.license.version>
