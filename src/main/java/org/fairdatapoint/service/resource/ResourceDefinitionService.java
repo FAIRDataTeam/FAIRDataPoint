@@ -175,31 +175,19 @@ public class ResourceDefinitionService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteByUuid(UUID uuid) {
-        // 1. Get resource definition
-        final Optional<ResourceDefinition> oRd = resourceDefinitionRepository.findByUuid(uuid);
-        if (oRd.isEmpty()) {
-            return false;
-        }
-        final ResourceDefinition rd = oRd.get();
-
-        // 2. Delete from parent resource definitions
-        rd.getParents().forEach(this::deleteChild);
-
-        // 3. Delete resource definition (incl. children and links)
-        deleteDependents(rd);
-        resourceDefinitionRepository.delete(rd);
-
-        // 4. Delete entity from membership
-        membershipService.removeFromMembership(rd);
-        entityManager.flush();
-
-        // 5. Recompute cache
-        resourceDefinitionCache.computeCache();
-        targetClassesCache.computeCache();
-
-        // 6. Delete from OpenAPI docs
-        openApiService.removeGenericPaths(rd);
-        return true;
+        final Optional<ResourceDefinition> optionalResourceDefinition = resourceDefinitionRepository.findByUuid(uuid);
+        optionalResourceDefinition.ifPresent(
+            resourceDefinition -> {
+                // Delete resource definition entry from OpenAPI docs
+                openApiService.removeGenericPaths(resourceDefinition);
+                // Delete resource definition (and children) from database
+                resourceDefinitionRepository.delete(resourceDefinition);
+                // Recompute cache
+                resourceDefinitionCache.computeCache();
+                targetClassesCache.computeCache();
+            }
+        );
+        return optionalResourceDefinition.isPresent();
     }
 
     @Transactional
@@ -246,18 +234,11 @@ public class ResourceDefinitionService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     protected void deleteDependents(ResourceDefinition resourceDefinition) {
-        resourceDefinition.getChildren().forEach(this::deleteChild);
+        childRepository.deleteAll(resourceDefinition.getChildren());
         linkRepository.deleteAll(resourceDefinition.getExternalLinks());
         usageRepository.deleteAll(resourceDefinition.getMetadataSchemaUsages());
         entityManager.flush();
         entityManager.refresh(resourceDefinition);
-    }
-
-    @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
-    protected void deleteChild(ResourceDefinitionChild child) {
-        childMetadataRepository.deleteAll(child.getMetadata());
-        childRepository.delete(child);
     }
 
     public List<String> getTargetClassUris(ResourceDefinition resourceDefinition) {
