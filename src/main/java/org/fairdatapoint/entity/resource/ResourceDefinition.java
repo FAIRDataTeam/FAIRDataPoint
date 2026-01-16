@@ -62,7 +62,7 @@ public class ResourceDefinition extends BaseEntity {
     private List<ResourceDefinitionLink> externalLinks;
 
     @OrderBy("orderPriority")
-    @OneToMany(mappedBy = "resourceDefinition", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resourceDefinition", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MetadataSchemaUsage> metadataSchemaUsages;
 
     public boolean isRoot() {
