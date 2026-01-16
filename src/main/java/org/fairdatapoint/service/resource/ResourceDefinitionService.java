@@ -237,8 +237,6 @@ public class ResourceDefinitionService {
         childRepository.deleteAll(resourceDefinition.getChildren());
         linkRepository.deleteAll(resourceDefinition.getExternalLinks());
         usageRepository.deleteAll(resourceDefinition.getMetadataSchemaUsages());
-        entityManager.flush();
-        entityManager.refresh(resourceDefinition);
     }
 
     public List<String> getTargetClassUris(ResourceDefinition resourceDefinition) {
