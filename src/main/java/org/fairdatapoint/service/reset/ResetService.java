@@ -40,7 +40,9 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,9 @@ import static org.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 @Service
 public class ResetService {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -120,12 +125,12 @@ public class ResetService {
         }
         if (reqDto.isUsers() || reqDto.isMetadata()) {
             clearMemberships();
-            bootstrapService.repopulate(new String[]{"membership"}, populator);
+            repopulate(new String[]{"membership"});
         }
         if (reqDto.isUsers()) {
             clearApiKeys();
             clearUsers();
-            bootstrapService.repopulate(new String[]{"apikey", "user", "search"}, populator);
+            repopulate(new String[]{"apikey", "user", "search"});
         }
         if (reqDto.isMetadata()) {
             clearMetadata();
@@ -133,7 +138,7 @@ public class ResetService {
         }
         if (reqDto.isResourceDefinitions()) {
             clearMetadataSchemasAndResourceDefinitions();
-            bootstrapService.repopulate(new String[]{"schema", "resource"}, populator);
+            repopulate(new String[]{"schema", "resource"});
         }
         resourceDefinitionCache.computeCache();
         resourceDefinitionTargetClassesCache.computeCache();
@@ -189,5 +194,17 @@ public class ResetService {
         catch (RepositoryException exception) {
             log.error(exception.getMessage(), exception);
         }
+    }
+
+    /**
+     * Reloads data from JSON fixture files into the relational database.
+     * This works by clearing history records for the specified packages and then re-running the repository populator.
+     * Note that it may be necessary to delete existing entities from the relevant repositories first.
+     * @param packageNames Array of names of entity packages to be repopulated
+     */
+    private void repopulate(String[] packageNames) {
+        bootstrapService.removeFromHistory(packageNames);
+        populator.setResources(bootstrapService.getNewResources());
+        populator.populate(new Repositories(applicationContext));
     }
 }

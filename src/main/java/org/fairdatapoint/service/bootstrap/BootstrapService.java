@@ -27,12 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.config.properties.BootstrapProperties;
 import org.fairdatapoint.database.db.repository.FixtureHistoryRepository;
 import org.fairdatapoint.entity.bootstrap.FixtureHistory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
-import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -44,8 +41,6 @@ import java.util.TreeSet;
 @Slf4j
 @Service
 public class BootstrapService {
-
-    private final ApplicationContext applicationContext;
 
     private final BootstrapProperties bootstrapProperties;
 
@@ -59,16 +54,13 @@ public class BootstrapService {
 
     /**
      * Constructor (autowired).
-     * @param applicationContext Spring application context
      * @param bootstrapProperties Bootstrap properties
      * @param fixtureHistoryRepository Fixture history repository
      */
     public BootstrapService(
-            ApplicationContext applicationContext,
             BootstrapProperties bootstrapProperties,
             FixtureHistoryRepository fixtureHistoryRepository
     ) {
-        this.applicationContext = applicationContext;
         this.bootstrapProperties = bootstrapProperties;
         this.fixtureHistoryRepository = fixtureHistoryRepository;
     }
@@ -178,17 +170,5 @@ public class BootstrapService {
             addToHistory(resource.getFilename());
             log.debug("Fixture history updated: {}", resource.getFilename());
         }
-    }
-
-    /**
-     * Reloads data from JSON fixture files into the relational database.
-     * This works by clearing history records for the specified packages and then re-running the repository populator.
-     * Note that it may be necessary to delete existing entities from the relevant repositories first.
-     * @param packageNames Array of names of entity packages to be repopulated
-     */
-    public void repopulate(String[] packageNames, ResourceReaderRepositoryPopulator populator) {
-        removeFromHistory(packageNames);
-        populator.setResources(getNewResources());
-        populator.populate(new Repositories(applicationContext));
     }
 }
