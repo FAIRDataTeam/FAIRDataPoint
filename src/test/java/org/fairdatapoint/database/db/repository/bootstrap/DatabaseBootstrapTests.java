@@ -22,9 +22,8 @@
  */
 package org.fairdatapoint.database.db.repository.bootstrap;
 
-
-import jakarta.transaction.Transactional;
-import org.fairdatapoint.BaseIntegrationTest;
+import org.fairdatapoint.config.BootstrapConfig;
+import org.fairdatapoint.config.properties.BootstrapProperties;
 import org.fairdatapoint.database.db.repository.ApiKeyRepository;
 import org.fairdatapoint.database.db.repository.SearchSavedQueryRepository;
 import org.fairdatapoint.database.db.repository.UserAccountRepository;
@@ -34,7 +33,8 @@ import org.fairdatapoint.entity.user.UserAccount;
 import org.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -42,9 +42,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@AutoConfigureTestEntityManager
-@Transactional
-public class DatabaseBootstrapTests extends BaseIntegrationTest {
+@DataJpaTest
+// populate the test db by importing the bootstrap configuration classes
+@Import({BootstrapConfig.class, BootstrapProperties.class})
+public class DatabaseBootstrapTests {
     @Autowired
     private UserAccountRepository userAccountRepository;
 

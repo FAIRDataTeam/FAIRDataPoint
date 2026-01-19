@@ -42,8 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @ActiveProfiles(Profiles.TESTING)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest
 public class MetadataSchemaServiceTests {
     @Autowired
     private MetadataSchemaService service;

@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 
 @TestConfiguration
 public class MetadataTestConfig {
-
+    // TODO: Looks like we can remove this class altogether.
     private final ValueFactory VF = SimpleValueFactory.getInstance();
 
     @Bean(name = "language")
