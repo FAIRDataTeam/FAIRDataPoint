@@ -24,6 +24,7 @@ package org.fairdatapoint.acceptance.resource;
 
 import org.fairdatapoint.WebIntegrationTest;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import org.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import org.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatapoint.service.resource.ResourceDefinitionMapper;
@@ -75,11 +76,11 @@ public class List_POST extends WebIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
-        ParameterizedTypeReference<ResourceDefinition> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<ResourceDefinitionDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<ResourceDefinition> result = client.exchange(request, responseType);
+        ResponseEntity<ResourceDefinitionDTO> result = client.exchange(request, responseType);
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
