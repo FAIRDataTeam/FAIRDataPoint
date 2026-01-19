@@ -28,6 +28,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.base.BaseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "ResourceDefinition")
@@ -51,19 +52,19 @@ public class ResourceDefinition extends BaseEntity {
 
     @OrderBy("orderPriority")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "source", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ResourceDefinitionChild> children;
+    private List<ResourceDefinitionChild> children = new ArrayList<>();
 
     @OrderBy("orderPriority")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "target", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ResourceDefinitionChild> parents;
+    private List<ResourceDefinitionChild> parents = new ArrayList<>();
 
     @OrderBy("orderPriority")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "resourceDefinition", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ResourceDefinitionLink> externalLinks;
+    private List<ResourceDefinitionLink> externalLinks = new ArrayList<>();
 
     @OrderBy("orderPriority")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "resourceDefinition", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MetadataSchemaUsage> metadataSchemaUsages;
+    private List<MetadataSchemaUsage> metadataSchemaUsages = new ArrayList<>();
 
     public boolean isRoot() {
         return urlPrefix.isEmpty();
