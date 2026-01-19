@@ -24,6 +24,7 @@ package org.fairdatapoint.acceptance.resource;
 
 import org.fairdatapoint.WebIntegrationTest;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import org.fairdatapoint.api.dto.resource.ResourceDefinitionChildDTO;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import org.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
@@ -36,6 +37,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -71,6 +73,11 @@ public class Detail_PUT extends WebIntegrationTest {
         // GIVEN: Prepare data
         ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
         ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
+        ResourceDefinitionChildDTO childDto = new ResourceDefinitionChildDTO();
+        // add children to reproduce #752
+        childDto.setResourceDefinitionUuid(KnownUUIDs.RD_DATASET_UUID);
+        childDto.setRelationUri("http://www.w3.org/ns/dcat#dataset");
+        reqDto.setChildren(List.of(childDto));
 
         // AND: Prepare request
         RequestEntity<ResourceDefinitionChangeDTO> request = RequestEntity
