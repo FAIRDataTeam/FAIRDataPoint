@@ -137,8 +137,10 @@ public class ResourceDefinitionService {
         resourceDefinitionValidator.validate(null, reqDto);
 
         final ResourceDefinition definition = resourceDefinitionRepository.saveAndFlush(mapper.fromChangeDTO(reqDto));
-        entityManager.refresh(definition);
         createDependents(definition, reqDto);
+        // TODO: define helper methods on the entities to handle synchronization of bidirectional associations,
+        //  instead of manual refresh
+        entityManager.refresh(definition);
 
         resourceDefinitionCache.computeCache();
         targetClassesCache.computeCache();
