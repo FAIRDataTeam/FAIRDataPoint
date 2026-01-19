@@ -239,6 +239,9 @@ public class ResourceDefinitionService {
         childRepository.deleteAll(resourceDefinition.getChildren());
         linkRepository.deleteAll(resourceDefinition.getExternalLinks());
         usageRepository.deleteAll(resourceDefinition.getMetadataSchemaUsages());
+        entityManager.flush();
+        // todo: is the following refresh call redundant?
+        entityManager.refresh(resourceDefinition);
     }
 
     public List<String> getTargetClassUris(ResourceDefinition resourceDefinition) {
