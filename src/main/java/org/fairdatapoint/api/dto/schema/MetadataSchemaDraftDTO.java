@@ -38,7 +38,6 @@ import java.util.UUID;
 public class MetadataSchemaDraftDTO {
 
     @NotNull
-    @NotBlank
     private UUID uuid;
 
     @NotNull

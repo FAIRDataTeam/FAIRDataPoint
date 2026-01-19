@@ -40,7 +40,7 @@ import java.util.UUID;
 @Builder
 public class SearchSavedQueryDTO {
 
-    @NotBlank
+    @NotNull
     private UUID uuid;
 
     @NotBlank
