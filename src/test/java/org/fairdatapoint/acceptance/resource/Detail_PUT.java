@@ -71,13 +71,9 @@ public class Detail_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
+        // (use dataset because it has children, which reproduces #752)
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DATASET_UUID).get();
         ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
-        ResourceDefinitionChildDTO childDto = new ResourceDefinitionChildDTO();
-        // add children to reproduce #752
-        childDto.setResourceDefinitionUuid(KnownUUIDs.RD_DATASET_UUID);
-        childDto.setRelationUri("http://www.w3.org/ns/dcat#dataset");
-        reqDto.setChildren(List.of(childDto));
 
         // AND: Prepare request
         RequestEntity<ResourceDefinitionChangeDTO> request = RequestEntity
