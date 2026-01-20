@@ -24,6 +24,7 @@ package org.fairdatapoint.acceptance.resource;
 
 import org.fairdatapoint.WebIntegrationTest;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import org.fairdatapoint.api.dto.resource.ResourceDefinitionChildDTO;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import org.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
@@ -36,6 +37,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -69,7 +71,8 @@ public class Detail_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DISTRIBUTION_UUID).get();
+        // (use dataset because it has children, which reproduces #752)
+        ResourceDefinition resourceDefinition = resourceDefinitionRepository.findByUuid(KnownUUIDs.RD_DATASET_UUID).get();
         ResourceDefinitionChangeDTO reqDto = reqDto(resourceDefinition);
 
         // AND: Prepare request

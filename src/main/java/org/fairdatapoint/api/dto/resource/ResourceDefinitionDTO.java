@@ -37,7 +37,7 @@ import java.util.UUID;
 @Builder
 public class ResourceDefinitionDTO {
 
-    @NotBlank
+    @NotNull
     private UUID uuid;
 
     @NotBlank
