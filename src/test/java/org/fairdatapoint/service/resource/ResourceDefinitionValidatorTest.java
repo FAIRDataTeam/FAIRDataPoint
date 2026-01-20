@@ -246,13 +246,18 @@ public class ResourceDefinitionValidatorTest {
         ResourceDefinition rdFdp = newResourceDefinition(KnownUUIDs.RD_FDP_UUID, "FDP", "");
         ResourceDefinition rdCatalog = newResourceDefinition(KnownUUIDs.RD_CATALOG_UUID, "Catalog", "catalog");
         ResourceDefinition rdDataset = newResourceDefinition(KnownUUIDs.RD_DATASET_UUID, "Dataset", "dataset");
+        ResourceDefinition rdDistribution = newResourceDefinition(KnownUUIDs.RD_DISTRIBUTION_UUID, "Distribution", "distribution");
         ResourceDefinitionChild childFdpCatalog = newChild(KnownUUIDs.RD_CHILD_FDP_CATALOG_UUID, rdFdp, rdCatalog, "https://www.w3.org/ns/dcat#catalog");
         ResourceDefinitionChild childCatalogDataset = newChild(KnownUUIDs.RD_CHILD_CATALOG_DATASET_UUID, rdCatalog, rdDataset, "https://www.w3.org/ns/dcat#record");
+        ResourceDefinitionChild childDatasetDistribution = newChild(KnownUUIDs.RD_CHILD_DATASET_DISTRIBUTION_UUID, rdDataset, rdDistribution, "https://www.w3.org/ns/dcat#distribution");
         rdFdp.getChildren().add(childFdpCatalog);
         rdCatalog.getChildren().add(childCatalogDataset);
+        rdDataset.getChildren().add(childDatasetDistribution);
         rdCatalog.getParents().add(childFdpCatalog);
         rdDataset.getParents().add(childCatalogDataset);
+        rdDistribution.getParents().add(childDatasetDistribution);
 
+        // DTOs to validate
         ResourceDefinitionChangeDTO reqDto =
                 ResourceDefinitionChangeDTO.builder()
                         .name("Dataset")
@@ -261,7 +266,18 @@ public class ResourceDefinitionValidatorTest {
                         .externalLinks(List.of())
                         .metadataSchemaUuids(List.of())
                         .build();
-        ResourceDefinitionChildDTO childDatasetFdp = ResourceDefinitionChildDTO.builder()
+        ResourceDefinitionChildDTO validChildDTO = ResourceDefinitionChildDTO.builder()
+                .resourceDefinitionUuid(rdDistribution.getUuid())
+                .listView(
+                        ResourceDefinitionChildListViewDTO.builder()
+                                .title("")
+                                .metadata(List.of())
+                                .tagsUri("")
+                                .build()
+                )
+                .relationUri("http://www.w3.org/ns/dcat#distribution")
+                .build();
+        ResourceDefinitionChildDTO invalidChildDTO = ResourceDefinitionChildDTO.builder()
                 .resourceDefinitionUuid(rdFdp.getUuid())
                 .listView(
                         ResourceDefinitionChildListViewDTO.builder()
@@ -272,9 +288,10 @@ public class ResourceDefinitionValidatorTest {
                 )
                 .relationUri("http://www.w3.org/ns/dcat#record")
                 .build();
-        reqDto.setChildren(List.of(childDatasetFdp));
+        // add valid child without children before invalid child, to reproduce #831
+        reqDto.setChildren(List.of(validChildDTO, invalidChildDTO));
 
-        // AND: Prepare database
+        // AND: Mock database
         when(resourceDefinitionRepository.findByName(reqDto.getName()))
                 .thenReturn(Optional.empty());
         when(resourceDefinitionRepository.findByUrlPrefix(reqDto.getUrlPrefix()))
@@ -285,6 +302,8 @@ public class ResourceDefinitionValidatorTest {
                 .thenReturn(rdCatalog);
         when(resourceDefinitionCache.getByUuid(rdDataset.getUuid()))
                 .thenReturn(rdDataset);
+        when(resourceDefinitionCache.getByUuid(rdDistribution.getUuid()))
+                .thenReturn(rdDistribution);
 
         // WHEN:
         ValidationException exception = assertThrows(
