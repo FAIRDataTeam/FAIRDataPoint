@@ -8,6 +8,9 @@ Please note we have a code of conduct, please follow it in all your interactions
 All changes must be made via pull requests.
 This allows us to generate a consistent changelog during the release process.
 
+>[!IMPORTANT]
+>Any form of generated code (using AI, LLM, NLP, etc.) ***MUST*** be clearly labeled as *"CONTAINS GENERATED CODE"* in the PR.
+
 ## Pull Request Process
 
 1. Ensure any unnecessary install or build dependencies and other files are removed before the end of the layer when
