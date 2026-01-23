@@ -257,7 +257,14 @@ public class ResourceDefinitionService {
     @PreAuthorize("hasRole('ADMIN')")
     protected void deleteChild(ResourceDefinitionChild child) {
         childMetadataRepository.deleteAll(child.getMetadata());
-        childRepository.delete(child);
+        // Remember `child` is not actually a child but rather a link entity,
+        // where `source` is the parent and `target` is the actual child (#821).
+        // We need to clear both sides of the bi-directional relation.
+        // todo: refactor after fixing #825
+        child.getSource().getChildren().remove(child);
+        child.getTarget().getParents().remove(child);
+        child.setSource(null);
+        child.setTarget(null);
     }
 
     public List<String> getTargetClassUris(ResourceDefinition resourceDefinition) {
