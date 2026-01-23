@@ -67,15 +67,29 @@ public class ResourceDefinitionServiceTest extends BaseIntegrationTest {
         this.testEntityManager = testEntityManager;
     }
 
+    /**
+     * Reproduces #830
+     * @throws BindException
+     */
     @Test
     @WithMockUser(roles="ADMIN")
     public void testUpdateDoesNotDuplicateChildren() throws BindException {
-        // reproduces #830
+        // create DTO from existing resource (without making any actual changes)
         final UUID uuid = KnownUUIDs.RD_CATALOG_UUID;
         ResourceDefinition resourceDefinition = testEntityManager.find(ResourceDefinition.class, uuid);
         ResourceDefinitionChangeDTO changeDTO = resourceDefinitionMapper.toChangeDTO(resourceDefinition);
+        // count related items, for reference
+        final int expectedChildCount = resourceDefinition.getChildren().size();
+        final int expectedParentCount = resourceDefinition.getParents().size();
+        final int expectedExternalLinkCount =  resourceDefinition.getExternalLinks().size();
+        final int expectedMetadataSchemaUsageCount = resourceDefinition.getMetadataSchemaUsages().size();
+        // call update method
         resourceDefinitionService.update(uuid, changeDTO);
+        // check for duplicates (or other inconsistencies in the number of related items)
         testEntityManager.refresh(resourceDefinition);
-        assertEquals(1,  resourceDefinition.getChildren().size());
+        assertEquals(expectedChildCount, resourceDefinition.getChildren().size());
+        assertEquals(expectedParentCount, resourceDefinition.getParents().size());
+        assertEquals(expectedExternalLinkCount, resourceDefinition.getExternalLinks().size());
+        assertEquals(expectedMetadataSchemaUsageCount, resourceDefinition.getMetadataSchemaUsages().size());
     }
 }
