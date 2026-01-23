@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @AutoConfigureTestEntityManager
 @Transactional  // required for TestEntityManager outside of @DataJpaTest
@@ -83,7 +84,8 @@ public class ResourceDefinitionServiceTest extends BaseIntegrationTest {
     }
 
     /**
-     * Reproduces #830
+     * Reproduces #830, under the assumption that at least one of the default resources has children
+     * (in this case fdp, catalog, and dataset) and at least one of the resources has external links (distribution).
      */
     @ParameterizedTest
     @MethodSource("uuidProvider")
@@ -97,6 +99,7 @@ public class ResourceDefinitionServiceTest extends BaseIntegrationTest {
         final int expectedParentCount = resourceDefinition.getParents().size();
         final int expectedExternalLinkCount =  resourceDefinition.getExternalLinks().size();
         final int expectedMetadataSchemaUsageCount = resourceDefinition.getMetadataSchemaUsages().size();
+        assertTrue(expectedMetadataSchemaUsageCount > 0);
         // call update method
         resourceDefinitionService.update(uuid, changeDTO);
         // check for duplicates (or other inconsistencies in the number of related items)
