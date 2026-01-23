@@ -26,7 +26,8 @@ import org.fairdatapoint.BaseIntegrationTest;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatapoint.util.KnownUUIDs;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -36,6 +37,7 @@ import org.springframework.validation.BindException;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -68,14 +70,26 @@ public class ResourceDefinitionServiceTest extends BaseIntegrationTest {
     }
 
     /**
-     * Reproduces #830
-     * @throws BindException
+     * Provides arguments for @ParameterizedTest
+     * @return UUID of resource
      */
-    @Test
+    static Stream<UUID> uuidProvider() {
+        return Stream.of(
+                KnownUUIDs.RD_FDP_UUID,
+                KnownUUIDs.RD_CATALOG_UUID,
+                KnownUUIDs.RD_DATASET_UUID,
+                KnownUUIDs.RD_DISTRIBUTION_UUID
+        );
+    }
+
+    /**
+     * Reproduces #830
+     */
+    @ParameterizedTest
+    @MethodSource("uuidProvider")
     @WithMockUser(roles="ADMIN")
-    public void testUpdateDoesNotDuplicateChildren() throws BindException {
+    public void testUpdateDoesNotDuplicateRelatedItems(UUID uuid) throws BindException {
         // create DTO from existing resource (without making any actual changes)
-        final UUID uuid = KnownUUIDs.RD_CATALOG_UUID;
         ResourceDefinition resourceDefinition = testEntityManager.find(ResourceDefinition.class, uuid);
         ResourceDefinitionChangeDTO changeDTO = resourceDefinitionMapper.toChangeDTO(resourceDefinition);
         // count related items, for reference
