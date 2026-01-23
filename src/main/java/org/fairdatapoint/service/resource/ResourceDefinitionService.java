@@ -246,7 +246,8 @@ public class ResourceDefinitionService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     protected void deleteDependents(ResourceDefinition resourceDefinition) {
-        resourceDefinition.getChildren().forEach(this::deleteChild);
+        // Copy the list of children because we need to modify it (prevent ConcurrentModificationException)
+        List.copyOf(resourceDefinition.getChildren()).forEach(this::deleteChild);
         linkRepository.deleteAll(resourceDefinition.getExternalLinks());
         usageRepository.deleteAll(resourceDefinition.getMetadataSchemaUsages());
         entityManager.flush();
