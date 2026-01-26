@@ -24,6 +24,7 @@ package org.fairdatapoint.acceptance.resource;
 
 import org.fairdatapoint.WebIntegrationTest;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import org.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import org.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatapoint.service.resource.ResourceDefinitionMapper;
@@ -38,9 +39,7 @@ import java.net.URI;
 
 import static org.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPost;
 import static org.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestPost;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("POST /resource-definitions")
 public class List_POST extends WebIntegrationTest {
@@ -75,15 +74,20 @@ public class List_POST extends WebIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
-        ParameterizedTypeReference<ResourceDefinition> responseType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<ResourceDefinitionDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // WHEN:
-        ResponseEntity<ResourceDefinition> result = client.exchange(request, responseType);
+        ResponseEntity<ResourceDefinitionDTO> result = client.exchange(request, responseType);
 
         // THEN:
-        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getBody().getName(), is(equalTo(reqDto.getName())));
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        ResourceDefinitionDTO responseResourceDefinition = result.getBody();
+        assertNotNull(responseResourceDefinition);
+        assertEquals(reqDto.getName(), responseResourceDefinition.getName());
+        assertEquals(reqDto.getChildren().size(), responseResourceDefinition.getChildren().size());
+        assertEquals(reqDto.getExternalLinks().size(), responseResourceDefinition.getExternalLinks().size());
+        assertEquals(reqDto.getMetadataSchemaUuids().size(), responseResourceDefinition.getMetadataSchemaUuids().size());
     }
 
     @Test

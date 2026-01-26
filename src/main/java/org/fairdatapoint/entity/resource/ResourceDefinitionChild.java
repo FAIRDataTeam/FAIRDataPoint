@@ -57,6 +57,7 @@ public class ResourceDefinitionChild extends BaseEntity {
     @Column(name = "order_priority", nullable = false)
     private Integer orderPriority;
 
+    // TODO: replace all @NotNull @ManyToOne combinations by @ManyToOne(optional = false)
     @NotNull
     @ManyToOne
     @JoinColumn(name = "source_resource_definition_id", nullable = false)

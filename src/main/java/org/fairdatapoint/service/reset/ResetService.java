@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.api.dto.reset.ResetDTO;
 import org.fairdatapoint.database.db.repository.*;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatapoint.service.bootstrap.BootstrapService;
 import org.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.fairdatapoint.service.metadata.generic.GenericMetadataService;
 import org.fairdatapoint.service.resource.ResourceDefinitionCache;
@@ -39,6 +40,9 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
@@ -51,6 +55,9 @@ import static org.fairdatapoint.util.ValueFactoryHelper.i;
 @Slf4j
 @Service
 public class ResetService {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("persistentUrl")
@@ -72,7 +79,16 @@ public class ResetService {
     private Repository draftsRepository;
 
     @Autowired
+    private BootstrapService bootstrapService;
+
+    @Autowired
+    private ResourceReaderRepositoryPopulator populator;
+
+    @Autowired
     private ApiKeyRepository apiKeyRepository;
+
+    @Autowired
+    private MembershipPermissionRepository membershipPermissionRepository;
 
     @Autowired
     private MembershipRepository membershipRepository;
@@ -109,22 +125,20 @@ public class ResetService {
         }
         if (reqDto.isUsers() || reqDto.isMetadata()) {
             clearMemberships();
-            restoreDefaultMemberships();
+            repopulate(new String[]{"membership"});
         }
         if (reqDto.isUsers()) {
             clearApiKeys();
             clearUsers();
-            restoreDefaultUsers();
+            repopulate(new String[]{"apikey", "user", "search"});
         }
         if (reqDto.isMetadata()) {
             clearMetadata();
             restoreDefaultMetadata();
         }
         if (reqDto.isResourceDefinitions()) {
-            clearResourceDefinitions();
-            clearMetadataSchemas();
-            restoreDefaultMetadataSchemas();
-            restoreDefaultResourceDefinitions();
+            clearMetadataSchemasAndResourceDefinitions();
+            repopulate(new String[]{"schema", "resource"});
         }
         resourceDefinitionCache.computeCache();
         resourceDefinitionTargetClassesCache.computeCache();
@@ -136,6 +150,8 @@ public class ResetService {
     }
 
     private void clearMemberships() {
+        log.debug("Clearing membership permissions");
+        membershipPermissionRepository.deleteAll();
         log.debug("Clearing memberships");
         membershipRepository.deleteAll();
         log.debug("Clearing ACL cache");
@@ -147,12 +163,10 @@ public class ResetService {
         userRepository.deleteAll();
     }
 
-    private void clearMetadataSchemas() {
+    private void clearMetadataSchemasAndResourceDefinitions() {
+        // note these rely on cascade delete
         log.debug("Clearing metadata schemas");
         metadataSchemaRepository.deleteAll();
-    }
-
-    private void clearResourceDefinitions() {
         log.debug("Clearing resource definitions");
         resourceDefinitionRepository.deleteAll();
     }
@@ -164,16 +178,6 @@ public class ResetService {
         if (resourceDefinition.isPresent()) {
             genericMetadataService.delete(i(persistentUrl), resourceDefinition.get());
         }
-    }
-
-    private void restoreDefaultUsers() {
-        log.debug("Creating default users");
-        // TODO: data seed from specs
-    }
-
-    private void restoreDefaultMemberships() {
-        log.debug("Creating default memberships");
-        // TODO: data seed from specs
     }
 
     private void restoreDefaultMetadata() {
@@ -192,13 +196,15 @@ public class ResetService {
         }
     }
 
-    private void restoreDefaultMetadataSchemas() throws Exception {
-        log.debug("Creating default metadata schemas");
-        // TODO: data seed from specs
-    }
-
-    private void restoreDefaultResourceDefinitions() {
-        log.debug("Creating default resource definitions");
-        // TODO: data seed from specs
+    /**
+     * Reloads data from JSON fixture files into the relational database.
+     * This works by clearing history records for the specified packages and then re-running the repository populator.
+     * Note that it may be necessary to delete existing entities from the relevant repositories first.
+     * @param packageNames Array of names of entity packages to be repopulated
+     */
+    private void repopulate(String[] packageNames) {
+        bootstrapService.removeFromHistory(packageNames);
+        populator.setResources(bootstrapService.getNewResources());
+        populator.populate(new Repositories(applicationContext));
     }
 }
