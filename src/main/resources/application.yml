@@ -35,7 +35,7 @@ management:
   metrics:
     enable:
       all: false
-      http: true
+      custom: true
 
 security:
   jwt:
