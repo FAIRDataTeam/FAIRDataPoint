@@ -31,6 +31,10 @@ management:
     web:
       exposure:
         include: health, info, metrics
+  metrics:
+    enable:
+      all: false
+      http: true
 
 security:
   jwt:
