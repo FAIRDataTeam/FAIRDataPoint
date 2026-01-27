@@ -24,9 +24,6 @@ spring:
       thread-name-prefix: fdp-task-
 
 management:
-  health:
-    solr:
-      enabled:  false
   info:
     defaults:
       enabled: false
