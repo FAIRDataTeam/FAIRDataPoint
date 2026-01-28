@@ -22,7 +22,7 @@ jobs:
           - os: ubuntu-24.04
             mongo: 8
           - os: windows-2022
-            mongo: 5
+            mongo: 7
           - os: macos-14
             mongo: 8
         java-version:
