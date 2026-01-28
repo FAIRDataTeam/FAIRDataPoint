@@ -17,10 +17,20 @@ public class RequestMetricsFilter extends OncePerRequestFilter {
 
     private MeterRegistry meterRegistry;
 
+    /**
+     * Constructor
+     * @param meterRegistry Default MeterRegistry (autowired)
+     */
     public RequestMetricsFilter(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
     }
 
+    /**
+     * Increment counter for custom actuator metric based on HTTP request content
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param filterChain FilterChain
+     */
     @Override
     public void doFilterInternal(
             final HttpServletRequest request,
