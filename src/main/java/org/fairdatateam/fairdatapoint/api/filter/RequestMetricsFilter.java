@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -37,22 +38,17 @@ public class RequestMetricsFilter extends OncePerRequestFilter {
             final HttpServletResponse response,
             final FilterChain filterChain
     ) throws IOException, ServletException {
+        log.debug("Actuator counting request for {}", request.getRequestURL());
+        // From [servlet spec]: requestURI = contextPath + servletPath + pathInfo
+        // [servlet spec]: https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1#request-path-elements
         final String uri = request.getRequestURI();
         final String method = request.getMethod();
-        String query = request.getQueryString();
-        if (query == null) {
-            query = "";
-        }
-        String path = request.getServletPath();
-        if (path == null) {
-            path = "";
-        }
-        log.debug("Actuator counting request for {}", uri);
+        final Optional<String> query = Optional.ofNullable(request.getQueryString());
         meterRegistry.counter(
                 "custom",
                 "method", method,
-                "path", path,
-                "query", query
+                "query", query.orElseGet(() -> ""),
+                "uri", uri
         ).increment();
         filterChain.doFilter(request, response);
     }
