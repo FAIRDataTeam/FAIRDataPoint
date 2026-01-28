@@ -43,7 +43,7 @@ public class RequestMetricsFilter extends OncePerRequestFilter {
         // [servlet spec]: https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1#request-path-elements
         final Optional<String> query = Optional.ofNullable(request.getQueryString());
         meterRegistry.counter(
-                "custom",
+                "custom.http.server.requests",
                 "method", request.getMethod(),
                 "query", query.orElseGet(() -> ""),
                 "uri", request.getRequestURI()
