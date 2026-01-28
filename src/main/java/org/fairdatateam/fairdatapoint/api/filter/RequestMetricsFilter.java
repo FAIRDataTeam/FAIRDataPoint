@@ -41,14 +41,12 @@ public class RequestMetricsFilter extends OncePerRequestFilter {
         log.debug("Actuator counting request for {}", request.getRequestURL());
         // From [servlet spec]: requestURI = contextPath + servletPath + pathInfo
         // [servlet spec]: https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1#request-path-elements
-        final String uri = request.getRequestURI();
-        final String method = request.getMethod();
         final Optional<String> query = Optional.ofNullable(request.getQueryString());
         meterRegistry.counter(
                 "custom",
-                "method", method,
+                "method", request.getMethod(),
                 "query", query.orElseGet(() -> ""),
-                "uri", uri
+                "uri", request.getRequestURI()
         ).increment();
         filterChain.doFilter(request, response);
     }
