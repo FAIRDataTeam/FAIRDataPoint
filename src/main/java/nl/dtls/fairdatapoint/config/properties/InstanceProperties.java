@@ -34,6 +34,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @ConfigurationProperties(prefix = "instance")
 public class InstanceProperties {
+    // todo: set all default values explicitly here?
     private String clientUrl = "http://localhost:8080";
     private boolean behindProxy = true;
     private String persistentUrl;

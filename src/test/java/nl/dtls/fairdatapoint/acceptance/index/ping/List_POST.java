@@ -25,6 +25,7 @@ package nl.dtls.fairdatapoint.acceptance.index.ping;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
 import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
 import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
 import nl.dtls.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,9 @@ public class List_POST extends WebIntegrationTest {
     @Autowired
     private IndexEntryRepository indexEntryRepository;
 
+    @Autowired
+    private IndexSettingsRepository indexSettingsRepository;
+
     private final ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
     };
 
@@ -67,6 +71,7 @@ public class List_POST extends WebIntegrationTest {
     public void res204_newEntry() {
         // GIVEN: prepare data
         indexEntryRepository.deleteAll();
+        indexSettingsRepository.deleteAll();
         String clientUrl = "http://example.com";
         PingDTO reqDto = reqDTO(clientUrl);
 
