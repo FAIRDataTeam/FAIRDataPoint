@@ -35,6 +35,7 @@ import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -62,7 +63,13 @@ public class IndexSettingsService {
 
     @RequiredEnabledIndexFeature
     public IndexSettings getOrDefaults() {
-        return repository.findFirstBy().orElse(getDefaults());
+        log.debug("Getting index settings");
+        final Optional<IndexSettings> settings = repository.findFirstBy();
+        if (settings.isPresent()) {
+            log.debug("Index settings found");
+            return settings.orElseThrow();
+        }
+        return getDefaults();
     }
 
     @RequiredEnabledIndexFeature
@@ -72,6 +79,7 @@ public class IndexSettingsService {
 
     @RequiredEnabledIndexFeature
     public IndexSettings getDefaults() {
+        log.debug("Using default index settings");
         final IndexSettings settings = new IndexSettings();
         settings.setPing(IndexSettingsPing.getDefault());
         settings.setRetrieval(IndexSettingsRetrieval.getDefault());
