@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.10</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.dtls</groupId>
@@ -56,19 +56,19 @@
         <spring-security-acl-mongodb.version>6.0.0</spring-security-acl-mongodb.version>
 
         <!-- Core -->
-        <springdoc-openapi-starter-webmvc-ui.version>2.8.8</springdoc-openapi-starter-webmvc-ui.version>
+        <springdoc-openapi-starter-webmvc-ui.version>2.8.15</springdoc-openapi-starter-webmvc-ui.version>
         <mongock-bom.version>5.5.1</mongock-bom.version>
-        <rdf4j-runtime.version>5.1.3</rdf4j-runtime.version>
-        <jjwt-api.version>0.12.6</jjwt-api.version>
+        <rdf4j-runtime.version>5.2.2</rdf4j-runtime.version>
+        <jjwt-api.version>0.13.0</jjwt-api.version>
 
         <!-- Plugins -->
         <license-maven-plugin.version>5.0.0</license-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
+        <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-        <checkstyle.version>10.25.0</checkstyle.version>
-        <spring-javaformat-checkstyle.version>0.0.46</spring-javaformat-checkstyle.version>
+        <checkstyle.version>13.0.0</checkstyle.version>
+        <spring-javaformat-checkstyle.version>0.0.47</spring-javaformat-checkstyle.version>
         <spotbugs-maven-plugin.version>4.9.3.0</spotbugs-maven-plugin.version>
     </properties>
 
@@ -343,6 +343,8 @@
                     <configLocation>checkstyle.xml</configLocation>
                 </configuration>
                 <dependencies>
+                    <!-- maven-checkstyle-plugin uses very old checkstyle version 9.3, so we override it here -->
+                    <!-- https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/upgrading-checkstyle.html -->
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
