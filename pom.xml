@@ -68,6 +68,8 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <checkstyle.version>10.25.0</checkstyle.version>
+        <spring-javaformat-checkstyle.version>0.0.46</spring-javaformat-checkstyle.version>
         <spotbugs-maven-plugin.version>4.9.3.0</spotbugs-maven-plugin.version>
     </properties>
 
@@ -345,12 +347,12 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.25.0</version>
+                        <version>${checkstyle.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>io.spring.javaformat</groupId>
                         <artifactId>spring-javaformat-checkstyle</artifactId>
-                        <version>0.0.46</version>
+                        <version>${spring-javaformat-checkstyle.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
