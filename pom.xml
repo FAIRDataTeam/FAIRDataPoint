@@ -63,7 +63,6 @@
 
         <!-- Plugins -->
         <license-maven-plugin.version>5.0.0</license-maven-plugin.version>
-        <plugin.jacoco.version>0.7.6.201602180812</plugin.jacoco.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
