@@ -61,6 +61,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static org.fairdatapoint.util.HttpUtil.*;
@@ -305,10 +306,22 @@ public class GenericController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRepositoryException {
-        // 1. Init
-        final Model resultRdf = new LinkedHashModel();
+
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
+        return getMetaDataChildrenResponse(urlPrefix, recordId, childPrefix, Optional.of(page), Optional.of(size));
+    }
+
+    private ResponseEntity<Model> getMetaDataChildrenResponse(
+            final String urlPrefix,
+            final String recordId,
+            final String childPrefix,
+            Optional<Integer> oPage,
+            Optional<Integer> oSize
+    ) throws MetadataServiceException, MetadataRepositoryException {
+        // 1. Init
+        final HttpHeaders responseHeaders = new HttpHeaders();
+        final Model resultRdf = new LinkedHashModel();
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get entity (from repository based on permissions)
@@ -317,64 +330,72 @@ public class GenericController {
         final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
         final Model entity = metadataService.retrieve(entityUri, mode);
 
-        // 3. Get Children
+        // 3. Get requested resource definition relation
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
         final ResourceDefinition currentChildRd = resourceDefinitionService.getByUrlPrefix(childPrefix);
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
-
-        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            if (rdChild.getTarget().getUuid().equals(currentChildRd.getUuid())) {
-                final IRI relationUri = i(rdChild.getRelationUri());
-
-                // 3.1 Get all titles for sort
-                final Map<String, String> titles =
-                        metadataRepository.findChildTitles(entityUri, relationUri, RepositoryMode.COMBINED);
-
-                // 3.2 Get all children sorted
-                final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
-                        .stream()
-                        .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
-                        .filter(childUri -> {
-                            try {
-                                return oCurrentUser.isPresent()
-                                        || metadataStateService.isPublished(i(childUri.stringValue()));
-                            }
-                            catch (MetadataServiceException exc) {
-                                return false;
-                            }
-                        })
-                        .sorted((value1, value2) -> {
-                            final String title1 = titles.get(value1.toString());
-                            final String title2 = titles.get(value2.toString());
-                            if (title1 == null) {
-                                return -1;
-                            }
-                            if (title2 == null) {
-                                return 1;
-                            }
-                            return title1.compareToIgnoreCase(title2);
-                        })
-                        .toList();
-
-                // 3.3 Retrieve children metadata only for requested page
-                final int childrenCount = children.size();
-                children.stream().skip((long) page * size).limit(size)
-                        .map(childUri -> retrieveChildModel(childMetadataService, childUri))
-                        .flatMap(Optional::stream)
-                        .forEach(resultRdf::addAll);
-
-                // 3.4 Set Link headers and send response
-                final HttpHeaders responseHeaders = new HttpHeaders();
-                responseHeaders.set(
-                        "Link",
-                        createLinkHeader(entityUri.stringValue(), childPrefix, childrenCount, page, size)
-                );
-                return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
-            }
-        }
+        // todo: rename ResourceDefinitionChild and related variables as part of #821
+        final Optional<ResourceDefinitionChild> optionalChild = rd.getChildren().stream()
+                .filter(child -> child.getTarget().getUuid().equals(currentChildRd.getUuid()))
+                .findFirst();
 
         // Send empty response in case nothing was found
-        return ResponseEntity.ok(resultRdf);
+        if (optionalChild.isEmpty()) {
+            return ResponseEntity.ok().body(resultRdf);
+        }
+
+        // 4. Get metadata of children
+        final ResourceDefinitionChild rdChild = optionalChild.get();
+        final IRI relationUri = i(rdChild.getRelationUri());
+
+        // 4.1 Get all titles for sort
+        final Map<String, String> titles =
+                metadataRepository.findChildTitles(entityUri, relationUri, RepositoryMode.COMBINED);
+
+        // 4.2 Get all children sorted
+        final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
+                .stream()
+                .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
+                .filter(childUri -> {
+                    try {
+                        return oCurrentUser.isPresent()
+                                || metadataStateService.isPublished(i(childUri.stringValue()));
+                    }
+                    catch (MetadataServiceException exc) {
+                        return false;
+                    }
+                })
+                .sorted((value1, value2) -> {
+                    final String title1 = titles.get(value1.toString());
+                    final String title2 = titles.get(value2.toString());
+                    if (title1 == null) {
+                        return -1;
+                    }
+                    if (title2 == null) {
+                        return 1;
+                    }
+                    return title1.compareToIgnoreCase(title2);
+                })
+                .toList();
+
+        // 4.3 Limit children to requested page size
+        final int page = oPage.orElse(0);
+        Stream<Value> childrenStream = children.stream();
+        if (oSize.isPresent()) {
+            // use paging
+            final int size = oSize.get();
+            childrenStream = children.stream().skip((long) page * size).limit(size);
+            responseHeaders.set(
+                    "Link", createLinkHeader(entityUri.stringValue(), childPrefix, children.size(), page, size)
+            );
+        }
+
+        // 4.4 Get metadata for selected children
+        childrenStream.map(childUri -> retrieveChildModel(childMetadataService, childUri))
+                .flatMap(Optional::stream)
+                .forEach(resultRdf::addAll);
+
+        return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
     }
 
     private String getResourceNameForChild(String url) {
