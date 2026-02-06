@@ -28,17 +28,15 @@ import lombok.RequiredArgsConstructor;
 import org.fairdatapoint.database.rdf.repository.RepositoryMode;
 import jakarta.servlet.http.HttpServletResponse;
 import org.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import org.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import org.fairdatapoint.entity.exception.ForbiddenException;
-import org.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import org.fairdatapoint.entity.user.UserAccount;
 import org.fairdatapoint.service.metadata.common.MetadataService;
+import org.fairdatapoint.service.metadata.container.ContainerService;
 import org.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import org.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
-import org.fairdatapoint.service.metadata.state.MetadataStateService;
 import org.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.fairdatapoint.service.schema.MetadataSchemaService;
 import org.fairdatapoint.service.search.SearchFilterCache;
@@ -59,7 +57,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -86,11 +83,9 @@ public class GenericController {
 
     private final MetadataEnhancer metadataEnhancer;
 
+    private final ContainerService containerService;
+
     private final CurrentUserService currentUserService;
-
-    private final GenericMetadataRepository metadataRepository;
-
-    private final MetadataStateService metadataStateService;
 
     private final SearchFilterCache searchFilterCache;
 
@@ -309,18 +304,16 @@ public class GenericController {
         // Defaults
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        // 1. Init
+
+        // Init
         final HttpHeaders responseHeaders = new HttpHeaders();
         final Model resultRdf = new LinkedHashModel();
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity (from repository based on permissions)
+        // Get entity (from repository based on permissions)
         final Optional<UserAccount> oCurrentUser = currentUserService.getCurrentUser();
-        final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final RepositoryMode mode = oCurrentUser.isEmpty() ? RepositoryMode.MAIN : RepositoryMode.COMBINED;
-        final Model entity = metadataService.retrieve(entityUri, mode);
 
-        // 3. Get requested resource definition relation
+        // Get requested resource definition relation
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
         final ResourceDefinition currentChildRd = resourceDefinitionService.getByUrlPrefix(childPrefix);
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
@@ -329,46 +322,20 @@ public class GenericController {
                 .filter(child -> child.getTarget().getUuid().equals(currentChildRd.getUuid()))
                 .findFirst();
 
-        // Send empty response in case nothing was found
+        // Return empty response in case nothing was found
         if (optionalChild.isEmpty()) {
             return ResponseEntity.ok().body(resultRdf);
         }
 
-        // 4. Get metadata of children
+        // Get metadata of children
         final ResourceDefinitionChild rdChild = optionalChild.get();
+        final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final IRI relationUri = i(rdChild.getRelationUri());
+        final List<Value> children = containerService.getContainedValues(
+                childPrefix, urlPrefix, entityUri, relationUri, mode
+        );
 
-        // 4.1 Get all titles for sort
-        final Map<String, String> titles =
-                metadataRepository.findChildTitles(entityUri, relationUri, RepositoryMode.COMBINED);
-
-        // 4.2 Get all children sorted
-        final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
-                .stream()
-                .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
-                .filter(childUri -> {
-                    try {
-                        return oCurrentUser.isPresent()
-                                || metadataStateService.isPublished(i(childUri.stringValue()));
-                    }
-                    catch (MetadataServiceException exc) {
-                        return false;
-                    }
-                })
-                .sorted((value1, value2) -> {
-                    final String title1 = titles.get(value1.toString());
-                    final String title2 = titles.get(value2.toString());
-                    if (title1 == null) {
-                        return -1;
-                    }
-                    if (title2 == null) {
-                        return 1;
-                    }
-                    return title1.compareToIgnoreCase(title2);
-                })
-                .toList();
-
-        // 4.3 Limit children to requested page size
+        // Limit children to requested page size
         final int page = oPage.orElse(0);
         Stream<Value> childrenStream = children.stream();
         if (oSize.isPresent()) {
@@ -380,7 +347,7 @@ public class GenericController {
             );
         }
 
-        // 4.4 Get metadata for selected children
+        // Get metadata for selected children
         childrenStream.map(childUri -> retrieveChildModel(childMetadataService, childUri))
                 .flatMap(Optional::stream)
                 .forEach(resultRdf::addAll);
@@ -401,23 +368,6 @@ public class GenericController {
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRepositoryException {
         return getMetaDataChildren(childPrefix, oUrlPrefix, oRecordId, Optional.of(page), Optional.of(size));
-    }
-
-    private String getResourceNameForChild(String url) {
-        final String[] parts = url
-                .replace(persistentUrl, "")
-                .split("/");
-
-        if (parts.length < 2) {
-            throw new ValidationException("Unsupported URL");
-        }
-
-        // If URL is a repository -> return empty string
-        if (parts[1].equals("page")) {
-            return "";
-        }
-
-        return parts[1];
     }
 
     private String createLinkHeader(String entityUrl, String childPrefix, int childrenCount, int page, int size) {
