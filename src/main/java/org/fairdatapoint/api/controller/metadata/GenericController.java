@@ -300,41 +300,15 @@ public class GenericController {
             produces = "!application/json"
     )
     public ResponseEntity<Model> getMetaDataChildrenContainer(
+            @PathVariable final String childPrefix,
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId,
-            @PathVariable final String childPrefix,
-            @RequestParam final Optional<Integer> page,
-            @RequestParam final Optional<Integer> size
+            @RequestParam final Optional<Integer> oPage,
+            @RequestParam final Optional<Integer> oSize
     ) throws MetadataServiceException, MetadataRepositoryException {
+        // Defaults
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        return getMetaDataChildrenResponse(urlPrefix, recordId, childPrefix, page, size);
-    }
-
-    @Operation(hidden = true, deprecated = true)
-    @GetMapping(
-            path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
-            produces = "!application/json"
-    )
-    public ResponseEntity<Model> getMetaDataChildren(
-            @PathVariable final Optional<String> oUrlPrefix,
-            @PathVariable final Optional<String> oRecordId,
-            @PathVariable final String childPrefix,
-            @RequestParam(defaultValue = "0") final int page,
-            @RequestParam(defaultValue = "10") final int size
-    ) throws MetadataServiceException, MetadataRepositoryException {
-        final String urlPrefix = oUrlPrefix.orElse("");
-        final String recordId = oRecordId.orElse("");
-        return getMetaDataChildrenResponse(urlPrefix, recordId, childPrefix, Optional.of(page), Optional.of(size));
-    }
-
-    private ResponseEntity<Model> getMetaDataChildrenResponse(
-            final String urlPrefix,
-            final String recordId,
-            final String childPrefix,
-            Optional<Integer> oPage,
-            Optional<Integer> oSize
-    ) throws MetadataServiceException, MetadataRepositoryException {
         // 1. Init
         final HttpHeaders responseHeaders = new HttpHeaders();
         final Model resultRdf = new LinkedHashModel();
@@ -412,6 +386,21 @@ public class GenericController {
                 .forEach(resultRdf::addAll);
 
         return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
+    }
+
+    @Operation(hidden = true, deprecated = true)
+    @GetMapping(
+            path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
+            produces = "!application/json"
+    )
+    public ResponseEntity<Model> getMetaDataChildren(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId,
+            @PathVariable final String childPrefix,
+            @RequestParam(defaultValue = "0") final int page,
+            @RequestParam(defaultValue = "10") final int size
+    ) throws MetadataServiceException, MetadataRepositoryException {
+        return getMetaDataChildrenContainer(childPrefix, oUrlPrefix, oRecordId, Optional.of(page), Optional.of(size));
     }
 
     private String getResourceNameForChild(String url) {
