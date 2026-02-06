@@ -13,6 +13,7 @@ import org.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import org.fairdatapoint.service.metadata.state.MetadataStateService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -73,17 +74,11 @@ public class ContainerService {
                         return false;
                     }
                 })
-                .sorted((value1, value2) -> {
-                    final String title1 = titles.get(value1.toString());
-                    final String title2 = titles.get(value2.toString());
-                    if (title1 == null) {
-                        return -1;
-                    }
-                    if (title2 == null) {
-                        return 1;
-                    }
-                    return title1.compareToIgnoreCase(title2);
-                })
+                // todo: verify if Comparator implementation is equivalent to the original
+                .sorted(Comparator.comparing(
+                        childUri -> titles.get(childUri.toString()),
+                        String.CASE_INSENSITIVE_ORDER)
+                )
                 .toList();
     }
 
