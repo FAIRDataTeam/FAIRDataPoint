@@ -61,8 +61,11 @@ public class ContainerService {
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         final Model entity = metadataService.retrieve(entityUri, repositoryMode);
 
-        final List<Value> objects = getObjectsBy(entity, entityUri, relationUri);
-        return objects.stream()
+        //  https://rdf4j.org/javadoc/latest/org/eclipse/rdf4j/model/Value.html
+        final List<Value> values = getObjectsBy(entity, entityUri, relationUri);
+        return values.stream()
+                // todo: can we replace Value by MemIRI?
+                // todo: this uses both Value.toString() and Value.stringValue(). should we only use tha latter?
                 .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
                 // although entity may be published, it could contain URIs of draft resources
                 .filter(childUri -> {
