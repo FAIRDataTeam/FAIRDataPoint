@@ -299,7 +299,7 @@ public class GenericController {
             path = {"{childPrefix}/", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/{childPrefix}/"},
             produces = "!application/json"
     )
-    public ResponseEntity<Model> getMetaDataChildrenContainer(
+    public ResponseEntity<Model> getMetaDataChildren(
             @PathVariable final String childPrefix,
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId,
@@ -393,14 +393,14 @@ public class GenericController {
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
             produces = "!application/json"
     )
-    public ResponseEntity<Model> getMetaDataChildren(
+    public ResponseEntity<Model> getMetaDataChildrenDeprecated(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId,
             @PathVariable final String childPrefix,
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRepositoryException {
-        return getMetaDataChildrenContainer(childPrefix, oUrlPrefix, oRecordId, Optional.of(page), Optional.of(size));
+        return getMetaDataChildren(childPrefix, oUrlPrefix, oRecordId, Optional.of(page), Optional.of(size));
     }
 
     private String getResourceNameForChild(String url) {
