@@ -296,6 +296,23 @@ public class GenericController {
 
     @Operation(hidden = true)
     @GetMapping(
+            path = {"{childPrefix}/", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/{childPrefix}/"},
+            produces = "!application/json"
+    )
+    public ResponseEntity<Model> getMetaDataChildrenContainer(
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId,
+            @PathVariable final String childPrefix,
+            @RequestParam final Optional<Integer> page,
+            @RequestParam final Optional<Integer> size
+    ) throws MetadataServiceException, MetadataRepositoryException {
+        final String urlPrefix = oUrlPrefix.orElse("");
+        final String recordId = oRecordId.orElse("");
+        return getMetaDataChildrenResponse(urlPrefix, recordId, childPrefix, page, size);
+    }
+
+    @Operation(hidden = true)
+    @GetMapping(
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
             produces = "!application/json"
     )
@@ -306,7 +323,6 @@ public class GenericController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRepositoryException {
-
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
         return getMetaDataChildrenResponse(urlPrefix, recordId, childPrefix, Optional.of(page), Optional.of(size));
