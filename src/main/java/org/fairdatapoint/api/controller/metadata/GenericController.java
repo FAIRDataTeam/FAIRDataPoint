@@ -311,7 +311,7 @@ public class GenericController {
         return getMetaDataChildrenResponse(urlPrefix, recordId, childPrefix, page, size);
     }
 
-    @Operation(hidden = true)
+    @Operation(hidden = true, deprecated = true)
     @GetMapping(
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
             produces = "!application/json"
