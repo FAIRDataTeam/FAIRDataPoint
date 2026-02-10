@@ -27,10 +27,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.fairdatapoint.entity.index.http.Exchange;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IncomingPing {
+public class IncomingPing implements Serializable {
     private Exchange exchange;
     private Boolean newEntry;
 }

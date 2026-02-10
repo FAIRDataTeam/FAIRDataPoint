@@ -26,10 +26,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminTrigger {
+public class AdminTrigger implements Serializable {
     private String remoteAddr;
     private String tokenName;
     private String clientUrl;

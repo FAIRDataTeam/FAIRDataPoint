@@ -28,10 +28,12 @@ import lombok.NoArgsConstructor;
 import org.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.fairdatapoint.entity.index.http.Exchange;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MetadataRetrieval {
+public class MetadataRetrieval implements Serializable {
     private String error;
     private Exchange exchange;
     private RepositoryMetadata metadata;

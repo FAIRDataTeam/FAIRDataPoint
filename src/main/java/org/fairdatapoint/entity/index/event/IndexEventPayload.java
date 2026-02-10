@@ -26,9 +26,11 @@ import lombok.Builder;
 import lombok.Data;
 import org.fairdatapoint.entity.index.event.payload.*;
 
+import java.io.Serializable;
+
 @Data
 @Builder
-public class IndexEventPayload {
+public class IndexEventPayload implements Serializable {
 
     private IncomingPing incomingPing;
 
