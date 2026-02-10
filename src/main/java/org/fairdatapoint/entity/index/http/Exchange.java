@@ -26,10 +26,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Exchange {
+public class Exchange implements Serializable {
     private ExchangeDirection direction;
     private ExchangeState state = ExchangeState.Prepared;
     private String remoteAddr;

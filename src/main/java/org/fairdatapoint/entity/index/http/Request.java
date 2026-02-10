@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpEntity;
 
+import java.io.Serializable;
 import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Request {
+public class Request implements Serializable {
     private String method;
     private String url;
 
