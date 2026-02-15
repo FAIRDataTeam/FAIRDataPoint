@@ -89,9 +89,6 @@ public class ResourceDefinitionValidator {
             }
 
             final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childUuid);
-            if (rdChild.getChildren().isEmpty()) {
-                return;
-            }
             validateDependencyCyclesChild(uuid, rdChild.getChildren());
         }
     }
@@ -106,9 +103,6 @@ public class ResourceDefinitionValidator {
             }
 
             final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(childUuid);
-            if (rdChild.getChildren().isEmpty()) {
-                return;
-            }
             validateDependencyCyclesChild(uuid, rdChild.getChildren());
         }
     }
