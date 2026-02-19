@@ -29,7 +29,7 @@ import lombok.extern.log4j.Log4j2;
 import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -112,7 +112,7 @@ public class OpenApiService {
         updateTags(resourceDefinitions);
     }
 
-    @EventListener(ContextRefreshedEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         log.info("Initializing OpenAPI with generic paths");
         updateAllGenericPaths();
