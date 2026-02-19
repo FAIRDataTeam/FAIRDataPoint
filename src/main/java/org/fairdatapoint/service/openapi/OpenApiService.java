@@ -25,11 +25,12 @@ package org.fairdatapoint.service.openapi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -111,7 +112,7 @@ public class OpenApiService {
         updateTags(resourceDefinitions);
     }
 
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         log.info("Initializing OpenAPI with generic paths");
         updateAllGenericPaths();
