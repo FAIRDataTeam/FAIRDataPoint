@@ -22,6 +22,8 @@
  */
 package nl.dtls.fairdatapoint.acceptance.openapi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,10 +34,12 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 @DisplayName("GET /v3/api-docs")
 public class OpenApiDocs_GET extends WebIntegrationTest {
@@ -46,7 +50,7 @@ public class OpenApiDocs_GET extends WebIntegrationTest {
 
     @Test
     @DisplayName("HTTP 200: API Docs")
-    public void res200_apiDocs() {
+    public void res200_apiDocs() throws JsonProcessingException {
         // GIVEN
         RequestEntity<?> request = RequestEntity
                 .get(url())
@@ -59,5 +63,9 @@ public class OpenApiDocs_GET extends WebIntegrationTest {
         // THEN
         assertThat("Response code is OK", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response is JSON", result.getHeaders().getContentType(), is(equalTo(MediaType.APPLICATION_JSON)));
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap api_docs = mapper.readValue(result.getBody(), HashMap.class);
+        HashMap api_docs_paths = (HashMap) api_docs.get("paths");
+        assertThat("resource endpoints are listed", api_docs_paths.get("/catalog"), is(notNullValue()));
     }
 }
