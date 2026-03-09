@@ -1,0 +1,105 @@
+/*******************************************************************************
+ * Copyright (c) 2021 Eclipse RDF4J contributors.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Distribution License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *******************************************************************************/
+
+// This code is mostly copied from rdf4j spring-boot-sparql-web, with some customizations:
+// https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web
+
+package nl.dtls.fairdatapoint.api.controller.search;
+
+import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
+import org.eclipse.rdf4j.http.server.readonly.sparql.SparqlQueryEvaluator;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.repository.Repository;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+
+@RestController
+public class SearchSparqlController {
+
+    private static final String[] ALL_GRAPHS = {};
+
+    private final Repository rdf4jRepository;
+
+    private final SparqlQueryEvaluator sparqlQueryEvaluator;
+
+    /**
+     * Constructor
+     */
+    public SearchSparqlController(Repository rdf4jRepository, SparqlQueryEvaluator sparqlQueryEvaluator) {
+        this.rdf4jRepository = rdf4jRepository;
+        this.sparqlQueryEvaluator = sparqlQueryEvaluator;
+    }
+
+    /**
+     * Allows authenticated users to POST a full SPARQL query.
+     * Method body copied from <a href="https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web/src/main/java/org/eclipse/rdf4j/http/server/readonly/QueryResponder.java">...</a>.
+     */
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(path = "/search/sparql", consumes = APPLICATION_FORM_URLENCODED_VALUE)
+    public void sparqlPost(
+            @RequestParam(value = "default-graph-uri", required = false) String defaultGraphUri,
+            @RequestParam(value = "named-graph-uri", required = false) String namedGraphUri,
+            @RequestParam(value = "query") String query,
+            @RequestHeader(ACCEPT) String acceptHeader,
+            HttpServletResponse response
+    ) throws IOException {
+        try {
+            EvaluateResultHttpResponse result = new EvaluateResultHttpResponse(response);
+            sparqlQueryEvaluator.evaluate(
+                    result, rdf4jRepository, query, acceptHeader, toArray(defaultGraphUri), toArray(namedGraphUri)
+            );
+        } catch (MalformedQueryException | IllegalStateException | IOException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
+    private String[] toArray(String graphUri) {
+        if (graphUri != null) {
+            return new String[]{graphUri};
+        }
+        return ALL_GRAPHS;
+    }
+}
+
+/**
+ * Encapsulates the {@link HttpServletResponse}.
+ * Copied from <a href="https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web/src/main/java/org/eclipse/rdf4j/http/server/readonly/EvaluateResultHttpResponse.java">...</a>.
+ */
+class EvaluateResultHttpResponse implements EvaluateResult {
+
+    private final HttpServletResponse response;
+
+    public EvaluateResultHttpResponse(HttpServletResponse response) {
+        this.response = response;
+    }
+
+    @Override
+    public void setContentType(String contentType) {
+        response.setContentType(contentType);
+    }
+
+    @Override
+    public String getContentType() {
+        return response.getContentType();
+    }
+
+    @Override
+    public OutputStream getOutputstream() throws IOException {
+        return response.getOutputStream();
+    }
+}
