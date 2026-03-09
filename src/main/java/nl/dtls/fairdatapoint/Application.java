@@ -33,8 +33,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @EnableAsync
 @ComponentScan(basePackages = {
-        "org.eclipse.rdf4j.http.server.readonly.sparql",
-        "nl.dtls.fairdatapoint.*"
+    "org.eclipse.rdf4j.http.server.readonly.sparql",
+    "nl.dtls.fairdatapoint.*"
 })
 @ConfigurationPropertiesScan("nl.dtls.fairdatapoint.config.*")
 public class Application {

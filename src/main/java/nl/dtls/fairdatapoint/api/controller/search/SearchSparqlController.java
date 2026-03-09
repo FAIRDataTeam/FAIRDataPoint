@@ -1,16 +1,38 @@
-/*******************************************************************************
- * Copyright (c) 2021 Eclipse RDF4J contributors.
+/**
+ * The MIT License
+ * Copyright © 2017 DTL
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Distribution License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/org/documents/edl-v10.php.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * SPDX-License-Identifier: BSD-3-Clause
- *******************************************************************************/
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 // This code is mostly copied from rdf4j spring-boot-sparql-web, with some customizations:
+//
 // https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web
+//
+// Copyright (c) 2021 Eclipse RDF4J contributors.
+//
+// All rights reserved. This program and the accompanying materials
+// are made available under the terms of the Eclipse Distribution License v1.0
+// which accompanies this distribution, and is available at
+// http://www.eclipse.org/org/documents/edl-v10.php.
+//
+// SPDX-License-Identifier: BSD-3-Clause
 
 package nl.dtls.fairdatapoint.api.controller.search;
 
@@ -47,7 +69,7 @@ public class SearchSparqlController {
 
     /**
      * Allows authenticated users to POST a full SPARQL query.
-     * Method body copied from <a href="https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web/src/main/java/org/eclipse/rdf4j/http/server/readonly/QueryResponder.java">...</a>.
+     * Method body copied from org.eclipse.rdf4j.http.server.readonly.QueryResponder.
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/search/sparql", consumes = APPLICATION_FORM_URLENCODED_VALUE)
@@ -59,11 +81,12 @@ public class SearchSparqlController {
             HttpServletResponse response
     ) throws IOException {
         try {
-            EvaluateResultHttpResponse result = new EvaluateResultHttpResponse(response);
+            final EvaluateResultHttpResponse result = new EvaluateResultHttpResponse(response);
             sparqlQueryEvaluator.evaluate(
                     result, rdf4jRepository, query, acceptHeader, toArray(defaultGraphUri), toArray(namedGraphUri)
             );
-        } catch (MalformedQueryException | IllegalStateException | IOException e) {
+        }
+        catch (MalformedQueryException | IllegalStateException | IOException exception) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
@@ -74,32 +97,33 @@ public class SearchSparqlController {
         }
         return ALL_GRAPHS;
     }
-}
 
-/**
- * Encapsulates the {@link HttpServletResponse}.
- * Copied from <a href="https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web/src/main/java/org/eclipse/rdf4j/http/server/readonly/EvaluateResultHttpResponse.java">...</a>.
- */
-class EvaluateResultHttpResponse implements EvaluateResult {
+    /**
+     * Encapsulates the {@link HttpServletResponse}.
+     * Copied from org.eclipse.rdf4j.http.server.readonly.EvaluateResultHttpResponse.
+     */
+    protected static class EvaluateResultHttpResponse implements EvaluateResult {
 
-    private final HttpServletResponse response;
+        private final HttpServletResponse response;
 
-    public EvaluateResultHttpResponse(HttpServletResponse response) {
-        this.response = response;
+        public EvaluateResultHttpResponse(HttpServletResponse response) {
+            this.response = response;
+        }
+
+        @Override
+        public void setContentType(String contentType) {
+            response.setContentType(contentType);
+        }
+
+        @Override
+        public String getContentType() {
+            return response.getContentType();
+        }
+
+        @Override
+        public OutputStream getOutputstream() throws IOException {
+            return response.getOutputStream();
+        }
     }
 
-    @Override
-    public void setContentType(String contentType) {
-        response.setContentType(contentType);
-    }
-
-    @Override
-    public String getContentType() {
-        return response.getContentType();
-    }
-
-    @Override
-    public OutputStream getOutputstream() throws IOException {
-        return response.getOutputStream();
-    }
 }
