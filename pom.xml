@@ -214,6 +214,12 @@
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-spring-boot-sparql-web</artifactId>
             <version>${rdf4j-runtime.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
