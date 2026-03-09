@@ -211,6 +211,11 @@
             <version>${rdf4j-runtime.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-spring-boot-sparql-web</artifactId>
+            <version>${rdf4j-runtime.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>${jjwt-api.version}</version>
