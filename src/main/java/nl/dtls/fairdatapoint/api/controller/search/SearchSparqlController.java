@@ -93,7 +93,7 @@ public class SearchSparqlController {
     }
 
     private String[] toArray(String graphUri) {
-        if (graphUri != null) {
+        if (graphUri != null && !graphUri.isEmpty()) {
             return new String[]{graphUri};
         }
         return ALL_GRAPHS;
