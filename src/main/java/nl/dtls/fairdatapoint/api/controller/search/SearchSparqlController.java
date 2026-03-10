@@ -36,6 +36,7 @@
 
 package nl.dtls.fairdatapoint.api.controller.search;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
 import org.eclipse.rdf4j.http.server.readonly.sparql.SparqlQueryEvaluator;
@@ -50,6 +51,7 @@ import java.io.OutputStream;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
+@Tag(name = "Search")
 @RestController
 public class SearchSparqlController {
 
