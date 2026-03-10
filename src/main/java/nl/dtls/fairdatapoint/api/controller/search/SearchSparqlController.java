@@ -36,6 +36,7 @@
 
 package nl.dtls.fairdatapoint.api.controller.search;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
@@ -75,11 +76,12 @@ public class SearchSparqlController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/search/sparql", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void sparqlPost(
+        @Schema(example = MediaType.APPLICATION_JSON_VALUE)
             @RequestHeader(value = HttpHeaders.ACCEPT) String acceptHeader,
-            @RequestParam(value = "default-graph-uri", required = false) String defaultGraphUri,
-            @RequestParam(value = "named-graph-uri", required = false) String namedGraphUri,
-            @RequestParam(value = "query") String query,
-            HttpServletResponse response
+        @Schema(example = "\"\"") @RequestParam(value = "default-graph-uri", required = false) String defaultGraphUri,
+        @Schema(example = "\"\"") @RequestParam(value = "named-graph-uri", required = false) String namedGraphUri,
+        @Schema(example = "SELECT * WHERE {?subject ?predicate ?object}") @RequestParam(value = "query") String query,
+        HttpServletResponse response
     ) throws IOException {
         // enforce default accept header for wildcard
         final String accept = ("*/*".equals(acceptHeader)) ? MediaType.APPLICATION_JSON_VALUE : acceptHeader;
