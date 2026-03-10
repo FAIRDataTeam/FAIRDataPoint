@@ -215,9 +215,12 @@
             <artifactId>rdf4j-spring-boot-sparql-web</artifactId>
             <version>${rdf4j-runtime.version}</version>
             <exclusions>
+                <!-- Exclude all transitive dependencies:
+                They cause unwanted side effects, such as spring data rest exposing all repository methods as
+                rest endpoints. Moreover, we only need the class definitions. -->
                 <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
