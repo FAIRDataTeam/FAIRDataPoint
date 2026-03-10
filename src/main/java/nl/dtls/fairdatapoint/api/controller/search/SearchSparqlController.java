@@ -81,10 +81,12 @@ public class SearchSparqlController {
             @RequestParam(value = "query") String query,
             HttpServletResponse response
     ) throws IOException {
+        // enforce default accept header for wildcard
+        final String accept = ("*/*".equals(acceptHeader)) ? MediaType.APPLICATION_JSON_VALUE : acceptHeader;
         try {
             final EvaluateResultHttpResponse result = new EvaluateResultHttpResponse(response);
             sparqlQueryEvaluator.evaluate(
-                    result, rdf4jRepository, query, acceptHeader, toArray(defaultGraphUri), toArray(namedGraphUri)
+                    result, rdf4jRepository, query, accept, toArray(defaultGraphUri), toArray(namedGraphUri)
             );
         }
         catch (MalformedQueryException | IllegalStateException | IOException exception) {
