@@ -42,14 +42,13 @@ import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
 import org.eclipse.rdf4j.http.server.readonly.sparql.SparqlQueryEvaluator;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.repository.Repository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 @Tag(name = "Search")
 @RestController
@@ -74,12 +73,12 @@ public class SearchSparqlController {
      * Method body copied from org.eclipse.rdf4j.http.server.readonly.QueryResponder.
      */
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(path = "/search/sparql", consumes = APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(path = "/search/sparql", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void sparqlPost(
+            @RequestHeader(value = HttpHeaders.ACCEPT) String acceptHeader,
             @RequestParam(value = "default-graph-uri", required = false) String defaultGraphUri,
             @RequestParam(value = "named-graph-uri", required = false) String namedGraphUri,
             @RequestParam(value = "query") String query,
-            @RequestHeader(ACCEPT) String acceptHeader,
             HttpServletResponse response
     ) throws IOException {
         try {
