@@ -152,7 +152,8 @@ public class TestSparqlPost extends WebIntegrationTest {
 
 
     /**
-     * Verify that <a href="https://www.w3.org/TR/sparql11-update/">SPARQL Update</a> operations are disallowed
+     * Verify that <a href="https://www.w3.org/TR/sparql11-update/">SPARQL Update</a> operations are disallowed.
+     * The <code>SparqlQueryEvaluator</code> implements a whitelist in the <code>QueryTypes</code> enum.
      */
     @ParameterizedTest
     @ValueSource(strings = {
