@@ -127,4 +127,47 @@ public class TestSparqlPost extends WebIntegrationTest {
         assertFalse(responseBodyList.isEmpty());
     }
 
+
+    /**
+     * Verify that <a href="https://www.w3.org/TR/sparql11-update/">SPARQL Update</a> operations are disallowed
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+            // https://www.w3.org/TR/sparql11-update/#graphUpdate
+            "INSERT DATA { ex:test1 dc:title \"test\" }",
+            "INSERT { ?s dc:title ?ol } WHERE { ?s dc:title ?o . BIND( STRLANG(STR(?o), \"en\") AS ?ol ) . }",
+            "DELETE DATA { ?s dc:title ?o } WHERE { ?s dc:title ?o }",
+            "DELETE WHERE { ?s dc:title ?o }",
+            "LOAD dc:",
+            "CLEAR GRAPH ex:",
+            // https://www.w3.org/TR/sparql11-update/#graphManagement
+            "CREATE GRAPH ex:",
+            "DROP GRAPH ex:",
+            "COPY DEFAULT TO GRAPH ex:",
+            "MOVE DEFAULT TO GRAPH ex:",
+            "ADD DEFAULT TO GRAPH ex:"
+    })
+    public void sparqlPostUpdateDenied(String update) throws JsonProcessingException {
+        // common prefixes (part of prologue in sparql grammar)
+        final String prologue = """
+                PREFIX dc: <http://purl.org/dc/terms/>
+                PREFIX ex: <http://example.org/>
+                """;
+
+        // prepare request
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("query", prologue + update);
+        RequestEntity<?> request = RequestEntity
+                .post(url)
+                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(requestBody);
+
+        // perform
+        ResponseEntity<String> response = client.exchange(request, String.class);
+
+        // SPARQL Update operations should always be denied
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
 }
