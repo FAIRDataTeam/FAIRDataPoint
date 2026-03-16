@@ -43,7 +43,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("POST /search/sparql")
-public class TestSparqlPost extends WebIntegrationTest {
+public class TestSearchSparqlController extends WebIntegrationTest {
 
     private final URI url = URI.create("/search/sparql");
 
@@ -52,7 +52,7 @@ public class TestSparqlPost extends WebIntegrationTest {
     private final String querySelectAll = "SELECT * WHERE { ?s ?p ?o }";
 
     @Test
-    public void sparqlPostUnauthenticated() throws JsonProcessingException {
+    public void postSparqlUnauthenticated() throws JsonProcessingException {
         // prepare request
         SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
                 querySelectAll, null, null);
@@ -73,7 +73,7 @@ public class TestSparqlPost extends WebIntegrationTest {
     }
 
     @Test
-    public void sparqlPostSelectAll() throws JsonProcessingException {
+    public void postSparqlSelectAll() throws JsonProcessingException {
         // prepare request
         SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
                 querySelectAll, null, null);
@@ -91,6 +91,7 @@ public class TestSparqlPost extends WebIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         HashMap<String, Object> responseBodyMap = jsonMapper.readValue(response.getBody(), new TypeReference<>() {
         });
+
         // expected SPARQL SELECT result structure: https://www.w3.org/TR/sparql11-results-json/
         assertEquals(Set.of("head", "results"), responseBodyMap.keySet());
         if (responseBodyMap.get("results") instanceof HashMap<?, ?> results) {
@@ -99,7 +100,7 @@ public class TestSparqlPost extends WebIntegrationTest {
     }
 
     @Test
-    public void sparqlPostAskAny() throws JsonProcessingException {
+    public void postSparqlAskAny() throws JsonProcessingException {
         // prepare request
         SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
                 "ASK { ?s ?p ?o }", null, null);
@@ -116,6 +117,7 @@ public class TestSparqlPost extends WebIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         HashMap<String, Object> responseBodyMap = jsonMapper.readValue(response.getBody(), new TypeReference<>() {
         });
+
         // expected SPARQL ASK result structure: https://www.w3.org/TR/sparql11-results-json/
         assertEquals(Set.of("head", "boolean"), responseBodyMap.keySet());
         if (responseBodyMap.get("boolean") instanceof Boolean bool) {
@@ -128,7 +130,7 @@ public class TestSparqlPost extends WebIntegrationTest {
             "CONSTRUCT WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> } ",
             "DESCRIBE ?s WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> } "
     })
-    public void sparqlPostConstructOrDescribe(String query) throws JsonProcessingException {
+    public void postSparqlConstructOrDescribe(String query) throws JsonProcessingException {
         // prepare request
         SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
                 query, null, null);
@@ -171,7 +173,7 @@ public class TestSparqlPost extends WebIntegrationTest {
             "MOVE DEFAULT TO GRAPH ex:",
             "ADD DEFAULT TO GRAPH ex:"
     })
-    public void sparqlPostUpdateDenied(String update) throws JsonProcessingException {
+    public void postSparqlUpdateDenied(String update) throws JsonProcessingException {
         // common prefixes (part of prologue in sparql grammar)
         final String prologue = """
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -193,5 +195,4 @@ public class TestSparqlPost extends WebIntegrationTest {
         // SPARQL Update operations should always be denied
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
-
 }
