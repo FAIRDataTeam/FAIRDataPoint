@@ -72,6 +72,8 @@ public class SearchSparqlController {
     /**
      * Allows authenticated users to POST a full SPARQL query.
      * Method body copied from org.eclipse.rdf4j.http.server.readonly.QueryResponder.
+     * The "Accept" header is required, and allowable values depend on the type of query,
+     * as defined in <code>org.eclipse.rdf4j.http.server.readonly.sparql.QueryTypes.formats</code>.
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/search/sparql", consumes = MediaType.APPLICATION_JSON_VALUE)
