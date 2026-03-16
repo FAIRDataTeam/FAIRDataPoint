@@ -74,13 +74,11 @@ public class SearchSparqlController {
      * Method body copied from org.eclipse.rdf4j.http.server.readonly.QueryResponder.
      */
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(path = "/search/sparql", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(path = "/search/sparql", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void sparqlPost(
         @Schema(example = MediaType.APPLICATION_JSON_VALUE)
             @RequestHeader(value = HttpHeaders.ACCEPT) String acceptHeader,
-        @Schema(example = "\"\"") @RequestParam(value = "default-graph-uri", required = false) String defaultGraphUri,
-        @Schema(example = "\"\"") @RequestParam(value = "named-graph-uri", required = false) String namedGraphUri,
-        @Schema(example = "SELECT * WHERE {?subject ?predicate ?object}") @RequestParam(value = "query") String query,
+        @RequestBody SparqlQuery sparqlQuery,
         HttpServletResponse response
     ) throws IOException {
         // enforce default accept header for wildcard
@@ -88,7 +86,12 @@ public class SearchSparqlController {
         try {
             final EvaluateResultHttpResponse result = new EvaluateResultHttpResponse(response);
             sparqlQueryEvaluator.evaluate(
-                    result, rdf4jRepository, query, accept, toArray(defaultGraphUri), toArray(namedGraphUri)
+                    result,
+                    rdf4jRepository,
+                    sparqlQuery.query,
+                    accept,
+                    toArray(sparqlQuery.defaultGraphUri),
+                    toArray(sparqlQuery.namedGraphUri)
             );
         }
         catch (MalformedQueryException | IllegalStateException | IOException exception) {
@@ -131,4 +134,12 @@ public class SearchSparqlController {
         }
     }
 
+    /**
+     * Defines the content of the query request body, for JSON deserialization.
+     * @param query
+     * @param defaultGraphUri
+     * @param namedGraphUri
+     */
+    public record SparqlQuery(String query, String defaultGraphUri, String namedGraphUri) {
+    }
 }
