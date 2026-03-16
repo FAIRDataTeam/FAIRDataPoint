@@ -36,7 +36,6 @@
 
 package nl.dtls.fairdatapoint.api.controller.search;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
@@ -57,6 +56,8 @@ public class SearchSparqlController {
 
     private static final String[] ALL_GRAPHS = {};
 
+    private static final String JSON_MEDIA_TYPES = "application/json, application/ld+json";
+
     private final Repository rdf4jRepository;
 
     private final SparqlQueryEvaluator sparqlQueryEvaluator;
@@ -72,19 +73,23 @@ public class SearchSparqlController {
     /**
      * Allows authenticated users to POST a full SPARQL query.
      * Method body copied from org.eclipse.rdf4j.http.server.readonly.QueryResponder.
-     * The "Accept" header is required, and allowable values depend on the type of query,
+     * The "Accept" header is required, and allowable media types depend on the type of query,
      * as defined in <code>org.eclipse.rdf4j.http.server.readonly.sparql.QueryTypes.formats</code>.
+     * However, to simplify things, we restrict the allowable media types to JSON and/or JSON-LD.
      */
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(path = "/search/sparql", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            path = "/search/sparql",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = { MediaType.APPLICATION_JSON_VALUE, "application/ld+json" }
+    )
     public void sparqlPost(
-        @Schema(example = MediaType.APPLICATION_JSON_VALUE)
-            @RequestHeader(value = HttpHeaders.ACCEPT) String acceptHeader,
+        @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = JSON_MEDIA_TYPES) String acceptHeader,
         @RequestBody SparqlQuery sparqlQuery,
         HttpServletResponse response
     ) throws IOException {
         // enforce default accept header for wildcard
-        final String accept = ("*/*".equals(acceptHeader)) ? MediaType.APPLICATION_JSON_VALUE : acceptHeader;
+        final String accept = ("*/*".equals(acceptHeader)) ? JSON_MEDIA_TYPES : acceptHeader;
         try {
             final EvaluateResultHttpResponse result = new EvaluateResultHttpResponse(response);
             sparqlQueryEvaluator.evaluate(

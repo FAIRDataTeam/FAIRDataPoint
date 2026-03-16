@@ -72,15 +72,16 @@ public class TestSearchSparqlController extends WebIntegrationTest {
         assertTrue(responseBodyMap.containsKey("error"));
     }
 
-    @Test
-    public void postSparqlSelectAll() throws JsonProcessingException {
+    @ParameterizedTest
+    @ValueSource(strings = { MediaType.APPLICATION_JSON_VALUE, "*/*" })
+    public void postSparqlSelectAll(String acceptHeader) throws JsonProcessingException {
         // prepare request
         SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
                 querySelectAll, null, null);
         RequestEntity<SearchSparqlController.SparqlQuery> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.valueOf(acceptHeader))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(sparqlQuery);
 
@@ -127,8 +128,8 @@ public class TestSearchSparqlController extends WebIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "CONSTRUCT WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> } ",
-            "DESCRIBE ?s WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> } "
+            "CONSTRUCT WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> }",
+            "DESCRIBE ?s WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> }"
     })
     public void postSparqlConstructOrDescribe(String query) throws JsonProcessingException {
         // prepare request
