@@ -41,7 +41,7 @@ import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
 import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Client")
-@RestController("fdpProfileController")
+@RestController
 @RequestMapping("/profile")
 public class ProfileController {
 
