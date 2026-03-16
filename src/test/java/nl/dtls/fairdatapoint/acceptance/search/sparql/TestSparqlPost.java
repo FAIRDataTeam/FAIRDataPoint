@@ -27,14 +27,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.dtls.fairdatapoint.WebIntegrationTest;
+import nl.dtls.fairdatapoint.api.controller.search.SearchSparqlController;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -55,12 +54,12 @@ public class TestSparqlPost extends WebIntegrationTest {
     @Test
     public void sparqlPostUnauthenticated() throws JsonProcessingException {
         // prepare request
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("query", querySelectAll);
+        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
+                querySelectAll, null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(requestBody);
+                .body(sparqlQuery);
 
         // perform
         ResponseEntity<String> response = client.exchange(request, String.class);
@@ -76,13 +75,14 @@ public class TestSparqlPost extends WebIntegrationTest {
     @Test
     public void sparqlPostSelectAll() throws JsonProcessingException {
         // prepare request
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("query", querySelectAll);
-        RequestEntity<?> request = RequestEntity
+        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
+                querySelectAll, null, null);
+        RequestEntity<SearchSparqlController.SparqlQuery> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(requestBody);
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(sparqlQuery);
 
         // perform
         ResponseEntity<String> response = client.exchange(request, String.class);
@@ -101,13 +101,13 @@ public class TestSparqlPost extends WebIntegrationTest {
     @Test
     public void sparqlPostAskAny() throws JsonProcessingException {
         // prepare request
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("query", "ASK { ?s ?p ?o }");
+        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
+                "ASK { ?s ?p ?o }", null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(requestBody);
+                .body(sparqlQuery);
 
         // perform
         ResponseEntity<String> response = client.exchange(request, String.class);
@@ -130,14 +130,14 @@ public class TestSparqlPost extends WebIntegrationTest {
     })
     public void sparqlPostConstructOrDescribe(String query) throws JsonProcessingException {
         // prepare request
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("query", query);
+        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
+                query, null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 // QueryTypes.CONSTRUCT_OR_DESCRIBE does not support simple JSON, only application/ld+json (or ttl, n3)
                 .accept(MediaType.valueOf(RDFFormat.JSONLD.getDefaultMIMEType()))
-                .body(requestBody);
+                .body(sparqlQuery);
 
         // perform
         ResponseEntity<String> response = client.exchange(request, String.class);
@@ -179,13 +179,13 @@ public class TestSparqlPost extends WebIntegrationTest {
                 """;
 
         // prepare request
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("query", prologue + update);
+        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
+                prologue + update, null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(requestBody);
+                .body(sparqlQuery);
 
         // perform
         ResponseEntity<String> response = client.exchange(request, String.class);
