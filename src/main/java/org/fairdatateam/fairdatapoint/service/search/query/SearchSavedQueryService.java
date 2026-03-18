@@ -27,7 +27,6 @@ import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
@@ -108,7 +107,7 @@ public class SearchSavedQueryService {
     }
 
     private boolean canSeeQuery(Optional<User> optionalUser, SearchSavedQuery query) {
-        return query.getType().equals(SearchSavedQueryType.PUBLIC)
+        return query.getType().equals(SearchSavedQuery.Type.PUBLIC)
                 || optionalUser
                     .filter(user -> user.getRole().equals(UserRole.ADMIN))
                     .isPresent()
@@ -118,7 +117,7 @@ public class SearchSavedQueryService {
     }
 
     private boolean isOwnOrInternal(User user, SearchSavedQuery query) {
-        return query.getType().equals(SearchSavedQueryType.INTERNAL)
+        return query.getType().equals(SearchSavedQuery.Type.INTERNAL)
                 || Objects.equals(query.getUserUuid(), user.getUuid());
     }
 

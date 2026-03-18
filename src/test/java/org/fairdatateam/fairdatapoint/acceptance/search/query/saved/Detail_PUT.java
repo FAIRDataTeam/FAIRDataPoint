@@ -29,7 +29,6 @@ import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,7 +72,7 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.PUBLIC)
+                                .type(SearchSavedQuery.Type.PUBLIC)
                                 .variables(SearchQueryVariablesDTO.builder()
                                         .prefixes("A")
                                         .graphPattern("B")
@@ -107,7 +106,7 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.PUBLIC)
+                                .type(SearchSavedQuery.Type.PUBLIC)
                                 .variables(SearchQueryVariablesDTO.builder()
                                         .prefixes("A")
                                         .graphPattern("B")
@@ -141,7 +140,7 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.INTERNAL)
+                                .type(SearchSavedQuery.Type.INTERNAL)
                                 .variables(SearchQueryVariablesDTO.builder()
                                         .prefixes("A")
                                         .graphPattern("B")
@@ -159,7 +158,7 @@ public class Detail_PUT extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
-        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQueryType.INTERNAL)));
+        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQuery.Type.INTERNAL)));
         assertThat(result.getBody().getName(), is(equalTo("Edited query")));
         assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
         assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));
@@ -181,7 +180,7 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.INTERNAL)
+                                .type(SearchSavedQuery.Type.INTERNAL)
                                 .variables(SearchQueryVariablesDTO.builder()
                                         .prefixes("A")
                                         .graphPattern("B")
@@ -199,7 +198,7 @@ public class Detail_PUT extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
-        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQueryType.INTERNAL)));
+        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQuery.Type.INTERNAL)));
         assertThat(result.getBody().getName(), is(equalTo("Edited query")));
         assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
         assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));

@@ -23,14 +23,9 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

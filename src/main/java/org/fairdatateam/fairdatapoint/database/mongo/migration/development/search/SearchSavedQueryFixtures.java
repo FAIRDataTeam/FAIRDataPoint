@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.database.mongo.migration.development.sear
 
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +41,7 @@ public class SearchSavedQueryFixtures {
                 .uuid(UUID.randomUUID().toString())
                 .name("All datasets")
                 .description("Quickly query all datasets (DCAT)")
-                .type(SearchSavedQueryType.PUBLIC)
+                .type(SearchSavedQuery.Type.PUBLIC)
                 .userUuid(KnownUUIDs.USER_ALBERT_UUID)
                 .variables(SearchQueryVariablesDTO.builder()
                         .prefixes(PREFIX_DCAT)
@@ -60,7 +59,7 @@ public class SearchSavedQueryFixtures {
                 .uuid(UUID.randomUUID().toString())
                 .name("All distributions")
                 .description("Quickly query all distributions (DCAT)")
-                .type(SearchSavedQueryType.INTERNAL)
+                .type(SearchSavedQuery.Type.INTERNAL)
                 .userUuid(KnownUUIDs.USER_ADMIN_UUID)
                 .variables(SearchQueryVariablesDTO.builder()
                         .prefixes(PREFIX_DCAT)
@@ -78,7 +77,7 @@ public class SearchSavedQueryFixtures {
                 .uuid(UUID.randomUUID().toString())
                 .name("Things with data")
                 .description("This is private query of Nikola Tesla.")
-                .type(SearchSavedQueryType.PRIVATE)
+                .type(SearchSavedQuery.Type.PRIVATE)
                 .userUuid(KnownUUIDs.USER_NIKOLA_UUID)
                 .variables(SearchQueryVariablesDTO.builder()
                         .prefixes("")

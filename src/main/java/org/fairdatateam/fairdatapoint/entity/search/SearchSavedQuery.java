@@ -49,11 +49,18 @@ public class SearchSavedQuery {
 
     private String userUuid;
 
-    private SearchSavedQueryType type;
+    private Type type;
 
     private Instant createdAt;
 
     private Instant updatedAt;
 
     private SearchQueryVariablesDTO variables;
+
+    public enum Type {
+        PUBLIC,
+        PRIVATE,
+        INTERNAL
+    }
+
 }

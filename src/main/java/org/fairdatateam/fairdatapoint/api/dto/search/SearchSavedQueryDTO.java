@@ -28,7 +28,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
 
 import java.time.Instant;
 
@@ -49,7 +49,7 @@ public class SearchSavedQueryDTO {
     private String description;
 
     @NotNull
-    private SearchSavedQueryType type;
+    private SearchSavedQuery.Type type;
 
     @Valid
     @JsonInclude
