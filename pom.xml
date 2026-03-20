@@ -10,7 +10,7 @@
     </parent>
     <groupId>nl.dtls</groupId>
     <artifactId>fairdatapoint</artifactId>
-    <version>1.18.1</version>
+    <version>1.19.0</version>
     <packaging>jar</packaging>
 
     <name>FairDataPoint</name>
@@ -209,6 +209,20 @@
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-sail-nativerdf</artifactId>
             <version>${rdf4j-runtime.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-spring-boot-sparql-web</artifactId>
+            <version>${rdf4j-runtime.version}</version>
+            <exclusions>
+                <!-- Exclude all transitive dependencies:
+                They cause unwanted side effects, such as spring data rest exposing all repository methods as
+                rest endpoints. Moreover, we only need the class definitions. -->
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
