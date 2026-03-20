@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - develop
-      - support/1.18.x
+      - "support/**"
   pull_request:
   workflow_dispatch:
 
