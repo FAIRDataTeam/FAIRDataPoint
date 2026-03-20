@@ -29,9 +29,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.base.BaseEntityCustomUUID;
-import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
 import java.util.List;
@@ -83,7 +83,7 @@ public class MetadataSchemaVersion extends BaseEntityCustomUUID {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "type", columnDefinition = "METADATA_SCHEMA_TYPE", nullable = false)
     private MetadataSchemaType type;
 
@@ -95,7 +95,7 @@ public class MetadataSchemaVersion extends BaseEntityCustomUUID {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "state", columnDefinition = "METADATA_SCHEMA_STATE", nullable = false)
     private MetadataSchemaState state;
 

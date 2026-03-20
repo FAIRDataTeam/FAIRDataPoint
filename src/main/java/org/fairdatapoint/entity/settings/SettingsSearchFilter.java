@@ -28,8 +28,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.base.BaseEntity;
 import org.fairdatapoint.entity.search.SearchFilterType;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class SettingsSearchFilter extends BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "type", columnDefinition = "SEARCH_FILTER_TYPE", nullable = false)
     private SearchFilterType type;
 

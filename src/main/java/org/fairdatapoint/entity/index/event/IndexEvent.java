@@ -33,9 +33,9 @@ import lombok.experimental.SuperBuilder;
 import org.fairdatapoint.entity.base.BaseEntity;
 import org.fairdatapoint.entity.index.entry.IndexEntry;
 import org.fairdatapoint.entity.index.event.payload.*;
-import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 
@@ -50,7 +50,7 @@ public class IndexEvent extends BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "type", columnDefinition = "INDEX_EVENT_TYPE", nullable = false)
     private IndexEventType type;
 
