@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.harvester;
+package org.fairdatateam.fairdatapoint.service.index.harvester;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -43,13 +43,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
-import static nl.dtls.fairdatapoint.util.HttpUtil.getRdfContentType;
-import static nl.dtls.fairdatapoint.util.RdfIOUtil.read;
-import static nl.dtls.fairdatapoint.util.RdfIOUtil.readFile;
-import static nl.dtls.fairdatapoint.util.RdfUtil.getObjectsBy;
-import static nl.dtls.fairdatapoint.util.RdfUtil.getSubjectsBy;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRdfContentType;
+import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.read;
+import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.readFile;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.getObjectsBy;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.getSubjectsBy;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service

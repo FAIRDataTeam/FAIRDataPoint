@@ -20,24 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.production;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.production;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.context.annotation.Profile;
 
 import java.util.*;
 
-import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
 
 @ChangeLog(order = "0011")
 @Profile(Profiles.PRODUCTION)
@@ -92,7 +92,7 @@ public class Migration_0011_ComplyFDPO {
         shape.append("type", "INTERNAL");
         shape.append("definition", shaclDefinition);
         shape.append("targetClasses", classes);
-        shape.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.shape.Shape");
+        shape.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.shape.Shape");
         return shape;
     }
 
@@ -132,7 +132,7 @@ public class Migration_0011_ComplyFDPO {
         // External Links
         definition.append("externalLinks", List.of());
 
-        definition.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
+        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 }

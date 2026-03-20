@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;
 import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.runner.springboot.base.MongockInitializingBeanRunner;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import nl.dtls.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +41,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoAuditing
 @EnableMongoRepositories(
         basePackages = {
-            "nl.dtls.fairdatapoint",
+            "org.fairdatateam.fairdatapoint",
             "org.fairdatateam.rdf.migration",
             "org.fairdatateam.security.acls"
         }
@@ -65,7 +65,7 @@ public class MongoConfig {
         return MongockSpringboot.builder()
                 .setDriver(SpringDataMongoV4Driver.withDefaultLock(mongoTemplate))
                 .addMigrationScanPackage(
-                        "nl.dtls.fairdatapoint.database.mongo.migration.production"
+                        "org.fairdatateam.fairdatapoint.database.mongo.migration.production"
                 )
                 .setSpringContext(springContext)
                 .setLegacyMigration(new LegacyMigration("dbchangelog"))

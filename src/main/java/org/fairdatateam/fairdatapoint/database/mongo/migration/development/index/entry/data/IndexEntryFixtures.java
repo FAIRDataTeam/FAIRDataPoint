@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.index.entry.data;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.index.entry.data;
 
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
-import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryPermit;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryState;
+import org.fairdatateam.fairdatapoint.entity.index.entry.RepositoryMetadata;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

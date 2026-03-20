@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.resource;
+package org.fairdatateam.fairdatapoint.service.resource;
 
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.membership.MembershipService;
-import nl.dtls.fairdatapoint.service.openapi.OpenApiService;
+import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.service.membership.MembershipService;
+import org.fairdatateam.fairdatapoint.service.openapi.OpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;

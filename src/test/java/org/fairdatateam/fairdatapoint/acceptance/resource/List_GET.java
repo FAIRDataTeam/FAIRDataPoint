@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.resource;
+package org.fairdatateam.fairdatapoint.acceptance.resource;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

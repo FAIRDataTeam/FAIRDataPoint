@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.general;
+package org.fairdatateam.fairdatapoint.acceptance.general;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;

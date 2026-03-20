@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.index.settings;
+package org.fairdatateam.fairdatapoint.api.dto.index.settings;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.dtls.fairdatapoint.api.validator.ValidDuration;
+import org.fairdatateam.fairdatapoint.api.validator.ValidDuration;
 
 @NoArgsConstructor
 @AllArgsConstructor

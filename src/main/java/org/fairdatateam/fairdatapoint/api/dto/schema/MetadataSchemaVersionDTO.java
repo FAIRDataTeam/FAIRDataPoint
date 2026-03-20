@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.schema;
+package org.fairdatateam.fairdatapoint.api.dto.schema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
 
 import java.util.List;
 import java.util.Set;

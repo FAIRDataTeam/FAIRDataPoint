@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.search.query.saved;
+package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
-import nl.dtls.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

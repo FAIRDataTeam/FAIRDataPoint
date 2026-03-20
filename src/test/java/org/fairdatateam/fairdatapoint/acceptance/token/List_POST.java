@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.token;
+package org.fairdatateam.fairdatapoint.acceptance.token;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.acceptance.user.Common;
-import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
-import nl.dtls.fairdatapoint.api.dto.auth.TokenDTO;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.acceptance.user.Common;
+import org.fairdatateam.fairdatapoint.api.dto.auth.AuthDTO;
+import org.fairdatateam.fairdatapoint.api.dto.auth.TokenDTO;
+import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
+import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;

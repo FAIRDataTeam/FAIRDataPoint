@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.index.webhook;
+package org.fairdatateam.fairdatapoint.api.dto.index.webhook;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import org.fairdatateam.fairdatapoint.entity.index.webhook.WebhookEvent;
 
 @Data
 @NoArgsConstructor

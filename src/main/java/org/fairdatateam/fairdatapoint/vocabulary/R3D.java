@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.vocabulary;
+package org.fairdatateam.fairdatapoint.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 public final class R3D {
 

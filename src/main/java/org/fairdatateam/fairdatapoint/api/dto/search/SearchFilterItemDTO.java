@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.search;
+package org.fairdatateam.fairdatapoint.api.dto.search;
 
 import lombok.*;
-import nl.dtls.fairdatapoint.api.validator.ValidIri;
+import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
 
 @NoArgsConstructor
 @AllArgsConstructor

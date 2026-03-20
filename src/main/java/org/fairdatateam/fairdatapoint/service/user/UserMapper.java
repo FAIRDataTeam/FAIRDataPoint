@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.user;
+package org.fairdatateam.fairdatapoint.service.user;
 
-import nl.dtls.fairdatapoint.api.dto.user.*;
-import nl.dtls.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.api.dto.user.*;
+import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

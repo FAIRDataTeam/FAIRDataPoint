@@ -25,11 +25,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.vocabulary;
+package org.fairdatateam.fairdatapoint.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 /**
  * Semanticscience Integrated Ontology

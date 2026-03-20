@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.user;
+package org.fairdatateam.fairdatapoint.entity.user;
 
 import lombok.*;
 import org.bson.types.ObjectId;

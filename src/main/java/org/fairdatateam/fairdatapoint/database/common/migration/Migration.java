@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.common.migration;
+package org.fairdatateam.fairdatapoint.database.common.migration;
 
 public interface Migration {
 

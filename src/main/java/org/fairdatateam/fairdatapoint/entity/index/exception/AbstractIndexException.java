@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.exception;
+package org.fairdatateam.fairdatapoint.entity.index.exception;
 
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
+import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
 import org.springframework.http.HttpStatus;
 
 public abstract class AbstractIndexException extends RuntimeException {

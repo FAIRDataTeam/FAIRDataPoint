@@ -25,12 +25,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service.metadata.metric;
+package org.fairdatateam.fairdatapoint.service.metadata.metric;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.entity.metadata.Metric;
-import nl.dtls.fairdatapoint.entity.settings.Settings;
-import nl.dtls.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metric;
+import org.fairdatateam.fairdatapoint.entity.settings.Settings;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service

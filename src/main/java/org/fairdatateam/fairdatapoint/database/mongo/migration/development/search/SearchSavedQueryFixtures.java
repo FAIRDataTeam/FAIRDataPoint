@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.search;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.search;
 
-import nl.dtls.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
-import nl.dtls.fairdatapoint.entity.search.SearchSavedQuery;
-import nl.dtls.fairdatapoint.entity.search.SearchSavedQueryType;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;

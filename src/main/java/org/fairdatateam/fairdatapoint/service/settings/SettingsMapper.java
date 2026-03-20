@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.settings;
+package org.fairdatateam.fairdatapoint.service.settings;
 
-import nl.dtls.fairdatapoint.api.dto.search.SearchFilterDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchFilterItemDTO;
-import nl.dtls.fairdatapoint.api.dto.settings.*;
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.config.properties.PingProperties;
-import nl.dtls.fairdatapoint.config.properties.RepositoryProperties;
-import nl.dtls.fairdatapoint.entity.settings.*;
-import nl.dtls.fairdatapoint.service.search.SearchMapper;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchFilterDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchFilterItemDTO;
+import org.fairdatateam.fairdatapoint.api.dto.settings.*;
+import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
+import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
+import org.fairdatateam.fairdatapoint.entity.settings.*;
+import org.fairdatateam.fairdatapoint.service.search.SearchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

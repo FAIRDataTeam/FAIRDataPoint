@@ -20,20 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.index;
+package org.fairdatateam.fairdatapoint.api.controller.index;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.service.UtilityService;
-import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
-import nl.dtls.fairdatapoint.service.index.event.EventService;
-import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
+import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.service.UtilityService;
+import org.fairdatateam.fairdatapoint.service.index.entry.IndexEntryService;
+import org.fairdatateam.fairdatapoint.service.index.event.EventService;
+import org.fairdatateam.fairdatapoint.service.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

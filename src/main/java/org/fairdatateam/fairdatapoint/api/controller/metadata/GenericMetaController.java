@@ -20,24 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.metadata;
+package org.fairdatateam.fairdatapoint.api.controller.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaPathDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.member.MemberService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
-import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaDTO;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaPathDTO;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateDTO;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.service.metadata.common.MetadataService;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
+import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -49,11 +49,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
-import static nl.dtls.fairdatapoint.util.HttpUtil.getMetadataIRI;
-import static nl.dtls.fairdatapoint.util.RdfUtil.getStringObjectBy;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.getMetadataIRI;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.getStringObjectBy;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Metadata")
 @RestController

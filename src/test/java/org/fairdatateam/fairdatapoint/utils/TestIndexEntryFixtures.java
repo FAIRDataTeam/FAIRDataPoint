@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.utils;
+package org.fairdatateam.fairdatapoint.utils;
 
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryPermit;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryState;
 
 import java.time.Instant;
 import java.util.ArrayList;

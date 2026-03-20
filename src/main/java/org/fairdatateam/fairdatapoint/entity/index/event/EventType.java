@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.event;
+package org.fairdatateam.fairdatapoint.entity.index.event;
 
 public enum EventType {
     AdminTrigger,

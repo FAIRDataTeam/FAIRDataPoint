@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.webhook;
+package org.fairdatateam.fairdatapoint.service.index.webhook;
 
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.http.Exchange;
-import nl.dtls.fairdatapoint.entity.index.http.ExchangeDirection;
-import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
-import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.entity.index.http.Exchange;
+import org.fairdatateam.fairdatapoint.entity.index.http.ExchangeDirection;
+import org.fairdatateam.fairdatapoint.entity.index.http.ExchangeState;
+import org.fairdatateam.fairdatapoint.entity.index.webhook.Webhook;
+import org.fairdatateam.fairdatapoint.entity.index.webhook.WebhookEvent;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 

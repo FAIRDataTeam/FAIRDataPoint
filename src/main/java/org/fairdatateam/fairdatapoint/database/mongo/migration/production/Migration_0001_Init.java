@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.production;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.production;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
@@ -74,7 +74,7 @@ public class Migration_0001_Init {
         user.append("email", email);
         user.append("passwordHash", "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW");
         user.append("role", role);
-        user.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.user.User");
+        user.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.user.User");
         return user;
     }
 
@@ -103,7 +103,7 @@ public class Migration_0001_Init {
         }
         membership.append(FIELD_PERMISSIONS, permissions);
         membership.append("allowedEntities", allowedEntities);
-        membership.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.membership.Membership");
+        membership.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.membership.Membership");
         return membership;
     }
 

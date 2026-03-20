@@ -20,18 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.member;
+package org.fairdatateam.fairdatapoint.service.member;
 
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.MembershipRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.membership.Membership;
-import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.entity.user.UserRole;
-import nl.dtls.fairdatapoint.service.membership.PermissionService;
-import nl.dtls.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MembershipRepository;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.membership.Membership;
+import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.service.membership.PermissionService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.fairdatateam.security.acls.dao.AclRepository;

@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.form.autocomplete;
+package org.fairdatateam.fairdatapoint.service.form.autocomplete;
 
-import nl.dtls.fairdatapoint.entity.forms.RdfEntityCacheContainer;
+import org.fairdatateam.fairdatapoint.entity.forms.RdfEntityCacheContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Component;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.FORMS_AUTOCOMPLETE_CACHE;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.FORMS_AUTOCOMPLETE_CACHE;
 
 @Component
 public class FormsAutocompleteCache {

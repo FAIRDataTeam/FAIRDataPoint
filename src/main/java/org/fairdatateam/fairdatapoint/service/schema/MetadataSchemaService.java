@@ -20,21 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.schema;
+package org.fairdatateam.fairdatapoint.service.schema;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.schema.*;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import nl.dtls.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.api.dto.schema.*;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
+import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.beans.factory.annotation.Autowired;

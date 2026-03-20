@@ -20,22 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.index;
+package org.fairdatateam.fairdatapoint.api.controller.index;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryUpdateDTO;
-import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
-import nl.dtls.fairdatapoint.service.index.event.EventService;
-import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
-import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryUpdateDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryPermit;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.service.index.entry.IndexEntryService;
+import org.fairdatateam.fairdatapoint.service.index.event.EventService;
+import org.fairdatateam.fairdatapoint.service.index.harvester.HarvesterService;
+import org.fairdatateam.fairdatapoint.service.index.webhook.WebhookService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

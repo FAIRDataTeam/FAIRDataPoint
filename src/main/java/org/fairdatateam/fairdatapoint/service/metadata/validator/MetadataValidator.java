@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.validator;
+package org.fairdatateam.fairdatapoint.service.metadata.validator;
 
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.rdf.ShaclValidator;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import nl.dtls.fairdatapoint.service.schema.MetadataSchemaService;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.service.rdf.ShaclValidator;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
@@ -38,8 +38,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getParent;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataValidator {

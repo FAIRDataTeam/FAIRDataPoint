@@ -20,21 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata;
 
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import nl.dtls.fairdatapoint.database.common.migration.Migration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import org.fairdatateam.fairdatapoint.database.common.migration.Migration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.service.metadata.common.MetadataService;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
+import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +43,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class RdfMetadataMigration implements Migration {

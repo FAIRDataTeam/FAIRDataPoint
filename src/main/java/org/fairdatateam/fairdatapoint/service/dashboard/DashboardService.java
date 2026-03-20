@@ -20,20 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.dashboard;
+package org.fairdatateam.fairdatapoint.service.dashboard;
 
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.service.member.MemberService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
+import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.service.metadata.common.MetadataService;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
@@ -45,9 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
-import static nl.dtls.fairdatapoint.util.RdfUtil.getObjectsBy;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.getObjectsBy;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class DashboardService {

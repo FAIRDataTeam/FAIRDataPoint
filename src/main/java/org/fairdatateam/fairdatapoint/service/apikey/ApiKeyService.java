@@ -20,17 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.apikey;
+package org.fairdatateam.fairdatapoint.service.apikey;
 
-import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.ApiKeyRepository;
-import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
-import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
-import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.entity.user.UserRole;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
-import nl.dtls.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.api.dto.apikey.ApiKeyDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.ApiKeyRepository;
+import org.fairdatateam.fairdatapoint.entity.apikey.ApiKey;
+import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

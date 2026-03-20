@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.schema;
+package org.fairdatateam.fairdatapoint.acceptance.schema;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

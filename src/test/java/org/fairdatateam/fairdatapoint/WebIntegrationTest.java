@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint;
+package org.fairdatateam.fairdatapoint;
 
-import nl.dtls.fairdatapoint.database.mongo.migration.development.MigrationRunner;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.MigrationRunner;
+import org.fairdatateam.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

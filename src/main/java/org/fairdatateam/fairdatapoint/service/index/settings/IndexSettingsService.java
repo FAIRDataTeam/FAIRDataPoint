@@ -20,18 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.settings;
+package org.fairdatateam.fairdatapoint.service.index.settings;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
-import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
+import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
+import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettings;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsPing;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

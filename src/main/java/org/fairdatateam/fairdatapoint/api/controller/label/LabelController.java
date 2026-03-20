@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.label;
+package org.fairdatateam.fairdatapoint.api.controller.label;
 
-import nl.dtls.fairdatapoint.api.dto.label.LabelDTO;
-import nl.dtls.fairdatapoint.service.label.LabelService;
+import org.fairdatateam.fairdatapoint.api.dto.label.LabelDTO;
+import org.fairdatateam.fairdatapoint.service.label.LabelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

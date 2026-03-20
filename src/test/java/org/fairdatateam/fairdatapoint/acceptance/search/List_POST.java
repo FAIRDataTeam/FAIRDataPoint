@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.search;
+package org.fairdatateam.fairdatapoint.acceptance.search;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.search.SearchQueryDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;

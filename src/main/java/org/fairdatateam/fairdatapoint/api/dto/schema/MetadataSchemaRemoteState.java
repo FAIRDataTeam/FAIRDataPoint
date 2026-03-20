@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.schema;
+package org.fairdatateam.fairdatapoint.api.dto.schema;
 
 public enum MetadataSchemaRemoteState {
     DIRTY, CONFLICT, ALREADY_IMPORTED, NOT_IMPORTED

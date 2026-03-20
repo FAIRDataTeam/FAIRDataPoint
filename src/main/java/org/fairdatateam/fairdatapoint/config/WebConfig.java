@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtls.fairdatapoint.api.converter.ErrorConverter;
-import nl.dtls.fairdatapoint.api.converter.RdfConverter;
+import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
+import org.fairdatateam.fairdatapoint.api.converter.RdfConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

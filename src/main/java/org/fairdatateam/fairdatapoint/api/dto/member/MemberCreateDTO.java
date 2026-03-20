@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.member;
+package org.fairdatateam.fairdatapoint.api.dto.member;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

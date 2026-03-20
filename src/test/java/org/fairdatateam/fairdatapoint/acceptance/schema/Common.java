@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.schema;
+package org.fairdatateam.fairdatapoint.acceptance.schema;
 
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

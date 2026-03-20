@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.rdf.migration.database.RdfMigrationRepository;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigrationRunner;
 import org.springframework.context.ApplicationContext;

@@ -20,25 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.entry;
+package org.fairdatateam.fairdatapoint.service.index.entry;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.index.entry.*;
-import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryPermit;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
-import nl.dtls.fairdatapoint.service.index.event.EventService;
-import nl.dtls.fairdatapoint.service.index.harvester.HarvesterService;
-import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
-import nl.dtls.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.*;
+import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryPermit;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryState;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettings;
+import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
+import org.fairdatateam.fairdatapoint.service.index.event.EventService;
+import org.fairdatateam.fairdatapoint.service.index.harvester.HarvesterService;
+import org.fairdatateam.fairdatapoint.service.index.settings.IndexSettingsService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +54,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO.*;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO.*;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service

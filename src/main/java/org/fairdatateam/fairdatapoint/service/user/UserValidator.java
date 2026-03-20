@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.user;
+package org.fairdatateam.fairdatapoint.service.user;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

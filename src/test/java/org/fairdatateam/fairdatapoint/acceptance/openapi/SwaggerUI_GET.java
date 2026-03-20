@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.openapi;
+package org.fairdatateam.fairdatapoint.acceptance.openapi;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
-import nl.dtls.fairdatapoint.utils.CustomPageImpl;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
+import org.fairdatateam.fairdatapoint.utils.CustomPageImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;

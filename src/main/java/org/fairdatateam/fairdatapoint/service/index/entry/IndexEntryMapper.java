@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.entry;
+package org.fairdatateam.fairdatapoint.service.index.entry;
 
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
-import nl.dtls.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.service.index.event.EventMapper;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryDetailDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryStateDTO;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryState;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.service.index.event.EventMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository.catalog;
+package org.fairdatateam.fairdatapoint.database.rdf.repository.catalog;
 
 import jakarta.annotation.PostConstruct;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service("catalogMetadataRepository")
 public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository implements CatalogMetadataRepository {

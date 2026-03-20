@@ -21,13 +21,13 @@
  * THE SOFTWARE.
  */
 
-package nl.dtls.fairdatapoint.acceptance.search.sparql;
+package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.controller.search.SearchSparqlController;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.data;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.data;
 
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactory;
+import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactory;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -20,18 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.production;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.production;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
-import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
 
 @ChangeLog(order = "0003")
 @Profile(Profiles.PRODUCTION)
@@ -78,7 +78,7 @@ public class Migration_0003_ShapeDefinition {
         shape.append("name", name);
         shape.append("type", "INTERNAL");
         shape.append("definition", shaclDefinition);
-        shape.append("_class", "nl.dtls.fairdatapoint.entity.shape.Shape");
+        shape.append("_class", "org.fairdatateam.fairdatapoint.entity.shape.Shape");
         return shape;
     }
 }

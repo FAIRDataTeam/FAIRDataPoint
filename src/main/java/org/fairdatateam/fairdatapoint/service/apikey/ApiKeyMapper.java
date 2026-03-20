@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.apikey;
+package org.fairdatateam.fairdatapoint.service.apikey;
 
-import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
-import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
+import org.fairdatateam.fairdatapoint.api.dto.apikey.ApiKeyDTO;
+import org.fairdatateam.fairdatapoint.entity.apikey.ApiKey;
 import org.springframework.stereotype.Service;
 
 @Service

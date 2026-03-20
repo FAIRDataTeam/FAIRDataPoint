@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.catalog;
+package org.fairdatateam.fairdatapoint.acceptance.metadata.catalog;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.util.RdfIOUtil;
-import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -41,12 +41,12 @@ import java.net.URI;
 import java.util.List;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
+import static org.fairdatateam.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

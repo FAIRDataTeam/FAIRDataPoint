@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository.generic;
+package org.fairdatateam.fairdatapoint.database.rdf.repository.generic;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -37,9 +37,9 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 
 import java.util.ArrayList;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getLanguage;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getLanguage;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;

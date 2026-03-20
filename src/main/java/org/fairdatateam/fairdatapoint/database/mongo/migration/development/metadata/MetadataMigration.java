@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.metadata;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.metadata;
 
-import nl.dtls.fairdatapoint.database.common.migration.Migration;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
+import org.fairdatateam.fairdatapoint.database.common.migration.Migration;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.security;
+package org.fairdatateam.fairdatapoint.service.security;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

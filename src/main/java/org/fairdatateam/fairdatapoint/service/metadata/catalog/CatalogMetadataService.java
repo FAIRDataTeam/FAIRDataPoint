@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.catalog;
+package org.fairdatateam.fairdatapoint.service.metadata.catalog;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.service.metadata.common.AbstractMetadataService;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.setThemeTaxonomies;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.setThemeTaxonomies;
 
 @Service("catalogMetadataService")
 @Slf4j

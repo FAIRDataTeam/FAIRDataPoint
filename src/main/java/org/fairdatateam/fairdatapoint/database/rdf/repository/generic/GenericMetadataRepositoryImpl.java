@@ -25,10 +25,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository.generic;
+package org.fairdatateam.fairdatapoint.database.rdf.repository.generic;
 
-import nl.dtls.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 
 @Service("genericMetadataRepository")
 public class GenericMetadataRepositoryImpl extends AbstractMetadataRepository implements GenericMetadataRepository {

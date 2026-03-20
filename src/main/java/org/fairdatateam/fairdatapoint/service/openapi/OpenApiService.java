@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.openapi;
+package org.fairdatateam.fairdatapoint.service.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import lombok.extern.log4j.Log4j2;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

@@ -20,22 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.search;
+package org.fairdatateam.fairdatapoint.service.search;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import nl.dtls.fairdatapoint.api.dto.search.*;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
-import nl.dtls.fairdatapoint.entity.search.SearchFilterCacheContainer;
-import nl.dtls.fairdatapoint.entity.search.SearchFilterType;
-import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
-import nl.dtls.fairdatapoint.entity.search.SearchResult;
-import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
-import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
-import nl.dtls.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.api.dto.search.*;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterCacheContainer;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterType;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
+import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
+import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.MalformedQueryException;
@@ -52,8 +52,8 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
 public class SearchService {

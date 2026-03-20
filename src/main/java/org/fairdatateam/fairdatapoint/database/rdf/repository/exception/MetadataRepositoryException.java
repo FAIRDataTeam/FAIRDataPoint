@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository.exception;
+package org.fairdatateam.fairdatapoint.database.rdf.repository.exception;
 
 public class MetadataRepositoryException extends Exception {
 

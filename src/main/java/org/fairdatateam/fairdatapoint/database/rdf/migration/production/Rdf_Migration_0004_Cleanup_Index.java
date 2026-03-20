@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.production;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Value;
@@ -37,7 +37,7 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @RdfMigrationAnnotation(
         number = 4,

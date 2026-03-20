@@ -20,17 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.filter;
+package org.fairdatateam.fairdatapoint.api.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.service.apikey.ApiKeyService;
-import nl.dtls.fairdatapoint.service.jwt.JwtService;
+import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
+import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.service.apikey.ApiKeyService;
+import org.fairdatateam.fairdatapoint.service.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,7 +41,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static nl.dtls.fairdatapoint.util.HttpUtil.getToken;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.getToken;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {

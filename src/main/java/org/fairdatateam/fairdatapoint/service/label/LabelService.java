@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.label;
+package org.fairdatateam.fairdatapoint.service.label;
 
 import static java.util.function.Predicate.isEqual;
-import static nl.dtls.fairdatapoint.config.CacheConfig.LABEL_CACHE;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.LABEL_CACHE;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import org.fairdatateam.rdf.resolver.api.ResourceResolver;
 import org.fairdatateam.rdf.resolver.core.ContentNegotiationStrategy;
 import org.fairdatateam.rdf.resolver.core.CoreResourceResolver;
@@ -32,7 +32,7 @@ import org.fairdatateam.rdf.resolver.core.PathExtensionStrategy;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.label.LabelDTO;
+import org.fairdatateam.fairdatapoint.api.dto.label.LabelDTO;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;

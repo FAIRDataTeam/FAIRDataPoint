@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.util;
+package org.fairdatateam.fairdatapoint.util;
 
 import org.eclipse.rdf4j.model.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 public class RdfUtil {
 

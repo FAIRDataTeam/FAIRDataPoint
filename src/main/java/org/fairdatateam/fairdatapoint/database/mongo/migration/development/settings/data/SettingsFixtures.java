@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.settings.data;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.settings.data;
 
-import nl.dtls.fairdatapoint.entity.search.SearchFilterType;
-import nl.dtls.fairdatapoint.entity.settings.Settings;
-import nl.dtls.fairdatapoint.entity.settings.SettingsAutocompleteSource;
-import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
-import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterType;
+import org.fairdatateam.fairdatapoint.entity.settings.Settings;
+import org.fairdatateam.fairdatapoint.entity.settings.SettingsAutocompleteSource;
+import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilterItem;
 
 import java.util.Collections;
 import java.util.List;

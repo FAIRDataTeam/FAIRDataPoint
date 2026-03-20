@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint;
+package org.fairdatateam.fairdatapoint;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -34,9 +34,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableAsync
 @ComponentScan(basePackages = {
     "org.eclipse.rdf4j.http.server.readonly.sparql",
-    "nl.dtls.fairdatapoint.*"
+    "org.fairdatateam.fairdatapoint.*"
 })
-@ConfigurationPropertiesScan("nl.dtls.fairdatapoint.config.*")
+@ConfigurationPropertiesScan("org.fairdatateam.fairdatapoint.config.*")
 public class Application {
 
     private static final String PROFILES_PROPERTY = "spring.profiles.active";

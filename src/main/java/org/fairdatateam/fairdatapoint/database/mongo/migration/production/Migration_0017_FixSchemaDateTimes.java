@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.production;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.production;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -29,14 +29,14 @@ import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import lombok.SneakyThrows;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
 
 /**
  * This migration updates the default metadata schemas defining the `fdp`, `dataset`, and `distribution` shapes.

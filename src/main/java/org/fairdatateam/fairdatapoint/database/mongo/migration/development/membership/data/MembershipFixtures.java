@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.membership.data;
 
-import nl.dtls.fairdatapoint.entity.membership.Membership;
-import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.entity.membership.Membership;
+import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.webhook;
+package org.fairdatateam.fairdatapoint.entity.index.webhook;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.apikey;
+package org.fairdatateam.fairdatapoint.acceptance.apikey;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
-import nl.dtls.fairdatapoint.entity.apikey.ApiKey;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
+import org.fairdatateam.fairdatapoint.entity.apikey.ApiKey;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +37,9 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestDelete;
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestDelete;
-import static nl.dtls.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestDelete;
+import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestDelete;
+import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createUserForbiddenTestDelete;
+import static org.fairdatateam.fairdatapoint.acceptance.common.NotFoundTest.createAdminNotFoundTestDelete;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

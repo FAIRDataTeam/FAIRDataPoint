@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.schema.data;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.schema.data;
 
 import lombok.SneakyThrows;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaDraft;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
+import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
 
 @Service
 public class MetadataSchemaFixtures {

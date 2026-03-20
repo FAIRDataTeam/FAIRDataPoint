@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.production;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.production;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
@@ -28,10 +28,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import nl.dtls.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 

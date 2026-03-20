@@ -20,18 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.reset;
+package org.fairdatateam.fairdatapoint.service.reset;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.reset.ResetDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.*;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.generic.GenericMetadataService;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import nl.dtls.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.api.dto.reset.ResetDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.*;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.service.metadata.generic.GenericMetadataService;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
@@ -50,7 +50,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service

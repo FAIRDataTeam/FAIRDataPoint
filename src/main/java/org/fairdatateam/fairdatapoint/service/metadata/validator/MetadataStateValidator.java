@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.validator;
+package org.fairdatateam.fairdatapoint.service.metadata.validator;
 
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
 import org.springframework.stereotype.Service;
 
 @Service

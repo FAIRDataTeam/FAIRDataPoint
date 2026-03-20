@@ -25,19 +25,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service.metadata.metric;
+package org.fairdatateam.fairdatapoint.service.metadata.metric;
 
-import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
-import nl.dtls.fairdatapoint.entity.metadata.Metric;
-import nl.dtls.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metric;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.eclipse.rdf4j.model.IRI;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

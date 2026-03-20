@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.rdf;
+package org.fairdatateam.fairdatapoint.service.rdf;
 
-import nl.dtls.fairdatapoint.entity.exception.RdfValidationException;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.exception.RdfValidationException;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF4J;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
 public class ShaclValidator {

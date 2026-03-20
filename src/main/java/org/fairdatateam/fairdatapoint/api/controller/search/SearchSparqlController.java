@@ -34,7 +34,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-package nl.dtls.fairdatapoint.api.controller.search;
+package org.fairdatateam.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;

@@ -20,17 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.index.settings;
+package org.fairdatateam.fairdatapoint.acceptance.index.settings;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsPingDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsRetrievalDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsPingDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsRetrievalDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettings;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsPing;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

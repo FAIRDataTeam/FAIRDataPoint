@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.user;
+package org.fairdatateam.fairdatapoint.acceptance.user;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserPasswordDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserPasswordDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
+import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

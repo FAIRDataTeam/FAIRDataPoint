@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.membership;
+package org.fairdatateam.fairdatapoint.service.membership;
 
-import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
-import nl.dtls.fairdatapoint.entity.user.UserPermission;
+import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
+import org.fairdatateam.fairdatapoint.entity.user.UserPermission;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.stereotype.Service;
 

@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.apikey;
+package org.fairdatateam.fairdatapoint.api.controller.apikey;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nl.dtls.fairdatapoint.api.dto.apikey.ApiKeyDTO;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.service.apikey.ApiKeyService;
+import org.fairdatateam.fairdatapoint.api.dto.apikey.ApiKeyDTO;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.service.apikey.ApiKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

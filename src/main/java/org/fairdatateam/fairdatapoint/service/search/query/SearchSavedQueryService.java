@@ -20,19 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.search.query;
+package org.fairdatateam.fairdatapoint.service.search.query;
 
-import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
-import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
-import nl.dtls.fairdatapoint.entity.search.SearchSavedQuery;
-import nl.dtls.fairdatapoint.entity.search.SearchSavedQueryType;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.entity.user.UserRole;
-import nl.dtls.fairdatapoint.service.user.CurrentUserService;
-import nl.dtls.fairdatapoint.service.user.UserService;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

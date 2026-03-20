@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.profile;
+package org.fairdatateam.fairdatapoint.service.profile;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
 
 @Service
 public class ProfileService {

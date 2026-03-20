@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.common;
+package org.fairdatateam.fairdatapoint.acceptance.common;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,8 +31,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static nl.dtls.fairdatapoint.WebIntegrationTest.ADMIN_TOKEN;
-import static nl.dtls.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
+import static org.fairdatateam.fairdatapoint.WebIntegrationTest.ADMIN_TOKEN;
+import static org.fairdatateam.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

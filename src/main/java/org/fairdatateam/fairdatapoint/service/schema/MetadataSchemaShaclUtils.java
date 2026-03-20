@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.schema;
+package org.fairdatateam.fairdatapoint.service.schema;
 
-import nl.dtls.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -32,7 +32,7 @@ import org.eclipse.rdf4j.model.vocabulary.SHACL;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 public class MetadataSchemaShaclUtils {
 

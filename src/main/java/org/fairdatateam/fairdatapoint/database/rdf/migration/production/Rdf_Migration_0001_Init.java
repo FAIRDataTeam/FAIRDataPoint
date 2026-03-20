@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.production;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.production;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.service.reset.FactoryDefaults;
+import org.fairdatateam.fairdatapoint.service.reset.FactoryDefaults;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.bson.Document;

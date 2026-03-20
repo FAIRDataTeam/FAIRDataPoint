@@ -20,19 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.metadata;
+package org.fairdatateam.fairdatapoint.api.controller.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import nl.dtls.fairdatapoint.api.dto.member.MemberCreateDTO;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.service.member.MemberService;
-import nl.dtls.fairdatapoint.service.metadata.common.MetadataService;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
+import org.fairdatateam.fairdatapoint.api.dto.member.MemberCreateDTO;
+import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.service.metadata.common.MetadataService;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.service.metadata.factory.MetadataServiceFactory;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
-import static nl.dtls.fairdatapoint.util.HttpUtil.getMetadataIRI;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getMetadataIdentifier;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.getMetadataIRI;
 
 @Tag(name = "Authentication and Authorization")
 @RestController

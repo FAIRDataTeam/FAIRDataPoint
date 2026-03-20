@@ -25,10 +25,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.api.converter.ErrorConverter;
-import nl.dtls.fairdatapoint.api.converter.RdfConverter;
+import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
+import org.fairdatateam.fairdatapoint.api.converter.RdfConverter;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

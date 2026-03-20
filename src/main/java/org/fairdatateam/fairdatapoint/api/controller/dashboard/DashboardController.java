@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.dashboard;
+package org.fairdatateam.fairdatapoint.api.controller.dashboard;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import nl.dtls.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
-import nl.dtls.fairdatapoint.service.dashboard.DashboardService;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
+import org.fairdatateam.fairdatapoint.service.dashboard.DashboardService;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,9 +39,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
-import static nl.dtls.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRequestURL;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.removeLastPartOfIRI;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Client")
 @RestController

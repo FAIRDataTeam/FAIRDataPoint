@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.filter;
+package org.fairdatateam.fairdatapoint.api.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

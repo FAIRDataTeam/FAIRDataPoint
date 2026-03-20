@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.generic;
+package org.fairdatateam.fairdatapoint.service.metadata.generic;
 
-import nl.dtls.fairdatapoint.entity.exception.ForbiddenException;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.user.UserRole;
-import nl.dtls.fairdatapoint.service.metadata.common.AbstractMetadataService;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.service.metadata.common.AbstractMetadataService;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.security.acls.domain.BasePermission;
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 
 @Service("genericMetadataService")
 public class GenericMetadataService extends AbstractMetadataService {

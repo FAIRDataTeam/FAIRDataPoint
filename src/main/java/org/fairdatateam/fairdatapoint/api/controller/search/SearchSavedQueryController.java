@@ -20,17 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.search;
+package org.fairdatateam.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import nl.dtls.fairdatapoint.api.dto.search.SearchResultDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.service.search.SearchService;
-import nl.dtls.fairdatapoint.service.search.query.SearchSavedQueryService;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.service.search.SearchService;
+import org.fairdatateam.fairdatapoint.service.search.query.SearchSavedQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.resource;
+package org.fairdatateam.fairdatapoint.service.resource;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import nl.dtls.fairdatapoint.entity.exception.ValidationException;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
@@ -33,7 +33,7 @@ import org.springframework.validation.BindException;
 import java.util.List;
 import java.util.Optional;
 
-import static nl.dtls.fairdatapoint.util.ValidationUtil.uniquenessValidationFailed;
+import static org.fairdatateam.fairdatapoint.util.ValidationUtil.uniquenessValidationFailed;
 
 @Service
 public class ResourceDefinitionValidator {

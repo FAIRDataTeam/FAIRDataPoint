@@ -20,26 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.common;
+package org.fairdatateam.fairdatapoint.service.metadata.common;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataGetter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.service.member.MemberService;
-import nl.dtls.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
-import nl.dtls.fairdatapoint.service.metadata.state.MetadataStateService;
-import nl.dtls.fairdatapoint.service.metadata.validator.MetadataValidator;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import nl.dtls.fairdatapoint.service.user.CurrentUserService;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
+import org.fairdatateam.fairdatapoint.service.metadata.validator.MetadataValidator;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -53,10 +53,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getParent;
-import static nl.dtls.fairdatapoint.util.ThrowingFunction.suppress;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getParent;
+import static org.fairdatateam.fairdatapoint.util.ThrowingFunction.suppress;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
 
 @Slf4j
 public abstract class AbstractMetadataService implements MetadataService {
@@ -137,7 +137,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     @Override
     @PreAuthorize("""
             hasPermission(#uri.stringValue(),
-            'nl.dtls.fairdatapoint.entity.metadata.Metadata', 'WRITE')
+            'org.fairdatateam.fairdatapoint.entity.metadata.Metadata', 'WRITE')
             or hasRole('ADMIN')
             """)
     public Model update(

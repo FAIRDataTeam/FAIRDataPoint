@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.member;
+package org.fairdatateam.fairdatapoint.service.member;
 
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.entity.membership.Membership;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.service.membership.MembershipMapper;
-import nl.dtls.fairdatapoint.service.user.UserMapper;
+import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.entity.membership.Membership;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.service.membership.MembershipMapper;
+import org.fairdatateam.fairdatapoint.service.user.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

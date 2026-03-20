@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.config.AclConfig.ACL_CACHE;
+import static org.fairdatateam.fairdatapoint.config.AclConfig.ACL_CACHE;
 
 @Configuration
 @EnableCaching

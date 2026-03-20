@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.acl;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.acl;
 
-import nl.dtls.fairdatapoint.database.common.migration.Migration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.service.member.MemberService;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.database.common.migration.Migration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.fairdatateam.security.acls.dao.AclRepository;

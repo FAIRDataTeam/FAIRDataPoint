@@ -20,20 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.search;
+package org.fairdatateam.fairdatapoint.service.search;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.entity.search.SearchFilterCacheContainer;
-import nl.dtls.fairdatapoint.service.label.LabelService;
-import nl.dtls.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterCacheContainer;
+import org.fairdatateam.fairdatapoint.service.label.LabelService;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Component;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.config.CacheConfig.SEARCH_FILTERS_CACHE;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.SEARCH_FILTERS_CACHE;
 
 @Component
 @Slf4j

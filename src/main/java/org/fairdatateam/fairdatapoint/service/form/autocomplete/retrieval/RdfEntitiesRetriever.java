@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.form.autocomplete.retrieval;
+package org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval;
 
-import nl.dtls.fairdatapoint.entity.forms.RdfEntitySourceType;
+import org.fairdatateam.fairdatapoint.entity.forms.RdfEntitySourceType;
 
 import java.util.Map;
 

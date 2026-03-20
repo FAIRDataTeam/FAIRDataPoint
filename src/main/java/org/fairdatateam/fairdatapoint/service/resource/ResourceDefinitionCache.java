@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.resource;
+package org.fairdatateam.fairdatapoint.service.resource;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import nl.dtls.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -36,8 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
-import static nl.dtls.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
 
 @Service
 public class ResourceDefinitionCache {

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.common;
+package org.fairdatateam.fairdatapoint.service.index.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

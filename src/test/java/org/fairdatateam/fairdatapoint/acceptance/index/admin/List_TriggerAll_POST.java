@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.index.admin;
+package org.fairdatateam.fairdatapoint.acceptance.index.admin;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.event.EventType;
-import nl.dtls.fairdatapoint.utils.TestIndexEntryFixtures;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.EventRepository;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.entity.index.event.EventType;
+import org.fairdatateam.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

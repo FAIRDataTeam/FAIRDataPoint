@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.membership;
+package org.fairdatateam.fairdatapoint.api.controller.membership;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
-import nl.dtls.fairdatapoint.service.membership.MembershipService;
+import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
+import org.fairdatateam.fairdatapoint.service.membership.MembershipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

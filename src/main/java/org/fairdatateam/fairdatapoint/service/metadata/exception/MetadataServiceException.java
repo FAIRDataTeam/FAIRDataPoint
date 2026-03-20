@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.service.metadata.exception;
+package org.fairdatateam.fairdatapoint.service.metadata.exception;
 
 /**
  * @author Rajaram Kaliyaperumal

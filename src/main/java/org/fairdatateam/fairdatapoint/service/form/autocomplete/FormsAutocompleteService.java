@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.form.autocomplete;
+package org.fairdatateam.fairdatapoint.service.form.autocomplete;
 
-import nl.dtls.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
-import nl.dtls.fairdatapoint.api.dto.form.FormAutocompleteRequestDTO;
-import nl.dtls.fairdatapoint.entity.forms.RdfEntityCacheContainer;
-import nl.dtls.fairdatapoint.entity.settings.Settings;
-import nl.dtls.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesNamespaceRetriever;
-import nl.dtls.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesRetriever;
-import nl.dtls.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesSparqlRetriever;
-import nl.dtls.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
+import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteRequestDTO;
+import org.fairdatateam.fairdatapoint.entity.forms.RdfEntityCacheContainer;
+import org.fairdatateam.fairdatapoint.entity.settings.Settings;
+import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesNamespaceRetriever;
+import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesRetriever;
+import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesSparqlRetriever;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

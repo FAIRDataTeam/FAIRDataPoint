@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.config;
+package org.fairdatateam.fairdatapoint.api.dto.config;
 
 import lombok.*;
-import nl.dtls.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
+import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 
 import java.util.List;
 

@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development.index.event;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development.index.event;
 
-import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

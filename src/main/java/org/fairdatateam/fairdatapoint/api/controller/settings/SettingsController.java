@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.settings;
+package org.fairdatateam.fairdatapoint.api.controller.settings;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
-import nl.dtls.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
-import nl.dtls.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.api.dto.settings.SettingsDTO;
+import org.fairdatateam.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;

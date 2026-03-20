@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata;
+package org.fairdatateam.fairdatapoint.acceptance.metadata;
 
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.api.dto.member.MemberDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
+import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateDTO;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -36,7 +36,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static nl.dtls.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
+import static org.fairdatateam.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;

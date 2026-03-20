@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.catalog;
+package org.fairdatateam.fairdatapoint.service.metadata.catalog;
 
-import nl.dtls.fairdatapoint.BaseIntegrationTest;
-import nl.dtls.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import nl.dtls.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepositoryImpl;
-import nl.dtls.fairdatapoint.utils.TestRdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepositoryImpl;
+import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -41,9 +41,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getThemeTaxonomies;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.getUri;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getThemeTaxonomies;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

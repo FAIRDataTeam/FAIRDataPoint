@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.common;
+package org.fairdatateam.fairdatapoint.service.index.common;
 
 import lombok.SneakyThrows;
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
-import nl.dtls.fairdatapoint.entity.exception.FeatureDisabledException;
+import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.entity.exception.FeatureDisabledException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -39,7 +39,7 @@ public class IndexFeatureAspect {
     private InstanceProperties instanceProperties;
 
     @SneakyThrows
-    @Around("@annotation(nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature)")
+    @Around("@annotation(org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexFeature)")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) {
         if (!instanceProperties.isIndex()) {
             throw new FeatureDisabledException("Index functionality is turn off");

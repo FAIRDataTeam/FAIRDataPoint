@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.production;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.production;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
@@ -176,7 +176,7 @@ public class Migration_0004_ResourceDefinition {
         definition.append("targetClassUris", classes);
         definition.append("children", children);
         definition.append("externalLinks", links);
-        definition.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
+        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 
@@ -205,7 +205,7 @@ public class Migration_0004_ResourceDefinition {
         }
         membership.append(FIELD_PERMISSIONS, permissions);
         membership.append("allowedEntities", allowedEntities);
-        membership.append(FIELD_CLASS, "nl.dtls.fairdatapoint.entity.membership.Membership");
+        membership.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.membership.Membership");
         return membership;
     }
 

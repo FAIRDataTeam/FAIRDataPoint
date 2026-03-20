@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.form.autocomplete.retrieval;
+package org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval;
 
 import lombok.SneakyThrows;
-import nl.dtls.fairdatapoint.entity.forms.RdfEntitySourceType;
+import org.fairdatateam.fairdatapoint.entity.forms.RdfEntitySourceType;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -40,8 +40,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nl.dtls.fairdatapoint.util.RdfUtil.getStringObjectBy;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.getStringObjectBy;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Component
 public class RdfEntitiesNamespaceRetriever implements RdfEntitiesRetriever {

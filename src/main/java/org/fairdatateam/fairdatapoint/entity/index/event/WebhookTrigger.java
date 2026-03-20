@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.event;
+package org.fairdatateam.fairdatapoint.entity.index.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.dtls.fairdatapoint.entity.index.http.Exchange;
-import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
+import org.fairdatateam.fairdatapoint.entity.index.http.Exchange;
+import org.fairdatateam.fairdatapoint.entity.index.webhook.Webhook;
+import org.fairdatateam.fairdatapoint.entity.index.webhook.WebhookEvent;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 @Data

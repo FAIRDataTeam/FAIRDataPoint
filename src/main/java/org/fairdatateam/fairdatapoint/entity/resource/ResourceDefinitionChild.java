@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.resource;
+package org.fairdatateam.fairdatapoint.entity.resource;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import nl.dtls.fairdatapoint.api.validator.ValidIri;
+import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -20,17 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
-import nl.dtls.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.removeLastSlash;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Configuration
 public class MetadataConfig {

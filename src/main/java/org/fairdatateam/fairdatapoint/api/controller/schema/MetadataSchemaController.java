@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.schema;
+package org.fairdatateam.fairdatapoint.api.controller.schema;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import nl.dtls.fairdatapoint.api.dto.schema.*;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.service.schema.MetadataSchemaService;
-import nl.dtls.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.api.dto.schema.*;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

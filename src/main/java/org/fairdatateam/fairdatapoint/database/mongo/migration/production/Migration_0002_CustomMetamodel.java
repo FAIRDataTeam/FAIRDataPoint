@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.production;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.production;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.context.annotation.Profile;
@@ -52,7 +52,7 @@ public class Migration_0002_CustomMetamodel {
 
     private void updateAcl(MongoDatabase database) {
         final MongoCollection<Document> aclCol = database.getCollection("ACL");
-        aclCol.updateMany(new Document(), combine(set("className", "nl.dtls.fairdatapoint.entity.metadata.Metadata")));
+        aclCol.updateMany(new Document(), combine(set("className", "org.fairdatateam.fairdatapoint.entity.metadata.Metadata")));
     }
 
     private void addResourceDefinitions(MongoDatabase database) {
@@ -131,7 +131,7 @@ public class Migration_0002_CustomMetamodel {
         definition.append("child", child);
         definition.append("parentResourceDefinitionUuid", parentUuid);
         definition.append("childResourceDefinitionUuid", childUuid);
-        definition.append("_class", "nl.dtls.fairdatapoint.entity.resource.ResourceDefinition");
+        definition.append("_class", "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 }

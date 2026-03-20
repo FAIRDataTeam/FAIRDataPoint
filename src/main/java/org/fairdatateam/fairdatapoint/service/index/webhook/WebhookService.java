@@ -20,23 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.webhook;
+package org.fairdatateam.fairdatapoint.service.index.webhook;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.index.webhook.WebhookPayloadDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.WebhookRepository;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
-import nl.dtls.fairdatapoint.entity.index.webhook.Webhook;
-import nl.dtls.fairdatapoint.entity.index.webhook.WebhookEvent;
-import nl.dtls.fairdatapoint.service.UtilityService;
-import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
-import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
+import org.fairdatateam.fairdatapoint.api.dto.index.webhook.WebhookPayloadDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.EventRepository;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.WebhookRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import org.fairdatateam.fairdatapoint.entity.index.webhook.Webhook;
+import org.fairdatateam.fairdatapoint.entity.index.webhook.WebhookEvent;
+import org.fairdatateam.fairdatapoint.service.UtilityService;
+import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
+import org.fairdatateam.fairdatapoint.service.index.settings.IndexSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;

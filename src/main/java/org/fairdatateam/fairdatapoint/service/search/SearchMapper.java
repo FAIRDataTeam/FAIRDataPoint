@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.search;
+package org.fairdatateam.fairdatapoint.service.search;
 
-import nl.dtls.fairdatapoint.api.dto.search.*;
-import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
-import nl.dtls.fairdatapoint.entity.search.SearchResult;
-import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilter;
-import nl.dtls.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+import org.fairdatateam.fairdatapoint.api.dto.search.*;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
+import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
+import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilterItem;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

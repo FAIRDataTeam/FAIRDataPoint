@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.profile;
+package org.fairdatateam.fairdatapoint.api.controller.profile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import nl.dtls.fairdatapoint.entity.exception.ResourceNotFoundException;
-import nl.dtls.fairdatapoint.service.profile.ProfileService;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.service.profile.ProfileService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.HttpUtil.getRequestURL;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRequestURL;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Client")
 @RestController

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.resource;
+package org.fairdatateam.fairdatapoint.api.dto.resource;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -29,8 +29,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionLink;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionLink;
 
 import java.util.List;
 

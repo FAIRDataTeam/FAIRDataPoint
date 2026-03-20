@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.event;
+package org.fairdatateam.fairdatapoint.service.index.event;
 
-import nl.dtls.fairdatapoint.api.dto.index.event.EventDTO;
-import nl.dtls.fairdatapoint.entity.index.event.AdminTrigger;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.api.dto.index.event.EventDTO;
+import org.fairdatateam.fairdatapoint.entity.index.event.AdminTrigger;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 

@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.settings;
+package org.fairdatateam.fairdatapoint.service.index.settings;
 
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsPingDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsRetrievalDTO;
-import nl.dtls.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettings;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsPingDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsRetrievalDTO;
+import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettings;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsPing;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;

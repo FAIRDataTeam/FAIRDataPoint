@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.production;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
+import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.vocabulary.R3D;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.IRI;
@@ -41,8 +41,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.s;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.s;
 
 @RdfMigrationAnnotation(
         number = 3,

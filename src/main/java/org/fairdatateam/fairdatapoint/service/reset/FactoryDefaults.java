@@ -20,24 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.reset;
+package org.fairdatateam.fairdatapoint.service.reset;
 
-import nl.dtls.fairdatapoint.entity.membership.Membership;
-import nl.dtls.fairdatapoint.entity.membership.MembershipPermission;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
-import nl.dtls.fairdatapoint.entity.resource.*;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchema;
-import nl.dtls.fairdatapoint.entity.schema.MetadataSchemaType;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.entity.user.UserRole;
-import nl.dtls.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
-import nl.dtls.fairdatapoint.util.KnownUUIDs;
-import nl.dtls.fairdatapoint.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.vocabulary.DCAT3;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
+import org.fairdatateam.fairdatapoint.entity.membership.Membership;
+import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.entity.resource.*;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
+import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
+import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.vocabulary.DATACITE;
+import org.fairdatateam.fairdatapoint.vocabulary.DCAT3;
+import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.vocabulary.R3D;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
 import org.bson.types.BasicBSONList;
@@ -50,8 +50,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.util.ResourceReader.loadClassResource;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.*;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
 
 public class FactoryDefaults {
 
@@ -403,7 +403,7 @@ public class FactoryDefaults {
                 .append("name", USER_ALBERT.getUuid())
                 .append("isPrincipal", true);
         final Document acl = new Document();
-        acl.append("className", "nl.dtls.fairdatapoint.entity.metadata.FDPMetadata");
+        acl.append("className", "org.fairdatateam.fairdatapoint.entity.metadata.FDPMetadata");
         acl.append("instanceId", persistentUrl);
         acl.append("owner", owner);
         acl.append("inheritPermissions", true);

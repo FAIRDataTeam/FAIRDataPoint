@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.settings;
+package org.fairdatateam.fairdatapoint.acceptance.settings;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.settings.SettingsDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.SettingsRepository;
-import nl.dtls.fairdatapoint.entity.settings.*;
-import nl.dtls.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.settings.SettingsDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
+import org.fairdatateam.fairdatapoint.entity.settings.*;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

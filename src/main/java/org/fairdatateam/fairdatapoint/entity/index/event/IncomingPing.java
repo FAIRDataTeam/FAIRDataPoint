@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.index.event;
+package org.fairdatateam.fairdatapoint.entity.index.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.dtls.fairdatapoint.entity.index.http.Exchange;
+import org.fairdatateam.fairdatapoint.entity.index.http.Exchange;
 
 @Data
 @NoArgsConstructor

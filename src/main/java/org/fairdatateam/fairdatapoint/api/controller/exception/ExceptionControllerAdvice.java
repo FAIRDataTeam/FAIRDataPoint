@@ -25,17 +25,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.controller.exception;
+package org.fairdatateam.fairdatapoint.api.controller.exception;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
-import nl.dtls.fairdatapoint.entity.exception.*;
-import nl.dtls.fairdatapoint.entity.index.exception.AbstractIndexException;
-import nl.dtls.fairdatapoint.service.metadata.exception.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
+import org.fairdatateam.fairdatapoint.entity.exception.*;
+import org.fairdatateam.fairdatapoint.entity.index.exception.AbstractIndexException;
+import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.query.MalformedQueryException;
@@ -57,8 +57,8 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.util.RdfIOUtil.getWriterConfig;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.getWriterConfig;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @ControllerAdvice
 @Slf4j

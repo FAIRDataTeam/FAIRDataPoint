@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.openapi;
+package org.fairdatateam.fairdatapoint.service.openapi;
 
 import io.swagger.v3.oas.models.tags.Tag;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;

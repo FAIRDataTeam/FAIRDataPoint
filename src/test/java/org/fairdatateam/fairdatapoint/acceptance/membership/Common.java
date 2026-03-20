@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.membership;
+package org.fairdatateam.fairdatapoint.acceptance.membership;
 
-import nl.dtls.fairdatapoint.api.dto.membership.MembershipDTO;
-import nl.dtls.fairdatapoint.entity.membership.Membership;
+import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
+import org.fairdatateam.fairdatapoint.entity.membership.Membership;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

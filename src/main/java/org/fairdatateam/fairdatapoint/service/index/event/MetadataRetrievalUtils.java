@@ -20,19 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.event;
+package org.fairdatateam.fairdatapoint.service.index.event;
 
-import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.event.EventType;
-import nl.dtls.fairdatapoint.entity.index.event.MetadataRetrieval;
-import nl.dtls.fairdatapoint.entity.index.http.Exchange;
-import nl.dtls.fairdatapoint.entity.index.http.ExchangeDirection;
-import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
-import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
-import nl.dtls.fairdatapoint.vocabulary.DCAT3;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.R3D;
+import org.fairdatateam.fairdatapoint.entity.index.entry.RepositoryMetadata;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.entity.index.event.EventType;
+import org.fairdatateam.fairdatapoint.entity.index.event.MetadataRetrieval;
+import org.fairdatateam.fairdatapoint.entity.index.http.Exchange;
+import org.fairdatateam.fairdatapoint.entity.index.http.ExchangeDirection;
+import org.fairdatateam.fairdatapoint.entity.index.http.ExchangeState;
+import org.fairdatateam.fairdatapoint.service.index.entry.IndexEntryService;
+import org.fairdatateam.fairdatapoint.vocabulary.DCAT3;
+import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;

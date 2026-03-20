@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.jwt;
+package org.fairdatateam.fairdatapoint.service.jwt;
 
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
-import nl.dtls.fairdatapoint.api.dto.auth.AuthDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.UserRepository;
-import nl.dtls.fairdatapoint.entity.exception.UnauthorizedException;
-import nl.dtls.fairdatapoint.entity.user.User;
-import nl.dtls.fairdatapoint.service.security.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.api.dto.auth.AuthDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
+import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;

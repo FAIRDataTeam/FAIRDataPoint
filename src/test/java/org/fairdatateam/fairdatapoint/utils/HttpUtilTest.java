@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.utils;
+package org.fairdatateam.fairdatapoint.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.eclipse.rdf4j.model.IRI;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static nl.dtls.fairdatapoint.util.HttpUtil.*;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

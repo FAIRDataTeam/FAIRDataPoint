@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.forms;
+package org.fairdatateam.fairdatapoint.entity.forms;
 
 import lombok.*;
-import nl.dtls.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
+import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
 
 import java.util.List;
 

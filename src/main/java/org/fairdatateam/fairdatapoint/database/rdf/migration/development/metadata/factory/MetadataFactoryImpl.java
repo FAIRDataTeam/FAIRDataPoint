@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.factory;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.factory;
 
-import nl.dtls.fairdatapoint.entity.metadata.Agent;
-import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
+import org.fairdatateam.fairdatapoint.entity.metadata.Agent;
+import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -33,9 +33,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataFactoryImpl implements MetadataFactory {

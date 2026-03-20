@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.user;
+package org.fairdatateam.fairdatapoint.entity.user;
 
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;

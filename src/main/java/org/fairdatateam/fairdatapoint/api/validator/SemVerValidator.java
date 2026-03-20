@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.validator;
+package org.fairdatateam.fairdatapoint.api.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import nl.dtls.fairdatapoint.entity.schema.SemVer;
+import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
 
 public class SemVerValidator implements ConstraintValidator<ValidSemVer, String> {
 

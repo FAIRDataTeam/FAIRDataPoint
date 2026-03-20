@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.actuator;
+package org.fairdatateam.fairdatapoint.acceptance.actuator;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;

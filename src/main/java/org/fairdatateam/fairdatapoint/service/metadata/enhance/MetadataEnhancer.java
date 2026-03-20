@@ -20,19 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.metadata.enhance;
+package org.fairdatateam.fairdatapoint.service.metadata.enhance;
 
-import nl.dtls.fairdatapoint.entity.metadata.Identifier;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinition;
-import nl.dtls.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import nl.dtls.fairdatapoint.service.actuator.AppInfoContributor;
-import nl.dtls.fairdatapoint.service.metadata.metric.MetricsMetadataService;
-import nl.dtls.fairdatapoint.service.profile.ProfileService;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionService;
-import nl.dtls.fairdatapoint.util.ValueFactoryHelper;
-import nl.dtls.fairdatapoint.vocabulary.DATACITE;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.entity.metadata.Identifier;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.service.actuator.AppInfoContributor;
+import org.fairdatateam.fairdatapoint.service.metadata.metric.MetricsMetadataService;
+import org.fairdatateam.fairdatapoint.service.profile.ProfileService;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
+import org.fairdatateam.fairdatapoint.vocabulary.DATACITE;
+import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
@@ -46,12 +46,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataGetter.*;
-import static nl.dtls.fairdatapoint.entity.metadata.MetadataSetter.*;
-import static nl.dtls.fairdatapoint.util.RdfUtil.containsObject;
-import static nl.dtls.fairdatapoint.util.RdfUtil.getObjectsBy;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.*;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.containsObject;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.getObjectsBy;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataEnhancer {

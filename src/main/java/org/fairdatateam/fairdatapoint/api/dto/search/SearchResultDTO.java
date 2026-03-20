@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.search;
+package org.fairdatateam.fairdatapoint.api.dto.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.dtls.fairdatapoint.entity.search.SearchResultRelation;
+import org.fairdatateam.fairdatapoint.entity.search.SearchResultRelation;
 
 import java.util.List;
 

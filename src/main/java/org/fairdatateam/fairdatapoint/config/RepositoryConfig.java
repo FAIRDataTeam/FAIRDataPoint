@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.config;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.config.properties.RepositoryProperties;
+import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.config.RepositoryConfigException;
@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 
-import static nl.dtls.fairdatapoint.util.HttpUtil.removeLastSlash;
+import static org.fairdatateam.fairdatapoint.util.HttpUtil.removeLastSlash;
 
 @Slf4j
 @Configuration

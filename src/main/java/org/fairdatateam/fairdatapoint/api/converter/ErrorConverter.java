@@ -25,9 +25,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.api.converter;
+package org.fairdatateam.fairdatapoint.api.converter;
 
-import nl.dtls.fairdatapoint.api.dto.error.ErrorDTO;
+import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;

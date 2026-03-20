@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.metadata;
+package org.fairdatateam.fairdatapoint.entity.metadata;
 
-import nl.dtls.fairdatapoint.vocabulary.DCAT3;
-import nl.dtls.fairdatapoint.vocabulary.FDP;
-import nl.dtls.fairdatapoint.vocabulary.SIO;
+import org.fairdatateam.fairdatapoint.vocabulary.DCAT3;
+import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.vocabulary.SIO;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
@@ -32,9 +32,9 @@ import org.eclipse.rdf4j.model.vocabulary.*;
 
 import java.util.List;
 
-import static nl.dtls.fairdatapoint.util.RdfUtil.update;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.i;
-import static nl.dtls.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.util.RdfUtil.update;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
 public class MetadataSetter {
 

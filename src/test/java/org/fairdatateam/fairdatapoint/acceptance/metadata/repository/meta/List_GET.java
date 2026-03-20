@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.repository.meta;
+package org.fairdatateam.fairdatapoint.acceptance.metadata.repository.meta;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaDTO;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaDTO;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +38,8 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 import java.util.Map;
 
-import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyMember;
-import static nl.dtls.fairdatapoint.acceptance.metadata.Common.assertEmptyState;
+import static org.fairdatateam.fairdatapoint.acceptance.metadata.Common.assertEmptyMember;
+import static org.fairdatateam.fairdatapoint.acceptance.metadata.Common.assertEmptyState;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

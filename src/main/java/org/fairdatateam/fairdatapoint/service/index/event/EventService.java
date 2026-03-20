@@ -20,33 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.index.event;
+package org.fairdatateam.fairdatapoint.service.index.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.index.ping.PingDTO;
-import nl.dtls.fairdatapoint.database.mongo.repository.EventRepository;
-import nl.dtls.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntry;
-import nl.dtls.fairdatapoint.entity.index.entry.IndexEntryState;
-import nl.dtls.fairdatapoint.entity.index.entry.RepositoryMetadata;
-import nl.dtls.fairdatapoint.entity.index.event.Event;
-import nl.dtls.fairdatapoint.entity.index.event.EventType;
-import nl.dtls.fairdatapoint.entity.index.exception.IncorrectPingFormatException;
-import nl.dtls.fairdatapoint.entity.index.exception.PingDeniedException;
-import nl.dtls.fairdatapoint.entity.index.exception.RateLimitException;
-import nl.dtls.fairdatapoint.entity.index.http.Exchange;
-import nl.dtls.fairdatapoint.entity.index.http.ExchangeState;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import nl.dtls.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
-import nl.dtls.fairdatapoint.service.UtilityService;
-import nl.dtls.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
-import nl.dtls.fairdatapoint.service.index.entry.IndexEntryService;
-import nl.dtls.fairdatapoint.service.index.settings.IndexSettingsService;
-import nl.dtls.fairdatapoint.service.index.webhook.WebhookService;
+import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.EventRepository;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryState;
+import org.fairdatateam.fairdatapoint.entity.index.entry.RepositoryMetadata;
+import org.fairdatateam.fairdatapoint.entity.index.event.Event;
+import org.fairdatateam.fairdatapoint.entity.index.event.EventType;
+import org.fairdatateam.fairdatapoint.entity.index.exception.IncorrectPingFormatException;
+import org.fairdatateam.fairdatapoint.entity.index.exception.PingDeniedException;
+import org.fairdatateam.fairdatapoint.entity.index.exception.RateLimitException;
+import org.fairdatateam.fairdatapoint.entity.index.http.Exchange;
+import org.fairdatateam.fairdatapoint.entity.index.http.ExchangeState;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsPing;
+import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import org.fairdatateam.fairdatapoint.service.UtilityService;
+import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
+import org.fairdatateam.fairdatapoint.service.index.entry.IndexEntryService;
+import org.fairdatateam.fairdatapoint.service.index.settings.IndexSettingsService;
+import org.fairdatateam.fairdatapoint.service.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;

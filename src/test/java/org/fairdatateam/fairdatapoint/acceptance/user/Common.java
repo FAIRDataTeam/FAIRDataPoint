@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.user;
+package org.fairdatateam.fairdatapoint.acceptance.user;
 
-import nl.dtls.fairdatapoint.api.dto.user.UserChangeDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserCreateDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserDTO;
-import nl.dtls.fairdatapoint.api.dto.user.UserProfileChangeDTO;
-import nl.dtls.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserCreateDTO;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserProfileChangeDTO;
+import org.fairdatateam.fairdatapoint.entity.user.User;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

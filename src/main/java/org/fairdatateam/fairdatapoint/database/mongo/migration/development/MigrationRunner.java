@@ -20,24 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.migration.development;
+package org.fairdatateam.fairdatapoint.database.mongo.migration.development;
 
 import jakarta.annotation.PostConstruct;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.acl.AclMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.apikey.ApiKeyMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.index.entry.IndexEntryMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.index.event.EventMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.membership.MembershipMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.MetadataMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.resource.ResourceDefinitionMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.schema.MetadataSchemaMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.settings.SettingsMigration;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.user.UserMigration;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionCache;
-import nl.dtls.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import nl.dtls.fairdatapoint.service.search.SearchFilterCache;
-import nl.dtls.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.acl.AclMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.apikey.ApiKeyMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.index.entry.IndexEntryMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.index.event.EventMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.membership.MembershipMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.metadata.MetadataMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.ResourceDefinitionMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.schema.MetadataSchemaMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.settings.SettingsMigration;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.UserMigration;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.service.search.SearchFilterCache;
+import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;

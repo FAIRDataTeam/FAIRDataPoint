@@ -25,11 +25,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository.common;
+package org.fairdatateam.fairdatapoint.database.rdf.repository.common;
 
-import nl.dtls.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import nl.dtls.fairdatapoint.entity.search.SearchFilterValue;
-import nl.dtls.fairdatapoint.entity.search.SearchResult;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
+import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 

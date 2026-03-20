@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.production;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataRepository;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Resource;

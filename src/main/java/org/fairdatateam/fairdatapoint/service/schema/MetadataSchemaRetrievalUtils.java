@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.service.schema;
+package org.fairdatateam.fairdatapoint.service.schema;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import nl.dtls.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import nl.dtls.fairdatapoint.entity.exception.MetadataSchemaImportException;
+import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
+import org.fairdatateam.fairdatapoint.entity.exception.MetadataSchemaImportException;
 import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;

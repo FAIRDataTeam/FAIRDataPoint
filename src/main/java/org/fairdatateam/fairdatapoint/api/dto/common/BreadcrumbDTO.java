@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.common;
+package org.fairdatateam.fairdatapoint.api.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

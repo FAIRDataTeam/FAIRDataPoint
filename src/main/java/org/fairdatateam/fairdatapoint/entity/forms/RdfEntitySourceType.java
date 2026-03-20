@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.forms;
+package org.fairdatateam.fairdatapoint.entity.forms;
 
 public enum RdfEntitySourceType {
     SPARQL,

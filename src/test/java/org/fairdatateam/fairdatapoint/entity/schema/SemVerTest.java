@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.schema;
+package org.fairdatateam.fairdatapoint.entity.schema;
 
 import org.junit.jupiter.api.Test;
 

@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.acceptance.metadata.repository.meta;
+package org.fairdatateam.fairdatapoint.acceptance.metadata.repository.meta;
 
-import nl.dtls.fairdatapoint.WebIntegrationTest;
-import nl.dtls.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import nl.dtls.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
-import nl.dtls.fairdatapoint.database.mongo.repository.MetadataRepository;
-import nl.dtls.fairdatapoint.entity.metadata.Metadata;
-import nl.dtls.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
+import org.fairdatateam.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
+import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataRepository;
+import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +39,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static nl.dtls.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
-import static nl.dtls.fairdatapoint.acceptance.metadata.Common.createMetadataStateAlreadyPublished;
-import static nl.dtls.fairdatapoint.acceptance.metadata.Common.createMetadataStateChangeToDraft;
+import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
+import static org.fairdatateam.fairdatapoint.acceptance.metadata.Common.createMetadataStateAlreadyPublished;
+import static org.fairdatateam.fairdatapoint.acceptance.metadata.Common.createMetadataStateChangeToDraft;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

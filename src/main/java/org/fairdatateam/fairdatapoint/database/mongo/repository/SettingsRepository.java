@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.database.mongo.repository;
 
-import nl.dtls.fairdatapoint.entity.settings.Settings;
+import org.fairdatateam.fairdatapoint.entity.settings.Settings;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

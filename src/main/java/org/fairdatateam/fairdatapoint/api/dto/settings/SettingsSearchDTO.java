@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.dto.settings;
+package org.fairdatateam.fairdatapoint.api.dto.settings;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import nl.dtls.fairdatapoint.api.dto.search.SearchFilterDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchFilterDTO;
 
 import java.util.List;
 

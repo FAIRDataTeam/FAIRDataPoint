@@ -20,12 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.api.controller.reset;
+package org.fairdatateam.fairdatapoint.api.controller.reset;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import nl.dtls.fairdatapoint.api.dto.reset.ResetDTO;
-import nl.dtls.fairdatapoint.service.reset.ResetService;
+import org.fairdatateam.fairdatapoint.api.dto.reset.ResetDTO;
+import org.fairdatateam.fairdatapoint.service.reset.ResetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

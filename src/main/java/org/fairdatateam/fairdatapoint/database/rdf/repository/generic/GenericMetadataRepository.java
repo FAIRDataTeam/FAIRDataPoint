@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.repository.generic;
+package org.fairdatateam.fairdatapoint.database.rdf.repository.generic;
 
-import nl.dtls.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 
 public interface GenericMetadataRepository extends MetadataRepository {
 }

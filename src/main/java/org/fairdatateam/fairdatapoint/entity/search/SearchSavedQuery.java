@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.entity.search;
+package org.fairdatateam.fairdatapoint.entity.search;
 
 import lombok.*;
-import nl.dtls.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.dtls.fairdatapoint.database.rdf.migration.development;
+package org.fairdatateam.fairdatapoint.database.rdf.migration.development;
 
 import jakarta.annotation.PostConstruct;
-import nl.dtls.fairdatapoint.Profiles;
-import nl.dtls.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
