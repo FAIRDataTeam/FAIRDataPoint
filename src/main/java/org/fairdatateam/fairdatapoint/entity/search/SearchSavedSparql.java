@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-package nl.dtls.fairdatapoint.entity.search;
+package org.fairdatateam.fairdatapoint.entity.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
