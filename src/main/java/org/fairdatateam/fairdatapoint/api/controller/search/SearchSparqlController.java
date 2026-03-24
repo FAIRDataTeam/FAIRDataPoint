@@ -41,6 +41,7 @@ import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
 import org.eclipse.rdf4j.http.server.readonly.sparql.SparqlQueryEvaluator;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.repository.Repository;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQuery;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -94,10 +95,10 @@ public class SearchSparqlController {
             sparqlQueryEvaluator.evaluate(
                     result,
                     rdf4jRepository,
-                    sparqlQuery.query,
+                    sparqlQuery.query(),
                     accept,
-                    toArray(sparqlQuery.defaultGraphUri),
-                    toArray(sparqlQuery.namedGraphUri)
+                    toArray(sparqlQuery.defaultGraphUris()),
+                    toArray(sparqlQuery.namedGraphUris())
             );
         }
         catch (MalformedQueryException | IllegalStateException | IOException exception) {
@@ -105,11 +106,8 @@ public class SearchSparqlController {
         }
     }
 
-    private String[] toArray(String graphUri) {
-        if (graphUri != null && !graphUri.isEmpty()) {
-            return new String[]{graphUri};
-        }
-        return ALL_GRAPHS;
+    private String[] toArray(String[] graphUris) {
+        return (graphUris == null) ? ALL_GRAPHS : graphUris;
     }
 
     /**
@@ -140,12 +138,4 @@ public class SearchSparqlController {
         }
     }
 
-    /**
-     * Defines the content of the query request body, for JSON deserialization.
-     * @param query
-     * @param defaultGraphUri
-     * @param namedGraphUri
-     */
-    public record SparqlQuery(String query, String defaultGraphUri, String namedGraphUri) {
-    }
 }
