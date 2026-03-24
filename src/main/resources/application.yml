@@ -76,6 +76,7 @@ springdoc:
   writer-with-default-pretty-printer: true
   swagger-ui:
     disable-swagger-default-url: true
+    doc-expansion: none
     operationsSorter: alpha
 
 server:
