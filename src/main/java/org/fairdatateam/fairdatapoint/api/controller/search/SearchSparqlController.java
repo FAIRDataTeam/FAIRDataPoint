@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright © 2017 DTL
+ * Copyright © 2017 FAIR Data Team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 // This code is mostly copied from rdf4j spring-boot-sparql-web, with some customizations:
 //
 // https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web
