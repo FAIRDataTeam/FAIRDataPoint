@@ -1,35 +1,46 @@
-# Architecture Documentation
+# FAIRDataPoint System Architecture
 
 ## Overview
-The architecture of the FAIRDataPoint system is designed to facilitate the management and sharing of research data in compliance with the FAIR principles (Findable, Accessible, Interoperable, and Reusable). This document provides a comprehensive layout of the system components and their interactions.
+The FAIRDataPoint system is designed with a comprehensive architecture that supports data sharing, discovery, and reuse. The architecture can be visualized as multi-layered components that interact seamlessly to deliver data services.
 
-## System Components
-1. **Data Ingest Module**
-   - Responsible for collecting and storing research data.
-   - Supports various data formats for flexibility in data collection.
+## Multi-Layer Components
+1. **Presentation Layer**: Interfaces with end-users and presents data via web applications and APIs.
+2. **Application Layer**: Manages business logic, handles requests, and interacts with the data layer.
+3. **Data Layer**: Responsible for data storage, retrieval, and management.
 
-2. **Metadata Management**
-   - Ensures that data is properly annotated with relevant metadata.
-   - Allows for easy retrieval and identification of datasets.
+## Data Flows
+The data flows through the following paths:
+- User requests initiate data retrieval from the Application Layer which interacts with the Data Layer.
+- Metadata is fetched and utilized in presentations and for indexing.
 
-3. **API Gateway**
-   - Serves as the entry point for external applications to access the data.
-   - Implements security measures for authenticated access.
+## Metadata Schema Hierarchy
+- **Global Metadata**: Top-level metadata description for the data resources.
+- **Dataset Metadata**: Specific metadata associated with each dataset.
+- **File Metadata**: Detailed information for individual files within a dataset.
 
-4. **User Interface**
-   - Frontend application for users to interact with the system.
-   - Provides tools for data upload, management, and visualization.
+## Security Implementation
+- Authentication mechanisms (OAuth, API keys).
+- Role-based access control (RBAC) to secure sensitive data and operations.
 
-5. **Search Engine**
-   - Facilitates the searching and retrieval of datasets using metadata.
-   - Enhances user experience by providing efficient search capabilities.
+## Caching Strategy
+- Implement caching at the Application Layer to reduce latency and improve performance.
+- Use distributed caching systems to handle traffic efficiently and enhance reliability.
+
+## Database Design
+- Normalized design to eliminate redundancy.
+- Utilize relational databases for structured data and NoSQL databases for unstructured data.
+
+## Initialization Flow
+1. **Server Startup**: Load configuration and initialize services.
+2. **Database Connection**: Establish connections to necessary databases.
+3. **Cache Warmup**: Preload cache with frequently accessed data.
+
+## Design Patterns
+- **Model-View-Controller (MVC)**: Separates the application logic from UI presentations.
+- **Singleton**: Restricts the instantiation of a class to one single instance for managing shared resources.
 
 ## Component Interactions
-- Diagram: (insert diagrams here)
+- **API Gateway**: Serves as a single entry point for all clients.
+- **Service Interactions**: Communication between services is performed through RESTful APIs or message queues. 
 
-1. The Data Ingest Module sends data to the Metadata Management for annotation.
-2. Users can upload data via the User Interface, which communicates with the API Gateway.
-3. The Search Engine interacts with Metadata Management to provide search results.
-
-## Conclusion
-The architecture is designed to ensure compliance with the FAIR principles while providing an efficient workflow for data management. Future enhancements may include additional features for data visualization and analytics.
+This architecture is designed to adhere to the FAIR principles (Findable, Accessible, Interoperable, Reusable) by ensuring robust metadata management and secure data handling strategies.
