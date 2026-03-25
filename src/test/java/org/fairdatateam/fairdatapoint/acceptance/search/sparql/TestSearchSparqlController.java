@@ -26,8 +26,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,8 +53,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     @Test
     public void postSparqlUnauthenticated() throws JsonProcessingException {
         // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                querySelectAll, null, null);
+        SparqlQuery sparqlQuery = new SparqlQuery(querySelectAll, null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .accept(MediaType.APPLICATION_JSON)
@@ -75,9 +74,8 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     @ValueSource(strings = { MediaType.APPLICATION_JSON_VALUE, "*/*" })
     public void postSparqlSelectAll(String acceptHeader) throws JsonProcessingException {
         // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                querySelectAll, null, null);
-        RequestEntity<SearchSparqlController.SparqlQuery> request = RequestEntity
+        SparqlQuery sparqlQuery = new SparqlQuery(querySelectAll, null, null);
+        RequestEntity<SparqlQuery> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .accept(MediaType.valueOf(acceptHeader))
@@ -102,8 +100,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     @Test
     public void postSparqlAskAny() throws JsonProcessingException {
         // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                "ASK { ?s ?p ?o }", null, null);
+        SparqlQuery sparqlQuery = new SparqlQuery("ASK { ?s ?p ?o }", null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
@@ -132,8 +129,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     })
     public void postSparqlConstructOrDescribe(String query) throws JsonProcessingException {
         // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                query, null, null);
+        SparqlQuery sparqlQuery = new SparqlQuery(query, null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
@@ -181,8 +177,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
                 """;
 
         // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                prologue + update, null, null);
+        SparqlQuery sparqlQuery = new SparqlQuery(prologue + update, null, null);
         RequestEntity<?> request = RequestEntity
                 .post(url)
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
