@@ -58,6 +58,8 @@ public class SearchSavedQuery {
     // TODO: move "SearchQueryVariablesDTO" to entity/search/ and rename to e.g. SparqlQueryRestricted (not a DTO)
     private SearchQueryVariablesDTO variables;
 
+    private SparqlQuery sparqlQuery;
+
     public enum Type {
         PUBLIC,
         PRIVATE,
