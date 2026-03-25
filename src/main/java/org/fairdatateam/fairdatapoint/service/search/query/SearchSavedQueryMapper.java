@@ -26,6 +26,7 @@ import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -33,9 +34,16 @@ import java.util.UUID;
 
 @Component
 public class SearchSavedQueryMapper {
-    public SearchSavedQueryDTO toDTO(
-            SearchSavedQuery query, UserDTO userDTO
-    ) {
+    public SearchSavedQueryDTO toDTO(SearchSavedQuery query) {
+        // anonymize the userDTO object as much as possible without breaking backward compatibility
+        // TODO: replace UserDTO object by simple userUuid string (breaking change, postpone until next major release)
+        final String hidden = "***";
+        final UserDTO userDTO = new UserDTO();
+        userDTO.setUuid(query.getUserUuid());
+        userDTO.setFirstName(String.format("%.8s", query.getUserUuid()));
+        userDTO.setLastName(hidden);
+        userDTO.setEmail(hidden);
+        userDTO.setRole(UserRole.USER);
         return SearchSavedQueryDTO.builder()
                 .uuid(query.getUuid())
                 .name(query.getName())
