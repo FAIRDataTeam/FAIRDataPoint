@@ -52,6 +52,7 @@ public class SearchSavedQueryDTO {
     @NotNull
     private SearchSavedQuery.Type type;
 
+    // TODO: only return userUuid string, or perhaps part of name, but certainly not email and role
     @Valid
     @JsonInclude
     private UserDTO user;
