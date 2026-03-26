@@ -23,11 +23,11 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,12 +68,7 @@ public class List_POST extends WebIntegrationTest {
                                 .name("New query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("")
-                                        .graphPattern("")
-                                        .ordering("")
-                                        .build()
-                                )
+                                .variables(new SparqlQueryVariables("", "", ""))
                                 .build()
                 );
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -102,12 +97,7 @@ public class List_POST extends WebIntegrationTest {
                                 .name("New query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("")
-                                        .graphPattern("")
-                                        .ordering("")
-                                        .build()
-                                )
+                                .variables(new SparqlQueryVariables("", "", ""))
                                 .build()
                 );
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {

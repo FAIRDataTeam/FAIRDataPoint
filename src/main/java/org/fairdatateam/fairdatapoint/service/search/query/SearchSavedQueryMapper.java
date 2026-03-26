@@ -22,12 +22,10 @@
  */
 package org.fairdatateam.fairdatapoint.service.search.query;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +64,7 @@ public class SearchSavedQueryMapper {
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
                 .type(reqDto.getType())
-                .variables(fromSearchQueryVariablesDTO(reqDto.getVariables()))
+                .variables(reqDto.getVariables())
                 .userUuid(userUuid)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -79,18 +77,11 @@ public class SearchSavedQueryMapper {
         return query.toBuilder()
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
-                .variables(fromSearchQueryVariablesDTO(reqDto.getVariables()))
+                .variables(reqDto.getVariables())
                 .userUuid(query.getUserUuid())
                 .type(reqDto.getType())
                 .updatedAt(Instant.now())
                 .build();
-    }
-
-    private SparqlQueryVariables fromSearchQueryVariablesDTO(SearchQueryVariablesDTO variablesDTO) {
-        // 1-to-1 mapping is redundant, but we do it anyway to be consistent with the existing codebase
-        return new SparqlQueryVariables(
-                variablesDTO.getPrefixes(), variablesDTO.getGraphPattern(), variablesDTO.getOrdering()
-        );
     }
 
 }

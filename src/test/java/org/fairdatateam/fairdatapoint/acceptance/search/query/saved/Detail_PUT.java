@@ -23,12 +23,12 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,12 +73,7 @@ public class Detail_PUT extends WebIntegrationTest {
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -107,12 +102,7 @@ public class Detail_PUT extends WebIntegrationTest {
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -141,12 +131,7 @@ public class Detail_PUT extends WebIntegrationTest {
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.INTERNAL)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -160,9 +145,9 @@ public class Detail_PUT extends WebIntegrationTest {
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
         assertThat(result.getBody().getType(), is(equalTo(SearchSavedQuery.Type.INTERNAL)));
         assertThat(result.getBody().getName(), is(equalTo("Edited query")));
-        assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
-        assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));
-        assertThat(result.getBody().getVariables().getOrdering(), is(equalTo("C")));
+        assertThat(result.getBody().getVariables().prefixes(), is(equalTo("A")));
+        assertThat(result.getBody().getVariables().graphPattern(), is(equalTo("B")));
+        assertThat(result.getBody().getVariables().ordering(), is(equalTo("C")));
     }
 
     @Test
@@ -181,12 +166,7 @@ public class Detail_PUT extends WebIntegrationTest {
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.INTERNAL)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -200,8 +180,8 @@ public class Detail_PUT extends WebIntegrationTest {
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
         assertThat(result.getBody().getType(), is(equalTo(SearchSavedQuery.Type.INTERNAL)));
         assertThat(result.getBody().getName(), is(equalTo("Edited query")));
-        assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
-        assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));
-        assertThat(result.getBody().getVariables().getOrdering(), is(equalTo("C")));
+        assertThat(result.getBody().getVariables().prefixes(), is(equalTo("A")));
+        assertThat(result.getBody().getVariables().graphPattern(), is(equalTo("B")));
+        assertThat(result.getBody().getVariables().ordering(), is(equalTo("C")));
     }
 }
