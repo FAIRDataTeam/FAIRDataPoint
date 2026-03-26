@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.api.controller.search;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -90,7 +90,7 @@ public class SearchSavedQueryController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> create(
-            @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
+            @RequestBody @Valid SparqlQueryVariablesChangeDTO reqDto
     ) {
         final SearchSavedQueryDTO dto = searchSavedQueryService.create(reqDto);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -100,7 +100,7 @@ public class SearchSavedQueryController {
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> update(
             @PathVariable final String uuid,
-            @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
+            @RequestBody @Valid SparqlQueryVariablesChangeDTO reqDto
     ) {
         final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.update(uuid, reqDto);
         if (oDto.isPresent()) {

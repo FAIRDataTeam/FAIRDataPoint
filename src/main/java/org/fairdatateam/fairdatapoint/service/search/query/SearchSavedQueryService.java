@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.service.search.query;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
@@ -82,15 +82,15 @@ public class SearchSavedQueryService {
         return true;
     }
 
-    public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        final String currentUserUuid = currentUserProvider.getCurrentUserUuid().orElse(null);
+    public SearchSavedQueryDTO create(SparqlQueryVariablesChangeDTO reqDto) {
+            final String currentUserUuid = currentUserProvider.getCurrentUserUuid().orElse(null);
         final SearchSavedQuery searchSavedQuery = repository.save(
                 mapper.fromChangeDTO(reqDto, currentUserUuid)
         );
         return mapper.toDTO(searchSavedQuery);
     }
 
-    public Optional<SearchSavedQueryDTO> update(String uuid, SearchSavedQueryChangeDTO reqDto) {
+    public Optional<SearchSavedQueryDTO> update(String uuid, SparqlQueryVariablesChangeDTO reqDto) {
         final Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
         if (optionalSearchQuery.isEmpty()) {
             return Optional.empty();
