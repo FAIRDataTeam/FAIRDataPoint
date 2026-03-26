@@ -22,46 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.entity.search;
 
-import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.time.Instant;
-
-@Document
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder(toBuilder = true)
-public class SearchSavedQuery {
-
-    @Id
-    private ObjectId id;
-
-    private String uuid;
-
-    private String name;
-
-    private String description;
-
-    private String userUuid;
-
-    private Type type;
-
-    private Instant createdAt;
-
-    private Instant updatedAt;
-
-    private SparqlQueryRestricted variables;
-
-    private SparqlQuery sparqlQuery;
-
-    public enum Type {
-        PUBLIC,
-        PRIVATE,
-        INTERNAL
-    }
-
+/**
+ * Defines the content of a restricted SPARQL query as defined by the template
+ * src/main/resources/org/fairdatateam/fairdatapoint/service/search/queryTemplate.sparql
+ * @param prefixes
+ * @param graphPattern
+ * @param ordering
+ */
+public record SparqlQueryRestricted(String prefixes, String graphPattern, String ordering) {
 }
