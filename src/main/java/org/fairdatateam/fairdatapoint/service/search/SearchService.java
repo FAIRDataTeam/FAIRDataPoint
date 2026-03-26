@@ -27,10 +27,7 @@ import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepository
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterCacheContainer;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterType;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
+import org.fairdatateam.fairdatapoint.entity.search.*;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
@@ -113,7 +110,7 @@ public class SearchService {
      * @return List of search result objects
      */
     public List<SearchResultDTO> search(
-            SearchQueryVariablesDTO queryVariables
+            SparqlQueryVariables queryVariables
     ) throws MetadataRepositoryException, MalformedQueryException {
         // Compose query
         final String query = composeQuery(queryVariables);
@@ -226,11 +223,11 @@ public class SearchService {
      * @param queryVariables User input to be used as template context
      * @return Full SPARQL query string
      */
-    private String composeQuery(SearchQueryVariablesDTO queryVariables) {
+    private String composeQuery(SparqlQueryVariables queryVariables) {
         final Map<String, String> templateContext = Map.of(
-                "prefixes", queryVariables.getPrefixes(),
-                "graphPattern", queryVariables.getGraphPattern(),
-                "ordering", queryVariables.getOrdering()
+                "prefixes", queryVariables.prefixes(),
+                "graphPattern", queryVariables.graphPattern(),
+                "ordering", queryVariables.ordering()
         );
         final StrSubstitutor substitutor = new StrSubstitutor(templateContext, "{{", "}}");
         return substitutor.replace(queryTemplate);

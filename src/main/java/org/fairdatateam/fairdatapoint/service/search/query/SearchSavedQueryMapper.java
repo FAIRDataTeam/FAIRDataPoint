@@ -50,7 +50,7 @@ public class SearchSavedQueryMapper {
                 .uuid(query.getUuid())
                 .name(query.getName())
                 .description(query.getDescription())
-                .variables(toSearchQueryVariablesDTO(query.getVariables()))
+                .variables(query.getVariables())
                 .user(userDTO)
                 .type(query.getType())
                 .createdAt(query.getCreatedAt())
@@ -93,12 +93,4 @@ public class SearchSavedQueryMapper {
         );
     }
 
-    private SearchQueryVariablesDTO toSearchQueryVariablesDTO(SparqlQueryVariables restrictedQuery) {
-        // 1-to-1 mapping is redundant, but we do it anyway to be consistent with the existing codebase
-        return SearchQueryVariablesDTO.builder()
-                .prefixes(restrictedQuery.prefixes())
-                .graphPattern(restrictedQuery.graphPattern())
-                .ordering(restrictedQuery.ordering())
-                .build();
-    }
 }

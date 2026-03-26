@@ -30,6 +30,7 @@ import lombok.*;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryFull;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 
 import java.time.Instant;
 
@@ -64,8 +65,7 @@ public class SearchSavedQueryDTO {
     private Instant updatedAt;
 
     @Valid
-    @NotNull
-    private SearchQueryVariablesDTO variables;
+    private SparqlQueryVariables variables;
 
     @Valid
     private SparqlQueryFull sparqlQueryFull;
