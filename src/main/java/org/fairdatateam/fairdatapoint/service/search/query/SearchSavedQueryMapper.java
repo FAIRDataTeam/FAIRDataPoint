@@ -22,10 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.service.search.query;
 
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryRestricted;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +50,7 @@ public class SearchSavedQueryMapper {
                 .uuid(query.getUuid())
                 .name(query.getName())
                 .description(query.getDescription())
-                .variables(query.getVariables())
+                .variables(toSearchQueryVariablesDTO(query.getVariables()))
                 .user(userDTO)
                 .type(query.getType())
                 .createdAt(query.getCreatedAt())
@@ -64,7 +66,7 @@ public class SearchSavedQueryMapper {
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
                 .type(reqDto.getType())
-                .variables(reqDto.getVariables())
+                .variables(fromSearchQueryVariablesDTO(reqDto.getVariables()))
                 .userUuid(userUuid)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -77,10 +79,26 @@ public class SearchSavedQueryMapper {
         return query.toBuilder()
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
-                .variables(reqDto.getVariables())
+                .variables(fromSearchQueryVariablesDTO(reqDto.getVariables()))
                 .userUuid(query.getUserUuid())
                 .type(reqDto.getType())
                 .updatedAt(Instant.now())
+                .build();
+    }
+
+    private SparqlQueryRestricted fromSearchQueryVariablesDTO(SearchQueryVariablesDTO variablesDTO) {
+        // 1-to-1 mapping is redundant, but we do it anyway to be consistent with the existing codebase
+        return new SparqlQueryRestricted(
+                variablesDTO.getPrefixes(), variablesDTO.getGraphPattern(), variablesDTO.getOrdering()
+        );
+    }
+
+    private SearchQueryVariablesDTO toSearchQueryVariablesDTO(SparqlQueryRestricted restrictedQuery) {
+        // 1-to-1 mapping is redundant, but we do it anyway to be consistent with the existing codebase
+        return SearchQueryVariablesDTO.builder()
+                .prefixes(restrictedQuery.prefixes())
+                .graphPattern(restrictedQuery.graphPattern())
+                .ordering(restrictedQuery.ordering())
                 .build();
     }
 }
