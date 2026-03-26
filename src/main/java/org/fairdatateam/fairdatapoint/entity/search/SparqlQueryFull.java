@@ -28,5 +28,5 @@ package org.fairdatateam.fairdatapoint.entity.search;
  * @param defaultGraphUris
  * @param namedGraphUris
  */
-public record SparqlQuery(String query, String[] defaultGraphUris, String[] namedGraphUris) {
+public record SparqlQueryFull(String query, String[] defaultGraphUris, String[] namedGraphUris) {
 }

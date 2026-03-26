@@ -41,7 +41,7 @@ import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
 import org.eclipse.rdf4j.http.server.readonly.sparql.SparqlQueryEvaluator;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.repository.Repository;
-import org.fairdatateam.fairdatapoint.entity.search.SparqlQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryFull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -85,7 +85,7 @@ public class SearchSparqlController {
     )
     public void sparqlPost(
         @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = JSON_MEDIA_TYPES) String acceptHeader,
-        @RequestBody SparqlQuery sparqlQuery,
+        @RequestBody SparqlQueryFull sparqlQueryFull,
         HttpServletResponse response
     ) throws IOException {
         // enforce default accept header for wildcard
@@ -95,10 +95,10 @@ public class SearchSparqlController {
             sparqlQueryEvaluator.evaluate(
                     result,
                     rdf4jRepository,
-                    sparqlQuery.query(),
+                    sparqlQueryFull.query(),
                     accept,
-                    toArray(sparqlQuery.defaultGraphUris()),
-                    toArray(sparqlQuery.namedGraphUris())
+                    toArray(sparqlQueryFull.defaultGraphUris()),
+                    toArray(sparqlQueryFull.namedGraphUris())
             );
         }
         catch (MalformedQueryException | IllegalStateException | IOException exception) {
