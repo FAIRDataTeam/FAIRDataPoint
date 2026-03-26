@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.database.mongo.migration.development.search;
 
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryRestricted;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +43,7 @@ public class SearchSavedQueryFixtures {
                 .description("Quickly query all datasets (DCAT)")
                 .type(SearchSavedQuery.Type.PUBLIC)
                 .userUuid(KnownUUIDs.USER_ALBERT_UUID)
-                .variables(new SparqlQueryRestricted(PREFIX_DCAT, "?entity rdf:type dcat:Dataset .", ORDER_TITLE))
+                .variables(new SparqlQueryVariables(PREFIX_DCAT, "?entity rdf:type dcat:Dataset .", ORDER_TITLE))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
@@ -56,7 +56,7 @@ public class SearchSavedQueryFixtures {
                 .description("Quickly query all distributions (DCAT)")
                 .type(SearchSavedQuery.Type.INTERNAL)
                 .userUuid(KnownUUIDs.USER_ADMIN_UUID)
-                .variables(new SparqlQueryRestricted(PREFIX_DCAT, "?entity rdf:type dcat:Distribution .", ORDER_TITLE))
+                .variables(new SparqlQueryVariables(PREFIX_DCAT, "?entity rdf:type dcat:Distribution .", ORDER_TITLE))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
@@ -74,7 +74,7 @@ public class SearchSavedQueryFixtures {
                 .description("This is private query of Nikola Tesla.")
                 .type(SearchSavedQuery.Type.PRIVATE)
                 .userUuid(KnownUUIDs.USER_NIKOLA_UUID)
-                .variables(new SparqlQueryRestricted("", graphPattern, ORDER_TITLE))
+                .variables(new SparqlQueryVariables("", graphPattern, ORDER_TITLE))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();

@@ -29,5 +29,5 @@ package org.fairdatateam.fairdatapoint.entity.search;
  * @param graphPattern
  * @param ordering
  */
-public record SparqlQueryRestricted(String prefixes, String graphPattern, String ordering) {
+public record SparqlQueryVariables(String prefixes, String graphPattern, String ordering) {
 }

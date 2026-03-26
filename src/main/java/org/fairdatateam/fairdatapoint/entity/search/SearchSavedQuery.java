@@ -54,7 +54,7 @@ public class SearchSavedQuery {
 
     private Instant updatedAt;
 
-    private SparqlQueryRestricted variables;
+    private SparqlQueryVariables variables;
 
     private SparqlQueryFull sparqlQueryFull;
 

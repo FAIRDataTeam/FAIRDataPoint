@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryRestricted;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.springframework.stereotype.Component;
 
@@ -86,14 +86,14 @@ public class SearchSavedQueryMapper {
                 .build();
     }
 
-    private SparqlQueryRestricted fromSearchQueryVariablesDTO(SearchQueryVariablesDTO variablesDTO) {
+    private SparqlQueryVariables fromSearchQueryVariablesDTO(SearchQueryVariablesDTO variablesDTO) {
         // 1-to-1 mapping is redundant, but we do it anyway to be consistent with the existing codebase
-        return new SparqlQueryRestricted(
+        return new SparqlQueryVariables(
                 variablesDTO.getPrefixes(), variablesDTO.getGraphPattern(), variablesDTO.getOrdering()
         );
     }
 
-    private SearchQueryVariablesDTO toSearchQueryVariablesDTO(SparqlQueryRestricted restrictedQuery) {
+    private SearchQueryVariablesDTO toSearchQueryVariablesDTO(SparqlQueryVariables restrictedQuery) {
         // 1-to-1 mapping is redundant, but we do it anyway to be consistent with the existing codebase
         return SearchQueryVariablesDTO.builder()
                 .prefixes(restrictedQuery.prefixes())
