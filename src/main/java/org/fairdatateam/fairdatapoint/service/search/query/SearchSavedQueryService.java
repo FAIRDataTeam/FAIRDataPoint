@@ -37,11 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class SearchSavedQueryService {
@@ -62,28 +59,19 @@ public class SearchSavedQueryService {
 
     public List<SearchSavedQueryDTO> getAll() {
         final Optional<User> optionalUser = currentUserService.getCurrentUser();
-        final Map<String, UserDTO> userMap =
-                userService
-                        .getUsers()
-                        .stream()
-                        .collect(Collectors.toMap(UserDTO::getUuid, Function.identity()));
         return repository
                 .findAll()
                 .parallelStream()
-                .filter(query -> canSeeQuery(optionalUser, query))
-                .map(query -> mapper.toDTO(query, userMap.get(query.getUserUuid())))
+                .filter(savedQuery -> canSeeQuery(optionalUser, savedQuery))
+                .map(savedQuery -> mapper.toDTO(savedQuery))
                 .toList();
     }
 
     public Optional<SearchSavedQueryDTO> getSingle(String uuid) {
         final Optional<User> optionalUser = currentUserService.getCurrentUser();
         return repository.findByUuid(uuid)
-                .filter(searchSavedQuery -> canSeeQuery(optionalUser, searchSavedQuery))
-                .map(searchSavedQuery -> {
-                    final UserDTO userDto =
-                            userService.getUserByUuid(searchSavedQuery.getUserUuid()).orElse(null);
-                    return mapper.toDTO(searchSavedQuery, userDto);
-                });
+                .filter(savedQuery -> canSeeQuery(optionalUser, savedQuery))
+                .map(savedQuery -> mapper.toDTO(savedQuery));
     }
 
     public boolean delete(String uuid) {
@@ -105,7 +93,7 @@ public class SearchSavedQueryService {
         final SearchSavedQuery searchSavedQuery = repository.save(
                 mapper.fromChangeDTO(reqDto, userDto)
         );
-        return mapper.toDTO(searchSavedQuery, userDto);
+        return mapper.toDTO(searchSavedQuery);
     }
 
     public Optional<SearchSavedQueryDTO> update(String uuid, SearchSavedQueryChangeDTO reqDto) {
@@ -121,15 +109,7 @@ public class SearchSavedQueryService {
         final SearchSavedQuery updatedQuery = repository.save(
                 mapper.fromChangeDTO(searchSavedQuery, reqDto)
         );
-        if (updatedQuery.getUserUuid() == null) {
-            return Optional.of(mapper.toDTO(updatedQuery, null));
-        }
-        return Optional.of(mapper.toDTO(
-                updatedQuery,
-                userService
-                        .getUserByUuid(updatedQuery.getUserUuid())
-                        .orElse(null))
-        );
+        return Optional.of(mapper.toDTO(updatedQuery));
     }
 
     private boolean canSeeQuery(Optional<User> optionalUser, SearchSavedQuery query) {
