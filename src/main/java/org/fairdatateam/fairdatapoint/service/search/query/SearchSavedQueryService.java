@@ -33,9 +33,11 @@ import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SearchSavedQueryService {
@@ -83,7 +85,11 @@ public class SearchSavedQueryService {
     }
 
     public SearchSavedQuery create(SearchSavedQuery searchSavedQuery) {
-        searchSavedQuery.setUuid(currentUserProvider.getCurrentUserUuid().orElse(null));
+        final Instant now = Instant.now();
+        searchSavedQuery.setUuid(UUID.randomUUID().toString());
+        searchSavedQuery.setUserUuid(currentUserProvider.getCurrentUserUuid().orElse(null));
+        searchSavedQuery.setCreatedAt(now);
+        searchSavedQuery.setUpdatedAt(now);
         return repository.save(searchSavedQuery);
     }
 

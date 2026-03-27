@@ -56,15 +56,12 @@ public class SearchSavedQueryMapper {
                 .build();
     }
 
-    public SearchSavedQuery fromChangeDTO(SparqlQueryVariablesChangeDTO reqDto) {
+    public SearchSavedQuery fromChangeDTO(SparqlQueryVariablesChangeDTO variablesChangeDTO) {
         return SearchSavedQuery.builder()
-                .uuid(UUID.randomUUID().toString())
-                .name(reqDto.getName())
-                .description(reqDto.getDescription())
-                .type(reqDto.getType())
-                .variables(reqDto.getVariables())
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .name(variablesChangeDTO.getName())
+                .description(variablesChangeDTO.getDescription())
+                .type(variablesChangeDTO.getType())
+                .variables(variablesChangeDTO.getVariables())
                 .build();
     }
 
