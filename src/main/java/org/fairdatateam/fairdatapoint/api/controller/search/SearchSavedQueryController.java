@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.api.controller.search;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryFullChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
@@ -47,7 +48,7 @@ import static java.lang.String.format;
 
 @Tag(name = "Search")
 @RestController
-@RequestMapping("/search/query/saved")
+@RequestMapping("/search")
 public class SearchSavedQueryController {
 
     private static final String NOT_FOUND_MSG = "Saved query '%s' doesn't exist";
@@ -71,12 +72,12 @@ public class SearchSavedQueryController {
         this.searchService = searchService;
     }
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
         return new ResponseEntity<>(savedQueryService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> getSingle(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
@@ -89,7 +90,7 @@ public class SearchSavedQueryController {
         }
     }
 
-    @PostMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchResultDTO>> search(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException, MetadataRepositoryException {
@@ -103,27 +104,26 @@ public class SearchSavedQueryController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchSavedQueryDTO> create(
+    @PostMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SearchSavedQueryDTO> createTemplateSparqlQuery(
             @RequestBody @Valid SparqlQueryVariablesChangeDTO body
     ) {
-        final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromChangeDTO(body));
+        final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromVariablesChangeDTO(body));
         return new ResponseEntity<>(savedQueryMapper.toDTO(savedQuery), HttpStatus.CREATED);
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchSavedQueryDTO> create(
+    @PostMapping(path = "/sparql/saved", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SearchSavedQueryDTO> createFullSparqlQuery(
             @RequestBody @Valid SparqlQueryFullChangeDTO body
     ) {
-        final UserDTO userDto = userService.getCurrentUser().orElse(null);
-        final SearchSavedQueryDTO dto = searchSavedQueryService.create(body);
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromFullChangeDTO(body));
+        return new ResponseEntity<>(savedQueryMapper.toDTO(savedQuery), HttpStatus.CREATED);
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchSavedQueryDTO> update(
+    @PutMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SearchSavedQueryDTO> updateTemplateSparqlQuery(
             @PathVariable final String uuid,
             @RequestBody @Valid SparqlQueryVariablesChangeDTO reqDto
     ) {
@@ -137,9 +137,9 @@ public class SearchSavedQueryController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping(path = "/{uuid}")
+    @DeleteMapping(path = "/query/saved/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteTemplateSparqlQuery(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
         final boolean result = savedQueryService.delete(uuid);

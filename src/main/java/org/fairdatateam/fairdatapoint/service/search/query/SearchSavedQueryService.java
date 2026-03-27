@@ -104,7 +104,7 @@ public class SearchSavedQueryService {
             throw new ForbiddenException(MSG_CANNOT_UPDATE);
         }
         final SearchSavedQuery updatedQuery = repository.save(
-                mapper.fromChangeDTO(searchSavedQuery, reqDto)
+                mapper.fromVariablesChangeDTO(searchSavedQuery, reqDto)
         );
         return Optional.of(mapper.toDTO(updatedQuery));
     }
