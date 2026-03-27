@@ -28,7 +28,7 @@ import org.fairdatateam.fairdatapoint.api.dto.user.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.user.User;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.service.user.UserMapper;
 import org.fairdatateam.fairdatapoint.service.user.UserService;
 import org.springframework.http.HttpStatus;

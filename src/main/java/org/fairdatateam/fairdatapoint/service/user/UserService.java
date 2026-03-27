@@ -26,6 +26,7 @@ import org.fairdatateam.fairdatapoint.api.dto.user.*;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;

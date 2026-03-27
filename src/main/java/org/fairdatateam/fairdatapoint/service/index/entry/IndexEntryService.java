@@ -38,7 +38,7 @@ import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexF
 import org.fairdatateam.fairdatapoint.service.index.event.EventService;
 import org.fairdatateam.fairdatapoint.service.index.harvester.HarvesterService;
 import org.fairdatateam.fairdatapoint.service.index.settings.IndexSettingsService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.springframework.beans.factory.annotation.Autowired;

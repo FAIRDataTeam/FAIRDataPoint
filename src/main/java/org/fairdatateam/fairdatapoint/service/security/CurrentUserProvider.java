@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.user;
+package org.fairdatateam.fairdatapoint.service.security;
 
 import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
 import org.fairdatateam.fairdatapoint.entity.user.User;

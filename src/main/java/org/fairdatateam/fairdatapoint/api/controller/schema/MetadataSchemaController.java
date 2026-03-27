@@ -29,7 +29,7 @@ import org.fairdatateam.fairdatapoint.api.dto.schema.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

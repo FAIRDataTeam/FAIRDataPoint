@@ -41,7 +41,7 @@ import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateServic
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
 import org.fairdatateam.fairdatapoint.service.search.SearchFilterCache;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;

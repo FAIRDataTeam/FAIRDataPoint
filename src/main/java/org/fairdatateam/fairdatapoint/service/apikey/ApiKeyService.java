@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

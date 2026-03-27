@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.membership.PermissionService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.fairdatateam.security.acls.dao.AclRepository;

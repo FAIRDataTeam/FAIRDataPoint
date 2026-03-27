@@ -38,7 +38,7 @@ import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateServic
 import org.fairdatateam.fairdatapoint.service.metadata.validator.MetadataValidator;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
