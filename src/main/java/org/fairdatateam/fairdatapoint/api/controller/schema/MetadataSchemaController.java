@@ -23,12 +23,13 @@
 package org.fairdatateam.fairdatapoint.api.controller.schema;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.schema.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,16 +57,17 @@ public class MetadataSchemaController {
     private MetadataSchemaService metadataSchemaService;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaDTO>> getSchemas(
             @RequestParam(name = "drafts", required = false, defaultValue = "false")
             boolean includeDrafts,
             @RequestParam(name = "abstract", required = false, defaultValue = "true")
-            boolean includeAbstract
+            boolean includeAbstract,
+            HttpServletRequest request
     ) throws UnauthorizedException {
-        if (includeDrafts && currentUserService.isAdmin()) {
+        if (includeDrafts && request.isUserInRole("ROLE_ADMIN")) {
             return new ResponseEntity<>(
                     metadataSchemaService.getSchemasWithDrafts(includeAbstract),
                     HttpStatus.OK

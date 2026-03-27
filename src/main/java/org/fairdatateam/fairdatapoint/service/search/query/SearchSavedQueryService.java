@@ -24,15 +24,13 @@ package org.fairdatateam.fairdatapoint.service.search.query;
 
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
-import org.fairdatateam.fairdatapoint.service.user.UserService;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,13 +50,10 @@ public class SearchSavedQueryService {
     private SearchSavedQueryMapper mapper;
 
     @Autowired
-    private CurrentUserService currentUserService;
-
-    @Autowired
-    private UserService userService;
+    private CurrentUserProvider currentUserProvider;
 
     public List<SearchSavedQueryDTO> getAll() {
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Optional<User> optionalUser = currentUserProvider.getCurrentUser();
         return repository
                 .findAll()
                 .parallelStream()
@@ -68,7 +63,7 @@ public class SearchSavedQueryService {
     }
 
     public Optional<SearchSavedQueryDTO> getSingle(String uuid) {
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Optional<User> optionalUser = currentUserProvider.getCurrentUser();
         return repository.findByUuid(uuid)
                 .filter(savedQuery -> canSeeQuery(optionalUser, savedQuery))
                 .map(savedQuery -> mapper.toDTO(savedQuery));
@@ -80,7 +75,7 @@ public class SearchSavedQueryService {
             return false;
         }
         final SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Optional<User> optionalUser = currentUserProvider.getCurrentUser();
         if (!canManageQuery(optionalUser, searchSavedQuery)) {
             throw new ForbiddenException(MSG_CANNOT_UPDATE);
         }
@@ -89,9 +84,9 @@ public class SearchSavedQueryService {
     }
 
     public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        final UserDTO userDto = userService.getCurrentUser().orElse(null);
+        final String currentUserUuid = currentUserProvider.getCurrentUserUuid().orElse(null);
         final SearchSavedQuery searchSavedQuery = repository.save(
-                mapper.fromChangeDTO(reqDto, userDto)
+                mapper.fromChangeDTO(reqDto, currentUserUuid)
         );
         return mapper.toDTO(searchSavedQuery);
     }
@@ -101,7 +96,7 @@ public class SearchSavedQueryService {
         if (optionalSearchQuery.isEmpty()) {
             return Optional.empty();
         }
-        final Optional<User> optionalUser = currentUserService.getCurrentUser();
+        final Optional<User> optionalUser = currentUserProvider.getCurrentUser();
         final SearchSavedQuery searchSavedQuery = optionalSearchQuery.get();
         if (!canManageQuery(optionalUser, searchSavedQuery)) {
             throw new ForbiddenException(MSG_CANNOT_UPDATE);

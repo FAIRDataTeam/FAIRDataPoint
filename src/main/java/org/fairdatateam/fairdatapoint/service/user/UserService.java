@@ -26,9 +26,9 @@ import org.fairdatateam.fairdatapoint.api.dto.user.*;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,6 +40,9 @@ import static java.util.Optional.of;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private CurrentUserProvider currentUserProvider;
 
     @Autowired
     private UserRepository userRepository;
@@ -69,20 +72,6 @@ public class UserService {
                         .map(userMapper::toDTO);
     }
 
-    public Optional<String> getCurrentUserUuid() {
-        final Object principal =
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof org.springframework.security.core.userdetails.User) {
-            return of(((org.springframework.security.core.userdetails.User) principal)
-                    .getUsername());
-        }
-        return empty();
-    }
-
-    public Optional<UserDTO> getCurrentUser() {
-        return getCurrentUserUuid().flatMap(this::getUserByUuid);
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
     public UserDTO createUser(UserCreateDTO reqDto) {
         userValidator.validateEmail(null, reqDto.getEmail());
@@ -105,8 +94,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updateCurrentUser(UserProfileChangeDTO reqDto) {
-        final Optional<User> user =
-                getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
@@ -128,8 +116,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updatePasswordForCurrentUser(UserPasswordDTO reqDto) {
-        final Optional<User> user =
-                getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
