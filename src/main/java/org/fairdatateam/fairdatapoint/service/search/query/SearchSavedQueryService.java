@@ -31,7 +31,6 @@ import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
-import org.fairdatateam.fairdatapoint.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,9 +51,6 @@ public class SearchSavedQueryService {
 
     @Autowired
     private CurrentUserService currentUserService;
-
-    @Autowired
-    private UserService userService;
 
     public List<SearchSavedQueryDTO> getAll() {
         final Optional<User> optionalUser = currentUserService.getCurrentUser();
@@ -88,7 +84,7 @@ public class SearchSavedQueryService {
     }
 
     public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        final String currentUserUuid = userService.getCurrentUserUuid().orElse(null);
+        final String currentUserUuid = currentUserService.getCurrentUserUuid().orElse(null);
         final SearchSavedQuery searchSavedQuery = repository.save(
                 mapper.fromChangeDTO(reqDto, currentUserUuid)
         );

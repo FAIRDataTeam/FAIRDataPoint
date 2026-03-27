@@ -28,8 +28,6 @@ import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,6 +50,9 @@ public class UserService {
     private UserValidator userValidator;
 
     @Autowired
+    private CurrentUserService currentUserService;
+
+    @Autowired
     private MemberService memberService;
 
     public List<UserDTO> getUsers() {
@@ -68,22 +69,6 @@ public class UserService {
                 userRepository
                         .findByUuid(uuid)
                         .map(userMapper::toDTO);
-    }
-
-    public Optional<String> getCurrentUserUuid() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            final Object principal = auth.getPrincipal();
-            if (principal instanceof org.springframework.security.core.userdetails.User) {
-                return of(((org.springframework.security.core.userdetails.User) principal)
-                        .getUsername());
-            }
-        }
-        return empty();
-    }
-
-    public Optional<User> getCurrentUser() {
-        return getCurrentUserUuid().flatMap(userRepository::findByUuid);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -108,7 +93,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updateCurrentUser(UserProfileChangeDTO reqDto) {
-        final Optional<User> user = getCurrentUser();
+        final Optional<User> user = currentUserService.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
@@ -130,7 +115,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updatePasswordForCurrentUser(UserPasswordDTO reqDto) {
-        final Optional<User> user = getCurrentUser();
+        final Optional<User> user = currentUserService.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }

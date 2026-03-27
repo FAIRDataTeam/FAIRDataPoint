@@ -24,34 +24,42 @@ package org.fairdatateam.fairdatapoint.service.user;
 
 import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
 import org.fairdatateam.fairdatapoint.entity.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-
 @Service
 public class CurrentUserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
+    /**
+     * Constructor (autowired)
+     */
+    public CurrentUserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    /**
+     * Returns the uuid for the currently authenticated spring security user, if available
+     * @return optional UUID string
+     */
     public Optional<String> getCurrentUserUuid() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
-            final Object principal = auth.getPrincipal();
-            if (principal instanceof org.springframework.security.core.userdetails.User) {
-                return of(((org.springframework.security.core.userdetails.User) principal)
-                        .getUsername());
+            if (auth.getPrincipal() instanceof org.springframework.security.core.userdetails.User securityUser) {
+                return Optional.of(securityUser.getUsername());
             }
         }
-        return empty();
+        return Optional.empty();
     }
 
+    /**
+     * Returns the User instance for the currently authenticated spring security user
+     * @return optional User instance
+     */
     public Optional<User> getCurrentUser() {
         return getCurrentUserUuid().flatMap(userRepository::findByUuid);
     }

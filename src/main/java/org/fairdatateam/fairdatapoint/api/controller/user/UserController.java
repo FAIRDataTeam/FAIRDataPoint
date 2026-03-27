@@ -28,6 +28,7 @@ import org.fairdatateam.fairdatapoint.api.dto.user.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
 import org.fairdatateam.fairdatapoint.service.user.UserMapper;
 import org.fairdatateam.fairdatapoint.service.user.UserService;
 import org.springframework.http.HttpStatus;
@@ -45,9 +46,11 @@ import static java.lang.String.format;
 @RequestMapping("/users")
 public class UserController {
 
-    private static final String LOGIN_FIRST_MSG = "You have to be login at first";
+    private static final String LOGIN_FIRST_MSG = "You need to log in first";
 
     private static final String NOT_FOUND_MSG = "User '%s' doesn't exist";
+
+    private final CurrentUserService currentUserService;
 
     private final UserMapper userMapper;
 
@@ -56,7 +59,8 @@ public class UserController {
     /**
      * Constructor (autowired)
      */
-    public UserController(UserMapper userMapper, UserService userService) {
+    public UserController(CurrentUserService currentUserService, UserMapper userMapper, UserService userService) {
+        this.currentUserService = currentUserService;
         this.userMapper = userMapper;
         this.userService = userService;
     }
@@ -76,7 +80,7 @@ public class UserController {
     @Tag(name = "Authentication and Authorization")
     @GetMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUserCurrent() throws ResourceNotFoundException {
-        final User currentUser = userService.getCurrentUser()
+        final User currentUser = currentUserService.getCurrentUser()
                 .orElseThrow(() -> new ForbiddenException(LOGIN_FIRST_MSG));
         return new ResponseEntity<>(userMapper.toDTO(currentUser), HttpStatus.OK);
     }
