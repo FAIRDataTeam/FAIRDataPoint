@@ -27,8 +27,9 @@ import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.user.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.service.user.UserMapper;
 import org.fairdatateam.fairdatapoint.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +49,17 @@ public class UserController {
 
     private static final String NOT_FOUND_MSG = "User '%s' doesn't exist";
 
-    @Autowired
-    private UserService userService;
+    private final UserMapper userMapper;
+
+    private final UserService userService;
+
+    /**
+     * Constructor (autowired)
+     */
+    public UserController(UserMapper userMapper, UserService userService) {
+        this.userMapper = userMapper;
+        this.userService = userService;
+    }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserDTO>> getUsers() {
@@ -66,13 +76,9 @@ public class UserController {
     @Tag(name = "Authentication and Authorization")
     @GetMapping(path = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUserCurrent() throws ResourceNotFoundException {
-        final Optional<UserDTO> oDto = userService.getCurrentUser();
-        if (oDto.isPresent()) {
-            return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
-        }
-        else {
-            throw new ForbiddenException(LOGIN_FIRST_MSG);
-        }
+        final User currentUser = userService.getCurrentUser()
+                .orElseThrow(() -> new ForbiddenException(LOGIN_FIRST_MSG));
+        return new ResponseEntity<>(userMapper.toDTO(currentUser), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
