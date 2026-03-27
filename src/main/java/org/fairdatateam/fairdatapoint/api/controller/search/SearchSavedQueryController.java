@@ -32,7 +32,7 @@ import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepository
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.service.search.SearchService;
 import org.fairdatateam.fairdatapoint.service.search.query.SearchSavedQueryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,11 +51,22 @@ public class SearchSavedQueryController {
 
     private static final String NOT_FOUND_MSG = "Saved query '%s' doesn't exist";
 
-    @Autowired
-    private SearchSavedQueryService searchSavedQueryService;
+    private final CurrentUserProvider currentUserProvider;
 
-    @Autowired
-    private SearchService searchService;
+    private final SearchSavedQueryService searchSavedQueryService;
+
+    private final SearchService searchService;
+
+    /**
+     * Constructor (autowired)
+     */
+    public SearchSavedQueryController(
+            CurrentUserProvider userProvider, SearchSavedQueryService savedQueryService, SearchService searchService
+    ) {
+        this.currentUserProvider = userProvider;
+        this.searchSavedQueryService = savedQueryService;
+        this.searchService = searchService;
+    }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
