@@ -27,6 +27,7 @@ import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
+import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.service.search.SearchService;
@@ -90,9 +91,20 @@ public class SearchSavedQueryController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> create(
-            @RequestBody @Valid SparqlQueryVariablesChangeDTO reqDto
+            @RequestBody @Valid SparqlQueryVariablesChangeDTO body
     ) {
-        final SearchSavedQueryDTO dto = searchSavedQueryService.create(reqDto);
+        final UserDTO userDto = userService.getCurrentUser().orElse(null);
+        final SearchSavedQueryDTO dto = searchSavedQueryService.create(body);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SearchSavedQueryDTO> create(
+            @RequestBody @Valid SparqlQueryFullChangeDTO body
+    ) {
+        final UserDTO userDto = userService.getCurrentUser().orElse(null);
+        final SearchSavedQueryDTO dto = searchSavedQueryService.create(body);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
