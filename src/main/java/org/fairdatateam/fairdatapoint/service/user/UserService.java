@@ -41,6 +41,9 @@ import static java.util.Optional.of;
 public class UserService {
 
     @Autowired
+    private CurrentUserProvider currentUserProvider;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -48,9 +51,6 @@ public class UserService {
 
     @Autowired
     private UserValidator userValidator;
-
-    @Autowired
-    private CurrentUserService currentUserService;
 
     @Autowired
     private MemberService memberService;
@@ -93,7 +93,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updateCurrentUser(UserProfileChangeDTO reqDto) {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
@@ -115,7 +115,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updatePasswordForCurrentUser(UserPasswordDTO reqDto) {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }

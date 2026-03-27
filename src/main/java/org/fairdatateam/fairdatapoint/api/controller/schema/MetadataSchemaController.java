@@ -29,7 +29,7 @@ import org.fairdatateam.fairdatapoint.api.dto.schema.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ public class MetadataSchemaController {
     private MetadataSchemaService metadataSchemaService;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaDTO>> getSchemas(

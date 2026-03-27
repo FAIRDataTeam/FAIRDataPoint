@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.service.metadata.validator.MetadataStateValidator;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class MetadataStateService {
     private MetadataStateValidator metadataStateValidator;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     public Metadata get(IRI metadataUri) {
         final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
@@ -71,7 +71,7 @@ public class MetadataStateService {
 
     public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition definition) {
         // 1. Return null if user is not log in
-        if (currentUserService.getCurrentUser().isEmpty()) {
+        if (currentUserProvider.getCurrentUser().isEmpty()) {
             return null;
         }
 

@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.membership.PermissionService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.fairdatateam.security.acls.dao.AclRepository;
@@ -60,7 +60,7 @@ public class MemberService {
     private UserRepository userRepository;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     @Autowired
     private PermissionService permissionService;
@@ -95,7 +95,7 @@ public class MemberService {
 
     public <T> Optional<MemberDTO> getMemberForCurrentUser(String entityId, Class<T> entityType) {
         final MutableAcl acl = retrieveAcl(entityId, entityType);
-        final Optional<User> oUser = currentUserService.getCurrentUser();
+        final Optional<User> oUser = currentUserProvider.getCurrentUser();
         if (oUser.isEmpty()) {
             return Optional.empty();
         }
@@ -170,7 +170,7 @@ public class MemberService {
 
     public boolean checkRole(UserRole role) {
         // 1. Get user
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return false;
         }
@@ -182,7 +182,7 @@ public class MemberService {
     public <T> boolean checkPermission(
             String entityId, Class<T> entityType, Permission permission
     ) {
-        final Optional<User> oUser = currentUserService.getCurrentUser();
+        final Optional<User> oUser = currentUserProvider.getCurrentUser();
         if (oUser.isEmpty()) {
             return false;
         }

@@ -41,7 +41,7 @@ import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateServic
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
 import org.fairdatateam.fairdatapoint.service.search.SearchFilterCache;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
@@ -96,7 +96,7 @@ public class GenericController {
     private MetadataEnhancer metadataEnhancer;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     @Autowired
     private GenericMetadataRepository metadataRepository;
@@ -137,7 +137,7 @@ public class GenericController {
 
         // 3. Check if it is DRAFT
         final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
         if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
@@ -186,7 +186,7 @@ public class GenericController {
 
         // 4. Check if it is DRAFT
         final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
         if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
@@ -219,7 +219,7 @@ public class GenericController {
     ) throws MetadataServiceException {
         // 1. Check if user is authenticated
         //     - it can't be in SecurityConfig because the authentication is done based on content-type
-        final Optional<User> oUser = currentUserService.getCurrentUser();
+        final Optional<User> oUser = currentUserProvider.getCurrentUser();
         if (oUser.isEmpty()) {
             throw new ForbiddenException("You have to be login at first");
         }
@@ -347,7 +347,7 @@ public class GenericController {
 
         // 3. Check if it is draft
         final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserService.getCurrentUser();
+        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
         if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }

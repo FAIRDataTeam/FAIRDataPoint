@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -52,7 +52,7 @@ public class ApiKeyService {
     private ApiKeyRepository apiKeyRepository;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     @Autowired
     private MongoAuthenticationService mongoAuthenticationService;
@@ -61,7 +61,7 @@ public class ApiKeyService {
     private ApiKeyMapper apiKeyMapper;
 
     public List<ApiKeyDTO> getAll() {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
@@ -72,7 +72,7 @@ public class ApiKeyService {
     }
 
     public ApiKeyDTO create() {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
@@ -88,7 +88,7 @@ public class ApiKeyService {
         if (apiKey.isEmpty()) {
             return false;
         }
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             throw new ForbiddenException(MSG_LOGIN_FIRST);
         }

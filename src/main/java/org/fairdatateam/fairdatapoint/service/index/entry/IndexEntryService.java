@@ -38,7 +38,7 @@ import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexF
 import org.fairdatateam.fairdatapoint.service.index.event.EventService;
 import org.fairdatateam.fairdatapoint.service.index.harvester.HarvesterService;
 import org.fairdatateam.fairdatapoint.service.index.settings.IndexSettingsService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class IndexEntryService {
     private HarvesterService harvesterService;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries() {
@@ -113,8 +113,8 @@ public class IndexEntryService {
     }
 
     private List<IndexEntryPermit> getPermits(String permitQuery) {
-        if (currentUserService.getCurrentUser().isEmpty()
-                || !currentUserService.getCurrentUser().get().isAdmin()) {
+        if (currentUserProvider.getCurrentUser().isEmpty()
+                || !currentUserProvider.getCurrentUser().get().isAdmin()) {
             // not admin -> can use just ACCEPTED entries
             return List.of(IndexEntryPermit.ACCEPTED);
         }

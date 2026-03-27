@@ -38,7 +38,7 @@ import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateServic
 import org.fairdatateam.fairdatapoint.service.metadata.validator.MetadataValidator;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
-import org.fairdatateam.fairdatapoint.service.user.CurrentUserService;
+import org.fairdatateam.fairdatapoint.service.user.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -69,7 +69,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     private MemberService memberService;
 
     @Autowired
-    private CurrentUserService currentUserService;
+    private CurrentUserProvider currentUserProvider;
 
     @Autowired
     private MetadataEnhancer metadataEnhancer;
@@ -230,7 +230,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     }
 
     private void addPermissions(IRI uri) {
-        final Optional<User> user = currentUserService.getCurrentUser();
+        final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return;
         }

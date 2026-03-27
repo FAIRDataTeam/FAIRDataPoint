@@ -31,14 +31,14 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class CurrentUserService {
+public class CurrentUserProvider {
 
     private final UserRepository userRepository;
 
     /**
      * Constructor (autowired)
      */
-    public CurrentUserService(UserRepository userRepository) {
+    public CurrentUserProvider(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
