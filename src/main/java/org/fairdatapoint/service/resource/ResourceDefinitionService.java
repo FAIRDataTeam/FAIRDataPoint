@@ -246,8 +246,13 @@ public class ResourceDefinitionService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     protected void deleteDependents(ResourceDefinition resourceDefinition) {
-        resourceDefinition.getChildren().forEach(this::deleteChild);
-        linkRepository.deleteAll(resourceDefinition.getExternalLinks());
+        // Iterate over list copies because we need to modify the originals (prevent ConcurrentModificationException)
+        // todo: refactor after fixing #825
+        List.copyOf(resourceDefinition.getChildren()).forEach(this::deleteChild);
+        List.copyOf(resourceDefinition.getExternalLinks()).forEach(link -> {
+            resourceDefinition.getExternalLinks().remove(link);
+            linkRepository.delete(link);
+        });
         usageRepository.deleteAll(resourceDefinition.getMetadataSchemaUsages());
         entityManager.flush();
         entityManager.refresh(resourceDefinition);
@@ -257,7 +262,14 @@ public class ResourceDefinitionService {
     @PreAuthorize("hasRole('ADMIN')")
     protected void deleteChild(ResourceDefinitionChild child) {
         childMetadataRepository.deleteAll(child.getMetadata());
-        childRepository.delete(child);
+        // Remember `child` is not actually a child but rather a link entity,
+        // where `source` is the parent and `target` is the actual child (#821).
+        // We need to clear both sides of the bi-directional relation.
+        // todo: refactor after fixing #825
+        child.getSource().getChildren().remove(child);
+        child.getTarget().getParents().remove(child);
+        child.setSource(null);
+        child.setTarget(null);
     }
 
     public List<String> getTargetClassUris(ResourceDefinition resourceDefinition) {

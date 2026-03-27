@@ -24,7 +24,6 @@ package org.fairdatapoint.acceptance.resource;
 
 import org.fairdatapoint.WebIntegrationTest;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
-import org.fairdatapoint.api.dto.resource.ResourceDefinitionChildDTO;
 import org.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
 import org.fairdatapoint.database.db.repository.ResourceDefinitionRepository;
 import org.fairdatapoint.entity.resource.ResourceDefinition;
@@ -37,7 +36,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
