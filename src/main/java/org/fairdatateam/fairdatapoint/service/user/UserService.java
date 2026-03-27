@@ -82,8 +82,8 @@ public class UserService {
         return empty();
     }
 
-    public Optional<UserDTO> getCurrentUser() {
-        return getCurrentUserUuid().flatMap(this::getUserByUuid);
+    public Optional<User> getCurrentUser() {
+        return getCurrentUserUuid().flatMap(userRepository::findByUuid);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -108,8 +108,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updateCurrentUser(UserProfileChangeDTO reqDto) {
-        final Optional<User> user =
-                getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
+        final Optional<User> user = getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
@@ -131,8 +130,7 @@ public class UserService {
     }
 
     public Optional<UserDTO> updatePasswordForCurrentUser(UserPasswordDTO reqDto) {
-        final Optional<User> user =
-                getCurrentUserUuid().flatMap(uuid -> userRepository.findByUuid(uuid));
+        final Optional<User> user = getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
