@@ -56,16 +56,13 @@ public class SearchSavedQueryMapper {
                 .build();
     }
 
-    public SearchSavedQuery fromChangeDTO(
-            SparqlQueryVariablesChangeDTO reqDto, String userUuid
-    ) {
+    public SearchSavedQuery fromChangeDTO(SparqlQueryVariablesChangeDTO reqDto) {
         return SearchSavedQuery.builder()
                 .uuid(UUID.randomUUID().toString())
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
                 .type(reqDto.getType())
                 .variables(reqDto.getVariables())
-                .userUuid(userUuid)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();

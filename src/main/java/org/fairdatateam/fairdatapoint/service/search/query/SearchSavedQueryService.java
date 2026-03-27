@@ -82,12 +82,9 @@ public class SearchSavedQueryService {
         return true;
     }
 
-    public SearchSavedQueryDTO create(SparqlQueryVariablesChangeDTO reqDto) {
-        final String currentUserUuid = currentUserProvider.getCurrentUserUuid().orElse(null);
-        final SearchSavedQuery searchSavedQuery = repository.save(
-                mapper.fromChangeDTO(reqDto, currentUserUuid)
-        );
-        return mapper.toDTO(searchSavedQuery);
+    public SearchSavedQuery create(SearchSavedQuery searchSavedQuery) {
+        searchSavedQuery.setUuid(currentUserProvider.getCurrentUserUuid().orElse(null));
+        return repository.save(searchSavedQuery);
     }
 
     public Optional<SearchSavedQueryDTO> update(String uuid, SparqlQueryVariablesChangeDTO reqDto) {
