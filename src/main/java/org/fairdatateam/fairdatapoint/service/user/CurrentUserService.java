@@ -26,7 +26,6 @@ import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -51,15 +50,6 @@ public class CurrentUserService {
             }
         }
         return empty();
-    }
-
-    public boolean isAdmin() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null && auth.getAuthorities().stream().anyMatch(this::isAuthorityAdmin);
-    }
-
-    private boolean isAuthorityAdmin(GrantedAuthority authority) {
-        return authority.getAuthority().equals("ROLE_ADMIN");
     }
 
     public Optional<User> getCurrentUser() {

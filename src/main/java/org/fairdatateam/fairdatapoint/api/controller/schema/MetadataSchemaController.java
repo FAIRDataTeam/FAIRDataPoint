@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.api.controller.schema;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.schema.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -63,9 +64,10 @@ public class MetadataSchemaController {
             @RequestParam(name = "drafts", required = false, defaultValue = "false")
             boolean includeDrafts,
             @RequestParam(name = "abstract", required = false, defaultValue = "true")
-            boolean includeAbstract
+            boolean includeAbstract,
+            HttpServletRequest request
     ) throws UnauthorizedException {
-        if (includeDrafts && currentUserService.isAdmin()) {
+        if (includeDrafts && request.isUserInRole("ROLE_ADMIN")) {
             return new ResponseEntity<>(
                     metadataSchemaService.getSchemasWithDrafts(includeAbstract),
                     HttpStatus.OK
