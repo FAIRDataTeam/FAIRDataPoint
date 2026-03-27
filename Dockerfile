@@ -11,7 +11,8 @@ WORKDIR /builder
 ADD . /builder
 
 # https://maven.apache.org/ref/current/maven-embedder/cli.html
-RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests package
+ARG PROJECT_VERSION
+RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevision=${PROJECT_VERSION} package
 
 ################################################################################
 # BUILD IMAGE
