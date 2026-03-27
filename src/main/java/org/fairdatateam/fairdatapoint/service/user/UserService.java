@@ -28,6 +28,7 @@ import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -70,11 +71,13 @@ public class UserService {
     }
 
     public Optional<String> getCurrentUserUuid() {
-        final Object principal =
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof org.springframework.security.core.userdetails.User) {
-            return of(((org.springframework.security.core.userdetails.User) principal)
-                    .getUsername());
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            final Object principal = auth.getPrincipal();
+            if (principal instanceof org.springframework.security.core.userdetails.User) {
+                return of(((org.springframework.security.core.userdetails.User) principal)
+                        .getUsername());
+            }
         }
         return empty();
     }
