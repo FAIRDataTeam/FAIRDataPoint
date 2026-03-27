@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.service.search.query;
 
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
@@ -89,9 +88,9 @@ public class SearchSavedQueryService {
     }
 
     public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        final UserDTO userDto = userService.getCurrentUser().orElse(null);
+        final String currentUserUuid = userService.getCurrentUserUuid().orElse(null);
         final SearchSavedQuery searchSavedQuery = repository.save(
-                mapper.fromChangeDTO(reqDto, userDto)
+                mapper.fromChangeDTO(reqDto, currentUserUuid)
         );
         return mapper.toDTO(searchSavedQuery);
     }

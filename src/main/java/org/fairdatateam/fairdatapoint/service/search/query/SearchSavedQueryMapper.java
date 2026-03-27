@@ -57,7 +57,7 @@ public class SearchSavedQueryMapper {
     }
 
     public SearchSavedQuery fromChangeDTO(
-            SearchSavedQueryChangeDTO reqDto, UserDTO userDto
+            SearchSavedQueryChangeDTO reqDto, String userUuid
     ) {
         return SearchSavedQuery.builder()
                 .uuid(UUID.randomUUID().toString())
@@ -65,7 +65,7 @@ public class SearchSavedQueryMapper {
                 .description(reqDto.getDescription())
                 .type(reqDto.getType())
                 .variables(reqDto.getVariables())
-                .userUuid(userDto == null ? null : userDto.getUuid())
+                .userUuid(userUuid)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
