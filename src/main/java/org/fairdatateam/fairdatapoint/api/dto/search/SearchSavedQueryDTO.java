@@ -68,6 +68,6 @@ public class SearchSavedQueryDTO {
     private SparqlQueryVariables variables;
 
     @Valid
-    private SparqlQueryFull sparqlQueryFull;
+    private SparqlQueryFull sparqlQuery;
 
 }

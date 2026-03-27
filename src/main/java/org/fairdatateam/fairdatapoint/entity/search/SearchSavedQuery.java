@@ -56,7 +56,7 @@ public class SearchSavedQuery {
 
     private SparqlQueryVariables variables;
 
-    private SparqlQueryFull sparqlQueryFull;
+    private SparqlQueryFull sparqlQuery;
 
     public enum Type {
         PUBLIC,

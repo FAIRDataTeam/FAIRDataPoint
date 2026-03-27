@@ -47,5 +47,5 @@ public class SparqlQueryFullChangeDTO {
 
     @Valid
     @NotNull
-    private SparqlQueryFull sparqlQueryFull;
+    private SparqlQueryFull sparqlQuery;
 }
