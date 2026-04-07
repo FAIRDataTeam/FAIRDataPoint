@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.api.controller.search;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
@@ -72,11 +73,13 @@ public class SearchSavedQueryController {
     }
 
     @GetMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "List all existing saved queries")
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
         return new ResponseEntity<>(savedQueryService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Retrieve an existing saved query definition")
     public ResponseEntity<SearchSavedQueryDTO> getSingle(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
@@ -90,6 +93,7 @@ public class SearchSavedQueryController {
     }
 
     @PostMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Evaluate an existing saved query")
     public ResponseEntity<List<SearchResultDTO>> search(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException, MetadataRepositoryException {
@@ -104,6 +108,7 @@ public class SearchSavedQueryController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Save the query that is defined in the request body")
     public ResponseEntity<SearchSavedQueryDTO> create(
             @RequestBody @Valid SearchSavedQueryChangeDTO body
     ) {
@@ -113,6 +118,7 @@ public class SearchSavedQueryController {
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Change an existing saved query")
     public ResponseEntity<SearchSavedQueryDTO> update(
             @PathVariable final String uuid,
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
@@ -129,6 +135,7 @@ public class SearchSavedQueryController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping(path = "/query/saved/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Delete an existing saved query")
     public ResponseEntity<Void> delete(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
