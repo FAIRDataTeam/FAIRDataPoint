@@ -48,7 +48,7 @@ import static java.lang.String.format;
 
 @Tag(name = "Search")
 @RestController
-@RequestMapping("/search")
+@RequestMapping("/search/query/saved")
 public class SearchSavedQueryController {
 
     private static final String NOT_FOUND_MSG = "Saved query '%s' doesn't exist";
@@ -72,13 +72,13 @@ public class SearchSavedQueryController {
         this.searchService = searchService;
     }
 
-    @GetMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "List all existing saved queries")
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
         return new ResponseEntity<>(savedQueryService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Retrieve an existing saved query definition")
     public ResponseEntity<SearchSavedQueryDTO> getSingle(
             @PathVariable final String uuid
@@ -92,7 +92,7 @@ public class SearchSavedQueryController {
         }
     }
 
-    @PostMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Evaluate an existing saved query")
     public ResponseEntity<List<SearchResultDTO>> search(
             @PathVariable final String uuid
@@ -107,7 +107,7 @@ public class SearchSavedQueryController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Save the query that is defined in the request body")
     public ResponseEntity<SearchSavedQueryDTO> create(
             @RequestBody @Valid SearchSavedQueryChangeDTO body
@@ -117,7 +117,7 @@ public class SearchSavedQueryController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PutMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Change an existing saved query")
     public ResponseEntity<SearchSavedQueryDTO> update(
             @PathVariable final String uuid,
@@ -133,7 +133,7 @@ public class SearchSavedQueryController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping(path = "/query/saved/{uuid}")
+    @DeleteMapping(path = "/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "Delete an existing saved query")
     public ResponseEntity<Void> delete(
