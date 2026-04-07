@@ -48,6 +48,7 @@ public class SearchSavedQueryMapper {
                 .name(query.getName())
                 .description(query.getDescription())
                 .variables(query.getVariables())
+                .queryFull(query.getQueryFull())
                 .user(userDTO)
                 .type(query.getType())
                 .createdAt(query.getCreatedAt())
