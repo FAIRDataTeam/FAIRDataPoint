@@ -61,6 +61,7 @@ public class SearchSavedQueryMapper {
                 .description(changeDTO.getDescription())
                 .type(changeDTO.getType())
                 .variables(changeDTO.getVariables())
+                .queryFull(changeDTO.getQueryFull())
                 .build();
     }
 
@@ -71,6 +72,7 @@ public class SearchSavedQueryMapper {
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
                 .variables(reqDto.getVariables())
+                .queryFull(reqDto.getQueryFull())
                 .userUuid(query.getUserUuid())
                 .type(reqDto.getType())
                 .updatedAt(Instant.now())
