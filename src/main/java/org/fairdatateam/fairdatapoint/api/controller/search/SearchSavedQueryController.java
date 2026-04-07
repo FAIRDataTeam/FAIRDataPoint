@@ -104,7 +104,7 @@ public class SearchSavedQueryController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchSavedQueryDTO> createTemplateSparqlQuery(
+    public ResponseEntity<SearchSavedQueryDTO> create(
             @RequestBody @Valid SearchSavedQueryChangeDTO body
     ) {
         final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromChangeDTO(body));
@@ -113,7 +113,7 @@ public class SearchSavedQueryController {
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchSavedQueryDTO> updateTemplateSparqlQuery(
+    public ResponseEntity<SearchSavedQueryDTO> update(
             @PathVariable final String uuid,
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
@@ -129,7 +129,7 @@ public class SearchSavedQueryController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping(path = "/query/saved/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteTemplateSparqlQuery(
+    public ResponseEntity<Void> delete(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
         final boolean result = savedQueryService.delete(uuid);
