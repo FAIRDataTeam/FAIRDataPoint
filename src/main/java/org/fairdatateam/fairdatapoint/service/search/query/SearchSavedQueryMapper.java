@@ -61,7 +61,7 @@ public class SearchSavedQueryMapper {
                 .name(fullChangeDTO.getName())
                 .description(fullChangeDTO.getDescription())
                 .type(fullChangeDTO.getType())
-                .sparqlQuery(fullChangeDTO.getSparqlQuery())
+                .queryFull(fullChangeDTO.getQueryFull())
                 .build();
     }
 
