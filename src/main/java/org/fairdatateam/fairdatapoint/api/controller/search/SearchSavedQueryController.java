@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.api.controller.search;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
@@ -105,9 +105,9 @@ public class SearchSavedQueryController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/query/saved", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> createTemplateSparqlQuery(
-            @RequestBody @Valid SparqlQueryVariablesChangeDTO body
+            @RequestBody @Valid SearchSavedQueryChangeDTO body
     ) {
-        final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromVariablesChangeDTO(body));
+        final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromChangeDTO(body));
         return new ResponseEntity<>(savedQueryMapper.toDTO(savedQuery), HttpStatus.CREATED);
     }
 
@@ -115,7 +115,7 @@ public class SearchSavedQueryController {
     @PutMapping(path = "/query/saved/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchSavedQueryDTO> updateTemplateSparqlQuery(
             @PathVariable final String uuid,
-            @RequestBody @Valid SparqlQueryVariablesChangeDTO reqDto
+            @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
         final Optional<SearchSavedQueryDTO> oDto = savedQueryService.update(uuid, reqDto);
         if (oDto.isPresent()) {

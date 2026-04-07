@@ -35,7 +35,7 @@ import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 @Getter
 @Setter
 @Builder
-public class SparqlQueryVariablesChangeDTO {
+public class SearchSavedQueryChangeDTO {
 
     @NotBlank
     private String name;

@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
@@ -61,10 +61,10 @@ public class List_POST extends WebIntegrationTest {
         searchSavedQueryRepository.deleteAll();
 
         // AND: prepare request
-        RequestEntity<SparqlQueryVariablesChangeDTO> request = RequestEntity
+        RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
                 .post(url())
                 .body(
-                        SparqlQueryVariablesChangeDTO.builder()
+                        SearchSavedQueryChangeDTO.builder()
                                 .name("New query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)
@@ -89,11 +89,11 @@ public class List_POST extends WebIntegrationTest {
         searchSavedQueryRepository.deleteAll();
 
         // AND: prepare request
-        RequestEntity<SparqlQueryVariablesChangeDTO> request = RequestEntity
+        RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
                 .post(url())
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .body(
-                        SparqlQueryVariablesChangeDTO.builder()
+                        SearchSavedQueryChangeDTO.builder()
                                 .name("New query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)

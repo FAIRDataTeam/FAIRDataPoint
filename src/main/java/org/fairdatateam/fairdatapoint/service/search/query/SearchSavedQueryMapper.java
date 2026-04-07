@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.service.search.query;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
@@ -55,17 +55,17 @@ public class SearchSavedQueryMapper {
                 .build();
     }
 
-    public SearchSavedQuery fromVariablesChangeDTO(SparqlQueryVariablesChangeDTO variablesChangeDTO) {
+    public SearchSavedQuery fromChangeDTO(SearchSavedQueryChangeDTO changeDTO) {
         return SearchSavedQuery.builder()
-                .name(variablesChangeDTO.getName())
-                .description(variablesChangeDTO.getDescription())
-                .type(variablesChangeDTO.getType())
-                .variables(variablesChangeDTO.getVariables())
+                .name(changeDTO.getName())
+                .description(changeDTO.getDescription())
+                .type(changeDTO.getType())
+                .variables(changeDTO.getVariables())
                 .build();
     }
 
-    public SearchSavedQuery fromVariablesChangeDTO(
-            SearchSavedQuery query, SparqlQueryVariablesChangeDTO reqDto
+    public SearchSavedQuery fromChangeDTO(
+            SearchSavedQuery query, SearchSavedQueryChangeDTO reqDto
     ) {
         return query.toBuilder()
                 .name(reqDto.getName())

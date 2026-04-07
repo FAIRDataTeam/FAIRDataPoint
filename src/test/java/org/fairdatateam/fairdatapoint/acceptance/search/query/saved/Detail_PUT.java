@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
+import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
@@ -66,10 +66,10 @@ public class Detail_PUT extends WebIntegrationTest {
         SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPublic01());
 
         // AND: prepare request
-        RequestEntity<SparqlQueryVariablesChangeDTO> request = RequestEntity
+        RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
                 .put(url(query.getUuid()))
                 .body(
-                        SparqlQueryVariablesChangeDTO.builder()
+                        SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)
@@ -94,11 +94,11 @@ public class Detail_PUT extends WebIntegrationTest {
         SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPublic01());
 
         // AND: prepare request
-        RequestEntity<SparqlQueryVariablesChangeDTO> request = RequestEntity
+        RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
                 .put(url(query.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .body(
-                        SparqlQueryVariablesChangeDTO.builder()
+                        SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.PUBLIC)
@@ -123,11 +123,11 @@ public class Detail_PUT extends WebIntegrationTest {
         SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPublic01());
 
         // AND: prepare request
-        RequestEntity<SparqlQueryVariablesChangeDTO> request = RequestEntity
+        RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
                 .put(url(query.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .body(
-                        SparqlQueryVariablesChangeDTO.builder()
+                        SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.INTERNAL)
@@ -158,11 +158,11 @@ public class Detail_PUT extends WebIntegrationTest {
         SearchSavedQuery query = searchSavedQueryRepository.save(searchSavedQueryFixtures.savedQueryPublic01());
 
         // AND: prepare request
-        RequestEntity<SparqlQueryVariablesChangeDTO> request = RequestEntity
+        RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
                 .put(url(query.getUuid()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(
-                        SparqlQueryVariablesChangeDTO.builder()
+                        SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
                                 .type(SearchSavedQuery.Type.INTERNAL)
