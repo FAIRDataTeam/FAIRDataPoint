@@ -54,6 +54,7 @@ public class SearchSavedQuery {
 
     private Instant updatedAt;
 
+    // could rename to queryVariables for consistency, but that would be incompatible with existing queries in database
     private SparqlQueryVariables variables;
 
     private SparqlQueryFull queryFull;
