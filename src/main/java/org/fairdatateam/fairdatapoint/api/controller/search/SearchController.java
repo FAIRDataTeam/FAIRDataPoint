@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.api.controller.search;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.*;
@@ -50,9 +51,11 @@ public class SearchController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Operation(description = "Search by string literal")
     public ResponseEntity<List<SearchResultDTO>> search(
             @RequestBody @Valid SearchQueryDTO reqDto
     ) throws MetadataRepositoryException {
+        // this uses AbstractMetadataRepository.findByLiteral
         return ResponseEntity.ok(searchService.search(reqDto));
     }
 
@@ -60,6 +63,7 @@ public class SearchController {
             path = "/query",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Operation(description = "Retrieve the template used for restricted queries")
     public ResponseEntity<SearchQueryTemplateDTO> getSearchQueryTemplate() {
         return ResponseEntity.ok(searchService.getSearchQueryTemplate());
     }
@@ -69,6 +73,7 @@ public class SearchController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Operation(description = "Evaluate restricted query defined in the request body")
     public ResponseEntity<List<SearchResultDTO>> searchWithQuery(
             @RequestBody @Valid SparqlQueryVariables body
     ) throws MetadataRepositoryException, MalformedQueryException {
@@ -79,6 +84,7 @@ public class SearchController {
             path = "/filters",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Operation(description = "Retrieve list of all search filters")
     public ResponseEntity<List<SearchFilterDTO>> getSearchFilters() {
         return ResponseEntity.ok(searchService.getSearchFilters());
     }
@@ -88,6 +94,7 @@ public class SearchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(description = "Reset search filter cache")
     public ResponseEntity<List<SearchFilterDTO>> resetSearchFiltersCache() {
         return ResponseEntity.ok(searchService.resetSearchFilters());
     }
