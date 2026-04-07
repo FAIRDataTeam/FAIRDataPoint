@@ -25,7 +25,6 @@ package org.fairdatateam.fairdatapoint.api.controller.search;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryFullChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
@@ -109,15 +108,6 @@ public class SearchSavedQueryController {
             @RequestBody @Valid SparqlQueryVariablesChangeDTO body
     ) {
         final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromVariablesChangeDTO(body));
-        return new ResponseEntity<>(savedQueryMapper.toDTO(savedQuery), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping(path = "/sparql/saved", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchSavedQueryDTO> createFullSparqlQuery(
-            @RequestBody @Valid SparqlQueryFullChangeDTO body
-    ) {
-        final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromFullChangeDTO(body));
         return new ResponseEntity<>(savedQueryMapper.toDTO(savedQuery), HttpStatus.CREATED);
     }
 

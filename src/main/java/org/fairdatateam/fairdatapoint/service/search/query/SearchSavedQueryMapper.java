@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.service.search.query;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryFullChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SparqlQueryVariablesChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
@@ -53,15 +52,6 @@ public class SearchSavedQueryMapper {
                 .type(query.getType())
                 .createdAt(query.getCreatedAt())
                 .updatedAt(query.getUpdatedAt())
-                .build();
-    }
-
-    public SearchSavedQuery fromFullChangeDTO(SparqlQueryFullChangeDTO fullChangeDTO) {
-        return SearchSavedQuery.builder()
-                .name(fullChangeDTO.getName())
-                .description(fullChangeDTO.getDescription())
-                .type(fullChangeDTO.getType())
-                .queryFull(fullChangeDTO.getQueryFull())
                 .build();
     }
 

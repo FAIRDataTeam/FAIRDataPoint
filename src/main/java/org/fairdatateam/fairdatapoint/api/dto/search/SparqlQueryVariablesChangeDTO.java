@@ -27,6 +27,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryFull;
 import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 
 @NoArgsConstructor
@@ -46,6 +47,9 @@ public class SparqlQueryVariablesChangeDTO {
     private SearchSavedQuery.Type type;
 
     @Valid
-    @NotNull
     private SparqlQueryVariables variables;
+
+    @Valid
+    private SparqlQueryFull queryFull;
+
 }
