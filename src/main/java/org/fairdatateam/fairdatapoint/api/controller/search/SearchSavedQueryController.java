@@ -97,13 +97,9 @@ public class SearchSavedQueryController {
     public ResponseEntity<List<SearchResultDTO>> search(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException, MetadataRepositoryException {
-        final Optional<SearchSavedQueryDTO> oDto = savedQueryService.getSingle(uuid);
-        if (oDto.isPresent()) {
-            return ResponseEntity.ok(searchService.search(oDto.get().getVariables()));
-        }
-        else {
-            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
-        }
+        final SearchSavedQueryDTO savedQueryDTO = savedQueryService.getSingle(uuid).orElseThrow(
+                () -> new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid)));
+        return ResponseEntity.ok(searchService.search(savedQueryDTO.getVariables()));
     }
 
     @PreAuthorize("isAuthenticated()")
