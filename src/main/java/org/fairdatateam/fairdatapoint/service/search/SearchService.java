@@ -88,16 +88,26 @@ public class SearchService {
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
-    public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
-        final List<SearchResult> results = findByLiteral(l(reqDto.getQuery()));
+    /**
+     * Performs a predefined SPARQL query looking for a string literal
+     * @param simpleQuery Object containing a search string literal
+     * @return List of search result objects
+     */
+    public List<SearchResultDTO> search(SearchQueryDTO simpleQuery) throws MetadataRepositoryException {
+        final List<SearchResult> results = findByLiteral(l(simpleQuery.getQuery()));
         return processSearchResults(results);
     }
 
+    /**
+     * Evaluates restricted SPARQL query as defined in query template
+     * @param queryVariables User input as context for query template
+     * @return List of search result objects
+     */
     public List<SearchResultDTO> search(
-            SearchQueryVariablesDTO reqDto
+            SearchQueryVariablesDTO queryVariables
     ) throws MetadataRepositoryException, MalformedQueryException {
         // Compose query
-        final String query = composeQuery(reqDto);
+        final String query = composeQuery(queryVariables);
         // Verify query
         final SPARQLParser parser = new SPARQLParser();
         parser.parseQuery(query, persistentUrl);
