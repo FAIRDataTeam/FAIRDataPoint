@@ -247,8 +247,7 @@ public class SearchService {
         }
         catch (IOException | NoSuchElementException exception) {
             throw new RuntimeException(
-                    format("Cannot load SPARQL template for search: %s",
-                            exception.getMessage())
+                    format("Cannot load SPARQL template for search: %s", exception.getMessage())
             );
         }
     }
