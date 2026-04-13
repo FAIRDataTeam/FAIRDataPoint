@@ -41,7 +41,7 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 @Service("catalogMetadataRepository")
 public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository implements CatalogMetadataRepository {
 
-    private static final String GET_DATASET_THEMES_FOR_CATALOG = "getDatasetThemesForCatalog.sparql";
+    private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
