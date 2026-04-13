@@ -243,8 +243,7 @@ public class SearchService {
      */
     private String loadSparqlQueryTemplate() {
         try {
-            final Optional<URL> fileURL = Optional.ofNullable(SearchService.class.getResource(QUERY_TEMPLATE_NAME));
-            return Resources.toString(fileURL.orElseThrow(), Charsets.UTF_8);
+            return metadataRepository.loadSparqlQuery(QUERY_TEMPLATE_NAME, SearchService.class);
         }
         catch (IOException | NoSuchElementException exception) {
             throw new RuntimeException(
