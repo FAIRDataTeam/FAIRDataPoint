@@ -52,9 +52,9 @@ import static java.util.Optional.ofNullable;
 @Slf4j
 public abstract class AbstractMetadataRepository {
 
-    private static final String FIND_ENTITY_BY_LITERAL = "findEntityByLiteral.sparql";
-    private static final String FIND_CHILD_TITLES = "findChildTitles.sparql";
-    private static final String FIND_OBJECT_FOR_PREDICATE = "findObjectsForPredicate.sparql";
+    private static final String FIND_ENTITY_BY_LITERAL = "/sparql/findEntityByLiteral.sparql";
+    private static final String FIND_CHILD_TITLES = "/sparql/findChildTitles.sparql";
+    private static final String FIND_OBJECT_FOR_PREDICATE = "/sparql/findObjectsForPredicate.sparql";
 
     private static final String MSG_ERROR_RESOURCE = "Error retrieving resource: ";
     private static final String MSG_ERROR_URI = "Error retrieving repository URI: ";

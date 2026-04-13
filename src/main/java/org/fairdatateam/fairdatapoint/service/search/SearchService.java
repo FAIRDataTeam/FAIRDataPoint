@@ -58,7 +58,7 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 @Service
 public class SearchService {
 
-    private static final String QUERY_TEMPLATE_NAME = "queryTemplate.sparql";
+    private static final String QUERY_TEMPLATE_NAME = "/sparql/queryTemplate.sparql";
 
     private static final String QUERY_TEMPLATE = loadSparqlQueryTemplate();
 
@@ -210,10 +210,10 @@ public class SearchService {
 
     private static String loadSparqlQueryTemplate() {
         try {
-            final URL fileURL = SearchService.class.getResource(QUERY_TEMPLATE_NAME);
-            return Resources.toString(fileURL, Charsets.UTF_8);
+            final Optional<URL> fileURL = Optional.ofNullable(SearchService.class.getResource(QUERY_TEMPLATE_NAME));
+            return Resources.toString(fileURL.orElseThrow(), Charsets.UTF_8);
         }
-        catch (IOException exception) {
+        catch (IOException | NoSuchElementException exception) {
             throw new RuntimeException(
                     format("Cannot load SPARQL template for search: %s",
                             exception.getMessage())

@@ -27,8 +27,13 @@
  */
 package org.fairdatateam.fairdatapoint.database.rdf.repository.common;
 
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
+import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -39,11 +44,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getLanguage;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.*;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -78,6 +84,44 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.size(), is(equalTo(0)));
+    }
+
+    @Test
+    public void findByLiteralWorks() throws MetadataRepositoryException {
+        // given
+        final Model catalog1 = testMetadataFixtures.catalog1();
+        final Literal title = getTitle(catalog1);
+
+        // when
+        List<SearchResult> result = metadataRepository.findByLiteral(title);
+
+        // then
+        assertThat(result.size(), is(greaterThan(0)));
+    }
+
+    @Test
+    public void findByFilterPredicateWorks() throws MetadataRepositoryException {
+        // given
+        // (value from SettingsFixtures.SEARCH_FILTER_TYPE is private)
+        final String predicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+
+        // when
+        final List<SearchFilterValue> result = metadataRepository.findByFilterPredicate(i(predicate));
+
+        // then
+        assertThat(result.size(), is(greaterThan(0)));
+    }
+
+    @Test
+    public void findChildTitlesWorks() throws MetadataRepositoryException {
+        // given
+        final IRI parent = getUri(testMetadataFixtures.catalog1());
+
+        // when
+        final Map<String, String> result = metadataRepository.findChildTitles(parent, DCAT.HAS_DATASET);
+
+        // then
+        assertThat(result.size(), is(greaterThan(0)));
     }
 
     @Test
