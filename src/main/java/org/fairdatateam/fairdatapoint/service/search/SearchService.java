@@ -208,12 +208,25 @@ public class SearchService {
         }
     }
 
-    private String composeQuery(SearchQueryVariablesDTO reqDto) {
-        final StrSubstitutor substitutor =
-                new StrSubstitutor(searchMapper.toSubstitutions(reqDto), "{{", "}}");
+    /**
+     * Renders a SPARQL query string based on the restricted query defined in <code>QUERY_TEMPLATE</code> and user input
+     * @param queryVariables User input to be used as template context
+     * @return Full SPARQL query string
+     */
+    private String composeQuery(SearchQueryVariablesDTO queryVariables) {
+        final Map<String, String> templateContext = Map.of(
+                "prefixes", queryVariables.getPrefixes(),
+                "graphPattern", queryVariables.getGraphPattern(),
+                "ordering", queryVariables.getOrdering()
+        );
+        final StrSubstitutor substitutor = new StrSubstitutor(templateContext, "{{", "}}");
         return substitutor.replace(QUERY_TEMPLATE);
     }
 
+    /**
+     * Loads a query template string from file
+     * @return SPARQL query template string
+     */
     private static String loadSparqlQueryTemplate() {
         try {
             final Optional<URL> fileURL = Optional.ofNullable(SearchService.class.getResource(QUERY_TEMPLATE_NAME));

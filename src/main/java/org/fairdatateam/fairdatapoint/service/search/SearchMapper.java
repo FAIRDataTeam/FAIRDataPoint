@@ -33,7 +33,6 @@ import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilterItem;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -46,7 +45,6 @@ public class SearchMapper {
     private static final String FIELD_REL_PRED = "relationPredicate";
     private static final String FIELD_TITLE = "title";
     private static final String FIELD_TYPE = "rdfType";
-    private static final String FRAGMENT_SUFFIX = "\n";
 
     public SearchQueryTemplateDTO toQueryTemplateDTO(String template) {
         return new SearchQueryTemplateDTO(template);
@@ -120,13 +118,5 @@ public class SearchMapper {
                 .label(value.getLabel())
                 .preset(false)
                 .build();
-    }
-
-    public Map<String, String> toSubstitutions(SearchQueryVariablesDTO reqDto) {
-        return Map.of(
-                "prefixes", reqDto.getPrefixes() + FRAGMENT_SUFFIX,
-                "graphPattern", reqDto.getGraphPattern() + FRAGMENT_SUFFIX,
-                "ordering", reqDto.getOrdering() + FRAGMENT_SUFFIX
-        );
     }
 }
