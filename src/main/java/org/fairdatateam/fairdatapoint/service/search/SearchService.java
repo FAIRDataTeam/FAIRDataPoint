@@ -63,7 +63,7 @@ public class SearchService {
     private static final String FIND_OBJECT_FOR_PREDICATE = "/sparql/findObjectsForPredicate.sparql";
     private static final String QUERY_TEMPLATE_NAME = "/sparql/queryTemplate.sparql";
 
-    private static String QUERY_TEMPLATE;
+    private static String queryTemplate;
 
     private final GenericMetadataRepository metadataRepository;
 
@@ -95,7 +95,7 @@ public class SearchService {
         this.searchMapper = searchMapper;
         this.searchFilterCache = searchFilterCache;
         this.settingsService = settingsService;
-        QUERY_TEMPLATE = loadSparqlQueryTemplate();
+        queryTemplate = loadSparqlQueryTemplate();
     }
 
     /**
@@ -127,7 +127,7 @@ public class SearchService {
     }
 
     public SearchQueryTemplateDTO getSearchQueryTemplate() {
-        return searchMapper.toQueryTemplateDTO(QUERY_TEMPLATE);
+        return searchMapper.toQueryTemplateDTO(queryTemplate);
     }
 
     public List<SearchFilterDTO> getSearchFilters() {
@@ -234,7 +234,7 @@ public class SearchService {
                 "ordering", queryVariables.getOrdering()
         );
         final StrSubstitutor substitutor = new StrSubstitutor(templateContext, "{{", "}}");
-        return substitutor.replace(QUERY_TEMPLATE);
+        return substitutor.replace(queryTemplate);
     }
 
     /**
