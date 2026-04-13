@@ -79,7 +79,7 @@ public class SearchService {
     private final SearchFilterCache searchFilterCache;
 
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
     /**
      * Constructor (autowired)
