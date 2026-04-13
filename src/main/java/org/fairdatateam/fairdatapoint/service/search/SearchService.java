@@ -22,8 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.service.search;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import org.fairdatateam.fairdatapoint.api.dto.search.*;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
@@ -46,7 +44,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,7 +63,7 @@ public class SearchService {
     private static final String FIND_OBJECT_FOR_PREDICATE = "/sparql/findObjectsForPredicate.sparql";
     private static final String QUERY_TEMPLATE_NAME = "/sparql/queryTemplate.sparql";
 
-    private static final String QUERY_TEMPLATE = loadSparqlQueryTemplate();
+    private static String QUERY_TEMPLATE;
 
     private final GenericMetadataRepository metadataRepository;
 
@@ -98,6 +95,7 @@ public class SearchService {
         this.searchMapper = searchMapper;
         this.searchFilterCache = searchFilterCache;
         this.settingsService = settingsService;
+        QUERY_TEMPLATE = loadSparqlQueryTemplate();
     }
 
     /**
@@ -243,7 +241,7 @@ public class SearchService {
      * Loads a query template string from file
      * @return SPARQL query template string
      */
-    private static String loadSparqlQueryTemplate() {
+    private String loadSparqlQueryTemplate() {
         try {
             final Optional<URL> fileURL = Optional.ofNullable(SearchService.class.getResource(QUERY_TEMPLATE_NAME));
             return Resources.toString(fileURL.orElseThrow(), Charsets.UTF_8);
