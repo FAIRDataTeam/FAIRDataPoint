@@ -42,7 +42,6 @@ import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -69,24 +68,37 @@ public class SearchService {
 
     private static final String QUERY_TEMPLATE = loadSparqlQueryTemplate();
 
-    @Autowired
-    private GenericMetadataRepository metadataRepository;
+    private final GenericMetadataRepository metadataRepository;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private SearchMapper searchMapper;
+    private final SearchMapper searchMapper;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
 
-    @Autowired
     @Qualifier("persistentUrl")
     private String persistentUrl;
+
+    /**
+     * Constructor (autowired)
+     */
+    public SearchService(
+            GenericMetadataRepository metadataRepository,
+            MetadataStateService metadataStateService,
+            String persistentUrl,
+            SearchMapper searchMapper,
+            SearchFilterCache searchFilterCache,
+            SettingsService settingsService
+    ) {
+        this.metadataRepository = metadataRepository;
+        this.metadataStateService = metadataStateService;
+        this.persistentUrl = persistentUrl;
+        this.searchMapper = searchMapper;
+        this.searchFilterCache = searchFilterCache;
+        this.settingsService = settingsService;
+    }
 
     /**
      * Performs a predefined SPARQL query looking for a string literal
