@@ -48,7 +48,6 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
     private static final String MSG_ERROR_REMOVE_ALL = "Error remove all: ";
     private static final String MSG_ERROR_EXISTS = "Error check statement existence: ";
     private static final String MSG_ERROR_SAVE = "Error storing statements: ";
-    private static final String MSG_ERROR_SPARQL_LOAD = "Error reading %s.sparql file (error: %s)";
 
     private static final String FIELD_CHILD = "child";
     private static final String FIELD_TITLE = "title";
