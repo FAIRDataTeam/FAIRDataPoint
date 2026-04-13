@@ -58,7 +58,7 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 @Service
 public class SearchService {
 
-    private static final String QUERY_TEMPLATE_NAME = "queryTemplate.sparql";
+    private static final String QUERY_TEMPLATE_NAME = "/sparql/queryTemplate.sparql";
 
     private static final String QUERY_TEMPLATE = loadSparqlQueryTemplate();
 
