@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import jakarta.annotation.PostConstruct;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.repository.Repository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,8 @@ public class CatalogMetadataRepository extends AbstractMetadataRepository {
     /**
      * Constructor (autowired)
      */
-    public CatalogMetadataRepository(ConcurrentMapCacheManager cacheManager) {
+    public CatalogMetadataRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
+        super(repository);
         this.cacheManager = cacheManager;
     }
 

@@ -36,7 +36,6 @@ import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URL;
@@ -73,8 +72,14 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
     private static final String FIELD_REL_PRED = "relationPredicate";
     private static final String FIELD_REL_OBJ = "relationObject";
 
-    @Autowired
-    private Repository repository;
+    private final Repository repository;
+
+    /**
+     * Constructor (autowired)
+     */
+    public AbstractMetadataRepository(Repository repository) {
+        this.repository = repository;
+    }
 
     protected Repository getRepository() {
         return repository;

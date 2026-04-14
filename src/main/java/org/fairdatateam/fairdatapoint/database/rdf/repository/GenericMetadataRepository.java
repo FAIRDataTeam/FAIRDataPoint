@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.repository.Repository;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,8 @@ public class GenericMetadataRepository extends AbstractMetadataRepository {
     /**
      * Constructor (autowired)
      */
-    public GenericMetadataRepository(ConcurrentMapCacheManager cacheManager) {
+    public GenericMetadataRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
+        super(repository);
         this.cacheManager = cacheManager;
     }
 
