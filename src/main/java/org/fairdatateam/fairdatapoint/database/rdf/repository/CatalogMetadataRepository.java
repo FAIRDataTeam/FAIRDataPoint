@@ -20,13 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.rdf.repository.catalog;
+package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import jakarta.annotation.PostConstruct;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.rdf4j.repository.Repository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -38,13 +36,20 @@ import java.util.stream.Collectors;
 import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
-@Service("catalogMetadataRepository")
-public class CatalogMetadataRepositoryImpl extends AbstractMetadataRepository implements CatalogMetadataRepository {
+@Service
+public class CatalogMetadataRepository extends AbstractMetadataRepository {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
+
+    /**
+     * Constructor (autowired)
+     */
+    public CatalogMetadataRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
+        super(repository);
+        this.cacheManager = cacheManager;
+    }
 
     @PostConstruct
     public void init() {

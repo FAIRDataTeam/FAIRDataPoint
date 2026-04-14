@@ -20,12 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.rdf.repository.common;
+package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
 import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.fairdatateam.fairdatapoint.entity.search.SearchResultRelation;
@@ -37,7 +36,6 @@ import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URL;
@@ -50,7 +48,7 @@ import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
-public abstract class AbstractMetadataRepository {
+public abstract class AbstractMetadataRepository implements MetadataRepository {
 
     private static final String FIND_ENTITY_BY_LITERAL = "/sparql/findEntityByLiteral.sparql";
     private static final String FIND_CHILD_TITLES = "/sparql/findChildTitles.sparql";
@@ -74,8 +72,14 @@ public abstract class AbstractMetadataRepository {
     private static final String FIELD_REL_PRED = "relationPredicate";
     private static final String FIELD_REL_OBJ = "relationObject";
 
-    @Autowired
-    private Repository repository;
+    private final Repository repository;
+
+    /**
+     * Constructor (autowired)
+     */
+    public AbstractMetadataRepository(Repository repository) {
+        this.repository = repository;
+    }
 
     protected Repository getRepository() {
         return repository;
@@ -224,9 +228,9 @@ public abstract class AbstractMetadataRepository {
         }
     }
 
-    public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
-                                           Map<String, Value> bindings)
-            throws MetadataRepositoryException {
+    public List<BindingSet> runSparqlQuery(
+            String queryName, Class<?> repositoryType, Map<String, Value> bindings
+    ) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             final String queryString = loadSparqlQuery(queryName, repositoryType);
             final TupleQuery query = conn.prepareTupleQuery(queryString);

@@ -23,15 +23,14 @@
 package org.fairdatateam.fairdatapoint.service.metadata.catalog;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.CatalogMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
@@ -44,7 +43,6 @@ import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.setT
 public class CatalogMetadataService extends AbstractMetadataService {
 
     @Autowired
-    @Qualifier("catalogMetadataRepository")
     private CatalogMetadataRepository metadataRepository;
 
     @Override

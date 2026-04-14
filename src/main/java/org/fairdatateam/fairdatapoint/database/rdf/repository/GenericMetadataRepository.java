@@ -20,18 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.fairdatateam.fairdatapoint.database.rdf.repository.generic;
+package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.eclipse.rdf4j.repository.Repository;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
@@ -40,11 +33,18 @@ import java.util.List;
 import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getParent;
 
-@Service("genericMetadataRepository")
-public class GenericMetadataRepositoryImpl extends AbstractMetadataRepository implements GenericMetadataRepository {
+@Service
+public class GenericMetadataRepository extends AbstractMetadataRepository {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
+
+    /**
+     * Constructor (autowired)
+     */
+    public GenericMetadataRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
+        super(repository);
+        this.cacheManager = cacheManager;
+    }
 
     @Override
     public void save(List<Statement> statements, IRI context) throws MetadataRepositoryException {

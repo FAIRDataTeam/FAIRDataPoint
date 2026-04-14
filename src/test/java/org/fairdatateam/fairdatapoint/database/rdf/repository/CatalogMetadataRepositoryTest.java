@@ -20,9 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.rdf.repository.catalog;
+package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
@@ -70,7 +69,7 @@ public class CatalogMetadataRepositoryTest {
 
     @Spy
     @InjectMocks
-    private CatalogMetadataRepositoryImpl catalogMetadataRepository;
+    private CatalogMetadataRepository catalogMetadataRepository;
 
     @Test
     @DisplayName("Themes for catalog are in cache (no query to triple store)")

@@ -25,9 +25,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.database.rdf.repository.common;
+package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
 import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.eclipse.rdf4j.model.*;
@@ -64,7 +63,7 @@ public interface MetadataRepository {
     void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
             throws MetadataRepositoryException;
 
-    List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
-                                    Map<String, Value> bindings)
-            throws MetadataRepositoryException;
+    List<BindingSet> runSparqlQuery(
+            String queryName, Class<?> repositoryType, Map<String, Value> bindings
+    ) throws MetadataRepositoryException;
 }

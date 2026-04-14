@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.service.metadata.validator;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.common.MetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
