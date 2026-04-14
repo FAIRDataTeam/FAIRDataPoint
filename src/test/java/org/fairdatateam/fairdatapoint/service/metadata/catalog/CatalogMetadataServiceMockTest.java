@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.service.metadata.catalog;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepositoryImpl;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -56,7 +56,7 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Mock
-    private GenericMetadataRepositoryImpl metadataRepository;
+    private GenericMetadataRepository metadataRepository;
 
     @Mock
     private CatalogMetadataRepository catalogMetadataRepository;

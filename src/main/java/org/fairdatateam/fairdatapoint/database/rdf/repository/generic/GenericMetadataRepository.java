@@ -22,7 +22,51 @@
  */
 package org.fairdatateam.fairdatapoint.database.rdf.repository.generic;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.stereotype.Service;
 
-public interface GenericMetadataRepository extends MetadataRepository {
+import java.util.List;
+
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getParent;
+
+@Service
+public class GenericMetadataRepository extends AbstractMetadataRepository {
+
+    @Autowired
+    private ConcurrentMapCacheManager cacheManager;
+
+    @Override
+    public void save(List<Statement> statements, IRI context) throws MetadataRepositoryException {
+        super.save(statements, context);
+        clearCatalogCache(context);
+    }
+
+    @Override
+    public void remove(IRI uri) throws MetadataRepositoryException {
+        clearCatalogCache(uri);
+        super.remove(uri);
+    }
+
+    @Override
+    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+            throws MetadataRepositoryException {
+        clearCatalogCache(context);
+        super.removeStatement(subject, predicate, object, context);
+    }
+
+    private void clearCatalogCache(IRI uri) throws MetadataRepositoryException {
+        final Model metadata = new LinkedHashModel();
+        metadata.addAll(find(uri));
+        final IRI parent = getParent(metadata);
+        if (parent != null) {
+            cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parent.stringValue());
+        }
+    }
+
 }
