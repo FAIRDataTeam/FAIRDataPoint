@@ -22,14 +22,51 @@
  */
 package org.fairdatateam.fairdatapoint.database.rdf.repository.catalog;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.common.MetadataRepository;
+import jakarta.annotation.PostConstruct;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public interface CatalogMetadataRepository extends MetadataRepository {
+import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
-    List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRepositoryException;
+@Service
+public class CatalogMetadataRepository extends AbstractMetadataRepository {
+
+    private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
+
+    @Autowired
+    private ConcurrentMapCacheManager cacheManager;
+
+    @PostConstruct
+    public void init() {
+        cacheManager.setCacheNames(List.of(CATALOG_THEMES_CACHE));
+    }
+
+    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRepositoryException {
+        List<IRI> result = cache().get(uri.toString(), List.class);
+        if (result != null) {
+            return result;
+        }
+        result = runSparqlQuery(GET_DATASET_THEMES_FOR_CATALOG, CatalogMetadataRepository.class, Map.of(
+                "catalog", uri))
+                .stream()
+                .map(item -> i(item.getValue("theme").stringValue()))
+                .collect(Collectors.toList());
+        cache().put(uri.toString(), result);
+        return result;
+    }
+
+    private Cache cache() {
+        return cacheManager.getCache(CATALOG_THEMES_CACHE);
+    }
 
 }

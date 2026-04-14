@@ -70,7 +70,7 @@ public class CatalogMetadataRepositoryTest {
 
     @Spy
     @InjectMocks
-    private CatalogMetadataRepositoryImpl catalogMetadataRepository;
+    private CatalogMetadataRepository catalogMetadataRepository;
 
     @Test
     @DisplayName("Themes for catalog are in cache (no query to triple store)")
