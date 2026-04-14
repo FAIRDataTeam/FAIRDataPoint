@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.service.index.harvester;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;

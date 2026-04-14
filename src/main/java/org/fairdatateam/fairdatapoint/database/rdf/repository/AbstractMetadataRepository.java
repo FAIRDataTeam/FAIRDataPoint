@@ -20,12 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.rdf.repository.common;
+package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
 import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.fairdatateam.fairdatapoint.entity.search.SearchResultRelation;

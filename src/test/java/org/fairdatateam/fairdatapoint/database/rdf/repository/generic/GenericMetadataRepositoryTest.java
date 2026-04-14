@@ -23,8 +23,9 @@
 package org.fairdatateam.fairdatapoint.database.rdf.repository.generic;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.catalog.CatalogMetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.CatalogMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

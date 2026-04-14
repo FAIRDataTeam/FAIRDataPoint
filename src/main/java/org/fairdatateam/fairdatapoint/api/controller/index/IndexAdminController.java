@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.index.event.Event;
 import org.fairdatateam.fairdatapoint.service.UtilityService;
 import org.fairdatateam.fairdatapoint.service.index.entry.IndexEntryService;

@@ -22,7 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.database.rdf.repository.catalog;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.CatalogMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;

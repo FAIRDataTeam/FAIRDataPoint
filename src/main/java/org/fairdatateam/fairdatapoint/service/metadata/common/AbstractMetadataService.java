@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.service.metadata.common;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter;

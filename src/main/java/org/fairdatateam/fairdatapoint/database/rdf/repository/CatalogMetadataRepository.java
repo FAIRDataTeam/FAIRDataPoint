@@ -20,11 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.rdf.repository.catalog;
+package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import jakarta.annotation.PostConstruct;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.common.AbstractMetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
