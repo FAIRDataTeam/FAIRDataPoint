@@ -50,7 +50,7 @@ import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
-public abstract class AbstractMetadataRepository {
+public abstract class AbstractMetadataRepository implements MetadataRepository {
 
     private static final String FIND_ENTITY_BY_LITERAL = "/sparql/findEntityByLiteral.sparql";
     private static final String FIND_CHILD_TITLES = "/sparql/findChildTitles.sparql";
