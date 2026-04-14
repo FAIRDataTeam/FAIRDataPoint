@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import jakarta.annotation.PostConstruct;
 import org.eclipse.rdf4j.model.IRI;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -41,8 +40,14 @@ public class CatalogMetadataRepository extends AbstractMetadataRepository {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
+
+    /**
+     * Constructor (autowired)
+     */
+    public CatalogMetadataRepository(ConcurrentMapCacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     @PostConstruct
     public void init() {
