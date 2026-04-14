@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +35,14 @@ import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getP
 @Service
 public class GenericMetadataRepository extends AbstractMetadataRepository {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
+
+    /**
+     * Constructor (autowired)
+     */
+    public GenericMetadataRepository(ConcurrentMapCacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     @Override
     public void save(List<Statement> statements, IRI context) throws MetadataRepositoryException {
