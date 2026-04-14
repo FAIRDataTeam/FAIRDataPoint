@@ -64,7 +64,7 @@ public interface MetadataRepository {
     void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
             throws MetadataRepositoryException;
 
-    List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
-                                    Map<String, Value> bindings)
-            throws MetadataRepositoryException;
+    List<BindingSet> runSparqlQuery(
+            String queryName, Class<?> repositoryType, Map<String, Value> bindings
+    ) throws MetadataRepositoryException;
 }

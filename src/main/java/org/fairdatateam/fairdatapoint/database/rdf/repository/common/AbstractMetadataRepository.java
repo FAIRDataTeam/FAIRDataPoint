@@ -224,9 +224,9 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
         }
     }
 
-    public List<BindingSet> runSparqlQuery(String queryName, Class repositoryType,
-                                           Map<String, Value> bindings)
-            throws MetadataRepositoryException {
+    public List<BindingSet> runSparqlQuery(
+            String queryName, Class<?> repositoryType, Map<String, Value> bindings
+    ) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             final String queryString = loadSparqlQuery(queryName, repositoryType);
             final TupleQuery query = conn.prepareTupleQuery(queryString);
