@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.service.metadata.common;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.common.MetadataRepository;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.exception.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.generic.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter;
@@ -45,7 +45,6 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.OffsetDateTime;
@@ -62,8 +61,7 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
 public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
-    @Qualifier("genericMetadataRepository")
-    private MetadataRepository metadataRepository;
+    private GenericMetadataRepository metadataRepository;
 
     @Autowired
     private MemberService memberService;

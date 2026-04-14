@@ -31,7 +31,6 @@ import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataService
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
@@ -44,7 +43,6 @@ import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.setT
 public class CatalogMetadataService extends AbstractMetadataService {
 
     @Autowired
-    @Qualifier("catalogMetadataRepository")
     private CatalogMetadataRepository metadataRepository;
 
     @Override
