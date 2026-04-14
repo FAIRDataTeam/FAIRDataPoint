@@ -28,7 +28,6 @@ import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
