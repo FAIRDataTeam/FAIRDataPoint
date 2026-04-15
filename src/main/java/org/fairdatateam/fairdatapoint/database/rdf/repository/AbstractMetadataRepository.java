@@ -81,22 +81,6 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
         this.repository = repository;
     }
 
-    protected Repository getRepository() {
-        return repository;
-    }
-
-    public List<Resource> findResources() throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-
-            return Iterations.asList(
-                    conn.getContextIDs()
-            );
-        }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
-        }
-    }
-
     public List<Statement> find(IRI context) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             return Iterations.asList(
