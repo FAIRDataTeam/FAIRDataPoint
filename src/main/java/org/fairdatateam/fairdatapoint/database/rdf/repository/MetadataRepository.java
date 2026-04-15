@@ -27,8 +27,6 @@
  */
 package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
 
@@ -38,13 +36,6 @@ import java.util.Map;
 public interface MetadataRepository {
 
     List<Statement> find(IRI context) throws MetadataRepositoryException;
-
-    List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException;
-
-    List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException;
-
-    List<SearchFilterValue> findByFilterPredicate(IRI predicateUri)
-            throws MetadataRepositoryException;
 
     Map<String, String> findChildTitles(IRI parent, IRI relation)
             throws MetadataRepositoryException;

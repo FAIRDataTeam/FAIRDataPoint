@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.service.search;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import org.fairdatateam.fairdatapoint.api.dto.search.*;
+import org.fairdatateam.fairdatapoint.database.rdf.repository.AbstractMetadataRepository;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -38,6 +39,8 @@ import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateServic
 import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,11 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 @Service
 public class SearchService {
 
+    private static final String FIELD_VALUE = "value";
+    private static final String FIELD_LABEL = "label";
+
+    private static final String FIND_ENTITY_BY_LITERAL = "/sparql/findEntityByLiteral.sparql";
+    private static final String FIND_OBJECT_FOR_PREDICATE = "/sparql/findObjectsForPredicate.sparql";
     private static final String QUERY_TEMPLATE_NAME = "/sparql/queryTemplate.sparql";
 
     private static final String QUERY_TEMPLATE = loadSparqlQueryTemplate();
@@ -88,7 +96,7 @@ public class SearchService {
     }
 
     public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
-        final List<SearchResult> results = metadataRepository.findByLiteral(l(reqDto.getQuery()));
+        final List<SearchResult> results = findByLiteral(l(reqDto.getQuery()));
         return processSearchResults(results);
     }
 
@@ -101,7 +109,7 @@ public class SearchService {
         final SPARQLParser parser = new SPARQLParser();
         parser.parseQuery(query, persistentUrl);
         // Get and process results for query
-        final List<SearchResult> results = metadataRepository.findBySparqlQuery(query);
+        final List<SearchResult> results = findBySparqlQuery(query);
         return processSearchResults(results);
     }
 
@@ -157,8 +165,7 @@ public class SearchService {
             return cacheContainer.getValues();
         }
         try {
-            final List<SearchFilterValue> result =
-                    metadataRepository.findByFilterPredicate(i(predicate));
+            final List<SearchFilterValue> result = findByFilterPredicate(i(predicate));
             searchFilterCache.setFilter(predicate, new SearchFilterCacheContainer(result));
             return result;
         }
@@ -219,5 +226,40 @@ public class SearchService {
                             exception.getMessage())
             );
         }
+    }
+
+    public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
+        return metadataRepository
+                .runSparqlQuery(FIND_ENTITY_BY_LITERAL, AbstractMetadataRepository.class, Map.of("query", query))
+                .stream()
+                .map(item -> searchMapper.toSearchResult(item, true))
+                .toList();
+    }
+
+    public List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException {
+        return metadataRepository
+                .runSparqlQuery(query)
+                .stream()
+                .map(item -> searchMapper.toSearchResult(item, false))
+                .toList();
+    }
+
+    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException {
+        final Map<String, String> values = new HashMap<>();
+        metadataRepository.runSparqlQuery(
+                FIND_OBJECT_FOR_PREDICATE,
+                AbstractMetadataRepository.class,
+                Map.of("predicate", predicateUri)
+        ).forEach(entry -> {
+            values.put(
+                    entry.getValue(FIELD_VALUE).stringValue(),
+                    Optional.ofNullable(entry.getValue(FIELD_LABEL)).map(Value::stringValue).orElse(null)
+            );
+        });
+        return values
+                .entrySet()
+                .stream()
+                .map(entry -> new SearchFilterValue(entry.getKey(), entry.getValue()))
+                .toList();
     }
 }

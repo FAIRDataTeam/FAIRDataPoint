@@ -25,9 +25,6 @@ package org.fairdatateam.fairdatapoint.database.rdf.repository;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResultRelation;
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -42,17 +39,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
 
 @Slf4j
 public abstract class AbstractMetadataRepository implements MetadataRepository {
 
-    private static final String FIND_ENTITY_BY_LITERAL = "/sparql/findEntityByLiteral.sparql";
     private static final String FIND_CHILD_TITLES = "/sparql/findChildTitles.sparql";
-    private static final String FIND_OBJECT_FOR_PREDICATE = "/sparql/findObjectsForPredicate.sparql";
 
     private static final String MSG_ERROR_RESOURCE = "Error retrieving resource: ";
     private static final String MSG_ERROR_URI = "Error retrieving repository URI: ";
@@ -62,15 +55,8 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
     private static final String MSG_ERROR_SAVE = "Error storing statements: ";
     private static final String MSG_ERROR_SPARQL_LOAD = "Error reading %s.sparql file (error: %s)";
 
-    private static final String FIELD_VALUE = "value";
-    private static final String FIELD_LABEL = "label";
     private static final String FIELD_CHILD = "child";
     private static final String FIELD_TITLE = "title";
-    private static final String FIELD_ENTITY = "entity";
-    private static final String FIELD_TYPE = "rdfType";
-    private static final String FIELD_DESCRIPTION = "description";
-    private static final String FIELD_REL_PRED = "relationPredicate";
-    private static final String FIELD_REL_OBJ = "relationObject";
 
     private final Repository repository;
 
@@ -90,63 +76,6 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
         catch (RepositoryException exception) {
             throw new MetadataRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
         }
-    }
-
-    public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
-        return runSparqlQuery(
-                FIND_ENTITY_BY_LITERAL,
-                AbstractMetadataRepository.class,
-                Map.of("query", query)
-        )
-                .stream()
-                .map(item -> toSearchResult(item, true))
-                .toList();
-    }
-
-    public List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException {
-        return runSparqlQuery(query)
-                .stream()
-                .map(item -> toSearchResult(item, false))
-                .toList();
-    }
-
-    private SearchResult toSearchResult(BindingSet item, boolean withRelation) {
-        SearchResultRelation relation = null;
-        if (withRelation) {
-            relation = new SearchResultRelation(
-                    item.getValue(FIELD_REL_PRED).stringValue(),
-                    item.getValue(FIELD_REL_OBJ).stringValue()
-            );
-        }
-        return new SearchResult(
-                item.getValue(FIELD_ENTITY).stringValue(),
-                item.getValue(FIELD_TYPE).stringValue(),
-                item.getValue(FIELD_TITLE).stringValue(),
-                ofNullable(item.getValue(FIELD_DESCRIPTION)).map(Value::stringValue).orElse(""),
-                relation
-        );
-    }
-
-    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri)
-            throws MetadataRepositoryException {
-        final Map<String, String> values = new HashMap<>();
-        runSparqlQuery(
-                FIND_OBJECT_FOR_PREDICATE,
-                AbstractMetadataRepository.class,
-                Map.of("predicate", predicateUri)
-        ).forEach(entry -> {
-            values.put(
-                    entry.getValue(FIELD_VALUE).stringValue(),
-                    Optional.ofNullable(entry.getValue(FIELD_LABEL))
-                            .map(Value::stringValue)
-                            .orElse(null)
-            );
-        });
-        return values
-                .entrySet()
-                .stream()
-                .map(entry -> new SearchFilterValue(entry.getKey(), entry.getValue()))
-                .toList();
     }
 
     public Map<String, String> findChildTitles(IRI parent, IRI relation)
