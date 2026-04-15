@@ -22,8 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.*;
@@ -34,13 +33,9 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static java.lang.String.format;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadResource;
 
 @Slf4j
 public abstract class AbstractMetadataRepository implements MetadataRepository {
@@ -78,24 +73,16 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
         }
     }
 
-    public Map<String, String> findChildTitles(IRI parent, IRI relation)
-            throws MetadataRepositoryException {
+    public Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRepositoryException {
         final Map<String, String> titles = new HashMap<>();
-
-        final List<BindingSet> results = runSparqlQuery(
-                FIND_CHILD_TITLES,
-                AbstractMetadataRepository.class,
-                Map.of(
-                        "parent", parent,
-                        "relation", relation
-                ));
-
+        final List<BindingSet> results = runSparqlQueryFromFile(
+                FIND_CHILD_TITLES, Map.of("parent", parent, "relation", relation)
+        );
         for (var result : results) {
             final String childUri = result.getValue(FIELD_CHILD).stringValue();
             final String title = result.getValue(FIELD_TITLE).stringValue();
             titles.put(childUri, title);
         }
-
         return titles;
     }
 
@@ -141,36 +128,39 @@ public abstract class AbstractMetadataRepository implements MetadataRepository {
         }
     }
 
+    /**
+     * Evaluate a full SPARQL query string. The <code>bindings</code> argument may be used to assign (bind) values
+     * to any of the SPARQL query variables.
+     * @param queryString string containing a SPARQL query
+     * @param bindings map of values to be assigned to SPARQL query variables (or null if there are none)
+     * @return list of query results
+     */
     public List<BindingSet> runSparqlQuery(
-            String queryName, Class<?> repositoryType, Map<String, Value> bindings
+            String queryString, @Nullable Map<String, Value> bindings
     ) throws MetadataRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            final String queryString = loadSparqlQuery(queryName, repositoryType);
             final TupleQuery query = conn.prepareTupleQuery(queryString);
-            bindings.forEach(query::setBinding);
+            if (bindings != null) {
+                // assign values to variables defined in the sparql query
+                bindings.forEach(query::setBinding);
+            }
             return QueryResults.asList(query.evaluate());
         }
         catch (RepositoryException exception) {
             throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
         }
-        catch (IOException exception) {
-            throw new MetadataRepositoryException(format(MSG_ERROR_SPARQL_LOAD, queryName,
-                    exception.getMessage()));
-        }
     }
 
-    public List<BindingSet> runSparqlQuery(String queryString) throws MetadataRepositoryException {
-        try (RepositoryConnection conn = repository.getConnection()) {
-            final TupleQuery query = conn.prepareTupleQuery(queryString);
-            return query.evaluate().stream().toList();
-        }
-        catch (RepositoryException exception) {
-            throw new MetadataRepositoryException(MSG_ERROR_URI + exception.getMessage());
-        }
-    }
-
-    protected String loadSparqlQuery(String queryName, Class repositoryType) throws IOException {
-        final URL fileURL = repositoryType.getResource(queryName);
-        return Resources.toString(fileURL, Charsets.UTF_8);
+    /**
+     * Evaluate SPARQL query stored in a file
+     * @param queryFilePath path to SPARQL query file
+     * @param bindings map of values to be assigned to SPARQL query variables (or null if there are none)
+     * @return list of query results
+     */
+    public List<BindingSet> runSparqlQueryFromFile(
+            String queryFilePath, @Nullable Map<String, Value> bindings
+    ) throws MetadataRepositoryException {
+        final String queryString = loadResource(queryFilePath);
+        return runSparqlQuery(queryString, bindings);
     }
 }

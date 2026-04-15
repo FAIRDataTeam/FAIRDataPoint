@@ -82,7 +82,7 @@ public class CatalogMetadataRepositoryTest {
         catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
 
         // THEN:
-        verify(catalogMetadataRepository, never()).runSparqlQuery(any(), any(), any());
+        verify(catalogMetadataRepository, never()).runSparqlQueryFromFile(any(), any());
     }
 
     @Test
@@ -98,7 +98,7 @@ public class CatalogMetadataRepositoryTest {
         catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
 
         // THEN:
-        verify(catalogMetadataRepository, times(1)).runSparqlQuery(any(), any(), any());
+        verify(catalogMetadataRepository, times(1)).runSparqlQueryFromFile(any(), any());
     }
 
 }

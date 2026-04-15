@@ -25,7 +25,6 @@ package org.fairdatateam.fairdatapoint.service.search;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import org.fairdatateam.fairdatapoint.api.dto.search.*;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.AbstractMetadataRepository;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
@@ -229,8 +228,7 @@ public class SearchService {
     }
 
     public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
-        return metadataRepository
-                .runSparqlQuery(FIND_ENTITY_BY_LITERAL, AbstractMetadataRepository.class, Map.of("query", query))
+        return metadataRepository.runSparqlQueryFromFile(FIND_ENTITY_BY_LITERAL, Map.of("query", query))
                 .stream()
                 .map(item -> searchMapper.toSearchResult(item, true))
                 .toList();
@@ -238,7 +236,7 @@ public class SearchService {
 
     public List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException {
         return metadataRepository
-                .runSparqlQuery(query)
+                .runSparqlQuery(query, null)
                 .stream()
                 .map(item -> searchMapper.toSearchResult(item, false))
                 .toList();
@@ -246,9 +244,8 @@ public class SearchService {
 
     public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException {
         final Map<String, String> values = new HashMap<>();
-        metadataRepository.runSparqlQuery(
+        metadataRepository.runSparqlQueryFromFile(
                 FIND_OBJECT_FOR_PREDICATE,
-                AbstractMetadataRepository.class,
                 Map.of("predicate", predicateUri)
         ).forEach(entry -> {
             values.put(
