@@ -27,11 +27,8 @@
  */
 package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
-import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -82,32 +79,6 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.size(), is(equalTo(0)));
-    }
-
-    @Test
-    public void findByLiteralWorks() throws MetadataRepositoryException {
-        // given
-        final Model catalog1 = testMetadataFixtures.catalog1();
-        final Literal title = getTitle(catalog1);
-
-        // when
-        List<SearchResult> result = metadataRepository.findByLiteral(title);
-
-        // then
-        assertThat(result.size(), is(greaterThan(0)));
-    }
-
-    @Test
-    public void findByFilterPredicateWorks() throws MetadataRepositoryException {
-        // given
-        // (value from SettingsFixtures.SEARCH_FILTER_TYPE is private)
-        final String predicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-
-        // when
-        final List<SearchFilterValue> result = metadataRepository.findByFilterPredicate(i(predicate));
-
-        // then
-        assertThat(result.size(), is(greaterThan(0)));
     }
 
     @Test

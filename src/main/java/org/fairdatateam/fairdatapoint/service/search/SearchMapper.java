@@ -22,9 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.service.search;
 
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.query.BindingSet;
 import org.fairdatateam.fairdatapoint.api.dto.search.*;
 import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
 import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
+import org.fairdatateam.fairdatapoint.entity.search.SearchResultRelation;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilterItem;
 import org.springframework.stereotype.Component;
@@ -32,10 +35,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class SearchMapper {
 
+    private static final String FIELD_DESCRIPTION = "description";
+    private static final String FIELD_ENTITY = "entity";
+    private static final String FIELD_REL_OBJ = "relationObject";
+    private static final String FIELD_REL_PRED = "relationPredicate";
+    private static final String FIELD_TITLE = "title";
+    private static final String FIELD_TYPE = "rdfType";
     private static final String FRAGMENT_SUFFIX = "\n";
 
     public SearchQueryTemplateDTO toQueryTemplateDTO(String template) {
@@ -58,6 +68,23 @@ public class SearchMapper {
                         .filter(Objects::nonNull)
                         .distinct()
                         .toList()
+        );
+    }
+
+    public SearchResult toSearchResult(BindingSet item, boolean withRelation) {
+        SearchResultRelation relation = null;
+        if (withRelation) {
+            relation = new SearchResultRelation(
+                    item.getValue(FIELD_REL_PRED).stringValue(),
+                    item.getValue(FIELD_REL_OBJ).stringValue()
+            );
+        }
+        return new SearchResult(
+                item.getValue(FIELD_ENTITY).stringValue(),
+                item.getValue(FIELD_TYPE).stringValue(),
+                item.getValue(FIELD_TITLE).stringValue(),
+                Optional.ofNullable(item.getValue(FIELD_DESCRIPTION)).map(Value::stringValue).orElse(""),
+                relation
         );
     }
 

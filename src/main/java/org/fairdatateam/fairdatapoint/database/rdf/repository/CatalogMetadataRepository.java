@@ -61,8 +61,7 @@ public class CatalogMetadataRepository extends AbstractMetadataRepository {
         if (result != null) {
             return result;
         }
-        result = runSparqlQuery(GET_DATASET_THEMES_FOR_CATALOG, CatalogMetadataRepository.class, Map.of(
-                "catalog", uri))
+        result = runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
                 .collect(Collectors.toList());
