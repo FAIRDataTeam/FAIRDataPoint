@@ -43,13 +43,12 @@ import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadResource;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
@@ -95,7 +94,7 @@ public class SearchService {
         this.searchMapper = searchMapper;
         this.searchFilterCache = searchFilterCache;
         this.settingsService = settingsService;
-        queryTemplate = loadSparqlQueryTemplate();
+        queryTemplate = loadResource(QUERY_TEMPLATE_NAME);
     }
 
     /**
@@ -235,21 +234,6 @@ public class SearchService {
         );
         final StrSubstitutor substitutor = new StrSubstitutor(templateContext, "{{", "}}");
         return substitutor.replace(queryTemplate);
-    }
-
-    /**
-     * Loads a query template string from file
-     * @return SPARQL query template string
-     */
-    private String loadSparqlQueryTemplate() {
-        try {
-            return metadataRepository.loadSparqlQuery(QUERY_TEMPLATE_NAME, SearchService.class);
-        }
-        catch (IOException | NoSuchElementException exception) {
-            throw new RuntimeException(
-                    format("Cannot load SPARQL template for search: %s", exception.getMessage())
-            );
-        }
     }
 
     public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
