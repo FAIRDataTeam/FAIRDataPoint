@@ -80,7 +80,7 @@ public class SearchSavedQueryController {
     ) throws ResourceNotFoundException, MetadataRepositoryException {
         final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
-            return ResponseEntity.ok(searchService.search(oDto.get()));
+            return ResponseEntity.ok(searchService.search(oDto.get().getVariables()));
         }
         else {
             throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));

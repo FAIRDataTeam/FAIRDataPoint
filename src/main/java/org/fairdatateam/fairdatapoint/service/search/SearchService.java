@@ -22,8 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.service.search;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import org.fairdatateam.fairdatapoint.api.dto.search.*;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
@@ -42,18 +40,15 @@ import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.parser.sparql.SPARQLParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadResource;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
@@ -67,43 +62,61 @@ public class SearchService {
     private static final String FIND_OBJECT_FOR_PREDICATE = "/sparql/findObjectsForPredicate.sparql";
     private static final String QUERY_TEMPLATE_NAME = "/sparql/queryTemplate.sparql";
 
-    private static final String QUERY_TEMPLATE = loadSparqlQueryTemplate();
+    private static String queryTemplate;
 
-    @Autowired
-    private GenericMetadataRepository metadataRepository;
+    private final GenericMetadataRepository metadataRepository;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private SearchMapper searchMapper;
+    private final SearchMapper searchMapper;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    public List<SearchResultDTO> search(
-            SearchSavedQueryDTO searchSavedQueryDTO
-    ) throws MetadataRepositoryException {
-        return search(searchSavedQueryDTO.getVariables());
+    /**
+     * Constructor (autowired)
+     */
+    public SearchService(
+            GenericMetadataRepository metadataRepository,
+            MetadataStateService metadataStateService,
+            String persistentUrl,
+            SearchMapper searchMapper,
+            SearchFilterCache searchFilterCache,
+            SettingsService settingsService
+    ) {
+        this.metadataRepository = metadataRepository;
+        this.metadataStateService = metadataStateService;
+        this.persistentUrl = persistentUrl;
+        this.searchMapper = searchMapper;
+        this.searchFilterCache = searchFilterCache;
+        this.settingsService = settingsService;
+        queryTemplate = loadResource(QUERY_TEMPLATE_NAME);
     }
 
-    public List<SearchResultDTO> search(SearchQueryDTO reqDto) throws MetadataRepositoryException {
-        final List<SearchResult> results = findByLiteral(l(reqDto.getQuery()));
+    /**
+     * Performs a predefined SPARQL query looking for a string literal
+     * @param simpleQuery Object containing a search string literal
+     * @return List of search result objects
+     */
+    public List<SearchResultDTO> search(SearchQueryDTO simpleQuery) throws MetadataRepositoryException {
+        final List<SearchResult> results = findByLiteral(l(simpleQuery.getQuery()));
         return processSearchResults(results);
     }
 
+    /**
+     * Evaluates restricted SPARQL query as defined in query template
+     * @param queryVariables User input as context for query template
+     * @return List of search result objects
+     */
     public List<SearchResultDTO> search(
-            SearchQueryVariablesDTO reqDto
+            SearchQueryVariablesDTO queryVariables
     ) throws MetadataRepositoryException, MalformedQueryException {
         // Compose query
-        final String query = composeQuery(reqDto);
+        final String query = composeQuery(queryVariables);
         // Verify query
         final SPARQLParser parser = new SPARQLParser();
         parser.parseQuery(query, persistentUrl);
@@ -113,7 +126,7 @@ public class SearchService {
     }
 
     public SearchQueryTemplateDTO getSearchQueryTemplate() {
-        return searchMapper.toQueryTemplateDTO(QUERY_TEMPLATE);
+        return searchMapper.toQueryTemplateDTO(queryTemplate);
     }
 
     public List<SearchFilterDTO> getSearchFilters() {
@@ -208,23 +221,19 @@ public class SearchService {
         }
     }
 
-    private String composeQuery(SearchQueryVariablesDTO reqDto) {
-        final StrSubstitutor substitutor =
-                new StrSubstitutor(searchMapper.toSubstitutions(reqDto), "{{", "}}");
-        return substitutor.replace(QUERY_TEMPLATE);
-    }
-
-    private static String loadSparqlQueryTemplate() {
-        try {
-            final Optional<URL> fileURL = Optional.ofNullable(SearchService.class.getResource(QUERY_TEMPLATE_NAME));
-            return Resources.toString(fileURL.orElseThrow(), Charsets.UTF_8);
-        }
-        catch (IOException | NoSuchElementException exception) {
-            throw new RuntimeException(
-                    format("Cannot load SPARQL template for search: %s",
-                            exception.getMessage())
-            );
-        }
+    /**
+     * Renders a SPARQL query string based on the restricted query defined in <code>QUERY_TEMPLATE</code> and user input
+     * @param queryVariables User input to be used as template context
+     * @return Full SPARQL query string
+     */
+    private String composeQuery(SearchQueryVariablesDTO queryVariables) {
+        final Map<String, String> templateContext = Map.of(
+                "prefixes", queryVariables.getPrefixes(),
+                "graphPattern", queryVariables.getGraphPattern(),
+                "ordering", queryVariables.getOrdering()
+        );
+        final StrSubstitutor substitutor = new StrSubstitutor(templateContext, "{{", "}}");
+        return substitutor.replace(queryTemplate);
     }
 
     public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
