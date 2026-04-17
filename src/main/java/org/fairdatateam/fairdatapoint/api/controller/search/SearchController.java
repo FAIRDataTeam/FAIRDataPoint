@@ -55,7 +55,6 @@ public class SearchController {
     public ResponseEntity<List<SearchResultDTO>> search(
             @RequestBody @Valid SearchQueryDTO reqDto
     ) throws MetadataRepositoryException {
-        // this uses AbstractMetadataRepository.findByLiteral
         return ResponseEntity.ok(searchService.search(reqDto));
     }
 
