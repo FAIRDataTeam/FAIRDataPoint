@@ -23,16 +23,18 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryFull;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -41,11 +43,12 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
-import java.util.List;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("POST /search/query/saved")
 public class List_POST extends WebIntegrationTest {
@@ -70,13 +73,8 @@ public class List_POST extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("New query")
                                 .description("")
-                                .type(SearchSavedQueryType.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("")
-                                        .graphPattern("")
-                                        .ordering("")
-                                        .build()
-                                )
+                                .type(SearchSavedQuery.Type.PUBLIC)
+                                .variables(new SparqlQueryVariables("", "", ""))
                                 .build()
                 );
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -90,9 +88,9 @@ public class List_POST extends WebIntegrationTest {
         assertThat(searchSavedQueryRepository.count(), is(equalTo(0L)));
     }
 
-    @Test
-    @DisplayName("HTTP 201")
-    public void res201() {
+    @ParameterizedTest
+    @MethodSource("queryRecordProvider")
+    public void saveQuery(SparqlQueryVariables queryVariables, SparqlQueryFull queryFull) {
         // GIVEN: prepare data
         searchSavedQueryRepository.deleteAll();
 
@@ -104,13 +102,9 @@ public class List_POST extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("New query")
                                 .description("")
-                                .type(SearchSavedQueryType.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("")
-                                        .graphPattern("")
-                                        .ordering("")
-                                        .build()
-                                )
+                                .type(SearchSavedQuery.Type.PUBLIC)
+                                .variables(queryVariables)
+                                .queryFull(queryFull)
                                 .build()
                 );
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -121,8 +115,22 @@ public class List_POST extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.CREATED)));
-        assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_NIKOLA_UUID)));
-        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQueryType.PUBLIC)));
+        SearchSavedQueryDTO savedQueryDTO = result.getBody();
+        assertThat(savedQueryDTO.getUser().getUuid(), is(equalTo(KnownUUIDs.USER_NIKOLA_UUID)));
+        assertThat(savedQueryDTO.getType(), is(equalTo(SearchSavedQuery.Type.PUBLIC)));
         assertThat(searchSavedQueryRepository.count(), is(equalTo(1L)));
+        // either query variables or full query should be null
+        assertTrue((savedQueryDTO.getVariables() == null) != (savedQueryDTO.getQueryFull() == null));
     }
+
+    /**
+     * Provides values for the queryVariables and queryFull arguments for the saveQuery parameterized test
+     */
+    static Stream<Arguments> queryRecordProvider() {
+        return Stream.of(
+                Arguments.of(new SparqlQueryVariables("", "", ""), null),
+                Arguments.of(null, new SparqlQueryFull("", new String[0], new String[0]))
+        );
+    }
+
 }

@@ -22,8 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.entity.search;
 
-public enum SearchSavedQueryType {
-    PUBLIC,
-    PRIVATE,
-    INTERNAL
+/**
+ * Defines the content of a full SPARQL query
+ * @param query
+ * @param defaultGraphUris
+ * @param namedGraphUris
+ */
+public record SparqlQueryFull(String query, String[] defaultGraphUris, String[] namedGraphUris) {
 }

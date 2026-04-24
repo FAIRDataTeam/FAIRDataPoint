@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.api.controller.search;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
@@ -29,9 +30,10 @@ import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.service.search.SearchService;
+import org.fairdatateam.fairdatapoint.service.search.query.SearchSavedQueryMapper;
 import org.fairdatateam.fairdatapoint.service.search.query.SearchSavedQueryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,22 +52,37 @@ public class SearchSavedQueryController {
 
     private static final String NOT_FOUND_MSG = "Saved query '%s' doesn't exist";
 
-    @Autowired
-    private SearchSavedQueryService searchSavedQueryService;
+    private final SearchSavedQueryMapper savedQueryMapper;
 
-    @Autowired
-    private SearchService searchService;
+    private final SearchSavedQueryService savedQueryService;
+
+    private final SearchService searchService;
+
+    /**
+     * Constructor (autowired)
+     */
+    public SearchSavedQueryController(
+            SearchSavedQueryMapper savedQueryMapper,
+            SearchSavedQueryService savedQueryService,
+            SearchService searchService
+    ) {
+        this.savedQueryMapper = savedQueryMapper;
+        this.savedQueryService = savedQueryService;
+        this.searchService = searchService;
+    }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "List all existing saved queries")
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
-        return new ResponseEntity<>(searchSavedQueryService.getAll(), HttpStatus.OK);
+        return new ResponseEntity<>(savedQueryService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Retrieve an existing saved query definition")
     public ResponseEntity<SearchSavedQueryDTO> getSingle(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
-        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
+        final Optional<SearchSavedQueryDTO> oDto = savedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         }
@@ -75,34 +92,33 @@ public class SearchSavedQueryController {
     }
 
     @PostMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Evaluate an existing saved query")
     public ResponseEntity<List<SearchResultDTO>> search(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException, MetadataRepositoryException {
-        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
-        if (oDto.isPresent()) {
-            return ResponseEntity.ok(searchService.search(oDto.get().getVariables()));
-        }
-        else {
-            throw new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid));
-        }
+        final SearchSavedQueryDTO savedQueryDTO = savedQueryService.getSingle(uuid).orElseThrow(
+                () -> new ResourceNotFoundException(format(NOT_FOUND_MSG, uuid)));
+        return ResponseEntity.ok(searchService.search(savedQueryDTO.getVariables()));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Save the query that is defined in the request body")
     public ResponseEntity<SearchSavedQueryDTO> create(
-            @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
+            @RequestBody @Valid SearchSavedQueryChangeDTO body
     ) {
-        final SearchSavedQueryDTO dto = searchSavedQueryService.create(reqDto);
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        final SearchSavedQuery savedQuery = savedQueryService.create(savedQueryMapper.fromChangeDTO(body));
+        return new ResponseEntity<>(savedQueryMapper.toDTO(savedQuery), HttpStatus.CREATED);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Change an existing saved query")
     public ResponseEntity<SearchSavedQueryDTO> update(
             @PathVariable final String uuid,
             @RequestBody @Valid SearchSavedQueryChangeDTO reqDto
     ) {
-        final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.update(uuid, reqDto);
+        final Optional<SearchSavedQueryDTO> oDto = savedQueryService.update(uuid, reqDto);
         if (oDto.isPresent()) {
             return new ResponseEntity<>(oDto.get(), HttpStatus.OK);
         }
@@ -114,10 +130,11 @@ public class SearchSavedQueryController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping(path = "/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "Delete an existing saved query")
     public ResponseEntity<Void> delete(
             @PathVariable final String uuid
     ) throws ResourceNotFoundException {
-        final boolean result = searchSavedQueryService.delete(uuid);
+        final boolean result = savedQueryService.delete(uuid);
         if (result) {
             return ResponseEntity.noContent().build();
         }

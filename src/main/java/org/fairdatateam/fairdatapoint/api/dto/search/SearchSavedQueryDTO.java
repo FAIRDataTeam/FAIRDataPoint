@@ -28,7 +28,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryFull;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 
 import java.time.Instant;
 
@@ -49,8 +51,9 @@ public class SearchSavedQueryDTO {
     private String description;
 
     @NotNull
-    private SearchSavedQueryType type;
+    private SearchSavedQuery.Type type;
 
+    // TODO: only return userUuid string, or perhaps part of name, but certainly not email and role
     @Valid
     @JsonInclude
     private UserDTO user;
@@ -62,6 +65,9 @@ public class SearchSavedQueryDTO {
     private Instant updatedAt;
 
     @Valid
-    @NotNull
-    private SearchQueryVariablesDTO variables;
+    private SparqlQueryVariables variables;
+
+    @Valid
+    private SparqlQueryFull queryFull;
+
 }

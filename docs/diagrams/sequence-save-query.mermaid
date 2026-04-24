@@ -1,0 +1,47 @@
+%% restricted sparql query execution and saving in fdp v1.18.x
+sequenceDiagram
+%% simple search or switch to advanced search
+    user ->>+ fdp-client: use search box <br> or click "Advanced" under search box
+    fdp-client ->> fdp-client: /search
+    fdp-client ->>+ fdp: GET /search/query
+    fdp-client ->> fdp: GET /search/filters
+    fdp-client ->> fdp: GET /search/query/saved
+    fdp-client ->> fdp: POST /search/query <br> <variables obj> <br> {"graphPattern": str, "ordering": str, "prefixes": str}
+    fdp ->> fdp-client: Status 200 <br> {"template": <template string>}
+    fdp ->> fdp-client: Status 200 <br> [<filter obj>, ...]
+    fdp ->> fdp-client: Status 200 <br> [<saved query obj>, ...]
+    fdp ->>- fdp-client: Status 200 <br> [<query result obj>, ...]
+    fdp-client ->>- user: normal search form
+
+%% switch to sparql search
+    user ->>+ fdp-client: click "Switch to SPARQL"
+    fdp-client ->> fdp-client: /search?isSparql=true
+    fdp-client ->>+ fdp: 3x GET, 1x POST (same as bove)
+    fdp ->>- fdp-client: 4x Status 200 (same as above)
+    fdp-client ->>- user: sparql search form
+
+%% perform sparql search
+    user ->> fdp-client: fill out sparql search form
+    user ->>+ fdp-client: click "Search"
+    fdp-client ->>+ fdp: POST /search/query <br> <variables obj> <br> {"graphPattern": str, "ordering": str, "prefixes": str}
+    fdp ->>- fdp-client: Status 200 <br> array of <query result obj> <br> [{"uri": str, "title": str, "description": str, "types": array, "relations": array}, ...]
+    fdp-client ->>- user: list of query results
+
+%% save query
+    user ->>+ fdp-client: click "Save query"
+    fdp-client ->>- user: save query form
+    user ->> fdp-client: fill out save query form
+    user ->>+ fdp-client: click "Save"
+    fdp-client ->>+ fdp: POST /search/query/saved <br> <save info obj> <br> {"name": str, "description": str, "type": str, "variables": <variables obj>}
+    fdp ->>- fdp-client: Status 201 <br> <saved query obj> <br> {"name": str, "description": str, "type": str, "variables": <variables obj>, <br> "uuid": str, "user": <user obj>, "createdAt": str, "updatedAt": str}
+    fdp-client -->>- user: (no feedback)
+
+%% load query
+    user ->>+ fdp-client: click "Saved queries"
+    fdp-client ->>- user: list of saved queries
+    user ->>+ fdp-client: click a saved query
+    fdp-client ->>+ fdp: 3x GET (same as bove)
+    fdp-client ->> fdp: POST /search/query <br> <variables obj> from saved query
+    fdp ->>- fdp-client: 4x Status 200 (same as above)
+    fdp-client ->> user: saved query title, owner, and content
+    fdp-client ->>- user: list of query results

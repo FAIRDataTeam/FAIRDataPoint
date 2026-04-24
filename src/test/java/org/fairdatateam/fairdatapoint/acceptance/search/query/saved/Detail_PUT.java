@@ -23,13 +23,12 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.entity.search.SparqlQueryVariables;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,13 +72,8 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .type(SearchSavedQuery.Type.PUBLIC)
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -107,13 +101,8 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.PUBLIC)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .type(SearchSavedQuery.Type.PUBLIC)
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -141,13 +130,8 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.INTERNAL)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .type(SearchSavedQuery.Type.INTERNAL)
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -159,11 +143,11 @@ public class Detail_PUT extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
-        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQueryType.INTERNAL)));
+        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQuery.Type.INTERNAL)));
         assertThat(result.getBody().getName(), is(equalTo("Edited query")));
-        assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
-        assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));
-        assertThat(result.getBody().getVariables().getOrdering(), is(equalTo("C")));
+        assertThat(result.getBody().getVariables().prefixes(), is(equalTo("A")));
+        assertThat(result.getBody().getVariables().graphPattern(), is(equalTo("B")));
+        assertThat(result.getBody().getVariables().ordering(), is(equalTo("C")));
     }
 
     @Test
@@ -181,13 +165,8 @@ public class Detail_PUT extends WebIntegrationTest {
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
                                 .description("")
-                                .type(SearchSavedQueryType.INTERNAL)
-                                .variables(SearchQueryVariablesDTO.builder()
-                                        .prefixes("A")
-                                        .graphPattern("B")
-                                        .ordering("C")
-                                        .build()
-                                )
+                                .type(SearchSavedQuery.Type.INTERNAL)
+                                .variables(new SparqlQueryVariables("A", "B", "C"))
                                 .build()
                 );
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -199,10 +178,10 @@ public class Detail_PUT extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
-        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQueryType.INTERNAL)));
+        assertThat(result.getBody().getType(), is(equalTo(SearchSavedQuery.Type.INTERNAL)));
         assertThat(result.getBody().getName(), is(equalTo("Edited query")));
-        assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
-        assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));
-        assertThat(result.getBody().getVariables().getOrdering(), is(equalTo("C")));
+        assertThat(result.getBody().getVariables().prefixes(), is(equalTo("A")));
+        assertThat(result.getBody().getVariables().graphPattern(), is(equalTo("B")));
+        assertThat(result.getBody().getVariables().ordering(), is(equalTo("C")));
     }
 }

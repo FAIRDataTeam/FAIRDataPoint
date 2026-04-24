@@ -27,16 +27,17 @@ import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.entity.user.User;
 import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SearchSavedQueryService {
@@ -83,12 +84,13 @@ public class SearchSavedQueryService {
         return true;
     }
 
-    public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        final String currentUserUuid = currentUserProvider.getCurrentUserUuid().orElse(null);
-        final SearchSavedQuery searchSavedQuery = repository.save(
-                mapper.fromChangeDTO(reqDto, currentUserUuid)
-        );
-        return mapper.toDTO(searchSavedQuery);
+    public SearchSavedQuery create(SearchSavedQuery searchSavedQuery) {
+        final Instant now = Instant.now();
+        searchSavedQuery.setUuid(UUID.randomUUID().toString());
+        searchSavedQuery.setUserUuid(currentUserProvider.getCurrentUserUuid().orElse(null));
+        searchSavedQuery.setCreatedAt(now);
+        searchSavedQuery.setUpdatedAt(now);
+        return repository.save(searchSavedQuery);
     }
 
     public Optional<SearchSavedQueryDTO> update(String uuid, SearchSavedQueryChangeDTO reqDto) {
@@ -108,7 +110,7 @@ public class SearchSavedQueryService {
     }
 
     private boolean canSeeQuery(Optional<User> optionalUser, SearchSavedQuery query) {
-        return query.getType().equals(SearchSavedQueryType.PUBLIC)
+        return query.getType().equals(SearchSavedQuery.Type.PUBLIC)
                 || optionalUser
                     .filter(user -> user.getRole().equals(UserRole.ADMIN))
                     .isPresent()
@@ -118,7 +120,7 @@ public class SearchSavedQueryService {
     }
 
     private boolean isOwnOrInternal(User user, SearchSavedQuery query) {
-        return query.getType().equals(SearchSavedQueryType.INTERNAL)
+        return query.getType().equals(SearchSavedQuery.Type.INTERNAL)
                 || Objects.equals(query.getUserUuid(), user.getUuid());
     }
 

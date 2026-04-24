@@ -30,7 +30,6 @@ import org.fairdatateam.fairdatapoint.entity.user.UserRole;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Component
 public class SearchSavedQueryMapper {
@@ -49,6 +48,7 @@ public class SearchSavedQueryMapper {
                 .name(query.getName())
                 .description(query.getDescription())
                 .variables(query.getVariables())
+                .queryFull(query.getQueryFull())
                 .user(userDTO)
                 .type(query.getType())
                 .createdAt(query.getCreatedAt())
@@ -56,18 +56,13 @@ public class SearchSavedQueryMapper {
                 .build();
     }
 
-    public SearchSavedQuery fromChangeDTO(
-            SearchSavedQueryChangeDTO reqDto, String userUuid
-    ) {
+    public SearchSavedQuery fromChangeDTO(SearchSavedQueryChangeDTO changeDTO) {
         return SearchSavedQuery.builder()
-                .uuid(UUID.randomUUID().toString())
-                .name(reqDto.getName())
-                .description(reqDto.getDescription())
-                .type(reqDto.getType())
-                .variables(reqDto.getVariables())
-                .userUuid(userUuid)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .name(changeDTO.getName())
+                .description(changeDTO.getDescription())
+                .type(changeDTO.getType())
+                .variables(changeDTO.getVariables())
+                .queryFull(changeDTO.getQueryFull())
                 .build();
     }
 
@@ -78,9 +73,11 @@ public class SearchSavedQueryMapper {
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
                 .variables(reqDto.getVariables())
+                .queryFull(reqDto.getQueryFull())
                 .userUuid(query.getUserUuid())
                 .type(reqDto.getType())
                 .updatedAt(Instant.now())
                 .build();
     }
+
 }
