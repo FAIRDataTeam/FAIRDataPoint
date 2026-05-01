@@ -30,13 +30,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info, metrics
-  # todo: for some unknown reason, the following metrics filter has no effect (but works in fresh spring project)
-  metrics:
-    enable:
-      all: false
-      http:
-        server: true
+        include: health, info, httpexchanges
+  httpexchanges:
+    recording:
+      include: #request_headers, response_headers, time_taken
+
+custom:
+  httpexchanges:
+    capacity: 1000
 
 security:
   jwt:

@@ -22,34 +22,27 @@
  */
 package org.fairdatateam.fairdatapoint.config;
 
-import io.micrometer.common.KeyValue;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
+import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.observation.DefaultServerRequestObservationConvention;
-import org.springframework.http.server.observation.ServerRequestObservationContext;
 
+/**
+ * Configure an HTTP exchange repository to enable the <code>/actuator/httpexchanges</code> endpoint
+ * (<a href="https://docs.spring.io/spring-boot/reference/actuator/http-exchanges.html">docs</a>)
+ */
 @Configuration
-public class ActuatorConfig {
+public class HttpExchangeConfig {
 
-    /**
-     * Replaces the default `uri` path-pattern values with full paths in actuator metrics http.server.requests
-     */
+    @Value("${custom.httpexchanges.capacity:100}")
+    private String CAPACITY;
+
     @Bean
-    DefaultServerRequestObservationConvention customServerRequestObservationConvention() {
-        return new DefaultServerRequestObservationConvention() {
-            /**
-             * Replace the default URI path pattern (e.g. `/catalog/{id}`) with the full URI path (e.g. `/catalog/123`).
-             * This is high-cardinality data, but we add it as low-cardinality to make sure it shows up in the metrics.
-             * Beware, this could lead to memory issues in case of excessive number of URIs.
-             * See micrometer docs for more info.
-             * @param context ServerRequestObservationContext
-             * @return KeyValue with full uri
-             */
-            @Override
-            protected KeyValue uri(ServerRequestObservationContext context) {
-                // note the resulting tag name is "http.url" instead of "uri"
-                return super.httpUrl(context);
-            }
-        };
+    HttpExchangeRepository customHttpExchangeRepository() {
+        // the in-memory repository is very limited, but we want to keep things simple
+        InMemoryHttpExchangeRepository repository = new InMemoryHttpExchangeRepository();
+        repository.setCapacity(Integer.parseInt(CAPACITY));
+        return repository;
     }
 }
