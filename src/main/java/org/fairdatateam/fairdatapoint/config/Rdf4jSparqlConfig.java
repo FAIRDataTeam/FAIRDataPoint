@@ -20,26 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint;
+package org.fairdatateam.fairdatapoint.config;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
-@ConfigurationPropertiesScan
-public class Application {
-
-    private static final String PROFILES_PROPERTY = "spring.profiles.active";
-
-    public static void main(String[] args) {
-        final String property = System.getProperties().getProperty(PROFILES_PROPERTY);
-        if (property == null) {
-            System.setProperty(PROFILES_PROPERTY, Profiles.PRODUCTION);
-        }
-        SpringApplication.run(Application.class, args);
-    }
+/**
+ * Make sure the SparqlQueryEvaluator implementation bean can be found (SparqlQueryEvaluatorDefault)
+ */
+@Configuration
+@ComponentScan("org.eclipse.rdf4j.http.server.readonly.sparql")
+public class Rdf4jSparqlConfig {
 }
