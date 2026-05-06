@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-@SpringBootApplication(scanBasePackages = {"org.eclipse.rdf4j.http.server.readonly.sparql"})
+@SpringBootApplication
 @ConfigurationPropertiesScan
 public class Application {
 
