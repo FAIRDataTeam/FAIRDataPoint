@@ -23,13 +23,61 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import io.micrometer.common.KeyValue;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.config.MeterFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.DefaultServerRequestObservationConvention;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
 
+@Slf4j
 @Configuration
 public class ActuatorConfig {
+
+//    @Bean
+//    public MeterRegistryCustomizer<MeterRegistry> onlyHttpServerRequestMetricsCustomizer() {
+//        return registry -> {
+//            log.warn("----------- Customizing registry: {} ----------", registry.getClass().getName());
+//            registry.config().meterFilter(MeterFilter.denyUnless(this::isHttpServerRequestMetric));
+//        };
+//    }
+
+    private static boolean isHttpServerRequestMetric(Meter.Id id) {
+        final String meterName = id.getName();
+        log.warn(">>>>>>>>>> Filtering: {} <<<<<<<<<<<", meterName);
+        return meterName.startsWith("http.server.requests");
+    }
+
+//    @Bean
+//    public MeterFilter onlyHttpServerRequestMetrics() {
+//        log.warn("----------- Creating filter bean ------------");
+//        return MeterFilter.denyUnless(this::isHttpServerRequestMetric);
+//    }
+
+
+    @Bean
+    public static BeanPostProcessor onlyHttpServerRequestMetricsPostProcessor() {
+        log.warn("----------- Creating post processor bean ------------");
+        return new BeanPostProcessor() {
+
+            @Override
+            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+                log.warn("---------- postprocessing bean '{}' -----------", beanName);
+                if (bean instanceof MeterRegistry registry) {
+                    log.warn("---------- Applying meter filter to registry bean '{}': {} -----------",
+                            beanName, registry.getClass().getName());
+                    registry.config().meterFilter(MeterFilter.denyUnless(ActuatorConfig::isHttpServerRequestMetric));
+                }
+                return bean;
+            }
+
+        };
+    }
 
     /**
      * Replaces the default `uri` path-pattern values with full paths in actuator metrics http.server.requests
