@@ -30,7 +30,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication(scanBasePackages = {"org.eclipse.rdf4j.http.server.readonly.sparql"})
-@EnableAsync
 @ConfigurationPropertiesScan("org.fairdatateam.fairdatapoint.config.*")
 public class Application {
 
