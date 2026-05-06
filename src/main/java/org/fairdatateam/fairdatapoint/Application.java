@@ -30,7 +30,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication(scanBasePackages = {"org.eclipse.rdf4j.http.server.readonly.sparql"})
-@ConfigurationPropertiesScan("org.fairdatateam.fairdatapoint.config.*")
+@ConfigurationPropertiesScan
 public class Application {
 
     private static final String PROFILES_PROPERTY = "spring.profiles.active";
