@@ -15,6 +15,8 @@ spring:
       pageable:
         default-page-size: 50
         qualifier-delimiter: _
+  profiles:
+    default: production
   task:
     execution:
       pool:

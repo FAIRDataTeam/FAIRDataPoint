@@ -70,6 +70,10 @@
         <checkstyle.version>13.3.0</checkstyle.version>
         <spring-javaformat-checkstyle.version>0.0.47</spring-javaformat-checkstyle.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
+
+        <!-- required for mockito to function properly (#890) -->
+        <argLine/>
+
     </properties>
 
     <dependencyManagement>
@@ -397,6 +401,19 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- required for mockito to function properly (#890) -->
+                <!-- https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#mockito-instrumentation -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -409,6 +426,9 @@
                         <exclude>**/Common.java</exclude>
                         <exclude>**/common/*.java</exclude>
                     </excludes>
+                    <!-- required for mockito to function properly (#890) -->
+                    <!--suppress UnresolvedMavenProperty -->
+                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
                 </configuration>
             </plugin>
         </plugins>
