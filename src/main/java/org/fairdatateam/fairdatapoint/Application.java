@@ -39,13 +39,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ConfigurationPropertiesScan("org.fairdatateam.fairdatapoint.config.*")
 public class Application {
 
-    private static final String PROFILES_PROPERTY = "spring.profiles.active";
-
     public static void main(String[] args) {
-        final String property = System.getProperties().getProperty(PROFILES_PROPERTY);
-        if (property == null) {
-            System.setProperty(PROFILES_PROPERTY, Profiles.PRODUCTION);
-        }
         SpringApplication.run(Application.class, args);
     }
 }
