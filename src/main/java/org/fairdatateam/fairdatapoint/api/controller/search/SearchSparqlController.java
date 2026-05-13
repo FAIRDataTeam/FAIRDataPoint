@@ -37,10 +37,13 @@ package org.fairdatateam.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
 import org.eclipse.rdf4j.http.server.readonly.sparql.SparqlQueryEvaluator;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.http.HTTPRepository;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,6 +53,7 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Slf4j
 @Tag(name = "Search")
 @RestController
 public class SearchSparqlController {
@@ -73,6 +77,26 @@ public class SearchSparqlController {
         this.rdf4jRepository = rdf4jRepository;
         this.restClient = restClient;
         this.sparqlQueryEvaluator = sparqlQueryEvaluator;
+    }
+
+    /**
+     * Proxy for the triple store SPARQL endpoint.
+     * Makes an unauthenticated request to the triple store SPARQL endpoint.
+     */
+    @GetMapping("/sparql")
+    public void proxySparqlEndpoint() throws Exception {
+        final String endpointUrl;
+        if (rdf4jRepository instanceof HTTPRepository httpRepository) {
+            endpointUrl = httpRepository.getRepositoryURL();
+        } else if (rdf4jRepository instanceof SPARQLRepository sparqlRepository) {
+            endpointUrl = sparqlRepository.toString();
+        } else {
+            throw new UnsupportedOperationException(
+                    "SPARQL proxy endpoint is only available for external triple stores");
+        }
+        log.info("proxy for {}", endpointUrl);
+        restClient.get().uri(endpointUrl);
+        // todo: return response
     }
 
     /**
