@@ -46,6 +46,7 @@ import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
@@ -84,7 +85,7 @@ public class SearchSparqlController {
      * Makes an unauthenticated request to the triple store SPARQL endpoint.
      */
     @GetMapping("/sparql")
-    public void proxySparqlEndpoint() throws Exception {
+    public ResponseEntity<byte[]> proxySparqlEndpoint() throws Exception {
         final String endpointUrl;
         if (rdf4jRepository instanceof HTTPRepository httpRepository) {
             endpointUrl = httpRepository.getRepositoryURL();
@@ -95,8 +96,16 @@ public class SearchSparqlController {
                     "SPARQL proxy endpoint is only available for external triple stores");
         }
         log.info("proxy for {}", endpointUrl);
-        restClient.get().uri(endpointUrl);
-        // todo: return response
+        return restClient.get()
+                .uri(endpointUrl)
+                .exchange(
+                        (request, response) -> ResponseEntity
+                                .status(response.getStatusCode())
+                                .headers(response.getHeaders())
+                                .body(response.getBody().readAllBytes())
+                );
+        // Note that retrieve() also works, unless we receive a status >=400, in which case we get a server error.
+        // restClient.get().uri(endpointUrl).retrieve().toEntity(byte[]);
     }
 
     /**
