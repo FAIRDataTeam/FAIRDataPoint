@@ -44,6 +44,7 @@ import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,9 @@ import java.io.OutputStream;
 @Tag(name = "Search")
 @RestController
 public class SearchSparqlController {
+
+    @Value("${openapi.title} ${openapi.version}")
+    private String serverHeader;
 
     private static final String[] ALL_GRAPHS = {};
 
@@ -99,6 +103,30 @@ public class SearchSparqlController {
     }
 
     /**
+     * Extracts headers from response and removes the ones that should not be forwarded,
+     * such as hop-by-hop headers. These must be listed in the Connection header (see rfc9110 7.6.1).
+     */
+    private HttpHeaders cleanHeaders(RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response) {
+        // copy all headers from the response
+        HttpHeaders headers = new HttpHeaders();
+        headers.putAll(response.getHeaders());
+        // remove all headers listed in the "Connection" header
+        headers.getConnection().forEach(headers::remove);
+        headers.remove(HttpHeaders.CONNECTION);
+        // explicitly remove standard hop-by-hop headers mentioned in rfc2616 (although Connection should list them too)
+        headers.remove("Keep-Alive");
+        headers.remove(HttpHeaders.PROXY_AUTHENTICATE);
+        headers.remove(HttpHeaders.PROXY_AUTHORIZATION);
+        headers.remove(HttpHeaders.TE);
+        headers.remove(HttpHeaders.TRAILER);
+        headers.remove(HttpHeaders.TRANSFER_ENCODING);
+        headers.remove(HttpHeaders.UPGRADE);
+        // rewrite the server header to hide the type of backend triple store
+        headers.set(HttpHeaders.SERVER, serverHeader);
+        return headers;
+    }
+
+    /**
      * Proxy for the triple store SPARQL endpoint.
      * Makes an unauthenticated request to the triple store SPARQL endpoint, and returns the response unchanged,
      * except for headers that should not be forwarded.
@@ -109,19 +137,10 @@ public class SearchSparqlController {
         final String endpointUrl = determineSparqlEndpointUrl();
         return restClient.get()
                 .uri(endpointUrl)
-                .exchange((request, response) -> {
-                            // copy all headers from the response
-                            HttpHeaders headers = new HttpHeaders();
-                            headers.putAll(response.getHeaders());
-                            // remove hop-by-hop headers that should not be forwarded
-                            headers.remove(HttpHeaders.TRANSFER_ENCODING);
-                            headers.remove(HttpHeaders.CONNECTION);
-                            // return the rest of the response unchanged
-                            return ResponseEntity
-                                    .status(response.getStatusCode())
-                                    .headers(headers)
-                                    .body(response.getBody().readAllBytes());
-                        }
+                .exchange((request, response) -> ResponseEntity
+                        .status(response.getStatusCode())
+                        .headers(cleanHeaders(response))
+                        .body(response.getBody().readAllBytes())
                 );
     }
 
