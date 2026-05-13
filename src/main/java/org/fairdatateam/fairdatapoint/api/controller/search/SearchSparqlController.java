@@ -100,21 +100,29 @@ public class SearchSparqlController {
 
     /**
      * Proxy for the triple store SPARQL endpoint.
-     * Makes an unauthenticated request to the triple store SPARQL endpoint.
+     * Makes an unauthenticated request to the triple store SPARQL endpoint, and returns the response unchanged,
+     * except for headers that should not be forwarded.
      */
     @GetMapping("/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpoint() throws Exception {
+        // todo: pass on the request headers and content
         final String endpointUrl = determineSparqlEndpointUrl();
         return restClient.get()
                 .uri(endpointUrl)
-                .exchange(
-                        (request, response) -> ResponseEntity
-                                .status(response.getStatusCode())
-                                .headers(response.getHeaders())
-                                .body(response.getBody().readAllBytes())
+                .exchange((request, response) -> {
+                            // copy all headers from the response
+                            HttpHeaders headers = new HttpHeaders();
+                            headers.putAll(response.getHeaders());
+                            // remove hop-by-hop headers that should not be forwarded
+                            headers.remove(HttpHeaders.TRANSFER_ENCODING);
+                            headers.remove(HttpHeaders.CONNECTION);
+                            // return the rest of the response unchanged
+                            return ResponseEntity
+                                    .status(response.getStatusCode())
+                                    .headers(headers)
+                                    .body(response.getBody().readAllBytes());
+                        }
                 );
-        // Note that retrieve() also works, unless we receive a status >=400, in which case we get a server error.
-        // restClient.get().uri(endpointUrl).retrieve().toEntity(byte[]);
     }
 
     /**
