@@ -45,6 +45,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -61,11 +62,16 @@ public class SearchSparqlController {
 
     private final SparqlQueryEvaluator sparqlQueryEvaluator;
 
+    private final RestClient restClient;
+
     /**
      * Constructor
      */
-    public SearchSparqlController(Repository rdf4jRepository, SparqlQueryEvaluator sparqlQueryEvaluator) {
+    public SearchSparqlController(
+            Repository rdf4jRepository, RestClient restClient, SparqlQueryEvaluator sparqlQueryEvaluator
+    ) {
         this.rdf4jRepository = rdf4jRepository;
+        this.restClient = restClient;
         this.sparqlQueryEvaluator = sparqlQueryEvaluator;
     }
 
