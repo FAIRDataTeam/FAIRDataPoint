@@ -81,21 +81,30 @@ public class SearchSparqlController {
     }
 
     /**
+     * Returns the url of the backend triple store's SPARQL endpoint, obtained from the RDF4J repository.
+     */
+    private String determineSparqlEndpointUrl() {
+        final String sparqlEndpointUrl;
+        if (rdf4jRepository instanceof HTTPRepository httpRepository) {
+            sparqlEndpointUrl = httpRepository.getRepositoryURL();
+        } else if (rdf4jRepository instanceof SPARQLRepository sparqlRepository) {
+            // toString returns the repository's queryEndpointUrl
+            sparqlEndpointUrl = sparqlRepository.toString();
+        } else {
+            throw new UnsupportedOperationException(
+                    "The SPARQL proxy endpoint is only available for external triple stores");
+        }
+        log.info("Backend SPARQL endpoint URL: {}", sparqlEndpointUrl);
+        return sparqlEndpointUrl;
+    }
+
+    /**
      * Proxy for the triple store SPARQL endpoint.
      * Makes an unauthenticated request to the triple store SPARQL endpoint.
      */
     @GetMapping("/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpoint() throws Exception {
-        final String endpointUrl;
-        if (rdf4jRepository instanceof HTTPRepository httpRepository) {
-            endpointUrl = httpRepository.getRepositoryURL();
-        } else if (rdf4jRepository instanceof SPARQLRepository sparqlRepository) {
-            endpointUrl = sparqlRepository.toString();
-        } else {
-            throw new UnsupportedOperationException(
-                    "SPARQL proxy endpoint is only available for external triple stores");
-        }
-        log.info("proxy for {}", endpointUrl);
+        final String endpointUrl = determineSparqlEndpointUrl();
         return restClient.get()
                 .uri(endpointUrl)
                 .exchange(
