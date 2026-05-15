@@ -52,11 +52,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.function.Consumer;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Tag(name = "Search")
@@ -103,7 +105,6 @@ public class SearchSparqlController {
             throw new UnsupportedOperationException(
                     "The SPARQL proxy endpoint is only available for external triple stores");
         }
-        log.info("Backend SPARQL endpoint URL: {}", sparqlEndpointUrl);
         return sparqlEndpointUrl;
     }
 
@@ -133,21 +134,40 @@ public class SearchSparqlController {
 
     /**
      * Proxy for the triple store SPARQL endpoint.
-     * Makes an unauthenticated request to the triple store SPARQL endpoint, and returns the response unchanged,
+     * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
      * except for headers that should not be forwarded.
+     * The triple store SPARQL endpoint is expected to comply with the
+     * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
      */
     @GetMapping("/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpoint(
-            @RequestHeader HttpHeaders requestHeaders, HttpServletRequest request
+            HttpServletRequest request,
+            @RequestHeader HttpHeaders requestHeaders,
+            // request parameters defined in SPARQL protocol
+            @RequestParam(name = "query") String query,
+            @RequestParam(name = "default-graph-uri", required = false) List<String> defaultGraphUri,
+            @RequestParam(name = "named-graph-uri", required = false) List<String> namedGraphUri
     ) {
-        final String endpointUrl = determineSparqlEndpointUrl();
-        final String clientIp = request.getRemoteAddr();
+        // add query parameters
+        log.info("here's the query: {}", query);
+        final URI uriWithQuery = UriComponentsBuilder
+                .fromUriString(determineSparqlEndpointUrl())
+                // the query is automatically encoded, because it contains illegal characters, but the uris are not
+                .queryParam("query", query)
+                .queryParamIfPresent("default-graph-uri", Optional.ofNullable(defaultGraphUri))
+                .queryParamIfPresent("named-graph-uri", Optional.ofNullable(namedGraphUri))
+                .build()
+                // convert to URI (instead of String) to prevent RestClient from trying to do template expansion
+                // on the sparql query, e.g. {?s ?p ?o}
+                .toUri();
+        log.info("SPARQL URI query: {}", uriWithQuery);
+        // execute request
         return restClient.get()
-                .uri(endpointUrl)
+                .uri(uriWithQuery)
                 .headers(restHeaders -> {
                     // copy all headers and forward the client ip (otherwise the upstream only sees the proxy ip)
                     restHeaders.putAll(requestHeaders);
-                    restHeaders.add("X-Forwarded-For", clientIp);
+                    restHeaders.add("X-Forwarded-For", request.getRemoteAddr());
                 })
                 .exchange((restRequest, restResponse) -> {
                             return ResponseEntity
