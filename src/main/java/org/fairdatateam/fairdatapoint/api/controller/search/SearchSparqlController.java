@@ -106,7 +106,7 @@ public class SearchSparqlController {
      * Extracts headers from response and removes the ones that should not be forwarded,
      * such as hop-by-hop headers. These must be listed in the Connection header (see rfc9110 7.6.1).
      */
-    private HttpHeaders cleanHeaders(RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response) {
+    private HttpHeaders cleanResponseHeaders(RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response) {
         // copy all headers from the response
         HttpHeaders headers = new HttpHeaders();
         headers.putAll(response.getHeaders());
@@ -139,7 +139,7 @@ public class SearchSparqlController {
                 .uri(endpointUrl)
                 .exchange((request, response) -> ResponseEntity
                         .status(response.getStatusCode())
-                        .headers(cleanHeaders(response))
+                        .headers(cleanResponseHeaders(response))
                         .body(response.getBody().readAllBytes())
                 );
     }
