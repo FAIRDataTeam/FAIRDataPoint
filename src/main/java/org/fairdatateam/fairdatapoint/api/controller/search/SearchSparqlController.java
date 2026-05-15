@@ -60,12 +60,12 @@ import java.io.OutputStream;
 @RestController
 public class SearchSparqlController {
 
-    @Value("${openapi.title} ${openapi.version}")
-    private String serverHeader;
-
     private static final String[] ALL_GRAPHS = {};
 
     private static final String JSON_MEDIA_TYPES = "application/json, application/ld+json";
+
+    @Value("${openapi.title} ${openapi.version}")
+    private String serverHeader;
 
     private final Repository rdf4jRepository;
 
@@ -91,10 +91,12 @@ public class SearchSparqlController {
         final String sparqlEndpointUrl;
         if (rdf4jRepository instanceof HTTPRepository httpRepository) {
             sparqlEndpointUrl = httpRepository.getRepositoryURL();
-        } else if (rdf4jRepository instanceof SPARQLRepository sparqlRepository) {
+        }
+        else if (rdf4jRepository instanceof SPARQLRepository sparqlRepository) {
             // toString returns the repository's queryEndpointUrl
             sparqlEndpointUrl = sparqlRepository.toString();
-        } else {
+        }
+        else {
             throw new UnsupportedOperationException(
                     "The SPARQL proxy endpoint is only available for external triple stores");
         }
@@ -108,7 +110,7 @@ public class SearchSparqlController {
      */
     private HttpHeaders cleanResponseHeaders(RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response) {
         // copy all headers from the response
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.putAll(response.getHeaders());
         // remove all headers listed in the "Connection" header
         headers.getConnection().forEach(headers::remove);
@@ -137,10 +139,12 @@ public class SearchSparqlController {
         final String endpointUrl = determineSparqlEndpointUrl();
         return restClient.get()
                 .uri(endpointUrl)
-                .exchange((request, response) -> ResponseEntity
-                        .status(response.getStatusCode())
-                        .headers(cleanResponseHeaders(response))
-                        .body(response.getBody().readAllBytes())
+                .exchange((request, response) -> {
+                            return ResponseEntity
+                                    .status(response.getStatusCode())
+                                    .headers(cleanResponseHeaders(response))
+                                    .body(response.getBody().readAllBytes());
+                        }
                 );
     }
 
