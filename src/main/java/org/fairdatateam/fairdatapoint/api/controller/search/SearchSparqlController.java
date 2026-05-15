@@ -151,18 +151,18 @@ public class SearchSparqlController {
      */
     @GetMapping("/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpoint(
-            @RequestHeader HttpHeaders requestHeaders, HttpServletRequest clientRequest
+            @RequestHeader HttpHeaders requestHeaders, HttpServletRequest request
     ) {
         final String endpointUrl = determineSparqlEndpointUrl();
-        final String clientIp = clientRequest.getRemoteAddr();
+        final String clientIp = request.getRemoteAddr();
         return restClient.get()
                 .uri(endpointUrl)
                 .headers(requestHeadersUpdater(requestHeaders, clientIp))
-                .exchange((request, response) -> {
+                .exchange((restRequest, restResponse) -> {
                             return ResponseEntity
-                                    .status(response.getStatusCode())
-                                    .headers(cleanResponseHeaders(response))
-                                    .body(response.getBody().readAllBytes());
+                                    .status(restResponse.getStatusCode())
+                                    .headers(cleanResponseHeaders(restResponse))
+                                    .body(restResponse.getBody().readAllBytes());
                         }
                 );
     }
