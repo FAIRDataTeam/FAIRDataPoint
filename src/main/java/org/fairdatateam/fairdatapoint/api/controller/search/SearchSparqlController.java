@@ -56,6 +56,7 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 @Slf4j
 @Tag(name = "Search")
@@ -107,19 +108,19 @@ public class SearchSparqlController {
     }
 
     /**
-     * Extracts headers from a request and adds forwarding i
+     * Factory that returns a function that updates an HttpHeaders object by copying all headers from a request
+     * and adding proxy forwarding headers.
      */
-    private HttpHeaders adaptRequestHeaders(HttpServletRequest request) {
-        // extract headers from original request
-        final HttpHeaders headers = new HttpHeaders();
-        // this would be much simpler using RequestEntity.getHeaders(), but we need the HttpServletRequest for the ip.
-        request.getHeaderNames().asIterator().forEachRemaining(headerName -> {
-            headers.put(headerName, Collections.list(request.getHeaders(headerName)));
-        });
-        // forward the client ip (otherwise the upstream only sees the proxy ip)
-        // (could use the standard "Forwarded", but that requires extra logic to handle ipv6 quotes)
-        headers.add("X-Forwarded-For", request.getRemoteAddr());
-        return headers;
+    private Consumer<HttpHeaders> requestHeadersUpdater(HttpServletRequest request) {
+        return headers -> {
+            // would be much simpler using RequestEntity.getHeaders(), but we need the HttpServletRequest for the ip
+            request.getHeaderNames().asIterator().forEachRemaining(headerName -> {
+                headers.put(headerName, Collections.list(request.getHeaders(headerName)));
+            });
+            // forward the client ip (otherwise the upstream only sees the proxy ip)
+            // (could use the standard "Forwarded", but that requires extra logic to handle ipv6 quotes)
+            headers.add("X-Forwarded-For", request.getRemoteAddr());
+        };
     }
 
     /**
@@ -156,7 +157,7 @@ public class SearchSparqlController {
         final String endpointUrl = determineSparqlEndpointUrl();
         return restClient.get()
                 .uri(endpointUrl)
-                .headers(httpHeaders -> httpHeaders.putAll(adaptRequestHeaders(clientRequest)))
+                .headers(requestHeadersUpdater(clientRequest))
                 .exchange((request, response) -> {
                             return ResponseEntity
                                     .status(response.getStatusCode())
