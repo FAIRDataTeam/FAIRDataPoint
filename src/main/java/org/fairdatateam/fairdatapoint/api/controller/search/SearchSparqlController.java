@@ -108,18 +108,15 @@ public class SearchSparqlController {
     }
 
     /**
-     * Factory that returns a function that updates an HttpHeaders object by copying all headers from a request
+     * Factory returns a function that updates an HttpHeaders object by copying all headers from a request
      * and adding proxy forwarding headers.
      */
-    private Consumer<HttpHeaders> requestHeadersUpdater(HttpServletRequest request) {
-        return headers -> {
-            // would be much simpler using RequestEntity.getHeaders(), but we need the HttpServletRequest for the ip
-            request.getHeaderNames().asIterator().forEachRemaining(headerName -> {
-                headers.put(headerName, Collections.list(request.getHeaders(headerName)));
-            });
+    private Consumer<HttpHeaders> requestHeadersUpdater(HttpHeaders originalHeaders, String originalIp) {
+        return newHeaders -> {
+            newHeaders.putAll(originalHeaders);
             // forward the client ip (otherwise the upstream only sees the proxy ip)
             // (could use the standard "Forwarded", but that requires extra logic to handle ipv6 quotes)
-            headers.add("X-Forwarded-For", request.getRemoteAddr());
+            newHeaders.add("X-Forwarded-For", originalIp);
         };
     }
 
@@ -153,11 +150,14 @@ public class SearchSparqlController {
      * except for headers that should not be forwarded.
      */
     @GetMapping("/sparql")
-    public ResponseEntity<byte[]> proxySparqlEndpoint(HttpServletRequest clientRequest) {
+    public ResponseEntity<byte[]> proxySparqlEndpoint(
+            @RequestHeader HttpHeaders requestHeaders, HttpServletRequest clientRequest
+    ) {
         final String endpointUrl = determineSparqlEndpointUrl();
+        final String clientIp = clientRequest.getRemoteAddr();
         return restClient.get()
                 .uri(endpointUrl)
-                .headers(requestHeadersUpdater(clientRequest))
+                .headers(requestHeadersUpdater(requestHeaders, clientIp))
                 .exchange((request, response) -> {
                             return ResponseEntity
                                     .status(response.getStatusCode())
