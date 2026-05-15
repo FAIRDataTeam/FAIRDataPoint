@@ -36,6 +36,7 @@
 package org.fairdatateam.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
@@ -54,6 +55,7 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
 
 @Slf4j
 @Tag(name = "Search")
@@ -105,6 +107,22 @@ public class SearchSparqlController {
     }
 
     /**
+     * Extracts headers from a request and adds forwarding i
+     */
+    private HttpHeaders adaptRequestHeaders(HttpServletRequest request) {
+        // extract headers from original request
+        final HttpHeaders headers = new HttpHeaders();
+        // this would be much simpler using RequestEntity.getHeaders(), but we need the HttpServletRequest for the ip.
+        request.getHeaderNames().asIterator().forEachRemaining(headerName -> {
+            headers.put(headerName, Collections.list(request.getHeaders(headerName)));
+        });
+        // forward the client ip (otherwise the upstream only sees the proxy ip)
+        // (could use the standard "Forwarded", but that requires extra logic to handle ipv6 quotes)
+        headers.add("X-Forwarded-For", request.getRemoteAddr());
+        return headers;
+    }
+
+    /**
      * Extracts headers from response and removes the ones that should not be forwarded,
      * such as hop-by-hop headers. These must be listed in the Connection header (see rfc9110 7.6.1).
      */
@@ -134,11 +152,11 @@ public class SearchSparqlController {
      * except for headers that should not be forwarded.
      */
     @GetMapping("/sparql")
-    public ResponseEntity<byte[]> proxySparqlEndpoint() throws Exception {
-        // todo: pass on the request headers and content
+    public ResponseEntity<byte[]> proxySparqlEndpoint(HttpServletRequest clientRequest) {
         final String endpointUrl = determineSparqlEndpointUrl();
         return restClient.get()
                 .uri(endpointUrl)
+                .headers(httpHeaders -> httpHeaders.putAll(adaptRequestHeaders(clientRequest)))
                 .exchange((request, response) -> {
                             return ResponseEntity
                                     .status(response.getStatusCode())
