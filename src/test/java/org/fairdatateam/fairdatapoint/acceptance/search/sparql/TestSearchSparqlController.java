@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -49,6 +50,24 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
     private final String querySelectAll = "SELECT * WHERE { ?s ?p ?o }";
+
+    /**
+     * TODO: this test is a work in progress
+     */
+    @Test
+    public void getSparqlUnauthenticated() {
+        URI uriWithQuery = UriComponentsBuilder
+                .fromPath("/sparql")
+                .queryParam("query", querySelectAll)
+                .build()
+                .toUri();
+
+        RequestEntity<?> request = RequestEntity.get(uriWithQuery).build();
+
+        ResponseEntity<String> response = client.exchange(request, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        System.out.println(response.getBody());
+    }
 
     @Test
     public void postSparqlUnauthenticated() throws JsonProcessingException {
