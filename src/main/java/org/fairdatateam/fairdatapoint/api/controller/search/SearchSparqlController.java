@@ -108,19 +108,6 @@ public class SearchSparqlController {
     }
 
     /**
-     * Factory returns a function that updates an HttpHeaders object by copying all headers from a request
-     * and adding proxy forwarding headers.
-     */
-    private Consumer<HttpHeaders> requestHeadersUpdater(HttpHeaders originalHeaders, String originalIp) {
-        return newHeaders -> {
-            newHeaders.putAll(originalHeaders);
-            // forward the client ip (otherwise the upstream only sees the proxy ip)
-            // (could use the standard "Forwarded", but that requires extra logic to handle ipv6 quotes)
-            newHeaders.add("X-Forwarded-For", originalIp);
-        };
-    }
-
-    /**
      * Extracts headers from response and removes the ones that should not be forwarded,
      * such as hop-by-hop headers. These must be listed in the Connection header (see rfc9110 7.6.1).
      */
@@ -157,7 +144,11 @@ public class SearchSparqlController {
         final String clientIp = request.getRemoteAddr();
         return restClient.get()
                 .uri(endpointUrl)
-                .headers(requestHeadersUpdater(requestHeaders, clientIp))
+                .headers(restHeaders -> {
+                    // copy all headers and forward the client ip (otherwise the upstream only sees the proxy ip)
+                    restHeaders.putAll(requestHeaders);
+                    restHeaders.add("X-Forwarded-For", clientIp);
+                })
                 .exchange((restRequest, restResponse) -> {
                             return ResponseEntity
                                     .status(restResponse.getStatusCode())
