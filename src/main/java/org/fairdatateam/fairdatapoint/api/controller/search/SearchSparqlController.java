@@ -139,6 +139,7 @@ public class SearchSparqlController {
      * The triple store SPARQL endpoint is expected to comply with the
      * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpoint(
             HttpServletRequest request,

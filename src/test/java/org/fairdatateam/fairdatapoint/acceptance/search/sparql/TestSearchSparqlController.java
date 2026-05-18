@@ -77,18 +77,42 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     }
 
     /**
-     * Performs a basic SELECT query via GET request to external triple store, if available.
+     * Unauthenticated requests are denied
      */
     @Test
-    @EnabledIf("externalTripleStoreConfigured")
     public void getSparqlUnauthenticated() {
-        // specify request
+        // specify request with url query, but without authentication
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath("/sparql")
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
         RequestEntity<?> request = RequestEntity.get(uriWithQuery).accept(MediaType.APPLICATION_JSON).build();
+
+        // get response
+        ResponseEntity<JsonNode> response = client.exchange(request, JsonNode.class);
+
+        // evaluate results
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    /**
+     * Performs a basic SELECT query via GET request to external triple store, if available.
+     */
+    @Test
+    @EnabledIf("externalTripleStoreConfigured")
+    public void getSparqlAuthenticated() {
+        // specify request with url query and normal user (non-admin)
+        URI uriWithQuery = UriComponentsBuilder
+                .fromPath("/sparql")
+                .queryParam("query", querySelectAll)
+                .build()
+                .toUri();
+        RequestEntity<?> request = RequestEntity
+                .get(uriWithQuery)
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .build();
 
         // get response
         ResponseEntity<JsonNode> response = client.exchange(request, JsonNode.class);
