@@ -20,73 +20,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-// This code is mostly copied from rdf4j spring-boot-sparql-web, with some customizations:
-//
-// https://github.com/eclipse-rdf4j/rdf4j/blob/main/spring-components/spring-boot-sparql-web
-//
-// Copyright (c) 2021 Eclipse RDF4J contributors.
-//
-// All rights reserved. This program and the accompanying materials
-// are made available under the terms of the Eclipse Distribution License v1.0
-// which accompanies this distribution, and is available at
-// http://www.eclipse.org/org/documents/edl-v10.php.
-//
-// SPDX-License-Identifier: BSD-3-Clause
 
 package org.fairdatateam.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.rdf4j.http.server.readonly.sparql.EvaluateResult;
-import org.eclipse.rdf4j.http.server.readonly.sparql.SparqlQueryEvaluator;
-import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.NoneNestedConditions;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Tag(name = "Search")
+@Conditional(SearchSparqlController.OnExternalTripleStore.class)
 @RestController
 public class SearchSparqlController {
-
-    private static final String[] ALL_GRAPHS = {};
-
-    private static final String JSON_MEDIA_TYPES = "application/json, application/ld+json";
 
     @Value("${openapi.title} ${openapi.version}")
     private String serverHeader;
 
     private final Repository rdf4jRepository;
 
-    private final SparqlQueryEvaluator sparqlQueryEvaluator;
-
     private final RestClient restClient;
 
     /**
      * Constructor
      */
-    public SearchSparqlController(
-            Repository rdf4jRepository, RestClient restClient, SparqlQueryEvaluator sparqlQueryEvaluator
-    ) {
+    public SearchSparqlController(Repository rdf4jRepository, RestClient restClient) {
         this.rdf4jRepository = rdf4jRepository;
         this.restClient = restClient;
-        this.sparqlQueryEvaluator = sparqlQueryEvaluator;
     }
 
     /**
@@ -140,7 +117,7 @@ public class SearchSparqlController {
      * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
      */
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/sparql")
+    @GetMapping("/search/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpoint(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
@@ -180,82 +157,22 @@ public class SearchSparqlController {
     }
 
     /**
-     * Allows authenticated users to POST a full SPARQL query.
-     * Method body copied from org.eclipse.rdf4j.http.server.readonly.QueryResponder.
-     * The "Accept" header is required, and allowable media types depend on the type of query,
-     * as defined in <code>org.eclipse.rdf4j.http.server.readonly.sparql.QueryTypes.formats</code>.
-     * However, to simplify things, we restrict the allowable media types to JSON and/or JSON-LD.
+     * Custom condition returns true only when an external triple store is configured.
+     * That is, the repository type is not "in-memory" and not "native" (file system).
      */
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping(
-            path = "/search/sparql",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = { MediaType.APPLICATION_JSON_VALUE, "application/ld+json" }
-    )
-    public void sparqlPost(
-        @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = JSON_MEDIA_TYPES) String acceptHeader,
-        @RequestBody SparqlQuery sparqlQuery,
-        HttpServletResponse response
-    ) throws IOException {
-        // enforce default accept header for wildcard
-        final String accept = ("*/*".equals(acceptHeader)) ? JSON_MEDIA_TYPES : acceptHeader;
-        try {
-            final EvaluateResultHttpResponse result = new EvaluateResultHttpResponse(response);
-            sparqlQueryEvaluator.evaluate(
-                    result,
-                    rdf4jRepository,
-                    sparqlQuery.query,
-                    accept,
-                    toArray(sparqlQuery.defaultGraphUri),
-                    toArray(sparqlQuery.namedGraphUri)
-            );
-        }
-        catch (MalformedQueryException | IllegalStateException | IOException exception) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        }
-    }
+    static class OnExternalTripleStore extends NoneNestedConditions {
 
-    private String[] toArray(String graphUri) {
-        if (graphUri != null && !graphUri.isEmpty()) {
-            return new String[]{graphUri};
-        }
-        return ALL_GRAPHS;
-    }
-
-    /**
-     * Encapsulates the {@link HttpServletResponse}.
-     * Copied from org.eclipse.rdf4j.http.server.readonly.EvaluateResultHttpResponse.
-     */
-    protected static class EvaluateResultHttpResponse implements EvaluateResult {
-
-        private final HttpServletResponse response;
-
-        public EvaluateResultHttpResponse(HttpServletResponse response) {
-            this.response = response;
+        OnExternalTripleStore() {
+            super(ConfigurationPhase.REGISTER_BEAN);
         }
 
-        @Override
-        public void setContentType(String contentType) {
-            response.setContentType(contentType);
+        @ConditionalOnProperty(prefix = "repository", name = "type", havingValue = "1")
+        static class OnInMemoryType {
         }
 
-        @Override
-        public String getContentType() {
-            return response.getContentType();
+        @ConditionalOnProperty(prefix = "repository", name = "type", havingValue = "2")
+        static class OnNativeType {
         }
 
-        @Override
-        public OutputStream getOutputstream() throws IOException {
-            return response.getOutputStream();
-        }
-    }
-
-    /**
-     * Defines the content of the query request body, for JSON deserialization.
-     * @param query
-     * @param defaultGraphUri
-     * @param namedGraphUri
-     */
-    public record SparqlQuery(String query, String defaultGraphUri, String namedGraphUri) {
     }
 }

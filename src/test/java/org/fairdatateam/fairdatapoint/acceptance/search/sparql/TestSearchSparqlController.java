@@ -22,29 +22,19 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -83,7 +73,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     public void getSparqlUnauthenticated() {
         // specify request with url query, but without authentication
         URI uriWithQuery = UriComponentsBuilder
-                .fromPath("/sparql")
+                .fromPath("/search/sparql")
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
@@ -100,11 +90,11 @@ public class TestSearchSparqlController extends WebIntegrationTest {
      * Performs a basic SELECT query via GET request to external triple store, if available.
      */
     @Test
-    @EnabledIf("externalTripleStoreConfigured")
+//    @EnabledIf("externalTripleStoreConfigured")
     public void getSparqlAuthenticated() {
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
-                .fromPath("/sparql")
+                .fromPath("/search/sparql")
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
@@ -128,151 +118,5 @@ public class TestSearchSparqlController extends WebIntegrationTest {
         // https://www.w3.org/TR/sparql11-results-json/
         assertTrue(body.has("head"));
         assertTrue(body.has("results"));
-    }
-
-    @Test
-    public void postSparqlUnauthenticated() throws JsonProcessingException {
-        // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                querySelectAll, null, null);
-        RequestEntity<?> request = RequestEntity
-                .post(url)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(sparqlQuery);
-
-        // perform
-        ResponseEntity<String> response = client.exchange(request, String.class);
-
-        // evaluate
-        // TODO: this should actually be HttpStatus.UNAUTHORIZED, but FDP returns the wrong status code (see #704)
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-        HashMap<String, Object> responseBodyMap = jsonMapper.readValue(response.getBody(), new TypeReference<>() {
-        });
-        assertTrue(responseBodyMap.containsKey("error"));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { MediaType.APPLICATION_JSON_VALUE, "*/*" })
-    public void postSparqlSelectAll(String acceptHeader) throws JsonProcessingException {
-        // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                querySelectAll, null, null);
-        RequestEntity<SearchSparqlController.SparqlQuery> request = RequestEntity
-                .post(url)
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .accept(MediaType.valueOf(acceptHeader))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(sparqlQuery);
-
-        // perform
-        ResponseEntity<String> response = client.exchange(request, String.class);
-
-        // evaluate
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        HashMap<String, Object> responseBodyMap = jsonMapper.readValue(response.getBody(), new TypeReference<>() {
-        });
-
-        // expected SPARQL SELECT result structure: https://www.w3.org/TR/sparql11-results-json/
-        assertEquals(Set.of("head", "results"), responseBodyMap.keySet());
-        if (responseBodyMap.get("results") instanceof HashMap<?, ?> results) {
-            assertEquals(Set.of("bindings"), results.keySet());
-        }
-    }
-
-    @Test
-    public void postSparqlAskAny() throws JsonProcessingException {
-        // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                "ASK { ?s ?p ?o }", null, null);
-        RequestEntity<?> request = RequestEntity
-                .post(url)
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(sparqlQuery);
-
-        // perform
-        ResponseEntity<String> response = client.exchange(request, String.class);
-
-        // evaluate
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        HashMap<String, Object> responseBodyMap = jsonMapper.readValue(response.getBody(), new TypeReference<>() {
-        });
-
-        // expected SPARQL ASK result structure: https://www.w3.org/TR/sparql11-results-json/
-        assertEquals(Set.of("head", "boolean"), responseBodyMap.keySet());
-        if (responseBodyMap.get("boolean") instanceof Boolean bool) {
-            assertTrue(bool);
-        }
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "CONSTRUCT WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> }",
-            "DESCRIBE ?s WHERE { ?s a <https://w3id.org/fdp/fdp-o#MetadataService> }"
-    })
-    public void postSparqlConstructOrDescribe(String query) throws JsonProcessingException {
-        // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                query, null, null);
-        RequestEntity<?> request = RequestEntity
-                .post(url)
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                // QueryTypes.CONSTRUCT_OR_DESCRIBE does not support simple JSON, only application/ld+json (or ttl, n3)
-                .accept(MediaType.valueOf(RDFFormat.JSONLD.getDefaultMIMEType()))
-                .body(sparqlQuery);
-
-        // perform
-        ResponseEntity<String> response = client.exchange(request, String.class);
-
-        // evaluate
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<HashMap<String, Object>> responseBodyList = jsonMapper.readValue(
-                response.getBody(), new TypeReference<>() {}
-        );
-        assertFalse(responseBodyList.isEmpty());
-    }
-
-
-    /**
-     * Verify that <a href="https://www.w3.org/TR/sparql11-update/">SPARQL Update</a> operations are disallowed.
-     * The <code>SparqlQueryEvaluator</code> implements a whitelist in the <code>QueryTypes</code> enum.
-     */
-    @ParameterizedTest
-    @ValueSource(strings = {
-            // https://www.w3.org/TR/sparql11-update/#graphUpdate
-            "INSERT DATA { ex:test1 dc:title \"test\" }",
-            "INSERT { ?s dc:title ?ol } WHERE { ?s dc:title ?o . BIND( STRLANG(STR(?o), \"en\") AS ?ol ) . }",
-            "DELETE DATA { ?s dc:title ?o } WHERE { ?s dc:title ?o }",
-            "DELETE WHERE { ?s dc:title ?o }",
-            "LOAD dc:",
-            "CLEAR GRAPH ex:",
-            // https://www.w3.org/TR/sparql11-update/#graphManagement
-            "CREATE GRAPH ex:",
-            "DROP GRAPH ex:",
-            "COPY DEFAULT TO GRAPH ex:",
-            "MOVE DEFAULT TO GRAPH ex:",
-            "ADD DEFAULT TO GRAPH ex:"
-    })
-    public void postSparqlUpdateDenied(String update) throws JsonProcessingException {
-        // common prefixes (part of prologue in sparql grammar)
-        final String prologue = """
-                PREFIX dc: <http://purl.org/dc/terms/>
-                PREFIX ex: <http://example.org/>
-                """;
-
-        // prepare request
-        SearchSparqlController.SparqlQuery sparqlQuery = new SearchSparqlController.SparqlQuery(
-                prologue + update, null, null);
-        RequestEntity<?> request = RequestEntity
-                .post(url)
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(sparqlQuery);
-
-        // perform
-        ResponseEntity<String> response = client.exchange(request, String.class);
-
-        // SPARQL Update operations should always be denied
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
