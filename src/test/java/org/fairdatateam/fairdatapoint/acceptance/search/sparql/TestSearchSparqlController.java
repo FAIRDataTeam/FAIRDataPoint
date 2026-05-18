@@ -24,26 +24,34 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("POST /search/sparql")
 public class TestSearchSparqlController extends WebIntegrationTest {
+
+    private final Environment environment;
 
     private final URI url = URI.create("/search/sparql");
 
@@ -52,21 +60,50 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     private final String querySelectAll = "SELECT * WHERE { ?s ?p ?o }";
 
     /**
-     * TODO: this test is a work in progress
+     * Constructor
+     */
+    @Autowired
+    public TestSearchSparqlController(Environment environment) {
+        this.environment = environment;
+    }
+
+    /**
+     * Returns true if an external triple store is configured.
+     * For example, set <code>repository.type = 4</code> and <code>repository.graph-db.repository = "fdp-test"</code>.
+     */
+    boolean externalTripleStoreConfigured() {
+        final int repoType = Integer.parseInt(Objects.requireNonNull(environment.getProperty("repository.type")));
+        return repoType > RepositoryProperties.TYPE_NATIVE;
+    }
+
+    /**
+     * Performs a basic SELECT query via GET request to external triple store, if available.
      */
     @Test
+    @EnabledIf("externalTripleStoreConfigured")
     public void getSparqlUnauthenticated() {
+        // specify request
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath("/sparql")
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
+        RequestEntity<?> request = RequestEntity.get(uriWithQuery).accept(MediaType.APPLICATION_JSON).build();
 
-        RequestEntity<?> request = RequestEntity.get(uriWithQuery).build();
+        // get response
+        ResponseEntity<JsonNode> response = client.exchange(request, JsonNode.class);
 
-        ResponseEntity<String> response = client.exchange(request, String.class);
+        // evaluate results
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        System.out.println(response.getBody());
+        final MediaType contentType = response.getHeaders().getContentType();
+        assertNotNull(contentType);
+        final MediaType expectedType = MediaType.parseMediaType("application/sparql-results+json");
+        assertTrue(contentType.equalsTypeAndSubtype(expectedType));
+        final JsonNode body = response.getBody();
+        assertNotNull(body);
+        // https://www.w3.org/TR/sparql11-results-json/
+        assertTrue(body.has("head"));
+        assertTrue(body.has("results"));
     }
 
     @Test
