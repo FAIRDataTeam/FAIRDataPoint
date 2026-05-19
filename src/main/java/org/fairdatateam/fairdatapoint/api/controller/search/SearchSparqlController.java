@@ -31,9 +31,7 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.NoneNestedConditions;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,9 +43,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This controller depends on a SPARQL endpoint provided by an external triple store.
+ * For this reason it is disabled when using an in-memory or native (file system) triple store.
+ */
 @Slf4j
 @Tag(name = "Search")
-@Conditional(SearchSparqlController.OnExternalTripleStore.class)
+@ConditionalOnExpression("'${repository.type:}' != '1' and '${repository.type:}' != '2'")
 @RestController
 public class SearchSparqlController {
 
@@ -156,23 +158,4 @@ public class SearchSparqlController {
                 );
     }
 
-    /**
-     * Custom condition returns true only when an external triple store is configured.
-     * That is, the repository type is not "in-memory" and not "native" (file system).
-     */
-    static class OnExternalTripleStore extends NoneNestedConditions {
-
-        OnExternalTripleStore() {
-            super(ConfigurationPhase.REGISTER_BEAN);
-        }
-
-        @ConditionalOnProperty(prefix = "repository", name = "type", havingValue = "1")
-        static class OnInMemoryType {
-        }
-
-        @ConditionalOnProperty(prefix = "repository", name = "type", havingValue = "2")
-        static class OnNativeType {
-        }
-
-    }
 }
