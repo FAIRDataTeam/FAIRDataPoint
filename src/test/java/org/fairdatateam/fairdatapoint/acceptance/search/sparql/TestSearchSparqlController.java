@@ -23,7 +23,6 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.junit.jupiter.api.DisplayName;
@@ -43,9 +42,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
 
     private final Environment environment;
 
-    private final URI url = URI.create("/search/sparql");
-
-    private final ObjectMapper jsonMapper = new ObjectMapper();
+    private final String path = "/search/sparql";
 
     private final String querySelectAll = "SELECT * WHERE { ?s ?p ?o }";
 
@@ -73,7 +70,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     public void getSparqlUnauthenticated() {
         // specify request with url query, but without authentication
         URI uriWithQuery = UriComponentsBuilder
-                .fromPath("/search/sparql")
+                .fromPath(path)
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
@@ -94,7 +91,7 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     public void getSparqlAuthenticated() {
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
-                .fromPath("/search/sparql")
+                .fromPath(path)
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
