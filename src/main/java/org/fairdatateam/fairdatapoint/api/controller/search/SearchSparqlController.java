@@ -28,8 +28,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
+import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,7 +47,6 @@ import java.util.Optional;
  */
 @Slf4j
 @Tag(name = "Search")
-@ConditionalOnExpression("'${repository.type:}' != '1' and '${repository.type:}' != '2'")
 @RestController
 public class SearchSparqlController {
 
@@ -107,6 +106,9 @@ public class SearchSparqlController {
             @RequestParam(name = "default-graph-uri", required = false) List<String> defaultGraphUri,
             @RequestParam(name = "named-graph-uri", required = false) List<String> namedGraphUri
     ) {
+        if (sparqlEndpointUrl == null) {
+            throw new ResourceNotFoundException("SPARQL endpoint unavailable");
+        }
         // add query parameters
         log.info("here's the query: {}", query);
         final URI uriWithQuery = UriComponentsBuilder
