@@ -26,5 +26,6 @@ USER spring:spring
 WORKDIR /fdp
 
 COPY --from=builder /builder/target/fdp-spring-boot.jar /fdp/app.jar
+COPY --from=builder /builder/fixtures /fdp/fixtures
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

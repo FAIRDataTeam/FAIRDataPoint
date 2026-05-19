@@ -27,7 +27,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.fairdatapoint.entity.base.BaseEntityCustomUUID;
+import org.fairdatapoint.entity.base.BaseEntity;
 import org.hibernate.annotations.Type;
 
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder(toBuilder = true)
-public class Settings extends BaseEntityCustomUUID {
+public class Settings extends BaseEntity {
 
     @Column(name = "app_title")
     private String appTitle;

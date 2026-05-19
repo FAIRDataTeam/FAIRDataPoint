@@ -1,7 +1,7 @@
-@prefix :         <http://fairdatapoint.org/> .
-@prefix sh:       <http://www.w3.org/ns/shacl#> .
-@prefix dash:     <http://datashapes.org/dash#> .
-@prefix ex:       <http://example.org/> .
+@prefix :     <http://fairdatapoint.org/> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix ex:   <http://example.org/> .
 
 :CustomShape a sh:NodeShape ;
   sh:targetClass ex:Dog ;

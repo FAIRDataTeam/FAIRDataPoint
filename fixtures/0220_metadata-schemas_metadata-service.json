@@ -1,0 +1,41 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "6f7a5a76-6185-4bd0-9fe9-62ecc90c9bad"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "36b22b70-6203-4dd2-9fb6-b39a776bf467",
+    "schema": {
+      "uuid": "6f7a5a76-6185-4bd0-9fe9-62ecc90c9bad"
+    },
+    "version": "1.0.0",
+    "name": "Metadata Service",
+    "description": "",
+    "definition": "@prefix :    <http://fairdatapoint.org/> .\n@prefix fdp: <https://w3id.org/fdp/fdp-o#> .\n@prefix sh:  <http://www.w3.org/ns/shacl#> .\n\n:MetadataServiceShape a sh:NodeShape ;\n  sh:targetClass fdp:MetadataService .\n",
+    "targetClasses": [
+      "http://www.w3.org/ns/dcat#Resource",
+      "http://www.w3.org/ns/dcat#DataService",
+      "https://w3id.org/fdp/fdp-o#MetadataService"
+    ],
+    "type": "INTERNAL",
+    "origin": null,
+    "importedFrom": null,
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false,
+    "suggestedResourceName": null,
+    "suggestedUrlPrefix": null
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "8742361b-cd00-4167-b859-e45fa36d0cb7",
+    "metadataSchemaVersion": {
+      "uuid": "36b22b70-6203-4dd2-9fb6-b39a776bf467"
+    },
+    "extendedMetadataSchema": {
+      "uuid": "89d94c1b-f6ff-4545-ba9b-120b2d1921d0"
+    },
+    "orderPriority": 0
+  }
+]

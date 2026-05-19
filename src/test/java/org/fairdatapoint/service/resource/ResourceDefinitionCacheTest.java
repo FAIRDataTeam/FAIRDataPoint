@@ -32,6 +32,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,10 +56,18 @@ public class ResourceDefinitionCacheTest extends BaseIntegrationTest {
     @Autowired
     protected Flyway flyway;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private ResourceReaderRepositoryPopulator populator;
+
     @BeforeEach
     public void setup() {
         flyway.clean();
         flyway.migrate();
+        // re-populate the database using default fixtures
+        populator.populate(new Repositories(applicationContext));
     }
 
     @Test

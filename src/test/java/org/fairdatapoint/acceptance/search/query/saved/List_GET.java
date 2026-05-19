@@ -155,7 +155,7 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<SearchSavedQueryDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(3)));
+        assertThat(body.size(), is(equalTo(4)));
         assertThat(body.get(0).getUuid(), is(equalTo(q1.getUuid())));
         assertThat(body.get(1).getUuid(), is(equalTo(q2.getUuid())));
         assertThat(body.get(2).getUuid(), is(equalTo(q3.getUuid())));

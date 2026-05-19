@@ -70,7 +70,7 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat(searchSavedQueryRepository.count(), is(equalTo(3L)));
+        assertThat(searchSavedQueryRepository.count(), is(equalTo(4L)));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat(searchSavedQueryRepository.count(), is(equalTo(3L)));
+        assertThat(searchSavedQueryRepository.count(), is(equalTo(4L)));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
-        assertThat(searchSavedQueryRepository.count(), is(equalTo(2L)));
+        assertThat(searchSavedQueryRepository.count(), is(equalTo(3L)));
     }
 
     @Test
@@ -136,6 +136,6 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
-        assertThat(searchSavedQueryRepository.count(), is(equalTo(2L)));
+        assertThat(searchSavedQueryRepository.count(), is(equalTo(3L)));
     }
 }

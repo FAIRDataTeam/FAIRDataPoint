@@ -17,9 +17,15 @@ spring:
     username: ${FDP_POSTGRES_USERNAME:fdp}
     password: ${FDP_POSTGRES_PASSWORD:fdp}
   flyway:
-    locations: classpath:test/db/migration,classpath:db/migration
+    locations: classpath:db/migration
     fail-on-missing-locations: true
     clean-disabled: false
 
 ping:
   enabled: false
+
+bootstrap:
+  enabled: true
+  locations:
+    - file:fixtures
+    - classpath:test-fixtures

@@ -111,3 +111,8 @@ springdoc:
 
 server:
   forward-headers-strategy: framework
+
+bootstrap:
+  enabled: true
+  locations:
+    - file:fixtures

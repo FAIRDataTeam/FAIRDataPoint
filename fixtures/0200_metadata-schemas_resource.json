@@ -1,0 +1,26 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "71d77460-f919-4f72-b265-ed26567fe361",
+    "schema": {
+      "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee"
+    },
+    "version": "1.0.0",
+    "name": "Resource",
+    "description": "",
+    "definition": "@prefix :     <http://fairdatapoint.org/> .\n@prefix dash: <http://datashapes.org/dash#> .\n@prefix dcat: <http://www.w3.org/ns/dcat#> .\n@prefix dct:  <http://purl.org/dc/terms/> .\n@prefix foaf: <http://xmlns.com/foaf/0.1/>.\n@prefix sh:   <http://www.w3.org/ns/shacl#> .\n@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\n\n:ResourceShape a sh:NodeShape ;\n  sh:targetClass dcat:Resource ;\n  sh:property [\n    sh:path dct:title ;\n    sh:nodeKind sh:Literal ;\n    sh:minCount 1 ;\n    sh:maxCount  1 ;\n    dash:editor dash:TextFieldEditor ;\n  ], [\n    sh:path dct:description ;\n    sh:nodeKind sh:Literal ;\n    sh:maxCount 1 ;\n    dash:editor dash:TextAreaEditor ;\n  ], [\n    sh:path dct:publisher ;\n    sh:node :AgentShape ;\n    sh:minCount 1 ;\n    sh:maxCount 1 ;\n    dash:editor dash:BlankNodeEditor ;\n  ], [\n    sh:path dcat:version ;\n    sh:name \"version\" ;\n    sh:nodeKind sh:Literal ;\n    sh:minCount 1 ;\n    sh:maxCount 1 ;\n    dash:editor dash:TextFieldEditor ;\n    dash:viewer dash:LiteralViewer ;\n  ], [\n    sh:path dct:language ;\n    sh:nodeKind sh:IRI ;\n    sh:maxCount 1 ;\n    dash:editor dash:URIEditor ;\n    dash:viewer dash:LabelViewer ;\n  ], [\n    sh:path dct:license ;\n    sh:nodeKind sh:IRI ;\n    sh:maxCount 1 ;\n    dash:editor dash:URIEditor ;\n    dash:viewer dash:LabelViewer ;\n  ], [\n    sh:path dct:rights ;\n    sh:nodeKind sh:IRI ;\n    sh:maxCount 1 ;\n    dash:editor dash:URIEditor ;\n    dash:viewer dash:LabelViewer ;\n  ] .\n\n:AgentShape a sh:NodeShape ;\n  sh:targetClass foaf:Agent ;\n  sh:property [\n    sh:path foaf:name;\n    sh:nodeKind sh:Literal ;\n    sh:minCount 1 ;\n    sh:maxCount  1 ;\n    dash:editor dash:TextFieldEditor ;\n  ] .\n",
+    "targetClasses": ["http://www.w3.org/ns/dcat#Resource"],
+    "type": "INTERNAL",
+    "origin": null,
+    "importedFrom": null,
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": true,
+    "suggestedResourceName": null,
+    "suggestedUrlPrefix": null
+  }
+]

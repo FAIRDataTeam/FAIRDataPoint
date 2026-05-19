@@ -30,6 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.repository.init.ResourceReaderRepositoryPopulator;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -64,10 +67,22 @@ public abstract class WebIntegrationTest {
     @Autowired
     protected AclMigration aclMigration;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private ResourceReaderRepositoryPopulator populator;
+
     @BeforeEach
     public void setup() {
+        // drop test database content
         flyway.clean();
+        // re-migrate schemas
         flyway.migrate();
+        // re-populate the database using fixtures
+        populator.populate(new Repositories(applicationContext));
+        // re-migrate acl data
+        // (TODO: AclMigration is in a subfolder of rdf/migration, but is it even related to rdf? Looks relational...)
         aclMigration.runMigration();
     }
 }

@@ -28,7 +28,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.fairdatapoint.entity.base.BaseEntityCustomUUID;
+import org.fairdatapoint.entity.base.BaseEntity;
 import org.fairdatapoint.entity.resource.MetadataSchemaUsage;
 
 import java.util.List;
@@ -40,7 +40,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class MetadataSchema extends BaseEntityCustomUUID {
+public class MetadataSchema extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             orphanRemoval = true, mappedBy = "schema")

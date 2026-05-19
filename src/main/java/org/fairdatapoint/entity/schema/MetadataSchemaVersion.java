@@ -28,7 +28,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.fairdatapoint.entity.base.BaseEntityCustomUUID;
+import org.fairdatapoint.entity.base.BaseEntity;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Type;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -45,7 +45,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class MetadataSchemaVersion extends BaseEntityCustomUUID {
+public class MetadataSchemaVersion extends BaseEntity {
 
     @NotNull
     @ManyToOne

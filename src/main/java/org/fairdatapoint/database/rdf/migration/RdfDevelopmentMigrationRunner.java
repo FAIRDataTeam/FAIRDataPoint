@@ -22,7 +22,6 @@
  */
 package org.fairdatapoint.database.rdf.migration;
 
-import jakarta.annotation.PostConstruct;
 import org.fairdatapoint.Profiles;
 import org.fairdatapoint.database.rdf.migration.development.metadata.AclMigration;
 import org.fairdatapoint.database.rdf.migration.development.metadata.RdfMetadataMigration;
@@ -32,7 +31,9 @@ import org.fairdatapoint.database.rdf.repository.generic.GenericMetadataReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,7 +53,7 @@ public class RdfDevelopmentMigrationRunner {
     @Qualifier("genericMetadataRepository")
     private GenericMetadataRepository metadataRepository;
 
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void run() {
         rdfMetadataMigration.runMigration();
         if (activeProfile.equals(Profiles.DEVELOPMENT)) {

@@ -42,7 +42,7 @@ import java.util.UUID;
 public class BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @CustomGeneratedUUID
     @NotNull
     @Column(name = "uuid", nullable = false, updatable = false, unique = true)
     private UUID uuid;

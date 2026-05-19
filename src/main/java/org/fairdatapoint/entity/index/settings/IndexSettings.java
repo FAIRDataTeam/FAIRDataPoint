@@ -27,7 +27,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.fairdatapoint.entity.base.BaseEntityCustomUUID;
+import org.fairdatapoint.entity.base.BaseEntity;
 import org.hibernate.annotations.Type;
 
 import java.time.Duration;
@@ -40,7 +40,7 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder(toBuilder = true)
-public class IndexSettings extends BaseEntityCustomUUID {
+public class IndexSettings extends BaseEntity {
 
     @NotNull
     @Column(name = "auto_permit", nullable = false)

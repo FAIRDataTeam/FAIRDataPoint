@@ -1,0 +1,39 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinition",
+    "uuid": "02c649de-c579-43bb-b470-306abdc808c7",
+    "name": "Distribution",
+    "urlPrefix": "distribution"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinitionLink",
+    "uuid": "660a1821-a5d2-48d0-a26b-0c6d5bac3de4",
+    "resourceDefinition": {
+      "uuid": "02c649de-c579-43bb-b470-306abdc808c7"
+    },
+    "title": "Access online",
+    "propertyUri": "http://www.w3.org/ns/dcat#accessURL",
+    "orderPriority": 0
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinitionLink",
+    "uuid": "c2eaebb8-4d8d-469d-8736-269adeded996",
+    "resourceDefinition": {
+      "uuid": "02c649de-c579-43bb-b470-306abdc808c7"
+    },
+    "title": "Download",
+    "propertyUri": "http://www.w3.org/ns/dcat#downloadURL",
+    "orderPriority": 1
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.MetadataSchemaUsage",
+    "uuid": "bbf4ecb3-c529-4c02-955c-7160755debf5",
+    "resourceDefinition": {
+      "uuid": "02c649de-c579-43bb-b470-306abdc808c7"
+    },
+    "usedMetadataSchema": {
+      "uuid": "ebacbf83-cd4f-4113-8738-d73c0735b0ab"
+    },
+    "orderPriority": 0
+  }
+]

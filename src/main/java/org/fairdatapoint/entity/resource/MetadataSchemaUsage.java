@@ -29,6 +29,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.fairdatapoint.entity.base.CustomGeneratedUUID;
 import org.fairdatapoint.entity.schema.MetadataSchema;
 
 import java.util.UUID;
@@ -43,7 +44,7 @@ import java.util.UUID;
 public class MetadataSchemaUsage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @CustomGeneratedUUID
     @NotNull
     @Column(name = "uuid", nullable = false, updatable = false)
     private UUID uuid;

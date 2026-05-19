@@ -1,0 +1,40 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchema",
+    "uuid": "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaVersion",
+    "uuid": "9cc3c89a-76cf-4639-a71f-652627af51db",
+    "schema": {
+      "uuid": "866d7fb8-5982-4215-9c7c-18d0ed1bd5f3"
+    },
+    "version": "1.0.0",
+    "name": "Dataset",
+    "description": "",
+    "definition": "@prefix :     <http://fairdatapoint.org/> .\n@prefix dash: <http://datashapes.org/dash#> .\n@prefix dcat: <http://www.w3.org/ns/dcat#> .\n@prefix dct:  <http://purl.org/dc/terms/> .\n@prefix sh:   <http://www.w3.org/ns/shacl#> .\n@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\n\n:DatasetShape a sh:NodeShape ;\n  sh:targetClass dcat:Dataset ;\n  sh:property [\n    sh:path dct:issued ;\n    sh:datatype xsd:dateTime ;\n    sh:maxCount 1 ;\n    dash:editor dash:DatePickerEditor ;\n    dash:viewer dash:LiteralViewer ;\n  ], [\n    sh:path dct:modified ;\n    sh:datatype xsd:dateTime ;\n    sh:maxCount 1 ;\n    dash:editor dash:DatePickerEditor ;\n    dash:viewer dash:LiteralViewer ;\n  ],  [\n    sh:path dcat:theme ;\n    sh:nodeKind sh:IRI ;\n    sh:minCount 1 ;\n    dash:editor dash:URIEditor ;\n    dash:viewer dash:LabelViewer ;\n  ], [\n    sh:path dcat:contactPoint ;\n    sh:nodeKind sh:IRI ;\n    sh:maxCount 1 ;\n    dash:editor dash:URIEditor ;\n    dash:viewer dash:LabelViewer ;\n  ], [\n    sh:path dcat:keyword ;\n    sh:nodeKind sh:Literal ;\n    dash:editor dash:TextFieldEditor ;\n    dash:viewer dash:LiteralViewer ;\n  ], [\n    sh:path dcat:landingPage ;\n    sh:nodeKind sh:IRI ;\n    sh:maxCount 1 ;\n    dash:editor dash:URIEditor ;\n    dash:viewer dash:LabelViewer ;\n  ] .\n",
+    "targetClasses": [
+      "http://www.w3.org/ns/dcat#Resource",
+      "http://www.w3.org/ns/dcat#Dataset"
+    ],
+    "type": "INTERNAL",
+    "origin": null,
+    "importedFrom": null,
+    "state": "LATEST",
+    "published": false,
+    "abstractSchema": false,
+    "suggestedResourceName": "Dataset",
+    "suggestedUrlPrefix": "dataset"
+  },
+  {
+    "_class": "org.fairdatapoint.entity.schema.MetadataSchemaExtension",
+    "uuid": "da13ba37-09f8-4937-9055-e3ee3aefc57c",
+    "metadataSchemaVersion": {
+      "uuid": "9cc3c89a-76cf-4639-a71f-652627af51db"
+    },
+    "extendedMetadataSchema": {
+      "uuid": "6a668323-3936-4b53-8380-a4fd2ed082ee"
+    },
+    "orderPriority": 0
+  }
+]

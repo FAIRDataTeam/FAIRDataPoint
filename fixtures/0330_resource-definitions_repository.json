@@ -1,0 +1,33 @@
+[
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinition",
+    "uuid": "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c",
+    "name": "FAIR Data Point",
+    "urlPrefix": ""
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.ResourceDefinitionChild",
+    "uuid": "b8648597-8fbd-4b89-9e30-5eab82675e42",
+    "source": {
+      "uuid": "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c"
+    },
+    "target": {
+      "uuid": "a0949e72-4466-4d53-8900-9436d1049a4b"
+    },
+    "relationUri": "https://w3id.org/fdp/fdp-o#metadataCatalog",
+    "title": "Catalogs",
+    "tagsUri": "http://www.w3.org/ns/dcat#themeTaxonomy",
+    "orderPriority": 0
+  },
+  {
+    "_class": "org.fairdatapoint.entity.resource.MetadataSchemaUsage",
+    "uuid": "9b3a32a8-a14c-4eb0-ba02-3aa8e13a8f11",
+    "resourceDefinition": {
+      "uuid": "77aaad6a-0136-4c6e-88b9-07ffccd0ee4c"
+    },
+    "usedMetadataSchema": {
+      "uuid": "a92958ab-a414-47e6-8e17-68ba96ba3a2b"
+    },
+    "orderPriority": 0
+  }
+]
