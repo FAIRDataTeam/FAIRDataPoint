@@ -27,9 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.http.HTTPRepository;
-import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
+import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpHeaders;
@@ -56,35 +54,16 @@ public class SearchSparqlController {
     @Value("${openapi.title} ${openapi.version}")
     private String serverHeader;
 
-    private final Repository rdf4jRepository;
-
     private final RestClient restClient;
+
+    private final String sparqlEndpointUrl;
 
     /**
      * Constructor
      */
-    public SearchSparqlController(Repository rdf4jRepository, RestClient restClient) {
-        this.rdf4jRepository = rdf4jRepository;
+    public SearchSparqlController(RepositoryProperties graphRepositoryProperties, RestClient restClient) {
         this.restClient = restClient;
-    }
-
-    /**
-     * Returns the url of the backend triple store's SPARQL endpoint, obtained from the RDF4J repository.
-     */
-    private String determineSparqlEndpointUrl() {
-        final String sparqlEndpointUrl;
-        if (rdf4jRepository instanceof HTTPRepository httpRepository) {
-            sparqlEndpointUrl = httpRepository.getRepositoryURL();
-        }
-        else if (rdf4jRepository instanceof SPARQLRepository sparqlRepository) {
-            // toString returns the repository's queryEndpointUrl
-            sparqlEndpointUrl = sparqlRepository.toString();
-        }
-        else {
-            throw new UnsupportedOperationException(
-                    "The SPARQL proxy endpoint is only available for external triple stores");
-        }
-        return sparqlEndpointUrl;
+        this.sparqlEndpointUrl = graphRepositoryProperties.getUrl();
     }
 
     /**
@@ -131,7 +110,7 @@ public class SearchSparqlController {
         // add query parameters
         log.info("here's the query: {}", query);
         final URI uriWithQuery = UriComponentsBuilder
-                .fromUriString(determineSparqlEndpointUrl())
+                .fromUriString(sparqlEndpointUrl)
                 // the query is automatically encoded, because it contains illegal characters, but the uris are not
                 .queryParam("query", query)
                 .queryParamIfPresent("default-graph-uri", Optional.ofNullable(defaultGraphUri))
