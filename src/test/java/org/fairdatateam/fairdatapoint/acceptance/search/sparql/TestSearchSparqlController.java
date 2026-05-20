@@ -23,13 +23,23 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -37,10 +47,28 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("POST /search/sparql")
-public class TestSearchSparqlController extends WebIntegrationTest {
+@ActiveProfiles(Profiles.TESTING)
+@WebMvcTest
+public class TestSearchSparqlController {
 
-    private final Environment environment;
+    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
+            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE2MjA4Mzg3MDgsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
+            ".U3mPUE0fREeVlresvl6uHR-aTj3ATFYn7CsAJ0cyOhqvaICTvURewF8QPfw2WVZ4GGc8Ej46BqHI9rpwKqRxpQ";
+
+
+
+    private RestClient restClient;
+
+    private MockRestServiceServer mockServer;
+
+    @BeforeEach
+    void setup() {
+        // see examples at main/spring-test/src/test/java/org/springframework/test/web/client/samples/SampleTests.java
+        // https://docs.spring.io/spring-framework/reference/testing/spring-mvc-test-client.html
+        RestClient.Builder clientBuilder = RestClient.builder();
+        this.mockServer = MockRestServiceServer.bindTo(clientBuilder).ignoreExpectOrder(true).build();
+        this.restClient = clientBuilder.build();
+    }
 
     private final String path = "/search/sparql";
 
@@ -49,19 +77,10 @@ public class TestSearchSparqlController extends WebIntegrationTest {
     /**
      * Constructor
      */
-    @Autowired
-    public TestSearchSparqlController(Environment environment) {
-        this.environment = environment;
+    public TestSearchSparqlController() {
     }
 
-    /**
-     * Returns true if an external triple store is configured.
-     * For example, set <code>repository.type = 4</code> and <code>repository.graph-db.repository = "fdp-test"</code>.
-     */
-    boolean externalTripleStoreConfigured() {
-        final int repoType = Integer.parseInt(Objects.requireNonNull(environment.getProperty("repository.type")));
-        return repoType > RepositoryProperties.TYPE_NATIVE;
-    }
+
 
     /**
      * Unauthenticated requests are denied
@@ -74,10 +93,13 @@ public class TestSearchSparqlController extends WebIntegrationTest {
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
-        RequestEntity<?> request = RequestEntity.get(uriWithQuery).accept(MediaType.APPLICATION_JSON).build();
 
         // get response
-        ResponseEntity<JsonNode> response = client.exchange(request, JsonNode.class);
+        ResponseEntity<JsonNode> response = restClient.get()
+                .uri(uriWithQuery)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntity(JsonNode.class);
 
         // evaluate results
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
@@ -95,14 +117,14 @@ public class TestSearchSparqlController extends WebIntegrationTest {
                 .queryParam("query", querySelectAll)
                 .build()
                 .toUri();
-        RequestEntity<?> request = RequestEntity
-                .get(uriWithQuery)
-                .accept(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
-                .build();
 
         // get response
-        ResponseEntity<JsonNode> response = client.exchange(request, JsonNode.class);
+        ResponseEntity<JsonNode> response = restClient.get()
+                .uri(uriWithQuery)
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .retrieve()
+                .toEntity(JsonNode.class);
 
         // evaluate results
         assertEquals(HttpStatus.OK, response.getStatusCode());
