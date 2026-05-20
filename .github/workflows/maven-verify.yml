@@ -8,6 +8,10 @@ on:
       - develop
       - "support/**"
   pull_request:
+    paths-ignore:
+      - "**.cff"
+      - "**.md"
+      - "LICENSE"
   workflow_dispatch:
 
 concurrency:
@@ -22,16 +26,18 @@ jobs:
           # https://github.com/ankane/setup-mongodb?tab=readme-ov-file#versions
           - os: ubuntu-24.04
             mongo: 8
-          - os: windows-2022
-            mongo: 7
+          - os: windows-2025
+            mongo: 8
           - os: macos-14
             mongo: 8
         java-version:
           - 21
-    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v2
+    uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v3
     with:
-      runner: ${{ matrix.runner.os }}
+      runner: ${{ matrix.runner }}
       java-version: ${{ matrix.java-version }}
+      # quotes around spring.profiles.active are required for windows
+      mvn-options: '-D"spring.profiles.active"=testing'
       # db settings must match testing profile
       db-type: mongodb
       db-version: ${{ matrix.runner.mongo }}  # see https://github.com/ankane/setup-mongodb/issues/6
