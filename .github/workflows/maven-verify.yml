@@ -27,14 +27,14 @@ jobs:
           - os: ubuntu-24.04
             mongo: 8
           - os: windows-2025
-            mongo: 8
+            mongo: 7
           - os: macos-14
             mongo: 8
         java-version:
           - 21
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v3
     with:
-      runner: ${{ matrix.runner }}
+      runner: ${{ matrix.runner.os }}
       java-version: ${{ matrix.java-version }}
       # quotes around spring.profiles.active are required for windows
       mvn-options: '-D"spring.profiles.active"=testing'
