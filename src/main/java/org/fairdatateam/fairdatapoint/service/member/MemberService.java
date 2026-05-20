@@ -40,7 +40,6 @@ import org.fairdatateam.security.acls.domain.MongoAcl;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.*;
-import org.fairdatateam.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,7 +50,7 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     @Autowired
-    private MongoDBMutableAclService aclService;
+    private MutableAclService aclService;
 
     @Autowired
     private MembershipRepository membershipRepository;
