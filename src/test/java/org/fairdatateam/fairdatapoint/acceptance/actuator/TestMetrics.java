@@ -26,7 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -48,6 +50,18 @@ class TestMetrics {
     // https://docs.spring.io/spring-framework/reference/testing/mockmvc/assertj.html
     @Autowired
     private MockMvcTester mockMvc;
+
+    @Test
+    // test requests are automatically authenticated due to existing security principal (from AuthHelper.java ?)
+    @WithAnonymousUser
+    void onlyAuthenticatedUsersCanAccessMetrics() {
+        MvcTestResult testResult = mockMvc.get()
+                .uri(metricsUriBuilder.build().toUri())
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange();
+        // todo: should actually be 401 UNAUTHORIZED (see #704)
+        assertThat(testResult).hasStatus(HttpStatus.FORBIDDEN);
+    }
 
     @Test
     void onlyExposesHttpServerRequestsMetric() {
