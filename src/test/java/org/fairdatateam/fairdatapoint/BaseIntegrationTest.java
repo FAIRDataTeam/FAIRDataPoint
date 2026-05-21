@@ -29,6 +29,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles(Profiles.TESTING)
-@SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest
 public abstract class BaseIntegrationTest {
 }
