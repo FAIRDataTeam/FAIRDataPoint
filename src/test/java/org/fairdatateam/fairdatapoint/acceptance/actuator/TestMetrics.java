@@ -31,6 +31,8 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -38,9 +40,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureMockMvc
 class TestMetrics {
 
-    final String tagName = "http.url";
     final String metricName = "http.server.requests";
     final UriComponentsBuilder metricsUriBuilder = UriComponentsBuilder.fromPath("/actuator/metrics");
+    final String tagName = "http.url";
+    final String uriVisited = "/meta";
 
     // https://docs.spring.io/spring-framework/reference/testing/mockmvc/assertj.html
     @Autowired
@@ -48,8 +51,8 @@ class TestMetrics {
 
     @Test
     void onlyExposesHttpServerRequestsMetric() {
-        // visit any endpoint to initialize the "http.server.requests" metric
-        mockMvc.get().uri("/meta").exchange();
+        // visit some endpoint to initialize the "http.server.requests" metric
+        mockMvc.get().uri(uriVisited).exchange();
         // get metrics list
         MvcTestResult testResult = mockMvc.get()
                 .uri(metricsUriBuilder.build().toUri())
@@ -67,8 +70,7 @@ class TestMetrics {
 
     @Test
     void listsVisitedEndpointUris() {
-        // visit any endpoint to initialize the "http.server.requests" metric
-        final String uriVisited = "/meta";
+        // visit some endpoint to initialize the "http.server.requests" metric
         mockMvc.get().uri(uriVisited).exchange();
         // get the available metrics for "http.server.requests"
         MvcTestResult testResult = mockMvc.get()
@@ -82,5 +84,30 @@ class TestMetrics {
                 .filteredOn("tag", tagName)
                 .flatExtracting("values")
                 .contains(uriVisited);
+    }
+
+    @Test
+    void endpointVisitsAreCounted() {
+        // visit some endpoint a number of times
+        final int visitCount = 3;
+        for (int i = 0; i < visitCount; i++) {
+            mockMvc.get().uri(uriVisited).exchange();
+        }
+        // get the available metrics for this endpoint
+        URI endpointMetricsUri = metricsUriBuilder
+                .pathSegment(metricName)
+                .queryParam("tag", "%s:%s".formatted(tagName, uriVisited))
+                .build().toUri();
+        MvcTestResult testResult = mockMvc.get()
+                .uri(endpointMetricsUri)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange();
+        // the COUNT statistic value for this endpoint should match the actual number of visits
+        assertThat(testResult).hasStatusOk().hasContentTypeCompatibleWith(MediaType.APPLICATION_JSON);
+        assertThat(testResult).bodyJson().extractingPath("$.name").isEqualTo(metricName);
+        assertThat(testResult).bodyJson().extractingPath("$.measurements").asArray()
+                .filteredOn("statistic", "COUNT")
+                .extracting("value")
+                .contains((double) visitCount);
     }
 }
