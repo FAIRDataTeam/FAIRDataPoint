@@ -57,7 +57,6 @@ class TestMetrics {
     void onlyAuthenticatedUsersCanAccessMetrics() {
         MvcTestResult testResult = mockMvc.get()
                 .uri(metricsUriBuilder.build().toUri())
-                .accept(MediaType.APPLICATION_JSON)
                 .exchange();
         // todo: should actually be 401 UNAUTHORIZED (see #704)
         assertThat(testResult).hasStatus(HttpStatus.FORBIDDEN);
