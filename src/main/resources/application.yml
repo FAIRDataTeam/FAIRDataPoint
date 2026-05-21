@@ -36,8 +36,8 @@ management:
   metrics:
     enable:
       all: false
-      http:
-        server: true
+      http.server.requests: true
+      http.server.requests.active: false
 
 security:
   jwt:
