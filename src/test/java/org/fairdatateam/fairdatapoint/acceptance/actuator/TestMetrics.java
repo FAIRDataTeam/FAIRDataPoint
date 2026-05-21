@@ -29,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,22 +37,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureMockMvc
 class TestMetrics {
+
+    final String tagName = "http.url";
+    final String metricName = "http.server.requests";
+    final UriComponentsBuilder metricsUriBuilder = UriComponentsBuilder.fromPath("/actuator/metrics");
+
+    // https://docs.spring.io/spring-framework/reference/testing/mockmvc/assertj.html
     @Autowired
     private MockMvcTester mockMvc;
 
     @Test
-    void onlyExposesServerMetrics() {
-        // https://docs.spring.io/spring-framework/reference/testing/mockmvc/assertj.html
+    void onlyExposesHttpServerRequestsMetric() {
+        // visit any endpoint to initialize the "http.server.requests" metric
+        mockMvc.get().uri("/meta").exchange();
+        // get metrics list
         MvcTestResult testResult = mockMvc.get()
-                .uri("/actuator/metrics")
+                .uri(metricsUriBuilder.build().toUri())
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange();
+        // results should only include the "http.server.requests" (this only appears if endpoints have been visited)
         assertThat(testResult)
                 .hasStatusOk()
                 .hasContentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .bodyJson()
                 .extractingPath("$.names")
                 .asArray()
-                .containsExactly("http.server.requests.active");
+                .containsExactly(metricName);
     }
 }
