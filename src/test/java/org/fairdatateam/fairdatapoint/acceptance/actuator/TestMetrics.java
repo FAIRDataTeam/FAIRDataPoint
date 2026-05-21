@@ -64,4 +64,23 @@ class TestMetrics {
                 .asArray()
                 .containsExactly(metricName);
     }
+
+    @Test
+    void listsVisitedEndpointUris() {
+        // visit any endpoint to initialize the "http.server.requests" metric
+        final String uriVisited = "/meta";
+        mockMvc.get().uri(uriVisited).exchange();
+        // get the available metrics for "http.server.requests"
+        MvcTestResult testResult = mockMvc.get()
+                .uri(metricsUriBuilder.pathSegment(metricName).build().toUri())
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange();
+        // the visited endpoint should be included in the available tag values for "http.url"
+        assertThat(testResult).hasStatusOk().hasContentTypeCompatibleWith(MediaType.APPLICATION_JSON);
+        assertThat(testResult).bodyJson().extractingPath("$.name").isEqualTo(metricName);
+        assertThat(testResult).bodyJson().extractingPath("$.availableTags").asArray()
+                .filteredOn("tag", tagName)
+                .flatExtracting("values")
+                .contains(uriVisited);
+    }
 }
