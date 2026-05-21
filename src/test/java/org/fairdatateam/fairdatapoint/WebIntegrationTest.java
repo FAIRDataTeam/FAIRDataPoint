@@ -35,9 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles(Profiles.TESTING)
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-        properties = {"spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 public abstract class WebIntegrationTest {
 
