@@ -22,7 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.actuator;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.fairdatateam.fairdatapoint.Profiles;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -52,9 +54,18 @@ class TestMetrics {
     final String tagName = "http.url";
     final String uriVisited = "/meta";
 
+    @Autowired
+    private MeterRegistry meterRegistry;
+
     // https://docs.spring.io/spring-framework/reference/testing/mockmvc/assertj.html
     @Autowired
     private MockMvcTester mockMvc;
+
+    @BeforeEach
+    void clearMeterRegistry() {
+        // clear all metrics
+        meterRegistry.clear();
+    }
 
     @Test
     @WithAnonymousUser
