@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -40,7 +40,7 @@ import java.net.URI;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles(Profiles.TESTING)
-@WebMvcTest
+@SpringBootTest
 @WithMockUser
 public class SearchSparqlControllerTest {
 
