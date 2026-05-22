@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
@@ -43,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles(Profiles.TESTING)
 @AutoConfigureMockMvc
 @SpringBootTest
+@WithMockUser
 class TestMetrics {
 
     final String metricName = "http.server.requests";
