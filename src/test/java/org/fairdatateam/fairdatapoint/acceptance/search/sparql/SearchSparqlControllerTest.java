@@ -28,6 +28,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.*;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
@@ -39,13 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles(Profiles.TESTING)
 @WebMvcTest
+@WithMockUser
 public class SearchSparqlControllerTest {
-
-    public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
-            ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE2MjA4Mzg3MDgsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
-            ".U3mPUE0fREeVlresvl6uHR-aTj3ATFYn7CsAJ0cyOhqvaICTvURewF8QPfw2WVZ4GGc8Ej46BqHI9rpwKqRxpQ";
-
-
 
     private RestClient restClient;
 
@@ -70,12 +67,11 @@ public class SearchSparqlControllerTest {
     public SearchSparqlControllerTest() {
     }
 
-
-
     /**
      * Unauthenticated requests are denied
      */
     @Test
+    @WithAnonymousUser
     public void getSparqlUnauthenticated() {
         // specify request with url query, but without authentication
         URI uriWithQuery = UriComponentsBuilder
@@ -111,7 +107,6 @@ public class SearchSparqlControllerTest {
         ResponseEntity<JsonNode> response = restClient.get()
                 .uri(uriWithQuery)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .retrieve()
                 .toEntity(JsonNode.class);
 
