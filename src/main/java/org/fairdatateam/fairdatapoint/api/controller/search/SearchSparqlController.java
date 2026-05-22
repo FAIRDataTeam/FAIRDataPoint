@@ -135,8 +135,11 @@ public class SearchSparqlController {
         return restClient.get()
                 .uri(uriWithQuery)
                 .headers(restHeaders -> {
-                    // copy all headers and forward the client ip (otherwise the upstream only sees the proxy ip)
+                    // copy all headers
                     restHeaders.putAll(requestHeaders);
+                    // remove any authorization to prevent privilege escalation attempts
+                    restHeaders.remove(HttpHeaders.AUTHORIZATION);
+                    // forward the client ip (otherwise the upstream only sees the proxy ip)
                     restHeaders.add("X-Forwarded-For", request.getRemoteAddr());
                 })
                 .exchange((restRequest, restResponse) -> {
