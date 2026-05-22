@@ -24,26 +24,16 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -109,7 +99,6 @@ public class SearchSparqlControllerTest {
      * Performs a basic SELECT query via GET request to external triple store, if available.
      */
     @Test
-//    @EnabledIf("externalTripleStoreConfigured")
     public void getSparqlAuthenticated() {
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
