@@ -41,8 +41,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @ActiveProfiles(Profiles.TESTING)
-@SpringBootTest
 @AutoConfigureMockMvc
+@SpringBootTest
 class TestMetrics {
 
     final String metricName = "http.server.requests";
