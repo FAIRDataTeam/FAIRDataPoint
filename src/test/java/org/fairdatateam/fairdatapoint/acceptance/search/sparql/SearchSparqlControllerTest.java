@@ -67,12 +67,9 @@ public class SearchSparqlControllerTest {
     public SearchSparqlControllerTest() {
     }
 
-    /**
-     * Unauthenticated requests are denied
-     */
     @Test
     @WithAnonymousUser
-    public void getSparqlUnauthenticated() {
+    public void unauthenticatedRequestsAreDenied() {
         // specify request with url query, but without authentication
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
@@ -91,11 +88,8 @@ public class SearchSparqlControllerTest {
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
-    /**
-     * Performs a basic SELECT query via GET request to external triple store, if available.
-     */
     @Test
-    public void getSparqlAuthenticated() {
+    public void simpleSelectQueryWorksViaGet() {
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
