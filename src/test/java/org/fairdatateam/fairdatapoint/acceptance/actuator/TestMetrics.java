@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.actuator;
 
+import org.fairdatateam.fairdatapoint.Profiles;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -38,6 +40,7 @@ import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@ActiveProfiles(Profiles.TESTING)
 @SpringBootTest
 @AutoConfigureMockMvc
 class TestMetrics {
@@ -52,7 +55,6 @@ class TestMetrics {
     private MockMvcTester mockMvc;
 
     @Test
-    // test requests are automatically authenticated due to existing security principal (from AuthHelper.java ?)
     @WithAnonymousUser
     void onlyAuthenticatedUsersCanAccessMetrics() {
         MvcTestResult testResult = mockMvc.get()
