@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles(Profiles.TESTING)
 @WebMvcTest
-public class TestSearchSparqlController {
+public class SearchSparqlControllerTest {
 
     public static final String NIKOLA_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
             ".eyJzdWIiOiJiNWI5MmM2OS01ZWQ5LTQwNTQtOTU0ZC0wMTIxYzI5YjY4MDAiLCJpYXQiOjE2MjA4Mzg3MDgsImV4cCI6MjUzMzcwNzY4NDYxfQ" +
@@ -77,7 +77,7 @@ public class TestSearchSparqlController {
     /**
      * Constructor
      */
-    public TestSearchSparqlController() {
+    public SearchSparqlControllerTest() {
     }
 
 
