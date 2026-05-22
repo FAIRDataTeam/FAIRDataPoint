@@ -23,6 +23,7 @@
 
 package org.fairdatateam.fairdatapoint.api.controller.search;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -49,6 +50,13 @@ import java.util.Optional;
 @Tag(name = "Search")
 @RestController
 public class SearchSparqlController {
+
+    private static final String DESCRIPTION_EXPERIMENTAL = """
+            [EXPERIMENTAL]
+            SPARQL endpoint - Supports SPARQL query operations following the SPARQL protocol.
+            Update operations are not allowed.
+            This endpoint is not part of the stable API and may change in future releases.
+            """;
 
     @Value("${openapi.title} ${openapi.version}")
     private String serverHeader;
@@ -96,6 +104,7 @@ public class SearchSparqlController {
      * The triple store SPARQL endpoint is expected to comply with the
      * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
      */
+    @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/search/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpoint(
