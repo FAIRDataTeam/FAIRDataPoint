@@ -54,12 +54,19 @@ class MetricsTest {
     final String tagName = "http.url";
     final String uriVisited = "/meta";
 
-    @Autowired
-    private MeterRegistry meterRegistry;
+    private final MeterRegistry meterRegistry;
 
     // https://docs.spring.io/spring-framework/reference/testing/mockmvc/assertj.html
+    private final MockMvcTester mockMvc;
+
+    /**
+     * Constructor
+     */
     @Autowired
-    private MockMvcTester mockMvc;
+    MetricsTest(MeterRegistry meterRegistry, MockMvcTester mockMvc) {
+        this.meterRegistry = meterRegistry;
+        this.mockMvc = mockMvc;
+    }
 
     @BeforeEach
     void clearMeterRegistry() {
