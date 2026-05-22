@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureMockMvc
 @SpringBootTest
 @WithMockUser
-class TestMetrics {
+class MetricsTest {
 
     final String metricName = "http.server.requests";
     final UriComponentsBuilder metricsUriBuilder = UriComponentsBuilder.fromPath("/actuator/metrics");
