@@ -22,9 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.config;
 
+import org.fairdatateam.fairdatapoint.Profiles;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +34,7 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 
 @Configuration
+@Profile(Profiles.NON_TESTING)
 public class HttpClientConfig {
     // TODO: use newer WebClient (Spring 5)
 
