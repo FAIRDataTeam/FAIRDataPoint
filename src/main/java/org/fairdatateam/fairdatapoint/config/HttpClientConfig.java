@@ -36,9 +36,10 @@ public class HttpClientConfig {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
-    @Bean RestClient restClient() {
+    @Bean RestClient restClient(RestClient.Builder builder) {
+        // The builder argument is required for autoconfiguration of MockRestServiceServer in tests
         // https://docs.spring.io/spring-framework/reference/integration/rest-clients.html
-        return RestClient.create();
+        return builder.build();
     }
 
     @Bean
