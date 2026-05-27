@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.http.HttpClient;
 import java.time.Duration;
 
 @Configuration
@@ -51,14 +50,6 @@ public class HttpClientConfig {
                 // todo: these are deprecated, but we should replace RestTemplate by RestClient anyway
                 .setConnectTimeout(TIMEOUT)
                 .setReadTimeout(TIMEOUT)
-                .build();
-    }
-
-    @Bean
-    public HttpClient httpClient() {
-        return HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2)
-                .followRedirects(HttpClient.Redirect.ALWAYS)
                 .build();
     }
 
