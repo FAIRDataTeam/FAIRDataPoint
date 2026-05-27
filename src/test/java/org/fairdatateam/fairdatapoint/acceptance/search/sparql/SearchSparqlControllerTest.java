@@ -24,9 +24,6 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
-import org.fairdatateam.fairdatapoint.service.index.event.EventService;
-import org.fairdatateam.fairdatapoint.service.index.harvester.HarvesterService;
-import org.fairdatateam.fairdatapoint.service.ping.PingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
@@ -42,7 +39,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
@@ -57,16 +54,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @WithMockUser
 public class SearchSparqlControllerTest {
 
-    // EventService, HarvesterService, and PingService are mocked because they depend on RestTemplate and HttpClient
-    // from HttpClientConfig.java, which conflict with RestClient causing @AutoConfigureMockRestServiceServer failure
     @MockitoBean
-    EventService eventService;
-
-    @MockitoBean
-    HarvesterService harvesterService;
-
-    @MockitoBean
-    PingService pingService;
+    RestTemplate restTemplate;
 
     private final MockMvcTester mockMvc;
 
@@ -158,22 +147,7 @@ public class SearchSparqlControllerTest {
                 public String getUrl() {
                     return TEST_SPARQL_ENDPOINT_URL;
                 }
-
-                ;
             };
-        }
-
-        /**
-         * Configures a restClient bean to be used instead of the one from HttpClientConfig.
-         * The HttpClientConfig contains several types of clients, which causes @AutoConfigureMockRestServiceServer
-         * to fail. In the future it should only contain a RestClient anyway, but, for now, we disable HttpClientConfig
-         * and mock the unrelated services that depend on the other (conflicting) client types.
-         */
-        @Bean
-        RestClient restClient(RestClient.Builder builder) {
-            // Flow: MockMvcTester → Controller → RestClient → MockRestServiceServer
-            // https://docs.spring.io/spring-framework/reference/integration/rest-clients.html
-            return builder.build();
         }
 
     }
