@@ -44,8 +44,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.startsWith;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @ActiveProfiles(Profiles.TESTING)
@@ -97,6 +98,10 @@ public class SearchSparqlControllerTest {
         this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
                 .expect(requestTo(startsWith(TestConfig.TEST_SPARQL_ENDPOINT_URL)))
+                // forwarded header should have been added to request
+                .andExpect(header("X-Forwarded-For", matchesPattern(".+")))
+                // authorization headers should have been removed from request
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
                 .andRespond(withSuccess());
 
         // specify request with url query and normal user (non-admin)
