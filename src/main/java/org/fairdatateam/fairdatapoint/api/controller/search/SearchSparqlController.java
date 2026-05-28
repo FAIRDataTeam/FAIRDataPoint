@@ -58,6 +58,17 @@ public class SearchSparqlController {
             This endpoint is not part of the stable API and may change in future releases.
             """;
 
+    // standard hop-by-hop headers mentioned in rfc2616
+    private static final List<String> HOP_BY_HOP_HEADERS = List.of(
+            "Keep-Alive",
+            HttpHeaders.PROXY_AUTHENTICATE,
+            HttpHeaders.PROXY_AUTHORIZATION,
+            HttpHeaders.TE,
+            HttpHeaders.TRAILER,
+            HttpHeaders.TRANSFER_ENCODING,
+            HttpHeaders.UPGRADE
+    );
+
     @Value("${openapi.title} ${openapi.version}")
     private String serverHeader;
 
@@ -74,6 +85,14 @@ public class SearchSparqlController {
     }
 
     /**
+     * The hop-by-hop headers have nothing to do with our SPARQL query, but,
+     * if they exist, for whatever reason, they need to be removed by our proxy.
+     */
+    public static List<String> getHopByHopHeaders() {
+        return HOP_BY_HOP_HEADERS;
+    }
+
+    /**
      * Extracts headers from response and removes the ones that should not be forwarded,
      * such as hop-by-hop headers. These must be listed in the Connection header (see rfc9110 7.6.1).
      */
@@ -84,14 +103,8 @@ public class SearchSparqlController {
         // remove all headers listed in the "Connection" header
         headers.getConnection().forEach(headers::remove);
         headers.remove(HttpHeaders.CONNECTION);
-        // explicitly remove standard hop-by-hop headers mentioned in rfc2616 (although Connection should list them too)
-        headers.remove("Keep-Alive");
-        headers.remove(HttpHeaders.PROXY_AUTHENTICATE);
-        headers.remove(HttpHeaders.PROXY_AUTHORIZATION);
-        headers.remove(HttpHeaders.TE);
-        headers.remove(HttpHeaders.TRAILER);
-        headers.remove(HttpHeaders.TRANSFER_ENCODING);
-        headers.remove(HttpHeaders.UPGRADE);
+        // explicitly remove hop-by-hop headers (although Connection should list them too)
+        HOP_BY_HOP_HEADERS.forEach(headers::remove);
         // rewrite the server header to hide the type of backend triple store
         headers.set(HttpHeaders.SERVER, serverHeader);
         return headers;
