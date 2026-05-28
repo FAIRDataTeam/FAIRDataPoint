@@ -95,7 +95,7 @@ public class SearchSparqlControllerTest {
     }
 
     @Test
-    public void simpleSelectQueryWorksViaGet() {
+    public void proxyForwardingWorksForGet() {
         // mock headers for response from mock backend sparql server
         final HttpHeaders mockBackendResponseHeaders = new HttpHeaders();
         // add a custom header
