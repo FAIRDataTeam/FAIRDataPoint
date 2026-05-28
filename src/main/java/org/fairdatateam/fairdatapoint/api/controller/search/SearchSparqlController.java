@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,6 +47,7 @@ import java.util.Optional;
  * This controller depends on a SPARQL endpoint provided by an external triple store.
  * For this reason it is disabled when using an in-memory or native (file system) triple store.
  */
+@ConditionalOnProperty(value = "instance.sparqlProxyEnabled", havingValue = "true")
 @Slf4j
 @Tag(name = "Search")
 @RestController

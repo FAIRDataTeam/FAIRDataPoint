@@ -54,7 +54,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @ActiveProfiles(Profiles.TESTING)
 @AutoConfigureMockMvc
 @AutoConfigureMockRestServiceServer
-@SpringBootTest
+@SpringBootTest(properties = { "instance.sparqlProxyEnabled=true" })
 @WithMockUser
 public class SearchSparqlControllerTest {
 

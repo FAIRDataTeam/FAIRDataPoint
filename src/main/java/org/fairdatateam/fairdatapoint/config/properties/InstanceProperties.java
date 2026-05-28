@@ -41,6 +41,9 @@ public class InstanceProperties {
     private boolean index;
     private boolean indexAutoPermit;
 
+    // enable an optional sparql proxy endpoint that forwards requests to the backend triple store sparql endpoint
+    private boolean sparqlProxyEnabled = false;
+
     private String title = "FAIR Data Point";
     private String subtitle = "Metadata for machines";
 
