@@ -44,6 +44,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -54,6 +55,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @WithMockUser
 public class SearchSparqlControllerTest {
 
+    // mock ResTemplate to prevent autoconfig issues with MockRestServiceServer (the controller uses RestClient)
     @MockitoBean
     RestTemplate restTemplate;
 
@@ -93,8 +95,8 @@ public class SearchSparqlControllerTest {
     public void simpleSelectQueryWorksViaGet() {
         // configure mock server for remote SPARQL endpoint
         this.mockRemoteSparqlServer
-                // todo: handle url query params...
-                .expect(requestTo(TestConfig.TEST_SPARQL_ENDPOINT_URL))
+                // startsWith is required, otherwise it will expect a url without (query) parameters
+                .expect(requestTo(startsWith(TestConfig.TEST_SPARQL_ENDPOINT_URL)))
                 .andRespond(withSuccess());
 
         // specify request with url query and normal user (non-admin)
