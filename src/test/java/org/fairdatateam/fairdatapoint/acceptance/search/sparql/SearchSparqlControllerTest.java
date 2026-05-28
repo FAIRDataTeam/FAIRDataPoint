@@ -61,7 +61,7 @@ public class SearchSparqlControllerTest {
 
     private final MockMvcTester mockMvc;
 
-    private final MockRestServiceServer mockRemoteSparqlServer;
+    private final MockRestServiceServer mockBackendSparqlServer;
 
     private final String path = "/search/sparql";
 
@@ -71,9 +71,9 @@ public class SearchSparqlControllerTest {
      * Constructor
      */
     @Autowired
-    public SearchSparqlControllerTest(MockMvcTester mockMvc, MockRestServiceServer mockRemoteSparqlServer) {
+    public SearchSparqlControllerTest(MockMvcTester mockMvc, MockRestServiceServer mockBackendSparqlServer) {
         this.mockMvc = mockMvc;
-        this.mockRemoteSparqlServer = mockRemoteSparqlServer;
+        this.mockBackendSparqlServer = mockBackendSparqlServer;
     }
 
     @Test
@@ -94,7 +94,7 @@ public class SearchSparqlControllerTest {
     @Test
     public void simpleSelectQueryWorksViaGet() {
         // configure mock server for remote SPARQL endpoint
-        this.mockRemoteSparqlServer
+        this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
                 .expect(requestTo(startsWith(TestConfig.TEST_SPARQL_ENDPOINT_URL)))
                 .andRespond(withSuccess());
@@ -106,6 +106,7 @@ public class SearchSparqlControllerTest {
                 .build()
                 .toUri();
 
+        // execute request
         MvcTestResult testResult = mockMvc.get().uri(uriWithQuery).accept(MediaType.APPLICATION_JSON).exchange();
 
         assertThat(testResult).hasStatusOk();
