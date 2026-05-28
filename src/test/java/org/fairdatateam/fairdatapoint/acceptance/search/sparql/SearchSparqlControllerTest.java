@@ -109,6 +109,8 @@ public class SearchSparqlControllerTest {
         // add server header
         final String backendServerHeader = "mock backend sparql server 1.0";
         mockBackendResponseHeaders.add(HttpHeaders.SERVER, backendServerHeader);
+        // mock json response body (https://www.w3.org/TR/sparql11-results-json/)
+        final String mockJsonBody = "{\"head\": {\"vars\": []}, \"results\": {\"bindings\": []}}";
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
@@ -117,7 +119,7 @@ public class SearchSparqlControllerTest {
                 .andExpect(header("X-Forwarded-For", matchesPattern(".+")))
                 // authorization headers should have been removed from request
                 .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-                .andRespond(withSuccess().headers(mockBackendResponseHeaders));
+                .andRespond(withSuccess().headers(mockBackendResponseHeaders).body(mockJsonBody));
 
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
@@ -140,28 +142,10 @@ public class SearchSparqlControllerTest {
         hopByHopHeaders.forEach(header -> assertThat(testResult).doesNotContainHeader(header));
         assertThat(testResult).containsHeader(HttpHeaders.SERVER);
         assertThat(testResult).headers().doesNotContainEntry(HttpHeaders.SERVER, List.of(backendServerHeader));
+        // verify that proxy returns json response body
+        assertThat(testResult).bodyJson().hasPath("head.vars").hasPath("results.bindings");
 
-//        // get response
-//        ResponseEntity<JsonNode> response = restClient.get()
-//                .uri(uriWithQuery)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .retrieve()
-//                .toEntity(JsonNode.class);
-//
-//        // evaluate results
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        final MediaType contentType = response.getHeaders().getContentType();
-//        assertNotNull(contentType);
-//        final MediaType expectedType = MediaType.parseMediaType("application/sparql-results+json");
-//        assertTrue(contentType.equalsTypeAndSubtype(expectedType));
-//        final JsonNode body = response.getBody();
-//        assertNotNull(body);
-//        // https://www.w3.org/TR/sparql11-results-json/
-//        assertTrue(body.has("head"));
-//        assertTrue(body.has("results"));
     }
-
-
 
     // note that @Configuration overrides the primary config, whereas @TestConfiguration extends it
     @TestConfiguration
