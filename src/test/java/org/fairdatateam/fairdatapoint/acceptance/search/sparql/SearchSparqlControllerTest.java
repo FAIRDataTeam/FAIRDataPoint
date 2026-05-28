@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -94,6 +96,19 @@ public class SearchSparqlControllerTest {
 
     @Test
     public void simpleSelectQueryWorksViaGet() {
+        // mock headers for response from mock backend sparql server
+        final HttpHeaders mockBackendResponseHeaders = new HttpHeaders();
+        // add a custom header
+        final String customHeaderName = "my-custom-header";
+        mockBackendResponseHeaders.add(customHeaderName, "dummy");
+        // add standard hop-by-hop headers
+        final List<String> hopByHopHeaders = SearchSparqlController.getHopByHopHeaders();
+        hopByHopHeaders.forEach(header -> mockBackendResponseHeaders.add(header, "dummy"));
+        // connection list is incomplete on purpose (does not contain all hop-by-hop headers)
+        mockBackendResponseHeaders.put(HttpHeaders.CONNECTION, List.of(customHeaderName, hopByHopHeaders.get(0)));
+        // add server header
+        final String backendServerHeader = "mock backend sparql server 1.0";
+        mockBackendResponseHeaders.add(HttpHeaders.SERVER, backendServerHeader);
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
@@ -102,7 +117,7 @@ public class SearchSparqlControllerTest {
                 .andExpect(header("X-Forwarded-For", matchesPattern(".+")))
                 // authorization headers should have been removed from request
                 .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-                .andRespond(withSuccess());
+                .andRespond(withSuccess().headers(mockBackendResponseHeaders));
 
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
@@ -112,9 +127,19 @@ public class SearchSparqlControllerTest {
                 .toUri();
 
         // execute request
-        MvcTestResult testResult = mockMvc.get().uri(uriWithQuery).accept(MediaType.APPLICATION_JSON).exchange();
+        MvcTestResult testResult = mockMvc.get()
+                .uri(uriWithQuery)
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "dummy")
+                .exchange();
 
+        // check response headers
         assertThat(testResult).hasStatusOk();
+        assertThat(testResult).doesNotContainHeader(customHeaderName);
+        assertThat(testResult).doesNotContainHeader(HttpHeaders.CONNECTION);
+        hopByHopHeaders.forEach(header -> assertThat(testResult).doesNotContainHeader(header));
+        assertThat(testResult).containsHeader(HttpHeaders.SERVER);
+        assertThat(testResult).headers().doesNotContainEntry(HttpHeaders.SERVER, List.of(backendServerHeader));
 
 //        // get response
 //        ResponseEntity<JsonNode> response = restClient.get()
