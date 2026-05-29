@@ -40,10 +40,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController.*;
@@ -153,6 +156,42 @@ public class SearchSparqlControllerTest {
         hopByHopHeaders.forEach(header -> assertThat(testResult).doesNotContainHeader(header));
         assertThat(testResult).containsHeader(HttpHeaders.SERVER);
         assertThat(testResult).headers().doesNotContainEntry(HttpHeaders.SERVER, List.of(backendServerHeader));
+
+        // verify that proxy returns json response body
+        assertThat(testResult).bodyJson().hasPath("head.vars").hasPath("results.bindings");
+
+    }
+
+    @Test
+    public void proxyForwardingWorksForPostFormRequests() {
+        // mock form data
+        final MultiValueMap<String, String> formData = CollectionUtils.toMultiValueMap(Map.of(
+                PARAM_QUERY, List.of(querySelectAll),
+                PARAM_DEFAULT_GRAPH_URI, List.of("http://default.graph.uri"),
+                PARAM_NAMED_GRAPH_URI, List.of("http://named.graph.uri")
+        ));
+
+        // configure mock server for remote SPARQL endpoint
+        this.mockBackendSparqlServer
+                .expect(requestTo(TestConfig.TEST_SPARQL_ENDPOINT_URL))
+                .andExpect(method(HttpMethod.POST))
+                // form data from original request must arrive at server unaltered (except for empty lists)
+                .andExpect(content().formData(formData))
+                .andRespond(withSuccess().body(mockJsonBody));
+
+        // execute request
+        MvcTestResult testResult = mockMvc.post()
+                .uri(URI.create(path))
+                .accept(MediaType.APPLICATION_JSON)
+                // note that empty list values in formData are not included in the actual form data
+                .formFields(formData)
+                .exchange();
+
+        // check that mock server has received expected requests
+        mockBackendSparqlServer.verify();
+
+        // check response headers
+        assertThat(testResult).hasStatusOk();
         // verify that proxy returns json response body
         assertThat(testResult).bodyJson().hasPath("head.vars").hasPath("results.bindings");
 

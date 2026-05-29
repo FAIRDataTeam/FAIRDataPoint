@@ -34,8 +34,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -43,6 +46,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -163,7 +167,7 @@ public class SearchSparqlController {
     }
 
     /**
-     * Proxy for the triple store SPARQL endpoint.
+     * Proxy for GET requests to the triple store SPARQL endpoint.
      * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
      * except for headers that should not be forwarded.
      * The triple store SPARQL endpoint is expected to comply with the
@@ -198,6 +202,48 @@ public class SearchSparqlController {
         return restClient.get()
                 .uri(uriWithQuery)
                 .headers(cleanRequestHeadersFactory(request, requestHeaders))
+                .exchange(this::cleanResponse);
+    }
+
+    /**
+     * Proxy for POST requests to the triple store SPARQL endpoint, using form data.
+     * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
+     * except for headers that should not be forwarded.
+     * The triple store SPARQL endpoint is expected to comply with the
+     * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
+     */
+    @Operation(description = DESCRIPTION_EXPERIMENTAL)
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(value = "/search/sparql", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<byte[]> proxySparqlEndpointPostForm(
+            HttpServletRequest request,
+            @RequestHeader HttpHeaders requestHeaders,
+            // request parameters defined in SPARQL protocol (in this case bound to form data)
+            @RequestParam(name = PARAM_QUERY) String query,
+            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
+            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
+    ) {
+        returnIfSparqlEndpointUnavailable();
+        // @RequestParam is used in the method signature for convenient validation and generation of api docs.
+        // However, this means we need to reconstruct the form data before we can forward it to the backend server.
+        // (an alternative would be to use `@RequestBody MultiValueMap<String, String> sparqlForm`, combined with
+        // custom validation, instead of the individual @RequestParam entries)
+        // TODO: make MultiValueMap mutable!
+        final MultiValueMap<String, String> sparqlForm = CollectionUtils.toMultiValueMap(Map.of(
+                PARAM_QUERY, List.of(query)
+        ));
+        if ( defaultGraphUri != null && !defaultGraphUri.isEmpty() ) {
+            sparqlForm.put(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri);
+        }
+        if ( namedGraphUri != null && !namedGraphUri.isEmpty() ) {
+            sparqlForm.put(PARAM_NAMED_GRAPH_URI, namedGraphUri);
+        }
+        // post to backend sparql endpoint
+        final URI uri = URI.create(sparqlEndpointUrl);
+        return restClient.post()
+                .uri(uri)
+                .headers(cleanRequestHeadersFactory(request, requestHeaders))
+                .body(sparqlForm)
                 .exchange(this::cleanResponse);
     }
 
