@@ -46,6 +46,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController.*;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -131,7 +132,7 @@ public class SearchSparqlControllerTest {
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
-                .queryParam("query", querySelectAll)
+                .queryParam(PARAM_QUERY, querySelectAll)
                 .build()
                 .toUri();
 

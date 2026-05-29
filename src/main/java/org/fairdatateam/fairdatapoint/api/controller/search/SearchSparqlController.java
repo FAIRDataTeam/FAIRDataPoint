@@ -56,6 +56,12 @@ import java.util.function.Consumer;
 @RestController
 public class SearchSparqlController {
 
+    public static final String PARAM_QUERY = "query";
+
+    public static final String PARAM_DEFAULT_GRAPH_URI = "default-graph-uri";
+
+    public static final String PARAM_NAMED_GRAPH_URI = "named-graph-uri";
+
     private static final String DESCRIPTION_EXPERIMENTAL = """
             [EXPERIMENTAL]
             SPARQL endpoint - Supports SPARQL query operations following the SPARQL protocol.
@@ -170,9 +176,9 @@ public class SearchSparqlController {
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
             // request parameters defined in SPARQL protocol
-            @RequestParam(name = "query") String query,
-            @RequestParam(name = "default-graph-uri", required = false) List<String> defaultGraphUri,
-            @RequestParam(name = "named-graph-uri", required = false) List<String> namedGraphUri
+            @RequestParam(name = PARAM_QUERY) String query,
+            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
+            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
         returnIfSparqlEndpointUnavailable();
         // add query parameters
@@ -180,15 +186,15 @@ public class SearchSparqlController {
         final URI uriWithQuery = UriComponentsBuilder
                 .fromUriString(sparqlEndpointUrl)
                 // the query is automatically encoded, because it contains illegal characters, but the uris are not
-                .queryParam("query", query)
-                .queryParamIfPresent("default-graph-uri", Optional.ofNullable(defaultGraphUri))
-                .queryParamIfPresent("named-graph-uri", Optional.ofNullable(namedGraphUri))
+                .queryParam(PARAM_QUERY, query)
+                .queryParamIfPresent(PARAM_DEFAULT_GRAPH_URI, Optional.ofNullable(defaultGraphUri))
+                .queryParamIfPresent(PARAM_NAMED_GRAPH_URI, Optional.ofNullable(namedGraphUri))
                 .build()
                 // convert to URI (instead of String) to prevent RestClient from trying to do template expansion
                 // on the sparql query, e.g. {?s ?p ?o}
                 .toUri();
         log.info("SPARQL URI query: {}", uriWithQuery);
-        // execute request
+        // send get request to backend sparql endpoint
         return restClient.get()
                 .uri(uriWithQuery)
                 .headers(cleanRequestHeadersFactory(request, requestHeaders))
