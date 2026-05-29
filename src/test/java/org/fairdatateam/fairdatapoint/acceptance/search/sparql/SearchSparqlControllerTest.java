@@ -71,6 +71,9 @@ public class SearchSparqlControllerTest {
 
     private final String querySelectAll = "SELECT * WHERE { ?s ?p ?o }";
 
+    // mock json response body (https://www.w3.org/TR/sparql11-results-json/)
+    private final String mockJsonBody = "{\"head\": {\"vars\": []}, \"results\": {\"bindings\": []}}";
+
     /**
      * Constructor
      */
@@ -114,9 +117,6 @@ public class SearchSparqlControllerTest {
         // add server header
         final String backendServerHeader = "mock backend sparql server 1.0";
         mockBackendResponseHeaders.add(HttpHeaders.SERVER, backendServerHeader);
-
-        // mock json response body (https://www.w3.org/TR/sparql11-results-json/)
-        final String mockJsonBody = "{\"head\": {\"vars\": []}, \"results\": {\"bindings\": []}}";
 
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
