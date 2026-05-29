@@ -151,7 +151,7 @@ public class SearchSparqlController {
     @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/search/sparql")
-    public ResponseEntity<byte[]> proxySparqlEndpoint(
+    public ResponseEntity<byte[]> proxySparqlEndpointGet(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
             // request parameters defined in SPARQL protocol
