@@ -115,6 +115,7 @@ public class SearchSparqlControllerTest {
         this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
                 .expect(requestTo(startsWith(TestConfig.TEST_SPARQL_ENDPOINT_URL)))
+                .andExpect(method(HttpMethod.GET))
                 // forwarded header should have been added to request
                 .andExpect(header("X-Forwarded-For", matchesPattern(".+")))
                 // authorization headers should have been removed from request
@@ -134,6 +135,9 @@ public class SearchSparqlControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "dummy")
                 .exchange();
+
+        // check that mock server has received expected requests
+        mockBackendSparqlServer.verify();
 
         // check response headers
         assertThat(testResult).hasStatusOk();
