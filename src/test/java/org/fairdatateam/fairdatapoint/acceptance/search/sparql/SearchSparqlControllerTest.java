@@ -98,19 +98,25 @@ public class SearchSparqlControllerTest {
     public void proxyForwardingWorksForGetRequests() {
         // mock headers for response from mock backend sparql server
         final HttpHeaders mockBackendResponseHeaders = new HttpHeaders();
+
         // add a custom header
         final String customHeaderName = "my-custom-header";
         mockBackendResponseHeaders.add(customHeaderName, "dummy");
+
         // add standard hop-by-hop headers
         final List<String> hopByHopHeaders = SearchSparqlController.getHopByHopHeaders();
         hopByHopHeaders.forEach(header -> mockBackendResponseHeaders.add(header, "dummy"));
+
         // connection list is incomplete on purpose (does not contain all hop-by-hop headers)
         mockBackendResponseHeaders.put(HttpHeaders.CONNECTION, List.of(customHeaderName, hopByHopHeaders.get(0)));
+
         // add server header
         final String backendServerHeader = "mock backend sparql server 1.0";
         mockBackendResponseHeaders.add(HttpHeaders.SERVER, backendServerHeader);
+
         // mock json response body (https://www.w3.org/TR/sparql11-results-json/)
         final String mockJsonBody = "{\"head\": {\"vars\": []}, \"results\": {\"bindings\": []}}";
+
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
