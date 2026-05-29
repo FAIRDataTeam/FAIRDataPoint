@@ -33,12 +33,14 @@ import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -133,6 +135,19 @@ public class SearchSparqlController {
     }
 
     /**
+     * Modifies the response from RestClient before returning it from the controller.
+     * To be used as input for <code>RestClient.*.exchange()</code> calls.
+     */
+    private ResponseEntity<byte[]> cleanResponse(
+            HttpRequest restRequest, RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse restResponse
+    ) throws IOException {
+        return ResponseEntity
+                .status(restResponse.getStatusCode())
+                .headers(cleanResponseHeaders(restResponse))
+                .body(restResponse.getBody().readAllBytes());
+    }
+
+    /**
      * Abort with "resource not found" if there is no upstream SPARQL endpoint
      */
     private void returnIfSparqlEndpointUnavailable() {
@@ -177,13 +192,7 @@ public class SearchSparqlController {
         return restClient.get()
                 .uri(uriWithQuery)
                 .headers(cleanRequestHeaders(request, requestHeaders))
-                .exchange((restRequest, restResponse) -> {
-                            return ResponseEntity
-                                    .status(restResponse.getStatusCode())
-                                    .headers(cleanResponseHeaders(restResponse))
-                                    .body(restResponse.getBody().readAllBytes());
-                        }
-                );
+                .exchange(this::cleanResponse);
     }
 
 }
