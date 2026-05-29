@@ -42,6 +42,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * This controller depends on a SPARQL endpoint provided by an external triple store.
@@ -92,6 +93,25 @@ public class SearchSparqlController {
      */
     public static List<String> getHopByHopHeaders() {
         return HOP_BY_HOP_HEADERS;
+    }
+
+    /**
+     * Returns a function that updates an HttpHeaders object based on the headers from a request.
+     * To be used as input for <code>RestClient.*.headers()</code> methods.
+     */
+    private Consumer<HttpHeaders> cleanRequestHeaders(HttpServletRequest request, HttpHeaders requestHeaders) {
+        // Design note: It seems redundant to have both request and requestHeaders arguments because the headers are
+        // already available in the request. However, HttpServletRequest does not provide a simple way to get an
+        // HttpHeaders object, whereas the controller does provide one with @RequestHeader. Still, we do also need the
+        // HttpServletRequest to get the remote IP address.
+        return restRequestHeaders -> {
+            // copy all headers
+            restRequestHeaders.putAll(requestHeaders);
+            // remove any authorization to prevent privilege escalation attempts
+            restRequestHeaders.remove(HttpHeaders.AUTHORIZATION);
+            // forward the client ip (otherwise the upstream only sees the proxy ip)
+            restRequestHeaders.add("X-Forwarded-For", request.getRemoteAddr());
+        };
     }
 
     /**
@@ -153,14 +173,7 @@ public class SearchSparqlController {
         // execute request
         return restClient.get()
                 .uri(uriWithQuery)
-                .headers(restHeaders -> {
-                    // copy all headers
-                    restHeaders.putAll(requestHeaders);
-                    // remove any authorization to prevent privilege escalation attempts
-                    restHeaders.remove(HttpHeaders.AUTHORIZATION);
-                    // forward the client ip (otherwise the upstream only sees the proxy ip)
-                    restHeaders.add("X-Forwarded-For", request.getRemoteAddr());
-                })
+                .headers(cleanRequestHeaders(request, requestHeaders))
                 .exchange((restRequest, restResponse) -> {
                             return ResponseEntity
                                     .status(restResponse.getStatusCode())
