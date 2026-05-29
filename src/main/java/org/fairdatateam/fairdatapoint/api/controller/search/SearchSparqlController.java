@@ -132,6 +132,9 @@ public class SearchSparqlController {
         return headers;
     }
 
+    /**
+     * Abort with "resource not found" if there is no upstream SPARQL endpoint
+     */
     private void returnIfSparqlEndpointUnavailable() {
         if (sparqlEndpointUrl == null) {
             throw new ResourceNotFoundException("SPARQL endpoint unavailable");
