@@ -112,6 +112,12 @@ public class SearchSparqlController {
         return headers;
     }
 
+    private void returnIfSparqlEndpointUnavailable() {
+        if (sparqlEndpointUrl == null) {
+            throw new ResourceNotFoundException("SPARQL endpoint unavailable");
+        }
+    }
+
     /**
      * Proxy for the triple store SPARQL endpoint.
      * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
@@ -130,9 +136,7 @@ public class SearchSparqlController {
             @RequestParam(name = "default-graph-uri", required = false) List<String> defaultGraphUri,
             @RequestParam(name = "named-graph-uri", required = false) List<String> namedGraphUri
     ) {
-        if (sparqlEndpointUrl == null) {
-            throw new ResourceNotFoundException("SPARQL endpoint unavailable");
-        }
+        returnIfSparqlEndpointUnavailable();
         // add query parameters
         log.info("here's the query: {}", query);
         final URI uriWithQuery = UriComponentsBuilder
