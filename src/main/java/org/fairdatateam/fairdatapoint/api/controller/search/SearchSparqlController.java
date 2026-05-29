@@ -101,7 +101,7 @@ public class SearchSparqlController {
      * Returns a function that updates an HttpHeaders object based on the headers from a request.
      * To be used as input for <code>RestClient.*.headers()</code> methods.
      */
-    private Consumer<HttpHeaders> cleanRequestHeaders(HttpServletRequest request, HttpHeaders requestHeaders) {
+    private Consumer<HttpHeaders> cleanRequestHeadersFactory(HttpServletRequest request, HttpHeaders requestHeaders) {
         // Design note: It seems redundant to have both request and requestHeaders arguments because the headers are
         // already available in the request. However, HttpServletRequest does not provide a simple way to get an
         // HttpHeaders object, whereas the controller does provide one with @RequestHeader. Still, we do also need the
@@ -191,7 +191,7 @@ public class SearchSparqlController {
         // execute request
         return restClient.get()
                 .uri(uriWithQuery)
-                .headers(cleanRequestHeaders(request, requestHeaders))
+                .headers(cleanRequestHeadersFactory(request, requestHeaders))
                 .exchange(this::cleanResponse);
     }
 
