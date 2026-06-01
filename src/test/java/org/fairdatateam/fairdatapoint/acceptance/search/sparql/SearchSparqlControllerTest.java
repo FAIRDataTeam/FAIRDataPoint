@@ -24,19 +24,19 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
-import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
@@ -62,6 +62,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @WithMockUser
 public class SearchSparqlControllerTest {
 
+    final static String TEST_SPARQL_ENDPOINT_URL = "https://triple.store.example.org/sparql";
+
     // mock ResTemplate to prevent autoconfig issues with MockRestServiceServer (the controller uses RestClient)
     @MockitoBean
     RestTemplate restTemplate;
@@ -69,6 +71,8 @@ public class SearchSparqlControllerTest {
     private final MockMvcTester mockMvc;
 
     private final MockRestServiceServer mockBackendSparqlServer;
+
+    private final SearchSparqlController searchSparqlController;
 
     private final String path = "/search/sparql";
 
@@ -79,15 +83,20 @@ public class SearchSparqlControllerTest {
      * Constructor
      */
     @Autowired
-    public SearchSparqlControllerTest(MockMvcTester mockMvc, MockRestServiceServer mockBackendSparqlServer) {
+    public SearchSparqlControllerTest(
+            MockMvcTester mockMvc,
+            MockRestServiceServer mockBackendSparqlServer,
+            SearchSparqlController searchSparqlController
+    ) {
         this.mockMvc = mockMvc;
         this.mockBackendSparqlServer = mockBackendSparqlServer;
+        this.searchSparqlController = searchSparqlController;
     }
 
     @BeforeEach
     public void setup() {
         // override the repository query url
-        when(repositoryConfig.getRepositoryUrl()).thenReturn(TEST_SPARQL_ENDPOINT_URL);
+        ReflectionTestUtils.setField(searchSparqlController, "sparqlEndpointUrl", TEST_SPARQL_ENDPOINT_URL);
     }
 
     @Test
@@ -128,7 +137,7 @@ public class SearchSparqlControllerTest {
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
-                .expect(requestTo(startsWith(TestConfig.TEST_SPARQL_ENDPOINT_URL)))
+                .expect(requestTo(startsWith(TEST_SPARQL_ENDPOINT_URL)))
                 .andExpect(method(HttpMethod.GET))
                 // forwarded header should have been added to request
                 .andExpect(header("X-Forwarded-For", matchesPattern(".+")))
@@ -170,14 +179,14 @@ public class SearchSparqlControllerTest {
     public void proxyForwardingWorksForPostFormRequests() {
         // mock form data
         final MultiValueMap<String, String> formData = CollectionUtils.toMultiValueMap(Map.of(
-                PARAM_QUERY, List.of(querySelectAll),
+                PARAM_QUERY, List.of(EXAMPLE_QUERY),
                 PARAM_DEFAULT_GRAPH_URI, List.of("http://default.graph.uri"),
                 PARAM_NAMED_GRAPH_URI, List.of("http://named.graph.uri")
         ));
 
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
-                .expect(requestTo(TestConfig.TEST_SPARQL_ENDPOINT_URL))
+                .expect(requestTo(TEST_SPARQL_ENDPOINT_URL))
                 .andExpect(method(HttpMethod.POST))
                 // form data from original request must arrive at server unaltered (except for empty lists)
                 .andExpect(content().formData(formData))
@@ -198,28 +207,6 @@ public class SearchSparqlControllerTest {
         assertThat(testResult).hasStatusOk();
         // verify that proxy returns json response body
         assertThat(testResult).bodyJson().hasPath("head.vars").hasPath("results.bindings");
-
-    }
-
-    // note that @Configuration overrides the primary config, whereas @TestConfiguration extends it
-    @TestConfiguration
-    static class TestConfig {
-
-        public static final String TEST_SPARQL_ENDPOINT_URL = "https://triple.store.example.org/sparql";
-
-        /**
-         * Overrides the default repositoryProperties bean to return a dummy url from getUrl().
-         */
-        @Bean
-        @Primary
-        public RepositoryProperties repositoryProperties() {
-            return new RepositoryProperties() {
-                @Override
-                public String getUrl() {
-                    return TEST_SPARQL_ENDPOINT_URL;
-                }
-            };
-        }
 
     }
 
