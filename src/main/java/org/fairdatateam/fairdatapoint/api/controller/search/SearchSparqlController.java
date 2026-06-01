@@ -217,7 +217,7 @@ public class SearchSparqlController {
     }
 
     /**
-     * Proxy for POST requests to the triple store SPARQL endpoint, using form data.
+     * Proxy for POST requests to the triple store SPARQL endpoint using form data.
      * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
      * except for headers that should not be forwarded.
      * The triple store SPARQL endpoint is expected to comply with the
@@ -256,4 +256,36 @@ public class SearchSparqlController {
                 .exchange(this::cleanResponse);
     }
 
+    /**
+     * Proxy for POST requests to the triple store SPARQL endpoint using raw sparql query.
+     * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
+     * except for headers that should not be forwarded.
+     * The triple store SPARQL endpoint is expected to comply with the
+     * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
+     */
+    @Operation(description = DESCRIPTION_EXPERIMENTAL)
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(value = "/search/sparql", consumes = "application/sparql-query")
+    public ResponseEntity<byte[]> proxySparqlEndpointPostRaw(
+            HttpServletRequest request,
+            @RequestHeader HttpHeaders requestHeaders,
+            // request parameters defined in SPARQL protocol (in this case bound to form data)
+            @RequestBody @Parameter(schema = @Schema(example = EXAMPLE_QUERY)) String query,
+            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
+            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
+    ) {
+        abortIfSparqlEndpointUnavailable();
+        // add query parameters if present
+        final URI uriWithQuery = UriComponentsBuilder
+                .fromUriString(sparqlEndpointUrl)
+                .queryParamIfPresent(PARAM_DEFAULT_GRAPH_URI, Optional.ofNullable(defaultGraphUri))
+                .queryParamIfPresent(PARAM_NAMED_GRAPH_URI, Optional.ofNullable(namedGraphUri))
+                .build().toUri();
+        // post to backend sparql endpoint
+        return restClient.post()
+                .uri(uriWithQuery)
+                .headers(cleanRequestHeadersFactory(request, requestHeaders))
+                .body(query)
+                .exchange(this::cleanResponse);
+    }
 }
