@@ -39,7 +39,6 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
@@ -235,15 +234,14 @@ public class SearchSparqlController {
         // However, this means we need to reconstruct the form data before we can forward it to the backend server.
         // (an alternative would be to use `@RequestBody MultiValueMap<String, String> sparqlForm`, combined with
         // custom validation, instead of the individual @RequestParam entries)
-        // TODO: make MultiValueMap mutable!
-        final MultiValueMap<String, String> sparqlForm = CollectionUtils.toMultiValueMap(Map.of(
+        final MultiValueMap<String, String> sparqlForm = MultiValueMap.fromMultiValue(Map.of(
                 PARAM_QUERY, List.of(query)
         ));
         if ( defaultGraphUri != null && !defaultGraphUri.isEmpty() ) {
-            sparqlForm.put(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri);
+            sparqlForm.addAll(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri);
         }
         if ( namedGraphUri != null && !namedGraphUri.isEmpty() ) {
-            sparqlForm.put(PARAM_NAMED_GRAPH_URI, namedGraphUri);
+            sparqlForm.addAll(PARAM_NAMED_GRAPH_URI, namedGraphUri);
         }
         // post to backend sparql endpoint
         final URI uri = URI.create(sparqlEndpointUrl);
