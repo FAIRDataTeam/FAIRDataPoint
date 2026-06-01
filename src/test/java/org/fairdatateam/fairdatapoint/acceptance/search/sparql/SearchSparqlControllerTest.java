@@ -189,7 +189,7 @@ public class SearchSparqlControllerTest {
         this.mockBackendSparqlServer
                 .expect(requestTo(TEST_SPARQL_ENDPOINT_URL))
                 .andExpect(method(HttpMethod.POST))
-                .andExpect(content().contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED))
                 // form data from original request must arrive at server unaltered (except for empty lists)
                 .andExpect(content().formData(formData))
                 .andRespond(withSuccess().body(mockJsonBody));
