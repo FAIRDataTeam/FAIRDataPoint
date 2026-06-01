@@ -74,6 +74,10 @@ public class SearchSparqlControllerTest {
 
     private final SearchSparqlController searchSparqlController;
 
+    private final String defaultGraphUri = "http://default.graph.uri";
+
+    private final String namedGraphUri = "http://named.graph.uri";
+
     private final String path = "/search/sparql";
 
     // mock json response body (https://www.w3.org/TR/sparql11-results-json/)
@@ -181,8 +185,8 @@ public class SearchSparqlControllerTest {
         // mock form data
         final MultiValueMap<String, String> formData = CollectionUtils.toMultiValueMap(Map.of(
                 PARAM_QUERY, List.of(EXAMPLE_QUERY),
-                PARAM_DEFAULT_GRAPH_URI, List.of("http://default.graph.uri"),
-                PARAM_NAMED_GRAPH_URI, List.of("http://named.graph.uri")
+                PARAM_DEFAULT_GRAPH_URI, List.of(defaultGraphUri),
+                PARAM_NAMED_GRAPH_URI, List.of(namedGraphUri)
         ));
 
         // configure mock server for remote SPARQL endpoint
@@ -208,9 +212,48 @@ public class SearchSparqlControllerTest {
 
         // check response headers
         assertThat(testResult).hasStatusOk();
+
+        // verify that proxy returns json response body
+        assertThat(testResult).bodyJson().hasPath("head.vars").hasPath("results.bindings");
+    }
+
+    @Test
+    public void proxyForwardingWorksForPostRawRequests() {
+        // configure mock server for remote SPARQL endpoint
+        this.mockBackendSparqlServer
+                .expect(requestTo(startsWith(TEST_SPARQL_ENDPOINT_URL)))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentTypeCompatibleWith("application/sparql-query"))
+                .andExpect(queryParam(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri))
+                .andExpect(queryParam(PARAM_NAMED_GRAPH_URI, namedGraphUri))
+                .andExpect(content().string(EXAMPLE_QUERY))
+                .andRespond(withSuccess().body(mockJsonBody));
+
+        // specify request with url query and normal user (non-admin)
+        URI uriWithQuery = UriComponentsBuilder
+                .fromPath(path)
+                .queryParam(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri)
+                .queryParam(PARAM_NAMED_GRAPH_URI, namedGraphUri)
+                .build()
+                .toUri();
+
+        // execute request
+        MvcTestResult testResult = mockMvc.post()
+                .uri(uriWithQuery)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType("application/sparql-query")
+                .content(EXAMPLE_QUERY)
+                .exchange();
+
+        // check that mock server has received expected requests
+        // (for some reason this hides exceptions from the RestClient, so comment out to debug)
+        mockBackendSparqlServer.verify();
+
+        // check response headers
+        assertThat(testResult).hasStatusOk();
+
         // verify that proxy returns json response body
         assertThat(testResult).bodyJson().hasPath("head.vars").hasPath("results.bindings");
 
     }
-
 }
