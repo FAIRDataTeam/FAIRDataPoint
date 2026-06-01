@@ -24,6 +24,8 @@
 package org.fairdatateam.fairdatapoint.api.controller.search;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -60,6 +62,8 @@ import java.util.function.Consumer;
 @Tag(name = "Search")
 @RestController
 public class SearchSparqlController {
+
+    public static final String EXAMPLE_QUERY = "SELECT * WHERE { ?s ?p ?o }";
 
     public static final String PARAM_QUERY = "query";
 
@@ -98,9 +102,10 @@ public class SearchSparqlController {
     public SearchSparqlController(Repository repository, RestClient restClient) {
         this.restClient = restClient;
         // todo: simplify as part of #824
-        if ( repository instanceof SPARQLRepository sparqlRepository) {
+        if (repository instanceof SPARQLRepository sparqlRepository) {
             this.sparqlEndpointUrl = sparqlRepository.toString();
-        } else if ( repository instanceof HTTPRepository httpRepository) {
+        }
+        else if (repository instanceof HTTPRepository httpRepository) {
             this.sparqlEndpointUrl = httpRepository.getRepositoryURL();
         }
     }
@@ -186,7 +191,7 @@ public class SearchSparqlController {
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
             // request parameters defined in SPARQL protocol
-            @RequestParam(name = PARAM_QUERY) String query,
+            @RequestParam(name = PARAM_QUERY) @Parameter(example = EXAMPLE_QUERY) String query,
             @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
@@ -225,7 +230,7 @@ public class SearchSparqlController {
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
             // request parameters defined in SPARQL protocol (in this case bound to form data)
-            @RequestParam(name = PARAM_QUERY) String query,
+            @RequestParam(name = PARAM_QUERY) @Parameter(schema = @Schema(example = EXAMPLE_QUERY)) String query,
             @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
@@ -237,10 +242,10 @@ public class SearchSparqlController {
         final MultiValueMap<String, String> sparqlForm = MultiValueMap.fromMultiValue(Map.of(
                 PARAM_QUERY, List.of(query)
         ));
-        if ( defaultGraphUri != null && !defaultGraphUri.isEmpty() ) {
+        if (defaultGraphUri != null && !defaultGraphUri.isEmpty()) {
             sparqlForm.addAll(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri);
         }
-        if ( namedGraphUri != null && !namedGraphUri.isEmpty() ) {
+        if (namedGraphUri != null && !namedGraphUri.isEmpty()) {
             sparqlForm.addAll(PARAM_NAMED_GRAPH_URI, namedGraphUri);
         }
         // post to backend sparql endpoint

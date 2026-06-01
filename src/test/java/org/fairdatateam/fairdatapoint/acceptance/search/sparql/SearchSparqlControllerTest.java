@@ -72,8 +72,6 @@ public class SearchSparqlControllerTest {
 
     private final String path = "/search/sparql";
 
-    private final String querySelectAll = "SELECT * WHERE { ?s ?p ?o }";
-
     // mock json response body (https://www.w3.org/TR/sparql11-results-json/)
     private final String mockJsonBody = "{\"head\": {\"vars\": []}, \"results\": {\"bindings\": []}}";
 
@@ -86,13 +84,19 @@ public class SearchSparqlControllerTest {
         this.mockBackendSparqlServer = mockBackendSparqlServer;
     }
 
+    @BeforeEach
+    public void setup() {
+        // override the repository query url
+        when(repositoryConfig.getRepositoryUrl()).thenReturn(TEST_SPARQL_ENDPOINT_URL);
+    }
+
     @Test
     @WithAnonymousUser
     public void unauthenticatedRequestsAreDeniedWithoutContactingRemoteSparqlServer() {
         // specify request with url query, but without authentication
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
-                .queryParam("query", querySelectAll)
+                .queryParam("query", EXAMPLE_QUERY)
                 .build()
                 .toUri();
 
@@ -135,7 +139,7 @@ public class SearchSparqlControllerTest {
         // specify request with url query and normal user (non-admin)
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
-                .queryParam(PARAM_QUERY, querySelectAll)
+                .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
                 .build()
                 .toUri();
 
