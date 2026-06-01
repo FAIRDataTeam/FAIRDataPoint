@@ -28,7 +28,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.http.HTTPRepository;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -89,14 +91,19 @@ public class SearchSparqlController {
 
     private final RestClient restClient;
 
-    private final String sparqlEndpointUrl;
+    private String sparqlEndpointUrl;
 
     /**
      * Constructor
      */
-    public SearchSparqlController(RepositoryProperties graphRepositoryProperties, RestClient restClient) {
+    public SearchSparqlController(Repository repository, RestClient restClient) {
         this.restClient = restClient;
-        this.sparqlEndpointUrl = graphRepositoryProperties.getUrl();
+        // todo: simplify as part of #824
+        if ( repository instanceof SPARQLRepository sparqlRepository) {
+            this.sparqlEndpointUrl = sparqlRepository.toString();
+        } else if ( repository instanceof HTTPRepository httpRepository) {
+            this.sparqlEndpointUrl = httpRepository.getRepositoryURL();
+        }
     }
 
     /**
