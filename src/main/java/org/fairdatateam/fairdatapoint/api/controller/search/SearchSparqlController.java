@@ -167,8 +167,8 @@ public class SearchSparqlController {
     /**
      * Abort with "resource not found" if there is no upstream SPARQL endpoint
      */
-    private void returnIfSparqlEndpointUnavailable() {
-        if (sparqlEndpointUrl == null) {
+    private void abortIfSparqlEndpointUnavailable() {
+        if (sparqlEndpointUrl == null || sparqlEndpointUrl.isEmpty()) {
             throw new ResourceNotFoundException("SPARQL endpoint unavailable");
         }
     }
@@ -191,7 +191,7 @@ public class SearchSparqlController {
             @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
-        returnIfSparqlEndpointUnavailable();
+        abortIfSparqlEndpointUnavailable();
         // add query parameters
         log.info("here's the query: {}", query);
         final URI uriWithQuery = UriComponentsBuilder
@@ -230,7 +230,7 @@ public class SearchSparqlController {
             @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
-        returnIfSparqlEndpointUnavailable();
+        abortIfSparqlEndpointUnavailable();
         // @RequestParam is used in the method signature for convenient validation and generation of api docs.
         // However, this means we need to reconstruct the form data before we can forward it to the backend server.
         // (an alternative would be to use `@RequestBody MultiValueMap<String, String> sparqlForm`, combined with
