@@ -160,6 +160,7 @@ public class SearchSparqlControllerTest {
                 .exchange();
 
         // check that mock server has received expected requests
+        // (for some reason this hides exceptions from the RestClient, so comment out to debug)
         mockBackendSparqlServer.verify();
 
         // check response headers
@@ -188,6 +189,7 @@ public class SearchSparqlControllerTest {
         this.mockBackendSparqlServer
                 .expect(requestTo(TEST_SPARQL_ENDPOINT_URL))
                 .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 // form data from original request must arrive at server unaltered (except for empty lists)
                 .andExpect(content().formData(formData))
                 .andRespond(withSuccess().body(mockJsonBody));
@@ -201,6 +203,7 @@ public class SearchSparqlControllerTest {
                 .exchange();
 
         // check that mock server has received expected requests
+        // (for some reason this hides exceptions from the RestClient, so comment out to debug)
         mockBackendSparqlServer.verify();
 
         // check response headers

@@ -48,6 +48,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -239,21 +240,20 @@ public class SearchSparqlController {
         // However, this means we need to reconstruct the form data before we can forward it to the backend server.
         // (an alternative would be to use `@RequestBody MultiValueMap<String, String> sparqlForm`, combined with
         // custom validation, instead of the individual @RequestParam entries)
-        final MultiValueMap<String, String> sparqlForm = MultiValueMap.fromMultiValue(Map.of(
-                PARAM_QUERY, List.of(query)
-        ));
+        final HashMap<String, List<String>> sparqlForm = new HashMap<>(3);
+        sparqlForm.put(PARAM_QUERY, List.of(query));
         if (defaultGraphUri != null && !defaultGraphUri.isEmpty()) {
-            sparqlForm.addAll(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri);
+            sparqlForm.put(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri);
         }
         if (namedGraphUri != null && !namedGraphUri.isEmpty()) {
-            sparqlForm.addAll(PARAM_NAMED_GRAPH_URI, namedGraphUri);
+            sparqlForm.put(PARAM_NAMED_GRAPH_URI, namedGraphUri);
         }
         // post to backend sparql endpoint
         final URI uri = URI.create(sparqlEndpointUrl);
         return restClient.post()
                 .uri(uri)
                 .headers(cleanRequestHeadersFactory(request, requestHeaders))
-                .body(sparqlForm)
+                .body(MultiValueMap.fromMultiValue(sparqlForm))
                 .exchange(this::cleanResponse);
     }
 
