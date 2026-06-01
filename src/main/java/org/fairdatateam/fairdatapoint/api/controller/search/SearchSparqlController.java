@@ -186,23 +186,7 @@ public class SearchSparqlController {
      */
     @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
-    @GetMapping(
-            path = "/search/sparql",
-            produces = {
-                    // ASK or SELECT
-                    "application/sparql-results+json",
-                    "application/sparql-results+xml",
-                    "text/csv",
-                    "text/tab-separated-values",
-                    // CONSTRUCT or DESCRIBE
-                    "application/ld+json",
-                    "application/n-quads",
-                    "application/n-triples",
-                    "application/rdf+xml",
-                    "application/trig",
-                    "text/n3",
-                    "text/turtle"
-            })
+    @GetMapping("/search/sparql")
     public ResponseEntity<byte[]> proxySparqlEndpointGet(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
@@ -241,24 +225,7 @@ public class SearchSparqlController {
      */
     @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(
-            value = "/search/sparql",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = {
-                    // ASK or SELECT
-                    "application/sparql-results+json",
-                    "application/sparql-results+xml",
-                    "text/csv",
-                    "text/tab-separated-values",
-                    // CONSTRUCT or DESCRIBE
-                    "application/ld+json",
-                    "application/n-quads",
-                    "application/n-triples",
-                    "application/rdf+xml",
-                    "application/trig",
-                    "text/n3",
-                    "text/turtle"
-            })
+    @PostMapping(value = "/search/sparql", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<byte[]> proxySparqlEndpointPostForm(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
