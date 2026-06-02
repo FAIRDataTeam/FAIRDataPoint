@@ -160,6 +160,19 @@ public class SearchSparqlControllerTest {
     }
 
     @Test
+    public void formPostWithSparqlUpdateContentTypeIsDenied() {
+        // execute request sparql-update content type
+        MvcTestResult testResult = mockMvc.post()
+                .uri(URI.create(path))
+                .contentType(MEDIA_TYPE_SPARQL_UPDATE)
+                .content(MALICIOUS_SPARQL_UPDATE)
+                .exchange();
+
+        // the request is denied because the content type is not supported (i.e. not in @PostMapping.consumes)
+        assertThat(testResult).hasStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
+    @Test
     public void proxyForwardingWorksForGetRequests() {
         // mock headers for response from mock backend sparql server
         final HttpHeaders mockBackendResponseHeaders = new HttpHeaders();
