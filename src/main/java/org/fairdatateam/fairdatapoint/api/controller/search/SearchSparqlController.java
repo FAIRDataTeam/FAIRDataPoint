@@ -283,11 +283,6 @@ public class SearchSparqlController {
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
-        // abort if content-type is "application/sparql-update" (beware this relies on the upstream sparql endpoint
-        // denying raw sparql requests with other content-types)
-        if (request.getContentType().contains(MEDIA_TYPE_SPARQL_UPDATE)) {
-            return ResponseEntity.badRequest().body(MESSAGE_UPDATE_DENIED.getBytes());
-        }
         // add query parameters if present
         final URI uriWithQuery = UriComponentsBuilder
                 .fromUriString(sparqlEndpointUrl)
