@@ -40,7 +40,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -183,10 +182,10 @@ public class SearchSparqlControllerTest {
     @Test
     public void proxyForwardingWorksForPostFormRequests() {
         // mock form data
-        final MultiValueMap<String, String> formData = CollectionUtils.toMultiValueMap(Map.of(
-                PARAM_QUERY, List.of(EXAMPLE_QUERY),
-                PARAM_DEFAULT_GRAPH_URI, List.of(defaultGraphUri),
-                PARAM_NAMED_GRAPH_URI, List.of(namedGraphUri)
+        final MultiValueMap<String, String> formData = MultiValueMap.fromSingleValue(Map.of(
+                PARAM_QUERY, EXAMPLE_QUERY,
+                PARAM_DEFAULT_GRAPH_URI, defaultGraphUri,
+                PARAM_NAMED_GRAPH_URI, namedGraphUri
         ));
 
         // configure mock server for remote SPARQL endpoint
