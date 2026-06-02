@@ -36,14 +36,12 @@ import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
@@ -240,7 +238,7 @@ public class SearchSparqlController {
         abortIfSparqlEndpointUnavailable();
         // abort if request contains a SPARQL update attempt
         if (request.getParameter(PARAM_UPDATE) != null) {
-            return ResponseEntity.badRequest().body(MESSAGE_UPDATE_DENIED.getBytes());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MESSAGE_UPDATE_DENIED);
         }
         // @RequestParam is used in the method signature for convenient validation and generation of api docs.
         // However, this means we need to reconstruct the form data before we can forward it to the backend server.

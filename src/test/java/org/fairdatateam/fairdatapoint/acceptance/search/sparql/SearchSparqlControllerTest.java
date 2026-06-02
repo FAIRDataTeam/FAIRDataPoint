@@ -156,7 +156,7 @@ public class SearchSparqlControllerTest {
         assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
 
         // verify that proxy returns json response body
-        assertThat(testResult).hasBodyTextEqualTo(MESSAGE_UPDATE_DENIED);
+        assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
     }
 
     @Test
