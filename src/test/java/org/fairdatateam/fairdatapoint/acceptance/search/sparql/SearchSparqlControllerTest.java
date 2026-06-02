@@ -133,10 +133,8 @@ public class SearchSparqlControllerTest {
         // execute request
         MvcTestResult testResult = mockMvc.post().uri(URI.create(path)).formFields(formData).exchange();
 
-        // check response headers
+        // request should fail
         assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
-
-        // verify that proxy returns json response body
         assertThat(testResult).hasErrorMessage("Required parameter 'query' is not present.");
     }
 
@@ -151,16 +149,14 @@ public class SearchSparqlControllerTest {
         // execute request
         MvcTestResult testResult = mockMvc.post().uri(URI.create(path)).formFields(formData).exchange();
 
-        // check response headers
+        // request should fail
         assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
-
-        // verify that proxy returns json response body
         assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
     }
 
     @Test
     public void formPostWithSparqlUpdateContentTypeIsDenied() {
-        // execute request sparql-update content type
+        // execute request with sparql-update content type
         MvcTestResult testResult = mockMvc.post()
                 .uri(URI.create(path))
                 .contentType(MEDIA_TYPE_SPARQL_UPDATE)
@@ -172,6 +168,50 @@ public class SearchSparqlControllerTest {
     }
 
     @Test
+    public void getRequestWithMaliciousUrlQueryIsDenied() {
+        // specify request with malicious url query (trying to update)
+        URI uriWithMaliciousQuery = UriComponentsBuilder
+                .fromPath(path)
+                .queryParam(PARAM_QUERY, MALICIOUS_SPARQL_UPDATE)
+                .build()
+                .toUri();
+
+        // execute request
+        MvcTestResult testResult = mockMvc.get().uri(uriWithMaliciousQuery).exchange();
+
+        // request should fail
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+        assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
+    }
+
+    @Test
+    public void postRequestWithMaliciousFormQueryIsDenied() {
+        // execute request with malicious form data
+        MvcTestResult testResult = mockMvc.post()
+                .uri(path)
+                .formField(PARAM_QUERY, MALICIOUS_SPARQL_UPDATE)
+                .exchange();
+
+        // request should fail
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+        assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
+    }
+
+    @Test
+    public void postRequestWithMaliciousRawQueryIsDenied() {
+        // execute request with malicious raw query
+        MvcTestResult testResult = mockMvc.post()
+                .uri(path)
+                .contentType(MEDIA_TYPE_SPARQL_QUERY)
+                .content(MALICIOUS_SPARQL_UPDATE)
+                .exchange();
+
+        // request should fail
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+        assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
+    }
+
+        @Test
     public void proxyForwardingWorksForGetRequests() {
         // mock headers for response from mock backend sparql server
         final HttpHeaders mockBackendResponseHeaders = new HttpHeaders();
