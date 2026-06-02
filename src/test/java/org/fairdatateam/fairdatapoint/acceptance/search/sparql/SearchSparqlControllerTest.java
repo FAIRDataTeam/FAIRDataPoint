@@ -222,7 +222,7 @@ public class SearchSparqlControllerTest {
     }
 
     @Test
-    public void proxyForwardingWorksForPostFormRequests() {
+    public void proxyForwardingWorksForFormPostRequests() {
         // mock form data
         final MultiValueMap<String, String> formData = MultiValueMap.fromSingleValue(Map.of(
                 PARAM_QUERY, EXAMPLE_QUERY,
@@ -259,12 +259,12 @@ public class SearchSparqlControllerTest {
     }
 
     @Test
-    public void proxyForwardingWorksForPostRawRequests() {
+    public void proxyForwardingWorksForRawPostRequests() {
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
                 .expect(requestTo(startsWith(TEST_SPARQL_ENDPOINT_URL)))
                 .andExpect(method(HttpMethod.POST))
-                .andExpect(content().contentTypeCompatibleWith("application/sparql-query"))
+                .andExpect(content().contentTypeCompatibleWith(MEDIA_TYPE_SPARQL_QUERY))
                 .andExpect(queryParam(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri))
                 .andExpect(queryParam(PARAM_NAMED_GRAPH_URI, namedGraphUri))
                 .andExpect(content().string(EXAMPLE_QUERY))
