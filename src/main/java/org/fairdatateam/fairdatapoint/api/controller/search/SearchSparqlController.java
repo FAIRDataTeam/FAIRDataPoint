@@ -201,10 +201,9 @@ public class SearchSparqlController {
     ) {
         abortIfSparqlEndpointUnavailable();
         // add query parameters
-        log.info("here's the query: {}", query);
         final URI uriWithQuery = UriComponentsBuilder
                 .fromUriString(sparqlEndpointUrl)
-                // the query is automatically encoded, because it contains illegal characters, but the uris are not
+                // the query is automatically encoded because it contains illegal characters, but the uris are not
                 .queryParam(PARAM_QUERY, query)
                 .queryParamIfPresent(PARAM_DEFAULT_GRAPH_URI, Optional.ofNullable(defaultGraphUri))
                 .queryParamIfPresent(PARAM_NAMED_GRAPH_URI, Optional.ofNullable(namedGraphUri))
