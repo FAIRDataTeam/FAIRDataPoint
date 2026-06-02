@@ -66,10 +66,13 @@ public class SearchSparqlController {
 
     public static final String EXAMPLE_QUERY = "SELECT * WHERE { ?s ?p ?o }";
 
-    // request parameters defined in SPARQL protocol
+    public static final String MESSAGE_UPDATE_DENIED = "SPARQL update not allowed";
+
+    // request parameters defined in https://www.w3.org/TR/sparql11-protocol/
     public static final String PARAM_QUERY = "query";
     public static final String PARAM_DEFAULT_GRAPH_URI = "default-graph-uri";
     public static final String PARAM_NAMED_GRAPH_URI = "named-graph-uri";
+    public static final String PARAM_UPDATE = "update";
 
     private static final String DESCRIPTION_EXPERIMENTAL = """
             [EXPERIMENTAL]
@@ -234,6 +237,10 @@ public class SearchSparqlController {
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
+        // abort if request contains a SPARQL update attempt
+        if (request.getParameter(PARAM_UPDATE) != null) {
+            return ResponseEntity.badRequest().body(MESSAGE_UPDATE_DENIED.getBytes());
+        }
         // @RequestParam is used in the method signature for convenient validation and generation of api docs.
         // However, this means we need to reconstruct the form data before we can forward it to the backend server.
         // (an alternative would be to use `@RequestBody MultiValueMap<String, String> sparqlForm`, combined with

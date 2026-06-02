@@ -61,6 +61,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @WithMockUser
 public class SearchSparqlControllerTest {
 
+    final static String MALICIOUS_SPARQL_UPDATE = "CLEAR GRAPH ex:";
+
     final static String TEST_SPARQL_ENDPOINT_URL = "https://triple.store.example.org/sparql";
 
     // mock ResTemplate to prevent autoconfig issues with MockRestServiceServer (the controller uses RestClient)
@@ -115,6 +117,47 @@ public class SearchSparqlControllerTest {
         MvcTestResult testResult = mockMvc.get().uri(uriWithQuery).accept(MediaType.APPLICATION_JSON).exchange();
 
         assertThat(testResult).hasStatus(HttpStatus.FORBIDDEN);
+    }
+
+
+    /**
+     * The <a href="https://www.w3.org/TR/sparql11-protocol/#update-operation">SPARQL protocol</a> requires that update
+     * operations are done either via POST with content-type "application/x-www-form-urlencoded" and an "update" field,
+     * or via POST with content-type "application/sparql-update" and a raw SPARQL update command string.
+     */
+    @Test
+    public void formPostWithUpdateFieldIsIgnored() {
+        // mock form data with "update" field, no "query" field (which is required)
+        final MultiValueMap<String, String> formData = MultiValueMap.fromSingleValue(Map.of(
+                PARAM_UPDATE, MALICIOUS_SPARQL_UPDATE
+        ));
+
+        // execute request
+        MvcTestResult testResult = mockMvc.post().uri(URI.create(path)).formFields(formData).exchange();
+
+        // check response headers
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+
+        // verify that proxy returns json response body
+        assertThat(testResult).hasErrorMessage("Required parameter 'query' is not present.");
+    }
+
+    @Test
+    public void formPostWithUpdateAndQueryFieldIsDenied() {
+        // mock form data with "update" field and a valid "query" field
+        final MultiValueMap<String, String> formData = MultiValueMap.fromSingleValue(Map.of(
+                PARAM_UPDATE, MALICIOUS_SPARQL_UPDATE,
+                PARAM_QUERY, EXAMPLE_QUERY
+        ));
+
+        // execute request
+        MvcTestResult testResult = mockMvc.post().uri(URI.create(path)).formFields(formData).exchange();
+
+        // check response headers
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+
+        // verify that proxy returns json response body
+        assertThat(testResult).hasBodyTextEqualTo(MESSAGE_UPDATE_DENIED);
     }
 
     @Test
