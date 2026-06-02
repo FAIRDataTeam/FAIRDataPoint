@@ -118,7 +118,6 @@ public class SearchSparqlControllerTest {
         assertThat(testResult).hasStatus(HttpStatus.FORBIDDEN);
     }
 
-
     /**
      * The <a href="https://www.w3.org/TR/sparql11-protocol/#update-operation">SPARQL protocol</a> requires that update
      * operations are done either via POST with content-type "application/x-www-form-urlencoded" and an "update" field,
@@ -198,7 +197,7 @@ public class SearchSparqlControllerTest {
                 .expect(requestTo(startsWith(TEST_SPARQL_ENDPOINT_URL)))
                 .andExpect(method(HttpMethod.GET))
                 // forwarded header should have been added to request
-                .andExpect(header("X-Forwarded-For", matchesPattern(".+")))
+                .andExpect(header(HEADER_X_FORWARDED_FOR, matchesPattern(".+")))
                 // authorization headers should have been removed from request
                 .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
                 .andRespond(withSuccess().headers(mockBackendResponseHeaders).body(mockJsonBody));

@@ -64,6 +64,8 @@ public class SearchSparqlController {
 
     public static final String EXAMPLE_QUERY = "SELECT * WHERE { ?s ?p ?o }";
 
+    public static final String HEADER_X_FORWARDED_FOR = "X-Forwarded-For";
+
     public static final String MESSAGE_UPDATE_DENIED = "SPARQL update not allowed";
 
     // request parameters and media types defined in https://www.w3.org/TR/sparql11-protocol/
@@ -136,7 +138,7 @@ public class SearchSparqlController {
             // remove any authorization to prevent privilege escalation attempts
             restRequestHeaders.remove(HttpHeaders.AUTHORIZATION);
             // forward the client ip (otherwise the upstream only sees the proxy ip)
-            restRequestHeaders.add("X-Forwarded-For", request.getRemoteAddr());
+            restRequestHeaders.add(HEADER_X_FORWARDED_FOR, request.getRemoteAddr());
         };
     }
 
