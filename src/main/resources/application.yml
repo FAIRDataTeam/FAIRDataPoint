@@ -76,13 +76,13 @@ openapi:
 
 springdoc:
   # https://springdoc.org/properties.html
-  writer-with-default-pretty-printer: true
-  writer-with-order-by-keys: true
   swagger-ui:
     disable-swagger-default-url: true
     doc-expansion: none
     operationsSorter: method
     tagsSorter: alpha
+  writer-with-default-pretty-printer: true
+  writer-with-order-by-keys: true
 
 server:
   forward-headers-strategy: framework
