@@ -65,10 +65,9 @@ public class SearchSparqlController {
 
     public static final String EXAMPLE_QUERY = "SELECT * WHERE { ?s ?p ?o }";
 
+    // request parameters defined in SPARQL protocol
     public static final String PARAM_QUERY = "query";
-
     public static final String PARAM_DEFAULT_GRAPH_URI = "default-graph-uri";
-
     public static final String PARAM_NAMED_GRAPH_URI = "named-graph-uri";
 
     private static final String DESCRIPTION_EXPERIMENTAL = """
@@ -190,7 +189,6 @@ public class SearchSparqlController {
     public ResponseEntity<byte[]> proxySparqlEndpointGet(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
-            // request parameters defined in SPARQL protocol
             @RequestParam(name = PARAM_QUERY) @Parameter(example = EXAMPLE_QUERY) String query,
             @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
@@ -229,7 +227,7 @@ public class SearchSparqlController {
     public ResponseEntity<byte[]> proxySparqlEndpointPostForm(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
-            // request parameters defined in SPARQL protocol (in this case bound to form data)
+            // bind form data from request body
             @RequestParam(name = PARAM_QUERY) @Parameter(schema = @Schema(example = EXAMPLE_QUERY)) String query,
             @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
@@ -269,8 +267,9 @@ public class SearchSparqlController {
     public ResponseEntity<byte[]> proxySparqlEndpointPostRaw(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
-            // request parameters defined in SPARQL protocol (in this case bound to form data)
+            // raw query in body
             @RequestBody @Parameter(schema = @Schema(example = EXAMPLE_QUERY)) String query,
+            // graph uris in url parameters
             @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
