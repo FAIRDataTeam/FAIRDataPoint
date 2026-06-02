@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -237,7 +238,7 @@ public class SearchSparqlController {
         // However, this means we need to reconstruct the form data before we can forward it to the backend server.
         // (an alternative would be to use `@RequestBody MultiValueMap<String, String> sparqlForm`, combined with
         // custom validation, instead of the individual @RequestParam entries)
-        final HashMap<String, List<String>> sparqlForm = new HashMap<>(3);
+        final Map<String, List<String>> sparqlForm = new HashMap<>(3);
         sparqlForm.put(PARAM_QUERY, List.of(query));
         if (defaultGraphUri != null && !defaultGraphUri.isEmpty()) {
             sparqlForm.put(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri);
