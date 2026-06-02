@@ -109,7 +109,7 @@ public class SearchSparqlControllerTest {
         // specify request with url query, but without authentication
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
-                .queryParam("query", EXAMPLE_QUERY)
+                .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
                 .build()
                 .toUri();
 
