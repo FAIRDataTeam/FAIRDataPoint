@@ -68,7 +68,9 @@ public class SearchSparqlController {
 
     public static final String MESSAGE_UPDATE_DENIED = "SPARQL update not allowed";
 
-    // request parameters defined in https://www.w3.org/TR/sparql11-protocol/
+    // request parameters and media types defined in https://www.w3.org/TR/sparql11-protocol/
+    public static final String MEDIA_TYPE_SPARQL_QUERY = "application/sparql-query";
+    public static final String MEDIA_TYPE_SPARQL_UPDATE = "application/sparql-update";
     public static final String PARAM_QUERY = "query";
     public static final String PARAM_DEFAULT_GRAPH_URI = "default-graph-uri";
     public static final String PARAM_NAMED_GRAPH_URI = "named-graph-uri";
@@ -271,7 +273,7 @@ public class SearchSparqlController {
      */
     @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(value = "/search/sparql", consumes = "application/sparql-query")
+    @PostMapping(value = "/search/sparql", consumes = MEDIA_TYPE_SPARQL_QUERY)
     public ResponseEntity<byte[]> proxySparqlEndpointPostRaw(
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,

@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.*;
 import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -283,7 +282,7 @@ public class SearchSparqlControllerTest {
         MvcTestResult testResult = mockMvc.post()
                 .uri(uriWithQuery)
                 .accept(MediaType.APPLICATION_JSON)
-                .contentType("application/sparql-query")
+                .contentType(MEDIA_TYPE_SPARQL_QUERY)
                 .content(EXAMPLE_QUERY)
                 .exchange();
 
