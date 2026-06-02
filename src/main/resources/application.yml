@@ -82,6 +82,7 @@ springdoc:
     disable-swagger-default-url: true
     doc-expansion: none
     operationsSorter: method
+    tagsSorter: alpha
 
 server:
   forward-headers-strategy: framework
