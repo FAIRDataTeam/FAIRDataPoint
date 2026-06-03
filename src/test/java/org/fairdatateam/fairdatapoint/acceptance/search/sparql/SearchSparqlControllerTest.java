@@ -48,6 +48,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController.*;
+import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlQueryValidator.MESSAGE_INVALID_QUERY;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -181,7 +182,7 @@ public class SearchSparqlControllerTest {
 
         // request should fail
         assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
-        assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
+        assertThat(testResult).hasBodyTextEqualTo(MESSAGE_INVALID_QUERY);
     }
 
     @Test
@@ -194,7 +195,7 @@ public class SearchSparqlControllerTest {
 
         // request should fail
         assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
-        assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
+        assertThat(testResult).hasBodyTextEqualTo(MESSAGE_INVALID_QUERY);
     }
 
     @Test
@@ -208,7 +209,7 @@ public class SearchSparqlControllerTest {
 
         // request should fail
         assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
-        assertThat(testResult).hasErrorMessage(MESSAGE_UPDATE_DENIED);
+        assertThat(testResult).hasBodyTextEqualTo(MESSAGE_INVALID_QUERY);
     }
 
         @Test

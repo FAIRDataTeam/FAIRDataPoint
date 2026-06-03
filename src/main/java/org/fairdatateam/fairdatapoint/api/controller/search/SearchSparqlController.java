@@ -30,14 +30,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
-import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
-import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,10 +46,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -188,27 +180,6 @@ public class SearchSparqlController {
     }
 
     /**
-     * Validate the SPARQL query string, throws ResponseStatusException if invalid.
-     * This also guards against SPARQL update commands.
-     */
-    private void abortIfSparqlQueryInvalid(String query) {
-        // create temporary in-memory repository because we need a repository connection
-        // but do not want to run the risk of accidental access to the main repository
-        final Repository temporaryRepository = new SailRepository(new MemoryStore());
-        try (RepositoryConnection connection = temporaryRepository.getConnection()) {
-            // use RDF4J's built-in query validation (note there is also a prepareUpdate() method)
-            connection.prepareQuery(query);
-        }
-        catch (MalformedQueryException | RepositoryException exception) {
-            log.warn(exception.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MESSAGE_UPDATE_DENIED);
-        }
-        finally {
-            temporaryRepository.shutDown();
-        }
-    }
-
-    /**
      * Proxy for GET requests to the triple store SPARQL endpoint.
      * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
      * except for headers that should not be forwarded.
@@ -226,7 +197,7 @@ public class SearchSparqlController {
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
-        abortIfSparqlQueryInvalid(query);
+        SparqlQueryValidator.validate(query);
         // add query parameters
         final URI uriWithQuery = UriComponentsBuilder
                 .fromUriString(sparqlEndpointUrl)
@@ -265,7 +236,7 @@ public class SearchSparqlController {
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
-        abortIfSparqlQueryInvalid(query);
+        SparqlQueryValidator.validate(query);
         // abort if request contains a SPARQL update attempt
         if (request.getParameter(PARAM_UPDATE) != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MESSAGE_UPDATE_DENIED);
@@ -311,7 +282,7 @@ public class SearchSparqlController {
             @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
-        abortIfSparqlQueryInvalid(query);
+        SparqlQueryValidator.validate(query);
         // add query parameters if present
         final URI uriWithQuery = UriComponentsBuilder
                 .fromUriString(sparqlEndpointUrl)
