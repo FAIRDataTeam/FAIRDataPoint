@@ -185,7 +185,7 @@ public class SearchSparqlControllerTest {
     }
 
     @Test
-    public void postRequestWithMaliciousFormQueryIsDenied() {
+    public void formPostWithMaliciousQueryIsDenied() {
         // execute request with malicious form data
         MvcTestResult testResult = mockMvc.post()
                 .uri(path)
@@ -198,7 +198,7 @@ public class SearchSparqlControllerTest {
     }
 
     @Test
-    public void postRequestWithMaliciousRawQueryIsDenied() {
+    public void rawPostWithMaliciousQueryIsDenied() {
         // execute request with malicious raw query
         MvcTestResult testResult = mockMvc.post()
                 .uri(path)
