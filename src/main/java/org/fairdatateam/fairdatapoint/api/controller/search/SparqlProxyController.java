@@ -54,7 +54,7 @@ import java.util.*;
 @Slf4j
 @Tag(name = "Search")
 @RestController
-public class SearchSparqlController {
+public class SparqlProxyController {
 
     public static final String EXAMPLE_QUERY = "SELECT * WHERE { ?s ?p ?o }";
 
@@ -84,7 +84,7 @@ public class SearchSparqlController {
     /**
      * Constructor
      */
-    public SearchSparqlController(Repository repository, SparqlProxyHeaderCleaner cleaner, RestClient restClient) {
+    public SparqlProxyController(Repository repository, SparqlProxyHeaderCleaner cleaner, RestClient restClient) {
         this.cleaner = cleaner;
         this.restClient = restClient;
         // todo: simplify as part of #824

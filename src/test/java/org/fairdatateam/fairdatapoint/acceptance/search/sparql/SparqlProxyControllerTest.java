@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
+import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController;
 import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyHeaderCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController.*;
+import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController.*;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyHeaderCleaner.HEADER_X_FORWARDED_FOR;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlQueryValidator.MESSAGE_INVALID_QUERY;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -61,7 +61,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @AutoConfigureMockRestServiceServer
 @SpringBootTest(properties = { "instance.sparqlProxyEnabled=true" })
 @WithMockUser
-public class SearchSparqlControllerTest {
+public class SparqlProxyControllerTest {
 
     final static String MALICIOUS_SPARQL_UPDATE = "CLEAR GRAPH ex:";
 
@@ -75,7 +75,7 @@ public class SearchSparqlControllerTest {
 
     private final MockRestServiceServer mockBackendSparqlServer;
 
-    private final SearchSparqlController searchSparqlController;
+    private final SparqlProxyController sparqlProxyController;
 
     private final String defaultGraphUri = "http://default.graph.uri";
 
@@ -90,20 +90,20 @@ public class SearchSparqlControllerTest {
      * Constructor
      */
     @Autowired
-    public SearchSparqlControllerTest(
+    public SparqlProxyControllerTest(
             MockMvcTester mockMvc,
             MockRestServiceServer mockBackendSparqlServer,
-            SearchSparqlController searchSparqlController
+            SparqlProxyController sparqlProxyController
     ) {
         this.mockMvc = mockMvc;
         this.mockBackendSparqlServer = mockBackendSparqlServer;
-        this.searchSparqlController = searchSparqlController;
+        this.sparqlProxyController = sparqlProxyController;
     }
 
     @BeforeEach
     public void setup() {
         // override the repository query url
-        ReflectionTestUtils.setField(searchSparqlController, "sparqlEndpointUrl", TEST_SPARQL_ENDPOINT_URL);
+        ReflectionTestUtils.setField(sparqlProxyController, "sparqlEndpointUrl", TEST_SPARQL_ENDPOINT_URL);
     }
 
     @Test
