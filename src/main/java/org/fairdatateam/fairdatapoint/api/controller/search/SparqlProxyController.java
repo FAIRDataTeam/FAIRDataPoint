@@ -75,7 +75,7 @@ public class SparqlProxyController {
             This endpoint is not part of the stable API and may change in future releases.
             """;
 
-    private final SparqlProxyHeaderCleaner cleaner;
+    private final SparqlProxyCleaningService cleaningService;
 
     private final RestClient restClient;
 
@@ -84,8 +84,10 @@ public class SparqlProxyController {
     /**
      * Constructor
      */
-    public SparqlProxyController(Repository repository, SparqlProxyHeaderCleaner cleaner, RestClient restClient) {
-        this.cleaner = cleaner;
+    public SparqlProxyController(
+            Repository repository, SparqlProxyCleaningService cleaningService, RestClient restClient
+    ) {
+        this.cleaningService = cleaningService;
         this.restClient = restClient;
         // todo: simplify as part of #824
         if (repository instanceof SPARQLRepository sparqlRepository) {
@@ -139,8 +141,8 @@ public class SparqlProxyController {
         // send get request to backend sparql endpoint
         return restClient.get()
                 .uri(uriWithQuery)
-                .headers(cleaner.cleanRequestHeadersFactory(request, requestHeaders))
-                .exchange(cleaner::cleanResponse);
+                .headers(cleaningService.cleanRequestHeadersFactory(request, requestHeaders))
+                .exchange(cleaningService::cleanResponse);
     }
 
     /**
@@ -183,9 +185,9 @@ public class SparqlProxyController {
         final URI uri = URI.create(sparqlEndpointUrl);
         return restClient.post()
                 .uri(uri)
-                .headers(cleaner.cleanRequestHeadersFactory(request, requestHeaders))
+                .headers(cleaningService.cleanRequestHeadersFactory(request, requestHeaders))
                 .body(MultiValueMap.fromMultiValue(sparqlForm))
-                .exchange(cleaner::cleanResponse);
+                .exchange(cleaningService::cleanResponse);
     }
 
     /**
@@ -218,8 +220,8 @@ public class SparqlProxyController {
         // post to backend sparql endpoint
         return restClient.post()
                 .uri(uriWithQuery)
-                .headers(cleaner.cleanRequestHeadersFactory(request, requestHeaders))
+                .headers(cleaningService.cleanRequestHeadersFactory(request, requestHeaders))
                 .body(query)
-                .exchange(cleaner::cleanResponse);
+                .exchange(cleaningService::cleanResponse);
     }
 }

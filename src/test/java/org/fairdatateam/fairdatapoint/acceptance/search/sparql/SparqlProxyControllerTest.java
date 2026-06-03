@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController;
-import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyHeaderCleaner;
+import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyCleaningService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController.*;
-import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyHeaderCleaner.HEADER_X_FORWARDED_FOR;
+import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyCleaningService.HEADER_X_FORWARDED_FOR;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlQueryValidator.MESSAGE_INVALID_QUERY;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.startsWith;
@@ -216,6 +216,8 @@ public class SparqlProxyControllerTest {
 
         @Test
     public void proxyForwardingWorksForGetRequests() {
+        // todo: move the header cleaning checks to a dedicated SparqlProxyCleaningServiceTest class
+
         // mock headers for response from mock backend sparql server
         final HttpHeaders mockBackendResponseHeaders = new HttpHeaders();
 
@@ -224,7 +226,7 @@ public class SparqlProxyControllerTest {
         mockBackendResponseHeaders.add(customHeaderName, "dummy");
 
         // add standard hop-by-hop headers
-        final List<String> hopByHopHeaders = SparqlProxyHeaderCleaner.getHopByHopHeaders();
+        final List<String> hopByHopHeaders = SparqlProxyCleaningService.getHopByHopHeaders();
         hopByHopHeaders.forEach(header -> mockBackendResponseHeaders.add(header, "dummy"));
 
         // connection list is incomplete on purpose (does not contain all hop-by-hop headers)

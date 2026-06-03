@@ -38,7 +38,7 @@ import java.util.function.Consumer;
  * Provides methods for cleaning request and response headers in a SPARQL proxy endpoint
  */
 @Service
-public class SparqlProxyHeaderCleaner {
+public class SparqlProxyCleaningService {
 
     public static final String HEADER_X_FORWARDED_FOR = "X-Forwarded-For";
 
