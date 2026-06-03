@@ -34,7 +34,6 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,10 +43,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * This controller depends on a SPARQL endpoint provided by an external triple store.
@@ -60,8 +57,6 @@ import java.util.function.Consumer;
 public class SearchSparqlController {
 
     public static final String EXAMPLE_QUERY = "SELECT * WHERE { ?s ?p ?o }";
-
-    public static final String HEADER_X_FORWARDED_FOR = "X-Forwarded-For";
 
     public static final String MESSAGE_UPDATE_DENIED = "SPARQL update not allowed";
 
@@ -80,19 +75,7 @@ public class SearchSparqlController {
             This endpoint is not part of the stable API and may change in future releases.
             """;
 
-    // standard hop-by-hop headers mentioned in rfc2616
-    private static final List<String> HOP_BY_HOP_HEADERS = List.of(
-            "Keep-Alive",
-            HttpHeaders.PROXY_AUTHENTICATE,
-            HttpHeaders.PROXY_AUTHORIZATION,
-            HttpHeaders.TE,
-            HttpHeaders.TRAILER,
-            HttpHeaders.TRANSFER_ENCODING,
-            HttpHeaders.UPGRADE
-    );
-
-    @Value("${openapi.title} ${openapi.version}")
-    private String serverHeader;
+    private final SparqlProxyHeaderCleaner cleaner;
 
     private final RestClient restClient;
 
@@ -101,7 +84,8 @@ public class SearchSparqlController {
     /**
      * Constructor
      */
-    public SearchSparqlController(Repository repository, RestClient restClient) {
+    public SearchSparqlController(Repository repository, SparqlProxyHeaderCleaner cleaner, RestClient restClient) {
+        this.cleaner = cleaner;
         this.restClient = restClient;
         // todo: simplify as part of #824
         if (repository instanceof SPARQLRepository sparqlRepository) {
@@ -110,64 +94,6 @@ public class SearchSparqlController {
         else if (repository instanceof HTTPRepository httpRepository) {
             this.sparqlEndpointUrl = httpRepository.getRepositoryURL();
         }
-    }
-
-    /**
-     * The hop-by-hop headers have nothing to do with our SPARQL query, but,
-     * if they exist, for whatever reason, they need to be removed by our proxy.
-     */
-    public static List<String> getHopByHopHeaders() {
-        return HOP_BY_HOP_HEADERS;
-    }
-
-    /**
-     * Returns a function that updates an HttpHeaders object based on the headers from a request.
-     * To be used as input for <code>RestClient.*.headers()</code> methods.
-     */
-    private Consumer<HttpHeaders> cleanRequestHeadersFactory(HttpServletRequest request, HttpHeaders requestHeaders) {
-        // Design note: It seems redundant to have both request and requestHeaders arguments because the headers are
-        // already available in the request. However, HttpServletRequest does not provide a simple way to get an
-        // HttpHeaders object, whereas the controller does provide one with @RequestHeader. Still, we do also need the
-        // HttpServletRequest to get the remote IP address.
-        return restRequestHeaders -> {
-            // copy all headers
-            restRequestHeaders.putAll(requestHeaders);
-            // remove any authorization to prevent privilege escalation attempts
-            restRequestHeaders.remove(HttpHeaders.AUTHORIZATION);
-            // forward the client ip (otherwise the upstream only sees the proxy ip)
-            restRequestHeaders.add(HEADER_X_FORWARDED_FOR, request.getRemoteAddr());
-        };
-    }
-
-    /**
-     * Extracts headers from response and removes the ones that should not be forwarded,
-     * such as hop-by-hop headers. These must be listed in the Connection header (see rfc9110 7.6.1).
-     */
-    private HttpHeaders cleanResponseHeaders(RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response) {
-        // copy all headers from the response
-        final HttpHeaders headers = new HttpHeaders();
-        headers.putAll(response.getHeaders());
-        // remove all headers listed in the "Connection" header
-        headers.getConnection().forEach(headers::remove);
-        headers.remove(HttpHeaders.CONNECTION);
-        // explicitly remove hop-by-hop headers (although Connection should list them too)
-        HOP_BY_HOP_HEADERS.forEach(headers::remove);
-        // rewrite the server header to hide the type of backend triple store
-        headers.set(HttpHeaders.SERVER, serverHeader);
-        return headers;
-    }
-
-    /**
-     * Modifies the response from RestClient before returning it from the controller.
-     * To be used as input for <code>RestClient.*.exchange()</code> calls.
-     */
-    private ResponseEntity<byte[]> cleanResponse(
-            HttpRequest restRequest, RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse restResponse
-    ) throws IOException {
-        return ResponseEntity
-                .status(restResponse.getStatusCode())
-                .headers(cleanResponseHeaders(restResponse))
-                .body(restResponse.getBody().readAllBytes());
     }
 
     /**
@@ -213,8 +139,8 @@ public class SearchSparqlController {
         // send get request to backend sparql endpoint
         return restClient.get()
                 .uri(uriWithQuery)
-                .headers(cleanRequestHeadersFactory(request, requestHeaders))
-                .exchange(this::cleanResponse);
+                .headers(cleaner.cleanRequestHeadersFactory(request, requestHeaders))
+                .exchange(cleaner::cleanResponse);
     }
 
     /**
@@ -257,9 +183,9 @@ public class SearchSparqlController {
         final URI uri = URI.create(sparqlEndpointUrl);
         return restClient.post()
                 .uri(uri)
-                .headers(cleanRequestHeadersFactory(request, requestHeaders))
+                .headers(cleaner.cleanRequestHeadersFactory(request, requestHeaders))
                 .body(MultiValueMap.fromMultiValue(sparqlForm))
-                .exchange(this::cleanResponse);
+                .exchange(cleaner::cleanResponse);
     }
 
     /**
@@ -292,8 +218,8 @@ public class SearchSparqlController {
         // post to backend sparql endpoint
         return restClient.post()
                 .uri(uriWithQuery)
-                .headers(cleanRequestHeadersFactory(request, requestHeaders))
+                .headers(cleaner.cleanRequestHeadersFactory(request, requestHeaders))
                 .body(query)
-                .exchange(this::cleanResponse);
+                .exchange(cleaner::cleanResponse);
     }
 }

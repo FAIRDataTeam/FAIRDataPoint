@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController;
+import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyHeaderCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SearchSparqlController.*;
+import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyHeaderCleaner.HEADER_X_FORWARDED_FOR;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlQueryValidator.MESSAGE_INVALID_QUERY;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.startsWith;
@@ -222,7 +224,7 @@ public class SearchSparqlControllerTest {
         mockBackendResponseHeaders.add(customHeaderName, "dummy");
 
         // add standard hop-by-hop headers
-        final List<String> hopByHopHeaders = SearchSparqlController.getHopByHopHeaders();
+        final List<String> hopByHopHeaders = SparqlProxyHeaderCleaner.getHopByHopHeaders();
         hopByHopHeaders.forEach(header -> mockBackendResponseHeaders.add(header, "dummy"));
 
         // connection list is incomplete on purpose (does not contain all hop-by-hop headers)
