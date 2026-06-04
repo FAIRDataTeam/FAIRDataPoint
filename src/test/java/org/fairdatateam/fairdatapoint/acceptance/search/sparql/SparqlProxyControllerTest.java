@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController;
-import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyCleaningService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +43,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController.*;
-import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyCleaningService.HEADER_X_FORWARDED_FOR;
 import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlQueryValidator.MESSAGE_INVALID_QUERY;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -109,15 +105,17 @@ public class SparqlProxyControllerTest {
     @Test
     @WithAnonymousUser
     public void unauthenticatedRequestsAreDeniedWithoutContactingRemoteSparqlServer() {
-        // specify request with url query, but without authentication
+        // specify url query
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
                 .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
                 .build()
                 .toUri();
 
+        // perform request
         MvcTestResult testResult = mockMvc.get().uri(uriWithQuery).accept(MediaType.APPLICATION_JSON).exchange();
 
+        // should be denied
         assertThat(testResult).hasStatus(HttpStatus.FORBIDDEN);
     }
 
@@ -172,7 +170,7 @@ public class SparqlProxyControllerTest {
 
     @Test
     public void getRequestWithMaliciousUrlQueryIsDenied() {
-        // specify request with malicious url query (trying to update)
+        // specify malicious url query (trying to update)
         URI uriWithMaliciousQuery = UriComponentsBuilder
                 .fromPath(path)
                 .queryParam(PARAM_QUERY, MALICIOUS_SPARQL_UPDATE)
@@ -216,38 +214,14 @@ public class SparqlProxyControllerTest {
 
         @Test
     public void proxyForwardingWorksForGetRequests() {
-        // todo: move the header cleaning checks to a dedicated SparqlProxyCleaningServiceTest class
-
-        // mock headers for response from mock backend sparql server
-        final HttpHeaders mockBackendResponseHeaders = new HttpHeaders();
-
-        // add a custom header
-        final String customHeaderName = "my-custom-header";
-        mockBackendResponseHeaders.add(customHeaderName, "dummy");
-
-        // add standard hop-by-hop headers
-        final List<String> hopByHopHeaders = SparqlProxyCleaningService.getHopByHopHeaders();
-        hopByHopHeaders.forEach(header -> mockBackendResponseHeaders.add(header, "dummy"));
-
-        // connection list is incomplete on purpose (does not contain all hop-by-hop headers)
-        mockBackendResponseHeaders.put(HttpHeaders.CONNECTION, List.of(customHeaderName, hopByHopHeaders.get(0)));
-
-        // add server header
-        final String backendServerHeader = "mock backend sparql server 1.0";
-        mockBackendResponseHeaders.add(HttpHeaders.SERVER, backendServerHeader);
-
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer
                 // startsWith is required, otherwise it will expect a url without (query) parameters
                 .expect(requestTo(startsWith(TEST_SPARQL_ENDPOINT_URL)))
                 .andExpect(method(HttpMethod.GET))
-                // forwarded header should have been added to request
-                .andExpect(header(HEADER_X_FORWARDED_FOR, matchesPattern(".+")))
-                // authorization headers should have been removed from request
-                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-                .andRespond(withSuccess().headers(mockBackendResponseHeaders).body(mockJsonBody));
+                .andRespond(withSuccess().body(mockJsonBody));
 
-        // specify request with url query and normal user (non-admin)
+        // specify url with query
         URI uriWithQuery = UriComponentsBuilder
                 .fromPath(path)
                 .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
@@ -258,22 +232,14 @@ public class SparqlProxyControllerTest {
         MvcTestResult testResult = mockMvc.get()
                 .uri(uriWithQuery)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "dummy")
                 .exchange();
 
         // check that mock server has received expected requests
         // (for some reason this hides exceptions from the RestClient, so comment out to debug)
         mockBackendSparqlServer.verify();
 
-        // check response headers
-        assertThat(testResult).hasStatusOk();
-        assertThat(testResult).doesNotContainHeader(customHeaderName);
-        assertThat(testResult).doesNotContainHeader(HttpHeaders.CONNECTION);
-        hopByHopHeaders.forEach(header -> assertThat(testResult).doesNotContainHeader(header));
-        assertThat(testResult).containsHeader(HttpHeaders.SERVER);
-        assertThat(testResult).headers().doesNotContainEntry(HttpHeaders.SERVER, List.of(backendServerHeader));
-
         // verify that proxy returns json response body
+        assertThat(testResult).hasStatusOk();
         assertThat(testResult).bodyJson().hasPath("head.vars").hasPath("results.bindings");
 
     }
