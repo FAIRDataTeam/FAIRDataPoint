@@ -27,8 +27,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -86,7 +86,7 @@ public class SparqlProxyCleaningService {
      * Extracts headers from response and removes the ones that should not be forwarded,
      * such as hop-by-hop headers. These must be listed in the Connection header (see rfc9110 7.6.1).
      */
-    private HttpHeaders cleanResponseHeaders(RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response) {
+    private HttpHeaders cleanResponseHeaders(ClientHttpResponse response) {
         // copy all headers from the response
         final HttpHeaders headers = new HttpHeaders();
         headers.putAll(response.getHeaders());
@@ -105,7 +105,7 @@ public class SparqlProxyCleaningService {
      * To be used as input for <code>RestClient.*.exchange()</code> calls.
      */
     ResponseEntity<byte[]> cleanResponse(
-            HttpRequest restRequest, RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse restResponse
+            HttpRequest restRequest, ClientHttpResponse restResponse
     ) throws IOException {
         return ResponseEntity
                 .status(restResponse.getStatusCode())
