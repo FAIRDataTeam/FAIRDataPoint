@@ -41,7 +41,8 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Map;
 
@@ -105,15 +106,12 @@ public class SparqlProxyControllerTest {
     @Test
     @WithAnonymousUser
     public void unauthenticatedRequestsAreDeniedWithoutContactingRemoteSparqlServer() {
-        // specify url query
-        URI uriWithQuery = UriComponentsBuilder
-                .fromPath(path)
+        // perform request with url query but without authentication (@WithAnonymousUser)
+        MvcTestResult testResult = mockMvc.get()
+                .uri(path)
                 .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
-                .build()
-                .toUri();
-
-        // perform request
-        MvcTestResult testResult = mockMvc.get().uri(uriWithQuery).accept(MediaType.APPLICATION_JSON).exchange();
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange();
 
         // should be denied
         assertThat(testResult).hasStatus(HttpStatus.FORBIDDEN);
@@ -170,15 +168,11 @@ public class SparqlProxyControllerTest {
 
     @Test
     public void getRequestWithMaliciousUrlQueryIsDenied() {
-        // specify malicious url query (trying to update)
-        URI uriWithMaliciousQuery = UriComponentsBuilder
-                .fromPath(path)
+        // execute request with malicious url query (trying to update)
+        MvcTestResult testResult = mockMvc.get()
+                .uri(path)
                 .queryParam(PARAM_QUERY, MALICIOUS_SPARQL_UPDATE)
-                .build()
-                .toUri();
-
-        // execute request
-        MvcTestResult testResult = mockMvc.get().uri(uriWithMaliciousQuery).exchange();
+                .exchange();
 
         // request should fail
         assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
@@ -221,16 +215,10 @@ public class SparqlProxyControllerTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess().body(mockJsonBody));
 
-        // specify url with query
-        URI uriWithQuery = UriComponentsBuilder
-                .fromPath(path)
-                .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
-                .build()
-                .toUri();
-
-        // execute request
+        // execute request with url query
         MvcTestResult testResult = mockMvc.get()
-                .uri(uriWithQuery)
+                .uri(path)
+                .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange();
 
@@ -293,17 +281,11 @@ public class SparqlProxyControllerTest {
                 .andExpect(content().string(EXAMPLE_QUERY))
                 .andRespond(withSuccess().body(mockJsonBody));
 
-        // specify request with url query and normal user (non-admin)
-        URI uriWithQuery = UriComponentsBuilder
-                .fromPath(path)
+        // execute request with raw query in body and graph uris in url
+        MvcTestResult testResult = mockMvc.post()
+                .uri(path)
                 .queryParam(PARAM_DEFAULT_GRAPH_URI, defaultGraphUri)
                 .queryParam(PARAM_NAMED_GRAPH_URI, namedGraphUri)
-                .build()
-                .toUri();
-
-        // execute request
-        MvcTestResult testResult = mockMvc.post()
-                .uri(uriWithQuery)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MEDIA_TYPE_SPARQL_QUERY)
                 .content(EXAMPLE_QUERY)
