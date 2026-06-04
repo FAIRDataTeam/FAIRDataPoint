@@ -65,6 +65,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @WithMockUser
 public class SparqlProxyControllerTest {
 
+    // note we're now using @URL instead of the custom (RDF4J-based) @ValidIri because the latter ignores spaces
     final static String INVALID_URI = "https://in valid.example.org";
 
     final static String MALICIOUS_SPARQL_UPDATE = "CLEAR GRAPH ex:";
