@@ -47,8 +47,14 @@ import java.net.URI;
 import java.util.*;
 
 /**
- * This controller depends on a SPARQL endpoint provided by an external triple store.
- * For this reason it is disabled when using an in-memory or native (file system) triple store.
+ * Acts as a proxy that forwards read-only query requests to a SPARQL endpoint provided by an external triple store.
+ * The triple store SPARQL endpoint must comply with the
+ * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
+ * The proxy controller performs basic input validation and removes authentication credentials before forwarding
+ * requests to the triple store SPARQL endpoint. It also cleans up the headers before returning the response.
+ * Returns status <code>404 NOT FOUND</code> when using an in-memory or native (file system) triple store,
+ * because those do not provide a SPARQL endpoint.
+ * This controller is disabled by default, and can be enabled by setting <code>instance.sparqlProxyEnabled=true</code>.
  */
 @ConditionalOnProperty(value = "instance.sparqlProxyEnabled", havingValue = "true")
 @Slf4j
@@ -108,11 +114,7 @@ public class SparqlProxyController {
     }
 
     /**
-     * Proxy for GET requests to the triple store SPARQL endpoint.
-     * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
-     * except for headers that should not be forwarded.
-     * The triple store SPARQL endpoint is expected to comply with the
-     * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
+     * Handles GET requests with queries in URL parameters.
      */
     @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
@@ -146,11 +148,7 @@ public class SparqlProxyController {
     }
 
     /**
-     * Proxy for POST requests to the triple store SPARQL endpoint using form data.
-     * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
-     * except for headers that should not be forwarded.
-     * The triple store SPARQL endpoint is expected to comply with the
-     * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
+     * Handles POST requests using form data (<code>"application/x-www-form-urlencoded"</code>).
      */
     @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
@@ -191,11 +189,7 @@ public class SparqlProxyController {
     }
 
     /**
-     * Proxy for POST requests to the triple store SPARQL endpoint using raw sparql query.
-     * Makes an unauthenticated request to the triple store SPARQL endpoint and returns the response unchanged,
-     * except for headers that should not be forwarded.
-     * The triple store SPARQL endpoint is expected to comply with the
-     * <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL protocol</a>.
+     * Handles POST requests with raw sparql queries (<code>"application/sparql-query"</code>)
      */
     @Operation(description = DESCRIPTION_EXPERIMENTAL)
     @PreAuthorize("isAuthenticated()")
