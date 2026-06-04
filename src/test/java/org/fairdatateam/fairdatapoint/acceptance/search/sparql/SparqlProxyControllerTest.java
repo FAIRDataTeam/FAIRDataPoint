@@ -42,7 +42,6 @@ import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Map;
 
@@ -53,12 +52,20 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+/**
+ * Tests proxy functionality.
+ * Note: If you encounter "AssertionError: No further requests expected", that means a request is *unexpectedly* being
+ * forwarded to the mock upstream sparql server. This may happen, for example, if the proxy controller is supposed to
+ * deny the request but does not do so.
+ */
 @ActiveProfiles(Profiles.TESTING)
 @AutoConfigureMockMvc
 @AutoConfigureMockRestServiceServer
 @SpringBootTest(properties = { "instance.sparqlProxyEnabled=true" })
 @WithMockUser
 public class SparqlProxyControllerTest {
+
+    final static String INVALID_URI = "https://in valid.example.org";
 
     final static String MALICIOUS_SPARQL_UPDATE = "CLEAR GRAPH ex:";
 
@@ -206,7 +213,53 @@ public class SparqlProxyControllerTest {
         assertThat(testResult).hasBodyTextEqualTo(MESSAGE_INVALID_QUERY);
     }
 
-        @Test
+    @Test
+    public void getWithInvalidUriIsDenied() {
+        System.out.println(INVALID_URI);
+        // execute get request with invalid graph uris
+        MvcTestResult testResult = mockMvc.get()
+                .uri(path)
+                .queryParam(PARAM_DEFAULT_GRAPH_URI, INVALID_URI)
+                .queryParam(PARAM_NAMED_GRAPH_URI, INVALID_URI)
+                .queryParam(PARAM_QUERY, EXAMPLE_QUERY)
+                .exchange();
+
+        // request should fail
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void rawPostWithInvalidUriIsDenied() {
+        // execute post request with invalid graph uris
+        MvcTestResult testResult = mockMvc.post()
+                .uri(path)
+                .queryParam(PARAM_DEFAULT_GRAPH_URI, INVALID_URI)
+                .queryParam(PARAM_NAMED_GRAPH_URI, INVALID_URI)
+                .contentType(MEDIA_TYPE_SPARQL_QUERY)
+                .content(EXAMPLE_QUERY)
+                .exchange();
+
+        // request should be denied
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void formPostWithInvalidUriIsDenied() {
+        // mock form data
+        final MultiValueMap<String, String> formData = MultiValueMap.fromSingleValue(Map.of(
+                PARAM_QUERY, EXAMPLE_QUERY,
+                PARAM_DEFAULT_GRAPH_URI, INVALID_URI,
+                PARAM_NAMED_GRAPH_URI, INVALID_URI
+        ));
+
+        // execute post request with invalid graph uris
+        MvcTestResult testResult = mockMvc.post().uri(path).formFields(formData).exchange();
+
+        // request should be denied
+        assertThat(testResult).hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
     public void proxyForwardingWorksForGetRequests() {
         // configure mock server for remote SPARQL endpoint
         this.mockBackendSparqlServer

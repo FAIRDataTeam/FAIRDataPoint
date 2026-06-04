@@ -34,6 +34,7 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -123,8 +124,8 @@ public class SparqlProxyController {
             HttpServletRequest request,
             @RequestHeader HttpHeaders requestHeaders,
             @RequestParam(name = PARAM_QUERY) @Parameter(example = EXAMPLE_QUERY) String query,
-            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
-            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
+            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<@URL String> defaultGraphUri,
+            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<@URL String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
         SparqlQueryValidator.validate(query);
@@ -158,8 +159,8 @@ public class SparqlProxyController {
             @RequestHeader HttpHeaders requestHeaders,
             // bind form data from request body
             @RequestParam(name = PARAM_QUERY) @Parameter(schema = @Schema(example = EXAMPLE_QUERY)) String query,
-            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
-            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
+            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<@URL String> defaultGraphUri,
+            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<@URL String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
         SparqlQueryValidator.validate(query);
@@ -200,8 +201,8 @@ public class SparqlProxyController {
             // raw query in body
             @RequestBody @Parameter(schema = @Schema(example = EXAMPLE_QUERY)) String query,
             // graph uris in url parameters
-            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<String> defaultGraphUri,
-            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<String> namedGraphUri
+            @RequestParam(name = PARAM_DEFAULT_GRAPH_URI, required = false) List<@URL String> defaultGraphUri,
+            @RequestParam(name = PARAM_NAMED_GRAPH_URI, required = false) List<@URL String> namedGraphUri
     ) {
         abortIfSparqlEndpointUnavailable();
         SparqlQueryValidator.validate(query);
