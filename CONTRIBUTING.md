@@ -5,51 +5,68 @@ This can be done via [issues], [discussions], email, or any other available meth
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
-## Pull Request Process
+>[!IMPORTANT]
+>Code generated using any form of AI, LLM, or similar tools, ***MUST*** be clearly labeled as such in the PR.
 
-1. Ensure any unnecessary install or build dependencies and other files are removed before the end of the layer when
-   doing a build.
-2. Explain the changes and update the README.md file and other documentation if necessary.
-3. Be ready to communicate about the Pull Request and make changes if required by reviewers.
-4. The Pull Request may be merged once it passes the review and automatic checks.
+## Version control workflow
 
-## Gitflow Workflow
+Our version control workflow is pragmatic, aiming to minimize overhead for a small team.
+It resembles [github flow] with some aspects of [git flow] and [trunk-based development], but does not really fit well in any of those boxes.
 
-We use the standard [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow):
+- We have a single `master` branch which is supposed to remain stable. 
+- For every *significant* change, we create a new short-lived branch from `master`.
+- We immediately create a pull request (PR) for the new short-lived branch.  
+- We push often, at least once a day.
+  This allows us to keep track of work in progress and provide guidance before things get off track.
+- After merging back into `master`, the short-lived branch is deleted.
+- Rebasing and force pushing the *short-lived* branch is allowed only *if* the corresponding PR does not have any comments yet. 
+  This ensures the comments remain in context.
+- Releases are created directly from the `master` branch.
+- Only the latest major release is supported.
 
-* __master__ branch is used only for releases (and eventually hotfixes), this branch is also protected on GitHub (pull
-  requests with review and all checks must pass)
-* __develop__ branch is used for development and as a base for following development branches of features, support
-  stuff, and as a base for releases
-* __feature/*__ (base develop, rebase-merged back to develop when done)
-* __chore/*__ (like the feature but semantically different, not the feature but some chore, e.g., cleanup or update of
-  Dockerfile)
-* __fix/*__ (like the feature but semantically different, not something new but fix of a non-critical bug)
-* __release/*__ (base develop, merged to master and develop when ready for release+tag)
-* __hotfix/*__ (base master, merged to master and develop)
+Note that there is still a `develop` branch, but that is legacy.
 
-Please note, that for tasks from [our Jira](https://dtl-fair.atlassian.net/projects/FDP/issues), we use such
-as `[FDP-XX]` identifying the project and task number.
+## Pull requests are used for significant changes
 
-## Release Management
+All significant contributions should be added via [pull requests] (PRs).
+This allows us to discuss and review the changes, and document design choices.
+Very minor changes, like fixing a typo in the readme or a comment, can sometimes be pushed directly onto master.
 
-For the release management we use (aside from
-the [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)):
+Pull request titles must be *concise* and *descriptive*.
+This enables auto-generation of meaningful change logs during the release process.
 
-* [Semantic versioning](https://semver.org)
-* Release Candidates - X.Y.Z-rc.N should be created if don’t expect any problems (in that case use alpha or beta), and
-  make a walkthrough to verify its functionality according to the manuals finally - it also verifies that the
-  documentation is up to date with the new version.
-* [CHANGELOG.md](https://keepachangelog.com/en/1.0.0/ )
-* GitHub releases and tags - make the release using GitHub (or hub extension), CI will automatically upload ZIP and TGZ
-  distribution files there - better verify.
-* Docker Hub image - in case of release, Docker image with the same tag will be created automatically.
-* The matching version of [FDP](https://github.com/FAIRDataTeam/FAIRDataPoint)
-  , [FDP-Client](https://github.com/FAIRDataTeam/FAIRDataPoint-client),
-  and [OpenRefine extension](https://github.com/FAIRDataTeam/OpenRefine-metadata-extension) must be always compatible.
+## Pull requests must be focused
 
-Also, never forget to update the
-joint [FAIR Data Point documentation](https://github.com/FAIRDataTeam/FAIRDataPoint-Docs)!
+Individual PRs *must* have a strong focus which is clear from the title.
+When writing the title, remember that it is the only thing users will see in the change log.
+PRs should also have a clear description and rationale, and should be linked to relevant issues, if any.
 
-[issues]: https://github.com/FAIRDataTeam/FAIRDataPoint/issues
+If a PR gets very large, split it up into smaller PRs that can be reviewed separately.
+
+## Merge method is chosen depending on content
+
+Depending on the size and type of PR, different [merge methods] can be applied.
+We prefer a squash merge for small PRs, resulting in a single commit.
+However, in some cases, it may be useful to keep the individual commits from the PR.
+In that case we use a merge commit (as in `--no-ff`).
+
+## External dependencies are minimized
+
+To reduce the maintenance burden, we aim to minimize the number of external dependencies.
+If external dependencies cannot be avoided, we prefer well-supported projects with large numbers of contributors.
+
+## Semantic versioning applies to the API
+
+Release versions are based on [semantic versioning], i.e. `major.minor.patch`.
+However, the semantic versioning rules for `major` changes are only applied to changes in the HTTP API.
+For example, breaking changes in application *configuration* may occur in `minor` versions, as long as these changes are not reflected in the HTTP API.
+
 [discussions]: https://github.com/FAIRDataTeam/FAIRDataPoint/discussions
+[git flow]: https://nvie.com/posts/a-successful-git-branching-model/
+[github flow]: https://githubflow.github.io/
+[issues]: https://github.com/FAIRDataTeam/FAIRDataPoint/issues
+[merge methods]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github
+[pull requests]: https://github.com/FAIRDataTeam/FAIRDataPoint-client-redux/pulls
+[releases]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases
+[semantic versioning]: https://semver.org
+[trunk-based development]: https://trunkbaseddevelopment.com/
