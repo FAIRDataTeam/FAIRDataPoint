@@ -1,7 +1,7 @@
 # Contributing
 
-When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other
-method with the owners of this repository before making a change.
+Before contributing to this repository, please discuss the intended change with the repository owners.
+This can be done via [issues], [discussions], email, or any other available method.
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
@@ -50,3 +50,6 @@ the [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflo
 
 Also, never forget to update the
 joint [FAIR Data Point documentation](https://github.com/FAIRDataTeam/FAIRDataPoint-Docs)!
+
+[issues]: https://github.com/FAIRDataTeam/FAIRDataPoint/issues
+[discussions]: https://github.com/FAIRDataTeam/FAIRDataPoint/discussions
