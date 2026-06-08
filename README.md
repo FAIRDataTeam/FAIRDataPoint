@@ -7,28 +7,30 @@
 [![Documentation Status](https://readthedocs.org/projects/fairdatapoint/badge/?version=latest)](https://fairdatapoint.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19236251.svg)](https://doi.org/10.5281/zenodo.19236251)
 
-The [FAIR Data Point (FDP)] is an HTTP API for creating, storing, and serving FAIR metadata (**F**indable, **A**ccessible, **I**nteroperable, **R**eusable).
+The [FAIR Data Point (FDP)] provides an HTTP API for creating, storing, and serving FAIR (**F**indable, **A**ccessible, **I**nteroperable, **R**eusable) metadata in the form of [RDF].
 The metadata content is generated semi-automatically according to the [FAIR Data Point specification].
 
 ## Usage
 
-More information about FDP, how to deploy it and use it can be found in the [FDP documentation].
+More information about the FDP, how to deploy it, and how to use it, can be found in the [FDP documentation].
 
 ### API Documentation
 
-The FAIR Data Point API comes with embedded [OpenAPI] documentation based on SwaggerUI.
-Each FDP serves human friendly API documentation at the path `/swagger-ui.html`, for example, https://app.fairdatapoint.org/swagger-ui.html.
-In addition, machine readable API docs are available at the path `/v3/api-docs`, for example, https://app.fairdatapoint.org/v3/api-docs.
+The FAIR Data Point API also comes with embedded [OpenAPI] documentation based on SwaggerUI.
+Each FDP serves its own human friendly API documentation at the path `/swagger-ui.html`, for example, https://app.fairdatapoint.org/swagger-ui.html.
+In addition, machine readable API docs (JSON) are available at the path `/v3/api-docs`, for example, https://app.fairdatapoint.org/v3/api-docs.
 
 ## Development
 
 ### Technology Stack
 
+The FDP runs on the following technology stack and is typically deployed as a Docker container. 
+
 - **Spring-boot**
 - **Java**
 - **Maven**
 - **MongoDB**
-- **Docker** (only required for building a Docker image)
+- **Docker** (only required for building a Docker image and running the container)
 
 ### Build & Run
 
@@ -49,7 +51,7 @@ $ mvn spring-boot:run
 
 ### Run tests
 
-Run from the root of the project:
+Tests can be run, from the root of the project, as follows:
 
 ```bash
 $ mvn test
@@ -86,7 +88,7 @@ By default, the FDP sets up the following *default users*.
 ## Contributing
 
 Interested in contributing to FDP development?
-Take a look at our [contribution guidelines](CONTRIBUTING.md) and [code of Conduct](CODE_OF_CONDUCT.md).
+Take a look at our [contribution guidelines](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Citation
 
@@ -128,3 +130,4 @@ This project is licensed under the MIT License - see the [LICENSE] file for more
 [contribution guidelines]: CONTRIBUTING.md
 [code of conduct]: CODE_OF_CONDUCT.md
 [mongo docker image]: https://hub.docker.com/_/mongo/
+[RDF]: https://www.w3.org/TR/rdf11-primer/
