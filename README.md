@@ -2,7 +2,7 @@
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/FAIRDataTeam/FAIRDataPoint?sort=semver)](https://github.com/FAIRDataTeam/FAIRDataPoint/releases)
 [![Libraries.io](https://img.shields.io/librariesio/github/FAIRDataTeam/FAIRDataPoint)](https://libraries.io/github/FAIRDataTeam/FAIRDataPoint)
-[![License](https://img.shields.io/github/license/FAIRDataTeam/FAIRDataPoint)](https://github.com/FAIRDataTeam/FAIRDataPoint/blob/develop/LICENSE)
+[![License](https://img.shields.io/github/license/FAIRDataTeam/FAIRDataPoint)](https://github.com/FAIRDataTeam/FAIRDataPoint/blob/master/LICENSE)
 [![Docker Pulls](https://img.shields.io/docker/pulls/fairdata/fairdatapoint)](https://hub.docker.com/r/fairdata/fairdatapoint)
 [![Documentation Status](https://readthedocs.org/projects/fairdatapoint/badge/?version=latest)](https://fairdatapoint.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19236251.svg)](https://doi.org/10.5281/zenodo.19236251)
