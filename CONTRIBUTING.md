@@ -30,16 +30,23 @@ Note that there is still a `develop` branch, but that is legacy.
 
 All significant contributions should be added via [pull requests] (PRs).
 This allows us to discuss and review the changes, and document design choices.
-Very minor changes, like fixing a typo in the readme or a comment, can sometimes be pushed directly onto master.
+It also ensures that the contribution is mentioned in the auto-generated change logs.
 
-Pull request titles must be *concise* and *descriptive*.
-This enables auto-generation of meaningful change logs during the release process.
+A significant change is anything that is worth knowing about for developers or end users.
+Tiny changes that do not directly affect the inner workings of the application, like fixing some typos in the readme or a comment, can sometimes be pushed directly onto the `master` branch.
+Always ask yourself: Should this change appear in the change log?
+
+## Pull request titles and labels are important
+
+Pull requests form the basis for the change logs that are auto-generated during the release process.
+For this reason, PR titles must be *concise* and *descriptive*.
+When writing a PR title, remember that this title is the only thing users will see in the change log.
+Also note that change log entries are categorised based on their *labels*, as defined in [release.yml].
 
 ## Pull requests must be focused
 
 Individual PRs *must* have a strong focus which is clear from the title.
-When writing the title, remember that it is the only thing users will see in the change log.
-PRs should also have a clear description and rationale, and should be linked to relevant issues, if any.
+PRs should also have a clear description and rationale and should be linked to relevant issues, if any.
 
 If a PR gets very large, split it up into smaller PRs that can be reviewed separately.
 
@@ -50,9 +57,9 @@ We prefer a squash merge for small PRs, resulting in a single commit.
 However, in some cases, it may be useful to keep the individual commits from the PR.
 In that case we use a merge commit (as in `--no-ff`).
 
-## External dependencies are minimized
+## External dependencies are minimised
 
-To reduce the maintenance burden, we aim to minimize the number of external dependencies.
+To reduce the maintenance burden, we aim to minimise the number of external dependencies.
 If external dependencies cannot be avoided, we prefer well-supported projects with large numbers of contributors.
 
 ## Semantic versioning applies to the API
@@ -68,5 +75,6 @@ For example, breaking changes in application *configuration* may occur in `minor
 [merge methods]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github
 [pull requests]: https://github.com/FAIRDataTeam/FAIRDataPoint-client-redux/pulls
 [releases]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases
+[release.yml]: .github/release.yml
 [semantic versioning]: https://semver.org
 [trunk-based development]: https://trunkbaseddevelopment.com/
