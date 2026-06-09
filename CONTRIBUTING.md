@@ -73,7 +73,7 @@ For example, breaking changes in application *configuration* may occur in `minor
 [github flow]: https://githubflow.github.io/
 [issues]: https://github.com/FAIRDataTeam/FAIRDataPoint/issues
 [merge methods]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github
-[pull requests]: https://github.com/FAIRDataTeam/FAIRDataPoint-client-redux/pulls
+[pull requests]: https://github.com/FAIRDataTeam/FAIRDataPoint/pulls
 [releases]: https://github.com/FAIRDataTeam/FAIRDataPoint/releases
 [release.yml]: .github/release.yml
 [semantic versioning]: https://semver.org
