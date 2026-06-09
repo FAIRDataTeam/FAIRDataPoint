@@ -1,0 +1,22 @@
+# Configuration for auto-generated release notes
+# https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+
+changelog:
+  categories:
+    - title: Breaking changes
+      labels:
+        - breaking-change
+    - title: New features
+      labels:
+        - feature
+    - title: Bugfixes and other changes
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - breaking-change
+          - feature
+          - dependencies
+    - title: Dependency upgrades
+      labels:
+        - dependencies
