@@ -3,7 +3,7 @@ name: Publish to Docker Hub
 on:
   push:
     branches:
-      - develop
+      - master
   pull_request:
     paths-ignore:
       - "**.cff"

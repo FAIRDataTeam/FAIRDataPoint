@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.http.HttpClient;
 import java.time.Duration;
 
 @Configuration
@@ -41,14 +40,6 @@ public class HttpClientConfig {
         return restTemplateBuilder
                 .setConnectTimeout(TIMEOUT)
                 .setReadTimeout(TIMEOUT)
-                .build();
-    }
-
-    @Bean
-    public HttpClient httpClient() {
-        return HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2)
-                .followRedirects(HttpClient.Redirect.ALWAYS)
                 .build();
     }
 
