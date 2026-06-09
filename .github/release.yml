@@ -6,6 +6,12 @@ changelog:
     - title: Breaking changes
       labels:
         - breaking-change
+    - title: Configuration changes
+      labels:
+        - configuration
+    - title: Deprecations
+      labels:
+        - deprecation
     - title: New features
       labels:
         - feature
@@ -15,6 +21,8 @@ changelog:
       exclude:
         labels:
           - breaking-change
+          - configuration
+          - deprecation
           - feature
           - dependencies
     - title: Dependency upgrades
