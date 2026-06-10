@@ -3,7 +3,7 @@ name: "Code Style"
 on:
   push:
     branches:
-      - develop
+      - master
   pull_request:
 
 concurrency:

@@ -77,11 +77,14 @@ openapi:
     url: https://github.com/FAIRDataTeam/FAIRDataPoint
 
 springdoc:
-  writer-with-default-pretty-printer: true
+  # https://springdoc.org/properties.html
   swagger-ui:
     disable-swagger-default-url: true
     doc-expansion: none
-    operationsSorter: alpha
+    operationsSorter: method
+    tagsSorter: alpha
+  writer-with-default-pretty-printer: true
+  writer-with-order-by-keys: true
 
 server:
   forward-headers-strategy: framework

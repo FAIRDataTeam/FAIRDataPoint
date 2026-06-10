@@ -20,12 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint;
+package org.fairdatateam.fairdatapoint.config;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
-@ActiveProfiles(Profiles.TESTING)
-@SpringBootTest
-public abstract class BaseIntegrationTest {
+/**
+ * Make sure the SparqlQueryEvaluator implementation bean can be found (SparqlQueryEvaluatorDefault)
+ */
+@Configuration
+@ComponentScan("org.eclipse.rdf4j.http.server.readonly.sparql")
+public class Rdf4jSparqlConfig {
 }
