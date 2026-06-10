@@ -7,9 +7,8 @@ server:
   port: 8088
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/fdp-test
+  mongodb:
+    uri: mongodb://localhost:27017/fdp-test
 
 security:
   jwt:
