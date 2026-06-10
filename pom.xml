@@ -172,6 +172,8 @@
         <!-- ////////////////// -->
         <!--   Mongock          -->
         <!-- ////////////////// -->
+
+        <!-- mongock versions are managed via mongock-bom -->
         <dependency>
             <groupId>io.mongock</groupId>
             <artifactId>mongock-springboot</artifactId>
@@ -179,10 +181,6 @@
         <dependency>
             <groupId>io.mongock</groupId>
             <artifactId>mongodb-springdata-v4-driver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
         </dependency>
 
         <!-- ////////////////// -->
