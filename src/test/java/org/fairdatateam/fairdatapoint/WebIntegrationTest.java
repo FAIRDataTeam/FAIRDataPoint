@@ -26,14 +26,12 @@ import org.fairdatateam.fairdatapoint.database.mongo.migration.development.Migra
 import org.fairdatateam.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(Profiles.TESTING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureMockMvc
 public abstract class WebIntegrationTest {
 
     public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
