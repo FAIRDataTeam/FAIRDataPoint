@@ -31,7 +31,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(Profiles.TESTING)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+// todo: in most cases we can probably use WebEnvironment.MOCK with MockMvc instead of TestRestTemplate (see #862)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class WebIntegrationTest {
 
     public static final String ADMIN_TOKEN = "Bearer eyJhbGciOiJIUzUxMiJ9" +
