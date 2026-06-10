@@ -3,7 +3,7 @@ name: "Security Audit"
 on:
   push:
     branches:
-      - develop
+      - master
   pull_request:
   schedule:
     - cron: '23 4 * * 1'
@@ -82,7 +82,7 @@ jobs:
 
     env:
       PUBLIC_IMAGE: fairdata/fairdatapoint
-      TAG_DEVELOP: develop
+      IMAGE_TAG: master
 
     steps:
 
@@ -91,8 +91,8 @@ jobs:
 
       - name: Docker build
         run: |
-          docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
-          docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t fdp:snyk-test -f Dockerfile .
+          docker pull $PUBLIC_IMAGE:$IMAGE_TAG
+          docker build --cache-from $PUBLIC_IMAGE:$IMAGE_TAG -t fdp:snyk-test -f Dockerfile .
 
       - name: Perform Snyk Check (Docker)
         uses: snyk/actions/docker@master

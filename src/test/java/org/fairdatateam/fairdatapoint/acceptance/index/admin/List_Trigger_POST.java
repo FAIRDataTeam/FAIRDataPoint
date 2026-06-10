@@ -34,11 +34,13 @@ import org.fairdatateam.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.net.URI;
 import java.util.List;
@@ -201,5 +203,17 @@ public class List_Trigger_POST extends WebIntegrationTest {
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.NO_CONTENT)));
         assertThat("One AdminTrigger event is created", events.size(), is(equalTo(1)));
         assertThat("Records correct client URL", events.get(0).getAdminTrigger().getClientUrl(), is(equalTo(entry.getClientUrl())));
+    }
+
+    /**
+     * Enables asynchronous request processing.
+     * This reproduces the exception handling behaviour of the production config,
+     * which causes RDF parsing exceptions to be ignored by the ExceptionControllerAdvice,
+     * because they occur in worker threads.
+     * The parsing exceptions should be reflected in the resulting IndexEntryState instead.
+     */
+    @TestConfiguration
+    @EnableAsync
+    public static class AsyncConfig {
     }
 }

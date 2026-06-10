@@ -1,17 +1,29 @@
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
 version: 2
 updates:
   - package-ecosystem: "maven"
+    # Look for `requirements.*` files in the `root` directory
     directory: "/"
+    # Check the registry for updates every week
     schedule:
-      interval: "daily"
-    target-branch: "develop"
+      interval: "weekly"
+    # Add labels to generated PRs
     labels:
       - "dependencies"
+    # Group minor updates and patch updates, except for spring-boot-starter-parent updates,
+    # and create separate PRs for updates that do not match any grouping rule.
+    groups:
+      minor-or-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "*spring-boot-starter-parent*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "develop"
     labels:
       - "dependencies"
