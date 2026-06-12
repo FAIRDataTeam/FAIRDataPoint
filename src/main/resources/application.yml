@@ -26,16 +26,18 @@ spring:
       thread-name-prefix: fdp-task-
 
 management:
-  health:
-    solr:
-      enabled:  false
   info:
     defaults:
       enabled: false
   endpoints:
     web:
       exposure:
-        include: health, info
+        include: health, info, metrics
+  metrics:
+    enable:
+      all: false
+      http.server.requests: true
+      http.server.requests.active: false
 
 security:
   jwt:
@@ -67,7 +69,7 @@ metadataProperties:
 
 openapi:
   title: FAIR Data Point API
-  version: 1.19.1
+  version: 1.20.0
   description: "The reference implementation of the metadata registration service: A service implementing the API specification. It contains an authentication system to allow maintainers to define and update metadata. Read-only access to the data is public."
   contact:
     name: Luiz Bonino
