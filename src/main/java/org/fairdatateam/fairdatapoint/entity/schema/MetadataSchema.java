@@ -27,7 +27,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -98,7 +98,7 @@ public class MetadataSchema {
 
     private String previousVersionUuid;
 
-    @PersistenceConstructor
+    @PersistenceCreator
     public MetadataSchema(
             ObjectId id, String uuid, String versionUuid, String versionString,
             String name, String description, String definition, Set<String> targetClasses,
