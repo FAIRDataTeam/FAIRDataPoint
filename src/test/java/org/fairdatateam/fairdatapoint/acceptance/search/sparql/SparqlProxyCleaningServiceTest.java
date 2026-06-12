@@ -126,7 +126,6 @@ public class SparqlProxyCleaningServiceTest {
 
             // check result
             final HttpHeaders cleanedResponseHeaders = cleanedResponse.getHeaders();
-            System.out.println(cleanedResponseHeaders);
             assertThat(cleanedResponseHeaders).doesNotContainKey(customHeaderName);
             hopByHopHeaders.forEach(header -> assertThat(cleanedResponseHeaders).doesNotContainKey(header));
             assertThat(cleanedResponseHeaders).doesNotContainKey(HttpHeaders.CONNECTION);

@@ -216,7 +216,6 @@ public class SparqlProxyControllerTest {
 
     @Test
     public void getWithInvalidUriIsDenied() {
-        System.out.println(INVALID_URI);
         // execute get request with invalid graph uris
         MvcTestResult testResult = mockMvc.get()
                 .uri(path)

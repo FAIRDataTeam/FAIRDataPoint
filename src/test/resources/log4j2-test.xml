@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <!-- set log levels for individual packages (add or change as needed) -->
-        <Logger name="org.springframework" level="error"/>
+        <Logger name="org.springframework" level="off"/>
         <!-- set root log level to limit the amount of test output clutter -->
         <Root level="off">
             <AppenderRef ref="console-log"/>
