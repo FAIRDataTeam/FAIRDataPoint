@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.config;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -35,9 +36,16 @@ public class HttpClientConfig {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
+    @Bean RestClient restClient(RestClient.Builder builder) {
+        // The builder argument is required for autoconfiguration of MockRestServiceServer in tests
+        // https://docs.spring.io/spring-framework/reference/integration/rest-clients.html
+        return builder.build();
+    }
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
+                // todo: these are deprecated, but we should replace RestTemplate by RestClient anyway
                 .setConnectTimeout(TIMEOUT)
                 .setReadTimeout(TIMEOUT)
                 .build();
