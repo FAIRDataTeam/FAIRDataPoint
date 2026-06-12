@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import org.fairdatateam.fairdatapoint.api.filter.FilterConfigurer;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -62,6 +63,7 @@ public class SecurityConfig {
                                     .requestMatchers("/index/admin**").authenticated()
                                     .requestMatchers("/index**").permitAll()
                                     .requestMatchers(HttpMethod.PUT).authenticated()
+                                    .requestMatchers(EndpointRequest.to("metrics")).authenticated()
                                     .anyRequest().permitAll();
                         }
                 )
