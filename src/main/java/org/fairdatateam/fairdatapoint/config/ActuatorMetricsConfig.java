@@ -38,6 +38,8 @@ import org.springframework.http.server.observation.ServerRequestObservationConte
 @ConditionalOnExpression("'${management.endpoints.web.exposure.include}'.contains('metrics')")
 public class ActuatorMetricsConfig {
 
+    private final String meterName = "http.server.requests";
+
     /**
      * Disables all actuator meters except for http.server.requests.
      * See <a href="https://docs.micrometer.io/micrometer/reference/concepts/meter-filters.html">meter filters</a>.
@@ -53,7 +55,6 @@ public class ActuatorMetricsConfig {
      */
     @Bean
     public MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer() {
-        final String meterName = "http.server.requests";
         log.info("Denying all meters except {}", meterName);
         return registry -> {
             registry.config().meterFilter(MeterFilter.denyUnless(id -> id.getName().equals(meterName)));
@@ -61,11 +62,11 @@ public class ActuatorMetricsConfig {
     }
 
     /**
-     * Replaces the default `uri` path-pattern values with full paths in actuator metrics http.server.requests
+     * Replaces the default uri path-pattern values with full paths in actuator metrics http.server.requests
      */
     @Bean
     DefaultServerRequestObservationConvention customServerRequestObservationConvention() {
-        log.info("Using custom http.url metric for http.server.requests.");
+        log.info("Using custom http.url metric for {}.", meterName);
         return new DefaultServerRequestObservationConvention() {
             /**
              * Replace the default URI path pattern (e.g. `/catalog/{id}`) with the full URI path (e.g. `/catalog/123`).
