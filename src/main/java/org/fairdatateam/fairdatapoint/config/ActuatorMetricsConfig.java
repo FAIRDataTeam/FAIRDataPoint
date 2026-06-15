@@ -36,7 +36,7 @@ import org.springframework.http.server.observation.ServerRequestObservationConte
 @Slf4j
 @Configuration
 @ConditionalOnExpression("'${management.endpoints.web.exposure.include}'.contains('metrics')")
-public class ActuatorConfig {
+public class ActuatorMetricsConfig {
 
     /**
      * Disables all actuator meters except for http.server.requests.
