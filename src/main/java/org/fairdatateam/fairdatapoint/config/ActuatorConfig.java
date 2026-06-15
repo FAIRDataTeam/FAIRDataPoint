@@ -42,7 +42,7 @@ public class ActuatorConfig {
      */
     @Bean
     DefaultServerRequestObservationConvention customServerRequestObservationConvention() {
-        log.debug("using custom http.url metric for http.server.requests");
+        log.debug("Using custom http.url metric for http.server.requests.");
         return new DefaultServerRequestObservationConvention() {
             /**
              * Replace the default URI path pattern (e.g. `/catalog/{id}`) with the full URI path (e.g. `/catalog/123`).

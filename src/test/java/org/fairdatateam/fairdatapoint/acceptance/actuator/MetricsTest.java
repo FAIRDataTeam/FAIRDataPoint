@@ -45,7 +45,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles(Profiles.TESTING)
 @AutoConfigureMockMvc
-@SpringBootTest
+@SpringBootTest(properties = {
+        "management.endpoints.web.exposure.include=health,info,metrics",
+        "management.metrics.enable.http.server.requests=true"
+})
 @WithMockUser
 class MetricsTest {
 
