@@ -56,10 +56,7 @@ public class ActuatorMetricsConfig {
         final String meterName = "http.server.requests";
         log.info("Denying all meters except {}", meterName);
         return registry -> {
-            registry.config().meterFilter(
-                    MeterFilter.denyUnless(id -> {
-                        return id.getName().equals(meterName);
-                    }));
+            registry.config().meterFilter(MeterFilter.denyUnless(id -> id.getName().equals(meterName)));
         };
     }
 
