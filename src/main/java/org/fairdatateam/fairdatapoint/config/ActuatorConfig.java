@@ -23,8 +23,11 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import io.micrometer.common.KeyValue;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.config.MeterFilter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.DefaultServerRequestObservationConvention;
@@ -32,17 +35,31 @@ import org.springframework.http.server.observation.ServerRequestObservationConte
 
 @Slf4j
 @Configuration
-@ConditionalOnProperty(
-        name = "management.metrics.enable.http.server.requests", havingValue = "true", matchIfMissing = false
-)
+@ConditionalOnExpression("'${management.endpoints.web.exposure.include}'.contains('metrics')")
 public class ActuatorConfig {
+
+    /**
+     * Disables all actuator meters except for http.server.requests.
+     * See <a href="https://docs.micrometer.io/micrometer/reference/concepts/meter-filters.html">meter filters</a>.
+     */
+    @Bean
+    public MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer() {
+        final String meterName = "http.server.requests";
+        log.info("Denying all meters except {}", meterName);
+        return registry -> {
+            registry.config().meterFilter(
+                    MeterFilter.denyUnless(id -> {
+                        return id.getName().equals(meterName);
+                    }));
+        };
+    }
 
     /**
      * Replaces the default `uri` path-pattern values with full paths in actuator metrics http.server.requests
      */
     @Bean
     DefaultServerRequestObservationConvention customServerRequestObservationConvention() {
-        log.debug("Using custom http.url metric for http.server.requests.");
+        log.info("Using custom http.url metric for http.server.requests.");
         return new DefaultServerRequestObservationConvention() {
             /**
              * Replace the default URI path pattern (e.g. `/catalog/{id}`) with the full URI path (e.g. `/catalog/123`).
