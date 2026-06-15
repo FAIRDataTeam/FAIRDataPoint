@@ -32,11 +32,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info, metrics
+        # to expose custom http.server.requests http.url metric, include "metrics", and enable http.server.requests
+        include: health, info
   metrics:
+    # enables internal collection of metrics, regardless of exposure
     enable:
       all: false
-      http.server.requests: true
+      # set http.server.requests true to enable custom http.url metric
+      http.server.requests: false
       http.server.requests.active: false
 
 security:
