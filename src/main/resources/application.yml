@@ -16,7 +16,7 @@ spring:
         default-page-size: 50
         qualifier-delimiter: _
   profiles:
-    default: production
+    active: production
   task:
     execution:
       pool:
