@@ -23,12 +23,18 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import io.micrometer.common.KeyValue;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.DefaultServerRequestObservationConvention;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
 
+@Slf4j
 @Configuration
+@ConditionalOnProperty(
+        name = "management.metrics.enable.http.server.requests", havingValue = "true", matchIfMissing = false
+)
 public class ActuatorConfig {
 
     /**
@@ -36,6 +42,7 @@ public class ActuatorConfig {
      */
     @Bean
     DefaultServerRequestObservationConvention customServerRequestObservationConvention() {
+        log.debug("using custom http.url metric for http.server.requests");
         return new DefaultServerRequestObservationConvention() {
             /**
              * Replace the default URI path pattern (e.g. `/catalog/{id}`) with the full URI path (e.g. `/catalog/123`).
