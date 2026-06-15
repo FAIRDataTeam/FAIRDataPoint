@@ -41,6 +41,15 @@ public class ActuatorMetricsConfig {
     /**
      * Disables all actuator meters except for http.server.requests.
      * See <a href="https://docs.micrometer.io/micrometer/reference/concepts/meter-filters.html">meter filters</a>.
+     * This is the equivalent of the following <code>application.yml</code> settings:
+     * <pre>
+     *     management:
+     *       metrics:
+     *         enable:
+     *           all: false
+     *           http.server.requests: true
+     *           http.server.requests.active: false
+     * </pre>
      */
     @Bean
     public MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer() {
