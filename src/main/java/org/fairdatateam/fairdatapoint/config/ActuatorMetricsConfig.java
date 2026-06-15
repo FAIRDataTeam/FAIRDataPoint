@@ -23,19 +23,50 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import io.micrometer.common.KeyValue;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.config.MeterFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.DefaultServerRequestObservationConvention;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
 
+@Slf4j
 @Configuration
-public class ActuatorConfig {
+@ConditionalOnExpression("'${management.endpoints.web.exposure.include}'.contains('metrics')")
+public class ActuatorMetricsConfig {
+
+    private final String meterName = "http.server.requests";
 
     /**
-     * Replaces the default `uri` path-pattern values with full paths in actuator metrics http.server.requests
+     * Disables all actuator meters except for http.server.requests.
+     * See <a href="https://docs.micrometer.io/micrometer/reference/concepts/meter-filters.html">meter filters</a>.
+     * This is the equivalent of the following <code>application.yml</code> settings:
+     * <pre>
+     *     management:
+     *       metrics:
+     *         enable:
+     *           all: false
+     *           http.server.requests: true
+     *           http.server.requests.active: false
+     * </pre>
+     */
+    @Bean
+    public MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer() {
+        log.info("Denying all meters except {}", meterName);
+        return registry -> {
+            registry.config().meterFilter(MeterFilter.denyUnless(id -> id.getName().equals(meterName)));
+        };
+    }
+
+    /**
+     * Replaces the default uri path-pattern values with full paths in actuator metrics http.server.requests
      */
     @Bean
     DefaultServerRequestObservationConvention customServerRequestObservationConvention() {
+        log.info("Using custom http.url metric for {}.", meterName);
         return new DefaultServerRequestObservationConvention() {
             /**
              * Replace the default URI path pattern (e.g. `/catalog/{id}`) with the full URI path (e.g. `/catalog/123`).
