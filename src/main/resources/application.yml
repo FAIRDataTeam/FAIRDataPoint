@@ -32,12 +32,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info, metrics
-  metrics:
-    enable:
-      all: false
-      http.server.requests: true
-      http.server.requests.active: false
+        # To expose custom http.server.requests http.url metric, include "metrics".
+        # This can also be done using env variable MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE.
+        # Note the ActuatorMetricsConfig ensures that only the http.server.requests meter is enabled.
+        include: health, info
 
 security:
   jwt:
