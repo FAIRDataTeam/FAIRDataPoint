@@ -75,7 +75,7 @@ public class CorsTest {
 
     @Test
     public void corsPreflightRequestFailsIfAccessControlRequestMethodHeaderMissing() {
-        // request with Origin header, but without AccessControlRequestMethod header
+        // request with Origin header, but without Access-Control-Request-Method header
         MvcTestResult testResult = mockMvc.options()
                 .uri(uri)
                 .header(HttpHeaders.ORIGIN, otherOrigin)
