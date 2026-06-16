@@ -54,6 +54,9 @@ public class CorsTest {
 
     private final MockMvcTester mockMvc;
 
+    // todo: do we need to enable the security filter chain as well, to test http.cors()?
+    //  https://docs.spring.io/spring-security/reference/servlet/test/mockmvc/setup.html
+
     /**
      * Constructor
      */
