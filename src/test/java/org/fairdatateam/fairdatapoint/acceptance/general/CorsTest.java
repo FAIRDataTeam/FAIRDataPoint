@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.general;
 
+import org.eclipse.jetty.http.HttpHeader;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,12 +64,15 @@ public class CorsTest {
 
     @Test
     public void normalRequestYieldsNoAccessControlHeaders() {
+        // request without Origin header
         MvcTestResult testResult = mockMvc.options().uri(uri).exchange();
-        assertThat(testResult).hasStatusOk().doesNotContainHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN);
+        assertThat(testResult).hasStatusOk()
+                .doesNotContainHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN);
     }
 
     @Test
     public void corsPreflightRequestFailsIfAccessControlRequestMethodHeaderMissing() {
+        // request with Origin header, but without AccessControlRequestMethod header
         MvcTestResult testResult = mockMvc.options()
                 .uri(uri)
                 .header(HttpHeaders.ORIGIN, otherOrigin)
@@ -77,14 +83,23 @@ public class CorsTest {
 
     @Test
     public void corsPreflightRequestYieldsExpectedAccessControlHeaders() {
+        // valid CORS request, with both required headers
         MvcTestResult testResult = mockMvc.options()
                 .uri(uri)
-                // this preflight says: "I plan to make a GET request."
+                // this preflight says: "I plan to make a GET request with this header from this origin."
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, HttpMethod.GET)
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, HttpHeaders.AUTHORIZATION)
                 .header(HttpHeaders.ORIGIN, otherOrigin)
                 .exchange();
-        assertThat(testResult).hasStatusOk()
-                .hasHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        List.of(
+                // note that Access-Control-Allow-Headers is only returned if the request
+                // contains Access-Control-Request-Headers
+                HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+                HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS
+        ).forEach(header -> assertThat(testResult).hasStatusOk().containsHeader(header));
+
     }
 
 }
