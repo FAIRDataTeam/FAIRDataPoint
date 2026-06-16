@@ -36,6 +36,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+// Spring Security docs use @EnableWebSecurity, but we don't need it here because of Spring Boot autoconfiguration.
 public class SecurityConfig {
 
     @Bean
@@ -68,6 +69,11 @@ public class SecurityConfig {
                                     .anyRequest().permitAll();
                         }
                 )
+                // Enable CORS for the security filter chain.
+                // "If Spring MVC is on classpath and no CorsConfigurationSource is provided,
+                // Spring Security will use CORS configuration provided to Spring MVC."
+                // https://docs.spring.io/spring-security/reference/servlet/integrations/cors.html#cors-spring-mvc-integration
+                .cors(Customizer.withDefaults())
                 // "Customizer.withDefaults() [...] is a shortcut for the lambda expression it -> {}."
                 .with(filterConfigurer, Customizer.withDefaults());
         return http.build();
