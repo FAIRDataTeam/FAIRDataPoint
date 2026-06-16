@@ -89,8 +89,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
-     * Global Cross-Origin Resource Sharing (CORS) configuration
-     * https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html#mvc-cors-global
+     * Global Cross-Origin Resource Sharing (CORS) configuration based on
+     * <a href="https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html#mvc-cors-global">
+     * Web MVC CORS example</a>
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -103,6 +104,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpHeaders.ACCEPT,
                         HttpHeaders.CONTENT_TYPE
                 )
+                // If the response contains these headers, the browser will expose them in JavaScript
                 .exposedHeaders(HttpHeaders.LOCATION, HttpHeaders.LINK);
     }
 }
