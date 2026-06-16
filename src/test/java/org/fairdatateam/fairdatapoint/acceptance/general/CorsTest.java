@@ -60,6 +60,12 @@ public class CorsTest {
     }
 
     @Test
+    public void normalRequestYieldsNoAccessControlHeaders() {
+        MvcTestResult testResult = mockMvc.options().uri(uri).exchange();
+        assertThat(testResult).hasStatusOk().doesNotContainHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN);
+    }
+
+    @Test
     public void corsPreflightRequestFailsIfAccessControlRequestMethodHeaderMissing() {
         MvcTestResult testResult = mockMvc.options()
                 .uri(uri)
