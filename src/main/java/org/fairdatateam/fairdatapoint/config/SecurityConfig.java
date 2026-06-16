@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -67,6 +68,11 @@ public class SecurityConfig {
                                     .anyRequest().permitAll();
                         }
                 )
+                // Enable CORS for the security filter chain.
+                // "If Spring MVC is on classpath and no CorsConfigurationSource is provided,
+                // Spring Security will use CORS configuration provided to Spring MVC."
+                // https://docs.spring.io/spring-security/reference/servlet/integrations/cors.html#cors-spring-mvc-integration
+                .cors(Customizer.withDefaults())
                 .apply(filterConfigurer);
         return http.build();
     }
