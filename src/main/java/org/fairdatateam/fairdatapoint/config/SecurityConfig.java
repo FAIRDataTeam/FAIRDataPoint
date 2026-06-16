@@ -74,7 +74,8 @@ public class SecurityConfig {
                 // Spring Security will use CORS configuration provided to Spring MVC."
                 // https://docs.spring.io/spring-security/reference/servlet/integrations/cors.html#cors-spring-mvc-integration
                 .cors(Customizer.withDefaults())
-                .apply(filterConfigurer);
+                // "Customizer.withDefaults() [...] is a shortcut for the lambda expression it -> {}."
+                .with(filterConfigurer, Customizer.withDefaults());
         return http.build();
     }
 }
