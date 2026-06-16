@@ -36,6 +36,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+// Spring Security docs use @EnableWebSecurity, but we don't need it here because of Spring Boot autoconfiguration.
 public class SecurityConfig {
 
     @Bean
