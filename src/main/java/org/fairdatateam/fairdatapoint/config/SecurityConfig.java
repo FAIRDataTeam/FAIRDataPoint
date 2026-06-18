@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import org.fairdatateam.fairdatapoint.api.filter.FilterConfigurer;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
