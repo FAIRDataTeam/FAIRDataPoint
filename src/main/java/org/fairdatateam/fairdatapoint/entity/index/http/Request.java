@@ -26,7 +26,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpEntity;
 
 import java.net.http.HttpRequest;
 import java.util.List;
@@ -56,11 +55,6 @@ public class Request {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public void setFromHttpEntity(HttpEntity<String> httpEntity) {
-        body = httpEntity.getBody();
-        headers = httpEntity.getHeaders();
     }
 
     public void setFromHttpServletRequest(HttpServletRequest request) {
