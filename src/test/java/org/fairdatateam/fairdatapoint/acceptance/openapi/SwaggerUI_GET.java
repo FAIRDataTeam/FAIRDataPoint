@@ -23,11 +23,9 @@
 package org.fairdatateam.fairdatapoint.acceptance.openapi;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryDTO;
-import org.fairdatateam.fairdatapoint.utils.CustomPageImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
+import org.springframework.boot.http.client.HttpRedirects;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -62,7 +60,7 @@ public class SwaggerUI_GET extends WebIntegrationTest {
                 .build();
 
         // WHEN
-        ResponseEntity<String> result = client.withRedirects(ClientHttpRequestFactorySettings.Redirects.DONT_FOLLOW)
+        ResponseEntity<String> result = client.withRedirects(HttpRedirects.DONT_FOLLOW)
                 .exchange(request, new ParameterizedTypeReference<>() {});
 
         // THEN
