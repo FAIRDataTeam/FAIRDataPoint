@@ -190,7 +190,8 @@
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
         <property name="max" value="120"/>
-        <property name="ignorePattern" value="^ *\* *([^ ]+|\{@code .*|&lt;a href=&quot;[^&quot;]+&quot;&gt;)$"/>
+        <!-- allow long single words (e.g. urls) in javadoc and inline comments -->
+        <property name="ignorePattern" value="^ *(\*|\/{2}) *([^ ]+|\{@code .*|&lt;a href=&quot;[^&quot;]+&quot;&gt;)$"/>
     </module>
 
     <!-- Whitespace -->
