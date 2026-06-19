@@ -86,7 +86,7 @@ public class SparqlProxyCleaningServiceTest {
 
         // check result
         assertThat(requestHeadersOutgoing.getAccept()).hasSize(1).contains(MediaType.APPLICATION_JSON);
-        assertThat(requestHeadersOutgoing.containsKey(HttpHeaders.AUTHORIZATION)).isFalse();
+        assertThat(requestHeadersOutgoing.containsHeader(HttpHeaders.AUTHORIZATION)).isFalse();
         assertThat(requestHeadersOutgoing.get(SparqlProxyCleaningService.HEADER_X_FORWARDED_FOR))
                 .hasSize(1).contains(remoteIP);
     }
@@ -126,11 +126,11 @@ public class SparqlProxyCleaningServiceTest {
 
             // check result
             final HttpHeaders cleanedResponseHeaders = cleanedResponse.getHeaders();
-            assertThat(cleanedResponseHeaders).doesNotContainKey(customHeaderName);
-            hopByHopHeaders.forEach(header -> assertThat(cleanedResponseHeaders).doesNotContainKey(header));
-            assertThat(cleanedResponseHeaders).doesNotContainKey(HttpHeaders.CONNECTION);
-            assertThat(cleanedResponseHeaders).doesNotContainEntry(HttpHeaders.SERVER, List.of(backendServerHeader));
-            assertThat(cleanedResponseHeaders).containsEntry(HttpHeaders.SERVER, List.of("Test API 1.0"));
+            assertThat(cleanedResponseHeaders.containsHeader(customHeaderName)).isFalse();
+            hopByHopHeaders.forEach(header -> assertThat(cleanedResponseHeaders.containsHeader(header)).isFalse());
+            assertThat(cleanedResponseHeaders.containsHeader(HttpHeaders.CONNECTION)).isFalse();
+            assertThat(cleanedResponseHeaders.containsHeaderValue(HttpHeaders.SERVER, backendServerHeader)).isFalse();
+            assertThat(cleanedResponseHeaders.containsHeaderValue(HttpHeaders.SERVER, "Test API 1.0"));
         }
     }
 }
