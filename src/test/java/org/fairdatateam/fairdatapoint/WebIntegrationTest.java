@@ -26,12 +26,14 @@ import org.fairdatateam.fairdatapoint.database.mongo.migration.development.Migra
 import org.fairdatateam.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(Profiles.TESTING)
 // todo: in most cases we can probably use WebEnvironment.MOCK with MockMvc instead of TestRestTemplate (see #862)
+@AutoConfigureTestRestTemplate
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class WebIntegrationTest {
 
