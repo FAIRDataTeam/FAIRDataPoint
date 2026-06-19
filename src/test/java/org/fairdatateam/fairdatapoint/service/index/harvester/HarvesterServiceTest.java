@@ -80,7 +80,7 @@ public class HarvesterServiceTest {
     private Model catalog;
 
     @BeforeEach
-    private void setup() {
+    public void setup() {
         // Setup resource definition;
         ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();
 
