@@ -47,7 +47,7 @@ public class MetadataSchemaDraftDTO {
     @NotNull
     private String description;
 
-    private boolean abstractSchema;
+    private Boolean abstractSchema;
 
     @NotNull
     private String definition;

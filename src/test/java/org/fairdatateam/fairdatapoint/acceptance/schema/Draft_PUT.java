@@ -103,7 +103,7 @@ public class Draft_PUT extends WebIntegrationTest {
         assertThat(result.getBody().getName(), is(equalTo(reqDto.getName())));
         assertThat(result.getBody().getDescription(), is(equalTo(reqDto.getDescription())));
         assertThat(result.getBody().getDefinition(), is(equalTo(reqDto.getDefinition())));
-        assertThat(result.getBody().isAbstractSchema(), is(equalTo(reqDto.isAbstractSchema())));
+        assertThat(result.getBody().getAbstractSchema(), is(equalTo(reqDto.isAbstractSchema())));
         assertThat(result.getBody().getExtendsSchemaUuids(), is(equalTo(reqDto.getExtendsSchemaUuids())));
     }
 
