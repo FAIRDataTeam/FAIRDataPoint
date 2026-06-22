@@ -25,12 +25,13 @@ package org.fairdatateam.fairdatapoint.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
 import org.fairdatateam.fairdatapoint.api.converter.RdfConverter;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -57,14 +58,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
         this.rdfConverters = rdfConverters;
     }
 
-
+    /**
+     * Configures message converters. See
+     * <a href="https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-config/message-converters.html">
+     * example in Spring docs</a>.
+     */
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new StringHttpMessageConverter());
-        converters.addAll(errorConverters);
-        converters.addAll(rdfConverters);
-        converters.add(new ByteArrayHttpMessageConverter());
-        converters.add(new JacksonJsonHttpMessageConverter(jsonMapper()));
+    public void configureMessageConverters(HttpMessageConverters.@NonNull ServerBuilder builder) {
+        builder.withStringConverter(new StringHttpMessageConverter())
+                .withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper()))
+                .addCustomConverter(new ByteArrayHttpMessageConverter());
+        errorConverters.forEach(builder::addCustomConverter);
+        rdfConverters.forEach(builder::addCustomConverter);
     }
 
     @Override
