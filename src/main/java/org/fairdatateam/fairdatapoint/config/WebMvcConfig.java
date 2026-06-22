@@ -73,7 +73,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+    public void configureContentNegotiation(@NonNull ContentNegotiationConfigurer configurer) {
         for (ErrorConverter converter : errorConverters) {
             converter.configureContentNegotiation(configurer);
         }
