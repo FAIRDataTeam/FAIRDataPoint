@@ -25,7 +25,6 @@ package org.fairdatateam.fairdatapoint.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
 import org.fairdatateam.fairdatapoint.api.converter.RdfConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -46,11 +45,18 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private List<ErrorConverter> errorConverters;
+    private final List<ErrorConverter> errorConverters;
 
-    @Autowired
-    private List<RdfConverter> rdfConverters;
+    private final List<RdfConverter> rdfConverters;
+
+    /**
+     * Constructor (autowired)
+     */
+    public WebMvcConfig(List<ErrorConverter> errorConverters, List<RdfConverter> rdfConverters) {
+        this.errorConverters = errorConverters;
+        this.rdfConverters = rdfConverters;
+    }
+
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
