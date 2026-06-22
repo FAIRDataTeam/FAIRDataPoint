@@ -22,8 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
 import org.fairdatateam.fairdatapoint.api.converter.RdfConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +33,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -59,7 +58,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         converters.addAll(errorConverters);
         converters.addAll(rdfConverters);
         converters.add(new ByteArrayHttpMessageConverter());
-        converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
+        converters.add(new JacksonJsonHttpMessageConverter(jsonMapper()));
     }
 
     @Override
@@ -75,12 +74,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     @Primary
-    public ObjectMapper objectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.setSerializationInclusion(NON_NULL);
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        return mapper;
+    public JsonMapper jsonMapper() {
+        return JsonMapper.builder()
+                // https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-databind/2.9.8/com/fasterxml/jackson/databind/ObjectMapper.html#findAndRegisterModules--
+                // https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md#objectmapper-serialization-inclusion-configuration
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL))
+                // https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md#objectmapper-visibility-configuration
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
     }
 
     @Bean

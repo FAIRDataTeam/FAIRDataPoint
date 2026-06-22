@@ -22,8 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.service.index.event;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
 import org.fairdatateam.fairdatapoint.entity.index.event.Event;
@@ -32,6 +30,8 @@ import org.fairdatateam.fairdatapoint.entity.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.entity.index.http.ExchangeDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ public class IncomingPingUtils {
     private static final Integer VERSION = 1;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     public Event prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
         final IncomingPing incomingPing = new IncomingPing();
@@ -51,9 +51,9 @@ public class IncomingPingUtils {
         ex.getRequest().setHeaders(getHeaders(request));
         ex.getRequest().setFromHttpServletRequest(request);
         try {
-            ex.getRequest().setBody(objectMapper.writeValueAsString(reqDto));
+            ex.getRequest().setBody(jsonMapper.writeValueAsString(reqDto));
         }
-        catch (JsonProcessingException exception) {
+        catch (JacksonException exception) {
             ex.getRequest().setBody(null);
         }
 

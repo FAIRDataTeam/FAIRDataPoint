@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.service.index.event;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
@@ -57,6 +56,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -70,7 +70,7 @@ public class EventService {
     private static final int PAGE_SIZE = 10;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @Autowired
     private ThreadPoolTaskExecutor executor;
@@ -155,7 +155,7 @@ public class EventService {
             event.getIncomingPing().getExchange().getResponse()
                     .setCode(HttpStatus.BAD_REQUEST.value());
             event.getIncomingPing().getExchange().getResponse()
-                    .setBody(objectMapper.writeValueAsString(nextException.getErrorDTO()));
+                    .setBody(jsonMapper.writeValueAsString(nextException.getErrorDTO()));
             event.setFinished(Instant.now());
             eventRepository.save(event);
             log.info("Incoming ping has incorrect format: {}", exception.getMessage());
