@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.api.dto.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +30,6 @@ import lombok.*;
 
 import java.util.List;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
@@ -63,4 +63,13 @@ public class MetadataSchemaDraftDTO {
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private String lastVersion;
+
+    /**
+     * No-args constructor explicitly marked as default for JSON creation.
+     * See <a href="https://github.com/FasterXML/jackson/wiki/Jackson-Release-3.0#jackson-databind">
+     * FasterXML/jackson-databind#5318</a> for more info.
+     */
+    @JsonCreator
+    public MetadataSchemaDraftDTO() {
+    }
 }
