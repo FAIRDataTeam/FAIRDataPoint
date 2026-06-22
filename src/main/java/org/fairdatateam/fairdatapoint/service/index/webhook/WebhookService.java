@@ -22,8 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.service.index.webhook;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.api.dto.index.webhook.WebhookPayloadDTO;
@@ -42,6 +40,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -57,7 +57,7 @@ public class WebhookService {
     private WebhookMapper webhookMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @Autowired
     private WebhookRepository webhookRepository;
@@ -79,10 +79,10 @@ public class WebhookService {
         eventRepository.save(event);
         final WebhookPayloadDTO webhookPayload = webhookMapper.toWebhookPayloadDTO(event);
         try {
-            final String payloadWithSecret = objectMapper.writeValueAsString(webhookPayload);
+            final String payloadWithSecret = jsonMapper.writeValueAsString(webhookPayload);
             final String signature = WebhookUtils.computeHashSignature(payloadWithSecret);
             webhookPayload.setSecret(SECRET_PLACEHOLDER);
-            final String payloadWithoutSecret = objectMapper.writeValueAsString(webhookPayload);
+            final String payloadWithoutSecret = jsonMapper.writeValueAsString(webhookPayload);
             WebhookUtils.postWebhook(
                     event,
                     retrievalSettings.getTimeout(),
@@ -90,7 +90,7 @@ public class WebhookService {
                     signature
             );
         }
-        catch (JsonProcessingException exception) {
+        catch (JacksonException exception) {
             log.error("Failed to convert webhook payload to string");
         }
         catch (NoSuchAlgorithmException exception) {

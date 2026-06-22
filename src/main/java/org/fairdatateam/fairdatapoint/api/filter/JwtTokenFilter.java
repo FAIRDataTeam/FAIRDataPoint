@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.api.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +37,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
@@ -53,7 +53,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private ApiKeyService apiKeyService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @Override
     public void doFilterInternal(
@@ -69,7 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON.toString());
             final ErrorDTO error = new ErrorDTO(HttpStatus.UNAUTHORIZED, "You have to be log in");
-            objectMapper.writeValue(response.getWriter(), error);
+            jsonMapper.writeValue(response.getWriter(), error);
         }
     }
 

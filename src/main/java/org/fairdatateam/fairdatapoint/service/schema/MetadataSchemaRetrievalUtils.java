@@ -22,13 +22,13 @@
  */
 package org.fairdatateam.fairdatapoint.service.schema;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.MetadataSchemaImportException;
 import org.springframework.http.HttpHeaders;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,7 +49,7 @@ public class MetadataSchemaRetrievalUtils {
             .connectTimeout(Duration.ofMinutes(1))
             .build();
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonMapper JSON_MAPPER = new JsonMapper();
 
     private static final TypeReference<List<MetadataSchemaVersionDTO>> RESPONSE_TYPE =
             new TypeReference<>() {
@@ -64,9 +64,9 @@ public class MetadataSchemaRetrievalUtils {
                     .GET().build();
             final HttpResponse<String> response =
                     HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-            return OBJECT_MAPPER.readValue(response.body(), RESPONSE_TYPE);
+            return JSON_MAPPER.readValue(response.body(), RESPONSE_TYPE);
         }
-        catch (JsonProcessingException exception) {
+        catch (JacksonException exception) {
             log.warn(
                     format("Could not parse published metadata schemas from %s: %s",
                             fdpUrl, exception.getMessage())
