@@ -76,17 +76,15 @@ public class ResourceDefinitionTargetClassesCache {
                             new LinkedList<>(metadataSchemaMap.get(schemaUuid).getExtendSchemas());
                     final Set<String> visitedParents = new HashSet<>();
                     while (!parentUuids.isEmpty()) {
-                        String parentUuid = parentUuids.poll();
+                        final String parentUuid = parentUuids.poll();
                         if (!visitedParents.contains(parentUuid)) {
                             visitedParents.add(parentUuid);
                             final MetadataSchema parentSchema = metadataSchemaMap.get(parentUuid);
                             if (parentSchema != null) {
                                 targetClassUris.addAll(
-                                        Optional.ofNullable(parentSchema.getTargetClasses()).orElse(Set.of())
-                                );
+                                        Optional.ofNullable(parentSchema.getTargetClasses()).orElse(Set.of()));
                                 parentUuids.addAll(
-                                        Optional.ofNullable(parentSchema.getExtendSchemas()).orElse(List.of())
-                                );
+                                        Optional.ofNullable(parentSchema.getExtendSchemas()).orElse(List.of()));
                             }
                         }
                     }
