@@ -45,7 +45,8 @@
     <properties>
         <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- revision should be overridden during build, e.g. `mvn -Drevision=v1.20.2 ...` -->
+        <!-- The `revision` property should be overridden during build, e.g. `mvn -Drevision=v1.20.2 ...` -->
+        <!-- This is handled automatically in the `docker-publish.yml` workflow, with the help of `PROJECT_VERSION`. -->
         <revision>dev</revision>
 
         <!-- Maven -->
