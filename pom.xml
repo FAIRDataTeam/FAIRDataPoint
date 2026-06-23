@@ -55,7 +55,7 @@
         <maven.compiler.target>21</maven.compiler.target>
 
         <!-- Project related -->
-        <spring-rdf-migration.version>2.0.0</spring-rdf-migration.version>
+        <spring-rdf-migration.version>2.0.1</spring-rdf-migration.version>
         <rdf-resource-resolver.version>0.2.2</rdf-resource-resolver.version>
         <spring-security-acl-mongodb.version>6.0.5</spring-security-acl-mongodb.version>
 
