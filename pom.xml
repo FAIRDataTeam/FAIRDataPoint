@@ -56,7 +56,7 @@
 
         <!-- Project related -->
         <spring-rdf-migration.version>2.0.0</spring-rdf-migration.version>
-        <rdf-resource-resolver.version>0.2.0</rdf-resource-resolver.version>
+        <rdf-resource-resolver.version>0.2.2</rdf-resource-resolver.version>
         <spring-security-acl-mongodb.version>6.0.5</spring-security-acl-mongodb.version>
 
         <!-- Core -->
