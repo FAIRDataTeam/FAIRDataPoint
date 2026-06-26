@@ -39,7 +39,7 @@ jobs:
     # This makes most sense for pushes to the master branch, before the actual release takes place.
     # Nevertheless, it does provide extra verification for the release case as well.
     needs: publish
-    uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch@issue14-repo-dispatch
+    uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch@v3
     secrets: inherit
     with:
       secret-token: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
