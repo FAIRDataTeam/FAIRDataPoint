@@ -40,7 +40,6 @@ jobs:
     # Nevertheless, it does provide extra verification for the release case as well.
     needs: publish
     uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch/action.yml@v3
-    secrets: inherit
     env:
       SECRET_TOKEN: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
     with:
