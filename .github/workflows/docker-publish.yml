@@ -41,8 +41,10 @@ jobs:
     needs: publish
     uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch/action.yml@v3
     secrets: inherit
+    env:
+      SECRET_TOKEN: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
     with:
-      secret-token: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
+      secret-token: ${{ env.SECRET_TOKEN }}
       target-repo-name: FAIRDataPoint-E2E-Tests
       target-repo-owner: FAIRDataTeam
       event-type: trigger-tests
