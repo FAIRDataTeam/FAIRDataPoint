@@ -39,15 +39,17 @@ jobs:
     # This makes most sense for pushes to the master branch, before the actual release takes place.
     # Nevertheless, it does provide extra verification for the release case as well.
     needs: publish
-    uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch/action.yml@v3
-    secrets: inherit
-    with:
-      secret-token: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
-      target-repo-name: FAIRDataPoint-E2E-Tests
-      target-repo-owner: FAIRDataTeam
-      event-type: trigger-tests
-      client-payload: |
-        {
-            "fdp_version": "${{ github.ref_name }}",
-            "fdp_client_version": "latest"
-        }
+    runs-on: ubuntu-latest
+    steps:
+      - name: trigger e2e tests
+        uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch@v3
+        with:
+          secret-token: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
+          target-repo-name: FAIRDataPoint-E2E-Tests
+          target-repo-owner: FAIRDataTeam
+          event-type: trigger-tests
+          client-payload: |
+            {
+                "fdp_version": "${{ github.ref_name }}",
+                "fdp_client_version": "latest"
+            }
