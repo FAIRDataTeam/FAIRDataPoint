@@ -22,48 +22,58 @@
  */
 package org.fairdatateam.fairdatapoint.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
 import org.fairdatateam.fairdatapoint.api.converter.RdfConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private List<ErrorConverter> errorConverters;
+    private final List<ErrorConverter> errorConverters;
 
-    @Autowired
-    private List<RdfConverter> rdfConverters;
+    private final List<RdfConverter> rdfConverters;
 
+    /**
+     * Constructor (autowired)
+     */
+    public WebMvcConfig(List<ErrorConverter> errorConverters, List<RdfConverter> rdfConverters) {
+        this.errorConverters = errorConverters;
+        this.rdfConverters = rdfConverters;
+    }
+
+    /**
+     * Configures message converters. See
+     * <a href="https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-config/message-converters.html">
+     * example in Spring docs</a>.
+     */
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new StringHttpMessageConverter());
-        converters.addAll(errorConverters);
-        converters.addAll(rdfConverters);
-        converters.add(new ByteArrayHttpMessageConverter());
-        converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
+    public void configureMessageConverters(HttpMessageConverters.@NonNull ServerBuilder builder) {
+        builder.withStringConverter(new StringHttpMessageConverter())
+                .withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper()))
+                .addCustomConverter(new ByteArrayHttpMessageConverter());
+        errorConverters.forEach(builder::addCustomConverter);
+        rdfConverters.forEach(builder::addCustomConverter);
     }
 
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+    public void configureContentNegotiation(@NonNull ContentNegotiationConfigurer configurer) {
         for (ErrorConverter converter : errorConverters) {
             converter.configureContentNegotiation(configurer);
         }
@@ -75,12 +85,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     @Primary
-    public ObjectMapper objectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.setSerializationInclusion(NON_NULL);
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        return mapper;
+    public JsonMapper jsonMapper() {
+        return JsonMapper.builder()
+                // https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-databind/2.9.8/com/fasterxml/jackson/databind/ObjectMapper.html#findAndRegisterModules--
+                // https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md#objectmapper-serialization-inclusion-configuration
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL))
+                // https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md#objectmapper-visibility-configuration
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
     }
 
     @Bean

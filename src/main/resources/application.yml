@@ -9,12 +9,14 @@ instance:
 
 spring:
   data:
-    mongodb:
-      uri: mongodb://${FDP_MONGO_HOST:mongo}:${FDP_MONGO_PORT:27017}/${FDP_MONGO_DB:fdp}
     web:
       pageable:
         default-page-size: 50
         qualifier-delimiter: _
+  mongodb:
+    representation:
+      uuid: standard
+    uri: mongodb://${FDP_MONGO_HOST:mongo}:${FDP_MONGO_PORT:27017}/${FDP_MONGO_DB:fdp}
   profiles:
     active: production
   task:

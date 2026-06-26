@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
 import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateDTO;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

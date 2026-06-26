@@ -7,6 +7,5 @@ security:
       expiration: 999
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/fdp-dev
+  mongodb:
+    uri: mongodb://localhost:27017/fdp-dev
