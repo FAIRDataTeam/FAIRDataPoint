@@ -34,3 +34,20 @@ jobs:
       push: ${{ github.event_name == 'push' || github.event_name == 'release' }}
       build-args: |
         "PROJECT_VERSION=${{ github.ref_name }}"
+  e2e:
+    # The end-to-end tests get the docker image from docker hub, so the image needs to be published first.
+    # This makes most sense for pushes to the master branch, before the actual release takes place.
+    # Nevertheless, it does provide extra verification for the release case as well.
+    needs: publish
+    uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch@issue14-repo-dispatch
+    secrets: inherit
+    with:
+      secret-token: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
+      target-repo-name: FAIRDataPoint-E2E-Tests
+      target-repo-owner: FAIRDataTeam
+      event-type: trigger-tests
+      client-payload: |
+        {
+            "fdp_version": "${{ github.ref_name }}",
+            "fdp_client_version": "latest"
+        }
