@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: trigger e2e tests
-        uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch/action.yml@v3
+        uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch@v3
         with:
           secret-token: ${{ secrets.FDP_E2E_REPO_DISPATCH_TOKEN }}
           target-repo-name: FAIRDataPoint-E2E-Tests
