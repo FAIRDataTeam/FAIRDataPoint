@@ -20,11 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service;
+package org.fairdatateam.fairdatapoint.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
-import org.fairdatateam.fairdatapoint.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -38,7 +38,7 @@ import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeState;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsPing;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
-import org.fairdatateam.fairdatapoint.service.UtilityService;
+import org.fairdatateam.fairdatapoint.util.UtilityService;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
