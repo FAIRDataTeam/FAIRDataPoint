@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development.membership.data;
 
-import org.fairdatateam.fairdatapoint.entity.membership.Membership;
-import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
+import org.fairdatateam.fairdatapoint.security.membership.Membership;
+import org.fairdatateam.fairdatapoint.security.membership.MembershipPermission;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 

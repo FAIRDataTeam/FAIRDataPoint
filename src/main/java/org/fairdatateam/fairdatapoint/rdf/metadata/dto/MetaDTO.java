@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 
 import java.util.Map;
 

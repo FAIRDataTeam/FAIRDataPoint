@@ -33,7 +33,7 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateService;
-import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.MongoAuthenticationService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;

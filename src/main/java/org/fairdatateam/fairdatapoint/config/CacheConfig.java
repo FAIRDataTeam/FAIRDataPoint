@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.config.AclConfig.ACL_CACHE;
+import static org.fairdatateam.fairdatapoint.security.acl.AclConfig.ACL_CACHE;
 
 @Configuration
 @EnableCaching

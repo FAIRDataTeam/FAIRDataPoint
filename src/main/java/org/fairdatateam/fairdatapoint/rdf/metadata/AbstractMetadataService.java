@@ -27,10 +27,10 @@ import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.user.User;
-import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
-import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

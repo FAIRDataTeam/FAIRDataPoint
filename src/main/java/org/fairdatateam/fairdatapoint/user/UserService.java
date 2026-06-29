@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.user;
 
-import org.fairdatateam.fairdatapoint.service.member.MemberService;
-import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.security.membership.MemberService;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.user.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

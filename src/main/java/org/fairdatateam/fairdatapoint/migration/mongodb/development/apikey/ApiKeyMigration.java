@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.migration.mongodb.development.apikey;
 
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.apikey.data.ApiKeyFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.ApiKeyRepository;
+import org.fairdatateam.fairdatapoint.security.apikey.ApiKeyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

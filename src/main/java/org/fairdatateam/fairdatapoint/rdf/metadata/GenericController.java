@@ -32,7 +32,7 @@ import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaService;
 import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
-import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;

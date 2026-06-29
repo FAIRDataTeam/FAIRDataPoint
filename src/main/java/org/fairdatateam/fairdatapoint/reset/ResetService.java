@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.reset;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.*;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
@@ -33,6 +32,8 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.security.apikey.ApiKeyRepository;
+import org.fairdatateam.fairdatapoint.security.membership.MembershipRepository;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.IRI;

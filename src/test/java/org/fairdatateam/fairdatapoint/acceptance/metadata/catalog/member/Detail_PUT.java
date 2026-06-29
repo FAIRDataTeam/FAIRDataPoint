@@ -24,11 +24,11 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.catalog.member;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
-import org.fairdatateam.fairdatapoint.api.dto.member.MemberCreateDTO;
-import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
+import org.fairdatateam.fairdatapoint.security.membership.MemberCreateDTO;
+import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.membership.data.MembershipFixtures;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.service.member.MemberMapper;
+import org.fairdatateam.fairdatapoint.security.membership.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

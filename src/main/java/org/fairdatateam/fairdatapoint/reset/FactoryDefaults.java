@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.reset;
 
-import org.fairdatateam.fairdatapoint.entity.membership.Membership;
-import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
+import org.fairdatateam.fairdatapoint.security.membership.Membership;
+import org.fairdatateam.fairdatapoint.security.membership.MembershipPermission;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;

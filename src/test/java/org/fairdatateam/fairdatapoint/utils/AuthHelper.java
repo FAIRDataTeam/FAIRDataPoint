@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.utils;
 
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

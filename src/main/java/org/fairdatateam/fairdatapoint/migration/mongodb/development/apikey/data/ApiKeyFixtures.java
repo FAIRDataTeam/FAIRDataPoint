@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.migration.mongodb.development.apikey.data;
 
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.entity.apikey.ApiKey;
+import org.fairdatateam.fairdatapoint.security.apikey.ApiKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
-import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;

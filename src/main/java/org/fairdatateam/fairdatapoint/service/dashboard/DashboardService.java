@@ -23,12 +23,12 @@
 package org.fairdatateam.fairdatapoint.service.dashboard;
 
 import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
-import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
-import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
+import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
+import org.fairdatateam.fairdatapoint.security.membership.MembershipDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
-import org.fairdatateam.fairdatapoint.service.member.MemberService;
+import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateService;

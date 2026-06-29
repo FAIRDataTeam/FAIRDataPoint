@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.acceptance.token;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.auth.AuthDTO;
-import org.fairdatateam.fairdatapoint.api.dto.auth.TokenDTO;
+import org.fairdatateam.fairdatapoint.security.auth.AuthDTO;
+import org.fairdatateam.fairdatapoint.security.token.TokenDTO;
 import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
 import org.fairdatateam.fairdatapoint.user.dto.UserDTO;
 import org.junit.jupiter.api.DisplayName;

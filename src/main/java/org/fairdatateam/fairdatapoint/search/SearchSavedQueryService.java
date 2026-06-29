@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
-import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

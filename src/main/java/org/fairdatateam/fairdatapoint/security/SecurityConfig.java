@@ -1,0 +1,81 @@
+/**
+ * The MIT License
+ * Copyright © 2017 FAIR Data Team
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package org.fairdatateam.fairdatapoint.security;
+
+import org.fairdatateam.fairdatapoint.security.filter.FilterConfigurer;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+// Spring Security docs use @EnableWebSecurity, but we don't need it here because of Spring Boot autoconfiguration.
+public class SecurityConfig {
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, FilterConfigurer filterConfigurer) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionMgmt -> sessionMgmt.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        authz -> {
+                            authz
+                                    .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                    .requestMatchers("/dashboard").authenticated()
+                                    .requestMatchers("/users**").authenticated()
+                                    .requestMatchers("/api-keys**").authenticated()
+                                    .requestMatchers("/users/**").authenticated()
+                                    .requestMatchers("/memberships**").authenticated()
+                                    .requestMatchers("/tokens").permitAll()
+                                    .requestMatchers("/search**").permitAll()
+                                    .requestMatchers("/index/admin**").authenticated()
+                                    .requestMatchers("/index**").permitAll()
+                                    .requestMatchers(HttpMethod.PUT).authenticated()
+                                    .requestMatchers(EndpointRequest.to("metrics")).authenticated()
+                                    .anyRequest().permitAll();
+                        }
+                )
+                // Enable CORS for the security filter chain.
+                // "If Spring MVC is on classpath and no CorsConfigurationSource is provided,
+                // Spring Security will use CORS configuration provided to Spring MVC."
+                // https://docs.spring.io/spring-security/reference/servlet/integrations/cors.html#cors-spring-mvc-integration
+                .cors(Customizer.withDefaults())
+                // "Customizer.withDefaults() [...] is a shortcut for the lambda expression it -> {}."
+                .with(filterConfigurer, Customizer.withDefaults());
+        return http.build();
+    }
+}
