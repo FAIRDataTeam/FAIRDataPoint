@@ -20,10 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval;
+package org.fairdatateam.fairdatapoint.form;
 
 import lombok.SneakyThrows;
-import org.fairdatateam.fairdatapoint.entity.forms.RdfEntitySourceType;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;

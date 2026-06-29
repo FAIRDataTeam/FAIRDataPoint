@@ -20,19 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.form;
+package org.fairdatateam.fairdatapoint.form;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-@Builder
-public class FormAutocompleteItemDTO {
+public class FormAutocompleteRequestDTO {
+    @NotNull
+    @ValidIri
+    private String rdfType;
 
-    private String uri;
-
-    private String label;
+    @NotNull
+    private String query;
 }

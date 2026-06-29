@@ -20,9 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval;
+package org.fairdatateam.fairdatapoint.form;
 
-import org.fairdatateam.fairdatapoint.entity.forms.RdfEntitySourceType;
 import org.fairdatateam.fairdatapoint.settings.SettingsAutocompleteSource;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.eclipse.rdf4j.query.TupleQuery;

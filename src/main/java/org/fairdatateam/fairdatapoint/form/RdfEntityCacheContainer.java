@@ -20,9 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.forms;
+package org.fairdatateam.fairdatapoint.form;
 
-public enum RdfEntitySourceType {
-    SPARQL,
-    NAMESPACE
+import lombok.*;
+
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@Builder
+public class RdfEntityCacheContainer {
+
+    private RdfEntitySourceType sourceType;
+
+    private String rdfType;
+
+    private List<FormAutocompleteItemDTO> items;
 }

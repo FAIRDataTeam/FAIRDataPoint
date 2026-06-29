@@ -20,39 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.form.autocomplete;
+package org.fairdatateam.fairdatapoint.form;
 
-import org.fairdatateam.fairdatapoint.entity.forms.RdfEntityCacheContainer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.stereotype.Component;
+import lombok.*;
 
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.FORMS_AUTOCOMPLETE_CACHE;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@Builder
+public class FormAutocompleteItemDTO {
 
-@Component
-public class FormsAutocompleteCache {
+    private String uri;
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
-
-    public void clear() {
-        cache().clear();
-    }
-
-    public void evict(String rdfType) {
-        cache().evict(rdfType);
-    }
-
-    public void set(RdfEntityCacheContainer container) {
-        cache().put(container.getRdfType(), container);
-    }
-
-    public RdfEntityCacheContainer get(String rdfType) {
-        return cache().get(rdfType, RdfEntityCacheContainer.class);
-    }
-
-    private Cache cache() {
-        return cacheManager.getCache(FORMS_AUTOCOMPLETE_CACHE);
-    }
+    private String label;
 }

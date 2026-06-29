@@ -20,24 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.forms;
+package org.fairdatateam.fairdatapoint.form;
 
-import lombok.*;
-import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
+import java.util.Map;
 
-import java.util.List;
+public interface RdfEntitiesRetriever {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@Builder
-public class RdfEntityCacheContainer {
+    Map<String, String> retrieve(String rdfType);
 
-    private RdfEntitySourceType sourceType;
-
-    private String rdfType;
-
-    private List<FormAutocompleteItemDTO> items;
+    RdfEntitySourceType getSourceType();
 }

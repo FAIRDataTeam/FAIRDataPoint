@@ -20,15 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.form.autocomplete;
+package org.fairdatateam.fairdatapoint.form;
 
-import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
-import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteRequestDTO;
-import org.fairdatateam.fairdatapoint.entity.forms.RdfEntityCacheContainer;
 import org.fairdatateam.fairdatapoint.settings.Settings;
-import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesNamespaceRetriever;
-import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesRetriever;
-import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesSparqlRetriever;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
