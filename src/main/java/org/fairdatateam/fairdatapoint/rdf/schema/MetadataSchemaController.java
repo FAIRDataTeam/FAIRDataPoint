@@ -28,7 +28,6 @@ import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.*;
-import org.fairdatateam.fairdatapoint.schema.dto.*;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -52,5 +52,6 @@ public interface MetadataRdfRepository {
     void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
             throws MetadataRdfRepositoryException;
 
-    List<BindingSet> runSparqlQuery(String queryString, Map<String, Value> bindings) throws MetadataRdfRepositoryException;
+    List<BindingSet> runSparqlQuery(String queryString, Map<String, Value> bindings)
+            throws MetadataRdfRepositoryException;
 }

@@ -25,7 +25,6 @@ package org.fairdatateam.fairdatapoint.index.entry;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDetailDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryStateDTO;
-import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventMapper;
 import org.springframework.beans.factory.annotation.Autowired;

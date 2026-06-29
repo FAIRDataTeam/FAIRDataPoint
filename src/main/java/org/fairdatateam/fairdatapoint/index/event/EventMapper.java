@@ -22,8 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.index.event;
 
-import org.fairdatateam.fairdatapoint.index.event.AdminTrigger;
-import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.dto.EventDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;

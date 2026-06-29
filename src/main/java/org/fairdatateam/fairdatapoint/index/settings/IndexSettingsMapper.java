@@ -26,9 +26,6 @@ import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsPingDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsRetrievalDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
-import org.fairdatateam.fairdatapoint.index.entity.settings.IndexSettings;
-import org.fairdatateam.fairdatapoint.index.entity.settings.IndexSettingsPing;
-import org.fairdatateam.fairdatapoint.index.entity.settings.IndexSettingsRetrieval;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;

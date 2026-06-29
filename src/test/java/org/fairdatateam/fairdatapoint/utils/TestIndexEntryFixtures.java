@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.utils;
 
-import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 

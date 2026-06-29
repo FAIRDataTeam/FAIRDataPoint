@@ -20,12 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.index.entity.entry;
+package org.fairdatateam.fairdatapoint.index.entry;
 
 import lombok.*;
 import org.bson.types.ObjectId;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

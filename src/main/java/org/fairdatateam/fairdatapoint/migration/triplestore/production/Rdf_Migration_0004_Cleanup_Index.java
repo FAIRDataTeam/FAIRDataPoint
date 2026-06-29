@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Value;

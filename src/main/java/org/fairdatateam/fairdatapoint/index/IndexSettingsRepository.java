@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.index;
 
-import org.fairdatateam.fairdatapoint.index.entity.settings.IndexSettings;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development.index.entry.data;
 
-import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;

@@ -26,7 +26,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.bson.types.ObjectId;
 import org.fairdatateam.fairdatapoint.index.webhook.WebhookPing;
 import org.fairdatateam.fairdatapoint.index.webhook.WebhookTrigger;

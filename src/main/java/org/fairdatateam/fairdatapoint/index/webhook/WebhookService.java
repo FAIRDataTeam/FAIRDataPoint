@@ -28,7 +28,7 @@ import org.fairdatateam.fairdatapoint.database.mongo.repository.EventRepository;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.WebhookRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
-import org.fairdatateam.fairdatapoint.index.entity.settings.IndexSettingsRetrieval;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.fairdatateam.fairdatapoint.service.UtilityService;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;

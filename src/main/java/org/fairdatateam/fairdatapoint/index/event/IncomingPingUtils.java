@@ -23,8 +23,6 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.fairdatateam.fairdatapoint.index.event.Event;
-import org.fairdatateam.fairdatapoint.index.event.IncomingPing;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;

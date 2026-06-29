@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.database.mongo.repository;
 
-import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventType;
 import org.springframework.data.domain.Page;
