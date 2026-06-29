@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.search;
 
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.search.dto.*;

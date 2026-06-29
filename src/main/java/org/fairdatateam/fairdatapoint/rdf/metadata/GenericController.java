@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.user.User;

@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.security.membership.MemberCreateDTO;
 import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

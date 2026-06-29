@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.schema;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
+import org.fairdatateam.fairdatapoint.exception.ErrorDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data.MetadataSchemaFixtures;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;

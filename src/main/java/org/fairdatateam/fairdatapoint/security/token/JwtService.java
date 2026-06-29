@@ -26,7 +26,7 @@ import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import org.fairdatateam.fairdatapoint.security.auth.AuthDTO;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
-import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;

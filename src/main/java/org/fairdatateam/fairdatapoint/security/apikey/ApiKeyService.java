@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.security.apikey;
 
-import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
-import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.MongoAuthenticationService;

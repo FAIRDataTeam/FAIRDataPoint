@@ -25,15 +25,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.api.controller.exception;
+package org.fairdatateam.fairdatapoint.exception;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
-import org.fairdatateam.fairdatapoint.entity.exception.*;
 import org.fairdatateam.fairdatapoint.index.exception.AbstractIndexException;
 import org.fairdatateam.fairdatapoint.rdf.RdfValidationException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;

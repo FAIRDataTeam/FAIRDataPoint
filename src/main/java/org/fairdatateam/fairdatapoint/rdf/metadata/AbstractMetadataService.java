@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.user.User;

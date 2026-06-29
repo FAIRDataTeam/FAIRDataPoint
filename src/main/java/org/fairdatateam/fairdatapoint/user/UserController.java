@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.user;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.user.dto.*;
 import org.springframework.http.HttpStatus;

@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.search;
 
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;

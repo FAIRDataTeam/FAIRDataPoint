@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.security;
 
 import org.fairdatateam.fairdatapoint.user.UserRepository;
-import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
+import org.fairdatateam.fairdatapoint.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

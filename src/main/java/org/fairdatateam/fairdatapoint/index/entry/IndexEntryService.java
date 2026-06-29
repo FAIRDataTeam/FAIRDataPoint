@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.fairdatateam.fairdatapoint.index.entry.dto.*;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;

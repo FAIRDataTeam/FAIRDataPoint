@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.exception.ForbiddenException;
+import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.eclipse.rdf4j.model.IRI;

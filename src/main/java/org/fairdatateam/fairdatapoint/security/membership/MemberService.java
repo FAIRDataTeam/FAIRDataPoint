@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.security.membership;
 
 import org.fairdatateam.fairdatapoint.user.UserRepository;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;

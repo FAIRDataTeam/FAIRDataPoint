@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.rdf.schema;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.*;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;

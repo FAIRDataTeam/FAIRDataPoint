@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.security.apikey;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

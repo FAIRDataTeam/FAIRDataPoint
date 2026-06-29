@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
+import org.fairdatateam.fairdatapoint.exception.ErrorConverter;
 import org.fairdatateam.fairdatapoint.rdf.RdfConverter;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
