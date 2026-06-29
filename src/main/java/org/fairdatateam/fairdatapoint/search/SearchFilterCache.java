@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.search;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.service.label.LabelService;
+import org.fairdatateam.fairdatapoint.label.LabelService;
 import org.fairdatateam.fairdatapoint.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
