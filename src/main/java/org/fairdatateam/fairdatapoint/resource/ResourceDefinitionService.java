@@ -26,7 +26,7 @@ import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionChangeDTO;
 import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.service.membership.MembershipService;
-import org.fairdatateam.fairdatapoint.service.openapi.OpenApiService;
+import org.fairdatateam.fairdatapoint.openapi.OpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;

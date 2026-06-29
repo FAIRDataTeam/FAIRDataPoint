@@ -20,22 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config.properties;
+package org.fairdatateam.fairdatapoint.openapi;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "openapi")
-public class OpenApiProperties {
-    private String title;
-    private String version;
-    private String description;
-    private OpenApiContactProperties contact;
+public class OpenApiContactProperties {
+    private String name;
+    private String email;
+    private String url;
 }
