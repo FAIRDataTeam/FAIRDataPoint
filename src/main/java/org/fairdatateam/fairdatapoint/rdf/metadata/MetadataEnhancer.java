@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
-import org.fairdatateam.fairdatapoint.service.profile.ProfileService;
+import org.fairdatateam.fairdatapoint.profile.ProfileService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
