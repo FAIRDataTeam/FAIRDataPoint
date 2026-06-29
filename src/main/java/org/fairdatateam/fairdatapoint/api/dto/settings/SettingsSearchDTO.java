@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.api.dto.settings;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchFilterDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 
 import java.util.List;
 

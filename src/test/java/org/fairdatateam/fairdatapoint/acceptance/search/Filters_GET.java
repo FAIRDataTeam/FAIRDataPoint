@@ -23,9 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchFilterDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

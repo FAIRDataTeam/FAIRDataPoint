@@ -20,23 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.search;
+package org.fairdatateam.fairdatapoint.search;
 
-import lombok.*;
-import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder(toBuilder = true)
-public class SearchFilterItemDTO {
+public class SearchResult {
 
-    @ValidIri
-    private String value;
+    private String uri;
 
-    private String label;
+    private String type;
 
-    private boolean preset = true;
+    private String title;
 
+    private String description;
+
+    private SearchResultRelation relation;
 }

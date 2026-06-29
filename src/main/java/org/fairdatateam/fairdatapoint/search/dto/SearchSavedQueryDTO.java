@@ -20,20 +20,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.search;
+package org.fairdatateam.fairdatapoint.search.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.fairdatateam.fairdatapoint.user.dto.UserDTO;
+import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;
+
+import java.time.Instant;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class SearchFilterValue {
+@Builder
+public class SearchSavedQueryDTO {
 
-    private String value;
+    @NotBlank
+    private String uuid;
 
-    private String label;
+    @NotBlank
+    private String name;
+
+    @NotNull
+    private String description;
+
+    @NotNull
+    private SearchSavedQueryType type;
+
+    @Valid
+    @JsonInclude
+    private UserDTO user;
+
+    @NotNull
+    private Instant createdAt;
+
+    @NotNull
+    private Instant updatedAt;
+
+    @Valid
+    @NotNull
+    private SearchQueryVariablesDTO variables;
 }

@@ -20,19 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.search;
+package org.fairdatateam.fairdatapoint.search.dto;
 
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @Getter
 @Setter
-public class SearchResultRelation {
+public class SearchQueryDTO {
 
-    private String predicate;
-
-    private String object;
+    @NotNull
+    private String query;
 
 }

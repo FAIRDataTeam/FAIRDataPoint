@@ -20,48 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.search;
+package org.fairdatateam.fairdatapoint.search.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.user.dto.UserDTO;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
-
-import java.time.Instant;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class SearchSavedQueryDTO {
-
-    @NotBlank
-    private String uuid;
-
-    @NotBlank
-    private String name;
+public class SearchQueryVariablesDTO {
 
     @NotNull
-    private String description;
+    private String prefixes;
 
     @NotNull
-    private SearchSavedQueryType type;
-
-    @Valid
-    @JsonInclude
-    private UserDTO user;
+    private String graphPattern;
 
     @NotNull
-    private Instant createdAt;
-
-    @NotNull
-    private Instant updatedAt;
-
-    @Valid
-    @NotNull
-    private SearchQueryVariablesDTO variables;
+    private String ordering;
 }

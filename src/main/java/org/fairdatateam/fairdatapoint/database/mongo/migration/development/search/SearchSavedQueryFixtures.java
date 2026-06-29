@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.database.mongo.migration.development.search;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
+import org.fairdatateam.fairdatapoint.search.SearchSavedQuery;
+import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 

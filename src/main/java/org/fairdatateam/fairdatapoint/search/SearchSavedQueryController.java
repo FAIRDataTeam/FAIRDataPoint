@@ -20,17 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.controller.search;
+package org.fairdatateam.fairdatapoint.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchResultDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
-import org.fairdatateam.fairdatapoint.service.search.SearchService;
-import org.fairdatateam.fairdatapoint.service.search.query.SearchSavedQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

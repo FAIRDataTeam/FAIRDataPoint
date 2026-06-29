@@ -20,18 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.search;
+package org.fairdatateam.fairdatapoint.search;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.*;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterCacheContainer;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterType;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.search.dto.*;
 import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;

@@ -20,34 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.search;
+package org.fairdatateam.fairdatapoint.search;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterType;
+import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.time.Instant;
 
+@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder(toBuilder = true)
-public class SearchFilterDTO {
+public class SearchSavedQuery {
 
-    @NotNull
-    private SearchFilterType type;
+    @Id
+    private ObjectId id;
 
-    @NotNull
-    private String label;
+    private String uuid;
 
-    @ValidIri
-    private String predicate;
+    private String name;
 
-    @NotNull
-    private List<@Valid SearchFilterItemDTO> values;
+    private String description;
 
-    private boolean queryFromRecords;
+    private String userUuid;
+
+    private SearchSavedQueryType type;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    private SearchQueryVariablesDTO variables;
 }

@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.search;
+package org.fairdatateam.fairdatapoint.search;
 
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.BindingSet;
-import org.fairdatateam.fairdatapoint.api.dto.search.*;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResultRelation;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterItemDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchQueryTemplateDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchResultDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

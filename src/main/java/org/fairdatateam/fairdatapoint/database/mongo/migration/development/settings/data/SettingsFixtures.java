@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.database.mongo.migration.development.settings.data;
 
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterType;
+import org.fairdatateam.fairdatapoint.search.SearchFilterType;
 import org.fairdatateam.fairdatapoint.entity.settings.Settings;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsAutocompleteSource;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;

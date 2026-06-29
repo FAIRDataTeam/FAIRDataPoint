@@ -20,14 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.search.query;
+package org.fairdatateam.fairdatapoint.search;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
+import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;

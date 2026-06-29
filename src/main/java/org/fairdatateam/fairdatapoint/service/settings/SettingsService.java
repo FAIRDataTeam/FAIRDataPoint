@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
 import org.fairdatateam.fairdatapoint.entity.settings.Settings;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
-import org.fairdatateam.fairdatapoint.service.search.SearchFilterCache;
+import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

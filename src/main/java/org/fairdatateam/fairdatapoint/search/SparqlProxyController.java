@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-package org.fairdatateam.fairdatapoint.api.controller.search;
+package org.fairdatateam.fairdatapoint.search;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

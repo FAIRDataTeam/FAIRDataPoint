@@ -20,11 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.search;
+package org.fairdatateam.fairdatapoint.search;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterCacheContainer;
 import org.fairdatateam.fairdatapoint.service.label.LabelService;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;

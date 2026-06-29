@@ -36,7 +36,7 @@ import org.fairdatateam.fairdatapoint.database.mongo.migration.development.setti
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.UserMigration;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import org.fairdatateam.fairdatapoint.service.search.SearchFilterCache;
+import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;

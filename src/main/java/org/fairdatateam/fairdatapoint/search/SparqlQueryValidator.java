@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.controller.search;
+package org.fairdatateam.fairdatapoint.search;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.query.MalformedQueryException;

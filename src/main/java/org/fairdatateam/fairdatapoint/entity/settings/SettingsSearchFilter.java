@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.entity.settings;
 
 import lombok.*;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterType;
+import org.fairdatateam.fairdatapoint.search.SearchFilterType;
 
 import java.util.List;
 

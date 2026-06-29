@@ -20,9 +20,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.search;
+package org.fairdatateam.fairdatapoint.search.dto;
 
-public enum SearchFilterType {
-    IRI,
-    LITERAL
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
+import org.fairdatateam.fairdatapoint.search.SearchFilterType;
+
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
+public class SearchFilterDTO {
+
+    @NotNull
+    private SearchFilterType type;
+
+    @NotNull
+    private String label;
+
+    @ValidIri
+    private String predicate;
+
+    @NotNull
+    private List<@Valid SearchFilterItemDTO> values;
+
+    private boolean queryFromRecords;
 }

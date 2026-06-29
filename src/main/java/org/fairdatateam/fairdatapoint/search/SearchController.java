@@ -20,13 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.controller.search;
+package org.fairdatateam.fairdatapoint.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.fairdatateam.fairdatapoint.api.dto.search.*;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.service.search.SearchService;
+import org.fairdatateam.fairdatapoint.search.dto.*;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

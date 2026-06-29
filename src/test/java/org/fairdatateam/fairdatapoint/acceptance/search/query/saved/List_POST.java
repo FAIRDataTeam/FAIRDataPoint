@@ -23,13 +23,11 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQueryRepository;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
+import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
+import org.fairdatateam.fairdatapoint.search.SearchSavedQueryRepository;
+import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +39,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

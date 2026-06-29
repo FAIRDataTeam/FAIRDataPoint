@@ -20,10 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.search;
+package org.fairdatateam.fairdatapoint.search;
 
-public enum SearchSavedQueryType {
-    PUBLIC,
-    PRIVATE,
-    INTERNAL
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.Optional;
+
+public interface SearchSavedQueryRepository extends MongoRepository<SearchSavedQuery, String> {
+
+    Optional<SearchSavedQuery> findByUuid(String uuid);
+
 }

@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 
-import org.fairdatateam.fairdatapoint.api.controller.search.SparqlQueryValidator;
+import org.fairdatateam.fairdatapoint.search.SparqlQueryValidator;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

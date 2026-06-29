@@ -22,14 +22,14 @@
  */
 package org.fairdatateam.fairdatapoint.service.settings;
 
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchFilterDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchFilterItemDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterItemDTO;
 import org.fairdatateam.fairdatapoint.api.dto.settings.*;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
 import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
 import org.fairdatateam.fairdatapoint.entity.settings.*;
-import org.fairdatateam.fairdatapoint.service.search.SearchMapper;
+import org.fairdatateam.fairdatapoint.search.SearchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -20,15 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.search;
 
-import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface SearchSavedQueryRepository extends MongoRepository<SearchSavedQuery, String> {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class SearchFilterCacheContainer {
 
-    Optional<SearchSavedQuery> findByUuid(String uuid);
-
+    private List<SearchFilterValue> values;
 }

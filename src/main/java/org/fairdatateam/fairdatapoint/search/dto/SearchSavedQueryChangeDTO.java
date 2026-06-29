@@ -20,24 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.search;
+package org.fairdatateam.fairdatapoint.search.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class SearchQueryVariablesDTO {
+public class SearchSavedQueryChangeDTO {
+
+    @NotBlank
+    private String name;
 
     @NotNull
-    private String prefixes;
+    private String description;
 
     @NotNull
-    private String graphPattern;
+    private SearchSavedQueryType type;
 
+    @Valid
     @NotNull
-    private String ordering;
+    private SearchQueryVariablesDTO variables;
 }
