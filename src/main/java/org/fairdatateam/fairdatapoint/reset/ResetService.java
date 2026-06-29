@@ -20,11 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.reset;
+package org.fairdatateam.fairdatapoint.reset;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.api.dto.reset.ResetDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.*;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;

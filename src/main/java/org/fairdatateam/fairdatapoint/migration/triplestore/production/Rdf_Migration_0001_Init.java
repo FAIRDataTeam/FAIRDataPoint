@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.service.reset.FactoryDefaults;
+import org.fairdatateam.fairdatapoint.reset.FactoryDefaults;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.bson.Document;

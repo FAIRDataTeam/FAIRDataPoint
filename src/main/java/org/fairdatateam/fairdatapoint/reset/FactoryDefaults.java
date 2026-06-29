@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.reset;
+package org.fairdatateam.fairdatapoint.reset;
 
 import org.fairdatateam.fairdatapoint.entity.membership.Membership;
 import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
