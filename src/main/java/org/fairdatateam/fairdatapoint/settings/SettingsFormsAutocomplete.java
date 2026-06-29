@@ -20,9 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.settings;
+package org.fairdatateam.fairdatapoint.settings;
 
 import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,11 +32,9 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsAutocompleteSource {
+public class SettingsFormsAutocomplete {
 
-    private String rdfType;
+    private Boolean searchNamespace;
 
-    private String sparqlEndpoint;
-
-    private String sparqlQuery;
+    private List<SettingsAutocompleteSource> sources;
 }

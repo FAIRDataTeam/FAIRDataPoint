@@ -25,11 +25,11 @@ package org.fairdatateam.fairdatapoint.service.form.autocomplete;
 import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteItemDTO;
 import org.fairdatateam.fairdatapoint.api.dto.form.FormAutocompleteRequestDTO;
 import org.fairdatateam.fairdatapoint.entity.forms.RdfEntityCacheContainer;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
+import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesNamespaceRetriever;
 import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesRetriever;
 import org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval.RdfEntitiesSparqlRetriever;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

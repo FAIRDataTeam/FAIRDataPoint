@@ -20,11 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.settings;
+package org.fairdatateam.fairdatapoint.settings;
 
 import jakarta.annotation.PostConstruct;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;

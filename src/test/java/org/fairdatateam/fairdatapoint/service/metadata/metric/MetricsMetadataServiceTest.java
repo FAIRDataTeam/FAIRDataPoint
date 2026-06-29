@@ -28,9 +28,7 @@
 package org.fairdatateam.fairdatapoint.service.metadata.metric;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
 import org.fairdatateam.fairdatapoint.entity.metadata.Metric;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
 import org.eclipse.rdf4j.model.IRI;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

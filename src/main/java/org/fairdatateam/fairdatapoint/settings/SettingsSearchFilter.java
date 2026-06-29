@@ -20,9 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.settings;
+package org.fairdatateam.fairdatapoint.settings;
 
 import lombok.*;
+import org.fairdatateam.fairdatapoint.search.SearchFilterType;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,7 +33,15 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsForms {
+public class SettingsSearchFilter {
 
-    private SettingsFormsAutocomplete autocomplete;
+    private SearchFilterType type;
+
+    private String label;
+
+    private String predicate;
+
+    private List<SettingsSearchFilterItem> presetValues;
+
+    private boolean queryFromRecords;
 }

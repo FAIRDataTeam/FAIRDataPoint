@@ -20,28 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.settings;
+package org.fairdatateam.fairdatapoint.settings;
 
-import lombok.*;
-import org.fairdatateam.fairdatapoint.search.SearchFilterType;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
+import java.util.Optional;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class SettingsSearchFilter {
-
-    private SearchFilterType type;
-
-    private String label;
-
-    private String predicate;
-
-    private List<SettingsSearchFilterItem> presetValues;
-
-    private boolean queryFromRecords;
+public interface SettingsRepository extends MongoRepository<Settings, String> {
+    Optional<Settings> findFirstBy();
 }

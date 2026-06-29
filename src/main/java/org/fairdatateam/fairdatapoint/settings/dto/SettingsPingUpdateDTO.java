@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.settings;
+package org.fairdatateam.fairdatapoint.settings.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -33,10 +33,11 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsPing {
+public class SettingsPingUpdateDTO {
 
     private boolean enabled;
 
     @NotNull
     private List<String> endpoints;
+
 }

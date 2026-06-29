@@ -20,18 +20,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.settings;
+package org.fairdatateam.fairdatapoint.settings.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.fairdatateam.fairdatapoint.settings.SettingsMetricsEntry;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder(toBuilder = true)
-public class SettingsFormsDTO {
+public class SettingsUpdateDTO {
+
+    private String appTitle;
+
+    private String appSubtitle;
 
     @NotNull
-    private SettingsFormsAutocompleteDTO autocomplete;
+    private List<SettingsMetricsEntry> metadataMetrics;
+
+    @NotNull
+    private SettingsPingUpdateDTO ping;
+
+    @NotNull
+    private SettingsSearchDTO search;
+
+    @NotNull
+    private SettingsFormsDTO forms;
 }

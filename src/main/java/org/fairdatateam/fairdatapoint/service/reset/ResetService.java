@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataService
 import org.fairdatateam.fairdatapoint.service.metadata.generic.GenericMetadataService;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;

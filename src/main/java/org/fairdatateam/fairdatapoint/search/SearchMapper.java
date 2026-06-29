@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.search;
 
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.BindingSet;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilterItem;
 import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchFilterItemDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchQueryTemplateDTO;

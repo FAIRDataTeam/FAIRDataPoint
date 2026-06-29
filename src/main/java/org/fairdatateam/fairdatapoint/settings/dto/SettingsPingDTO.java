@@ -20,8 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.settings;
+package org.fairdatateam.fairdatapoint.settings.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -30,11 +31,18 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsFormsAutocomplete {
+public class SettingsPingDTO {
 
-    private Boolean searchNamespace;
+    @NotNull
+    private Boolean enabled;
 
-    private List<SettingsAutocompleteSource> sources;
+    @NotNull
+    private List<String> endpoints;
+
+    @NotNull
+    private List<String> endpointsFromConfig;
+
+    @NotNull
+    private String interval;
 }

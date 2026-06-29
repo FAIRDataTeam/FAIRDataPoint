@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.service.form.autocomplete.retrieval;
 
 import org.fairdatateam.fairdatapoint.entity.forms.RdfEntitySourceType;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsAutocompleteSource;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.settings.SettingsAutocompleteSource;
+import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;

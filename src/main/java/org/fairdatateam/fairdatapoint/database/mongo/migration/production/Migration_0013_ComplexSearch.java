@@ -29,7 +29,7 @@ import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.settings.SettingsCache;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;

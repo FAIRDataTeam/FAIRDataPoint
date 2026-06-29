@@ -20,24 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.settings;
+package org.fairdatateam.fairdatapoint.settings.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.util.List;
+import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsPingUpdateDTO {
-
-    private boolean enabled;
+public class SettingsAutocompleteSourceDTO {
 
     @NotNull
-    private List<String> endpoints;
+    @ValidIri
+    private String rdfType;
 
+    @NotNull
+    private String sparqlEndpoint;
+
+    @NotNull
+    private String sparqlQuery;
 }

@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.database.mongo.migration.development.settings;
 
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.settings.data.SettingsFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
+import org.fairdatateam.fairdatapoint.settings.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

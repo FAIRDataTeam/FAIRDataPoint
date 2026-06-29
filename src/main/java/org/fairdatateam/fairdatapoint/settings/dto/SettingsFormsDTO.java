@@ -20,19 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.settings;
+package org.fairdatateam.fairdatapoint.settings.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsSearchFilterItem {
+public class SettingsFormsDTO {
 
-    private String value;
-
-    private String label;
+    @NotNull
+    private SettingsFormsAutocompleteDTO autocomplete;
 }

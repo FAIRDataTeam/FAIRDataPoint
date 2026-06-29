@@ -23,10 +23,10 @@
 package org.fairdatateam.fairdatapoint.database.mongo.migration.development.settings.data;
 
 import org.fairdatateam.fairdatapoint.search.SearchFilterType;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsAutocompleteSource;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilterItem;
+import org.fairdatateam.fairdatapoint.settings.Settings;
+import org.fairdatateam.fairdatapoint.settings.SettingsAutocompleteSource;
+import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilterItem;
 
 import java.util.Collections;
 import java.util.List;

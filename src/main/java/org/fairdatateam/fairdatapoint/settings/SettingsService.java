@@ -20,13 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.settings;
+package org.fairdatateam.fairdatapoint.settings;
 
-import org.fairdatateam.fairdatapoint.api.dto.settings.SettingsDTO;
-import org.fairdatateam.fairdatapoint.api.dto.settings.SettingsUpdateDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.settings.dto.SettingsDTO;
+import org.fairdatateam.fairdatapoint.settings.dto.SettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

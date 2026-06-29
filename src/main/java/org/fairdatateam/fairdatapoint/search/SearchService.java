@@ -26,10 +26,10 @@ import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepository
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
+import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.search.dto.*;
 import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;

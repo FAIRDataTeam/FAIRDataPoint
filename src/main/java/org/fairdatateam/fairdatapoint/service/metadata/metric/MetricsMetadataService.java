@@ -29,8 +29,8 @@ package org.fairdatateam.fairdatapoint.service.metadata.metric;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.entity.metadata.Metric;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.settings.Settings;
+import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;

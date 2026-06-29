@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.settings;
+package org.fairdatateam.fairdatapoint.settings;
 
 import lombok.*;
 
@@ -30,10 +30,9 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsMetricsEntry {
+public class SettingsSearchFilterItem {
 
-    private String metricUri;
+    private String value;
 
-    private String resourceUri;
-
+    private String label;
 }

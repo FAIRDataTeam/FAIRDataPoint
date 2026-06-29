@@ -24,9 +24,9 @@ package org.fairdatateam.fairdatapoint.service.config;
 
 import org.fairdatateam.fairdatapoint.api.dto.config.BootstrapConfigDTO;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
+import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

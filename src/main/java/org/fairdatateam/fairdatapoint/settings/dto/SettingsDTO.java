@@ -20,26 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.settings;
+package org.fairdatateam.fairdatapoint.settings.dto;
 
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
+import org.fairdatateam.fairdatapoint.settings.SettingsMetricsEntry;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder(toBuilder = true)
-public class SettingsAutocompleteSourceDTO {
+public class SettingsDTO {
 
-    @NotNull
-    @ValidIri
-    private String rdfType;
+    private String clientUrl;
 
-    @NotNull
-    private String sparqlEndpoint;
+    private String persistentUrl;
 
-    @NotNull
-    private String sparqlQuery;
+    @JsonInclude
+    private String appTitle;
+
+    @JsonInclude
+    private String appSubtitle;
+
+    private String appTitleFromConfig;
+
+    private String appSubtitleFromConfig;
+
+    private List<SettingsMetricsEntry> metadataMetrics;
+
+    private SettingsPingDTO ping;
+
+    private SettingsRepositoryDTO repository;
+
+    private SettingsSearchDTO search;
+
+    private SettingsFormsDTO forms;
 }

@@ -28,7 +28,7 @@ import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.runner.springboot.base.MongockInitializingBeanRunner;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.settings.SettingsCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;

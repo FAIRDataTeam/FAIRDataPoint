@@ -20,22 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.settings;
+package org.fairdatateam.fairdatapoint.settings;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
-
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 @Builder(toBuilder = true)
-public class SettingsSearchDTO {
+public class SettingsMetricsEntry {
 
-    @NotNull
-    private List<@Valid SearchFilterDTO> filters;
+    private String metricUri;
+
+    private String resourceUri;
+
 }

@@ -23,14 +23,12 @@
 package org.fairdatateam.fairdatapoint.acceptance.settings;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.settings.*;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsFormsAutocomplete;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsMetricsEntry;
-import org.fairdatateam.fairdatapoint.entity.settings.SettingsPing;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
-import org.junit.jupiter.api.AfterAll;
+import org.fairdatateam.fairdatapoint.settings.SettingsRepository;
+import org.fairdatateam.fairdatapoint.settings.Settings;
+import org.fairdatateam.fairdatapoint.settings.SettingsMetricsEntry;
+import org.fairdatateam.fairdatapoint.settings.SettingsPing;
+import org.fairdatateam.fairdatapoint.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.settings.dto.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

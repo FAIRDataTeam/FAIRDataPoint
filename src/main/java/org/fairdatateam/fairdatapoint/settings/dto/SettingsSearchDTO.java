@@ -20,13 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.settings.dto;
 
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface SettingsRepository extends MongoRepository<Settings, String> {
-    Optional<Settings> findFirstBy();
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
+public class SettingsSearchDTO {
+
+    @NotNull
+    private List<@Valid SearchFilterDTO> filters;
 }
