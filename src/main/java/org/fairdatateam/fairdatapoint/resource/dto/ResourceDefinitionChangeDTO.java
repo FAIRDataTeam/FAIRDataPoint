@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.resource;
+package org.fairdatateam.fairdatapoint.resource.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -29,8 +29,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionLink;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionLink;
 
 import java.util.List;
 
@@ -38,10 +38,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResourceDefinitionDTO {
-
-    @NotBlank
-    private String uuid;
+public class ResourceDefinitionChangeDTO {
 
     @NotBlank
     private String name;
@@ -51,9 +48,6 @@ public class ResourceDefinitionDTO {
 
     @NotNull
     private List<String> metadataSchemaUuids;
-
-    @NotNull
-    private List<String> targetClassUris;
 
     @NotNull
     @Valid

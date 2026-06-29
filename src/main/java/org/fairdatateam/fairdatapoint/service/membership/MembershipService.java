@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.service.membership;
 import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.MembershipRepository;
 import org.fairdatateam.fairdatapoint.entity.membership.Membership;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

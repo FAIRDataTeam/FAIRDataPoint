@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data;
 
-import org.fairdatateam.fairdatapoint.entity.resource.*;
+import org.fairdatateam.fairdatapoint.resource.*;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;

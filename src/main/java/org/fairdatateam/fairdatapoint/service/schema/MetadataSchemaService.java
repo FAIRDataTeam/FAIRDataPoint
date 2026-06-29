@@ -33,7 +33,7 @@ import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
 import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
 import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;

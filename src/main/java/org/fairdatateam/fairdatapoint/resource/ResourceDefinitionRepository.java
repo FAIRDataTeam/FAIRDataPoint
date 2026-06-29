@@ -20,29 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
-import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@Builder(toBuilder = true)
-public class ResourceDefinitionChild {
+import java.util.List;
+import java.util.Optional;
 
-    @NotBlank
-    private String resourceDefinitionUuid;
+public interface ResourceDefinitionRepository extends MongoRepository<ResourceDefinition, String> {
 
-    @NotBlank
-    @ValidIri
-    private String relationUri;
+    Optional<ResourceDefinition> findByUuid(String uuid);
 
-    @Valid
-    private ResourceDefinitionChildListView listView;
+    Optional<ResourceDefinition> findByName(String name);
+
+    Optional<ResourceDefinition> findByUrlPrefix(String urlPrefix);
+
+    List<ResourceDefinition> findByMetadataSchemaUuidsIsContaining(String metadataSchemaUuid);
 
 }

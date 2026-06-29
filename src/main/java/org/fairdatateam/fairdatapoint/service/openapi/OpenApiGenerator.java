@@ -39,7 +39,7 @@ import org.fairdatateam.fairdatapoint.api.dto.member.MemberCreateDTO;
 import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
 import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaDTO;
 import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 

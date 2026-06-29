@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadat
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.service.metadata.common.MetadataService;
 import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;

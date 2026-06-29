@@ -133,7 +133,7 @@ public class Migration_0002_CustomMetamodel {
         definition.append("child", child);
         definition.append("parentResourceDefinitionUuid", parentUuid);
         definition.append("childResourceDefinitionUuid", childUuid);
-        definition.append("_class", "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
+        definition.append("_class", "org.fairdatateam.fairdatapoint.resource.ResourceDefinition");
         return definition;
     }
 }

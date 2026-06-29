@@ -28,8 +28,8 @@ import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataReposito
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.service.metadata.validator.MetadataStateValidator;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;

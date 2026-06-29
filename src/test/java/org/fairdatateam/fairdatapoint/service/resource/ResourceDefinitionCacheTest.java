@@ -24,8 +24,9 @@ package org.fairdatateam.fairdatapoint.service.resource;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

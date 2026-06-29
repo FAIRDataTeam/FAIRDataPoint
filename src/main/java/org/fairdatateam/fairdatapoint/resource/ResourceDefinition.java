@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

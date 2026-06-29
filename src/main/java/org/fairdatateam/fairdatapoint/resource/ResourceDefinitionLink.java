@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class ResourceDefinitionChildListViewMetadata {
+public class ResourceDefinitionLink {
 
     @NotBlank
     private String title;

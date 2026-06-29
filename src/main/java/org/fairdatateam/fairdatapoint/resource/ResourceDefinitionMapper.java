@@ -20,11 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
-import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionChangeDTO;
+import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

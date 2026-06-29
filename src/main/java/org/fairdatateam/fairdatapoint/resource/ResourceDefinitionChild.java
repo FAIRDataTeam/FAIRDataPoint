@@ -20,14 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
-
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,15 +33,16 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-public class ResourceDefinitionChildListView {
+public class ResourceDefinitionChild {
 
     @NotBlank
-    private String title;
+    private String resourceDefinitionUuid;
 
+    @NotBlank
     @ValidIri
-    private String tagsUri;
+    private String relationUri;
 
     @Valid
-    private List<ResourceDefinitionChildListViewMetadata> metadata;
+    private ResourceDefinitionChildListView listView;
 
 }

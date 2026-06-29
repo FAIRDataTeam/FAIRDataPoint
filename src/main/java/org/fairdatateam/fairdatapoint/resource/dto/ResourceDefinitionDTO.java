@@ -20,22 +20,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.resource.dto;
 
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionLink;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ResourceDefinitionRepository extends MongoRepository<ResourceDefinition, String> {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class ResourceDefinitionDTO {
 
-    Optional<ResourceDefinition> findByUuid(String uuid);
+    @NotBlank
+    private String uuid;
 
-    Optional<ResourceDefinition> findByName(String name);
+    @NotBlank
+    private String name;
 
-    Optional<ResourceDefinition> findByUrlPrefix(String urlPrefix);
+    @NotNull
+    private String urlPrefix;
 
-    List<ResourceDefinition> findByMetadataSchemaUuidsIsContaining(String metadataSchemaUuid);
+    @NotNull
+    private List<String> metadataSchemaUuids;
 
+    @NotNull
+    private List<String> targetClassUris;
+
+    @NotNull
+    @Valid
+    private List<ResourceDefinitionChild> children;
+
+    @NotNull
+    @Valid
+    private List<ResourceDefinitionLink> externalLinks;
 }

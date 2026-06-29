@@ -23,10 +23,8 @@
 package org.fairdatateam.fairdatapoint.service.resource;
 
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.resource.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

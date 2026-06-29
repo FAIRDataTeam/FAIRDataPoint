@@ -23,9 +23,9 @@
 package org.fairdatateam.fairdatapoint.service.profile;
 
 import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;

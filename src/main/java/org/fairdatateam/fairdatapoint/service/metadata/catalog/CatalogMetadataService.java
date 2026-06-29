@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.service.metadata.catalog;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.CatalogMetadataRepository;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.service.metadata.common.AbstractMetadataService;
 import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;

@@ -23,13 +23,13 @@
 package org.fairdatateam.fairdatapoint.service.metadata.enhance;
 
 import org.fairdatateam.fairdatapoint.entity.metadata.Identifier;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.service.actuator.AppInfoContributor;
 import org.fairdatateam.fairdatapoint.service.metadata.metric.MetricsMetadataService;
 import org.fairdatateam.fairdatapoint.service.profile.ProfileService;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
 import org.fairdatateam.fairdatapoint.vocabulary.DATACITE;
 import org.fairdatateam.fairdatapoint.vocabulary.FDP;

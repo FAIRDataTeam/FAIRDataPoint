@@ -24,9 +24,9 @@ package org.fairdatateam.fairdatapoint.database.mongo.migration.development.reso
 
 import org.fairdatateam.fairdatapoint.database.common.migration.Migration;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

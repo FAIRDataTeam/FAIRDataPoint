@@ -27,7 +27,7 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.bson.BasicBSONObject;
 import org.bson.Document;
@@ -176,7 +176,7 @@ public class Migration_0004_ResourceDefinition {
         definition.append("targetClassUris", classes);
         definition.append("children", children);
         definition.append("externalLinks", links);
-        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
+        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.resource.ResourceDefinition");
         return definition;
     }
 

@@ -20,12 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
-import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;

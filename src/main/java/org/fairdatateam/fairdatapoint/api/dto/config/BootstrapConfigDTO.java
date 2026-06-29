@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.api.dto.config;
 
 import lombok.*;
-import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
+import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
 
 import java.util.List;
 

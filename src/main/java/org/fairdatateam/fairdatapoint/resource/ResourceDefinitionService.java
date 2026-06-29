@@ -20,13 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
-import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.resource.ResourceDefinitionDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.ResourceDefinitionRepository;
+import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionChangeDTO;
+import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.service.membership.MembershipService;
 import org.fairdatateam.fairdatapoint.service.openapi.OpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;

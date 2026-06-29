@@ -27,8 +27,8 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.bson.Document;
@@ -132,7 +132,7 @@ public class Migration_0011_ComplyFDPO {
         // External Links
         definition.append("externalLinks", List.of());
 
-        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
+        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.resource.ResourceDefinition");
         return definition;
     }
 }

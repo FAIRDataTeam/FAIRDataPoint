@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.service.metadata.common;
 
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

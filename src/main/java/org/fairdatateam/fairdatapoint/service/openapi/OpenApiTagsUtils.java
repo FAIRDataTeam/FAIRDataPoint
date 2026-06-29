@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.service.openapi;
 
 import io.swagger.v3.oas.models.tags.Tag;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;
