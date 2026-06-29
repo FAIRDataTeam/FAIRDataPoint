@@ -20,22 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.validator;
+package org.fairdatateam.fairdatapoint.index.settings;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-import java.lang.annotation.*;
+import java.time.Duration;
 
-@Documented
-@Constraint(validatedBy = DurationValidator.class)
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE_USE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ValidDuration {
+public class DurationValidator implements ConstraintValidator<ValidDuration, String> {
 
-    String message() default "Invalid ISO-8601 duration";
+    @Override
+    public void initialize(ValidDuration text) {
+    }
 
-    Class<?>[] groups() default {};
-
-    Class<? extends Payload>[] payload() default {};
+    @Override
+    public boolean isValid(String text, ConstraintValidatorContext cxt) {
+        try {
+            Duration.parse(text);
+            return true;
+        }
+        catch (Exception exception) {
+            return false;
+        }
+    }
 }

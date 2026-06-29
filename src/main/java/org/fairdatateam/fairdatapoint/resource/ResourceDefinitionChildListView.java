@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
+import org.fairdatateam.fairdatapoint.util.ValidIri;
 
 import java.util.List;
 

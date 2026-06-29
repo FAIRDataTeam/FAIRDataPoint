@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.form;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
+import org.fairdatateam.fairdatapoint.util.ValidIri;
 
 @NoArgsConstructor
 @AllArgsConstructor

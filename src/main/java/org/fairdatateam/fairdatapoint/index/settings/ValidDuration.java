@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.validator;
+package org.fairdatateam.fairdatapoint.index.settings;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -28,12 +28,12 @@ import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = SemVerValidator.class)
+@Constraint(validatedBy = DurationValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidSemVer {
+public @interface ValidDuration {
 
-    String message() default "Invalid version specification";
+    String message() default "Invalid ISO-8601 duration";
 
     Class<?>[] groups() default {};
 

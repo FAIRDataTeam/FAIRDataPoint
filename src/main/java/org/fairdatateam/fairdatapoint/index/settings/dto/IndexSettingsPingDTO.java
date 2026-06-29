@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fairdatateam.fairdatapoint.api.validator.ValidDuration;
+import org.fairdatateam.fairdatapoint.index.settings.ValidDuration;
 
 import java.util.List;
 

@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.search.dto;
 
 import lombok.*;
-import org.fairdatateam.fairdatapoint.api.validator.ValidIri;
+import org.fairdatateam.fairdatapoint.util.ValidIri;
 
 @NoArgsConstructor
 @AllArgsConstructor

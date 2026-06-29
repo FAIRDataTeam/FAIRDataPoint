@@ -20,28 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.validator;
+package org.fairdatateam.fairdatapoint.rdf.schema;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import java.lang.annotation.*;
 
-public class IriValidator implements ConstraintValidator<ValidIri, String> {
+@Documented
+@Constraint(validatedBy = SemVerValidator.class)
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE_USE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidSemVer {
 
-    @Override
-    public void initialize(ValidIri text) {
-    }
+    String message() default "Invalid version specification";
 
-    @Override
-    public boolean isValid(String text, ConstraintValidatorContext cxt) {
-        try {
-            i(text);
-            return true;
-        }
-        catch (Exception exception) {
-            return false;
-        }
-    }
+    Class<?>[] groups() default {};
 
+    Class<? extends Payload>[] payload() default {};
 }
