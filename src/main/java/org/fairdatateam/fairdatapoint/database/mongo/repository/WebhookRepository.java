@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.database.mongo.repository;
 
-import org.fairdatateam.fairdatapoint.entity.index.webhook.Webhook;
+import org.fairdatateam.fairdatapoint.index.webhook.Webhook;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

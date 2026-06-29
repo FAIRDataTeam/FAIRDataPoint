@@ -24,10 +24,10 @@ package org.fairdatateam.fairdatapoint.database.rdf.migration.production;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Value;

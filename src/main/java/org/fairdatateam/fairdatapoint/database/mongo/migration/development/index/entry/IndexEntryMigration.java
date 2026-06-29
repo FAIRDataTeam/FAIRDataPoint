@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.database.mongo.migration.development.inde
 
 import org.fairdatateam.fairdatapoint.database.common.migration.Migration;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.index.entry.data.IndexEntryFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

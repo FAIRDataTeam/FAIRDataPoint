@@ -28,6 +28,7 @@ import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadat
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.index.HarvesterService;
 import org.fairdatateam.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.vocabulary.FDP;

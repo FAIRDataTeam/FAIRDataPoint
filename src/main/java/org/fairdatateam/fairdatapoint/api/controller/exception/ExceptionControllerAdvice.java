@@ -34,7 +34,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.*;
-import org.fairdatateam.fairdatapoint.entity.index.exception.AbstractIndexException;
+import org.fairdatateam.fairdatapoint.index.exception.AbstractIndexException;
 import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

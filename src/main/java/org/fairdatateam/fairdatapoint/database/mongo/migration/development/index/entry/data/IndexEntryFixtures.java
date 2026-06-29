@@ -22,10 +22,10 @@
  */
 package org.fairdatateam.fairdatapoint.database.mongo.migration.development.index.entry.data;
 
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryPermit;
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryState;
-import org.fairdatateam.fairdatapoint.entity.index.entry.RepositoryMetadata;
+import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
+import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
