@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.actuator;
+package org.fairdatateam.fairdatapoint.actuator;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.info.Info;

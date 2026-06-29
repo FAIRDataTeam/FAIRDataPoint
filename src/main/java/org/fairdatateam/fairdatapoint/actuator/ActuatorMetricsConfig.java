@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.actuator;
 
 import io.micrometer.common.KeyValue;
 import io.micrometer.core.instrument.MeterRegistry;
