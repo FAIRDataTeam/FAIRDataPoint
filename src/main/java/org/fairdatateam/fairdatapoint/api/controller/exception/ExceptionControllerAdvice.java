@@ -35,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.*;
 import org.fairdatateam.fairdatapoint.index.exception.AbstractIndexException;
+import org.fairdatateam.fairdatapoint.rdf.RdfValidationException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

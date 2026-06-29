@@ -20,19 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.exception;
+package org.fairdatateam.fairdatapoint.index.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.eclipse.rdf4j.model.Model;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-@Getter
-@AllArgsConstructor
-public class RdfValidationException extends RuntimeException {
+import java.time.Instant;
+import java.util.List;
 
-    private final Model model;
+public interface EventRepository extends MongoRepository<Event, String> {
 
+    List<Event> getAllByType(EventType type);
+
+    List<Event> getAllByFinishedIsNull();
+
+    Page<Event> getAllByRelatedTo(IndexEntry indexEntry, Pageable pageable);
+
+    List<Event> findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
+            String remoteAddr, Instant after);
 }

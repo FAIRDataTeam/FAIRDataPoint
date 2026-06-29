@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.index.admin;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.EventRepository;
+import org.fairdatateam.fairdatapoint.index.event.EventRepository;
 import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;

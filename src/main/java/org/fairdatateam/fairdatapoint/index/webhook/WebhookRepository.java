@@ -20,9 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.index.webhook;
 
-import org.fairdatateam.fairdatapoint.index.webhook.Webhook;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.exception;
+package org.fairdatateam.fairdatapoint.rdf.schema;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

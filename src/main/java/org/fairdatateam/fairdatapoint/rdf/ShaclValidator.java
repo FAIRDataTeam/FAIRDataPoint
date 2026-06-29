@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.rdf;
 
-import org.fairdatateam.fairdatapoint.entity.exception.RdfValidationException;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF4J;

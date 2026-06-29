@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.rdf.schema;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaVersionDTO;
-import org.fairdatateam.fairdatapoint.entity.exception.MetadataSchemaImportException;
 import org.springframework.http.HttpHeaders;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;

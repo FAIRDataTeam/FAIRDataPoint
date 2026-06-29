@@ -20,26 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.index.exception;
 
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
-import org.fairdatateam.fairdatapoint.index.event.Event;
-import org.fairdatateam.fairdatapoint.index.event.EventType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.time.Instant;
-import java.util.List;
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class FeatureDisabledException extends RuntimeException {
 
-public interface EventRepository extends MongoRepository<Event, String> {
+    public FeatureDisabledException(String message) {
+        super(message);
+    }
 
-    List<Event> getAllByType(EventType type);
-
-    List<Event> getAllByFinishedIsNull();
-
-    Page<Event> getAllByRelatedTo(IndexEntry indexEntry, Pageable pageable);
-
-    List<Event> findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
-            String remoteAddr, Instant after);
 }

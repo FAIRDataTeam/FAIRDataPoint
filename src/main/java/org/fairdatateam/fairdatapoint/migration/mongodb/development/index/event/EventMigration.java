@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development.index.event;
 
-import org.fairdatateam.fairdatapoint.database.mongo.repository.EventRepository;
+import org.fairdatateam.fairdatapoint.index.event.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
