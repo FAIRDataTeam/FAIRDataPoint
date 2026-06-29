@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;

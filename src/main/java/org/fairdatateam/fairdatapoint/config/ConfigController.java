@@ -20,37 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config.properties;
+package org.fairdatateam.fairdatapoint.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "instance")
-public class InstanceProperties {
-    // todo: set all default values explicitly here?
-    private String clientUrl = "http://localhost:8080";
-    private boolean behindProxy = true;
-    private String persistentUrl;
-    private boolean index;
-    private boolean indexAutoPermit;
+@Tag(name = "Client")
+@RestController
+@RequestMapping("/configs")
+public class ConfigController {
 
-    // enable an optional sparql proxy endpoint that forwards requests to the backend triple store sparql endpoint
-    private boolean sparqlProxyEnabled = false;
+    @Autowired
+    private ConfigService configService;
 
-    private String title = "FAIR Data Point";
-    private String subtitle = "Metadata for machines";
-
-    public String getUrl() {
-        if (persistentUrl == null || persistentUrl.isBlank()) {
-            return clientUrl;
-        }
-        return persistentUrl;
+    @GetMapping(path = "/bootstrap", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BootstrapConfigDTO> getBootstrapConfig() {
+        final BootstrapConfigDTO dto = configService.getBootstrapConfig();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+
 }

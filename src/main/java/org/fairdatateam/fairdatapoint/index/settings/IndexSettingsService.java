@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.springframework.beans.factory.annotation.Autowired;

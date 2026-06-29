@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.index;
 
 import lombok.SneakyThrows;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.exception.FeatureDisabledException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

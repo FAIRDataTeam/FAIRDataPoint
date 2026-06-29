@@ -20,28 +20,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.config;
+package org.fairdatateam.fairdatapoint.config;
 
-import lombok.*;
-import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
-
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
-public class BootstrapConfigDTO {
-
+@ConfigurationProperties(prefix = "instance")
+public class InstanceProperties {
+    // todo: set all default values explicitly here?
+    private String clientUrl = "http://localhost:8080";
+    private boolean behindProxy = true;
     private String persistentUrl;
-
-    private List<ResourceDefinitionDTO> resourceDefinitions;
-
     private boolean index;
+    private boolean indexAutoPermit;
 
-    private String appTitle;
+    // enable an optional sparql proxy endpoint that forwards requests to the backend triple store sparql endpoint
+    private boolean sparqlProxyEnabled = false;
 
-    private String appSubtitle;
+    private String title = "FAIR Data Point";
+    private String subtitle = "Metadata for machines";
 
+    public String getUrl() {
+        if (persistentUrl == null || persistentUrl.isBlank()) {
+            return clientUrl;
+        }
+        return persistentUrl;
+    }
 }

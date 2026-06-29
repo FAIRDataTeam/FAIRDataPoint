@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.ping;
 
 import lombok.extern.log4j.Log4j2;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;

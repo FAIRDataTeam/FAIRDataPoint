@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

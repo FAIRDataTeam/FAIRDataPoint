@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.util;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

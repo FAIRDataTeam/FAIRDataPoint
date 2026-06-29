@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.settings;
 
 import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchFilterItemDTO;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.ping.PingProperties;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryProperties;
 import org.fairdatateam.fairdatapoint.search.SearchMapper;

@@ -20,31 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.controller.config;
+package org.fairdatateam.fairdatapoint.config;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.fairdatateam.fairdatapoint.api.dto.config.BootstrapConfigDTO;
-import org.fairdatateam.fairdatapoint.service.config.ConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.*;
+import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
 
-@Tag(name = "Client")
-@RestController
-@RequestMapping("/configs")
-public class ConfigController {
+import java.util.List;
 
-    @Autowired
-    private ConfigService configService;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+public class BootstrapConfigDTO {
 
-    @GetMapping(path = "/bootstrap", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BootstrapConfigDTO> getBootstrapConfig() {
-        final BootstrapConfigDTO dto = configService.getBootstrapConfig();
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
+    private String persistentUrl;
+
+    private List<ResourceDefinitionDTO> resourceDefinitions;
+
+    private boolean index;
+
+    private String appTitle;
+
+    private String appSubtitle;
 
 }

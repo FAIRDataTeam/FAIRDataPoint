@@ -20,10 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.config;
+package org.fairdatateam.fairdatapoint.config;
 
-import org.fairdatateam.fairdatapoint.api.dto.config.BootstrapConfigDTO;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
