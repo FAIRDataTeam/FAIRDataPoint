@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.index;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.metadata.GenericMetadataRdfRepository;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -43,7 +43,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getChildren;
+import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getChildren;
 import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRdfContentType;
 import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.read;
 import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.readFile;
@@ -58,17 +58,17 @@ public class HarvesterService {
     private static final String DEFAULT_NAVIGATION_SHACL = "defaultNavigationShacl.ttl";
 
     @Autowired
-    private GenericMetadataRepository genericMetadataRepository;
+    private GenericMetadataRdfRepository genericMetadataRepository;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public void deleteHarvestedData(String clientUrl) throws MetadataRepositoryException {
+    public void deleteHarvestedData(String clientUrl) throws MetadataRdfRepositoryException {
         genericMetadataRepository.remove(i(clientUrl));
     }
 
     @Async
-    public void harvest(String clientUrl) throws MetadataRepositoryException {
+    public void harvest(String clientUrl) throws MetadataRdfRepositoryException {
         log.info("Start harvesting '{}'", clientUrl);
 
         // 0. Remove previously harvested metadata

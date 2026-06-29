@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.service.reset;
 
 import org.fairdatateam.fairdatapoint.entity.membership.Membership;
 import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
-import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
-import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
 import org.fairdatateam.fairdatapoint.entity.schema.SemVer;

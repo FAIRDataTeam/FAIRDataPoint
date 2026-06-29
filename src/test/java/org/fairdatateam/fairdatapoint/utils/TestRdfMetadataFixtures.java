@@ -23,16 +23,16 @@
 package org.fairdatateam.fairdatapoint.utils;
 
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
-import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactory;
+import org.fairdatateam.fairdatapoint.metadata.migration.development.metadata.data.RdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.metadata.migration.development.metadata.factory.MetadataFactory;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
+import org.fairdatateam.fairdatapoint.metadata.MetadataEnhancer;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getUri;
 
 @Service
 public class TestRdfMetadataFixtures extends RdfMetadataFixtures {

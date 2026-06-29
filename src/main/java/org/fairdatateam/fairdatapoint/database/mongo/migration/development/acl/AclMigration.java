@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.database.mongo.migration.development.acl;
 import org.fairdatateam.fairdatapoint.database.common.migration.Migration;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
 import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -53,7 +53,7 @@ public class Migration_0002_CustomMetamodel {
     private void updateAcl(MongoDatabase database) {
         final MongoCollection<Document> aclCol = database.getCollection("ACL");
         aclCol.updateMany(
-                new Document(), combine(set("className", "org.fairdatateam.fairdatapoint.entity.metadata.Metadata"))
+                new Document(), combine(set("className", "org.fairdatateam.fairdatapoint.metadata.Metadata"))
         );
     }
 

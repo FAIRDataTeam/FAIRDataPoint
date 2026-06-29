@@ -40,8 +40,8 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.metadata.MetadataSetter.*;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 import static org.hamcrest.MatcherAssert.assertThat;

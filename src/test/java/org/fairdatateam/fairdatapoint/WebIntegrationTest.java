@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint;
 
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.MigrationRunner;
-import org.fairdatateam.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
+import org.fairdatateam.fairdatapoint.metadata.migration.development.RdfDevelopmentMigrationRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;

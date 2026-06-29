@@ -22,13 +22,13 @@
  */
 package org.fairdatateam.fairdatapoint.search;
 
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
-import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.search.dto.*;
-import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
+import org.fairdatateam.fairdatapoint.metadata.MetadataStateService;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
@@ -60,7 +60,7 @@ public class SearchService {
 
     private static String queryTemplate;
 
-    private final GenericMetadataRepository metadataRepository;
+    private final GenericMetadataRdfRepository metadataRepository;
 
     private final MetadataStateService metadataStateService;
 
@@ -77,7 +77,7 @@ public class SearchService {
      * Constructor (autowired)
      */
     public SearchService(
-            GenericMetadataRepository metadataRepository,
+            GenericMetadataRdfRepository metadataRepository,
             MetadataStateService metadataStateService,
             String persistentUrl,
             SearchMapper searchMapper,
@@ -98,7 +98,7 @@ public class SearchService {
      * @param simpleQuery Object containing a search string literal
      * @return List of search result objects
      */
-    public List<SearchResultDTO> search(SearchQueryDTO simpleQuery) throws MetadataRepositoryException {
+    public List<SearchResultDTO> search(SearchQueryDTO simpleQuery) throws MetadataRdfRepositoryException {
         final List<SearchResult> results = findByLiteral(l(simpleQuery.getQuery()));
         return processSearchResults(results);
     }
@@ -110,7 +110,7 @@ public class SearchService {
      */
     public List<SearchResultDTO> search(
             SearchQueryVariablesDTO queryVariables
-    ) throws MetadataRepositoryException, MalformedQueryException {
+    ) throws MetadataRdfRepositoryException, MalformedQueryException {
         // Compose query
         final String query = composeQuery(queryVariables);
         // Verify query
@@ -177,7 +177,7 @@ public class SearchService {
             searchFilterCache.setFilter(predicate, new SearchFilterCacheContainer(result));
             return result;
         }
-        catch (MetadataRepositoryException exception) {
+        catch (MetadataRdfRepositoryException exception) {
             throw new RuntimeException(exception);
         }
     }
@@ -232,14 +232,14 @@ public class SearchService {
         return substitutor.replace(queryTemplate);
     }
 
-    public List<SearchResult> findByLiteral(Literal query) throws MetadataRepositoryException {
+    public List<SearchResult> findByLiteral(Literal query) throws MetadataRdfRepositoryException {
         return metadataRepository.runSparqlQueryFromFile(FIND_ENTITY_BY_LITERAL, Map.of("query", query))
                 .stream()
                 .map(item -> searchMapper.toSearchResult(item, true))
                 .toList();
     }
 
-    public List<SearchResult> findBySparqlQuery(String query) throws MetadataRepositoryException {
+    public List<SearchResult> findBySparqlQuery(String query) throws MetadataRdfRepositoryException {
         return metadataRepository
                 .runSparqlQuery(query, null)
                 .stream()
@@ -247,7 +247,7 @@ public class SearchService {
                 .toList();
     }
 
-    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRepositoryException {
+    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRdfRepositoryException {
         final Map<String, String> values = new HashMap<>();
         metadataRepository.runSparqlQueryFromFile(
                 FIND_OBJECT_FOR_PREDICATE,

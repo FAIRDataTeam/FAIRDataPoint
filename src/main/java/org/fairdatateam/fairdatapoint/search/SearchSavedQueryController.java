@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 import org.fairdatateam.fairdatapoint.search.dto.SearchResultDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,7 +75,7 @@ public class SearchSavedQueryController {
     @PostMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchResultDTO>> search(
             @PathVariable final String uuid
-    ) throws ResourceNotFoundException, MetadataRepositoryException {
+    ) throws ResourceNotFoundException, MetadataRdfRepositoryException {
         final Optional<SearchSavedQueryDTO> oDto = searchSavedQueryService.getSingle(uuid);
         if (oDto.isPresent()) {
             return ResponseEntity.ok(searchService.search(oDto.get().getVariables()));

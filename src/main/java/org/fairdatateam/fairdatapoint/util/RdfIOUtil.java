@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.setRdfTypes;
+import static org.fairdatateam.fairdatapoint.metadata.MetadataSetter.setRdfTypes;
 import static org.fairdatateam.fairdatapoint.util.RdfUtil.getSubjectBy;
 import static org.fairdatateam.fairdatapoint.util.ResourceReader.getResource;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;

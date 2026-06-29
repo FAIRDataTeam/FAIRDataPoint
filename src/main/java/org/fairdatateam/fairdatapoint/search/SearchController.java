@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.search.dto.*;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class SearchController {
     )
     public ResponseEntity<List<SearchResultDTO>> search(
             @RequestBody @Valid SearchQueryDTO reqDto
-    ) throws MetadataRepositoryException {
+    ) throws MetadataRdfRepositoryException {
         return ResponseEntity.ok(searchService.search(reqDto));
     }
 
@@ -69,7 +69,7 @@ public class SearchController {
     )
     public ResponseEntity<List<SearchResultDTO>> searchWithQuery(
             @RequestBody @Valid SearchQueryVariablesDTO reqDto
-    ) throws MetadataRepositoryException, MalformedQueryException {
+    ) throws MetadataRdfRepositoryException, MalformedQueryException {
         return ResponseEntity.ok(searchService.search(reqDto));
     }
 

@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
+import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.service.UtilityService;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
@@ -95,7 +95,7 @@ public class IndexPingController {
     public ResponseEntity<Void> receivePing(
             @RequestBody @Valid PingDTO reqDto,
             HttpServletRequest request
-    ) throws MetadataRepositoryException {
+    ) throws MetadataRdfRepositoryException {
         log.info("Received ping from {}", utilityService.getRemoteAddr(request));
         final Event event = eventService.acceptIncomingPing(reqDto, request);
         log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());

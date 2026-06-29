@@ -25,8 +25,8 @@ package org.fairdatateam.fairdatapoint.index.entry;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.index.entity.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entity.settings.IndexSettings;
@@ -77,7 +77,7 @@ public class IndexEntryService {
     private IndexEntryMapper mapper;
 
     @Autowired
-    private GenericMetadataRepository genericMetadataRepository;
+    private GenericMetadataRdfRepository genericMetadataRepository;
 
     @Autowired
     private HarvesterService harvesterService;
@@ -251,7 +251,7 @@ public class IndexEntryService {
 
     @RequiredEnabledIndexFeature
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteEntry(String uuid) throws MetadataRepositoryException {
+    public void deleteEntry(String uuid) throws MetadataRdfRepositoryException {
         final IndexEntry entry = repository.findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
         harvesterService.deleteHarvestedData(entry.getClientUrl());
@@ -259,7 +259,7 @@ public class IndexEntryService {
     }
 
     @Async
-    public void harvest(String clientUrl) throws MetadataRepositoryException {
+    public void harvest(String clientUrl) throws MetadataRdfRepositoryException {
         log.info("Checking index entry for '{}'", clientUrl);
         final Optional<IndexEntry> indexEntry = getEntryByClientUrl(clientUrl);
         if (indexEntry.isEmpty() || indexEntry.get().getPermit() != IndexEntryPermit.ACCEPTED) {
@@ -275,7 +275,7 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
-    public Model getEntryHarvestedData(String uuid) throws MetadataRepositoryException {
+    public Model getEntryHarvestedData(String uuid) throws MetadataRdfRepositoryException {
         final IndexEntry entry = repository
                 .findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));

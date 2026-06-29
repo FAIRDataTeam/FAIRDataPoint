@@ -27,7 +27,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
-import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.metadata.MetadataState;
 
 import java.util.List;
 import java.util.Optional;
