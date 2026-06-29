@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.metadata.distribution;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

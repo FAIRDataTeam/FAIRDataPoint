@@ -20,14 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.vocabulary;
+package org.fairdatateam.fairdatapoint.rdf;
 
-import org.eclipse.rdf4j.model.IRI;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-
-public final class DATACITE {
-    public static final String NAMESPACE = "http://purl.org/spar/datacite/";
-
-    public static final IRI IDENTIFIER = i(NAMESPACE + "Identifier");
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class RdfRepositoryBasicProperties {
+    private String url = "";
+    private String repository = "";
+    private String username = "";
+    private String password = "";
 }

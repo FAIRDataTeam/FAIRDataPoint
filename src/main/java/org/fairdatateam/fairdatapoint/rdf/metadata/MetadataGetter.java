@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
@@ -37,7 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.fairdatateam.fairdatapoint.util.RdfUtil.*;
+import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 

@@ -20,18 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.vocabulary;
+package org.fairdatateam.fairdatapoint.rdf.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.vocabulary.DCAT;
 
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
-/**
- * Temporary solution for DCAT3 which currently not supported in RDR4J vocabularies
- *
- * @TODO: remove once RDF4J supports DCAT3
- */
-public class DCAT3 extends DCAT {
-    public static final IRI VERSION = i(NAMESPACE + "version");
+public final class FDP {
+
+    public static final String NAMESPACE = "https://w3id.org/fdp/fdp-o#";
+
+    public static final IRI FAIRDATAPOINT = i(NAMESPACE + "FAIRDataPoint");
+    public static final IRI FDPSOFTWAREVERSION = i(NAMESPACE + "fdpSoftwareVersion");
+    public static final IRI METADATACATALOG = i(NAMESPACE + "metadataCatalog");
+    public static final IRI METADATAIDENTIFIER = i(NAMESPACE + "metadataIdentifier");
+    public static final IRI METADATAISSUED = i(NAMESPACE + "metadataIssued");
+    public static final IRI METADATAMODIFIED = i(NAMESPACE + "metadataModified");
+    public static final IRI METADATASERVICE = i(NAMESPACE + "MetadataService");
+
 }

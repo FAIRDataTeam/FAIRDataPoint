@@ -40,7 +40,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.fairdatateam.fairdatapoint.util.RdfUtil.getStringObjectBy;
+import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getStringObjectBy;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Component

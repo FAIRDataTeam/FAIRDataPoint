@@ -54,9 +54,9 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.util.HttpUtil.*;
-import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.changeBaseUri;
-import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.read;
-import static org.fairdatateam.fairdatapoint.util.RdfUtil.*;
+import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.changeBaseUri;
+import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.read;
+import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Metadata")

@@ -20,19 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.vocabulary;
+package org.fairdatateam.fairdatapoint.rdf.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
 
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
-public final class R3D {
+public final class DATACITE {
+    public static final String NAMESPACE = "http://purl.org/spar/datacite/";
 
-    public static final String NAMESPACE = "http://www.re3data.org/schema/3-0#";
-
-    public static final IRI COUNTRY = i(NAMESPACE + "country");
-    public static final IRI DATACATALOG = i(NAMESPACE + "dataCatalog");
-    public static final IRI REPOSITORY = i(NAMESPACE + "Repository");
-    public static final IRI REPOSITORYIDENTIFIER = i(NAMESPACE + "repositoryIdentifier");
-
+    public static final IRI IDENTIFIER = i(NAMESPACE + "Identifier");
 }

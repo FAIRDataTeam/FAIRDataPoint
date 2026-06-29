@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.schema;
 
-import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;

@@ -20,20 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config.properties;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.fairdatateam.fairdatapoint.rdf.vocabulary;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.eclipse.rdf4j.model.IRI;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class RepositoryBasicProperties {
-    private String url = "";
-    private String repository = "";
-    private String username = "";
-    private String password = "";
+import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+
+/**
+ * Semanticscience Integrated Ontology
+ *
+ * @see <a href="https://bioportal.bioontology.org/ontologies/SIO">Semanticscience Integrated Ontology</a>
+ * @author Rajaram Kaliyaperumal
+ * @author Kees Burger
+ * @version 0.1
+ * @since 2018-01-17
+ */
+public class SIO {
+
+    public static final String NAMESPACE = "http://semanticscience.org/resource/";
+
+    public static final IRI IS_ABOUT = i(NAMESPACE + "SIO_000332");
+    public static final IRI REFERS_TO = i(NAMESPACE + "SIO_000628");
+
 }

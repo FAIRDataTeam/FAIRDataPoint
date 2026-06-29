@@ -28,7 +28,7 @@
 package org.fairdatateam.fairdatapoint.config;
 
 import org.fairdatateam.fairdatapoint.api.converter.ErrorConverter;
-import org.fairdatateam.fairdatapoint.api.converter.RdfConverter;
+import org.fairdatateam.fairdatapoint.rdf.RdfConverter;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -25,9 +25,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.api.converter;
+package org.fairdatateam.fairdatapoint.rdf;
 
-import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.rio.RDFFormat;

@@ -47,7 +47,7 @@ import java.util.Optional;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getMetadataIdentifier;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getTitle;
 import static org.fairdatateam.fairdatapoint.util.HttpUtil.getMetadataIRI;
-import static org.fairdatateam.fairdatapoint.util.RdfUtil.getStringObjectBy;
+import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getStringObjectBy;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Tag(name = "Metadata")

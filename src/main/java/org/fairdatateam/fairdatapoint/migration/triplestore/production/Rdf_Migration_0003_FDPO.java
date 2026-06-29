@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
-import org.fairdatateam.fairdatapoint.vocabulary.R3D;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.R3D;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.IRI;

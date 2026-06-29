@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.context.annotation.Profile;

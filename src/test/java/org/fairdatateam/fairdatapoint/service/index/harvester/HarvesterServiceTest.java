@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.index.HarvesterService;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataEnhancer;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
-import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.write;
+import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.write;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

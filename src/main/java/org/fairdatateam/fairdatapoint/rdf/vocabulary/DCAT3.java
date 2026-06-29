@@ -20,31 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.fairdatateam.fairdatapoint.vocabulary;
+package org.fairdatateam.fairdatapoint.rdf.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
 
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 /**
- * Semanticscience Integrated Ontology
+ * Temporary solution for DCAT3 which currently not supported in RDR4J vocabularies
  *
- * @see <a href="https://bioportal.bioontology.org/ontologies/SIO">Semanticscience Integrated Ontology</a>
- * @author Rajaram Kaliyaperumal
- * @author Kees Burger
- * @version 0.1
- * @since 2018-01-17
+ * @TODO: remove once RDF4J supports DCAT3
  */
-public class SIO {
-
-    public static final String NAMESPACE = "http://semanticscience.org/resource/";
-
-    public static final IRI IS_ABOUT = i(NAMESPACE + "SIO_000332");
-    public static final IRI REFERS_TO = i(NAMESPACE + "SIO_000628");
-
+public class DCAT3 extends DCAT {
+    public static final IRI VERSION = i(NAMESPACE + "version");
 }

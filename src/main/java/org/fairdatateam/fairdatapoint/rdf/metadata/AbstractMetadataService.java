@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.service.member.MemberService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;

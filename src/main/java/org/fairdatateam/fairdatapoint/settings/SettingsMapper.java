@@ -26,7 +26,7 @@ import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchFilterItemDTO;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
-import org.fairdatateam.fairdatapoint.config.properties.RepositoryProperties;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryProperties;
 import org.fairdatateam.fairdatapoint.search.SearchMapper;
 import org.fairdatateam.fairdatapoint.settings.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class SettingsMapper {
     private PingProperties pingProperties;
 
     @Autowired
-    private RepositoryProperties repositoryProperties;
+    private RdfRepositoryProperties rdfRepositoryProperties;
 
     @Autowired
     private SearchMapper searchMapper;
@@ -131,12 +131,12 @@ public class SettingsMapper {
     public SettingsRepositoryDTO getRepositoryDTO() {
         return SettingsRepositoryDTO
                 .builder()
-                .type(repositoryProperties.getStringType())
-                .dir(repositoryProperties.getDir())
-                .url(repositoryProperties.getUrl())
-                .repository(repositoryProperties.getRepository())
-                .username(repositoryProperties.getUsername())
-                .password(repositoryProperties.getPassword() != null ? "<SECRET>" : null)
+                .type(rdfRepositoryProperties.getStringType())
+                .dir(rdfRepositoryProperties.getDir())
+                .url(rdfRepositoryProperties.getUrl())
+                .repository(rdfRepositoryProperties.getRepository())
+                .username(rdfRepositoryProperties.getUsername())
+                .password(rdfRepositoryProperties.getPassword() != null ? "<SECRET>" : null)
                 .build();
     }
 

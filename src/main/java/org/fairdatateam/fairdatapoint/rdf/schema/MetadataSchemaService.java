@@ -29,7 +29,7 @@ import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.*;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.schema.dto.*;
-import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.springframework.beans.factory.annotation.Autowired;

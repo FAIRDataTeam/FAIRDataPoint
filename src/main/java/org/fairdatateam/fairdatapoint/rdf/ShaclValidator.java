@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.rdf;
+package org.fairdatateam.fairdatapoint.rdf;
 
 import org.fairdatateam.fairdatapoint.entity.exception.RdfValidationException;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;

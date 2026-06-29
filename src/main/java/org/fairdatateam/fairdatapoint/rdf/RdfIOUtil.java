@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.util;
+package org.fairdatateam.fairdatapoint.rdf;
 
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.eclipse.rdf4j.model.Model;
@@ -35,6 +35,8 @@ import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.eclipse.rdf4j.rio.*;
 import org.eclipse.rdf4j.rio.helpers.BasicWriterSettings;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter;
+import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -45,7 +47,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setRdfTypes;
-import static org.fairdatateam.fairdatapoint.util.RdfUtil.getSubjectBy;
+import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getSubjectBy;
 import static org.fairdatateam.fairdatapoint.util.ResourceReader.getResource;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.s;
@@ -76,7 +78,7 @@ public class RdfIOUtil {
                         .toList();
         final Model model = new LinkedHashModel();
         model.addAll(sanitizedStatements);
-        setRdfTypes(model, i(newBaseUri), rdfTypes.stream().map(ValueFactoryHelper::i).toList());
+        MetadataSetter.setRdfTypes(model, i(newBaseUri), rdfTypes.stream().map(ValueFactoryHelper::i).toList());
         return model;
     }
 

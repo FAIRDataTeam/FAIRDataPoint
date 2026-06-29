@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.da
 
 import org.fairdatateam.fairdatapoint.resource.*;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.springframework.stereotype.Service;
 

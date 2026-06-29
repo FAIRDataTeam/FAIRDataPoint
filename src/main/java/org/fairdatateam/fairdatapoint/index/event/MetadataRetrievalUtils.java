@@ -23,16 +23,13 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
-import org.fairdatateam.fairdatapoint.index.event.Event;
-import org.fairdatateam.fairdatapoint.index.event.EventType;
-import org.fairdatateam.fairdatapoint.index.event.MetadataRetrieval;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeState;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
-import org.fairdatateam.fairdatapoint.vocabulary.DCAT3;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
-import org.fairdatateam.fairdatapoint.vocabulary.R3D;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.DCAT3;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;

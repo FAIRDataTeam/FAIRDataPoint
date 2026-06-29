@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config.properties;
+package org.fairdatateam.fairdatapoint.rdf;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +33,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "repository")
-public class RepositoryProperties {
+public class RdfRepositoryProperties {
     // TODO: use polymorphism for types of repository
 
     public static final int TYPE_IN_MEMORY = 1;
@@ -47,13 +47,13 @@ public class RepositoryProperties {
     public static final int TYPE_BLAZEGRAPH = 5;
 
     private int type;
-    private RepositoryNativeProperties nativeRepo;
-    private RepositoryBasicProperties agraph;
-    private RepositoryBasicProperties graphDb;
-    private RepositoryBasicProperties blazegraph;
+    private RdfRepositoryNativeProperties nativeRepo;
+    private RdfRepositoryBasicProperties agraph;
+    private RdfRepositoryBasicProperties graphDb;
+    private RdfRepositoryBasicProperties blazegraph;
 
-    public void setNative(RepositoryNativeProperties repositoryNativeProperties) {
-        this.nativeRepo = repositoryNativeProperties;
+    public void setNative(RdfRepositoryNativeProperties rdfRepositoryNativeProperties) {
+        this.nativeRepo = rdfRepositoryNativeProperties;
     }
 
     public String getStringType() {

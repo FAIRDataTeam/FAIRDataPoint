@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.fairdatateam.fairdatapoint.vocabulary.DCAT3;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
-import org.fairdatateam.fairdatapoint.vocabulary.SIO;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.DCAT3;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.SIO;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
@@ -32,7 +32,7 @@ import org.eclipse.rdf4j.model.vocabulary.*;
 
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.util.RdfUtil.update;
+import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.update;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 

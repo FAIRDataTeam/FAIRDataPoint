@@ -20,22 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.vocabulary;
+package org.fairdatateam.fairdatapoint.rdf;
 
-import org.eclipse.rdf4j.model.IRI;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-
-public final class FDP {
-
-    public static final String NAMESPACE = "https://w3id.org/fdp/fdp-o#";
-
-    public static final IRI FAIRDATAPOINT = i(NAMESPACE + "FAIRDataPoint");
-    public static final IRI FDPSOFTWAREVERSION = i(NAMESPACE + "fdpSoftwareVersion");
-    public static final IRI METADATACATALOG = i(NAMESPACE + "metadataCatalog");
-    public static final IRI METADATAIDENTIFIER = i(NAMESPACE + "metadataIdentifier");
-    public static final IRI METADATAISSUED = i(NAMESPACE + "metadataIssued");
-    public static final IRI METADATAMODIFIED = i(NAMESPACE + "metadataModified");
-    public static final IRI METADATASERVICE = i(NAMESPACE + "MetadataService");
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class RdfRepositoryNativeProperties {
+    private String dir = "";
 }

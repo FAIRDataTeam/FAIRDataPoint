@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaVersionDTO;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
