@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.utils;
 
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.metadata.migration.development.metadata.data.RdfMetadataFixtures;
-import org.fairdatateam.fairdatapoint.metadata.migration.development.metadata.factory.MetadataFactory;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactory;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.metadata.MetadataEnhancer;
 import org.eclipse.rdf4j.model.Model;

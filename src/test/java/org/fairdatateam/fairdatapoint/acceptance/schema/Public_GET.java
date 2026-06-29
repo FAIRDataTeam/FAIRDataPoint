@@ -23,10 +23,8 @@
 package org.fairdatateam.fairdatapoint.acceptance.schema;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaRemoteDTO;
 import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data.MetadataSchemaFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.entity.schema.SemVer;

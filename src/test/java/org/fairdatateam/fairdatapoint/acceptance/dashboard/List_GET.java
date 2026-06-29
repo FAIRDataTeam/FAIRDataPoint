@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.dashboard;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
 import org.fairdatateam.fairdatapoint.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
 import org.junit.jupiter.api.Test;

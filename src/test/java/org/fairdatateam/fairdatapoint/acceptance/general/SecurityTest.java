@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.general;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.apikey.data.ApiKeyFixtures;
 import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;

@@ -23,24 +23,15 @@
 package org.fairdatateam.fairdatapoint.acceptance.schema;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data.MetadataSchemaFixtures;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
 import static java.lang.String.format;
-import static org.fairdatateam.fairdatapoint.acceptance.common.NotFoundTest.createUserNotFoundTestGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("GET /metadata-schemas/:schemaUuid")
 public class Content_GET extends WebIntegrationTest {

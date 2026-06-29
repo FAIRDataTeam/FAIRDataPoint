@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.service.resource;
 
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.resource.*;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.junit.jupiter.api.Test;

@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.service.metadata.generic;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;

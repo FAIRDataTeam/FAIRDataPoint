@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.metadata.catalog.member;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

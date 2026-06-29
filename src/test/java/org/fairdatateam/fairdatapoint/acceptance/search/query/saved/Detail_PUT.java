@@ -26,7 +26,7 @@ import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.search.SearchSavedQueryFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.search.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;

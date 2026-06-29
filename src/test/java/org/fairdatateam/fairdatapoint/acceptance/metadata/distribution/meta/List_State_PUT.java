@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.distribution.meta;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.metadata.dto.MetaStateChangeDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.metadata.data.MetadataFixtures;
 import org.fairdatateam.fairdatapoint.metadata.MetadataRepository;
 import org.fairdatateam.fairdatapoint.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.metadata.MetadataState;

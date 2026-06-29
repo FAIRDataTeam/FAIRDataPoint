@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.resource;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionChangeDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionMapper;
 import org.junit.jupiter.api.DisplayName;

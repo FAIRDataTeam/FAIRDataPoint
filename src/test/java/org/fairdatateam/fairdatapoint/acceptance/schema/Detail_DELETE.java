@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.schema;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.schema.data.MetadataSchemaFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data.MetadataSchemaFixtures;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
