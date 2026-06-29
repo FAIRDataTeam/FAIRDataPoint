@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.entity.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinitionChild;
-import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
 import org.fairdatateam.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
 import org.fairdatateam.fairdatapoint.service.metadata.exception.MetadataServiceException;

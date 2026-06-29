@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.database.mongo.migration.development.user
 
 import org.fairdatateam.fairdatapoint.database.common.migration.Migration;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
+import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

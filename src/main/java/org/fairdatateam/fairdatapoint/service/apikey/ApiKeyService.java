@@ -27,8 +27,8 @@ import org.fairdatateam.fairdatapoint.database.mongo.repository.ApiKeyRepository
 import org.fairdatateam.fairdatapoint.entity.apikey.ApiKey;
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.exception.UnauthorizedException;
-import org.fairdatateam.fairdatapoint.entity.user.User;
-import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.user.User;
+import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.apache.commons.lang3.RandomStringUtils;

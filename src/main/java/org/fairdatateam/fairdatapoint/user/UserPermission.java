@@ -20,31 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.user;
+package org.fairdatateam.fairdatapoint.user;
 
-import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
-import org.fairdatateam.fairdatapoint.entity.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.model.Permission;
 
-import java.util.Optional;
+public class UserPermission extends BasePermission {
 
-import static java.lang.String.format;
+    public static final Permission INSERT = new UserPermission(32, 'I');
 
-@Service
-public class UserValidator {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public void validateEmail(String uuid, String email) {
-        final Optional<User> userEmail = userRepository.findByEmail(email);
-        if (userEmail.isPresent() && !userEmail.get().getUuid().equals(uuid)) {
-            throw new ValidationException(
-                    format("Email '%s' is already taken", email)
-            );
-        }
+    protected UserPermission(int mask) {
+        super(mask);
     }
 
+    protected UserPermission(int mask, char code) {
+        super(mask, code);
+    }
 }

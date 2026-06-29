@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.service.membership;
 
 import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
-import org.fairdatateam.fairdatapoint.entity.user.UserPermission;
+import org.fairdatateam.fairdatapoint.user.UserPermission;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.stereotype.Service;
 

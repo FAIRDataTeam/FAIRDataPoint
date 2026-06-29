@@ -20,17 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.user.dto;
 
-import org.fairdatateam.fairdatapoint.entity.user.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.fairdatateam.fairdatapoint.user.UserRole;
 
-import java.util.Optional;
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class UserDTO {
 
-public interface UserRepository extends MongoRepository<User, String> {
+    private String uuid;
 
-    Optional<User> findByUuid(String uuid);
+    private String firstName;
 
-    Optional<User> findByEmail(String email);
+    private String lastName;
+
+    private String email;
+
+    private UserRole role;
 
 }

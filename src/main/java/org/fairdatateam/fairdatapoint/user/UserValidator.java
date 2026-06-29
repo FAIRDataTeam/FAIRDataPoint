@@ -20,49 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.user;
+package org.fairdatateam.fairdatapoint.user;
 
-import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Document
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder(toBuilder = true)
-public class User {
+import java.util.Optional;
 
-    @Id
-    private ObjectId id;
+import static java.lang.String.format;
 
-    private String uuid;
+@Service
+public class UserValidator {
 
-    private String firstName;
+    @Autowired
+    private UserRepository userRepository;
 
-    private String lastName;
-
-    private String email;
-
-    private String passwordHash;
-
-    private UserRole role;
-
-    public User(
-            String uuid, String firstName, String lastName,
-            String email, String passwordHash, UserRole role
-    ) {
-        this.uuid = uuid;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
+    public void validateEmail(String uuid, String email) {
+        final Optional<User> userEmail = userRepository.findByEmail(email);
+        if (userEmail.isPresent() && !userEmail.get().getUuid().equals(uuid)) {
+            throw new ValidationException(
+                    format("Email '%s' is already taken", email)
+            );
+        }
     }
 
-    public boolean isAdmin() {
-        return role.equals(UserRole.ADMIN);
-    }
 }

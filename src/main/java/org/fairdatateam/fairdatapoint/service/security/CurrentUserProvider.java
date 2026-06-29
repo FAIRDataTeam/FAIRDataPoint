@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.service.security;
 
-import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
-import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.user.UserRepository;
+import org.fairdatateam.fairdatapoint.user.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

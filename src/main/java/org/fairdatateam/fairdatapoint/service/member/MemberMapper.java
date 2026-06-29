@@ -24,9 +24,9 @@ package org.fairdatateam.fairdatapoint.service.member;
 
 import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
 import org.fairdatateam.fairdatapoint.entity.membership.Membership;
-import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.service.membership.MembershipMapper;
-import org.fairdatateam.fairdatapoint.service.user.UserMapper;
+import org.fairdatateam.fairdatapoint.user.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

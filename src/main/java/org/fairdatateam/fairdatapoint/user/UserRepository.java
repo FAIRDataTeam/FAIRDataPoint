@@ -20,20 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.user;
+package org.fairdatateam.fairdatapoint.user;
 
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.model.Permission;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public class UserPermission extends BasePermission {
+import java.util.Optional;
 
-    public static final Permission INSERT = new UserPermission(32, 'I');
+public interface UserRepository extends MongoRepository<User, String> {
 
-    protected UserPermission(int mask) {
-        super(mask);
-    }
+    Optional<User> findByUuid(String uuid);
 
-    protected UserPermission(int mask, char code) {
-        super(mask, code);
-    }
+    Optional<User> findByEmail(String email);
+
 }

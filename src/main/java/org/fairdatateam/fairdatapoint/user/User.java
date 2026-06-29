@@ -20,10 +20,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.user;
+package org.fairdatateam.fairdatapoint.user;
 
-public enum UserRole {
+import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-    ADMIN, USER
+@Document
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder(toBuilder = true)
+public class User {
 
+    @Id
+    private ObjectId id;
+
+    private String uuid;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String email;
+
+    private String passwordHash;
+
+    private UserRole role;
+
+    public User(
+            String uuid, String firstName, String lastName,
+            String email, String passwordHash, UserRole role
+    ) {
+        this.uuid = uuid;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+    }
+
+    public boolean isAdmin() {
+        return role.equals(UserRole.ADMIN);
+    }
 }

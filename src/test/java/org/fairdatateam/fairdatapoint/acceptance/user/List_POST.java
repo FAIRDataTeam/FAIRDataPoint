@@ -24,10 +24,10 @@ package org.fairdatateam.fairdatapoint.acceptance.user;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserCreateDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
+import org.fairdatateam.fairdatapoint.user.dto.UserCreateDTO;
+import org.fairdatateam.fairdatapoint.user.dto.UserDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

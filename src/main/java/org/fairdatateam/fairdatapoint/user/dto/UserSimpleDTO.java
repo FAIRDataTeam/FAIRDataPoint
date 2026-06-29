@@ -20,35 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.user;
+package org.fairdatateam.fairdatapoint.user.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import lombok.Data;
 
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
-@Setter
-public class UserCreateDTO {
+public class UserSimpleDTO {
 
-    @NotBlank
+    private String uuid;
+
     private String firstName;
 
-    @NotBlank
     private String lastName;
 
-    @NotBlank
     private String email;
-
-    @NotBlank
-    private String password;
-
-    @NotNull
-    private UserRole role;
 
 }

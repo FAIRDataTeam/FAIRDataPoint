@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.api.dto.member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserSimpleDTO;
+import org.fairdatateam.fairdatapoint.user.dto.UserSimpleDTO;
 
 @Data
 @AllArgsConstructor

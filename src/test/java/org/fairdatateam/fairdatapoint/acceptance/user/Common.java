@@ -22,11 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.user;
 
-import org.fairdatateam.fairdatapoint.api.dto.user.UserChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserCreateDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserDTO;
-import org.fairdatateam.fairdatapoint.api.dto.user.UserProfileChangeDTO;
-import org.fairdatateam.fairdatapoint.entity.user.User;
+import org.fairdatateam.fairdatapoint.user.dto.UserChangeDTO;
+import org.fairdatateam.fairdatapoint.user.dto.UserCreateDTO;
+import org.fairdatateam.fairdatapoint.user.dto.UserDTO;
+import org.fairdatateam.fairdatapoint.user.dto.UserProfileChangeDTO;
+import org.fairdatateam.fairdatapoint.user.User;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

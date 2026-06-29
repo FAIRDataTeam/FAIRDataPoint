@@ -28,8 +28,8 @@ import org.fairdatateam.fairdatapoint.database.mongo.repository.SearchSavedQuery
 import org.fairdatateam.fairdatapoint.entity.exception.ForbiddenException;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.entity.search.SearchSavedQueryType;
-import org.fairdatateam.fairdatapoint.entity.user.User;
-import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.user.User;
+import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

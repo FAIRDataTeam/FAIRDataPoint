@@ -24,12 +24,12 @@ package org.fairdatateam.fairdatapoint.service.member;
 
 import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
 import org.fairdatateam.fairdatapoint.database.mongo.repository.MembershipRepository;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.UserRepository;
+import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.entity.membership.Membership;
 import org.fairdatateam.fairdatapoint.entity.membership.MembershipPermission;
-import org.fairdatateam.fairdatapoint.entity.user.User;
-import org.fairdatateam.fairdatapoint.entity.user.UserRole;
+import org.fairdatateam.fairdatapoint.user.User;
+import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.service.membership.PermissionService;
 import org.fairdatateam.fairdatapoint.service.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
