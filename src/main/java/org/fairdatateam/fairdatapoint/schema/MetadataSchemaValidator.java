@@ -20,16 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.schema;
+package org.fairdatateam.fairdatapoint.schema;
 
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.schema.dto.MetadataSchemaChangeDTO;
+import org.fairdatateam.fairdatapoint.schema.dto.MetadataSchemaVersionDTO;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

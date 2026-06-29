@@ -20,31 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.mongo.repository;
+package org.fairdatateam.fairdatapoint.schema.dto;
 
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface MetadataSchemaRepository extends MongoRepository<MetadataSchema, String> {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+public class MetadataSchemaDTO {
 
-    List<MetadataSchema> findByUuid(String uuid);
+    @NotNull
+    @NotBlank
+    private String uuid;
 
-    Optional<MetadataSchema> findByVersionUuid(String uuid);
+    @NotNull
+    @NotBlank
+    private String name;
 
-    Optional<MetadataSchema> findByUuidAndVersionString(String uuid, String versionString);
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private MetadataSchemaVersionDTO latest;
 
-    Optional<MetadataSchema> findByUuidAndLatestIsTrue(String uuid);
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private MetadataSchemaDraftDTO draft;
 
-    List<MetadataSchema> findAllByPublishedIsTrue();
+    @NotNull
+    private List<String> versions;
 
-    List<MetadataSchema> findAllByLatestIsTrue();
+    @NotNull
+    private List<String> extendSchemaUuids;
 
-    List<MetadataSchema> findAllByExtendSchemasContains(String uuid);
-
-    Optional<MetadataSchema> findByPreviousVersionUuid(String uuid);
-
-    List<MetadataSchema> findAllByImportedFromIsNotNull();
+    @NotNull
+    private List<String> childSchemaUuids;
 }

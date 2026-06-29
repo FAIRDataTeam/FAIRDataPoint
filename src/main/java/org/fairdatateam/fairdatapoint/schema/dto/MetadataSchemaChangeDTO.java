@@ -20,71 +20,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.schema;
+package org.fairdatateam.fairdatapoint.schema.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
 
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class MetadataSchemaVersionDTO {
+public class MetadataSchemaChangeDTO {
 
-    @NotNull
     @NotBlank
-    private String uuid;
-
-    @JsonInclude(JsonInclude.Include.ALWAYS)
-    private String version;
-
-    @JsonInclude(JsonInclude.Include.ALWAYS)
-    private String versionUuid;
-
-    @JsonInclude(JsonInclude.Include.ALWAYS)
-    private String previousVersionUuid;
-
     @NotNull
-    @NotBlank
     private String name;
 
-    private boolean published;
+    @NotNull
+    private String description;
 
     private boolean abstractSchema;
-
-    private boolean latest;
-
-    @NotNull
-    private MetadataSchemaType type;
-
-    @JsonInclude(JsonInclude.Include.ALWAYS)
-    private String origin;
-
-    @JsonInclude(JsonInclude.Include.ALWAYS)
-    private String importedFrom;
 
     @NotNull
     private String definition;
 
     @NotNull
-    private String description;
-
-    @NotNull
-    private Set<String> targetClasses;
-
-    @NotNull
     private List<String> extendsSchemaUuids;
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     private String suggestedResourceName;
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     private String suggestedUrlPrefix;
+
 }

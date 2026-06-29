@@ -31,7 +31,7 @@ import com.mongodb.client.model.Updates;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
-import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaShaclUtils;
+import org.fairdatateam.fairdatapoint.schema.MetadataSchemaShaclUtils;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 

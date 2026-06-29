@@ -20,26 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.validator;
+package org.fairdatateam.fairdatapoint.schema;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import org.fairdatateam.fairdatapoint.schema.SemVer;
-
-public class SemVerValidator implements ConstraintValidator<ValidSemVer, String> {
-
-    @Override
-    public void initialize(ValidSemVer text) {
-    }
-
-    @Override
-    public boolean isValid(String text, ConstraintValidatorContext cxt) {
-        try {
-            final SemVer version = new SemVer(text);
-            return text.equals(version.toString());
-        }
-        catch (Exception exception) {
-            return false;
-        }
-    }
+public enum MetadataSchemaType {
+    INTERNAL, CUSTOM, REFERENCE
 }

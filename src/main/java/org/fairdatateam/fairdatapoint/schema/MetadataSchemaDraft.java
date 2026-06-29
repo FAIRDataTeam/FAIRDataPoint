@@ -20,42 +20,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.schema;
+package org.fairdatateam.fairdatapoint.schema;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@Document
 @Getter
 @Setter
-@Builder
-public class MetadataSchemaDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class MetadataSchemaDraft {
 
-    @NotNull
-    @NotBlank
+    @Id
+    private ObjectId id;
+
+    @Indexed
     private String uuid;
 
     @NotNull
     @NotBlank
     private String name;
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
-    private MetadataSchemaVersionDTO latest;
+    @NotNull
+    private String description;
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
-    private MetadataSchemaDraftDTO draft;
+    private boolean abstractSchema;
 
     @NotNull
-    private List<String> versions;
+    private String definition;
 
     @NotNull
-    private List<String> extendSchemaUuids;
+    private Set<String> targetClasses;
 
     @NotNull
-    private List<String> childSchemaUuids;
+    private List<String> extendSchemas;
+
+    private String suggestedResourceName;
+
+    private String suggestedUrlPrefix;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
 }

@@ -23,10 +23,10 @@
 package org.fairdatateam.fairdatapoint.acceptance.schema;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
+import org.fairdatateam.fairdatapoint.schema.dto.MetadataSchemaChangeDTO;
+import org.fairdatateam.fairdatapoint.schema.dto.MetadataSchemaDraftDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data.MetadataSchemaFixtures;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.schema.MetadataSchema;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

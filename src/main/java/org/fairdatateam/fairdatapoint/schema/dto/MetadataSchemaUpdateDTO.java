@@ -20,28 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.schema;
+package org.fairdatateam.fairdatapoint.schema.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fairdatateam.fairdatapoint.api.validator.ValidSemVer;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class MetadataSchemaReleaseDTO {
+public class MetadataSchemaUpdateDTO {
 
     @NotBlank
-    @ValidSemVer
-    private String version;
+    @NotNull
+    private String name;
 
-    @NotBlank
+    @NotNull
     private String description;
 
     private boolean published;
-}
 
+}

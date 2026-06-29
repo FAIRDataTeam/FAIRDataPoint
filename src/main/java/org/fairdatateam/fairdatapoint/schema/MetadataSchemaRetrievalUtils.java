@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.schema;
+package org.fairdatateam.fairdatapoint.schema;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
+import org.fairdatateam.fairdatapoint.schema.dto.MetadataSchemaVersionDTO;
 import org.fairdatateam.fairdatapoint.entity.exception.MetadataSchemaImportException;
 import org.springframework.http.HttpHeaders;
 import tools.jackson.core.JacksonException;

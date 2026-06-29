@@ -23,10 +23,10 @@
 package org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data;
 
 import lombok.SneakyThrows;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
-import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
+import org.fairdatateam.fairdatapoint.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.schema.MetadataSchemaDraft;
+import org.fairdatateam.fairdatapoint.schema.MetadataSchemaType;
+import org.fairdatateam.fairdatapoint.schema.SemVer;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 

@@ -20,13 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.schema;
+package org.fairdatateam.fairdatapoint.schema;
 
-import org.fairdatateam.fairdatapoint.api.dto.schema.*;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
-import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
+import org.fairdatateam.fairdatapoint.schema.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

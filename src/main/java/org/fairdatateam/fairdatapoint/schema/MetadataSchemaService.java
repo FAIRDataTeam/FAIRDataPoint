@@ -20,20 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.schema;
+package org.fairdatateam.fairdatapoint.schema;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.api.dto.schema.*;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaDraftRepository;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaType;
-import org.fairdatateam.fairdatapoint.entity.schema.SemVer;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
+import org.fairdatateam.fairdatapoint.schema.dto.*;
 import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;

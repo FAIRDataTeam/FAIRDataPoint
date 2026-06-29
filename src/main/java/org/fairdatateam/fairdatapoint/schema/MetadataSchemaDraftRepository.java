@@ -20,28 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.schema;
+package org.fairdatateam.fairdatapoint.schema;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class MetadataSchemaUpdateDTO {
+import java.util.Optional;
 
-    @NotBlank
-    @NotNull
-    private String name;
+public interface MetadataSchemaDraftRepository
+        extends MongoRepository<MetadataSchemaDraft, String> {
 
-    @NotNull
-    private String description;
-
-    private boolean published;
+    Optional<MetadataSchemaDraft> findByUuid(String uuid);
 
 }

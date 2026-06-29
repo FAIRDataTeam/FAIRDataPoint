@@ -20,8 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.dto.schema;
+package org.fairdatateam.fairdatapoint.schema;
 
-public enum MetadataSchemaRemoteState {
-    DIRTY, CONFLICT, ALREADY_IMPORTED, NOT_IMPORTED
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface MetadataSchemaRepository extends MongoRepository<MetadataSchema, String> {
+
+    List<MetadataSchema> findByUuid(String uuid);
+
+    Optional<MetadataSchema> findByVersionUuid(String uuid);
+
+    Optional<MetadataSchema> findByUuidAndVersionString(String uuid, String versionString);
+
+    Optional<MetadataSchema> findByUuidAndLatestIsTrue(String uuid);
+
+    List<MetadataSchema> findAllByPublishedIsTrue();
+
+    List<MetadataSchema> findAllByLatestIsTrue();
+
+    List<MetadataSchema> findAllByExtendSchemasContains(String uuid);
+
+    Optional<MetadataSchema> findByPreviousVersionUuid(String uuid);
+
+    List<MetadataSchema> findAllByImportedFromIsNotNull();
 }

@@ -20,32 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.schema;
+package org.fairdatateam.fairdatapoint.schema.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 
-@Document
+@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder(toBuilder = true)
-public class MetadataSchemaDraft {
+@Builder
+public class MetadataSchemaDraftDTO {
 
-    @Id
-    private ObjectId id;
-
-    @Indexed
+    @NotNull
+    @NotBlank
     private String uuid;
 
     @NotNull
@@ -55,23 +47,29 @@ public class MetadataSchemaDraft {
     @NotNull
     private String description;
 
-    private boolean abstractSchema;
+    private Boolean abstractSchema;
 
     @NotNull
     private String definition;
 
     @NotNull
-    private Set<String> targetClasses;
+    private List<String> extendsSchemaUuids;
 
-    @NotNull
-    private List<String> extendSchemas;
-
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private String suggestedResourceName;
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private String suggestedUrlPrefix;
 
-    private Instant createdAt;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private String lastVersion;
 
-    private Instant updatedAt;
-
+    /**
+     * No-args constructor explicitly marked as default for JSON creation.
+     * See <a href="https://github.com/FasterXML/jackson/wiki/Jackson-Release-3.0#jackson-databind">
+     * FasterXML/jackson-databind#5318</a> for more info.
+     */
+    @JsonCreator
+    public MetadataSchemaDraftDTO() {
+    }
 }

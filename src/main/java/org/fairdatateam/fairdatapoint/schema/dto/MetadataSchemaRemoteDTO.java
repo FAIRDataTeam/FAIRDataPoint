@@ -20,8 +20,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.schema;
+package org.fairdatateam.fairdatapoint.schema.dto;
 
-public enum MetadataSchemaType {
-    INTERNAL, CUSTOM, REFERENCE
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+public class MetadataSchemaRemoteDTO {
+
+    @NotNull
+    @NotBlank
+    private MetadataSchemaVersionDTO schema;
+
+    private MetadataSchemaRemoteState status;
+
+    private boolean canImport;
 }

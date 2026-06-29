@@ -26,7 +26,7 @@ import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.service.rdf.ShaclValidator;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
-import org.fairdatateam.fairdatapoint.service.schema.MetadataSchemaService;
+import org.fairdatateam.fairdatapoint.schema.MetadataSchemaService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
