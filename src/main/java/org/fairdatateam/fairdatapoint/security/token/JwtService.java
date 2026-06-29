@@ -28,7 +28,7 @@ import org.fairdatateam.fairdatapoint.security.auth.AuthDTO;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.fairdatateam.fairdatapoint.exception.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
-import org.fairdatateam.fairdatapoint.security.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;

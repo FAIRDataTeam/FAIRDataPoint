@@ -20,19 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.security;
+package org.fairdatateam.fairdatapoint.security.auth;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
 
-@Configuration
-public class PasswordConfig {
+@Service
+public class MongoAuthenticationService {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    private static final String DEFAULT_CREDENTIALS = "";
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    public Authentication getAuthentication(String userUuid) {
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(userUuid);
+        return new UsernamePasswordAuthenticationToken(
+                userDetails, DEFAULT_CREDENTIALS, userDetails.getAuthorities()
+        );
     }
 
 }
