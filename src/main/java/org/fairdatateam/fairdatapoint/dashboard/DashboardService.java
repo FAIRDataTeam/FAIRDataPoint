@@ -20,9 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.dashboard;
+package org.fairdatateam.fairdatapoint.dashboard;
 
-import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;

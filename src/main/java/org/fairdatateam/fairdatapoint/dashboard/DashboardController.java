@@ -20,12 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.api.controller.dashboard;
+package org.fairdatateam.fairdatapoint.dashboard;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
-import org.fairdatateam.fairdatapoint.service.dashboard.DashboardService;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
