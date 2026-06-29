@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import org.fairdatateam.fairdatapoint.service.dashboard.DashboardService;
-import org.fairdatateam.fairdatapoint.metadata.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
 import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

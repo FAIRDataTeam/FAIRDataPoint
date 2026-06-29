@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development.metadata.data;
 
-import org.fairdatateam.fairdatapoint.metadata.Metadata;
-import org.fairdatateam.fairdatapoint.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

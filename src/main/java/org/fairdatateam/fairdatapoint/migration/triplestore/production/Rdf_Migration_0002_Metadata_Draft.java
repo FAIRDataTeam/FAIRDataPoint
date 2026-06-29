@@ -23,9 +23,9 @@
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.metadata.MetadataRepository;
-import org.fairdatateam.fairdatapoint.metadata.Metadata;
-import org.fairdatateam.fairdatapoint.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Resource;

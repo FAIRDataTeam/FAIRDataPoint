@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.index;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -43,7 +43,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
-import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getChildren;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getChildren;
 import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRdfContentType;
 import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.read;
 import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.readFile;

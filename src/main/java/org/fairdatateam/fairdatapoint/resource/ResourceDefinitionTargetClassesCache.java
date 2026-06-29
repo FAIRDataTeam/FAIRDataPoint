@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.resource;
 
 import jakarta.annotation.PostConstruct;
-import org.fairdatateam.fairdatapoint.schema.MetadataSchemaRepository;
-import org.fairdatateam.fairdatapoint.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;

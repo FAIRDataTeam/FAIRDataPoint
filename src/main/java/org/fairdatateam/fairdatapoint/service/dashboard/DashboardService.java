@@ -25,13 +25,13 @@ package org.fairdatateam.fairdatapoint.service.dashboard;
 import org.fairdatateam.fairdatapoint.api.dto.dashboard.DashboardItemDTO;
 import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
 import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
-import org.fairdatateam.fairdatapoint.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.service.member.MemberService;
-import org.fairdatateam.fairdatapoint.metadata.MetadataService;
-import org.fairdatateam.fairdatapoint.metadata.MetadataServiceException;
-import org.fairdatateam.fairdatapoint.metadata.MetadataStateService;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getTitle;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getTitle;
 import static org.fairdatateam.fairdatapoint.util.RdfUtil.getObjectsBy;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 

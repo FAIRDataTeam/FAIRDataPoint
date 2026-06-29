@@ -28,9 +28,9 @@
 package org.fairdatateam.fairdatapoint.service.metadata.metric;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.metadata.Metric;
+import org.fairdatateam.fairdatapoint.rdf.metadata.Metric;
 import org.eclipse.rdf4j.model.IRI;
-import org.fairdatateam.fairdatapoint.metadata.MetricsMetadataService;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetricsMetadataService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

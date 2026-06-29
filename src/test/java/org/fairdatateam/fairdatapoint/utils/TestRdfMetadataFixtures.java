@@ -26,13 +26,13 @@ import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.dat
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactory;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.metadata.MetadataEnhancer;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataEnhancer;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 
 @Service
 public class TestRdfMetadataFixtures extends RdfMetadataFixtures {

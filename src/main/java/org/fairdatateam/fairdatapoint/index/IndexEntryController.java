@@ -29,7 +29,7 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDetailDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryInfoDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryUpdateDTO;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;

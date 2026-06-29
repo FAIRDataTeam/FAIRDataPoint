@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.service.profile;
 
-import org.fairdatateam.fairdatapoint.schema.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;

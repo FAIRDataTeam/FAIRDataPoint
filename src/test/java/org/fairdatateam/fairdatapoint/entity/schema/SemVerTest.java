@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.entity.schema;
 
-import org.fairdatateam.fairdatapoint.schema.SemVer;
+import org.fairdatateam.fairdatapoint.rdf.schema.SemVer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

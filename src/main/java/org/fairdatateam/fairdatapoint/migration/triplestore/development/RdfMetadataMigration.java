@@ -22,17 +22,17 @@
  */
 package org.fairdatateam.fairdatapoint.migration.triplestore.development;
 
-import org.fairdatateam.fairdatapoint.metadata.dto.MetaStateChangeDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.metadata.GenericMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.metadata.MetadataService;
-import org.fairdatateam.fairdatapoint.metadata.MetadataServiceException;
-import org.fairdatateam.fairdatapoint.metadata.MetadataStateService;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateService;
 import org.fairdatateam.fairdatapoint.service.security.MongoAuthenticationService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -42,7 +42,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service

@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.search.dto.*;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.springframework.beans.factory.annotation.Autowired;

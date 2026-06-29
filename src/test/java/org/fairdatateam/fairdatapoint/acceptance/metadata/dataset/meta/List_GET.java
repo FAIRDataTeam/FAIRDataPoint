@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.dataset.meta;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
-import org.fairdatateam.fairdatapoint.metadata.dto.MetaDTO;
-import org.fairdatateam.fairdatapoint.metadata.dto.MetaStateDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.membership.data.MembershipFixtures;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.metadata.data.MetadataFixtures;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;

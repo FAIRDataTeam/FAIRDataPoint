@@ -23,9 +23,9 @@
 package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.metadata.CatalogMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.metadata.GenericMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -39,8 +39,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import java.util.ArrayList;
 
 import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getLanguage;
-import static org.fairdatateam.fairdatapoint.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getLanguage;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;

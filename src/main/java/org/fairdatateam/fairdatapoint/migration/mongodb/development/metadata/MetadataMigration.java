@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.migration.mongodb.development.metadata;
 
 import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.metadata.MetadataRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

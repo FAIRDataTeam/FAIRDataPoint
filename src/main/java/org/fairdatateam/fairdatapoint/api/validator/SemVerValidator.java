@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.api.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.fairdatateam.fairdatapoint.schema.SemVer;
+import org.fairdatateam.fairdatapoint.rdf.schema.SemVer;
 
 public class SemVerValidator implements ConstraintValidator<ValidSemVer, String> {
 
