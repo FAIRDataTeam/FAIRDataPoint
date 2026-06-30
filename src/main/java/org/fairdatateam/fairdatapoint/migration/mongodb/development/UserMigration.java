@@ -20,27 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.membership;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.membership.data.MembershipFixtures;
-import org.fairdatateam.fairdatapoint.security.membership.MembershipRepository;
+import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MembershipMigration implements Migration {
+public class UserMigration implements Migration {
 
     @Autowired
-    private MembershipFixtures membershipFixtures;
+    private UserFixtures userFixtures;
 
     @Autowired
-    private MembershipRepository membershipRepository;
+    private UserRepository userRepository;
 
     public void runMigration() {
-        membershipRepository.deleteAll();
-        membershipRepository.save(membershipFixtures.owner());
-        membershipRepository.save(membershipFixtures.dataProvider());
+        userRepository.deleteAll();
+        userRepository.save(userFixtures.admin());
+        userRepository.save(userFixtures.albert());
+        userRepository.save(userFixtures.nikola());
     }
 
 }

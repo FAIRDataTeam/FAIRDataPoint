@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.membership;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipDTO;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.membership.data.MembershipFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.MembershipFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;

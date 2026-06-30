@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.utils;
 
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactory;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;

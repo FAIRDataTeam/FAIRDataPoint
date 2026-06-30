@@ -24,16 +24,6 @@ package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import jakarta.annotation.PostConstruct;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.acl.AclMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.apikey.ApiKeyMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.index.entry.IndexEntryMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.index.event.EventMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.membership.MembershipMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.metadata.MetadataMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.ResourceDefinitionMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.MetadataSchemaMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.settings.SettingsMigration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.UserMigration;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.search.SearchFilterCache;

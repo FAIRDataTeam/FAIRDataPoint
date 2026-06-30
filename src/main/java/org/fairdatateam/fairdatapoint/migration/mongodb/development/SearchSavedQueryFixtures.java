@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.search;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQuery;

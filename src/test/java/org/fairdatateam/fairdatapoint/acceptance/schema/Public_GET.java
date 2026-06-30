@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.schema;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaVersionDTO;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data.MetadataSchemaFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.MetadataSchemaFixtures;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.rdf.schema.SemVer;

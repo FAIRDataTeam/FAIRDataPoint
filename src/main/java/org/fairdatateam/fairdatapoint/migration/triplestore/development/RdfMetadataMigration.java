@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.migration.triplestore.development;
 
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;

@@ -20,41 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.apikey.data;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.security.apikey.ApiKey;
+import org.fairdatateam.fairdatapoint.migration.Migration;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApiKeyFixtures {
-
-    public static final String ALBERT_API_KEY =
-            "a274793046e34a219fd0ea6362fcca61a001500b71724f4c973a017031653c20";
-
-    public static final String NIKOLA_API_KEY =
-            "dd5dc3b53b6145cfa9f6c58b72ebad21cd2f860ace62451ba4e3c74a0e63540a";
+public class MetadataSchemaMigration implements Migration {
 
     @Autowired
-    private UserFixtures userFixtures;
+    private MetadataSchemaFixtures metadataSchemaFixtures;
 
-    public ApiKey albertApiKey() {
-        return new ApiKey(
-                null,
-                "a1c00673-24c5-4e0a-bdbe-22e961ee7548",
-                userFixtures.albert().getUuid(),
-                ALBERT_API_KEY
-        );
-    }
+    @Autowired
+    private MetadataSchemaRepository metadataSchemaRepository;
 
-    public ApiKey nikolaApiKey() {
-        return new ApiKey(
-                null,
-                "62657760-21fe-488c-a0ea-f612a70493da",
-                userFixtures.nikola().getUuid(),
-                NIKOLA_API_KEY
-        );
+    public void runMigration() {
+        metadataSchemaRepository.deleteAll();
+        metadataSchemaRepository.save(metadataSchemaFixtures.resourceSchema());
+        metadataSchemaRepository.save(metadataSchemaFixtures.fdpSchema());
+        metadataSchemaRepository.save(metadataSchemaFixtures.dataServiceSchema());
+        metadataSchemaRepository.save(metadataSchemaFixtures.metadataServiceSchema());
+        metadataSchemaRepository.save(metadataSchemaFixtures.catalogSchema());
+        metadataSchemaRepository.save(metadataSchemaFixtures.datasetSchema());
+        metadataSchemaRepository.save(metadataSchemaFixtures.distributionSchema());
     }
 
 }

@@ -20,21 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.metadata;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
+import org.fairdatateam.fairdatapoint.index.event.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MetadataMigration implements Migration {
+public class EventMigration {
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private EventRepository eventRepository;
 
     public void runMigration() {
-        metadataRepository.deleteAll();
+        eventRepository.deleteAll();
     }
 
 }

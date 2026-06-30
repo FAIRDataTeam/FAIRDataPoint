@@ -20,32 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.index.entry;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.index.entry.data.IndexEntryFixtures;
-import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.settings.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class IndexEntryMigration implements Migration {
-
-    @Autowired
-    private IndexEntryFixtures indexEntryFixtures;
+@Component
+public class SettingsMigration {
 
     @Autowired
-    private IndexEntryRepository indexEntryRepository;
+    private SettingsRepository settingsRepository;
 
     public void runMigration() {
-        indexEntryRepository.deleteAll();
-
-        indexEntryRepository.save(indexEntryFixtures.entryActive());
-        indexEntryRepository.save(indexEntryFixtures.entryActive2());
-        indexEntryRepository.save(indexEntryFixtures.entryInactive());
-        indexEntryRepository.save(indexEntryFixtures.entryUnreachable());
-        indexEntryRepository.save(indexEntryFixtures.entryInvalid());
-        indexEntryRepository.save(indexEntryFixtures.entryUnknown());
+        settingsRepository.deleteAll();
+        settingsRepository.save(SettingsFixtures.settings());
     }
-
 }

@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query.saved;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.search.SearchSavedQueryFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.SearchSavedQueryFixtures;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQuery;
 import org.junit.jupiter.api.DisplayName;

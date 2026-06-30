@@ -20,20 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.index.event;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.fairdatateam.fairdatapoint.index.event.EventRepository;
+import org.fairdatateam.fairdatapoint.migration.Migration;
+import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EventMigration {
+public class IndexEntryMigration implements Migration {
 
     @Autowired
-    private EventRepository eventRepository;
+    private IndexEntryFixtures indexEntryFixtures;
+
+    @Autowired
+    private IndexEntryRepository indexEntryRepository;
 
     public void runMigration() {
-        eventRepository.deleteAll();
+        indexEntryRepository.deleteAll();
+
+        indexEntryRepository.save(indexEntryFixtures.entryActive());
+        indexEntryRepository.save(indexEntryFixtures.entryActive2());
+        indexEntryRepository.save(indexEntryFixtures.entryInactive());
+        indexEntryRepository.save(indexEntryFixtures.entryUnreachable());
+        indexEntryRepository.save(indexEntryFixtures.entryInvalid());
+        indexEntryRepository.save(indexEntryFixtures.entryUnknown());
     }
 
 }

@@ -20,11 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.acl;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.membership.data.MembershipFixtures;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.user.data.UserFixtures;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;

@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.service.index.harvester;
 
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.resource.data.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;

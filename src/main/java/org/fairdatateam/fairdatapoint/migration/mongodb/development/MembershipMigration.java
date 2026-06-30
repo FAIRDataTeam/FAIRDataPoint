@@ -20,32 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.schema;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.schema.data.MetadataSchemaFixtures;
-import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.security.membership.MembershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MetadataSchemaMigration implements Migration {
+public class MembershipMigration implements Migration {
 
     @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
+    private MembershipFixtures membershipFixtures;
 
     @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private MembershipRepository membershipRepository;
 
     public void runMigration() {
-        metadataSchemaRepository.deleteAll();
-        metadataSchemaRepository.save(metadataSchemaFixtures.resourceSchema());
-        metadataSchemaRepository.save(metadataSchemaFixtures.fdpSchema());
-        metadataSchemaRepository.save(metadataSchemaFixtures.dataServiceSchema());
-        metadataSchemaRepository.save(metadataSchemaFixtures.metadataServiceSchema());
-        metadataSchemaRepository.save(metadataSchemaFixtures.catalogSchema());
-        metadataSchemaRepository.save(metadataSchemaFixtures.datasetSchema());
-        metadataSchemaRepository.save(metadataSchemaFixtures.distributionSchema());
+        membershipRepository.deleteAll();
+        membershipRepository.save(membershipFixtures.owner());
+        membershipRepository.save(membershipFixtures.dataProvider());
     }
 
 }

@@ -20,21 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration.mongodb.development.settings;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.settings.data.SettingsFixtures;
-import org.fairdatateam.fairdatapoint.settings.SettingsRepository;
+import org.fairdatateam.fairdatapoint.migration.Migration;
+import org.fairdatateam.fairdatapoint.security.apikey.ApiKeyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class SettingsMigration {
+@Service
+public class ApiKeyMigration implements Migration {
 
     @Autowired
-    private SettingsRepository settingsRepository;
+    private ApiKeyFixtures apiKeyFixtures;
+
+    @Autowired
+    private ApiKeyRepository apiKeyRepository;
 
     public void runMigration() {
-        settingsRepository.deleteAll();
-        settingsRepository.save(SettingsFixtures.settings());
+        apiKeyRepository.deleteAll();
+        apiKeyRepository.save(apiKeyFixtures.albertApiKey());
+        apiKeyRepository.save(apiKeyFixtures.nikolaApiKey());
     }
+
 }
