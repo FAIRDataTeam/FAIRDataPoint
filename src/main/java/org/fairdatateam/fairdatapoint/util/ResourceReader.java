@@ -37,6 +37,10 @@ import java.io.UncheckedIOException;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Loads <a href="https://docs.spring.io/spring-framework/reference/core/resources.html">Spring Resources</a>.
+ * Beware: This has nothing to do with the concept of an FDP "Resource".
+ */
 public class ResourceReader {
 
     public static String loadResource(String name) {

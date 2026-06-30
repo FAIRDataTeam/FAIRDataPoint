@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpHeaders;

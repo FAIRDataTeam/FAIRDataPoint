@@ -23,8 +23,9 @@
 package org.fairdatateam.fairdatapoint.service.metadata.catalog;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.CatalogMetadataRepository;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataService;
+import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -41,8 +42,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getThemeTaxonomies;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getThemeTaxonomies;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -56,10 +57,10 @@ public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Mock
-    private GenericMetadataRepository metadataRepository;
+    private GenericMetadataRdfRepository metadataRepository;
 
     @Mock
-    private CatalogMetadataRepository catalogMetadataRepository;
+    private CatalogMetadataRdfRepository catalogMetadataRepository;
 
     @InjectMocks
     private CatalogMetadataService catalogMetadataService;

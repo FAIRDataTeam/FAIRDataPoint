@@ -23,14 +23,14 @@
 package org.fairdatateam.fairdatapoint.acceptance.index.settings;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsDTO;
-import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsPingDTO;
-import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsRetrievalDTO;
-import org.fairdatateam.fairdatapoint.api.dto.index.settings.IndexSettingsUpdateDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
-import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettings;
-import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsPing;
-import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
+import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
+import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsPingDTO;
+import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsRetrievalDTO;
+import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
+import org.fairdatateam.fairdatapoint.index.IndexSettingsRepository;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsPing;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

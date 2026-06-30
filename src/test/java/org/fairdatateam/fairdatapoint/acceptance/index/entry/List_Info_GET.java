@@ -23,9 +23,9 @@
 package org.fairdatateam.fairdatapoint.acceptance.index.entry;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.index.entry.IndexEntryInfoDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryInfoDTO;
+import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.utils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

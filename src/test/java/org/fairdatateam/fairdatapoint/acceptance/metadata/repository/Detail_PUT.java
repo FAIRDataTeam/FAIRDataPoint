@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.metadata.repository;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.util.RdfIOUtil;
+import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -40,8 +40,8 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.*;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -25,16 +25,17 @@ package org.fairdatateam.fairdatapoint.service.search;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.entity.search.SearchFilterValue;
-import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.search.SearchFilterValue;
+import org.fairdatateam.fairdatapoint.search.SearchResult;
+import org.fairdatateam.fairdatapoint.search.SearchService;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getTitle;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getTitle;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -49,7 +50,7 @@ public class SearchServiceTest extends BaseIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Test
-    public void findByLiteralWorks() throws MetadataRepositoryException {
+    public void findByLiteralWorks() throws MetadataRdfRepositoryException {
         // given
         final Model catalog1 = testMetadataFixtures.catalog1();
         final Literal title = getTitle(catalog1);
@@ -62,7 +63,7 @@ public class SearchServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findByFilterPredicateWorks() throws MetadataRepositoryException {
+    public void findByFilterPredicateWorks() throws MetadataRdfRepositoryException {
         // given
         // (value from SettingsFixtures.SEARCH_FILTER_TYPE is private)
         final String predicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";

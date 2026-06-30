@@ -23,13 +23,13 @@
 package org.fairdatateam.fairdatapoint.acceptance.metadata.distribution.meta;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
-import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaDTO;
-import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.membership.data.MembershipFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.metadata.data.MetadataFixtures;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.user.data.UserFixtures;
-import org.fairdatateam.fairdatapoint.service.member.MemberMapper;
+import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateDTO;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.MembershipFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.MetadataFixtures;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
+import org.fairdatateam.fairdatapoint.security.membership.MemberMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

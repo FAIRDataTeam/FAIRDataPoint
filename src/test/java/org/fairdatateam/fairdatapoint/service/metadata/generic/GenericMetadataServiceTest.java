@@ -23,11 +23,11 @@
 package org.fairdatateam.fairdatapoint.service.metadata.generic;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.entity.exception.ResourceNotFoundException;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.service.metadata.common.MetadataService;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
 import org.fairdatateam.fairdatapoint.utils.AuthHelper;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
@@ -40,8 +40,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.time.OffsetDateTime;
 
 import static java.lang.String.format;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.*;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataSetter.*;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.*;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

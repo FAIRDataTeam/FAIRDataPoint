@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.utils;
 
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryPermit;
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntryState;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 
 import java.time.Instant;
 import java.util.ArrayList;

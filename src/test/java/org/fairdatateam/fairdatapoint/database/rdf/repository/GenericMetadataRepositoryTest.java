@@ -23,6 +23,9 @@
 package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -36,8 +39,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import java.util.ArrayList;
 
 import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getLanguage;
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getLanguage;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -52,14 +55,14 @@ public class GenericMetadataRepositoryTest extends WebIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
-    private GenericMetadataRepository metadataRepository;
+    private GenericMetadataRdfRepository metadataRepository;
 
     @Autowired
-    private CatalogMetadataRepository catalogMetadataRepository;
+    private CatalogMetadataRdfRepository catalogMetadataRepository;
 
     @Test
     @DisplayName("'save' should evict cache")
-    public void saveEvictsCache() throws MetadataRepositoryException {
+    public void saveEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
@@ -80,7 +83,7 @@ public class GenericMetadataRepositoryTest extends WebIntegrationTest {
 
     @Test
     @DisplayName("'removeStatement' should evict cache")
-    public void removeStatementEvictsCache() throws MetadataRepositoryException {
+    public void removeStatementEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
@@ -101,7 +104,7 @@ public class GenericMetadataRepositoryTest extends WebIntegrationTest {
 
     @Test
     @DisplayName("'remove' should evict cache")
-    public void removeEvictsCache() throws MetadataRepositoryException {
+    public void removeEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);

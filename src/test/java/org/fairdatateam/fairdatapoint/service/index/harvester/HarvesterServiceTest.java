@@ -22,15 +22,16 @@
  */
 package org.fairdatateam.fairdatapoint.service.index.harvester;
 
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
-import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactoryImpl;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
-import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
-import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
-import org.fairdatateam.fairdatapoint.vocabulary.FDP;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
+import org.fairdatateam.fairdatapoint.index.HarvesterService;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataEnhancer;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,8 +47,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
-import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.write;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
+import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.write;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -63,7 +64,7 @@ public class HarvesterServiceTest {
     private ResourceDefinitionCache resourceDefinitionCache;
 
     @Mock
-    private GenericMetadataRepository genericMetadataRepository;
+    private GenericMetadataRdfRepository genericMetadataRepository;
 
     @InjectMocks
     private static MetadataEnhancer metadataEnhancer;
@@ -97,7 +98,7 @@ public class HarvesterServiceTest {
     }
 
     @Test
-    public void harvestSucceed() throws MetadataRepositoryException {
+    public void harvestSucceed() throws MetadataRdfRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
         mockEndpoint(catalogUrl, catalog);
@@ -110,7 +111,7 @@ public class HarvesterServiceTest {
     }
 
     @Test
-    public void harvestFailedForLinkedChildren() throws MetadataRepositoryException {
+    public void harvestFailedForLinkedChildren() throws MetadataRdfRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
         mockEndpoint404(catalogUrl);

@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.query;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchQueryVariablesDTO;
-import org.fairdatateam.fairdatapoint.api.dto.search.SearchResultDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
+import org.fairdatateam.fairdatapoint.search.dto.SearchResultDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;

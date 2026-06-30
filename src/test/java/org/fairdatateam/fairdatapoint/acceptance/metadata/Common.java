@@ -22,11 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.metadata;
 
-import org.fairdatateam.fairdatapoint.api.dto.error.ErrorDTO;
-import org.fairdatateam.fairdatapoint.api.dto.member.MemberDTO;
-import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.metadata.MetaStateDTO;
-import org.fairdatateam.fairdatapoint.entity.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.exception.ErrorDTO;
+import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateDTO;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;

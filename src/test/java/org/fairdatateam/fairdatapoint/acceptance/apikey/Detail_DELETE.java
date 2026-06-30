@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.acceptance.apikey;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.apikey.data.ApiKeyFixtures;
-import org.fairdatateam.fairdatapoint.entity.apikey.ApiKey;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ApiKeyFixtures;
+import org.fairdatateam.fairdatapoint.security.apikey.ApiKey;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

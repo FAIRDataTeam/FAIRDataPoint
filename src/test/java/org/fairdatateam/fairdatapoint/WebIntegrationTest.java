@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint;
 
-import org.fairdatateam.fairdatapoint.database.mongo.migration.development.MigrationRunner;
-import org.fairdatateam.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.DevelopmentMigrationRunner;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfDevelopmentMigrationRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
@@ -53,14 +53,14 @@ public abstract class WebIntegrationTest {
     protected TestRestTemplate client;
 
     @Autowired
-    protected MigrationRunner migrationRunner;
+    protected DevelopmentMigrationRunner developmentMigrationRunner;
 
     @Autowired
     protected RdfDevelopmentMigrationRunner rdfDevelopmentMigrationRunner;
 
     @BeforeEach
     public void setup() {
-        migrationRunner.run();
+        developmentMigrationRunner.run();
         rdfDevelopmentMigrationRunner.run();
     }
 

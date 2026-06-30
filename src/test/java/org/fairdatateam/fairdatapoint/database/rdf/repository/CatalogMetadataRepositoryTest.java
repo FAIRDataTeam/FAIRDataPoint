@@ -27,6 +27,8 @@ import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,11 +71,11 @@ public class CatalogMetadataRepositoryTest {
 
     @Spy
     @InjectMocks
-    private CatalogMetadataRepository catalogMetadataRepository;
+    private CatalogMetadataRdfRepository catalogMetadataRepository;
 
     @Test
     @DisplayName("Themes for catalog are in cache (no query to triple store)")
-    public void themesInCache() throws MetadataRepositoryException {
+    public void themesInCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
         when(cache.get(catalogUri.toString(), List.class)).thenReturn(Collections.emptyList());
@@ -87,7 +89,7 @@ public class CatalogMetadataRepositoryTest {
 
     @Test
     @DisplayName("Themes for catalog are not in cache (we have to query to triple store)")
-    public void themesNotInCache() throws MetadataRepositoryException {
+    public void themesNotInCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
         when(repository.getConnection()).thenReturn(repositoryConnection);

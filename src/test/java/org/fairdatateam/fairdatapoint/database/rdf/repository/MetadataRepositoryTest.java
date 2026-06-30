@@ -29,6 +29,8 @@ package org.fairdatateam.fairdatapoint.database.rdf.repository;
 
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -41,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.*;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -51,7 +53,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class MetadataRepositoryTest extends WebIntegrationTest {
 
     @Autowired
-    private GenericMetadataRepository metadataRepository;
+    private GenericMetadataRdfRepository metadataRepository;
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
@@ -82,7 +84,7 @@ public class MetadataRepositoryTest extends WebIntegrationTest {
     }
 
     @Test
-    public void findChildTitlesWorks() throws MetadataRepositoryException {
+    public void findChildTitlesWorks() throws MetadataRdfRepositoryException {
         // given
         final IRI parent = getUri(testMetadataFixtures.catalog1());
 
