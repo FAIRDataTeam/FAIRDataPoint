@@ -32,13 +32,12 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.LDP;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -55,13 +54,21 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 @Service
 public class HarvesterService {
 
+    private static final MediaType TURTLE = MediaType.parseMediaType(RDFFormat.TURTLE.getDefaultMIMEType());
+
     private static final String DEFAULT_NAVIGATION_SHACL = "defaultNavigationShacl.ttl";
 
-    @Autowired
-    private GenericMetadataRepository genericMetadataRepository;
+    private final GenericMetadataRepository genericMetadataRepository;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestClient client;
+
+    /**
+     * Constructor (autowired)
+     */
+    public HarvesterService(GenericMetadataRepository genericMetadataRepository, RestClient client) {
+        this.genericMetadataRepository = genericMetadataRepository;
+        this.client = client;
+    }
 
     public void deleteHarvestedData(String clientUrl) throws MetadataRepositoryException {
         genericMetadataRepository.remove(i(clientUrl));
@@ -137,12 +144,12 @@ public class HarvesterService {
 
     private Model makeRequest(String uri) {
         log.info("Making request to '{}'", uri);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(List.of(MediaType.parseMediaType(RDFFormat.TURTLE.getDefaultMIMEType())));
-        final HttpEntity<Void> entity = new HttpEntity<>(null, headers);
         try {
-            final ResponseEntity<String> response =
-                    restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+            final ResponseEntity<String> response = client.method(HttpMethod.GET)
+                    .uri(uri)
+                    .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
+                    .retrieve()
+                    .toEntity(String.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
                 log.info("Request to '{}' failed ({})", uri, response.getStatusCode());
                 throw new HttpClientErrorException(response.getStatusCode());
