@@ -46,13 +46,9 @@ jobs:
         # Unfortunately, we cannot do this inline but need a separate step that stores the result in outputs.
         # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-output-parameter
         id: image-version
-        env:
-          REF_NAME: ${{ github.ref_name }}
         run: |
-          if [[ "$REF_NAME" == v[0-9]* ]];
-          then version="${REF_NAME#v}";
-          else version=$REF_NAME;
-          fi
+          version="${{ github.ref_name }}"
+          [[ "$version" == v[0-9]* ]] && version="${version#v}"
           echo "IMAGE_VERSION=$version" >> "$GITHUB_OUTPUT"
       - name: trigger e2e tests
         uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch@v3
