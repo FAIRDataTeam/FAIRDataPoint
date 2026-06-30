@@ -54,6 +54,8 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 @Service
 public class HarvesterService {
 
+    private static final MediaType TURTLE = MediaType.parseMediaType(RDFFormat.TURTLE.getDefaultMIMEType());
+
     private static final String DEFAULT_NAVIGATION_SHACL = "defaultNavigationShacl.ttl";
 
     private final GenericMetadataRepository genericMetadataRepository;
@@ -146,8 +148,7 @@ public class HarvesterService {
             final ResponseEntity<String> response =
                     client.method(HttpMethod.GET)
                             .uri(uri)
-                            .headers(httpHeaders -> httpHeaders.setAccept(
-                                    List.of(MediaType.parseMediaType(RDFFormat.TURTLE.getDefaultMIMEType()))))
+                            .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
                             .retrieve()
                             .toEntity(String.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
