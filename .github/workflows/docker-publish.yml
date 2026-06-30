@@ -41,6 +41,19 @@ jobs:
     needs: publish
     runs-on: ubuntu-latest
     steps:
+      - name: determine docker image version from ref_name
+        # We need to remove the leading "v" from version strings like "v1.2.3", but not from tags like "very-nice".
+        # Unfortunately, we cannot do this inline but need a separate step that stores the result in outputs.
+        # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-output-parameter
+        id: image-version
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [[ "$REF_NAME" == v[0-9]* ]];
+          then version="${REF_NAME#v}";
+          else version=$REF_NAME;
+          fi
+          echo "IMAGE_VERSION=$version" >> "$GITHUB_OUTPUT"
       - name: trigger e2e tests
         uses: FAIRDataTeam/github-workflows/.github/actions/repo-dispatch@v3
         with:
@@ -50,6 +63,6 @@ jobs:
           event-type: trigger-tests
           client-payload: |
             {
-                "fdp_version": "${{ github.ref_name }}",
+                "fdp_version": "${{ steps.image-version.outputs.IMAGE_VERSION }}",
                 "fdp_client_version": "latest"
             }
