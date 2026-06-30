@@ -145,12 +145,11 @@ public class HarvesterService {
     private Model makeRequest(String uri) {
         log.info("Making request to '{}'", uri);
         try {
-            final ResponseEntity<String> response =
-                    client.method(HttpMethod.GET)
-                            .uri(uri)
-                            .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
-                            .retrieve()
-                            .toEntity(String.class);
+            final ResponseEntity<String> response = client.method(HttpMethod.GET)
+                    .uri(uri)
+                    .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
+                    .retrieve()
+                    .toEntity(String.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
                 log.info("Request to '{}' failed ({})", uri, response.getStatusCode());
                 throw new HttpClientErrorException(response.getStatusCode());
