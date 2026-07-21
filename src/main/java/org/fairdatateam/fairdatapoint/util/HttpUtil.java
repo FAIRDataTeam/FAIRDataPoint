@@ -75,13 +75,13 @@ public class HttpUtil {
             for (String header : IP_HEADER_CANDIDATES) {
                 final String ipList = request.getHeader(header);
                 if (ipList != null && !ipList.isEmpty() && !"unknown".equalsIgnoreCase(ipList)) {
-                    log.debug("IP list: {}", ipList);
+                    log.debug("Using first IP from {} header: {}", header, ipList);
                     clientIp = ipList.split(",")[0];
                     break;
                 }
             }
         }
-        log.info("Remote client IP: {}", clientIp);
+        log.debug("Remote client IP: {}", clientIp);
         return clientIp.strip();
     }
 
