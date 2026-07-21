@@ -82,7 +82,7 @@ public class HttpUtil {
             }
         }
         log.info("Remote client IP: {}", clientIp);
-        return clientIp;
+        return clientIp.strip();
     }
 
     public static String getRequestURL(HttpServletRequest request, String persistentUrl) {
