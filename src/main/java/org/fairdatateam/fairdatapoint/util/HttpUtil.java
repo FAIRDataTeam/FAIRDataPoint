@@ -69,15 +69,20 @@ public class HttpUtil {
     };
 
     public static String getClientIpAddress(HttpServletRequest request, Boolean behindProxy) {
+        String clientIp = request.getRemoteAddr();
+        log.debug("Remote address: {}", clientIp);
         if (behindProxy) {
             for (String header : IP_HEADER_CANDIDATES) {
                 final String ipList = request.getHeader(header);
                 if (ipList != null && !ipList.isEmpty() && !"unknown".equalsIgnoreCase(ipList)) {
-                    return ipList.split(",")[0];
+                    log.debug("IP list: {}", ipList);
+                    clientIp = ipList.split(",")[0];
+                    break;
                 }
             }
         }
-        return request.getRemoteAddr();
+        log.info("Remote client IP: {}", clientIp);
+        return clientIp;
     }
 
     public static String getRequestURL(HttpServletRequest request, String persistentUrl) {
