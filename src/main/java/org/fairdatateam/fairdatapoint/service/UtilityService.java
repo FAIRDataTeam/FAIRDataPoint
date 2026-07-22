@@ -35,6 +35,6 @@ public class UtilityService {
     private InstanceProperties instanceProperties;
 
     public String getRemoteAddr(HttpServletRequest request) {
-        return HttpUtil.getClientIpAddress(request, instanceProperties.isBehindProxy());
+        return HttpUtil.getClientIpAddress(request);
     }
 }
