@@ -53,12 +53,6 @@ public class HttpUtil {
 
     private static final String HEADER_TOKEN_PREFIX = "Bearer ";
 
-    public static String getClientIpAddress(HttpServletRequest request) {
-        String clientIp = request.getRemoteAddr();
-        log.debug("Remote address: {}", clientIp);
-        return clientIp.strip();
-    }
-
     public static String getRequestURL(HttpServletRequest request, String persistentUrl) {
         String urlS = request.getRequestURL().toString();
         log.info("Original requested url {}", urlS);
