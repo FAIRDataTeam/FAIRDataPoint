@@ -87,4 +87,9 @@ springdoc:
   writer-with-order-by-keys: true
 
 server:
-  forward-headers-strategy: framework
+  # The native strategy configures tomcat to handle x-forwarded-* headers so request.getRemoteAddr() yields the correct
+  # remote IP address. The web-facing trusted reverse proxy must discard any x-forwarded-for headers set by the remote
+  # client, in order to prevent IP spoofing. For example, it should use `proxy_set_header X-Forwarded-For $remote_addr;`
+  # instead of `$proxy_add_x_forwarded_for`.
+  # https://docs.spring.io/spring-boot/how-to/webserver.html#howto.webserver.use-behind-a-proxy-server
+  forward-headers-strategy: native
