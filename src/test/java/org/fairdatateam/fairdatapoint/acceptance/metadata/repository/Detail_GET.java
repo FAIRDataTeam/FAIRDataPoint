@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.repository;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,11 +35,15 @@ import org.springframework.http.ResponseEntity;
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("GET /")
 public class Detail_GET extends WebIntegrationTest {
+
+    @Autowired
+    private String persistentUrl;
 
     private URI url() {
         return URI.create("/");
@@ -60,6 +65,12 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        final String body = result.getBody();
+        assert body != null;
+        // check dcat:endpoint* statements
+        assertThat(body, containsString("dcat:endpointURL <%s>".formatted(persistentUrl)));
+        final String apiDocsPath = "/v3/api-docs";
+        assertThat(body, containsString("dcat:endpointDescription <%s%s>".formatted(persistentUrl, apiDocsPath)));
     }
 
 }
