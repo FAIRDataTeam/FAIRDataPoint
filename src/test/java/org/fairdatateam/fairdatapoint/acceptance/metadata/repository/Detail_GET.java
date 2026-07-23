@@ -67,10 +67,10 @@ public class Detail_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         final String body = result.getBody();
         assert body != null;
-        // check dcat:endpoint* statements
-        assertThat(body, containsString("dcat:endpointURL <%s>".formatted(persistentUrl)));
+        // https://springdoc.org/#springdoc-openapi-core-properties (but we write the expected value explicitly here)
         final String apiDocsPath = "/v3/api-docs";
         assertThat(body, containsString("dcat:endpointDescription <%s%s>".formatted(persistentUrl, apiDocsPath)));
+        assertThat(body, containsString("dcat:endpointURL <%s>".formatted(persistentUrl)));
     }
 
 }
