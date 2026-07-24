@@ -28,7 +28,6 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.fairdatateam.fairdatapoint.Profiles;
@@ -40,7 +39,6 @@ import java.time.Instant;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
 
@@ -62,6 +60,7 @@ import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResour
 )
 @Profile(Profiles.PRODUCTION)
 public class Migration_0020_FixSchemaEndpointDescription {
+
     private static final String COLLECTION_SCHEMAS = "metadataSchema";
     private static final String FIELD_CREATED_AT = "createdAt";
     private static final String FIELD_DEFINITION = "definition";
@@ -71,8 +70,6 @@ public class Migration_0020_FixSchemaEndpointDescription {
     private static final String FIELD_PREVIOUS_VERSION_UUID = "previousVersionUuid";
     private static final String FIELD_VERSION_STRING = "versionString";
     private static final String FIELD_VERSION_UUID = "versionUuid";
-
-
 
     private final MongoTemplate database;
 
