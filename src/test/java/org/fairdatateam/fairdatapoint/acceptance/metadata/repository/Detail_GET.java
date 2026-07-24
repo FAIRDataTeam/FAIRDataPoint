@@ -68,11 +68,18 @@ public class Detail_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         final String body = result.getBody();
         assert body != null;
-        // https://springdoc.org/#springdoc-openapi-core-properties (but we write the expected value explicitly here)
-        final String pattern = "dcat:endpointDescription <%s%s>";
-        List.of("/v3/api-docs", "/swagger-ui.html").forEach(expectedPath ->
-                assertThat(body, containsString(pattern.formatted(persistentUrl, expectedPath))));
         assertThat(body, containsString("dcat:endpointURL <%s>".formatted(persistentUrl)));
+        // check that a line exists with endpoint descriptions for api-docs and swagger-ui (handles turtle syntax)
+        final String endpointDescription = "dcat:endpointDescription";
+        assertThat(body, containsString(endpointDescription));
+        final List<String> lines = List.of(body.split("\n"));
+        lines.forEach(line -> {
+            if (line.contains(endpointDescription)) {
+                // https://springdoc.org/#springdoc-openapi-core-properties (expected values intentionally hard-coded)
+                List.of("/v3/api-docs", "/swagger-ui.html").forEach(expectedPath ->
+                        assertThat(line, containsString(persistentUrl + expectedPath)));
+            }
+        });
     }
 
 }
