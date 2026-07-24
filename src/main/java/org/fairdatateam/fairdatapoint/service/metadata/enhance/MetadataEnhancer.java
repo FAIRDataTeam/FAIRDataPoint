@@ -175,8 +175,8 @@ public class MetadataEnhancer {
             resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
             resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
             // add dcat:endpointDescription statements for api-docs path and swagger-ui path from config
-            List.of(springDocConfig.getApiDocs().getPath(), swaggerUiConfig.getPath()).forEach(path ->
-                    resultRdf.add(entityUri, DCAT.ENDPOINT_DESCRIPTION, i(persistentUrl + path)));
+            List.of(springDocConfig.getApiDocs().getPath(), swaggerUiConfig.getPath()).forEach(
+                    path -> resultRdf.add(entityUri, DCAT.ENDPOINT_DESCRIPTION, i(persistentUrl + path)));
         }
     }
 

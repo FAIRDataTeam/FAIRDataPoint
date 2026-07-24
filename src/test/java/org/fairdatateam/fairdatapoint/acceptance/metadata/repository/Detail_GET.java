@@ -76,8 +76,8 @@ public class Detail_GET extends WebIntegrationTest {
         lines.forEach(line -> {
             if (line.contains(endpointDescription)) {
                 // https://springdoc.org/#springdoc-openapi-core-properties (expected values intentionally hard-coded)
-                List.of("/v3/api-docs", "/swagger-ui.html").forEach(expectedPath ->
-                        assertThat(line, containsString(persistentUrl + expectedPath)));
+                List.of("/v3/api-docs", "/swagger-ui.html").forEach(
+                        expectedPath -> assertThat(line, containsString(persistentUrl + expectedPath)));
             }
         });
     }
