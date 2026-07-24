@@ -71,9 +71,9 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <git-commit-id-maven-plugin.version>10.0.0</git-commit-id-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-        <checkstyle.version>13.6.0</checkstyle.version>
+        <checkstyle.version>13.8.0</checkstyle.version>
         <spring-javaformat-checkstyle.version>0.0.47</spring-javaformat-checkstyle.version>
-        <spotbugs-maven-plugin.version>4.10.2.0</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.10.3.0</spotbugs-maven-plugin.version>
 
         <!-- required for mockito to function properly (#890) -->
         <argLine/>
