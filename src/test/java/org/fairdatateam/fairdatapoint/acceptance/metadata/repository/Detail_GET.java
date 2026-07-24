@@ -33,6 +33,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -68,8 +69,9 @@ public class Detail_GET extends WebIntegrationTest {
         final String body = result.getBody();
         assert body != null;
         // https://springdoc.org/#springdoc-openapi-core-properties (but we write the expected value explicitly here)
-        final String apiDocsPath = "/v3/api-docs";
-        assertThat(body, containsString("dcat:endpointDescription <%s%s>".formatted(persistentUrl, apiDocsPath)));
+        final String pattern = "dcat:endpointDescription <%s%s>";
+        List.of("/v3/api-docs", "/swagger-ui.html").forEach(expectedPath ->
+                assertThat(body, containsString(pattern.formatted(persistentUrl, expectedPath))));
         assertThat(body, containsString("dcat:endpointURL <%s>".formatted(persistentUrl)));
     }
 
