@@ -36,6 +36,7 @@ import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
+import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +56,10 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataEnhancer {
+
+    // https://springdoc.org/#springdoc-openapi-core-properties
+    @Autowired
+    private SpringDocConfigProperties springDocConfig;
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
@@ -165,6 +170,8 @@ public class MetadataEnhancer {
         if (definition.isRoot()) {
             resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
             resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
+            final String apiDocsPath = springDocConfig.getApiDocs().getPath();
+            resultRdf.add(entityUri, DCAT.ENDPOINT_DESCRIPTION, i(persistentUrl + apiDocsPath));
         }
     }
 
