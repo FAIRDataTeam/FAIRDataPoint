@@ -14,9 +14,8 @@
     sh:order 20 ;
   ] , [
     sh:path dcat:endpointDescription ;
-    sh:nodeKind sh:Literal ;
-    sh:maxCount 1 ;
+    sh:nodeKind sh:IRI ;
     dash:editor dash:TextAreaEditor ;
-    dash:viewer dash:LiteralViewer ;
+    dash:viewer dash:LabelViewer ;
     sh:order 21 ;
   ] .
