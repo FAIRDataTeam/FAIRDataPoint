@@ -78,6 +78,9 @@ public class KnownUUIDs {
     public static final String SCHEMA_V1_DATASERVICE_UUID =
             "9111d436-fe58-4bd5-97ae-e6f86bc2997a";
 
+    public static final String SCHEMA_V2_DATASERVICE_UUID =
+            "83af8216-75fb-49c4-8788-76464af77070";
+
     public static final String SCHEMA_V1_METADATASERVICE_UUID =
             "36b22b70-6203-4dd2-9fb6-b39a776bf467";
 
