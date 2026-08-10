@@ -51,8 +51,7 @@
         <revision>dev</revision>
 
         <!-- Maven -->
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
 
         <!-- Project related -->
         <spring-rdf-migration.version>2.0.1</spring-rdf-migration.version>
