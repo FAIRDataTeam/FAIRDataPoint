@@ -4,7 +4,7 @@
 ################################################################################
 # BUILD JAR
 
-FROM maven:3-eclipse-temurin-21-alpine AS builder
+FROM maven:3-eclipse-temurin-25-alpine AS builder
 
 WORKDIR /builder
 
@@ -17,7 +17,7 @@ RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevisi
 ################################################################################
 # BUILD IMAGE
 
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:25-jdk-alpine
 
 # add non-root user to run the app
 # https://spring.io/guides/gs/spring-boot-docker
