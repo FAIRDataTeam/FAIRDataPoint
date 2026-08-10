@@ -22,6 +22,7 @@ jobs:
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v3
     with:
       # todo: enable tests (and specify db properties) when test duration has been minimized
+      java-version: 25
       mvn-options: "-DskipTests"
       db-type: "none"
       db-version: 0
