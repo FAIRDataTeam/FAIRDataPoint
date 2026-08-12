@@ -34,7 +34,7 @@ import org.fairdatateam.fairdatapoint.entity.search.SearchResult;
 import org.fairdatateam.fairdatapoint.entity.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.service.metadata.state.MetadataStateService;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Value;

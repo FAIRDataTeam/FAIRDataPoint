@@ -41,7 +41,6 @@ import org.fairdatateam.fairdatapoint.entity.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.entity.index.http.ExchangeState;
 import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsPing;
 import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
-import org.fairdatateam.fairdatapoint.service.UtilityService;
 import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.service.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.service.index.settings.IndexSettingsService;
@@ -92,9 +91,6 @@ public class EventService {
     private EventMapper eventMapper;
 
     @Autowired
-    private UtilityService utilityService;
-
-    @Autowired
     private IncomingPingUtils incomingPingUtils;
 
     @Autowired
@@ -116,7 +112,7 @@ public class EventService {
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
-        final String remoteAddr = utilityService.getRemoteAddr(request);
+        final String remoteAddr = request.getRemoteAddr();
         final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
 
         if (indexSettingsService.isPingDenied(reqDto)) {
@@ -266,8 +262,7 @@ public class EventService {
     public Event acceptAdminTrigger(HttpServletRequest request, PingDTO pingDTO) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event =
-                eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(),
-                        utilityService.getRemoteAddr(request));
+                eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
         final IndexEntry entry = indexEntryService.storeEntry(pingDTO);
         event.setRelatedTo(entry);
         event.finish();
@@ -277,9 +272,7 @@ public class EventService {
     @RequiredEnabledIndexFeature
     public Event acceptAdminTriggerAll(HttpServletRequest request) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Event event =
-                eventMapper.toAdminTriggerEvent(authentication, null,
-                        utilityService.getRemoteAddr(request));
+        final Event event = eventMapper.toAdminTriggerEvent(authentication, null, request.getRemoteAddr());
         event.finish();
         return eventRepository.save(event);
     }

@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.entity.index.event.Event;
-import org.fairdatateam.fairdatapoint.service.UtilityService;
 import org.fairdatateam.fairdatapoint.service.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.service.index.event.EventService;
 import org.fairdatateam.fairdatapoint.service.index.webhook.WebhookService;
@@ -46,9 +45,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/index/admin")
 public class IndexAdminController {
-
-    @Autowired
-    private UtilityService utilityService;
 
     @Autowired
     private EventService eventService;
@@ -67,8 +63,7 @@ public class IndexAdminController {
             @RequestBody @Valid PingDTO reqDto,
             HttpServletRequest request
     ) throws MetadataRepositoryException {
-        log.info("Received ping trigger request from {}",
-                utilityService.getRemoteAddr(request));
+        log.info("Received ping trigger request from {}", request.getRemoteAddr());
         final Event event = eventService.acceptAdminTrigger(request, reqDto);
         webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
@@ -80,8 +75,7 @@ public class IndexAdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerMetadataRetrieveAll(HttpServletRequest request) {
-        log.info("Received ping trigger all request from {}",
-                utilityService.getRemoteAddr(request));
+        log.info("Received ping trigger all request from {}", request.getRemoteAddr());
         final Event event = eventService.acceptAdminTriggerAll(request);
         webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
@@ -92,8 +86,7 @@ public class IndexAdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void webhookPing(@RequestParam UUID webhook, HttpServletRequest request) {
-        log.info("Received webhook {} ping trigger from {}",
-                webhook, utilityService.getRemoteAddr(request));
+        log.info("Received webhook {} ping trigger from {}", webhook, request.getRemoteAddr());
         final Event event = webhookService.handleWebhookPing(request, webhook);
         webhookService.triggerWebhooks(event);
     }

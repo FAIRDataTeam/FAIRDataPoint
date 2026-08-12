@@ -85,6 +85,20 @@ By default, the FDP sets up the following *default users*.
     - Username: `nikola.tesla@example.com`
     - Password: `password`
 
+### Running behind a reverse-proxy
+
+When running behind a reverse-proxy, the FDP app gets the actual remote IP from the [X-Forwarded-For] HTTP header.
+This remote IP is used for rate limiting when the FDP is configured as an index (`instance.index=true`).
+To prevent IP spoofing, your web-facing reverse-proxy should set the `X-Forwarded-For` header to a trusted value and discard any `X-Forwarded-For` headers sent by remote clients.
+
+From Mozilla's [X-Forwarded-For] docs:
+
+>If you know that all proxies in the request chain are trusted (i.e., you control them) and are configured correctly, the parts of the header added by your proxies can be trusted. If any proxy is malicious or misconfigured, any part of the header not added by a trusted proxy may be spoofed or may have an unexpected format or contents. If the server can be directly connected to from the internet — even if it is also behind a trusted reverse proxy — no part of the X-Forwarded-For IP list can be considered trustworthy or safe for security-related uses.
+>
+>Any security-related use of X-Forwarded-For (such as for rate limiting or IP-based access control) must only use IP addresses added by a trusted proxy. Using untrustworthy values can result in rate-limiter avoidance, access-control bypass, memory exhaustion, or other negative security or availability consequences.
+>
+>Leftmost (untrusted) values must only be used for cases where there is no negative impact from using spoofed values.
+
 ## Contributing
 
 Interested in contributing to FDP development?
@@ -131,3 +145,4 @@ This project is licensed under the MIT License - see the [LICENSE] file for more
 [code of conduct]: CODE_OF_CONDUCT.md
 [mongo docker image]: https://hub.docker.com/_/mongo/
 [RDF]: https://www.w3.org/TR/rdf11-primer/
+[X-Forwarded-For]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-For

@@ -32,7 +32,6 @@ import org.fairdatateam.fairdatapoint.entity.index.event.Event;
 import org.fairdatateam.fairdatapoint.entity.index.settings.IndexSettingsRetrieval;
 import org.fairdatateam.fairdatapoint.entity.index.webhook.Webhook;
 import org.fairdatateam.fairdatapoint.entity.index.webhook.WebhookEvent;
-import org.fairdatateam.fairdatapoint.service.UtilityService;
 import org.fairdatateam.fairdatapoint.service.index.common.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.service.index.settings.IndexSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +66,6 @@ public class WebhookService {
 
     @Autowired
     private IndexSettingsService indexSettingsService;
-
-    @Autowired
-    private UtilityService utilityService;
 
     @RequiredEnabledIndexFeature
     public void processWebhookTrigger(Event event) {
@@ -154,11 +150,7 @@ public class WebhookService {
                 SecurityContextHolder.getContext().getAuthentication();
         final Optional<Webhook> webhook = webhookRepository.findByUuid(webhookUuid);
         final Event event = eventRepository.save(
-                webhookMapper.toPingEvent(
-                        authentication,
-                        webhookUuid,
-                        utilityService.getRemoteAddr(request)
-                )
+                webhookMapper.toPingEvent(authentication, webhookUuid, request.getRemoteAddr())
         );
         if (webhook.isEmpty()) {
             throw new ResourceNotFoundException("There is no such webhook: " + webhookUuid);
