@@ -42,22 +42,27 @@ import java.util.stream.Stream;
 @ConditionalOnProperty(name = "ping.enabled", havingValue = "true", matchIfMissing = true)
 public class PingService {
 
-    private final PingProperties pingProperties;
-
     private final InstanceProperties instanceProperties;
 
-    private final SettingsService settingsService;
+    private final PingProperties pingProperties;
 
     private final RestClient client;
+
+    private final SettingsService settingsService;
 
     /**
      * Constructor (autowired)
      */
-    public PingService(PingProperties pingProperties, InstanceProperties instanceProperties, SettingsService settingsService, RestClient client) {
-        this.pingProperties = pingProperties;
-        this.instanceProperties = instanceProperties;
-        this.settingsService = settingsService;
+    public PingService(
+            InstanceProperties instanceProperties,
+            PingProperties pingProperties,
+            RestClient client,
+            SettingsService settingsService
+    ) {
         this.client = client;
+        this.instanceProperties = instanceProperties;
+        this.pingProperties = pingProperties;
+        this.settingsService = settingsService;
     }
 
     @Scheduled(
