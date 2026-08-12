@@ -28,47 +28,35 @@ import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadat
 import org.fairdatateam.fairdatapoint.database.rdf.repository.MetadataRepositoryException;
 import org.fairdatateam.fairdatapoint.database.rdf.repository.GenericMetadataRepository;
 import org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.service.metadata.enhance.MetadataEnhancer;
-import org.fairdatateam.fairdatapoint.service.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestClient;
 
 import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.write;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withResourceNotFound;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @ExtendWith(MockitoExtension.class)
 public class HarvesterServiceTest {
 
-    @Mock
-    private RestTemplate restTemplate;
-
-    @Mock
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private MockRestServiceServer mockRemoteServer;
 
     @Mock
     private GenericMetadataRepository genericMetadataRepository;
 
-    @InjectMocks
-    private static MetadataEnhancer metadataEnhancer;
-
-    @InjectMocks
     private HarvesterService harvesterService;
 
     private final String repositoryUrl = "http://fairdatapoint.example";
@@ -81,6 +69,17 @@ public class HarvesterServiceTest {
 
     @BeforeEach
     public void setup() {
+        // Configure a mock remote server for the RestClient to be used by the harvester:
+        // 1. create a local RestClient builder
+        RestClient.Builder restClientBuilder = RestClient.builder();
+        // 2. bind the builder to a MockRestServiceServer
+        mockRemoteServer = MockRestServiceServer.bindTo(restClientBuilder).build();
+        // 3. build a local RestClient instance (instead of using the singleton from HttpClientConfig, because we have a
+        // simple test without spring context, not a @SpringBootTest or @WebMvcTest)
+        RestClient client = restClientBuilder.build();
+        // 4. pass the client into the harvester service
+        harvesterService = new HarvesterService(genericMetadataRepository, client);
+
         // Setup resource definition;
         ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();
 
@@ -123,23 +122,19 @@ public class HarvesterServiceTest {
     }
 
     private void mockEndpoint(String url, Model body) {
-        // Create response
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.set("Content-Type", "text/turtle");
-        ResponseEntity<String> responseBody = new ResponseEntity<>(write(body), headers, HttpStatus.OK);
-
-        // Mock
-        when(restTemplate.exchange(eq(url), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(responseBody);
+        // configure mock server response
+        this.mockRemoteServer
+                .expect(requestTo(url))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess().body(write(body)).header("content-type", "text/turtle"));
     }
 
     private void mockEndpoint404(String url) {
-        // Create response
-        ResponseEntity<String> responseBody = new ResponseEntity<>("", HttpStatus.NOT_FOUND);
-
-        // Mock
-        when(restTemplate.exchange(eq(url), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(responseBody);
+        // configure mock server response
+        this.mockRemoteServer
+                .expect(requestTo(url))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withResourceNotFound());
     }
 
 }
