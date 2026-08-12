@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.general;
 
-import org.eclipse.jetty.http.HttpHeader;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

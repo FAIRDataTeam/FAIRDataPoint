@@ -23,9 +23,11 @@
 package org.fairdatateam.fairdatapoint.acceptance.general;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -56,11 +58,21 @@ public class ContentNegotiationTest extends WebIntegrationTest {
         assertThat(result.getHeaders().getContentType().toString(), is(equalTo("text/turtle")));
     }
 
-    @Test
-    public void getContentAccordingToFormatQueryString() {
+    @ParameterizedTest
+    @CsvSource({
+            "'', text/turtle",
+            "jsonld, application/ld+json",
+            "n3, text/n3",
+            "rdf, application/rdf+xml",
+            "ttl, text/turtle",
+            "xml, application/xml"
+    })
+    public void getContentAccordingToFormatQueryString(String format, String expectedContentType) {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .get(URI.create("/?format=rdf"))
+                .get(URI.create("/?format=" + format))
+                // explicitly override the accept header to make sure empty format work as expected
+                .header(HttpHeaders.ACCEPT, "*/*")
                 .build();
         ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
         };
@@ -70,7 +82,7 @@ public class ContentNegotiationTest extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(result.getHeaders().getContentType().toString(), is(equalTo("application/rdf+xml")));
+        assertThat(result.getHeaders().getContentType().toString(), is(equalTo(expectedContentType)));
     }
 
     @Test
