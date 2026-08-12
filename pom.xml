@@ -244,6 +244,11 @@
             <artifactId>rdf4j-repository-manager</artifactId>
         </dependency>
         <dependency>
+            <!-- already a transitive dependency, but we make it explicit because of org.eclipse.rdf4j.rio imports -->
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-rio-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-sail-memory</artifactId>
         </dependency>
