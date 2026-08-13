@@ -36,6 +36,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.*;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
@@ -105,6 +106,7 @@ public class HarvesterServiceTest {
         harvesterService.harvest(repositoryUrl);
 
         // THEN:
+        mockRemoteServer.verify();
         verify(genericMetadataRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
     }
 
@@ -118,21 +120,22 @@ public class HarvesterServiceTest {
         harvesterService.harvest(repositoryUrl);
 
         // THEN:
+        mockRemoteServer.verify();
         verify(genericMetadataRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     private void mockEndpoint(String url, Model body) {
-        // configure mock server response
+        // configure mock server expectations and response
         this.mockRemoteServer
-                .expect(requestTo(url))
+                .expect(ExpectedCount.once(), requestTo(url))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess().body(write(body)).header("content-type", "text/turtle"));
     }
 
     private void mockEndpoint404(String url) {
-        // configure mock server response
+        // configure mock server expectations and response
         this.mockRemoteServer
-                .expect(requestTo(url))
+                .expect(ExpectedCount.once(), requestTo(url))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withResourceNotFound());
     }
