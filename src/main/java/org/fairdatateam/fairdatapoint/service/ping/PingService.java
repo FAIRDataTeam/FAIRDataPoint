@@ -87,10 +87,10 @@ public class PingService {
     }
 
     @Async
-    void pingEndpoint(String endpoint, Map<String, String> request) {
+    void pingEndpoint(String endpoint, Map<String, String> pingContent) {
         try {
             log.info("Pinging {}", endpoint);
-            client.post().uri(endpoint).body(request).retrieve().toEntity(String.class);
+            client.post().uri(endpoint).body(pingContent).retrieve().toEntity(String.class);
         }
         catch (Exception exception) {
             log.warn("Failed to ping {}: {}", endpoint, exception.getMessage());
