@@ -126,7 +126,7 @@ public class HarvesterServiceTest {
 
     private void mockEndpoint(String url, Model body) {
         // configure mock server expectations and response
-        this.mockRemoteServer
+        mockRemoteServer
                 .expect(ExpectedCount.once(), requestTo(url))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess().body(write(body)).header("content-type", "text/turtle"));
@@ -134,7 +134,7 @@ public class HarvesterServiceTest {
 
     private void mockEndpoint404(String url) {
         // configure mock server expectations and response
-        this.mockRemoteServer
+        mockRemoteServer
                 .expect(ExpectedCount.once(), requestTo(url))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withResourceNotFound());
