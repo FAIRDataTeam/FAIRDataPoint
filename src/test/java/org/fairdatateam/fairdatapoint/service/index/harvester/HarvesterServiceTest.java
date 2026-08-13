@@ -47,8 +47,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withResourceNotFound;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HarvesterServiceTest {
@@ -97,7 +96,7 @@ public class HarvesterServiceTest {
     }
 
     @Test
-    public void harvestSucceed() throws MetadataRepositoryException {
+    public void harvestSucceeded() throws MetadataRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
         mockEndpoint(catalogUrl, catalog);
@@ -108,6 +107,22 @@ public class HarvesterServiceTest {
         // THEN:
         mockRemoteServer.verify();
         verify(genericMetadataRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
+    }
+
+    @Test
+    public void harvestFailedDueToServerError() throws MetadataRepositoryException {
+        // GIVEN: Mock webserver
+        mockRemoteServer
+                .expect(ExpectedCount.once(), requestTo(repositoryUrl))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withServerError());
+
+        // WHEN:
+        harvesterService.harvest(repositoryUrl);
+
+        // THEN:
+        mockRemoteServer.verify();
+        verify(genericMetadataRepository, never()).save(any(), any());
     }
 
     @Test
