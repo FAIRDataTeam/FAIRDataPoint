@@ -114,7 +114,10 @@ public class HarvesterServiceTest {
     public void harvestFailedForLinkedChildren() throws MetadataRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
-        mockEndpoint404(catalogUrl);
+        mockRemoteServer
+                .expect(ExpectedCount.once(), requestTo(catalogUrl))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withResourceNotFound());
 
         // WHEN:
         harvesterService.harvest(repositoryUrl);
@@ -130,14 +133,6 @@ public class HarvesterServiceTest {
                 .expect(ExpectedCount.once(), requestTo(url))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess().body(write(body)).header("content-type", "text/turtle"));
-    }
-
-    private void mockEndpoint404(String url) {
-        // configure mock server expectations and response
-        mockRemoteServer
-                .expect(ExpectedCount.once(), requestTo(url))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withResourceNotFound());
     }
 
 }
