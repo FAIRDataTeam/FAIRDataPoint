@@ -31,7 +31,8 @@ public class HttpClientConfig {
 
     @Bean
     public RestClient restClient(RestClient.Builder builder) {
-        // The builder argument is required for autoconfiguration of MockRestServiceServer in tests
+        // The singleton RestClient bean and the builder argument are required for autoconfiguration of
+        // MockRestServiceServer in tests.
         // https://docs.spring.io/spring-framework/reference/integration/rest-clients.html
         // https://docs.spring.io/spring-boot/reference/io/rest-client.html#io.rest-client.restclient.customization
         return builder.build();
