@@ -22,9 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.config;
 
+import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
@@ -35,10 +37,13 @@ public class HttpClientConfig {
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
     @Bean
-    public RestClient restClient(RestClient.Builder builder) {
+    public RestClient restClient(RestClient.Builder builder, ClientHttpRequestFactory clientHttpRequestFactory) {
         // The builder argument is required for autoconfiguration of MockRestServiceServer in tests
         // https://docs.spring.io/spring-framework/reference/integration/rest-clients.html
-        return builder.build();
+        // Even though spring autoconfig already picks up the custom HttpClientSettings bean by default,
+        // we use a custom request factory to apply the settings explicitly.
+        // https://docs.spring.io/spring-boot/reference/io/rest-client.html#io.rest-client.restclient.customization
+        return builder.requestFactory(clientHttpRequestFactory).build();
     }
 
     @Bean
@@ -46,6 +51,12 @@ public class HttpClientConfig {
         return HttpClientSettings.defaults()
                 .withConnectTimeout(TIMEOUT)
                 .withReadTimeout(TIMEOUT);
+    }
+
+    @Bean
+    public ClientHttpRequestFactory clientHttpRequestFactory(HttpClientSettings httpClientSettings) {
+        // Apply the http client settings explicitly (even though spring autoconfig already takes care of this)
+        return ClientHttpRequestFactoryBuilder.detect().build(httpClientSettings);
     }
 
 }
