@@ -20,13 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.index.harvester;
+package org.fairdatateam.fairdatapoint.service.ping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
 import org.fairdatateam.fairdatapoint.entity.settings.Settings;
-import org.fairdatateam.fairdatapoint.service.ping.PingService;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
