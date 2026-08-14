@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.service.index.harvester;
 
+import org.fairdatateam.fairdatapoint.config.HttpClientConfig;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactoryImpl;
@@ -35,7 +36,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.*;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
@@ -49,10 +53,16 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
+@RestClientTest
+@ContextConfiguration(classes = HttpClientConfig.class)
 @ExtendWith(MockitoExtension.class)
 public class HarvesterServiceTest {
 
+    @Autowired
     private MockRestServiceServer mockRemoteServer;
+
+    @Autowired
+    private RestClient restClient;
 
     @Mock
     private GenericMetadataRepository genericMetadataRepository;
@@ -69,21 +79,13 @@ public class HarvesterServiceTest {
 
     @BeforeEach
     public void setup() {
-        // Configure a mock remote server for the RestClient to be used by the harvester:
-        // 1. create a local RestClient builder
-        RestClient.Builder restClientBuilder = RestClient.builder();
-        // 2. bind the builder to a MockRestServiceServer
-        mockRemoteServer = MockRestServiceServer.bindTo(restClientBuilder).build();
-        // 3. build a local RestClient instance (instead of using the singleton from HttpClientConfig, because we have a
-        // simple test without spring context, not a @SpringBootTest or @WebMvcTest)
-        RestClient client = restClientBuilder.build();
-        // 4. pass the client into the harvester service
-        harvesterService = new HarvesterService(genericMetadataRepository, client);
+        // Create a harvester service
+        harvesterService = new HarvesterService(genericMetadataRepository, restClient);
 
-        // Setup resource definition;
+        // Set up resource definition;
         ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();
 
-        // Setup RDF fixtures
+        // Set up RDF fixtures
         RdfMetadataFixtures fixtures = new RdfMetadataFixtures(new MetadataFactoryImpl());
 
         // Create repository

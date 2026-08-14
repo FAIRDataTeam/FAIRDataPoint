@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.service.ping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.fairdatateam.fairdatapoint.config.HttpClientConfig;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
 import org.fairdatateam.fairdatapoint.entity.settings.Settings;
@@ -32,7 +33,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.HttpMethod;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.json.JsonMapper;
@@ -44,6 +48,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+@RestClientTest
+@ContextConfiguration(classes = HttpClientConfig.class)
 @ExtendWith(MockitoExtension.class)
 public class PingServiceTest {
 
@@ -53,7 +59,11 @@ public class PingServiceTest {
 
     private final JsonMapper jsonMapper = new JsonMapper();
 
+    @Autowired
     private MockRestServiceServer mockRemoteServer;
+
+    @Autowired
+    private RestClient restClient;
 
     private PingService pingService;
 
@@ -68,15 +78,7 @@ public class PingServiceTest {
 
     @BeforeEach
     public void setup() {
-        // Configure a mock remote server and bind it to a local RestClient builder
-        RestClient.Builder restClientBuilder = RestClient.builder();
-        mockRemoteServer = MockRestServiceServer.bindTo(restClientBuilder).build();
-
-        // Build a local RestClient instance instead of using the singleton from HttpClientConfig, because we have a
-        // simple test without spring context, not a @SpringBootTest or @WebMvcTest.
-        RestClient restClient = restClientBuilder.build();
-
-        // Create a ping service using the local RestClient
+        // Create a ping service
         pingService = new PingService(instanceProperties, pingProperties, restClient, settingsService);
 
         // Configure mocks
