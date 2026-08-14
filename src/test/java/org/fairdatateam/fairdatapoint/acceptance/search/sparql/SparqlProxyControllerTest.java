@@ -34,13 +34,11 @@ import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Map;
@@ -71,10 +69,6 @@ public class SparqlProxyControllerTest {
     final static String MALICIOUS_SPARQL_UPDATE = "CLEAR GRAPH ex:";
 
     final static String TEST_SPARQL_ENDPOINT_URL = "https://triple.store.example.org/sparql";
-
-    // mock ResTemplate to prevent autoconfig issues with MockRestServiceServer (the controller uses RestClient)
-    @MockitoBean
-    RestTemplate restTemplate;
 
     private final MockMvcTester mockMvc;
 
