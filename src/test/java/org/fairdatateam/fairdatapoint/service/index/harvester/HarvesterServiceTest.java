@@ -74,8 +74,11 @@ public class HarvesterServiceTest {
         RestClient.Builder restClientBuilder = RestClient.builder();
         // 2. bind the builder to a MockRestServiceServer
         mockRemoteServer = MockRestServiceServer.bindTo(restClientBuilder).build();
-        // 3. create a harvester service using this builder
-        harvesterService = new HarvesterService(genericMetadataRepository, restClientBuilder);
+        // 3. build a local RestClient instance (instead of using the singleton from HttpClientConfig, because we have a
+        // simple test without spring context, not a @SpringBootTest or @WebMvcTest)
+        RestClient client = restClientBuilder.build();
+        // 4. pass the client into the harvester service
+        harvesterService = new HarvesterService(genericMetadataRepository, client);
 
         // Setup resource definition;
         ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();

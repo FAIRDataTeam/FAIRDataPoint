@@ -46,7 +46,7 @@ public class PingService {
 
     private final PingProperties pingProperties;
 
-    private final RestClient restClient;
+    private final RestClient client;
 
     private final SettingsService settingsService;
 
@@ -56,10 +56,10 @@ public class PingService {
     public PingService(
             InstanceProperties instanceProperties,
             PingProperties pingProperties,
-            RestClient.Builder restClientBuilder,
+            RestClient client,
             SettingsService settingsService
     ) {
-        this.restClient = restClientBuilder.build();
+        this.client = client;
         this.instanceProperties = instanceProperties;
         this.pingProperties = pingProperties;
         this.settingsService = settingsService;
@@ -90,7 +90,7 @@ public class PingService {
     void pingEndpoint(String endpoint, Map<String, String> pingContent) {
         try {
             log.info("Pinging {}", endpoint);
-            restClient.post().uri(endpoint).body(pingContent).retrieve().toEntity(String.class);
+            client.post().uri(endpoint).body(pingContent).retrieve().toEntity(String.class);
         }
         catch (Exception exception) {
             log.warn("Failed to ping {}: {}", endpoint, exception.getMessage());
