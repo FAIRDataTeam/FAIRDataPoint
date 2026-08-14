@@ -60,14 +60,14 @@ public class HarvesterService {
 
     private final GenericMetadataRepository genericMetadataRepository;
 
-    private final RestClient client;
+    private final RestClient restClient;
 
     /**
      * Constructor (autowired)
      */
-    public HarvesterService(GenericMetadataRepository genericMetadataRepository, RestClient client) {
+    public HarvesterService(GenericMetadataRepository genericMetadataRepository, RestClient restClient) {
         this.genericMetadataRepository = genericMetadataRepository;
-        this.client = client;
+        this.restClient = restClient;
     }
 
     public void deleteHarvestedData(String clientUrl) throws MetadataRepositoryException {
@@ -145,7 +145,7 @@ public class HarvesterService {
     private Model makeRequest(String uri) {
         log.info("Making request to '{}'", uri);
         try {
-            final ResponseEntity<String> response = client.method(HttpMethod.GET)
+            final ResponseEntity<String> response = restClient.method(HttpMethod.GET)
                     .uri(uri)
                     .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
                     .retrieve()
