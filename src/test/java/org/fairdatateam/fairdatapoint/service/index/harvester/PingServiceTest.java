@@ -73,12 +73,8 @@ public class PingServiceTest {
         RestClient.Builder restClientBuilder = RestClient.builder();
         mockRemoteServer = MockRestServiceServer.bindTo(restClientBuilder).build();
 
-        // Build a local RestClient instance instead of using the singleton from HttpClientConfig, because we have a
-        // simple test without spring context, not a @SpringBootTest or @WebMvcTest.
-        RestClient restClient = restClientBuilder.build();
-
-        // Create a ping service using the local RestClient
-        pingService = new PingService(instanceProperties, pingProperties, restClient, settingsService);
+        // Create a ping service using the local RestClient builder
+        pingService = new PingService(instanceProperties, pingProperties, restClientBuilder, settingsService);
 
         // Configure mocks
         when(pingProperties.isEnabled()).thenReturn(true);
