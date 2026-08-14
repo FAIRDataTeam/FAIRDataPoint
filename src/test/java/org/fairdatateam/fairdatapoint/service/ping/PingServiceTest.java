@@ -30,15 +30,12 @@ import org.fairdatateam.fairdatapoint.entity.settings.Settings;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestClient;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
@@ -49,8 +46,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest
-@ContextConfiguration(classes = HttpClientConfig.class)
-@ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = { HttpClientConfig.class, PingService.class })
 public class PingServiceTest {
 
     private static final String MOCK_ENDPOINT = "https://fdp-index.example.org";
@@ -63,30 +59,24 @@ public class PingServiceTest {
     private MockRestServiceServer mockRemoteServer;
 
     @Autowired
-    private RestClient restClient;
-
     private PingService pingService;
 
-    @Mock
+    @MockitoBean
     private InstanceProperties instanceProperties;
 
-    @Mock
+    @MockitoBean
     private PingProperties pingProperties;
 
-    @Mock
+    @MockitoBean
     private SettingsService settingsService;
 
     @BeforeEach
     public void setup() {
-        // Create a ping service
-        pingService = new PingService(instanceProperties, pingProperties, restClient, settingsService);
-
         // Configure mocks
         when(pingProperties.isEnabled()).thenReturn(true);
         when(pingProperties.getEndpoints()).thenReturn(List.of(MOCK_ENDPOINT));
         when(instanceProperties.getClientUrl()).thenReturn(MOCK_CLIENT_URL);
         when(settingsService.getOrDefaults()).thenReturn(Settings.getDefault());
-
     }
 
     @Test

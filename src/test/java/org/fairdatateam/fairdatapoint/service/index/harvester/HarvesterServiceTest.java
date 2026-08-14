@@ -33,16 +33,13 @@ import org.fairdatateam.fairdatapoint.vocabulary.FDP;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestClient;
 
 import static org.fairdatateam.fairdatapoint.entity.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.util.RdfIOUtil.write;
@@ -54,20 +51,17 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @RestClientTest
-@ContextConfiguration(classes = HttpClientConfig.class)
-@ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = { HarvesterService.class, HttpClientConfig.class })
 public class HarvesterServiceTest {
 
     @Autowired
     private MockRestServiceServer mockRemoteServer;
 
     @Autowired
-    private RestClient restClient;
-
-    @Mock
-    private GenericMetadataRepository genericMetadataRepository;
-
     private HarvesterService harvesterService;
+
+    @MockitoBean
+    private GenericMetadataRepository genericMetadataRepository;
 
     private final String repositoryUrl = "http://fairdatapoint.example";
 
@@ -79,9 +73,6 @@ public class HarvesterServiceTest {
 
     @BeforeEach
     public void setup() {
-        // Create a harvester service
-        harvesterService = new HarvesterService(genericMetadataRepository, restClient);
-
         // Set up resource definition;
         ResourceDefinitionFixtures resourceDefinitionFixtures = new ResourceDefinitionFixtures();
 
