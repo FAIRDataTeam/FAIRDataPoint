@@ -24,6 +24,8 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController;
+import org.fairdatateam.fairdatapoint.service.index.harvester.HarvesterService;
+import org.fairdatateam.fairdatapoint.service.ping.PingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -84,6 +87,13 @@ public class SparqlProxyControllerTest {
 
     // mock json response body (https://www.w3.org/TR/sparql11-results-json/)
     private final String mockJsonBody = "{\"head\": {\"vars\": []}, \"results\": {\"bindings\": []}}";
+
+    // mock all other beans that use a RestClient, to prevent MockRestServiceServer binding issues
+    @MockitoBean
+    HarvesterService harvesterService;
+
+    @MockitoBean
+    PingService pingService;
 
     /**
      * Constructor
