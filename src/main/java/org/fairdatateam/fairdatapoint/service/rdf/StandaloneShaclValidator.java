@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 
 @Service
-public class ShaclValidator {
+public class StandaloneShaclValidator {
 
     public void validate(Model shacl, Model data, String baseUri) {
         // 1. Prepare repository
