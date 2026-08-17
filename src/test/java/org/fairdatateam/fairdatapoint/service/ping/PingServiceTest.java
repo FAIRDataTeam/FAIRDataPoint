@@ -23,7 +23,6 @@
 package org.fairdatateam.fairdatapoint.service.ping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.fairdatateam.fairdatapoint.config.HttpClientConfig;
 import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
 import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
 import org.fairdatateam.fairdatapoint.entity.settings.Settings;
@@ -46,7 +45,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest
-@ContextConfiguration(classes = { HttpClientConfig.class, PingService.class })
+@ContextConfiguration(classes = PingService.class)
 public class PingServiceTest {
 
     private static final String MOCK_ENDPOINT = "https://fdp-index.example.org";

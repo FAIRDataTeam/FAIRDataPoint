@@ -56,10 +56,10 @@ public class PingService {
     public PingService(
             InstanceProperties instanceProperties,
             PingProperties pingProperties,
-            RestClient restClient,
+            RestClient.Builder restClientBuilder,
             SettingsService settingsService
     ) {
-        this.restClient = restClient;
+        this.restClient = restClientBuilder.build();
         this.instanceProperties = instanceProperties;
         this.pingProperties = pingProperties;
         this.settingsService = settingsService;

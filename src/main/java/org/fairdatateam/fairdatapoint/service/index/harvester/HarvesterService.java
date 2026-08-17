@@ -65,9 +65,9 @@ public class HarvesterService {
     /**
      * Constructor (autowired)
      */
-    public HarvesterService(GenericMetadataRepository genericMetadataRepository, RestClient restClient) {
+    public HarvesterService(GenericMetadataRepository genericMetadataRepository, RestClient.Builder restClientBuilder) {
         this.genericMetadataRepository = genericMetadataRepository;
-        this.restClient = restClient;
+        this.restClient = restClientBuilder.build();
     }
 
     public void deleteHarvestedData(String clientUrl) throws MetadataRepositoryException {

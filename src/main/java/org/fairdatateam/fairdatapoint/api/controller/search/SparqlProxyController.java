@@ -92,10 +92,10 @@ public class SparqlProxyController {
      * Constructor
      */
     public SparqlProxyController(
-            Repository repository, SparqlProxyCleaningService cleaningService, RestClient restClient
+            Repository repository, SparqlProxyCleaningService cleaningService, RestClient.Builder restClientBuilder
     ) {
         this.cleaningService = cleaningService;
-        this.restClient = restClient;
+        this.restClient = restClientBuilder.build();
         // todo: simplify as part of #824
         if (repository instanceof SPARQLRepository sparqlRepository) {
             this.sparqlEndpointUrl = sparqlRepository.toString();

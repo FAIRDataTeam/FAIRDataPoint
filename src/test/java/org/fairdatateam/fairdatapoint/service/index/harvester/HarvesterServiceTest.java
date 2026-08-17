@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.service.index.harvester;
 
-import org.fairdatateam.fairdatapoint.config.HttpClientConfig;
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.resource.data.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.data.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.database.rdf.migration.development.metadata.factory.MetadataFactoryImpl;
@@ -51,7 +50,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @RestClientTest
-@ContextConfiguration(classes = { HarvesterService.class, HttpClientConfig.class })
+@ContextConfiguration(classes = HarvesterService.class)
 public class HarvesterServiceTest {
 
     @Autowired
