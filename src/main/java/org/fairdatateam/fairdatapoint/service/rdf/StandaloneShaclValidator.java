@@ -22,55 +22,45 @@
  */
 package org.fairdatateam.fairdatapoint.service.rdf;
 
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.sail.shacl.ShaclValidator;
+import org.eclipse.rdf4j.sail.shacl.results.ValidationReport;
 import org.fairdatateam.fairdatapoint.entity.exception.RdfValidationException;
-import org.fairdatateam.fairdatapoint.entity.exception.ValidationException;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.vocabulary.RDF4J;
-import org.eclipse.rdf4j.repository.RepositoryException;
-import org.eclipse.rdf4j.repository.sail.SailRepository;
-import org.eclipse.rdf4j.repository.sail.SailRepositoryConnection;
-import org.eclipse.rdf4j.sail.memory.MemoryStore;
-import org.eclipse.rdf4j.sail.shacl.ShaclSail;
-import org.eclipse.rdf4j.sail.shacl.ShaclSailValidationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import java.io.StringWriter;
 
 @Service
 public class StandaloneShaclValidator {
 
+    /**
+     * Converts an RDF4J Model instance to a String, because  ShaclValidator.Builder.withShapes() does not accept Model.
+     */
+    private String modelToString(Model model) {
+        final StringWriter writer = new StringWriter();
+        Rio.write(model, writer, RDFFormat.TURTLE);
+        return writer.toString();
+    }
+
+    /**
+     * Uses a standalone ShaclValidator to validate <code>data</code> against <code>shacl</code>.
+     * Raises <code>RdfValidationException</code> if validation fails.
+     */
     public void validate(Model shacl, Model data, String baseUri) {
-        // 1. Prepare repository
-        final ShaclSail shaclSail = new ShaclSail(new MemoryStore());
-        shaclSail.setRdfsSubClassReasoning(true);
-        final SailRepository sailRepository = new SailRepository(shaclSail);
-        sailRepository.init();
+        // standalone ShaclValidator
+        final ShaclValidator.ValidatorWithShapes validator = ShaclValidator.builder()
+                .setRdfsSubClassReasoning(true)
+                .withShapes(modelToString(shacl), baseUri, RDFFormat.TURTLE)
+                .build();
 
-        try (SailRepositoryConnection connection = sailRepository.getConnection()) {
-            // 2. Save SHACL
-            connection.begin();
-            connection.add(shacl, RDF4J.SHACL_SHAPE_GRAPH);
-            connection.commit();
+        // ValidationReport is deprecated due to planned move to other package
+        // https://rdf4j.org/javadoc/latest/org/eclipse/rdf4j/sail/shacl/results/ValidationReport.html
+        final ValidationReport report = validator.validate(modelToString(data), baseUri, RDFFormat.TURTLE);
 
-            // 3. Validate data
-            connection.begin();
-            connection.add(new ArrayList<>(data), i(baseUri));
-            connection.commit();
-
-        }
-        catch (RepositoryException exception) {
-            final Throwable cause = exception.getCause();
-            if (cause instanceof ShaclSailValidationException) {
-                final Model validationReportModel =
-                        ((ShaclSailValidationException) cause).validationReportAsModel();
-                throw new RdfValidationException(validationReportModel);
-            }
-            throw new ValidationException("Validation failed (unsupported exception)");
-        }
-        finally {
-            sailRepository.shutDown();
+        if (!report.conforms()) {
+            throw new RdfValidationException(report.asModel());
         }
     }
 
