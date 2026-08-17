@@ -24,12 +24,14 @@ package org.fairdatateam.fairdatapoint;
 
 import org.fairdatateam.fairdatapoint.database.mongo.migration.development.MigrationRunner;
 import org.fairdatateam.fairdatapoint.database.rdf.migration.development.RdfDevelopmentMigrationRunner;
+import org.fairdatateam.fairdatapoint.service.rdf.StandaloneShaclValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @ActiveProfiles(Profiles.TESTING)
 // todo: in most cases we can probably use WebEnvironment.MOCK with MockMvc instead of TestRestTemplate (see #862)
@@ -57,6 +59,9 @@ public abstract class WebIntegrationTest {
 
     @Autowired
     protected RdfDevelopmentMigrationRunner rdfDevelopmentMigrationRunner;
+
+    @MockitoBean
+    StandaloneShaclValidator shaclValidator;
 
     @BeforeEach
     public void setup() {
