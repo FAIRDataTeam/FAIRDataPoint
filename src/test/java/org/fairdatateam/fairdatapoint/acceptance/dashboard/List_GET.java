@@ -35,7 +35,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.TestPropertySource;
 
 import java.net.URI;
 import java.util.List;
@@ -46,12 +45,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-@TestPropertySource(properties = {
-        // increase timeouts to prevent failure on github windows and ubuntu runners
-        // todo: proper fix instead of this workaround
-        "spring.http.clients.connect-timeout = 1m",
-        "spring.http.clients.read-timeout = 1m"
-})
 public class List_GET extends WebIntegrationTest {
 
     @Autowired
