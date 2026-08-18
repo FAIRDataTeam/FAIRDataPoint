@@ -20,9 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.entity.schema;
+package org.fairdatateam.fairdatapoint.util;
 
-import org.fairdatateam.fairdatapoint.util.SemVer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
