@@ -20,34 +20,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.utils;
+package org.fairdatateam.fairdatapoint.testutils;
 
-import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
-import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 
-@Service
-public class AuthHelper {
+import java.util.List;
 
-    @Autowired
-    private UserFixtures userFixtures;
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CustomPageImpl<T> {
 
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private int totalPages;
+    private long totalElements;
+    private boolean first;
+    private CustomSort sort;
+    private CustomPageable pageable;
+    private int number;
+    private int numberOfElements;
+    private boolean last;
+    private int size;
+    private List<T> content;
+    private boolean empty;
 
-    public void authenticateAsAdmin() {
-        authenticate(userFixtures.admin().getUuid());
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CustomPageable {
+        private int page;
+        private int size;
+        private CustomSort sort;
     }
 
-    public void authenticateAsAlbert() {
-        authenticate(userFixtures.albert().getUuid());
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CustomSort {
+        private boolean sorted;
+        private boolean unsorted;
+        private boolean empty;
     }
 
-    private void authenticate(String uuid) {
-        Authentication auth = mongoAuthenticationService.getAuthentication(uuid);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
 }

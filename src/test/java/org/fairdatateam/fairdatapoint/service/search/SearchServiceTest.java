@@ -29,7 +29,7 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryExceptio
 import org.fairdatateam.fairdatapoint.search.SearchFilterValue;
 import org.fairdatateam.fairdatapoint.search.SearchResult;
 import org.fairdatateam.fairdatapoint.search.SearchService;
-import org.fairdatateam.fairdatapoint.utils.TestRdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.testutils.TestRdfMetadataFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
