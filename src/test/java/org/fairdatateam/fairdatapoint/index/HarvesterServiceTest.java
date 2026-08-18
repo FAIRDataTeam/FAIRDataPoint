@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.index.harvester;
+package org.fairdatateam.fairdatapoint.index;
 
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
@@ -28,7 +28,6 @@ import org.fairdatateam.fairdatapoint.migration.triplestore.development.Metadata
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.index.HarvesterService;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
