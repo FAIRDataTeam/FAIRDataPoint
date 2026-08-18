@@ -28,7 +28,7 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaType;
-import org.fairdatateam.fairdatapoint.rdf.schema.SemVer;
+import org.fairdatateam.fairdatapoint.util.SemVer;
 import org.fairdatateam.fairdatapoint.resource.*;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;

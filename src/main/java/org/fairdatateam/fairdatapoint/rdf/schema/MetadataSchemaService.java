@@ -31,6 +31,7 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCa
 import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.fairdatateam.fairdatapoint.util.SemVer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;

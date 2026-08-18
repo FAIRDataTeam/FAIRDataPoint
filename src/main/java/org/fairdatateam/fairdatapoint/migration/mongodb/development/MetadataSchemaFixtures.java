@@ -26,7 +26,7 @@ import lombok.SneakyThrows;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaDraft;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaType;
-import org.fairdatateam.fairdatapoint.rdf.schema.SemVer;
+import org.fairdatateam.fairdatapoint.util.SemVer;
 import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 

@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.schema;
 
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.*;
+import org.fairdatateam.fairdatapoint.util.SemVer;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

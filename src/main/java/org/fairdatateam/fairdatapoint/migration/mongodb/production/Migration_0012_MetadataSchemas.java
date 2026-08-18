@@ -29,7 +29,7 @@ import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.rdf.schema.SemVer;
+import org.fairdatateam.fairdatapoint.util.SemVer;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaShaclUtils;

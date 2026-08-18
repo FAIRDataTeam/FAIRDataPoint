@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaVersionDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.MetadataSchemaFixtures;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
-import org.fairdatateam.fairdatapoint.rdf.schema.SemVer;
+import org.fairdatateam.fairdatapoint.util.SemVer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
