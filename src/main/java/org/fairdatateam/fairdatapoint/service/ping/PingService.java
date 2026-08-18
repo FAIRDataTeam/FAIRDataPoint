@@ -28,6 +28,7 @@ import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
 import org.fairdatateam.fairdatapoint.entity.settings.Settings;
 import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -90,7 +91,12 @@ public class PingService {
     void pingEndpoint(String endpoint, Map<String, String> pingContent) {
         try {
             log.info("Pinging {}", endpoint);
-            restClient.post().uri(endpoint).body(pingContent).retrieve().toEntity(String.class);
+            restClient.post()
+                    .uri(endpoint)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(pingContent)
+                    .retrieve()
+                    .toEntity(String.class);
         }
         catch (Exception exception) {
             log.warn("Failed to ping {}: {}", endpoint, exception.getMessage());
