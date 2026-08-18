@@ -92,7 +92,7 @@ public class StandaloneShaclValidatorTest {
         // given rdf data that does not match the shacl shape
         final Model invalidData = Rio.parse(new StringReader(DATA_INVALID), BASE_URI, RDFFormat.TURTLE);
 
-        // an exception is raised
+        // a validation exception is raised
         RdfValidationException exception = assertThrows(RdfValidationException.class,
                 () -> standaloneShaclValidator.validate(shaclSchema, invalidData, BASE_URI));
 

@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.service.rdf;
 
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.shacl.ShaclValidator;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.StringWriter;
 
+@Slf4j
 @Service
 public class StandaloneShaclValidator {
 
@@ -55,11 +57,12 @@ public class StandaloneShaclValidator {
                 .withShapes(modelToString(shacl), baseUri, RDFFormat.TURTLE)
                 .build();
 
-        // ValidationReport is deprecated due to planned move to other package
+        // TODO: ValidationReport is deprecated due to planned move to other package
         // https://rdf4j.org/javadoc/latest/org/eclipse/rdf4j/sail/shacl/results/ValidationReport.html
         final ValidationReport report = validator.validate(modelToString(data), baseUri, RDFFormat.TURTLE);
 
         if (!report.conforms()) {
+            log.info("RDF validation failed: {}", report);
             throw new RdfValidationException(report.asModel());
         }
     }
