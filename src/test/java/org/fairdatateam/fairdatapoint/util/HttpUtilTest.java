@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.testutils;
+package org.fairdatateam.fairdatapoint.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.eclipse.rdf4j.model.IRI;
