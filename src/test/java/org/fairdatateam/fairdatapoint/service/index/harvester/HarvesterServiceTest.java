@@ -99,7 +99,7 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
+        verify(genericMetadataRdfRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRepository, never()).save(any(), any());
+        verify(genericMetadataRdfRepository, never()).save(any(), any());
     }
 
     @Test
@@ -132,7 +132,7 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
+        verify(genericMetadataRdfRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     private void mockEndpoint(String url, Model body) {
