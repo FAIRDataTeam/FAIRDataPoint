@@ -20,15 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.database.rdf.repository;
+package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +45,7 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CatalogMetadataRepositoryTest {
+public class CatalogMetadataRdfRepositoryTest {
 
     private final IRI catalogUri = i("http://localhost/textmining");
 
@@ -71,7 +69,7 @@ public class CatalogMetadataRepositoryTest {
 
     @Spy
     @InjectMocks
-    private CatalogMetadataRdfRepository catalogMetadataRepository;
+    private CatalogMetadataRdfRepository catalogMetadataRdfRepository;
 
     @Test
     @DisplayName("Themes for catalog are in cache (no query to triple store)")
@@ -81,10 +79,10 @@ public class CatalogMetadataRepositoryTest {
         when(cache.get(catalogUri.toString(), List.class)).thenReturn(Collections.emptyList());
 
         // WHEN:
-        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // THEN:
-        verify(catalogMetadataRepository, never()).runSparqlQueryFromFile(any(), any());
+        verify(catalogMetadataRdfRepository, never()).runSparqlQueryFromFile(any(), any());
     }
 
     @Test
@@ -97,10 +95,10 @@ public class CatalogMetadataRepositoryTest {
         when(tupleQuery.evaluate()).thenReturn(tupleQueryResult);
 
         // WHEN:
-        catalogMetadataRepository.getDatasetThemesForCatalog(catalogUri);
+        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // THEN:
-        verify(catalogMetadataRepository, times(1)).runSparqlQueryFromFile(any(), any());
+        verify(catalogMetadataRdfRepository, times(1)).runSparqlQueryFromFile(any(), any());
     }
 
 }
