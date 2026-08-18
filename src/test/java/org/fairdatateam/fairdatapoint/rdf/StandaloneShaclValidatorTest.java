@@ -20,14 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.rdf;
+package org.fairdatateam.fairdatapoint.rdf;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.SHACL;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
-import org.fairdatateam.fairdatapoint.rdf.RdfValidationException;
-import org.fairdatateam.fairdatapoint.rdf.StandaloneShaclValidator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
