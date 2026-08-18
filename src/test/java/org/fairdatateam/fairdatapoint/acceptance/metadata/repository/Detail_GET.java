@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.repository;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,13 +33,18 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @DisplayName("GET /")
 public class Detail_GET extends WebIntegrationTest {
+
+    @Autowired
+    private String persistentUrl;
 
     private URI url() {
         return URI.create("/");
@@ -60,6 +66,20 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        final String body = result.getBody();
+        assert body != null;
+        assertThat(body, containsString("dcat:endpointURL <%s>".formatted(persistentUrl)));
+        // check that a line exists with endpoint descriptions for api-docs and swagger-ui (handles turtle syntax)
+        final String endpointDescription = "dcat:endpointDescription";
+        assertThat(body, containsString(endpointDescription));
+        final List<String> lines = List.of(body.split("\n"));
+        lines.forEach(line -> {
+            if (line.contains(endpointDescription)) {
+                // https://springdoc.org/#springdoc-openapi-core-properties (expected values intentionally hard-coded)
+                List.of("/v3/api-docs", "/swagger-ui.html").forEach(
+                        expectedPath -> assertThat(line, containsString(persistentUrl + expectedPath)));
+            }
+        });
     }
 
 }

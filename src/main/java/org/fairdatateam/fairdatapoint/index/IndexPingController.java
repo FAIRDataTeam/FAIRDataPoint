@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
-import org.fairdatateam.fairdatapoint.util.UtilityService;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
 import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
@@ -58,9 +57,6 @@ public class IndexPingController {
 
     @Autowired
     private IndexEntryService indexEntryService;
-
-    @Autowired
-    private UtilityService utilityService;
 
     @Operation(
             description = "Inform about running FAIR Data Point. It is expected to "
@@ -96,7 +92,7 @@ public class IndexPingController {
             @RequestBody @Valid PingDTO reqDto,
             HttpServletRequest request
     ) throws MetadataRdfRepositoryException {
-        log.info("Received ping from {}", utilityService.getRemoteAddr(request));
+        log.info("Received ping from {}", request.getRemoteAddr());
         final Event event = eventService.acceptIncomingPing(reqDto, request);
         log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);

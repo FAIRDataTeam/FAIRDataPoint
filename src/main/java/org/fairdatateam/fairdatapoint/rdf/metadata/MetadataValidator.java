@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.rdf.ShaclValidator;
+import org.fairdatateam.fairdatapoint.rdf.StandaloneShaclValidator;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaService;
 import org.eclipse.rdf4j.model.IRI;
@@ -46,7 +46,7 @@ public class MetadataValidator {
     private MetadataRdfRepository metadataRepository;
 
     @Autowired
-    private ShaclValidator shaclValidator;
+    private StandaloneShaclValidator standaloneShaclValidator;
 
     @Autowired
     private MetadataSchemaService metadataSchemaService;
@@ -63,7 +63,7 @@ public class MetadataValidator {
 
     private void validateByShacl(Model metadata, IRI uri) {
         final Model shacl = metadataSchemaService.getShaclFromSchemas();
-        shaclValidator.validate(shacl, metadata, uri.stringValue());
+        standaloneShaclValidator.validate(shacl, metadata, uri.stringValue());
     }
 
     private void validateParent(Model metadata, ResourceDefinition definition) throws MetadataServiceException {

@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.search.dto.*;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateService;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.text.StrSubstitutor;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Value;

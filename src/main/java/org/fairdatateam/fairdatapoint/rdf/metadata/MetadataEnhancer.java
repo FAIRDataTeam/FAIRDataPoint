@@ -34,6 +34,8 @@ import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +55,13 @@ import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataEnhancer {
+
+    // https://springdoc.org/#springdoc-openapi-core-properties
+    @Autowired
+    private SpringDocConfigProperties springDocConfig;
+
+    @Autowired
+    private SwaggerUiConfigProperties swaggerUiConfig;
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
@@ -163,6 +172,9 @@ public class MetadataEnhancer {
         if (definition.isRoot()) {
             resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
             resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
+            // add dcat:endpointDescription statements for api-docs path and swagger-ui path from config
+            List.of(springDocConfig.getApiDocs().getPath(), swaggerUiConfig.getPath()).forEach(
+                    path -> resultRdf.add(entityUri, DCAT.ENDPOINT_DESCRIPTION, i(persistentUrl + path)));
         }
     }
 
