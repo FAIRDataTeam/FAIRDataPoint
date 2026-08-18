@@ -25,12 +25,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.service.metadata.metric;
+package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.rdf.metadata.Metric;
 import org.eclipse.rdf4j.model.IRI;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetricsMetadataService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

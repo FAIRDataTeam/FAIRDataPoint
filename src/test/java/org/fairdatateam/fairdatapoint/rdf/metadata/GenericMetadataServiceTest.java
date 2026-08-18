@@ -20,14 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.metadata.generic;
+package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
 import org.fairdatateam.fairdatapoint.testutils.AuthHelper;
 import org.fairdatateam.fairdatapoint.testutils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;

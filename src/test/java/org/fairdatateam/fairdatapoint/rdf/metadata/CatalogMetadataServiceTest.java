@@ -20,12 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.metadata.catalog;
+package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.rdf.metadata.CatalogMetadataService;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.testutils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -51,7 +48,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CatalogMetadataServiceMockTest extends BaseIntegrationTest {
+public class CatalogMetadataServiceTest extends BaseIntegrationTest {
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
