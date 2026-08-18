@@ -20,13 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.service.resource;
+package org.fairdatateam.fairdatapoint.resource;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
-import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
-import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
