@@ -23,10 +23,11 @@
 package org.fairdatateam.fairdatapoint.service.ping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.fairdatateam.fairdatapoint.config.properties.InstanceProperties;
-import org.fairdatateam.fairdatapoint.config.properties.PingProperties;
-import org.fairdatateam.fairdatapoint.entity.settings.Settings;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsService;
+import org.fairdatateam.fairdatapoint.config.InstanceProperties;
+import org.fairdatateam.fairdatapoint.ping.PingProperties;
+import org.fairdatateam.fairdatapoint.ping.PingService;
+import org.fairdatateam.fairdatapoint.settings.Settings;
+import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
