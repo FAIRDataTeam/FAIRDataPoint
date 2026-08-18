@@ -9,7 +9,11 @@ server:
 spring:
   mongodb:
     uri: mongodb://localhost:27017/fdp-test
-
+  http:
+    clients:
+      # increase timeout to prevent issues on github runners
+      connect-timeout: 1m
+      read-timeout: 1m
 security:
   jwt:
     token:

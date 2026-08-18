@@ -12,6 +12,11 @@ spring:
       pageable:
         default-page-size: 50
         qualifier-delimiter: _
+  http:
+    clients:
+      # https://docs.spring.io/spring-boot/reference/io/rest-client.html#io.rest-client.global-configuration
+      connect-timeout: 5s
+      read-timeout: 5s
   mongodb:
     representation:
       uuid: standard
