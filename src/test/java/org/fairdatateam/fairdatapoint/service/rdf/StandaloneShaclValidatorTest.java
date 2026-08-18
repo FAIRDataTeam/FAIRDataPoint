@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.entity.exception.RdfValidationException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,13 +75,13 @@ public class StandaloneShaclValidatorTest {
      */
     public StandaloneShaclValidatorTest() throws IOException {
         this.standaloneShaclValidator = new StandaloneShaclValidator();
-        this.shaclSchema = Rio.parse(Reader.of(SHACL_SCHEMA), BASE_URI, RDFFormat.TURTLE);
+        this.shaclSchema = Rio.parse(new StringReader(SHACL_SCHEMA), BASE_URI, RDFFormat.TURTLE);
     }
 
     @Test
     public void validDataPassesValidation() throws IOException {
         // given rdf data matching the shacl shape
-        final Model validData = Rio.parse(Reader.of(DATA_VALID), BASE_URI, RDFFormat.TURTLE);
+        final Model validData = Rio.parse(new StringReader(DATA_VALID), BASE_URI, RDFFormat.TURTLE);
 
         // validation succeeds
         standaloneShaclValidator.validate(shaclSchema, validData, BASE_URI);
@@ -90,7 +90,7 @@ public class StandaloneShaclValidatorTest {
     @Test
     public void invalidDataCausesValidationException() throws IOException {
         // given rdf data that does not match the shacl shape
-        final Model invalidData = Rio.parse(Reader.of(DATA_INVALID), BASE_URI, RDFFormat.TURTLE);
+        final Model invalidData = Rio.parse(new StringReader(DATA_INVALID), BASE_URI, RDFFormat.TURTLE);
 
         // an exception is raised
         RdfValidationException exception = assertThrows(RdfValidationException.class,
