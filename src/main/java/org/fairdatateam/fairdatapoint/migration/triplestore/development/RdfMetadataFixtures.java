@@ -101,6 +101,7 @@ public class RdfMetadataFixtures {
                 "catalog-1",
                 Arrays.asList(THEME_THEATRE, THEME_EXAMPLE),
                 fdpUrl,
+                // TODO: change catalogX method signatures to catalogX(String fdpUrl) and replace `fdp` by `i(fdpUrl)`
                 fdp
         );
     }
