@@ -27,7 +27,6 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDTO;
 import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
-import org.fairdatateam.fairdatapoint.testutils.CustomPageImpl;
 import org.fairdatateam.fairdatapoint.testutils.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
