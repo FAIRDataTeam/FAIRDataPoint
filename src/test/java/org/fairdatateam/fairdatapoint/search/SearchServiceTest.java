@@ -25,8 +25,8 @@ package org.fairdatateam.fairdatapoint.search;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,15 +41,18 @@ import static org.hamcrest.core.Is.is;
 public class SearchServiceTest extends BaseIntegrationTest {
 
     @Autowired
+    private String persistentUrl;
+
+    @Autowired
     private SearchService searchService;
 
     @Autowired
-    private TestRdfMetadataFixtures testMetadataFixtures;
+    private RdfMetadataFixtures rdfMetadataFixtures;
 
     @Test
     public void findByLiteralWorks() throws MetadataRdfRepositoryException {
         // given
-        final Model catalog1 = testMetadataFixtures.catalog1();
+        final Model catalog1 = rdfMetadataFixtures.catalog1(persistentUrl, i(persistentUrl));
         final Literal title = getTitle(catalog1);
 
         // when
