@@ -27,7 +27,6 @@ import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefi
 import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.exception.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.fairdatateam.fairdatapoint.testutils.AuthHelper;
 import org.fairdatateam.fairdatapoint.testutils.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
