@@ -127,7 +127,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     @Override
     @PreAuthorize("""
             hasPermission(#uri.stringValue(),
-            'org.fairdatateam.fairdatapoint.entity.metadata.Metadata', 'WRITE')
+            T(org.fairdatateam.fairdatapoint.rdf.metadata.Metadata).getName(), 'WRITE')
             or hasRole('ADMIN')
             """)
     public Model update(
