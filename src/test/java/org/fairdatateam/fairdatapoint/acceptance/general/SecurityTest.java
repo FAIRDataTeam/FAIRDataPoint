@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.acceptance.general;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ApiKeyFixtures;
 import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
-import org.fairdatateam.fairdatapoint.testutils.TestRdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.catalog;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataMigration;
 import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
-import org.fairdatateam.fairdatapoint.testutils.TestRdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.DisplayName;

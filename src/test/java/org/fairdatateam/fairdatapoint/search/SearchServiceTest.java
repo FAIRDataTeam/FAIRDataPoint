@@ -26,7 +26,7 @@ import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.testutils.TestRdfMetadataFixtures;
+import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
