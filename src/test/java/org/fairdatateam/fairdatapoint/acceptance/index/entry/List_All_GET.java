@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDTO;
 import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
-import org.fairdatateam.fairdatapoint.acceptance.index.TestIndexEntryFixtures;
+import org.fairdatateam.fairdatapoint.testfixtures.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
