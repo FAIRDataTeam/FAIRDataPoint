@@ -74,7 +74,7 @@ public class Migration_0001_Init {
         user.append("email", email);
         user.append("passwordHash", "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW");
         user.append("role", role);
-        user.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.user.User");
+        user.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.user.User");
         return user;
     }
 
@@ -103,7 +103,7 @@ public class Migration_0001_Init {
         }
         membership.append(FIELD_PERMISSIONS, permissions);
         membership.append("allowedEntities", allowedEntities);
-        membership.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.security.membership.Membership");
+        membership.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.membership.Membership");
         return membership;
     }
 

@@ -176,7 +176,7 @@ public class Migration_0004_ResourceDefinition {
         definition.append("targetClassUris", classes);
         definition.append("children", children);
         definition.append("externalLinks", links);
-        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.resource.ResourceDefinition");
+        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 
@@ -205,7 +205,7 @@ public class Migration_0004_ResourceDefinition {
         }
         membership.append(FIELD_PERMISSIONS, permissions);
         membership.append("allowedEntities", allowedEntities);
-        membership.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.security.membership.Membership");
+        membership.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.membership.Membership");
         return membership;
     }
 

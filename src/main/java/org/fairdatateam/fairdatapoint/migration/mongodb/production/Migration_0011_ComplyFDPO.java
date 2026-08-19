@@ -132,7 +132,7 @@ public class Migration_0011_ComplyFDPO {
         // External Links
         definition.append("externalLinks", List.of());
 
-        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.resource.ResourceDefinition");
+        definition.append(FIELD_CLASS, "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 }

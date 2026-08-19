@@ -53,7 +53,7 @@ public class Migration_0002_CustomMetamodel {
     private void updateAcl(MongoDatabase database) {
         final MongoCollection<Document> aclCol = database.getCollection("ACL");
         aclCol.updateMany(
-                new Document(), combine(set("className", "org.fairdatateam.fairdatapoint.rdf.metadata.Metadata"))
+                new Document(), combine(set("className", "org.fairdatateam.fairdatapoint.entity.metadata.Metadata"))
         );
     }
 
@@ -133,7 +133,7 @@ public class Migration_0002_CustomMetamodel {
         definition.append("child", child);
         definition.append("parentResourceDefinitionUuid", parentUuid);
         definition.append("childResourceDefinitionUuid", childUuid);
-        definition.append("_class", "org.fairdatateam.fairdatapoint.resource.ResourceDefinition");
+        definition.append("_class", "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition");
         return definition;
     }
 }
