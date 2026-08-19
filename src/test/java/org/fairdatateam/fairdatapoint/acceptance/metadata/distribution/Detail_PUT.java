@@ -74,8 +74,8 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("HTTP 200")
-    public void res200() {
+    @DisplayName("HTTP 200: User is owner")
+    public void res200_owner() {
         create_res200(ALBERT_TOKEN);
     }
 
