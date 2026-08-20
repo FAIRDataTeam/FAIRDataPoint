@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration;
+package org.fairdatateam.fairdatapoint.config;
 
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;
@@ -46,7 +46,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
             "org.fairdatateam.security.acls"
         }
 )
-public class MongoDbMigrationConfig {
+public class MongoConfig {
 
     @Autowired
     private ResourceDefinitionCache resourceDefinitionCache;
