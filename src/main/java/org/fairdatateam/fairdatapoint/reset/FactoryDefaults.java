@@ -403,6 +403,7 @@ public class FactoryDefaults {
                 .append("name", USER_ALBERT.getUuid())
                 .append("isPrincipal", true);
         final Document acl = new Document();
+        // TODO: there is no FDPMetadata class. This was already removed in 2020 (c37890f)
         acl.append("className", "org.fairdatateam.fairdatapoint.entity.metadata.FDPMetadata");
         acl.append("instanceId", persistentUrl);
         acl.append("owner", owner);
