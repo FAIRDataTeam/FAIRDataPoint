@@ -29,23 +29,20 @@ import io.mongock.api.annotations.RollbackExecution;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
-import java.util.Map;
 
-import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
 
 /**
- * This migration updates existing <code>_class</code> and <code>ACL.className</code> fields to the new package names.
- * Note that <code>_class</code> fields are automatically added by
- * <a href="https://docs.spring.io/spring-data/mongodb/reference/mongodb/converters-type-mapping.html#mongo-template.type-mapping">Spring Data MongoDB</a>.
+ * This migration updates existing <code>_class</code> and <code>ACL.className</code> fields to the new package names
+ * that resulted from refactoring the project file structure in PR #941.
+ * Note that <code>_class</code> fields are also updated automatically when
+ * <a href="https://docs.spring.io/spring-data/mongodb/reference/mongodb/converters-type-mapping.html#mongo-template.type-mapping">
+ * Spring Data MongoDB</a> saves or updates documents.
  */
 @Slf4j
 @ChangeUnit(
@@ -56,77 +53,66 @@ import static com.mongodb.client.model.Updates.set;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0021_UpdateClassNames {
 
-    private static final Map<String, List<String>> COLLECTIONS = Map.of(
-            "ACL", List.of(
-                    // this case applies to the className field instead of the _class field
-                    "org.fairdatateam.fairdatapoint.entity.metadata.Metadata",
-                    "org.fairdatateam.fairdatapoint.rdf.metadata.Metadata"
-            ),
-            "apiKey", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.apikey.ApiKey",
-                    "org.fairdatateam.fairdatapoint.security.apikey.ApiKey"
-            ),
-            "indexEntry", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry",
-                    "org.fairdatateam.fairdatapoint.index.entry.IndexEntry"
-            ),
-            "membership", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.membership.Membership",
-                    "org.fairdatateam.fairdatapoint.security.membership.Membership"
-            ),
-            "metadata", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.metadata.Metadata",
-                    "org.fairdatateam.fairdatapoint.rdf.metadata.Metadata"
-            ),
-            "metadataSchema", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema",
-                    "org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema"
-            ),
-            "resourceDefinition", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.resource.ResourceDefinition",
-                    "org.fairdatateam.fairdatapoint.resource.ResourceDefinition"
-            ),
-            "settings", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.settings.Settings",
-                    "org.fairdatateam.fairdatapoint.settings.Settings"
-            ),
-            "user", List.of(
-                    "org.fairdatateam.fairdatapoint.entity.user.User",
-                    "org.fairdatateam.fairdatapoint.user.User"
-            )
+    private static final String CLASS = "_class";
+
+    private static final String METADATA = "org.fairdatateam.fairdatapoint.rdf.metadata.Metadata";
+
+    private static final List<Change> CHANGES = List.of(
+            // Note that the `_class` values for "ACL" and "rdfMigration" collections refer to external package names
+            // which have not changed. However, `ACL.className` does refer to an internal package that has changed.
+            new Change("ACL", "className", METADATA),
+            new Change("apiKey", CLASS, "org.fairdatateam.fairdatapoint.security.apikey.ApiKey"),
+            new Change("indexEntry", CLASS, "org.fairdatateam.fairdatapoint.index.entry.IndexEntry"),
+            new Change("membership", CLASS, "org.fairdatateam.fairdatapoint.security.membership.Membership"),
+            new Change("metadata", CLASS, METADATA),
+            new Change("metadataSchema", CLASS, "org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema"),
+            new Change("resourceDefinition", CLASS, "org.fairdatateam.fairdatapoint.resource.ResourceDefinition"),
+            new Change("settings", CLASS, "org.fairdatateam.fairdatapoint.settings.Settings"),
+            new Change("user", CLASS, "org.fairdatateam.fairdatapoint.user.User")
     );
 
-    private final MongoTemplate database;
+    private final MongoTemplate mongoTemplate;
 
     /**
      * Constructor (autowired)
      */
-    public Migration_0021_UpdateClassNames(MongoTemplate template) {
-        this.database = template;
-    }
-
-    @Execution
-    public void run() {
-        COLLECTIONS.forEach(this::updateClassFields);
+    public Migration_0021_UpdateClassNames(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
 
     /**
-     * Replaces the old class name by the new one in relevant documents in the specified collection.
+     * Applies all the changes
      */
-    @SneakyThrows
-    private void updateClassFields(String collectionName, List<String> classNames) {
-        // get the mongodb collection
-        final MongoCollection<Document> collection = database.getCollection(collectionName);
-        // the ACL class comes from an external package, so _class does not change, but className does
-        final String fieldName = (collectionName.matches("ACL")) ? "className" : "_class";
-        // select documents where the field value matches the old class name
-        Bson filterByOldClassName = eq(fieldName, classNames.getFirst());
-        // update field value to new class name
-        collection.updateMany(filterByOldClassName, set(fieldName, classNames.getLast()));
+    @Execution
+    public void run() {
+        CHANGES.forEach(this::applyChange);
     }
 
+    /**
+     * Applies a <code>Change</code> to all relevant documents in the mongodb database
+     */
+    @SneakyThrows
+    private void applyChange(Change change) {
+        // get the mongodb collection
+        final MongoCollection<Document> collection = mongoTemplate.getCollection(change.collection());
+        // apply the change to all documents in the collection
+        final Document filterAll = new Document();
+        collection.updateMany(filterAll, set(change.field(), change.newValue()));
+    }
+
+    /**
+     * Cannot roll back because we cannot be sure whether the old package names were either org.fairdatateam or nl.dtls.
+     * This is because migration immutability was not strictly maintained in the past.
+     */
     @RollbackExecution
     public void rollback() {
-        // todo
+        // no-op
     }
+
+    /**
+     * Defines a new value to be applied to the specified field, for all documents in the specified collection.
+     */
+    private record Change(String collection, String field, String newValue) {
+    }
+
 }
