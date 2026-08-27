@@ -53,14 +53,19 @@ import static com.mongodb.client.model.Updates.set;
 @Profile(Profiles.PRODUCTION)
 public class Migration_0021_UpdateMongoTypeMapperClassNames {
 
+    private static final String ACL = "ACL";
+
     private static final String CLASS = "_class";
 
     private static final String METADATA = "org.fairdatateam.fairdatapoint.rdf.metadata.Metadata";
 
     private static final List<Change> CHANGES = List.of(
-            // Note that the `_class` values for "ACL" and "rdfMigration" collections refer to external package names
-            // which have not changed. However, `ACL.className` does refer to an internal package that has changed.
-            new Change("ACL", "className", METADATA),
+            // Note that the "ACL" and "rdfMigration" collections refer to external package names which were changed
+            // in v1.17.3. However, existing `_class` values were never migrated, so we fix that here as well.
+            new Change(ACL, CLASS, "org.fairdatateam.security.acls.domain.MongoAcl"),
+            new Change("rdfMigration", CLASS, "org.fairdatateam.rdf.migration.entity.RdfMigration"),
+            // The following changes are related to the current refactoring.
+            new Change(ACL, "className", METADATA),
             new Change("apiKey", CLASS, "org.fairdatateam.fairdatapoint.security.apikey.ApiKey"),
             new Change("indexEntry", CLASS, "org.fairdatateam.fairdatapoint.index.entry.IndexEntry"),
             new Change("membership", CLASS, "org.fairdatateam.fairdatapoint.security.membership.Membership"),
