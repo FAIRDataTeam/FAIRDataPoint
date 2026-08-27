@@ -46,12 +46,12 @@ import static com.mongodb.client.model.Updates.set;
  */
 @Slf4j
 @ChangeUnit(
-        id = "Migration_0021_UpdateClassNames",
+        id = "Migration_0021_UpdateMongoTypeMapperClassNames",
         order = "0021",
         author = "migrationBot"
 )
 @Profile(Profiles.PRODUCTION)
-public class Migration_0021_UpdateClassNames {
+public class Migration_0021_UpdateMongoTypeMapperClassNames {
 
     private static final String CLASS = "_class";
 
@@ -76,7 +76,7 @@ public class Migration_0021_UpdateClassNames {
     /**
      * Constructor (autowired)
      */
-    public Migration_0021_UpdateClassNames(MongoTemplate mongoTemplate) {
+    public Migration_0021_UpdateMongoTypeMapperClassNames(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
