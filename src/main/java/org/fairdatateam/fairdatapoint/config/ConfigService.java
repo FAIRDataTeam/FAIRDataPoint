@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.config;
 
+import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;

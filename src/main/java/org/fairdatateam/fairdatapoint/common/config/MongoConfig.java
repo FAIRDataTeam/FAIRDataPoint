@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.common.config;
 
 import io.mongock.api.config.LegacyMigration;
 import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;

@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.ping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.fairdatateam.fairdatapoint.config.InstanceProperties;
+import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.junit.jupiter.api.BeforeEach;

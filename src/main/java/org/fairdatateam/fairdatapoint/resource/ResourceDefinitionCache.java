@@ -34,8 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.RESOURCE_DEFINITION_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.RESOURCE_DEFINITION_PARENT_CACHE;
 
 @Service
 public class ResourceDefinitionCache {

@@ -32,7 +32,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Component;
 
 import static java.lang.String.format;
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.SEARCH_FILTERS_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.SEARCH_FILTERS_CACHE;
 
 @Component
 @Slf4j

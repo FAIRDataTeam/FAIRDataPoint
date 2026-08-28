@@ -28,7 +28,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.SETTINGS_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.SETTINGS_CACHE;
 
 @Service
 public class SettingsCache {

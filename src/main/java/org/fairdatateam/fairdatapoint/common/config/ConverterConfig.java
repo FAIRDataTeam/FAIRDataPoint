@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.common.config;
 
 import org.fairdatateam.fairdatapoint.common.error.ErrorConverter;
 import org.fairdatateam.fairdatapoint.rdf.RdfConverter;

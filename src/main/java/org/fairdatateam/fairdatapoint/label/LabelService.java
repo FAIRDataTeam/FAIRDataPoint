@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.label;
 
 import static java.util.function.Predicate.isEqual;
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.LABEL_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.LABEL_CACHE;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import org.fairdatateam.rdf.resolver.api.ResourceResolver;
 import org.fairdatateam.rdf.resolver.core.ContentNegotiationStrategy;

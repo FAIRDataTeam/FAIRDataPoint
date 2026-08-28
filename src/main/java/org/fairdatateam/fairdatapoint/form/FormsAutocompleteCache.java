@@ -27,7 +27,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Component;
 
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.FORMS_AUTOCOMPLETE_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.FORMS_AUTOCOMPLETE_CACHE;
 
 @Component
 public class FormsAutocompleteCache {

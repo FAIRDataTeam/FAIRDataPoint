@@ -20,12 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.common.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
 
 @Configuration
-@EnableScheduling
-public class WorkerConfig {
+public class PropertyConfig {
+
+    private static final String GIT_FILE = "META-INF/git.properties";
+
+    private static final String BUILD_INFO_FILE = "META-INF/build-info.properties";
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+        final PropertySourcesPlaceholderConfigurer propsConfig =
+                new PropertySourcesPlaceholderConfigurer();
+        propsConfig.setLocations(
+                new ClassPathResource(GIT_FILE),
+                new ClassPathResource(BUILD_INFO_FILE)
+        );
+        propsConfig.setIgnoreResourceNotFound(true);
+        propsConfig.setIgnoreUnresolvablePlaceholders(true);
+        return propsConfig;
+    }
+
 }

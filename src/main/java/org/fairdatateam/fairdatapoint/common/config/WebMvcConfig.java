@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.common.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.fairdatateam.fairdatapoint.common.error.ErrorConverter;

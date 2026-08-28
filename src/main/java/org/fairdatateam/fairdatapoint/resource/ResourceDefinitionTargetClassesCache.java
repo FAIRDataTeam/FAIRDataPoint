@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.RESOURCE_DEFINITION_TARGET_CLASSES_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.RESOURCE_DEFINITION_TARGET_CLASSES_CACHE;
 
 @Service
 public class ResourceDefinitionTargetClassesCache {

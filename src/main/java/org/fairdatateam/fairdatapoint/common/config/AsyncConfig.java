@@ -20,36 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.config;
+package org.fairdatateam.fairdatapoint.common.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.fairdatateam.fairdatapoint.Profiles;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.EnableAsync;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "instance")
-public class InstanceProperties {
-    // todo: set all default values explicitly here?
-    private String clientUrl = "http://localhost:8080";
-    private String persistentUrl;
-    private boolean index;
-    private boolean indexAutoPermit;
-
-    // enable an optional sparql proxy endpoint that forwards requests to the backend triple store sparql endpoint
-    private boolean sparqlProxyEnabled = false;
-
-    private String title = "FAIR Data Point";
-    private String subtitle = "Metadata for machines";
-
-    public String getUrl() {
-        if (persistentUrl == null || persistentUrl.isBlank()) {
-            return clientUrl;
-        }
-        return persistentUrl;
-    }
+@Configuration
+@EnableAsync
+@Profile(Profiles.NON_TESTING)
+public class AsyncConfig {
 }

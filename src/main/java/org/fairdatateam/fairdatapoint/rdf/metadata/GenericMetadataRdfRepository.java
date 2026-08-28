@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
 
 @Service
