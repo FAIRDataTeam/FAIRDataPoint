@@ -29,12 +29,15 @@ import io.mongock.api.annotations.RollbackExecution;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.not;
 import static com.mongodb.client.model.Updates.set;
 
 /**
@@ -105,9 +108,9 @@ public class Migration_0021_UpdateMongoTypeMapperClassNames {
     private void applyChange(Change change) {
         // get the mongodb collection
         final MongoCollection<Document> collection = mongoTemplate.getCollection(change.collection());
-        // apply the change to all documents in the collection
-        final Document filterAll = new Document();
-        collection.updateMany(filterAll, set(change.field(), change.newValue()));
+        // apply the change to documents in the collection that do not have the new value yet
+        final Bson filterNotNewValue = not(eq(change.field(), change.newValue()));
+        collection.updateMany(filterNotNewValue, set(change.field(), change.newValue()));
     }
 
     /**
