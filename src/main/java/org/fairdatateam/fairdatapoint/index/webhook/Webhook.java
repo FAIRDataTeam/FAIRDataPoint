@@ -37,6 +37,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+// TODO: looks like no webhooks are ever saved using the WebhookRepository, so no collection is ever created...
 @Document(collection = "webhook")
 public class Webhook {
     @Id
