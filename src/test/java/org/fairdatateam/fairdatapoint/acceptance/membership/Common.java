@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.membership;
 
-import org.fairdatateam.fairdatapoint.api.dto.membership.MembershipDTO;
-import org.fairdatateam.fairdatapoint.entity.membership.Membership;
+import org.fairdatateam.fairdatapoint.security.membership.MembershipDTO;
+import org.fairdatateam.fairdatapoint.security.membership.Membership;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

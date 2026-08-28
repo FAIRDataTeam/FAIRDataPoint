@@ -23,10 +23,8 @@
 package org.fairdatateam.fairdatapoint.acceptance.settings;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.settings.SettingsDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.SettingsRepository;
-import org.fairdatateam.fairdatapoint.entity.settings.*;
-import org.fairdatateam.fairdatapoint.service.settings.SettingsCache;
+import org.fairdatateam.fairdatapoint.settings.*;
+import org.fairdatateam.fairdatapoint.settings.dto.SettingsDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

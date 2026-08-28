@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.config;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.config.BootstrapConfigDTO;
+import org.fairdatateam.fairdatapoint.config.BootstrapConfigDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;

@@ -23,9 +23,9 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController;
-import org.fairdatateam.fairdatapoint.service.index.harvester.HarvesterService;
-import org.fairdatateam.fairdatapoint.service.ping.PingService;
+import org.fairdatateam.fairdatapoint.index.entry.HarvesterService;
+import org.fairdatateam.fairdatapoint.ping.PingService;
+import org.fairdatateam.fairdatapoint.search.SparqlProxyController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +47,8 @@ import java.net.URI;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyController.*;
-import static org.fairdatateam.fairdatapoint.api.controller.search.SparqlQueryValidator.MESSAGE_INVALID_QUERY;
+import static org.fairdatateam.fairdatapoint.search.SparqlProxyController.*;
+import static org.fairdatateam.fairdatapoint.search.SparqlQueryValidator.MESSAGE_INVALID_QUERY;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;

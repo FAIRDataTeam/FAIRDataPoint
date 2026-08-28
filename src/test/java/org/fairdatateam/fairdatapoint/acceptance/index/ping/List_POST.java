@@ -23,11 +23,11 @@
 package org.fairdatateam.fairdatapoint.acceptance.index.ping;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.api.dto.index.ping.PingDTO;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexEntryRepository;
-import org.fairdatateam.fairdatapoint.database.mongo.repository.IndexSettingsRepository;
-import org.fairdatateam.fairdatapoint.entity.index.entry.IndexEntry;
-import org.fairdatateam.fairdatapoint.utils.TestIndexEntryFixtures;
+import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRepository;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
+import org.fairdatateam.fairdatapoint.testfixtures.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

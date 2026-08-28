@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.fairdatateam.fairdatapoint.api.controller.search.SparqlProxyCleaningService;
+import org.fairdatateam.fairdatapoint.search.SparqlProxyCleaningService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

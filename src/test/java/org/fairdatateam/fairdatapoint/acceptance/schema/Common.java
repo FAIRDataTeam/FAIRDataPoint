@@ -22,12 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.acceptance.schema;
 
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaChangeDTO;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDTO;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaDraftDTO;
-import org.fairdatateam.fairdatapoint.api.dto.schema.MetadataSchemaVersionDTO;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchema;
-import org.fairdatateam.fairdatapoint.entity.schema.MetadataSchemaDraft;
+import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaChangeDTO;
+import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaDTO;
+import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaDraftDTO;
+import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaVersionDTO;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaDraft;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
