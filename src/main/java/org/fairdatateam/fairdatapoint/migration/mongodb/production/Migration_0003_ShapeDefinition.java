@@ -31,7 +31,7 @@ import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
-import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
 
 @ChangeLog(order = "0003")
 @Profile(Profiles.PRODUCTION)

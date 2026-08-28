@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
 
 public class FactoryDefaults {

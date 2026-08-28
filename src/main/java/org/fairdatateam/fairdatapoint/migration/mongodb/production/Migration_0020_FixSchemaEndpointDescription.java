@@ -40,7 +40,7 @@ import java.time.Instant;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
-import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
 
 /**
  * This migration creates a new version of the default metadata schema for the `DataServiceShape` and marks this as the

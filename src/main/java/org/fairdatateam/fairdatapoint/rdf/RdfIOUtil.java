@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getSubjectBy;
-import static org.fairdatateam.fairdatapoint.util.ResourceReader.getResource;
+import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.getResource;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.s;
 

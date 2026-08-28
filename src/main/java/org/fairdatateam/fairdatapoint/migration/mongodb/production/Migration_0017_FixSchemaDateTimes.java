@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static java.lang.String.format;
-import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
 
 /**
  * This migration updates the default metadata schemas defining the `fdp`, `dataset`, and `distribution` shapes.

@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
 
 @Service
 public class MetadataSchemaFixtures {

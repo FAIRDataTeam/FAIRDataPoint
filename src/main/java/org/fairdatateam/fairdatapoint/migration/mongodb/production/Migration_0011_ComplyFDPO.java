@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Profile;
 
 import java.util.*;
 
-import static org.fairdatateam.fairdatapoint.util.ResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
 
 @ChangeLog(order = "0011")
 @Profile(Profiles.PRODUCTION)
