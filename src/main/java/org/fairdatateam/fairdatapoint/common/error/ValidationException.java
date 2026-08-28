@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.exception;
+package org.fairdatateam.fairdatapoint.common.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-public class UnauthorizedException extends RuntimeException {
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class ValidationException extends RuntimeException {
 
-    public UnauthorizedException(String message) {
+    public ValidationException(String message) {
         super(message);
     }
 }

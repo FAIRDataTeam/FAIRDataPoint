@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.exception;
+package org.fairdatateam.fairdatapoint.common.error;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

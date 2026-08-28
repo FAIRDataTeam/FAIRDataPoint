@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.exception.ResourceNotFoundException;
-import org.fairdatateam.fairdatapoint.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;

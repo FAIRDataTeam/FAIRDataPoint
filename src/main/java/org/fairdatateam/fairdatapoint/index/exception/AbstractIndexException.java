@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.index.exception;
 
-import org.fairdatateam.fairdatapoint.exception.ErrorDTO;
+import org.fairdatateam.fairdatapoint.common.error.ErrorDTO;
 import org.springframework.http.HttpStatus;
 
 public abstract class AbstractIndexException extends RuntimeException {

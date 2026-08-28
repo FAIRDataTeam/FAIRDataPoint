@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.resource;
 
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
-import org.fairdatateam.fairdatapoint.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

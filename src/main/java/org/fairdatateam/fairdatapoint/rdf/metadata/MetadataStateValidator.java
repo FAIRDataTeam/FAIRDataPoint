@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
-import org.fairdatateam.fairdatapoint.exception.ValidationException;
+import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.springframework.stereotype.Service;
 
 @Service

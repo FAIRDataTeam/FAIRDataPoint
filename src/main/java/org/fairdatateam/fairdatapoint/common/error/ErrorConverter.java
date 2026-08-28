@@ -25,7 +25,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.exception;
+package org.fairdatateam.fairdatapoint.common.error;
 
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.springframework.http.HttpInputMessage;

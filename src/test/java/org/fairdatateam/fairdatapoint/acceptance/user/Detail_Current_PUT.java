@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.user;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
-import org.fairdatateam.fairdatapoint.exception.ErrorDTO;
+import org.fairdatateam.fairdatapoint.common.error.ErrorDTO;
 import org.fairdatateam.fairdatapoint.user.dto.UserDTO;
 import org.fairdatateam.fairdatapoint.user.dto.UserProfileChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
