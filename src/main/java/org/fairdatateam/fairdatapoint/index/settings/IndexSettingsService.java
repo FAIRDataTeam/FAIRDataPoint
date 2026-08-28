@@ -27,7 +27,6 @@ import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
-import org.fairdatateam.fairdatapoint.index.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

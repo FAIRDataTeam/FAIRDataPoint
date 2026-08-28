@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.index.HarvesterService;
+import org.fairdatateam.fairdatapoint.index.entry.HarvesterService;
 import org.fairdatateam.fairdatapoint.ping.PingService;
 import org.fairdatateam.fairdatapoint.search.SparqlProxyController;
 import org.junit.jupiter.api.BeforeEach;

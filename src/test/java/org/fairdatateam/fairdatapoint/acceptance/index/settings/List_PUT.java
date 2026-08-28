@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsPingDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsRetrievalDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
-import org.fairdatateam.fairdatapoint.index.IndexSettingsRepository;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsPing;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;

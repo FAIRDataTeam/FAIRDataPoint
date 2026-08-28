@@ -20,11 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.index;
+package org.fairdatateam.fairdatapoint.index.entry;
 
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;

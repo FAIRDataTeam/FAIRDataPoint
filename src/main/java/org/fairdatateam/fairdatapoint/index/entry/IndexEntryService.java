@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.index.entry;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
@@ -33,7 +32,6 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.*;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
-import org.fairdatateam.fairdatapoint.index.HarvesterService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;

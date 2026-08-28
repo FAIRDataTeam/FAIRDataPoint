@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.acceptance.index.ping;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
-import org.fairdatateam.fairdatapoint.index.IndexSettingsRepository;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.testfixtures.TestIndexEntryFixtures;
 import org.junit.jupiter.api.DisplayName;

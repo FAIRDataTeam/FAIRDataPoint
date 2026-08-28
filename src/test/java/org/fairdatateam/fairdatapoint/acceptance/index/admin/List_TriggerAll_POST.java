@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.index.admin;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.index.event.EventRepository;
-import org.fairdatateam.fairdatapoint.index.IndexEntryRepository;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventType;
 import org.junit.jupiter.api.DisplayName;

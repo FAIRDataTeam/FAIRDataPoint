@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.index;
+package org.fairdatateam.fairdatapoint.index.entry;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,9 +30,7 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryInfoDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryUpdateDTO;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryPermit;
 import org.fairdatateam.fairdatapoint.index.event.Event;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
 import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
 import org.eclipse.rdf4j.model.Model;
