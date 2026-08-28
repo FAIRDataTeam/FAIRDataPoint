@@ -30,13 +30,13 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import lombok.SneakyThrows;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static java.lang.String.format;
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadClassResource;
 
 /**
  * This migration updates the default metadata schemas defining the `fdp`, `dataset`, and `distribution` shapes.

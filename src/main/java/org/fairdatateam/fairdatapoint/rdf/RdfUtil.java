@@ -27,7 +27,7 @@ import org.eclipse.rdf4j.model.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 public class RdfUtil {
 

@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getStringObjectBy;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Component
 public class RdfEntitiesNamespaceRetriever implements RdfEntitiesRetriever {

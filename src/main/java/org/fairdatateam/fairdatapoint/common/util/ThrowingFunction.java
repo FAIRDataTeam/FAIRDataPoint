@@ -20,22 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.util;
+package org.fairdatateam.fairdatapoint.common.util;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
+import java.util.function.Function;
 
-import java.lang.annotation.*;
+@FunctionalInterface
+public interface ThrowingFunction<T, R, E extends Throwable> {
 
-@Documented
-@Constraint(validatedBy = IriValidator.class)
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE_USE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ValidIri {
+    static <T, R, E extends Throwable> Function<T, R> suppress(ThrowingFunction<T, R, E> func) {
+        return param -> {
+            try {
+                return func.apply(param);
+            }
+            catch (Throwable throwable) {
+                return null;
+            }
+        };
+    }
 
-    String message() default "Invalid IRI";
+    static <T, R, E extends Throwable> Function<T, R> unchecked(ThrowingFunction<T, R, E> func) {
+        return param -> {
+            try {
+                return func.apply(param);
+            }
+            catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        };
+    }
 
-    Class<?>[] groups() default {};
+    R apply(T param) throws E;
 
-    Class<? extends Payload>[] payload() default {};
 }

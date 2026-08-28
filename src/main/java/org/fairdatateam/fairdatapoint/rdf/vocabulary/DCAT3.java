@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.vocabulary;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 /**
  * Temporary solution for DCAT3 which currently not supported in RDR4J vocabularies

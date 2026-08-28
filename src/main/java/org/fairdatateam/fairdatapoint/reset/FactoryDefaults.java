@@ -28,12 +28,12 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaType;
-import org.fairdatateam.fairdatapoint.util.SemVer;
+import org.fairdatateam.fairdatapoint.common.util.SemVer;
 import org.fairdatateam.fairdatapoint.resource.*;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaShaclUtils;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.DATACITE;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.DCAT3;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
@@ -50,8 +50,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 
 public class FactoryDefaults {
 

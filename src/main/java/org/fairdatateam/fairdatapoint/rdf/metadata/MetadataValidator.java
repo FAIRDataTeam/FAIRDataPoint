@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataValidator {

@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.fairdatateam.fairdatapoint.util.ValidSemVer;
+import org.fairdatateam.fairdatapoint.common.util.ValidSemVer;
 
 @NoArgsConstructor
 @AllArgsConstructor

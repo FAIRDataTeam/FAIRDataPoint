@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getMetadataIdentifier;
-import static org.fairdatateam.fairdatapoint.util.HttpUtil.getMetadataIRI;
+import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.getMetadataIRI;
 
 @Tag(name = "Authentication and Authorization")
 @RestController

@@ -35,7 +35,7 @@ import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.s;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.s;
 
 @RdfMigrationAnnotation(
         number = 5,

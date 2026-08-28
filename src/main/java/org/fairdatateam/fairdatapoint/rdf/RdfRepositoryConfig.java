@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 
-import static org.fairdatateam.fairdatapoint.util.HttpUtil.removeLastSlash;
+import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.removeLastSlash;
 
 @Slf4j
 @Configuration

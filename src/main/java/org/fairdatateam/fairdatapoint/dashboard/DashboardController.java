@@ -37,9 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRequestURL;
+import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.getRequestURL;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.removeLastPartOfIRI;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Tag(name = "Client")
 @RestController

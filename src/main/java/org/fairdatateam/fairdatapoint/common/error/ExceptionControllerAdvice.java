@@ -57,7 +57,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.getWriterConfig;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @ControllerAdvice
 @Slf4j

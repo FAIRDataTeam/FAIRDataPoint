@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

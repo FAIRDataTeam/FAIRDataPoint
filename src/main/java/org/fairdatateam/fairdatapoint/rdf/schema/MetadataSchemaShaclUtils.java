@@ -32,7 +32,7 @@ import org.eclipse.rdf4j.model.vocabulary.SHACL;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 public class MetadataSchemaShaclUtils {
 

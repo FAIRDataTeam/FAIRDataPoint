@@ -36,7 +36,7 @@ import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.eclipse.rdf4j.rio.*;
 import org.eclipse.rdf4j.rio.helpers.BasicWriterSettings;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter;
-import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
+import org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,9 +47,9 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getSubjectBy;
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.getResource;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.s;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.getResource;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.s;
 
 public class RdfIOUtil {
 

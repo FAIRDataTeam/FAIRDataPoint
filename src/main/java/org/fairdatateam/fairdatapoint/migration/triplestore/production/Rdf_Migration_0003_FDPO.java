@@ -41,8 +41,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.s;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.s;
 
 @RdfMigrationAnnotation(
         number = 3,

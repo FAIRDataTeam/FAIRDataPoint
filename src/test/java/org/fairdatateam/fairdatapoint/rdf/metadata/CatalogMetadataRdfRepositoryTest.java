@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

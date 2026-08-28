@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.migration.triplestore.development;
 
 import org.fairdatateam.fairdatapoint.rdf.metadata.Agent;
-import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
+import org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.*;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataFactoryImpl implements MetadataFactory {

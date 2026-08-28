@@ -20,28 +20,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.util;
+package org.fairdatateam.fairdatapoint.common.util;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import lombok.*;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
-public class IriValidator implements ConstraintValidator<ValidIri, String> {
+import static java.lang.String.format;
 
-    @Override
-    public void initialize(ValidIri text) {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@Builder(toBuilder = true)
+public class SemVer implements Comparable<SemVer> {
+
+    private int major;
+
+    private int minor;
+
+    private int patch;
+
+    public SemVer(String semverString) {
+        final List<Integer> parts = Arrays
+                .stream(semverString.split("\\."))
+                .map(Integer::parseInt)
+                .toList();
+        major = parts.get(0);
+        minor = parts.get(1);
+        patch = parts.get(2);
     }
 
     @Override
-    public boolean isValid(String text, ConstraintValidatorContext cxt) {
-        try {
-            i(text);
-            return true;
+    public int compareTo(SemVer other) {
+        if (other == null) {
+            return 1;
         }
-        catch (Exception exception) {
-            return false;
-        }
+        return Comparator.comparing(SemVer::getMajor)
+                .thenComparing(SemVer::getMinor)
+                .thenComparing(SemVer::getPatch)
+                .compare(this, other);
     }
 
+    public boolean isSuccessor(SemVer version) {
+        return compareTo(version) > 0;
+    }
+
+    public String toString() {
+        return format("%d.%d.%d", major, minor, patch);
+    }
 }

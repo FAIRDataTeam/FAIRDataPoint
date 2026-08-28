@@ -46,8 +46,8 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getChildren;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
-import static org.fairdatateam.fairdatapoint.util.ThrowingFunction.suppress;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
+import static org.fairdatateam.fairdatapoint.common.util.ThrowingFunction.suppress;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 
 @Slf4j
 public abstract class AbstractMetadataService implements MetadataService {

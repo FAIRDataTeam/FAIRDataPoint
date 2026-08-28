@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.*;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 
 @Service
 public class ProfileService {

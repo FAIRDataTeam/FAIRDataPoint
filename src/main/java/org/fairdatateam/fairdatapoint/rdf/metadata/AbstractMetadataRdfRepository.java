@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadResource;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadResource;
 
 @Slf4j
 public abstract class AbstractMetadataRdfRepository implements MetadataRdfRepository {

@@ -20,27 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.util;
+package org.fairdatateam.fairdatapoint.common.util;
 
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindException;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
-public class ValidationUtil {
+import java.lang.annotation.*;
 
-    public static <T> void validationFailed(
-            String field, String code, String defaultMessage, T reqDto
-    ) throws BindException {
-        final BeanPropertyBindingResult error =
-                new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
-        error.rejectValue(field, code, defaultMessage);
-        throw new BindException(error);
-    }
+@Documented
+@Constraint(validatedBy = SemVerValidator.class)
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE_USE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidSemVer {
 
-    public static <T> void uniquenessValidationFailed(String field, T reqDto) throws BindException {
-        final BeanPropertyBindingResult error =
-                new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
-        error.rejectValue(field, "Uniqueness", "must be unique");
-        throw new BindException(error);
-    }
+    String message() default "Invalid version specification";
 
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }

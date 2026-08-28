@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.util;
 
+import org.fairdatateam.fairdatapoint.common.util.SemVer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

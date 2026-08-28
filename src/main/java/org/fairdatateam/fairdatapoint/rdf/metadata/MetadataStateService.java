@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
 public class MetadataStateService {

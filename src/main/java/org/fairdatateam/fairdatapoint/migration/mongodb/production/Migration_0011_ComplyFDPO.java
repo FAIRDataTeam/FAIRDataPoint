@@ -29,7 +29,7 @@ import com.mongodb.client.MongoDatabase;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.bson.Document;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Profile;
 
 import java.util.*;
 
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadClassResource;
 
 @ChangeLog(order = "0011")
 @Profile(Profiles.PRODUCTION)

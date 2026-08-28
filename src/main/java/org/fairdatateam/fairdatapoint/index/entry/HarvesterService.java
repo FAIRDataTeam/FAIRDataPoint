@@ -43,12 +43,12 @@ import java.util.*;
 
 import static java.util.Optional.ofNullable;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getChildren;
-import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRdfContentType;
+import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.getRdfContentType;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.read;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.readFile;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getSubjectsBy;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service

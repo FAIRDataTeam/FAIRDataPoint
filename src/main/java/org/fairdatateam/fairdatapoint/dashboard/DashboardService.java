@@ -46,7 +46,7 @@ import java.util.Optional;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getTitle;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
 public class DashboardService {

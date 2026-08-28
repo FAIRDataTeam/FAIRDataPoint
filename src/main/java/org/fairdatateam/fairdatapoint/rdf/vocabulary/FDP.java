@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.rdf.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
 
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 public final class FDP {
 

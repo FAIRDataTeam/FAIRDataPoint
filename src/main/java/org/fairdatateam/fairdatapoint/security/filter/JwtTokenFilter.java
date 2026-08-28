@@ -41,7 +41,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
-import static org.fairdatateam.fairdatapoint.util.HttpUtil.getToken;
+import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.getToken;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {

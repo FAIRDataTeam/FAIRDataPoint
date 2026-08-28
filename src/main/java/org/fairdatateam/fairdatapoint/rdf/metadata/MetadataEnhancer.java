@@ -28,7 +28,7 @@ import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
 import org.fairdatateam.fairdatapoint.profile.ProfileService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
-import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
+import org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.DATACITE;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
@@ -50,8 +50,8 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.*;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.containsObject;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
 @Service
 public class MetadataEnhancer {

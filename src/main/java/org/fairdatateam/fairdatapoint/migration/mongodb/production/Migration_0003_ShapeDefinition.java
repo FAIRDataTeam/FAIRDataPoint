@@ -27,11 +27,11 @@ import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadClassResource;
 
 @ChangeLog(order = "0003")
 @Profile(Profiles.PRODUCTION)

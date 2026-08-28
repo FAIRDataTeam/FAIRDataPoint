@@ -20,35 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.util;
+package org.fairdatateam.fairdatapoint.common.util;
 
-import java.util.function.Function;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
 
-@FunctionalInterface
-public interface ThrowingFunction<T, R, E extends Throwable> {
+public class ValidationUtil {
 
-    static <T, R, E extends Throwable> Function<T, R> suppress(ThrowingFunction<T, R, E> func) {
-        return param -> {
-            try {
-                return func.apply(param);
-            }
-            catch (Throwable throwable) {
-                return null;
-            }
-        };
+    public static <T> void validationFailed(
+            String field, String code, String defaultMessage, T reqDto
+    ) throws BindException {
+        final BeanPropertyBindingResult error =
+                new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
+        error.rejectValue(field, code, defaultMessage);
+        throw new BindException(error);
     }
 
-    static <T, R, E extends Throwable> Function<T, R> unchecked(ThrowingFunction<T, R, E> func) {
-        return param -> {
-            try {
-                return func.apply(param);
-            }
-            catch (Throwable throwable) {
-                throw new RuntimeException(throwable);
-            }
-        };
+    public static <T> void uniquenessValidationFailed(String field, T reqDto) throws BindException {
+        final BeanPropertyBindingResult error =
+                new BeanPropertyBindingResult(reqDto, reqDto.getClass().getName());
+        error.rejectValue(field, "Uniqueness", "must be unique");
+        throw new BindException(error);
     }
-
-    R apply(T param) throws E;
 
 }

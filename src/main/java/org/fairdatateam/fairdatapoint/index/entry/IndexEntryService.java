@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryStateDTO.*;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service

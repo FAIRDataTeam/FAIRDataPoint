@@ -44,9 +44,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadResource;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadResource;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
 @Service
 public class SearchService {

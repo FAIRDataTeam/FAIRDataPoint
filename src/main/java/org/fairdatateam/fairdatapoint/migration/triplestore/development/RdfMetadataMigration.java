@@ -43,7 +43,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
 public class RdfMetadataMigration implements Migration {

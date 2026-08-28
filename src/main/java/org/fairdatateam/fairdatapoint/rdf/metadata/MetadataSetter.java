@@ -33,8 +33,8 @@ import org.eclipse.rdf4j.model.vocabulary.*;
 import java.util.List;
 
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.update;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
 public class MetadataSetter {
 

@@ -36,8 +36,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.fairdatateam.fairdatapoint.util.HttpUtil.getRequestURL;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.getRequestURL;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Tag(name = "Client")
 @RestController

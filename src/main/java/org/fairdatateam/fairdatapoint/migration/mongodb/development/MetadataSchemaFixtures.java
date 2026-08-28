@@ -26,8 +26,8 @@ import lombok.SneakyThrows;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaDraft;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaType;
-import org.fairdatateam.fairdatapoint.util.SemVer;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.common.util.SemVer;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.fairdatateam.fairdatapoint.util.SpringResourceReader.loadClassResource;
+import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadClassResource;
 
 @Service
 public class MetadataSchemaFixtures {

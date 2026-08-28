@@ -30,7 +30,7 @@ import org.springframework.validation.BindException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.fairdatateam.fairdatapoint.util.ValidationUtil.uniquenessValidationFailed;
+import static org.fairdatateam.fairdatapoint.common.util.ValidationUtil.uniquenessValidationFailed;
 
 @Service
 public class ResourceDefinitionValidator {

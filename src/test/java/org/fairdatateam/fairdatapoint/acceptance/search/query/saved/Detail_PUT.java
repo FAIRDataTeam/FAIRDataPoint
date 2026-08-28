@@ -30,7 +30,7 @@ import org.fairdatateam.fairdatapoint.migration.mongodb.development.SearchSavedQ
 import org.fairdatateam.fairdatapoint.search.SearchSavedQueryRepository;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;
-import org.fairdatateam.fairdatapoint.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.fairdatateam.fairdatapoint.util.ValueFactoryHelper;
+import org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.i;
-import static org.fairdatateam.fairdatapoint.util.ValueFactoryHelper.l;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
 public class MetadataGetter {
 
