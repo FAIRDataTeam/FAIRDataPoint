@@ -67,13 +67,18 @@ public class Migration_0021_UpdateMongoTypeMapperClassNames {
             // The following changes are related to the current refactoring.
             new Change(ACL, "className", METADATA),
             new Change("apiKey", CLASS, "org.fairdatateam.fairdatapoint.security.apikey.ApiKey"),
+            new Change("event", CLASS, "org.fairdatateam.fairdatapoint.index.event.Event"),
             new Change("indexEntry", CLASS, "org.fairdatateam.fairdatapoint.index.entry.IndexEntry"),
+            new Change("indexSettings", CLASS, "org.fairdatateam.fairdatapoint.index.settings.IndexSettings"),
             new Change("membership", CLASS, "org.fairdatateam.fairdatapoint.security.membership.Membership"),
             new Change("metadata", CLASS, METADATA),
             new Change("metadataSchema", CLASS, "org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema"),
+            new Change("metadataSchemaDraft", CLASS, "org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaDraft"),
             new Change("resourceDefinition", CLASS, "org.fairdatateam.fairdatapoint.resource.ResourceDefinition"),
+            new Change("searchSavedQuery", CLASS, "org.fairdatateam.fairdatapoint.search.SearchSavedQuery"),
             new Change("settings", CLASS, "org.fairdatateam.fairdatapoint.settings.Settings"),
-            new Change("user", CLASS, "org.fairdatateam.fairdatapoint.user.User")
+            new Change("user", CLASS, "org.fairdatateam.fairdatapoint.user.User"),
+            new Change("webhook", CLASS, "org.fairdatateam.fairdatapoint.index.webhook.Webhook")
     );
 
     private final MongoTemplate mongoTemplate;
