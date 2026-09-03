@@ -39,7 +39,6 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -66,33 +65,48 @@ public class GenericController {
 
     private static final String MSG_ERROR_DRAFT_FORBIDDEN = "You are not allowed to view this record in state DRAFT";
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private final CurrentUserProvider currentUserProvider;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final GenericMetadataRdfRepository metadataRepository;
 
-    @Autowired
-    private MetadataSchemaService metadataSchemaService;
+    private final MetadataEnhancer metadataEnhancer;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataSchemaService metadataSchemaService;
 
-    @Autowired
-    private MetadataEnhancer metadataEnhancer;
+    private final MetadataServiceFactory metadataServiceFactory;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private GenericMetadataRdfRepository metadataRepository;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
+
+    /**
+     * Constructor (autowired)
+     */
+    public GenericController(
+            @Qualifier("persistentUrl") String persistentUrl,
+            CurrentUserProvider currentUserProvider,
+            GenericMetadataRdfRepository metadataRepository,
+            MetadataEnhancer metadataEnhancer,
+            MetadataSchemaService metadataSchemaService,
+            MetadataServiceFactory metadataServiceFactory,
+            MetadataStateService metadataStateService,
+            ResourceDefinitionService resourceDefinitionService,
+            SearchFilterCache searchFilterCache
+    ) {
+        this.persistentUrl = persistentUrl;
+        this.currentUserProvider = currentUserProvider;
+        this.metadataRepository = metadataRepository;
+        this.metadataEnhancer = metadataEnhancer;
+        this.metadataSchemaService = metadataSchemaService;
+        this.metadataServiceFactory = metadataServiceFactory;
+        this.metadataStateService = metadataStateService;
+        this.resourceDefinitionService = resourceDefinitionService;
+        this.searchFilterCache = searchFilterCache;
+    }
 
     @Operation(hidden = true)
     @GetMapping(path = {"/spec", "{oUrlPrefix:[^.]+}/spec"}, produces = "!application/json")
