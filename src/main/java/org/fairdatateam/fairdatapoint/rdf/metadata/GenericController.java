@@ -64,8 +64,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @RequestMapping("/")
 public class GenericController {
 
-    private static final String MSG_ERROR_DRAFT_FORBIDDEN =
-            "You are not allow to view this record in state DRAFT";
+    private static final String MSG_ERROR_DRAFT_FORBIDDEN = "You are not allowed to view this record in state DRAFT";
 
     @Autowired
     @Qualifier("persistentUrl")
