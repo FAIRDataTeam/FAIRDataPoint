@@ -42,7 +42,6 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -60,60 +59,84 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @Service
 public class ResetService {
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
-
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
 
-    @Autowired
-    private IRI license;
+    private final AclCache aclCache;
 
-    @Autowired
-    private IRI language;
+    private final AclRepository aclRepository;
 
-    @Autowired
-    private Repository repository;
+    private final ApiKeyRepository apiKeyRepository;
 
-    @Autowired
-    private ApiKeyRepository apiKeyRepository;
+    private final GenericMetadataService genericMetadataService;
 
-    @Autowired
-    private MembershipRepository membershipRepository;
+    private final IRI language;
 
-    @Autowired
-    private AclRepository aclRepository;
+    private final IRI license;
 
-    @Autowired
-    private AclCache aclCache;
+    private final MembershipRepository membershipRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final MetadataRepository metadataRepository;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final String persistentUrl;
 
-    @Autowired
-    private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
+    private final Repository repository;
 
-    @Autowired
-    private MetadataRepository metadataRepository;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
-    @Autowired
-    private GenericMetadataService genericMetadataService;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private final SettingsService settingsService;
+
+    private final UserRepository userRepository;
+
+    /**
+     * Constructor (autowired)
+     * @noinspection SpringJavaInjectionPointsAutowiringInspection (only for aclRepository)
+     */
+    public ResetService(
+            AclCache aclCache,
+            AclRepository aclRepository,
+            ApiKeyRepository apiKeyRepository,
+            GenericMetadataService genericMetadataService,
+            IRI language,
+            IRI license,
+            MembershipRepository membershipRepository,
+            MetadataRepository metadataRepository,
+            MetadataSchemaRepository metadataSchemaRepository,
+            MongoTemplate mongoTemplate,
+            @Qualifier("persistentUrl") String persistentUrl,
+            Repository repository,
+            ResourceDefinitionCache resourceDefinitionCache,
+            ResourceDefinitionRepository resourceDefinitionRepository,
+            ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache,
+            SettingsService settingsService,
+            UserRepository userRepository
+    ) {
+        this.aclCache = aclCache;
+        this.aclRepository = aclRepository;
+        this.apiKeyRepository = apiKeyRepository;
+        this.genericMetadataService = genericMetadataService;
+        this.language = language;
+        this.license = license;
+        this.membershipRepository = membershipRepository;
+        this.metadataRepository = metadataRepository;
+        this.metadataSchemaRepository = metadataSchemaRepository;
+        this.mongoTemplate = mongoTemplate;
+        this.persistentUrl = persistentUrl;
+        this.repository = repository;
+        this.resourceDefinitionCache = resourceDefinitionCache;
+        this.resourceDefinitionRepository = resourceDefinitionRepository;
+        this.resourceDefinitionTargetClassesCache = resourceDefinitionTargetClassesCache;
+        this.settingsService = settingsService;
+        this.userRepository = userRepository;
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public void resetToFactoryDefaults(ResetDTO reqDto) throws Exception {
