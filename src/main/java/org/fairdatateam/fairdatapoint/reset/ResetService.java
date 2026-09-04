@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.reset;
 
 import com.mongodb.client.MongoCollection;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -57,6 +58,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ResetService {
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
@@ -64,6 +66,7 @@ public class ResetService {
 
     private final AclCache aclCache;
 
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection */
     private final AclRepository aclRepository;
 
     private final ApiKeyRepository apiKeyRepository;
@@ -82,6 +85,7 @@ public class ResetService {
 
     private final MongoTemplate mongoTemplate;
 
+    @Qualifier("persistentUrl")
     private final String persistentUrl;
 
     private final Repository repository;
@@ -95,48 +99,6 @@ public class ResetService {
     private final SettingsService settingsService;
 
     private final UserRepository userRepository;
-
-    /**
-     * Constructor (autowired)
-     * @noinspection SpringJavaInjectionPointsAutowiringInspection (only for aclRepository)
-     */
-    public ResetService(
-            AclCache aclCache,
-            AclRepository aclRepository,
-            ApiKeyRepository apiKeyRepository,
-            GenericMetadataService genericMetadataService,
-            IRI language,
-            IRI license,
-            MembershipRepository membershipRepository,
-            MetadataRepository metadataRepository,
-            MetadataSchemaRepository metadataSchemaRepository,
-            MongoTemplate mongoTemplate,
-            @Qualifier("persistentUrl") String persistentUrl,
-            Repository repository,
-            ResourceDefinitionCache resourceDefinitionCache,
-            ResourceDefinitionRepository resourceDefinitionRepository,
-            ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache,
-            SettingsService settingsService,
-            UserRepository userRepository
-    ) {
-        this.aclCache = aclCache;
-        this.aclRepository = aclRepository;
-        this.apiKeyRepository = apiKeyRepository;
-        this.genericMetadataService = genericMetadataService;
-        this.language = language;
-        this.license = license;
-        this.membershipRepository = membershipRepository;
-        this.metadataRepository = metadataRepository;
-        this.metadataSchemaRepository = metadataSchemaRepository;
-        this.mongoTemplate = mongoTemplate;
-        this.persistentUrl = persistentUrl;
-        this.repository = repository;
-        this.resourceDefinitionCache = resourceDefinitionCache;
-        this.resourceDefinitionRepository = resourceDefinitionRepository;
-        this.resourceDefinitionTargetClassesCache = resourceDefinitionTargetClassesCache;
-        this.settingsService = settingsService;
-        this.userRepository = userRepository;
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public void resetToFactoryDefaults(ResetDTO reqDto) throws Exception {

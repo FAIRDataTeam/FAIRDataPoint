@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.security.acl;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -45,22 +46,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import static java.lang.String.format;
 
 @Configuration
+@RequiredArgsConstructor
 public class AclConfig {
 
     public static final String ACL_CACHE = "ACL_CACHE";
 
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection */
     private final AclRepository aclRepository;
 
     private final MongoTemplate mongoTemplate;
-
-    /**
-     * Constructor (autowired)
-     * @noinspection SpringJavaInjectionPointsAutowiringInspection (only for aclRepository)
-     */
-    public AclConfig(AclRepository aclRepository, MongoTemplate mongoTemplate) {
-        this.aclRepository = aclRepository;
-        this.mongoTemplate = mongoTemplate;
-    }
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {

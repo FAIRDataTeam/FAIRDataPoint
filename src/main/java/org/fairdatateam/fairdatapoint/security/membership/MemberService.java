@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.security.membership;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.user.User;
@@ -41,10 +42,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
 
     private final AclCache aclCache;
 
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection */
     private final AclRepository aclRepository;
 
     private final CurrentUserProvider currentUserProvider;
@@ -58,30 +61,6 @@ public class MemberService {
     private final PermissionService permissionService;
 
     private final UserRepository userRepository;
-
-    /**
-     * Constructor (autowired)
-     * @noinspection SpringJavaInjectionPointsAutowiringInspection (only for aclRepository)
-     */
-    public MemberService(
-            AclCache aclCache,
-            AclRepository aclRepository,
-            CurrentUserProvider currentUserProvider,
-            MemberMapper memberMapper,
-            MembershipRepository membershipRepository,
-            MutableAclService aclService,
-            PermissionService permissionService,
-            UserRepository userRepository
-    ) {
-        this.aclCache = aclCache;
-        this.aclRepository = aclRepository;
-        this.currentUserProvider = currentUserProvider;
-        this.memberMapper = memberMapper;
-        this.membershipRepository = membershipRepository;
-        this.aclService = aclService;
-        this.permissionService = permissionService;
-        this.userRepository = userRepository;
-    }
 
     @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> List<MemberDTO> getMembers(String entityId, Class<T> entityType) {
