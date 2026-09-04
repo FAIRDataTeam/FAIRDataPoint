@@ -23,7 +23,6 @@
 package org.fairdatateam.fairdatapoint.security.acl;
 
 import org.fairdatateam.fairdatapoint.user.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +49,16 @@ public class AclConfig {
 
     public static final String ACL_CACHE = "ACL_CACHE";
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private final AclRepository aclRepository;
 
-    @Autowired
-    private AclRepository aclRepository;
+    private final MongoTemplate mongoTemplate;
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    public AclConfig(AclRepository aclRepository, MongoTemplate mongoTemplate) {
+        this.aclRepository = aclRepository;
+        this.mongoTemplate = mongoTemplate;
+    }
+
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
