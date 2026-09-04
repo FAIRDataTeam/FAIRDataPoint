@@ -26,7 +26,6 @@ import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
@@ -39,27 +38,41 @@ import static java.lang.String.format;
 @Service
 public class AclMigration implements Migration {
 
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final AclCache aclCache;
 
-    @Autowired
-    private UserFixtures userFixtures;
+    private final AclRepository aclRepository;
 
-    @Autowired
-    private MembershipFixtures membershipFixtures;
+    private final MemberService memberService;
 
-    @Autowired
-    private AclRepository aclRepository;
+    private final MembershipFixtures membershipFixtures;
 
-    @Autowired
-    private MemberService memberService;
+    private final MongoAuthenticationService mongoAuthenticationService;
 
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private final String persistentUrl;
 
-    @Autowired
-    private AclCache aclCache;
+    private final UserFixtures userFixtures;
+
+    /**
+     * Constructor (autowired)
+     * @noinspection SpringJavaInjectionPointsAutowiringInspection (only for aclRepository)
+     */
+    public AclMigration(
+            AclCache aclCache,
+            AclRepository aclRepository,
+            MemberService memberService,
+            MembershipFixtures membershipFixtures,
+            MongoAuthenticationService mongoAuthenticationService,
+            @Qualifier("persistentUrl") String persistentUrl,
+            UserFixtures userFixtures
+    ) {
+        this.aclCache = aclCache;
+        this.aclRepository = aclRepository;
+        this.memberService = memberService;
+        this.membershipFixtures = membershipFixtures;
+        this.mongoAuthenticationService = mongoAuthenticationService;
+        this.persistentUrl = persistentUrl;
+        this.userFixtures = userFixtures;
+    }
 
     public void runMigration() {
         aclRepository.deleteAll();
