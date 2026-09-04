@@ -52,15 +52,6 @@ public class List_POST extends WebIntegrationTest {
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
 
-    @Autowired
-    private AclRepository aclRepository;
-
-    @Autowired
-    private AclCache aclCache;
-
-    @Autowired
-    private RdfMetadataMigration rdfMetadataMigration;
-
     private URI url() {
         return URI.create("/catalog");
     }

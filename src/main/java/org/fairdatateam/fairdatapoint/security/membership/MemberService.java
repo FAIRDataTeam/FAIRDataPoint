@@ -22,12 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.security.membership;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.domain.BasePermission;
@@ -42,31 +42,25 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
 
-    @Autowired
-    private MutableAclService aclService;
+    private final AclCache aclCache;
 
-    @Autowired
-    private MembershipRepository membershipRepository;
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
+    private final AclRepository aclRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final CurrentUserProvider currentUserProvider;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final MemberMapper memberMapper;
 
-    @Autowired
-    private PermissionService permissionService;
+    private final MembershipRepository membershipRepository;
 
-    @Autowired
-    private MemberMapper memberMapper;
+    private final MutableAclService aclService;
 
-    @Autowired
-    private AclRepository aclRepository;
+    private final PermissionService permissionService;
 
-    @Autowired
-    private AclCache aclCache;
+    private final UserRepository userRepository;
 
     @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> List<MemberDTO> getMembers(String entityId, Class<T> entityType) {

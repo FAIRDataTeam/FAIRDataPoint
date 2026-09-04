@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.reset;
 
 import com.mongodb.client.MongoCollection;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -42,7 +43,6 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -58,62 +58,47 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ResetService {
-
-    @Autowired
-    @Qualifier("persistentUrl")
-    private String persistentUrl;
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
 
-    @Autowired
-    private IRI license;
+    private final AclCache aclCache;
 
-    @Autowired
-    private IRI language;
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
+    private final AclRepository aclRepository;
 
-    @Autowired
-    private Repository repository;
+    private final ApiKeyRepository apiKeyRepository;
 
-    @Autowired
-    private ApiKeyRepository apiKeyRepository;
+    private final GenericMetadataService genericMetadataService;
 
-    @Autowired
-    private MembershipRepository membershipRepository;
+    private final IRI language;
 
-    @Autowired
-    private AclRepository aclRepository;
+    private final IRI license;
 
-    @Autowired
-    private AclCache aclCache;
+    private final MembershipRepository membershipRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final MetadataRepository metadataRepository;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    @Qualifier("persistentUrl")
+    private final String persistentUrl;
 
-    @Autowired
-    private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
+    private final Repository repository;
 
-    @Autowired
-    private MetadataRepository metadataRepository;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
-    @Autowired
-    private GenericMetadataService genericMetadataService;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private final SettingsService settingsService;
+
+    private final UserRepository userRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
     public void resetToFactoryDefaults(ResetDTO reqDto) throws Exception {

@@ -22,11 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
@@ -37,29 +37,24 @@ import org.springframework.stereotype.Service;
 import static java.lang.String.format;
 
 @Service
+@RequiredArgsConstructor
 public class AclMigration implements Migration {
 
-    @Autowired
+    private final AclCache aclCache;
+
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
+    private final AclRepository aclRepository;
+
+    private final MemberService memberService;
+
+    private final MembershipFixtures membershipFixtures;
+
+    private final MongoAuthenticationService mongoAuthenticationService;
+
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private UserFixtures userFixtures;
-
-    @Autowired
-    private MembershipFixtures membershipFixtures;
-
-    @Autowired
-    private AclRepository aclRepository;
-
-    @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
-
-    @Autowired
-    private AclCache aclCache;
+    private final UserFixtures userFixtures;
 
     public void runMigration() {
         aclRepository.deleteAll();

@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.security.acl;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -46,15 +46,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import static java.lang.String.format;
 
 @Configuration
+@RequiredArgsConstructor
 public class AclConfig {
 
     public static final String ACL_CACHE = "ACL_CACHE";
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
+    private final AclRepository aclRepository;
 
-    @Autowired
-    private AclRepository aclRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
@@ -76,9 +76,7 @@ public class AclConfig {
 
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
-        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(
-                format("ROLE_%s", UserRole.ADMIN.toString()))
-        );
+        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(format("ROLE_%s", UserRole.ADMIN.name())));
     }
 
     @Bean
