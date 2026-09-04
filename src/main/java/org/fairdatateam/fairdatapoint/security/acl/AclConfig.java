@@ -82,9 +82,7 @@ public class AclConfig {
 
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
-        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(
-                format("ROLE_%s", UserRole.ADMIN.toString()))
-        );
+        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(format("ROLE_%s", UserRole.ADMIN)));
     }
 
     @Bean
