@@ -47,7 +47,7 @@ public class MemberService {
 
     private final AclCache aclCache;
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection */
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
     private final AclRepository aclRepository;
 
     private final CurrentUserProvider currentUserProvider;

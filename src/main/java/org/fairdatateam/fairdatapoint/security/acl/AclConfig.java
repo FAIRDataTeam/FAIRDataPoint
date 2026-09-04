@@ -51,7 +51,7 @@ public class AclConfig {
 
     public static final String ACL_CACHE = "ACL_CACHE";
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection */
+    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
     private final AclRepository aclRepository;
 
     private final MongoTemplate mongoTemplate;
