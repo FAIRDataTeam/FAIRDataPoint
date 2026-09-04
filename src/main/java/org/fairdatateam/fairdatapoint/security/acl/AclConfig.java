@@ -53,12 +53,14 @@ public class AclConfig {
 
     private final MongoTemplate mongoTemplate;
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    /**
+     * Constructor (autowired)
+     * @noinspection SpringJavaInjectionPointsAutowiringInspection
+     */
     public AclConfig(AclRepository aclRepository, MongoTemplate mongoTemplate) {
         this.aclRepository = aclRepository;
         this.mongoTemplate = mongoTemplate;
     }
-
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
