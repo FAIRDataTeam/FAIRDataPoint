@@ -61,7 +61,7 @@ public class MemberService {
 
     /**
      * Constructor (autowired)
-     * @noinspection SpringJavaInjectionPointsAutowiringInspection
+     * @noinspection SpringJavaInjectionPointsAutowiringInspection (only for aclRepository)
      */
     public MemberService(
             AclCache aclCache,

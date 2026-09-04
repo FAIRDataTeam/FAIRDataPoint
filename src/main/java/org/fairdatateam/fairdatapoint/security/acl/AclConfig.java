@@ -55,7 +55,7 @@ public class AclConfig {
 
     /**
      * Constructor (autowired)
-     * @noinspection SpringJavaInjectionPointsAutowiringInspection
+     * @noinspection SpringJavaInjectionPointsAutowiringInspection (only for aclRepository)
      */
     public AclConfig(AclRepository aclRepository, MongoTemplate mongoTemplate) {
         this.aclRepository = aclRepository;
