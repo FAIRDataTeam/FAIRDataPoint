@@ -61,18 +61,18 @@
         <!-- Core -->
         <springdoc-openapi-starter-webmvc-ui.version>3.1.0</springdoc-openapi-starter-webmvc-ui.version>
         <mongock-bom.version>5.5.1</mongock-bom.version>
-        <rdf4j-bom.version>6.0.0</rdf4j-bom.version>
+        <rdf4j-bom.version>6.0.1</rdf4j-bom.version>
         <jjwt-api.version>0.13.0</jjwt-api.version>
 
         <!-- Plugins -->
-        <license-maven-plugin.version>5.1.1</license-maven-plugin.version>
+        <license-maven-plugin.version>5.1.2</license-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <git-commit-id-maven-plugin.version>10.0.0</git-commit-id-maven-plugin.version>
+        <git-commit-id-maven-plugin.version>10.0.1</git-commit-id-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <checkstyle.version>13.8.0</checkstyle.version>
         <spring-javaformat-checkstyle.version>0.0.48</spring-javaformat-checkstyle.version>
-        <spotbugs-maven-plugin.version>4.10.3.0</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.10.4.0</spotbugs-maven-plugin.version>
 
         <!-- required for mockito to function properly (#890) -->
         <argLine/>
