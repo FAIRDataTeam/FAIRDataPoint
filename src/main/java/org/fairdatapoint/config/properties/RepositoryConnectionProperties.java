@@ -44,11 +44,14 @@ public class RepositoryConnectionProperties {
 
     public static final int TYPE_BLAZEGRAPH = 5;
 
+    public static final int TYPE_VIRTUOSO = 6;
+
     private int type;
     private RepositoryNativeProperties nativeRepo;
     private RepositoryBasicProperties agraph;
     private RepositoryBasicProperties graphDb;
     private RepositoryBasicProperties blazegraph;
+    private RepositoryBasicProperties virtuoso;
 
     public void setNative(RepositoryNativeProperties repositoryNativeProperties) {
         this.nativeRepo = repositoryNativeProperties;
@@ -61,6 +64,7 @@ public class RepositoryConnectionProperties {
             case TYPE_ALLEGRO -> "AllegroGraph";
             case TYPE_GRAPHDB -> "GraphDB";
             case TYPE_BLAZEGRAPH -> "Blazegraph";
+            case TYPE_VIRTUOSO -> "Virtuoso";
             default -> "Invalid";
         };
     }
@@ -77,6 +81,7 @@ public class RepositoryConnectionProperties {
             case TYPE_ALLEGRO -> agraph.getUrl();
             case TYPE_GRAPHDB -> graphDb.getUrl();
             case TYPE_BLAZEGRAPH -> blazegraph.getUrl();
+            case TYPE_VIRTUOSO -> virtuoso.getUrl();
             default -> null;
         };
     }
@@ -94,6 +99,7 @@ public class RepositoryConnectionProperties {
         return switch (type) {
             case TYPE_ALLEGRO -> agraph.getUsername();
             case TYPE_GRAPHDB -> graphDb.getUsername();
+            case TYPE_VIRTUOSO -> virtuoso.getUsername();
             default -> null;
         };
     }
@@ -102,6 +108,7 @@ public class RepositoryConnectionProperties {
         return switch (type) {
             case TYPE_ALLEGRO -> agraph.getPassword();
             case TYPE_GRAPHDB -> graphDb.getPassword();
+            case TYPE_VIRTUOSO -> virtuoso.getPassword();
             default -> null;
         };
     }
