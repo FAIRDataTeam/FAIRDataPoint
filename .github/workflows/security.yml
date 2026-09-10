@@ -55,6 +55,8 @@ jobs:
   snyk:
     name: Snyk (Maven)
     runs-on: ubuntu-latest
+    # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#example-only-run-job-for-specific-repository
+    if: github.repository == 'FAIRDataTeam/FAIRDataPoint'
     permissions:
       actions: read
       contents: read
@@ -75,6 +77,7 @@ jobs:
   snyk-docker:
     name: Snyk (Docker)
     runs-on: ubuntu-latest
+    if: github.repository == 'FAIRDataTeam/FAIRDataPoint'
     permissions:
       actions: read
       contents: read
