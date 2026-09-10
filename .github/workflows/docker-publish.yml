@@ -41,6 +41,8 @@ jobs:
     # Nevertheless, it does provide extra verification for the release case as well.
     needs: publish
     runs-on: ubuntu-latest
+    # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#example-only-run-job-for-specific-repository
+    if: github.repository == 'FAIRDataTeam/FAIRDataPoint'
     steps:
       - name: determine docker image version from ref_name
         # We need to remove the leading "v" from version strings like "v1.2.3", but not from tags like "very-nice".
