@@ -19,6 +19,10 @@ RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevisi
 
 FROM eclipse-temurin:25-jdk-alpine
 
+# apply Alpine security updates that the published temurin tag lags behind
+# (must run as root, i.e. before switching to the non-root user)
+RUN apk upgrade --no-cache
+
 # add non-root user to run the app
 # https://spring.io/guides/gs/spring-boot-docker
 RUN addgroup -S spring && adduser -S spring -G spring

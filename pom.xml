@@ -64,6 +64,12 @@
         <rdf4j-bom.version>6.0.1</rdf4j-bom.version>
         <jjwt-api.version>0.13.0</jjwt-api.version>
 
+        <!-- Security overrides of spring-boot managed versions (remove once spring-boot catches up) -->
+        <!-- CVE-2026-65182, CVE-2026-65905, CVE-2026-68525: fixed in tomcat 11.0.25 -->
+        <tomcat.version>11.0.25</tomcat.version>
+        <!-- CVE-2025-67030: plexus-utils 3.2.0 is pulled in by mongock -> maven-artifact 3.6.1, fixed in 3.6.1+ -->
+        <plexus-utils.version>3.6.2</plexus-utils.version>
+
         <!-- Plugins -->
         <license-maven-plugin.version>5.1.2</license-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
@@ -95,6 +101,12 @@
                 <version>${rdf4j-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <!-- transitive via mongock -> maven-artifact, pinned to a version without CVE-2025-67030 -->
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
