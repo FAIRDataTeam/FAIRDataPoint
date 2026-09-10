@@ -39,6 +39,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -49,7 +50,22 @@ public class JwtService {
 
     private static final Long DAY_MS = 24 * 60 * 60 * 1000L;
 
-    @Value("${security.jwt.token.secret-key}")
+    /**
+     * Minimum secret size for HS256, see RFC 7518 section 3.2 (key length >= hash output length, 256 bits).
+     */
+    static final int MIN_SECRET_KEY_BYTES = 32;
+
+    static final String MSG_SECRET_KEY_MISSING =
+            "No JWT signing secret configured. Set the FDP_JWT_SECRET_KEY environment variable "
+                    + "(or the security.jwt.token.secret-key property) to a random value of at least "
+                    + MIN_SECRET_KEY_BYTES + " bytes, e.g. generated with `openssl rand -base64 48`.";
+
+    static final String MSG_SECRET_KEY_TOO_SHORT =
+            "The configured JWT signing secret is too short: HS256 requires at least "
+                    + MIN_SECRET_KEY_BYTES + " bytes. Set FDP_JWT_SECRET_KEY to a longer random value, "
+                    + "e.g. generated with `openssl rand -base64 48`.";
+
+    @Value("${security.jwt.token.secret-key:}")
     private String secretKey;
 
     @Value("${security.jwt.token.expiration:14}")
@@ -71,9 +87,25 @@ public class JwtService {
 
     @PostConstruct
     protected void init() {
+        validateSecretKey(secretKey);
+        // NOTE: the key material is the Base64 text of the secret (kept as-is for compatibility with tokens
+        // issued by earlier versions; changing this would invalidate all existing tokens).
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
         parser = Jwts.parser().setSigningKey(key).build();
+    }
+
+    /**
+     * Fail fast on a missing or weak signing secret, instead of silently signing tokens with a
+     * predictable key. There is deliberately no default value for the secret.
+     */
+    static void validateSecretKey(String secretKey) {
+        if (secretKey == null || secretKey.isBlank()) {
+            throw new IllegalStateException(MSG_SECRET_KEY_MISSING);
+        }
+        if (secretKey.getBytes(StandardCharsets.UTF_8).length < MIN_SECRET_KEY_BYTES) {
+            throw new IllegalStateException(MSG_SECRET_KEY_TOO_SHORT);
+        }
     }
 
     public String createToken(AuthDTO authDTO) {
