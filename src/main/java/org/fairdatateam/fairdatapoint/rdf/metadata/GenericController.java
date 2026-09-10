@@ -375,10 +375,9 @@ public class GenericController {
 
                 // 4.3 Retrieve children metadata only for requested page
                 final int childrenCount = children.size();
-                children.stream().skip((long) page * size).limit(size)
-                        .map(childUri -> retrieveChildModel(childMetadataService, childUri))
-                        .flatMap(Optional::stream)
-                        .forEach(resultRdf::addAll);
+                for (Value childUri : children.stream().skip((long) page * size).limit(size).toList()) {
+                    resultRdf.addAll(childMetadataService.retrieve(i(childUri.stringValue())));
+                }
 
                 // 4.4 Set Link headers and send response
                 final HttpHeaders responseHeaders = new HttpHeaders();
@@ -427,16 +426,6 @@ public class GenericController {
         }
 
         return String.join(", ", links);
-    }
-
-    private Optional<Model> retrieveChildModel(MetadataService childMetadataService, Value childUri) {
-        try {
-            final Model childModel = childMetadataService.retrieve(i(childUri.stringValue()));
-            return Optional.of(childModel);
-        }
-        catch (MetadataServiceException exception) {
-            return Optional.empty();
-        }
     }
 
     private String createLink(String entityUrl, String childPrefix, int page, int size, String rel) {
