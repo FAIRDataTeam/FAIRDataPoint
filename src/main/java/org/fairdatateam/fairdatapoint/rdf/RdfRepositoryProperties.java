@@ -46,11 +46,14 @@ public class RdfRepositoryProperties {
 
     public static final int TYPE_BLAZEGRAPH = 5;
 
+    public static final int TYPE_VIRTUOSO = 6;
+
     private int type;
     private RdfRepositoryNativeProperties nativeRepo;
     private RdfRepositoryBasicProperties agraph;
     private RdfRepositoryBasicProperties graphDb;
     private RdfRepositoryBasicProperties blazegraph;
+    private RdfRepositoryBasicProperties virtuoso;
 
     public void setNative(RdfRepositoryNativeProperties rdfRepositoryNativeProperties) {
         this.nativeRepo = rdfRepositoryNativeProperties;
@@ -63,6 +66,7 @@ public class RdfRepositoryProperties {
             case TYPE_ALLEGRO -> "AllegroGraph";
             case TYPE_GRAPHDB -> "GraphDB";
             case TYPE_BLAZEGRAPH -> "Blazegraph";
+            case TYPE_VIRTUOSO -> "Virtuoso";
             default -> "Invalid";
         };
     }
@@ -79,6 +83,7 @@ public class RdfRepositoryProperties {
             case TYPE_ALLEGRO -> agraph.getUrl();
             case TYPE_GRAPHDB -> graphDb.getUrl();
             case TYPE_BLAZEGRAPH -> blazegraph.getUrl();
+            case TYPE_VIRTUOSO -> virtuoso.getUrl();
             default -> null;
         };
     }
@@ -96,6 +101,7 @@ public class RdfRepositoryProperties {
         return switch (type) {
             case TYPE_ALLEGRO -> agraph.getUsername();
             case TYPE_GRAPHDB -> graphDb.getUsername();
+            case TYPE_VIRTUOSO -> virtuoso.getUsername();
             default -> null;
         };
     }
@@ -104,6 +110,7 @@ public class RdfRepositoryProperties {
         return switch (type) {
             case TYPE_ALLEGRO -> agraph.getPassword();
             case TYPE_GRAPHDB -> graphDb.getPassword();
+            case TYPE_VIRTUOSO -> virtuoso.getPassword();
             default -> null;
         };
     }

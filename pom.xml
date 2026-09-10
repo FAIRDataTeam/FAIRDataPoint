@@ -243,6 +243,15 @@
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-repository-manager</artifactId>
         </dependency>
+        <!-- Already a transitive runtime dependency via rdf4j-http-client (RDF4J's own default
+             HTTP backend); declared explicitly here at compile scope so RdfRepositoryConfig can
+             reference ApacheHC5RDF4JHttpClient directly to configure Digest auth for Virtuoso.
+             Adds no new library, just makes an already-shipped one visible at compile time. -->
+        <dependency>
+            <groupId>org.eclipse.rdf4j</groupId>
+            <artifactId>rdf4j-http-client-apache5</artifactId>
+            <version>${rdf4j-bom.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-jsonld</artifactId>
