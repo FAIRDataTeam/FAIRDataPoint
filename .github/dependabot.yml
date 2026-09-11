@@ -34,3 +34,9 @@ updates:
       interval: "daily"
     labels:
       - "dependencies"
+    allow:
+      # don't do major upgrades
+      - dependency-name: "eclipse-temurin:*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
