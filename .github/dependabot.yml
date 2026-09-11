@@ -2,12 +2,12 @@
 version: 2
 updates:
   - package-ecosystem: "maven"
-    # Look for `requirements.*` files in the `root` directory
+    # Where to look for the pom.xml
     directory: "/"
-    # Check the registry for updates every week
+    # How often to check the registry for updates
     schedule:
       interval: "daily"
-    # Add labels to generated PRs
+    # Which labels to add to generated PRs
     labels:
       - "dependencies"
     # Group minor updates and patch updates, except for spring-boot-starter-parent updates,
