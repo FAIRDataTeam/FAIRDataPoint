@@ -17,7 +17,10 @@ RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevisi
 ################################################################################
 # BUILD IMAGE
 
-FROM eclipse-temurin:25-jdk-alpine
+FROM eclipse-temurin:25.0.4_7-jre-alpine
+
+# Upgrade OS packages to apply latest security patches
+RUN apk upgrade --no-cache
 
 # add non-root user to run the app
 # https://spring.io/guides/gs/spring-boot-docker
