@@ -4,7 +4,7 @@
 ################################################################################
 # BUILD JAR
 
-FROM maven:3.9.16-eclipse-temurin-25-alpine AS builder
+FROM maven:3-eclipse-temurin-26-alpine AS builder
 
 WORKDIR /builder
 
