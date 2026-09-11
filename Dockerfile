@@ -17,7 +17,7 @@ RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevisi
 ################################################################################
 # BUILD IMAGE
 
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:25.0.4_7-jre-alpine
 
 # Upgrade OS packages to apply latest security patches
 RUN apk upgrade --no-cache
