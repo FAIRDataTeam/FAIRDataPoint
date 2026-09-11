@@ -19,6 +19,9 @@ RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevisi
 
 FROM eclipse-temurin:25-jre-alpine
 
+# Upgrade OS packages to apply latest security patches
+RUN apk upgrade --no-cache
+
 # add non-root user to run the app
 # https://spring.io/guides/gs/spring-boot-docker
 RUN addgroup -S spring && adduser -S spring -G spring
