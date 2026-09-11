@@ -6,7 +6,7 @@ updates:
     directory: "/"
     # Check the registry for updates every week
     schedule:
-      interval: "weekly"
+      interval: "daily"
     # Add labels to generated PRs
     labels:
       - "dependencies"
