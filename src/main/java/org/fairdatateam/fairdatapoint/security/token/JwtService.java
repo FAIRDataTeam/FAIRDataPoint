@@ -48,8 +48,6 @@ import java.util.Optional;
 @Component
 public class JwtService {
 
-    private static final Long DAY_MS = 24 * 60 * 60 * 1000L;
-
     /**
      * Minimum secret size for HS256, see RFC 7518 section 3.2 (key length >= hash output length, 256 bits).
      */
@@ -65,6 +63,8 @@ public class JwtService {
 
     static final String MSG_SECRET_KEY_TOO_SHORT =
             "The configured JWT signing secret is too short. " + MSG_SECRET_KEY_INSTRUCTION;
+
+    private static final Long DAY_MS = 24 * 60 * 60 * 1000L;
 
     @Value("${security.jwt.token.secret-key:}")
     private String secretKey;
