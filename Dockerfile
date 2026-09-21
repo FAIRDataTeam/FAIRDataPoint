@@ -4,7 +4,7 @@
 ################################################################################
 # BUILD JAR
 
-FROM maven:3-eclipse-temurin-25-alpine AS builder
+FROM maven:3.9.16-eclipse-temurin-25-alpine AS builder
 
 WORKDIR /builder
 
@@ -17,10 +17,9 @@ RUN mvn --quiet --batch-mode --update-snapshots --fail-fast -DskipTests -Drevisi
 ################################################################################
 # BUILD IMAGE
 
-FROM eclipse-temurin:25-jdk-alpine
+FROM eclipse-temurin:25.0.4_7-jre-alpine
 
-# apply Alpine security updates that the published temurin tag lags behind
-# (must run as root, i.e. before switching to the non-root user)
+# Upgrade OS packages to apply latest security patches
 RUN apk upgrade --no-cache
 
 # add non-root user to run the app

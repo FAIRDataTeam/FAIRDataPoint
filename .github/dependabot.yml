@@ -2,28 +2,49 @@
 version: 2
 updates:
   - package-ecosystem: "maven"
-    # Look for `requirements.*` files in the `root` directory
+    # Where to look for the pom.xml
     directory: "/"
-    # Check the registry for updates every week
+    # How often to check the registry for updates
     schedule:
-      interval: "weekly"
-    # Add labels to generated PRs
+      interval: "daily"
+    # Which labels to add to generated PRs
     labels:
       - "dependencies"
-    # Group minor updates and patch updates, except for spring-boot-starter-parent updates,
-    # and create separate PRs for updates that do not match any grouping rule.
+    # Spring-boot updates are always considered separately, regardless of semver level,because of the many transitive dependencies.
+    # Other *major* updates are also considered separately because they often require closer scrutiny.
+    # Non-major updates are grouped to reduce the number of PRs.
+    # Note that group rules are applied in order, so the first match wins.
     groups:
-      minor-or-patch:
+      spring-boot:
+        applies-to: version-updates
+        patterns:
+          - "*spring-boot-starter-parent*"
+      major:
         applies-to: version-updates
         update-types:
-          - "minor"
-          - "patch"
+          - "major"
         exclude-patterns:
           - "*spring-boot-starter-parent*"
-
+      non-major:
+        applies-to: version-updates
+        exclude-patterns:
+          - "*spring-boot-starter-parent*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     labels:
       - "dependencies"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+    allow:
+      # don't do major upgrades
+      - dependency-name: "*eclipse-temurin*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
