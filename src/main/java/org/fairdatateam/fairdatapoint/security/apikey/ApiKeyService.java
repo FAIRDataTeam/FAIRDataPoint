@@ -32,11 +32,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ApiKeyService {
@@ -62,24 +62,29 @@ public class ApiKeyService {
         if (user.isEmpty()) {
             throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
-        return apiKeyRepository.findByUserUuid(user.get().getUuid().toString())
+        return apiKeyRepository.findByUserUuid(user.get().getUuid())
                 .stream()
                 .map(apiKeyMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
+    @Transactional
     public ApiKeyDTO create() {
+        // the current user is loaded inside this transaction, so it is a managed entity that can
+        // be attached to the new API key straight away
         final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
-        final String generatedString = RandomStringUtils.random(TOKEN_SIZE, true, true);
-        final String uuid = UUID.randomUUID().toString();
-        final ApiKey apiKey = new ApiKey(null, uuid, user.get().getUuid().toString(), generatedString);
-        apiKeyRepository.save(apiKey);
-        return apiKeyMapper.toDTO(apiKey);
+        final ApiKey apiKey = ApiKey.builder()
+                .uuid(UUID.randomUUID())
+                .user(user.get())
+                .token(RandomStringUtils.secure().next(TOKEN_SIZE, true, true))
+                .build();
+        return apiKeyMapper.toDTO(apiKeyRepository.save(apiKey));
     }
 
+    @Transactional
     public boolean delete(String uuid) {
         final Optional<ApiKey> apiKey = apiKeyRepository.findByUuid(uuid);
         if (apiKey.isEmpty()) {
@@ -90,7 +95,7 @@ public class ApiKeyService {
             throw new ForbiddenException(MSG_LOGIN_FIRST);
         }
         if (user.get().getRole().equals(UserRole.ADMIN)
-                || apiKey.get().getUserUuid().equals(user.get().getUuid().toString())) {
+                || apiKey.get().getUser().getUuid().equals(user.get().getUuid())) {
             apiKeyRepository.delete(apiKey.get());
             return true;
         }
@@ -100,11 +105,11 @@ public class ApiKeyService {
     }
 
     public Authentication getAuthentication(String token) {
-        final Optional<ApiKey> apiKey = apiKeyRepository.findByToken(token);
-        if (apiKey.isEmpty()) {
+        final Optional<UUID> uuid = apiKeyRepository.findUserUuidByToken(token);
+        if (uuid.isEmpty()) {
             throw new UnauthorizedException("Invalid or non-existing API key");
         }
-        return authenticationService.getAuthentication(apiKey.get().getUserUuid());
+        return authenticationService.getAuthentication(uuid.get().toString());
     }
 
 }

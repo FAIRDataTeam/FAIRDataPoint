@@ -60,7 +60,7 @@ public class Detail_DELETE extends WebIntegrationTest {
         // GIVEN:
         ApiKey apikey = apikeyFixtures.albertApiKey();
         RequestEntity<Void> request = RequestEntity
-                .delete(url(apikey.getUuid()))
+                .delete(url(apikey.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -77,14 +77,14 @@ public class Detail_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
         ApiKey apikey = apikeyFixtures.albertApiKey();
-        createNoUserForbiddenTestDelete(client, url(apikey.getUuid()));
+        createNoUserForbiddenTestDelete(client, url(apikey.getUuid().toString()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an owner")
     public void res403_apikey() {
         ApiKey apikey = apikeyFixtures.nikolaApiKey();
-        createUserForbiddenTestDelete(client, url(apikey.getUuid()));
+        createUserForbiddenTestDelete(client, url(apikey.getUuid().toString()));
     }
 
     @Test

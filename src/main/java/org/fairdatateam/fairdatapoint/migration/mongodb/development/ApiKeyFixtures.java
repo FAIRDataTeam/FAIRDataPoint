@@ -26,6 +26,8 @@ import org.fairdatateam.fairdatapoint.security.apikey.ApiKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class ApiKeyFixtures {
 
@@ -35,25 +37,27 @@ public class ApiKeyFixtures {
     public static final String NIKOLA_API_KEY =
             "dd5dc3b53b6145cfa9f6c58b72ebad21cd2f860ace62451ba4e3c74a0e63540a";
 
+    private static final String ALBERT_API_KEY_UUID = "a1c00673-24c5-4e0a-bdbe-22e961ee7548";
+
+    private static final String NIKOLA_API_KEY_UUID = "62657760-21fe-488c-a0ea-f612a70493da";
+
     @Autowired
     private UserFixtures userFixtures;
 
     public ApiKey albertApiKey() {
-        return new ApiKey(
-                null,
-                "a1c00673-24c5-4e0a-bdbe-22e961ee7548",
-                userFixtures.albert().getUuid().toString(),
-                ALBERT_API_KEY
-        );
+        return ApiKey.builder()
+                .uuid(UUID.fromString(ALBERT_API_KEY_UUID))
+                .user(userFixtures.albert())
+                .token(ALBERT_API_KEY)
+                .build();
     }
 
     public ApiKey nikolaApiKey() {
-        return new ApiKey(
-                null,
-                "62657760-21fe-488c-a0ea-f612a70493da",
-                userFixtures.nikola().getUuid().toString(),
-                NIKOLA_API_KEY
-        );
+        return ApiKey.builder()
+                .uuid(UUID.fromString(NIKOLA_API_KEY_UUID))
+                .user(userFixtures.nikola())
+                .token(NIKOLA_API_KEY)
+                .build();
     }
 
 }

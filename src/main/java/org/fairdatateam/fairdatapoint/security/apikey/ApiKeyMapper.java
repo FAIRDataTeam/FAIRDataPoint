@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class ApiKeyMapper {
 
     public ApiKeyDTO toDTO(ApiKey apiKey) {
-        return new ApiKeyDTO(apiKey.getUuid(), apiKey.getToken());
+        return new ApiKeyDTO(apiKey.getUuid().toString(), apiKey.getToken());
     }
 
 }
