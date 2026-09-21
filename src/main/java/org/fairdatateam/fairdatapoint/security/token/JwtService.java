@@ -55,15 +55,16 @@ public class JwtService {
      */
     static final int MIN_SECRET_KEY_BYTES = 32;
 
+    static final String MSG_SECRET_KEY_INSTRUCTION = """
+            Set the `FDP_JWT_SECRET_KEY` environment variable (or the `security.jwt.token.secret-key` property) \
+            to a random value of at least %d bytes, for example, generated with `openssl rand -base64 48`.
+            """.formatted(MIN_SECRET_KEY_BYTES);
+
     static final String MSG_SECRET_KEY_MISSING =
-            "No JWT signing secret configured. Set the FDP_JWT_SECRET_KEY environment variable "
-                    + "(or the security.jwt.token.secret-key property) to a random value of at least "
-                    + MIN_SECRET_KEY_BYTES + " bytes, e.g. generated with `openssl rand -base64 48`.";
+            "No JWT signing secret configured. " + MSG_SECRET_KEY_INSTRUCTION;
 
     static final String MSG_SECRET_KEY_TOO_SHORT =
-            "The configured JWT signing secret is too short: HS256 requires at least "
-                    + MIN_SECRET_KEY_BYTES + " bytes. Set FDP_JWT_SECRET_KEY to a longer random value, "
-                    + "e.g. generated with `openssl rand -base64 48`.";
+            "The configured JWT signing secret is too short. " + MSG_SECRET_KEY_INSTRUCTION;
 
     @Value("${security.jwt.token.secret-key:}")
     private String secretKey;
