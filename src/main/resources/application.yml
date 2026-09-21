@@ -51,7 +51,7 @@ security:
       # deployment. Changing it invalidates all issued tokens.
       secret-key: ${FDP_JWT_SECRET_KEY:}
 
-# valid repository type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph}
+# valid repository type options {1 = inMemoryStore, 2 = NativeStore, 3 = AllegroGraph, 4 = graphDB, 5 = blazegraph, 6 = virtuoso}
 repository:
   type: ${FDP_TRIPLE_STORE_TYPE:1}
   native:
@@ -68,6 +68,10 @@ repository:
   blazegraph:
     url: ${FDP_TRIPLE_STORE_URL:http://localhost:8888/blazegraph}
     repository: ${FDP_TRIPLE_STORE_REPOSITORY:test}
+  virtuoso:
+    url: ${FDP_TRIPLE_STORE_URL:http://localhost:8890}
+    username: ${FDP_TRIPLE_STORE_USERNAME:dba}
+    password: ${FDP_TRIPLE_STORE_PASSWORD:password}
 
 metadataProperties:
   language: ${FDP_METADATA_LANGUAGE:http://id.loc.gov/vocabulary/iso639-1/en}
