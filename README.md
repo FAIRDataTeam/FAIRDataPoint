@@ -59,10 +59,10 @@ $ mvn test
 
 ### Create a Docker image
 
-To build a Docker image, run this from the project root:
+To build a Docker image for local testing, run the following command from the project root:
 
 ```bash
-$ docker build -f Dockerfile -t fairdatapoint:local .
+docker build --build-arg PROJECT_VERSION=<local-version> --tag <local-tag> .
 ```
 
 ## Security

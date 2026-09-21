@@ -59,10 +59,17 @@
         <spring-security-acl-mongodb.version>6.0.5</spring-security-acl-mongodb.version>
 
         <!-- Core -->
-        <springdoc-openapi-starter-webmvc-ui.version>3.1.0</springdoc-openapi-starter-webmvc-ui.version>
+        <springdoc-openapi-starter-webmvc-ui.version>3.1.1</springdoc-openapi-starter-webmvc-ui.version>
         <mongock-bom.version>5.5.1</mongock-bom.version>
-        <rdf4j-bom.version>6.0.1</rdf4j-bom.version>
+        <rdf4j-bom.version>6.1.0</rdf4j-bom.version>
         <jjwt-api.version>0.13.0</jjwt-api.version>
+
+        <!-- Temporary overrides of spring-boot managed versions (todo: remove once spring-boot catches up) -->
+        <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html -->
+        <tomcat.version>11.0.26</tomcat.version>
+
+        <!-- Transitive dependency override (todo: remove when #937 is fixed) -->
+        <plexus-utils.version>3.6.2</plexus-utils.version>
 
         <!-- Plugins -->
         <license-maven-plugin.version>5.1.2</license-maven-plugin.version>
@@ -70,9 +77,9 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <git-commit-id-maven-plugin.version>10.0.1</git-commit-id-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-        <checkstyle.version>14.0.0</checkstyle.version>
+        <checkstyle.version>14.1.0</checkstyle.version>
         <spring-javaformat-checkstyle.version>0.0.48</spring-javaformat-checkstyle.version>
-        <spotbugs-maven-plugin.version>4.10.4.0</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.10.4.1</spotbugs-maven-plugin.version>
 
         <!-- required for mockito to function properly (#890) -->
         <argLine/>
@@ -95,6 +102,12 @@
                 <version>${rdf4j-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <!-- override transitive dependency mongock -> maven-artifact (todo: remove when #937 is fixed) -->
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
