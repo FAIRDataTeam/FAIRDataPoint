@@ -23,12 +23,12 @@ updates:
         applies-to: version-updates
         update-types:
           - "major"
-        patterns:
-          - "*"
+        exclude-patterns:
+          - "*spring-boot-starter-parent*"
       non-major:
         applies-to: version-updates
-        patterns:
-          - "*"
+        exclude-patterns:
+          - "*spring-boot-starter-parent*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
