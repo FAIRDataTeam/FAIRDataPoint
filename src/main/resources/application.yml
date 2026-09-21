@@ -20,7 +20,9 @@ spring:
   mongodb:
     representation:
       uuid: standard
-    uri: mongodb://${FDP_MONGO_HOST:mongo}:${FDP_MONGO_PORT:27017}/${FDP_MONGO_DB:fdp}
+    host: ${FDP_MONGO_HOST:mongo}
+    port: ${FDP_MONGO_PORT:27017}
+    database: ${FDP_MONGO_DB:fdp}
   profiles:
     active: production
   task:
@@ -97,3 +99,23 @@ server:
   # `proxy_set_header X-Forwarded-For $remote_addr;` instead of `$proxy_add_x_forwarded_for`.
   # https://docs.spring.io/spring-boot/how-to/webserver.html#howto.webserver.use-behind-a-proxy-server
   forward-headers-strategy: native
+
+---
+# Activate the `mongo-auth` profile (e.g. SPRING_PROFILES_ACTIVE=production,mongo-auth) to connect
+# to a MongoDB instance that requires authentication. Defining username/password/authentication-database
+# as empty-string properties in the default document above (rather than omitting them) breaks every
+# no-auth deployment: Spring's Mongo auto-configuration builds a MongoCredential as soon as a username
+# property exists at all, even if it resolves to "". Keeping this profile-gated document separate means
+# the default document never defines those keys, so existing no-auth installs are unaffected.
+# Note these live under `spring.mongodb.*`, matching the connection properties above -- NOT
+# `spring.data.mongodb.*`, which has no username/password fields at all and silently ignores
+# anything placed under it (Mongo autoconfiguration is modularized: the real connection
+# properties class lives in its own module now and binds under `spring.mongodb`).
+spring:
+  config:
+    activate:
+      on-profile: mongo-auth
+  mongodb:
+    username: ${FDP_MONGO_USERNAME}
+    password: ${FDP_MONGO_PASSWORD}
+    authentication-database: ${FDP_MONGO_AUTH_DB:admin}
