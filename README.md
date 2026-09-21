@@ -73,6 +73,19 @@ We use [JWT Tokens](https://jwt.io/) and [Bearer Token Authentication](https://s
 A token can be obtained by posting username and password to the `/tokens` endpoint.
 For more details, visit the FDP OpenAPI documentation at `/swagger-ui.html`.
 
+### JWT signing secret (required)
+
+Tokens are signed with a secret that **must** be provided per deployment via the `FDP_JWT_SECRET_KEY` environment variable (or the `security.jwt.token.secret-key` property).
+There is no default: the FDP refuses to start when the secret is missing or shorter than 32 bytes.
+Generate a suitable value with, for example:
+
+```bash
+$ openssl rand -base64 48
+```
+
+Keep the secret private and unique per deployment. Changing it invalidates all tokens issued so far.
+The `development` profile ships a throw-away secret so local runs work without configuration; never expose an FDP running with that profile.
+
 By default, the FDP sets up the following *default users*.
 
 >[!WARNING]

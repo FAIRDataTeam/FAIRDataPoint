@@ -5,6 +5,9 @@ security:
   jwt:
     token:
       expiration: 999
+      # Development-only signing secret so `mvn spring-boot:run -Dspring-boot.run.profiles=development`
+      # works out of the box. Never use the development profile for a deployment reachable by others.
+      secret-key: ${FDP_JWT_SECRET_KEY:development-only-jwt-secret-do-not-use-in-production}
 
 spring:
   mongodb:
