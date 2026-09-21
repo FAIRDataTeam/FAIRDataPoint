@@ -64,6 +64,13 @@
         <rdf4j-bom.version>6.1.0</rdf4j-bom.version>
         <jjwt-api.version>0.13.0</jjwt-api.version>
 
+        <!-- Temporary overrides of spring-boot managed versions (todo: remove once spring-boot catches up) -->
+        <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html -->
+        <tomcat.version>11.0.26</tomcat.version>
+
+        <!-- Transitive dependency override (todo: remove when #937 is fixed) -->
+        <plexus-utils.version>3.6.2</plexus-utils.version>
+
         <!-- Plugins -->
         <license-maven-plugin.version>5.1.2</license-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
@@ -95,6 +102,12 @@
                 <version>${rdf4j-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <!-- override transitive dependency mongock -> maven-artifact (todo: remove when #937 is fixed) -->
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
