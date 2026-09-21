@@ -10,17 +10,25 @@ updates:
     # Add labels to generated PRs
     labels:
       - "dependencies"
-    # Group minor updates and patch updates, except for spring-boot-starter-parent updates,
-    # and create separate PRs for updates that do not match any grouping rule.
+    # Spring-boot updates are always considered separately, regardless of semver level,because of the many transitive dependencies.
+    # Other *major* updates are also considered separately because they often require closer scrutiny.
+    # Non-major updates are grouped to reduce the number of PRs.
+    # Note that group rules are applied in order, so the first match wins.
     groups:
-      minor-or-patch:
+      spring-boot:
+        applies-to: version-updates
+        patterns:
+          - "*spring-boot-starter-parent*"
+      major:
         applies-to: version-updates
         update-types:
-          - "minor"
-          - "patch"
-        exclude-patterns:
-          - "*spring-boot-starter-parent*"
-
+          - "major"
+        patterns:
+          - "*"
+      non-major:
+        applies-to: version-updates
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
