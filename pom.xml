@@ -69,7 +69,7 @@
         <tomcat.version>11.0.26</tomcat.version>
 
         <!-- Transitive dependency override (todo: remove when #937 is fixed) -->
-        <plexus-utils.version>3.6.2</plexus-utils.version>
+        <plexus-utils.version>4.1.0</plexus-utils.version>
 
         <!-- Plugins -->
         <license-maven-plugin.version>5.1.2</license-maven-plugin.version>
