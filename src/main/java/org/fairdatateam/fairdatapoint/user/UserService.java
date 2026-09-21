@@ -26,8 +26,10 @@ import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.user.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,15 +56,17 @@ public class UserService {
     @Autowired
     private MemberService memberService;
 
+    @Transactional(readOnly = true)
     public List<UserDTO> getUsers() {
         return
                 userRepository
-                        .findAll()
+                        .findAll(Sort.by("email"))
                         .stream()
                         .map(userMapper::toDTO)
                         .toList();
     }
 
+    @Transactional(readOnly = true)
     public Optional<UserDTO> getUserByUuid(String uuid) {
         return
                 userRepository
@@ -70,15 +74,16 @@ public class UserService {
                         .map(userMapper::toDTO);
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public UserDTO createUser(UserCreateDTO reqDto) {
         userValidator.validateEmail(null, reqDto.getEmail());
-        final String uuid = UUID.randomUUID().toString();
+        final UUID uuid = UUID.randomUUID();
         final User user = userMapper.fromCreateDTO(reqDto, uuid);
-        userRepository.save(user);
-        return userMapper.toDTO(user);
+        return userMapper.toDTO(userRepository.save(user));
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<UserDTO> updateUser(String uuid, UserChangeDTO reqDto) {
         final Optional<User> user = userRepository.findByUuid(uuid);
@@ -87,21 +92,21 @@ public class UserService {
         }
         userValidator.validateEmail(uuid, reqDto.getEmail());
         final User updatedUser = userMapper.fromChangeDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
-        return of(userMapper.toDTO(updatedUser));
+        return of(userMapper.toDTO(userRepository.save(updatedUser)));
     }
 
+    @Transactional
     public Optional<UserDTO> updateCurrentUser(UserProfileChangeDTO reqDto) {
         final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
-        userValidator.validateEmail(user.get().getUuid(), reqDto.getEmail());
+        userValidator.validateEmail(user.get().getUuid().toString(), reqDto.getEmail());
         final User updatedUser = userMapper.fromProfileChangeDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
-        return of(userMapper.toDTO(updatedUser));
+        return of(userMapper.toDTO(userRepository.save(updatedUser)));
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<UserDTO> updatePassword(String uuid, UserPasswordDTO reqDto) {
         final Optional<User> user = userRepository.findByUuid(uuid);
@@ -109,18 +114,17 @@ public class UserService {
             return empty();
         }
         final User updatedUser = userMapper.fromPasswordDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
-        return of(userMapper.toDTO(updatedUser));
+        return of(userMapper.toDTO(userRepository.save(updatedUser)));
     }
 
+    @Transactional
     public Optional<UserDTO> updatePasswordForCurrentUser(UserPasswordDTO reqDto) {
         final Optional<User> user = currentUserProvider.getCurrentUser();
         if (user.isEmpty()) {
             return empty();
         }
         final User updatedUser = userMapper.fromPasswordDTO(reqDto, user.get());
-        userRepository.save(updatedUser);
-        return of(userMapper.toDTO(updatedUser));
+        return of(userMapper.toDTO(userRepository.save(updatedUser)));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -129,8 +133,10 @@ public class UserService {
         if (user.isEmpty()) {
             return false;
         }
-        userRepository.delete(user.get());
+        // The ACL cleanup still lives in MongoDB, so it is run before the delete and outside a JPA
+        // transaction; this is a transition period and ACLs move to JDBC in PR 4.
         memberService.deleteMembers(user.get());
+        userRepository.delete(user.get());
         return true;
     }
 }

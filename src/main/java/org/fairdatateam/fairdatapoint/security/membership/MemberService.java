@@ -90,7 +90,7 @@ public class MemberService {
         final User user = oUser.get();
         final List<Permission> permissions = acl.getEntries()
                 .stream()
-                .filter(ace -> ace.getSid().equals(new PrincipalSid(user.getUuid())))
+                .filter(ace -> ace.getSid().equals(new PrincipalSid(user.getUuid().toString())))
                 .map(AccessControlEntry::getPermission)
                 .collect(Collectors.toList());
 
@@ -179,7 +179,7 @@ public class MemberService {
         final MutableAcl acl = retrieveAcl(entityId, entityType);
         return acl.getEntries()
                 .stream()
-                .filter(ace -> ((PrincipalSid) ace.getSid()).getPrincipal().equals(user.getUuid()))
+                .filter(ace -> ((PrincipalSid) ace.getSid()).getPrincipal().equals(user.getUuid().toString()))
                 .map(AccessControlEntry::getPermission)
                 .anyMatch(permission2 -> permission2.getMask() == permission.getMask());
     }
@@ -188,7 +188,7 @@ public class MemberService {
         final List<MongoAcl> acls = aclRepository.findAll();
         for (MongoAcl acl : acls) {
             acl.getPermissions()
-                    .removeIf(permission -> permission.getSid().getName().equals(user.getUuid()));
+                    .removeIf(permission -> permission.getSid().getName().equals(user.getUuid().toString()));
             aclRepository.save(acl);
         }
         aclCache.clearCache();

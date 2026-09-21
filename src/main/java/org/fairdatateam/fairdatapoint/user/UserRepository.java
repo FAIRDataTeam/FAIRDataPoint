@@ -22,13 +22,33 @@
  */
 package org.fairdatateam.fairdatapoint.user;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends MongoRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
-    Optional<User> findByUuid(String uuid);
+    Optional<User> findByUuid(UUID uuid);
+
+    /**
+     * Looks a user up by the string form of its identifier, as it arrives from the REST API or
+     * from a JWT subject. A malformed identifier is treated as "no such user" instead of an error.
+     *
+     * @param uuid identifier in string form, possibly malformed
+     * @return the user, or empty if the identifier is malformed or unknown
+     */
+    default Optional<User> findByUuid(String uuid) {
+        if (uuid == null) {
+            return Optional.empty();
+        }
+        try {
+            return findByUuid(UUID.fromString(uuid));
+        }
+        catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
+    }
 
     Optional<User> findByEmail(String email);
 

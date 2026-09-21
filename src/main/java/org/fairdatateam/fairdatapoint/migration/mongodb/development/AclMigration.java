@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
-import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
@@ -49,7 +49,7 @@ public class AclMigration implements Migration {
 
     private final MembershipFixtures membershipFixtures;
 
-    private final MongoAuthenticationService mongoAuthenticationService;
+    private final AuthenticationService authenticationService;
 
     @Qualifier("persistentUrl")
     private final String persistentUrl;
@@ -60,11 +60,11 @@ public class AclMigration implements Migration {
         aclRepository.deleteAll();
         aclCache.clearCache();
 
-        final String albertUuid = userFixtures.albert().getUuid();
-        final String nicolaUuid = userFixtures.nikola().getUuid();
+        final String albertUuid = userFixtures.albert().getUuid().toString();
+        final String nicolaUuid = userFixtures.nikola().getUuid().toString();
         final String ownerUuid = membershipFixtures.owner().getUuid();
         final String dataProviderUuid = membershipFixtures.dataProvider().getUuid();
-        final Authentication auth = mongoAuthenticationService.getAuthentication(albertUuid);
+        final Authentication auth = authenticationService.getAuthentication(albertUuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         // -- Catalog

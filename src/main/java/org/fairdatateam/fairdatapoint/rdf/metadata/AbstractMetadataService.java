@@ -224,7 +224,7 @@ public abstract class AbstractMetadataService implements MetadataService {
         if (user.isEmpty()) {
             return;
         }
-        memberService.createOwner(uri.stringValue(), Metadata.class, user.get().getUuid());
+        memberService.createOwner(uri.stringValue(), Metadata.class, user.get().getUuid().toString());
     }
 
     private void addState(IRI uri) {

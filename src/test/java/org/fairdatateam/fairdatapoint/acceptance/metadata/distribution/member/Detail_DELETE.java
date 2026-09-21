@@ -66,7 +66,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     private void create_res204(String token) {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("distribution-1", userFixtures.nikola().getUuid()))
+                .delete(url("distribution-1", userFixtures.nikola().getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -84,7 +84,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<Void> request = RequestEntity
-                .delete(url("distribution-2", userFixtures.nikola().getUuid()))
+                .delete(url("distribution-2", userFixtures.nikola().getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -100,7 +100,7 @@ public class Detail_DELETE extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing distribution")
     public void res404_nonExistingCatalog() {
-        createUserNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid()));
+        createUserNotFoundTestDelete(client, url("nonExisting", userFixtures.albert().getUuid().toString()));
     }
 
 }

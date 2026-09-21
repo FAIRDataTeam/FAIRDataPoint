@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserMapper {
 
@@ -36,7 +38,7 @@ public class UserMapper {
     public UserDTO toDTO(User user) {
         return
                 new UserDTO(
-                        user.getUuid(),
+                        user.getUuid().toString(),
                         user.getFirstName(),
                         user.getLastName(),
                         user.getEmail(),
@@ -46,21 +48,22 @@ public class UserMapper {
     public UserSimpleDTO toSimpleDTO(User user) {
         return
                 new UserSimpleDTO(
-                        user.getUuid(),
+                        user.getUuid().toString(),
                         user.getFirstName(),
                         user.getLastName(),
                         user.getEmail());
     }
 
-    public User fromCreateDTO(UserCreateDTO dto, String uuid) {
+    public User fromCreateDTO(UserCreateDTO dto, UUID uuid) {
         return
-                new User(
-                        uuid,
-                        dto.getFirstName(),
-                        dto.getLastName(),
-                        dto.getEmail(),
-                        passwordEncoder.encode(dto.getPassword()),
-                        dto.getRole());
+                User.builder()
+                        .uuid(uuid)
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .email(dto.getEmail())
+                        .passwordHash(passwordEncoder.encode(dto.getPassword()))
+                        .role(dto.getRole())
+                        .build();
     }
 
     public User fromChangeDTO(UserChangeDTO dto, User user) {

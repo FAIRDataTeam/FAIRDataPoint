@@ -26,7 +26,7 @@ import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
-import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class ApiKeyService {
     private CurrentUserProvider currentUserProvider;
 
     @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private AuthenticationService authenticationService;
 
     @Autowired
     private ApiKeyMapper apiKeyMapper;
@@ -62,7 +62,7 @@ public class ApiKeyService {
         if (user.isEmpty()) {
             throw new UnauthorizedException(MSG_LOGIN_FIRST);
         }
-        return apiKeyRepository.findByUserUuid(user.get().getUuid())
+        return apiKeyRepository.findByUserUuid(user.get().getUuid().toString())
                 .stream()
                 .map(apiKeyMapper::toDTO)
                 .collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class ApiKeyService {
         }
         final String generatedString = RandomStringUtils.random(TOKEN_SIZE, true, true);
         final String uuid = UUID.randomUUID().toString();
-        final ApiKey apiKey = new ApiKey(null, uuid, user.get().getUuid(), generatedString);
+        final ApiKey apiKey = new ApiKey(null, uuid, user.get().getUuid().toString(), generatedString);
         apiKeyRepository.save(apiKey);
         return apiKeyMapper.toDTO(apiKey);
     }
@@ -90,7 +90,7 @@ public class ApiKeyService {
             throw new ForbiddenException(MSG_LOGIN_FIRST);
         }
         if (user.get().getRole().equals(UserRole.ADMIN)
-                || apiKey.get().getUserUuid().equals(user.get().getUuid())) {
+                || apiKey.get().getUserUuid().equals(user.get().getUuid().toString())) {
             apiKeyRepository.delete(apiKey.get());
             return true;
         }
@@ -104,7 +104,7 @@ public class ApiKeyService {
         if (apiKey.isEmpty()) {
             throw new UnauthorizedException("Invalid or non-existing API key");
         }
-        return mongoAuthenticationService.getAuthentication(apiKey.get().getUserUuid());
+        return authenticationService.getAuthentication(apiKey.get().getUserUuid());
     }
 
 }

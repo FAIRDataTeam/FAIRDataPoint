@@ -60,7 +60,7 @@ public class Detail_DELETE extends WebIntegrationTest {
         // GIVEN:
         User user = userFixtures.albert();
         RequestEntity<Void> request = RequestEntity
-                .delete(url(user.getUuid()))
+                .delete(url(user.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {
@@ -77,14 +77,14 @@ public class Detail_DELETE extends WebIntegrationTest {
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
         User user = userFixtures.albert();
-        createNoUserForbiddenTestDelete(client, url(user.getUuid()));
+        createNoUserForbiddenTestDelete(client, url(user.getUuid().toString()));
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_user() {
         User user = userFixtures.albert();
-        createUserForbiddenTestDelete(client, url(user.getUuid()));
+        createUserForbiddenTestDelete(client, url(user.getUuid().toString()));
     }
 
     @Test

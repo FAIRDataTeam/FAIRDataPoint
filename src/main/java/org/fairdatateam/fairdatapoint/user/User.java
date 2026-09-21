@@ -22,45 +22,58 @@
  */
 package org.fairdatateam.fairdatapoint.user;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@Document
+import java.time.Instant;
+import java.util.UUID;
+
+@Entity
+@Table(name = "user_account")
 @NoArgsConstructor
-@AllArgsConstructor
+// Package-private: Lombok's @Builder needs an all-args constructor to build from, but since
+// @NoArgsConstructor already declares an explicit constructor, Lombok will not synthesize one
+// implicitly; this keeps that constructor out of the public API so User.builder() is the only
+// public way to construct a fully populated instance.
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 @Setter
 @Builder(toBuilder = true)
 public class User {
 
     @Id
-    private ObjectId id;
+    private UUID uuid;
 
-    private String uuid;
-
+    @Column(nullable = false)
     private String firstName;
 
+    @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String passwordHash;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false)
     private UserRole role;
 
-    public User(
-            String uuid, String firstName, String lastName,
-            String email, String passwordHash, UserRole role
-    ) {
-        this.uuid = uuid;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
-    }
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Instant updatedAt;
 
     public boolean isAdmin() {
         return role.equals(UserRole.ADMIN);

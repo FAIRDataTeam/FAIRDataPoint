@@ -28,7 +28,7 @@ import org.fairdatateam.fairdatapoint.security.auth.AuthDTO;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
-import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -80,7 +80,7 @@ public class JwtService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private AuthenticationService authenticationService;
 
     private JwtParser parser;
 
@@ -115,7 +115,7 @@ public class JwtService {
             throw new UsernameNotFoundException("User not found");
         }
         final Authentication auth = new UsernamePasswordAuthenticationToken(
-                user.get().getUuid(),
+                user.get().getUuid().toString(),
                 authDTO.getPassword()
         );
         authenticationManager.authenticate(auth);
@@ -123,7 +123,7 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(String token) {
-        return mongoAuthenticationService.getAuthentication(getUserUuid(token));
+        return authenticationService.getAuthentication(getUserUuid(token));
     }
 
     public String getUserUuid(String token) {

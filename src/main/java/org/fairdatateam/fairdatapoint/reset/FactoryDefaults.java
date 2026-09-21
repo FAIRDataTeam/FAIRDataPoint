@@ -49,6 +49,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadClassResource;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
@@ -83,7 +84,7 @@ public class FactoryDefaults {
     // == USERS
     // Changes: Migration_0001_Init
     public static final User USER_ALBERT = User.builder()
-            .uuid(KnownUUIDs.USER_ALBERT_UUID)
+            .uuid(UUID.fromString(KnownUUIDs.USER_ALBERT_UUID))
             .firstName("Albert")
             .lastName("Einstein")
             .email("albert.einstein@example.com")
@@ -92,7 +93,7 @@ public class FactoryDefaults {
             .build();
 
     public static final User USER_NIKOLA = User.builder()
-            .uuid(KnownUUIDs.USER_NIKOLA_UUID)
+            .uuid(UUID.fromString(KnownUUIDs.USER_NIKOLA_UUID))
             .firstName("Nikola")
             .lastName("Tesla")
             .email("nikola.tesla@example.com")
@@ -400,7 +401,7 @@ public class FactoryDefaults {
     // Repository ACL
     public static Document aclRepository(String persistentUrl) {
         final BasicBSONObject owner = new BasicBSONObject()
-                .append("name", USER_ALBERT.getUuid())
+                .append("name", USER_ALBERT.getUuid().toString())
                 .append("isPrincipal", true);
         final Document acl = new Document();
         // TODO: there is no FDPMetadata class. This was already removed in 2020 (c37890f)

@@ -37,7 +37,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Service
-public class MongoUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
@@ -53,7 +53,7 @@ public class MongoUserDetailsService implements UserDetailsService {
                 new SimpleGrantedAuthority(format("ROLE_%s", user.getRole().name()))
         );
         return new org.springframework.security.core.userdetails.User(
-                user.getUuid(), user.getPasswordHash(), authorities
+                user.getUuid().toString(), user.getPasswordHash(), authorities
         );
     }
 }

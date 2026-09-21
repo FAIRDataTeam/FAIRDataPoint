@@ -53,7 +53,7 @@ public class Common {
     }
 
     public static void compare(User entity, UserDTO dto) {
-        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
+        assertThat(dto.getUuid(), is(equalTo(entity.getUuid().toString())));
         assertThat(dto.getFirstName(), is(equalTo(entity.getFirstName())));
         assertThat(dto.getLastName(), is(equalTo(entity.getLastName())));
         assertThat(dto.getEmail(), is(equalTo(entity.getEmail())));

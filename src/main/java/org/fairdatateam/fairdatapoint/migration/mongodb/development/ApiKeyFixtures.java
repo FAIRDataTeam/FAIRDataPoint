@@ -42,7 +42,7 @@ public class ApiKeyFixtures {
         return new ApiKey(
                 null,
                 "a1c00673-24c5-4e0a-bdbe-22e961ee7548",
-                userFixtures.albert().getUuid(),
+                userFixtures.albert().getUuid().toString(),
                 ALBERT_API_KEY
         );
     }
@@ -51,7 +51,7 @@ public class ApiKeyFixtures {
         return new ApiKey(
                 null,
                 "62657760-21fe-488c-a0ea-f612a70493da",
-                userFixtures.nikola().getUuid(),
+                userFixtures.nikola().getUuid().toString(),
                 NIKOLA_API_KEY
         );
     }

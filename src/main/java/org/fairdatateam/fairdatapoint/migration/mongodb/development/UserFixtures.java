@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserFixtures {
 
@@ -46,47 +48,47 @@ public class UserFixtures {
     private PasswordEncoder passwordEncoder;
 
     public User admin() {
-        return new User(
-                KnownUUIDs.USER_ADMIN_UUID,
-                "Admin",
-                "von Universe",
-                ADMIN_EMAIL,
-                passwordEncoder.encode(PASSWORD),
-                UserRole.ADMIN
-        );
+        return User.builder()
+                .uuid(UUID.fromString(KnownUUIDs.USER_ADMIN_UUID))
+                .firstName("Admin")
+                .lastName("von Universe")
+                .email(ADMIN_EMAIL)
+                .passwordHash(passwordEncoder.encode(PASSWORD))
+                .role(UserRole.ADMIN)
+                .build();
     }
 
     public User albert() {
-        return new User(
-                KnownUUIDs.USER_ALBERT_UUID,
-                "Albert",
-                "Einstein",
-                ALBERT_EMAIL,
-                passwordEncoder.encode(PASSWORD),
-                UserRole.USER
-        );
+        return User.builder()
+                .uuid(UUID.fromString(KnownUUIDs.USER_ALBERT_UUID))
+                .firstName("Albert")
+                .lastName("Einstein")
+                .email(ALBERT_EMAIL)
+                .passwordHash(passwordEncoder.encode(PASSWORD))
+                .role(UserRole.USER)
+                .build();
     }
 
     public User nikola() {
-        return new User(
-                KnownUUIDs.USER_NIKOLA_UUID,
-                "Nikola",
-                "Tesla",
-                NIKOLA_EMAIL,
-                passwordEncoder.encode(PASSWORD),
-                UserRole.USER
-        );
+        return User.builder()
+                .uuid(UUID.fromString(KnownUUIDs.USER_NIKOLA_UUID))
+                .firstName("Nikola")
+                .lastName("Tesla")
+                .email(NIKOLA_EMAIL)
+                .passwordHash(passwordEncoder.encode(PASSWORD))
+                .role(UserRole.USER)
+                .build();
     }
 
     public User isaac() {
-        return new User(
-                KnownUUIDs.USER_ISAAC_UUID,
-                "Isaac",
-                "Newton",
-                ISAAC_EMAIL,
-                passwordEncoder.encode(PASSWORD),
-                UserRole.USER
-        );
+        return User.builder()
+                .uuid(UUID.fromString(KnownUUIDs.USER_ISAAC_UUID))
+                .firstName("Isaac")
+                .lastName("Newton")
+                .email(ISAAC_EMAIL)
+                .passwordHash(passwordEncoder.encode(PASSWORD))
+                .role(UserRole.USER)
+                .build();
     }
 
 }

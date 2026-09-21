@@ -78,7 +78,7 @@ public class Detail_PUT extends WebIntegrationTest {
     private void create_res200(String token) {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("distribution-1", userFixtures.nikola().getUuid()))
+                .put(url("distribution-1", userFixtures.nikola().getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -121,7 +121,7 @@ public class Detail_PUT extends WebIntegrationTest {
     public void res403() {
         // GIVEN:
         RequestEntity<MemberCreateDTO> request = RequestEntity
-                .put(url("distribution-2", userFixtures.nikola().getUuid()))
+                .put(url("distribution-2", userFixtures.nikola().getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -138,7 +138,7 @@ public class Detail_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 404: non-existing distribution")
     public void res404_nonExistingCatalog() {
-        createUserNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid()), reqDto());
+        createUserNotFoundTestPut(client, url("nonExisting", userFixtures.albert().getUuid().toString()), reqDto());
     }
 
 }

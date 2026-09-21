@@ -33,7 +33,7 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateService;
-import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +69,7 @@ public class RdfMetadataMigration implements Migration {
     private ResourceDefinitionFixtures resourceDefinitionFixtures;
 
     @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private AuthenticationService authenticationService;
 
     @Autowired
     private MetadataStateService metadataStateService;
@@ -84,8 +84,8 @@ public class RdfMetadataMigration implements Migration {
             metadataRepository.removeAll();
 
             // 2. Auth user
-            final String adminUuid = userFixtures.admin().getUuid();
-            final Authentication auth = mongoAuthenticationService.getAuthentication(adminUuid);
+            final String adminUuid = userFixtures.admin().getUuid().toString();
+            final Authentication auth = authenticationService.getAuthentication(adminUuid);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             // 3. Load metadata fixtures

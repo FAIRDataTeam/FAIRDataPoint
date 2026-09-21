@@ -30,7 +30,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MongoAuthenticationService {
+public class AuthenticationService {
 
     private static final String DEFAULT_CREDENTIALS = "";
 

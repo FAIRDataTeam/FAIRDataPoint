@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
-import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
+import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,18 +36,18 @@ public class AuthHelper {
     private UserFixtures userFixtures;
 
     @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private AuthenticationService authenticationService;
 
     public void authenticateAsAdmin() {
-        authenticate(userFixtures.admin().getUuid());
+        authenticate(userFixtures.admin().getUuid().toString());
     }
 
     public void authenticateAsAlbert() {
-        authenticate(userFixtures.albert().getUuid());
+        authenticate(userFixtures.albert().getUuid().toString());
     }
 
     private void authenticate(String uuid) {
-        Authentication auth = mongoAuthenticationService.getAuthentication(uuid);
+        Authentication auth = authenticationService.getAuthentication(uuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }

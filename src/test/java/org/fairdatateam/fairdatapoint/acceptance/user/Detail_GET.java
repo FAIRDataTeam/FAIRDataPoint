@@ -60,7 +60,7 @@ public class Detail_GET extends WebIntegrationTest {
         // GIVEN:
         User user = userFixtures.albert();
         RequestEntity<Void> request = RequestEntity
-                .get(url(user.getUuid()))
+                .get(url(user.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<UserDTO> responseType = new ParameterizedTypeReference<>() {
@@ -78,7 +78,7 @@ public class Detail_GET extends WebIntegrationTest {
     @DisplayName("HTTP 403")
     public void res403() {
         User user = userFixtures.albert();
-        createNoUserForbiddenTestGet(client, url(user.getUuid()));
+        createNoUserForbiddenTestGet(client, url(user.getUuid().toString()));
     }
 
     @Test

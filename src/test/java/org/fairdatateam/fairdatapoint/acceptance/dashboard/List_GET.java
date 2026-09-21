@@ -70,7 +70,7 @@ public class List_GET extends WebIntegrationTest {
                 .build();
         ParameterizedTypeReference<List<DashboardItemDTO>> responseType = new ParameterizedTypeReference<>() {
         };
-        String nikolaUuid = userFixtures.nikola().getUuid();
+        String nikolaUuid = userFixtures.nikola().getUuid().toString();
         memberService.deleteMember(format("%s/catalog/catalog-1", persistentUrl), Metadata.class, nikolaUuid);
 
         // WHEN:

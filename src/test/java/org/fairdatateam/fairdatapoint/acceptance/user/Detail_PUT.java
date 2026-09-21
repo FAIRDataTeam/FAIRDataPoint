@@ -66,7 +66,7 @@ public class Detail_PUT extends WebIntegrationTest {
         // GIVEN:
         User user = userFixtures.albert();
         RequestEntity<UserChangeDTO> request = RequestEntity
-                .put(url(user.getUuid()))
+                .put(url(user.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto());
@@ -89,7 +89,7 @@ public class Detail_PUT extends WebIntegrationTest {
         UserChangeDTO reqDto = new UserChangeDTO("EDITED: Albert", "EDITED: Einstein", "nikola.tesla@example.com",
                 UserRole.USER);
         RequestEntity<UserChangeDTO> request = RequestEntity
-                .put(url(user.getUuid()))
+                .put(url(user.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(reqDto);
@@ -108,14 +108,14 @@ public class Detail_PUT extends WebIntegrationTest {
     @DisplayName("HTTP 403: User is not authenticated")
     public void res403_notAuthenticated() {
         User user = userFixtures.albert();
-        createNoUserForbiddenTestPut(client, url(user.getUuid()), reqDto());
+        createNoUserForbiddenTestPut(client, url(user.getUuid().toString()), reqDto());
     }
 
     @Test
     @DisplayName("HTTP 403: User is not an admin")
     public void res403_user() {
         User user = userFixtures.albert();
-        createUserForbiddenTestPut(client, url(user.getUuid()), reqDto());
+        createUserForbiddenTestPut(client, url(user.getUuid().toString()), reqDto());
     }
 
     @Test

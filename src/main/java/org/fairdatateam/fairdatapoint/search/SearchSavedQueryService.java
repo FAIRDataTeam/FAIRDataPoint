@@ -116,7 +116,7 @@ public class SearchSavedQueryService {
 
     private boolean isOwnOrInternal(User user, SearchSavedQuery query) {
         return query.getType().equals(SearchSavedQueryType.INTERNAL)
-                || Objects.equals(query.getUserUuid(), user.getUuid());
+                || Objects.equals(query.getUserUuid(), user.getUuid().toString());
     }
 
     private boolean canManageQuery(Optional<User> optionalUser, SearchSavedQuery query) {
@@ -130,6 +130,6 @@ public class SearchSavedQueryService {
 
     private boolean isOwner(User user, SearchSavedQuery query) {
         return user.getRole().equals(UserRole.ADMIN)
-                || Objects.equals(query.getUserUuid(), user.getUuid());
+                || Objects.equals(query.getUserUuid(), user.getUuid().toString());
     }
 }

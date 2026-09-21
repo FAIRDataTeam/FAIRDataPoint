@@ -38,7 +38,7 @@ public class UserValidator {
 
     public void validateEmail(String uuid, String email) {
         final Optional<User> userEmail = userRepository.findByEmail(email);
-        if (userEmail.isPresent() && !userEmail.get().getUuid().equals(uuid)) {
+        if (userEmail.isPresent() && !userEmail.get().getUuid().toString().equals(uuid)) {
             throw new ValidationException(
                     format("Email '%s' is already taken", email)
             );
