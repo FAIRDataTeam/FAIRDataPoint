@@ -9,6 +9,12 @@ server:
 spring:
   mongodb:
     uri: mongodb://localhost:27017/fdp-test
+  # in-memory relational store for the test suite; the baseline schema is portable SQL, so the
+  # same Flyway migration that targets PostgreSQL in production is validated here on H2
+  datasource:
+    url: jdbc:h2:mem:fdp-test;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
   http:
     clients:
       # increase timeout to prevent issues on github runners

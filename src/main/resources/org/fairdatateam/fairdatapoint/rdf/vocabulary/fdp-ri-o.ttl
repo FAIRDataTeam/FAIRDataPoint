@@ -1,0 +1,28 @@
+@prefix fdp-ri: <https://w3id.org/fdp/fdp-ri-o#> .
+@prefix fdp-o:  <https://w3id.org/fdp/fdp-o#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct:    <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# Vocabulary of the FAIR Data Point reference implementation.
+#
+# FDP-O (https://w3id.org/fdp/fdp-o) describes what any FAIR Data Point exposes.
+# FDP-RI-O describes how this implementation stores its own configuration in the
+# triple store: record state, metadata schema versions, resource definitions,
+# settings and the RDF-migration log. Terms are added as the corresponding
+# repositories are implemented; anything found to be implementation-agnostic is
+# proposed to FDP-O instead.
+
+<https://w3id.org/fdp/fdp-ri-o>
+    a owl:Ontology ;
+    dct:title "FAIR Data Point Reference Implementation Ontology"@en ;
+    dct:description "Terms used by the FAIR Data Point reference implementation to store its configuration in the triple store."@en ;
+    dct:license <https://opensource.org/licenses/MIT> ;
+    owl:imports <https://w3id.org/fdp/fdp-o> ;
+    owl:versionInfo "2.0-draft" .
+
+fdp-ri:SystemGraph
+    a owl:Class ;
+    rdfs:label "system graph"@en ;
+    rdfs:comment "The named graph in which a reference implementation keeps its configuration. The graph IRI is https://w3id.org/fdp/fdp-ri-o/system."@en .

@@ -29,7 +29,8 @@ The FDP runs on the following technology stack and is typically deployed as a Do
 - **Spring-boot**
 - **Java**
 - **Maven**
-- **MongoDB**
+- **MongoDB** (FDP 1.x application data; being replaced, see below)
+- **PostgreSQL** (FDP 2.0 application data: accounts, access control, Index)
 - **Docker** (only required for building a Docker image and running the container)
 
 ### Build & Run
@@ -37,7 +38,19 @@ The FDP runs on the following technology stack and is typically deployed as a Do
 The FDP requires a MongoDB instance to store its application data, such as user accounts and settings.
 This can be achieved by running the official [mongo docker image].
 
-To configure the FDP to use MongoDB with standard connection (`mongodb://localhost:27017/fdp`), instruct Spring Boot to use the `development` profile, as follows:
+The 2.0 development line additionally requires a PostgreSQL instance; the relational schema is created
+automatically by Flyway on start-up. For local development, run the official [postgres docker image]
+with a database `fdp-dev` owned by user `fdp` / password `fdp`, for example:
+
+```bash
+$ docker run -d --name fdp-postgres -p 5432:5432 -e POSTGRES_DB=fdp-dev -e POSTGRES_USER=fdp -e POSTGRES_PASSWORD=fdp postgres:17
+```
+
+In deployments, the connection is configured with `FDP_POSTGRES_HOST`, `FDP_POSTGRES_PORT`, `FDP_POSTGRES_DB`,
+`FDP_POSTGRES_USERNAME` and `FDP_POSTGRES_PASSWORD`.
+
+To configure the FDP to use MongoDB with standard connection (`mongodb://localhost:27017/fdp`) and PostgreSQL on
+`localhost:5432`, instruct Spring Boot to use the `development` profile, as follows:
 
 ```bash
 $ mvn spring-boot:run -Dspring-boot.run.profiles=development
@@ -157,5 +170,6 @@ This project is licensed under the MIT License - see the [LICENSE] file for more
 [contribution guidelines]: CONTRIBUTING.md
 [code of conduct]: CODE_OF_CONDUCT.md
 [mongo docker image]: https://hub.docker.com/_/mongo/
+[postgres docker image]: https://hub.docker.com/_/postgres/
 [RDF]: https://www.w3.org/TR/rdf11-primer/
 [X-Forwarded-For]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-For

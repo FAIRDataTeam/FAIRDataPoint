@@ -12,3 +12,7 @@ security:
 spring:
   mongodb:
     uri: mongodb://localhost:27017/fdp-dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fdp-dev
+    username: fdp
+    password: fdp

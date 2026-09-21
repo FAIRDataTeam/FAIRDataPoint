@@ -21,6 +21,21 @@ spring:
     representation:
       uuid: standard
     uri: mongodb://${FDP_MONGO_HOST:mongo}:${FDP_MONGO_PORT:27017}/${FDP_MONGO_DB:fdp}
+  # relational store (FDP 2.0). Schema is managed by Flyway (src/main/resources/db/migration).
+  datasource:
+    url: jdbc:postgresql://${FDP_POSTGRES_HOST:postgres}:${FDP_POSTGRES_PORT:5432}/${FDP_POSTGRES_DB:fdp}
+    username: ${FDP_POSTGRES_USERNAME:fdp}
+    password: ${FDP_POSTGRES_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    locations: classpath:db/migration
   profiles:
     active: production
   task:
