@@ -33,7 +33,7 @@ public class SettingsMigration {
     private SettingsRepository settingsRepository;
 
     public void runMigration() {
-        settingsRepository.deleteAll();
+        // saving replaces the whole settings graph, so the fixtures leave nothing of a previous run
         settingsRepository.save(SettingsFixtures.settings());
     }
 }

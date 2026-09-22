@@ -94,7 +94,7 @@ public class List_DELETE extends WebIntegrationTest {
     public void res200_defaultSettings() {
         // GIVEN: prepare data
         Settings defaultSettings = Settings.getDefault();
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -121,8 +121,8 @@ public class List_DELETE extends WebIntegrationTest {
         // GIVEN: prepare data
         Settings defaultSettings = Settings.getDefault();
         Settings customSettings = customSettings();
-        settingsRepository.deleteAll();
-        settingsRepository.insert(customSettings);
+        settingsRepository.delete();
+        settingsRepository.save(customSettings);
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -136,7 +136,7 @@ public class List_DELETE extends WebIntegrationTest {
         ResponseEntity<SettingsDTO> result = client.exchange(request, responseType);
 
         // THEN
-        assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(1)));
+        assertThat("The settings are stored", settingsRepository.find().isPresent(), is(true));
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Response contains default metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(defaultSettings.getMetadataMetrics())));
@@ -179,7 +179,7 @@ public class List_DELETE extends WebIntegrationTest {
 
     @AfterEach
     public void teardown() {
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
     }
 }

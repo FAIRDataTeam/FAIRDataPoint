@@ -133,9 +133,14 @@ public class SystemGraphStore {
 
     /** Returns every statement of the system graph, mainly for diagnostics and tests. */
     public Model dump() {
-        return read(conn -> {
+        return dump(graph());
+    }
+
+    /** Returns every statement of a system graph. */
+    public Model dump(IRI graph) {
+        return read(graph, conn -> {
             final Model model = new LinkedHashModel();
-            conn.getStatements(null, null, null, graph()).forEach(model::add);
+            conn.getStatements(null, null, null, graph).forEach(model::add);
             return model;
         });
     }

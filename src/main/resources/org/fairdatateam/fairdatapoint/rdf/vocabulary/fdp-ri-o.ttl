@@ -1,6 +1,7 @@
 @prefix fdp-ri: <https://w3id.org/fdp/fdp-ri-o#> .
 @prefix fdp-o:  <https://w3id.org/fdp/fdp-o#> .
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dct:    <http://purl.org/dc/terms/> .
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
@@ -66,3 +67,177 @@ fdp-ri:appliedAt
     rdfs:comment "Moment at which the migration was applied to this reference implementation."@en ;
     rdfs:domain fdp-ri:AppliedMigration ;
     rdfs:range xsd:dateTime .
+
+fdp-ri:Settings
+    a owl:Class ;
+    rdfs:label "settings"@en ;
+    rdfs:comment "The settings of one reference implementation: what the client shows, which metrics are advertised, which indexes are pinged, which filters the search offers and how the forms autocomplete. The settings sub-graph of the system graph (https://w3id.org/fdp/fdp-ri-o/system/settings) holds exactly one instance, https://w3id.org/fdp/fdp-ri-o/system/settings#settings; the structures below it are blank nodes."@en .
+
+fdp-ri:SettingsMetricsEntry
+    a owl:Class ;
+    rdfs:label "settings metrics entry"@en ;
+    rdfs:comment "One FAIR metric advertised by a FAIR Data Point, together with the resource that documents how the metric is fulfilled."@en .
+
+fdp-ri:SettingsPing
+    a owl:Class ;
+    rdfs:label "settings ping"@en ;
+    rdfs:comment "Whether and where a FAIR Data Point announces itself to FAIR Data Point indexes."@en .
+
+fdp-ri:SettingsSearchFilter
+    a owl:Class ;
+    rdfs:label "settings search filter"@en ;
+    rdfs:comment "One filter offered by the search of a FAIR Data Point: a predicate, the values it can be filtered on and how those values are obtained."@en .
+
+fdp-ri:SettingsSearchFilterItem
+    a owl:Class ;
+    rdfs:label "settings search filter item"@en ;
+    rdfs:comment "One value that a search filter offers out of the box, rather than collecting it from the records."@en .
+
+fdp-ri:SettingsAutocomplete
+    a owl:Class ;
+    rdfs:label "settings autocomplete"@en ;
+    rdfs:comment "How the forms of the client autocomplete the fields that expect a resource."@en .
+
+fdp-ri:SettingsAutocompleteSource
+    a owl:Class ;
+    rdfs:label "settings autocomplete source"@en ;
+    rdfs:comment "One SPARQL endpoint queried by the autocompletion, for the entities of one RDF type."@en .
+
+fdp-ri:appTitle
+    a owl:DatatypeProperty ;
+    rdfs:label "app title"@en ;
+    rdfs:comment "Title of the FAIR Data Point, shown by the client instead of the title from the configuration file."@en ;
+    rdfs:domain fdp-ri:Settings ;
+    rdfs:range xsd:string .
+
+fdp-ri:appSubtitle
+    a owl:DatatypeProperty ;
+    rdfs:label "app subtitle"@en ;
+    rdfs:comment "Subtitle of the FAIR Data Point, shown by the client instead of the subtitle from the configuration file."@en ;
+    rdfs:domain fdp-ri:Settings ;
+    rdfs:range xsd:string .
+
+fdp-ri:metric
+    a owl:ObjectProperty ;
+    rdfs:label "metric"@en ;
+    rdfs:comment "Relates the settings to one of the FAIR metrics the FAIR Data Point advertises. The entries are ordered by fdp-ri:order."@en ;
+    rdfs:domain fdp-ri:Settings ;
+    rdfs:range fdp-ri:SettingsMetricsEntry .
+
+fdp-ri:metricUri
+    a owl:ObjectProperty ;
+    rdfs:label "metric URI"@en ;
+    rdfs:comment "The metric that a metrics entry advertises, e.g. https://purl.org/fair-metrics/FM_F1A."@en ;
+    rdfs:domain fdp-ri:SettingsMetricsEntry ;
+    rdfs:range rdfs:Resource .
+
+fdp-ri:resourceUri
+    a owl:ObjectProperty ;
+    rdfs:label "resource URI"@en ;
+    rdfs:comment "The resource that documents how the metric of a metrics entry is fulfilled."@en ;
+    rdfs:domain fdp-ri:SettingsMetricsEntry ;
+    rdfs:range rdfs:Resource .
+
+fdp-ri:order
+    a owl:DatatypeProperty ;
+    rdfs:label "order"@en ;
+    rdfs:comment "Position of a node among its siblings, counted from zero. Used wherever the order of the settings is meaningful to the user and the nodes are not kept in an rdf:List. The domain is intentionally left open: several of the structures below the settings are ordered."@en ;
+    rdfs:range xsd:integer .
+
+fdp-ri:ping
+    a owl:ObjectProperty ;
+    rdfs:label "ping"@en ;
+    rdfs:comment "Relates the settings to whether and where the FAIR Data Point announces itself."@en ;
+    rdfs:domain fdp-ri:Settings ;
+    rdfs:range fdp-ri:SettingsPing .
+
+fdp-ri:enabled
+    a owl:DatatypeProperty ;
+    rdfs:label "enabled"@en ;
+    rdfs:comment "Whether the FAIR Data Point announces itself to the indexes it is configured with."@en ;
+    rdfs:domain fdp-ri:SettingsPing ;
+    rdfs:range xsd:boolean .
+
+fdp-ri:endpoint
+    a owl:ObjectProperty ;
+    rdfs:label "endpoint"@en ;
+    rdfs:comment "The indexes a FAIR Data Point announces itself to, as an rdf:List of literals; the list keeps the order in which the endpoints were entered. The endpoints are literals rather than IRIs because they are entered as free text and are only resolved when a ping is sent."@en ;
+    rdfs:domain fdp-ri:SettingsPing ;
+    rdfs:range rdf:List .
+
+fdp-ri:searchFilter
+    a owl:ObjectProperty ;
+    rdfs:label "search filter"@en ;
+    rdfs:comment "Relates the settings to one of the filters the search offers. The filters are ordered by fdp-ri:order."@en ;
+    rdfs:domain fdp-ri:Settings ;
+    rdfs:range fdp-ri:SettingsSearchFilter .
+
+fdp-ri:filterType
+    a owl:DatatypeProperty ;
+    rdfs:label "filter type"@en ;
+    rdfs:comment "Whether a search filter matches IRIs or literals: 'IRI' or 'LITERAL'."@en ;
+    rdfs:domain fdp-ri:SettingsSearchFilter ;
+    rdfs:range xsd:string .
+
+fdp-ri:predicate
+    a owl:ObjectProperty ;
+    rdfs:label "predicate"@en ;
+    rdfs:comment "The predicate whose values a search filter filters on, e.g. http://purl.org/dc/terms/license."@en ;
+    rdfs:domain fdp-ri:SettingsSearchFilter ;
+    rdfs:range rdf:Property .
+
+fdp-ri:queryFromRecords
+    a owl:DatatypeProperty ;
+    rdfs:label "query from records"@en ;
+    rdfs:comment "Whether the values a search filter offers are collected from the records, in addition to its preset values."@en ;
+    rdfs:domain fdp-ri:SettingsSearchFilter ;
+    rdfs:range xsd:boolean .
+
+fdp-ri:presetValue
+    a owl:ObjectProperty ;
+    rdfs:label "preset value"@en ;
+    rdfs:comment "Relates a search filter to one of the values it offers out of the box. The values are ordered by fdp-ri:order; the value itself is kept as rdf:value and its caption as rdfs:label."@en ;
+    rdfs:domain fdp-ri:SettingsSearchFilter ;
+    rdfs:range fdp-ri:SettingsSearchFilterItem .
+
+fdp-ri:autocomplete
+    a owl:ObjectProperty ;
+    rdfs:label "autocomplete"@en ;
+    rdfs:comment "Relates the settings to how the forms of the client autocomplete their fields."@en ;
+    rdfs:domain fdp-ri:Settings ;
+    rdfs:range fdp-ri:SettingsAutocomplete .
+
+fdp-ri:searchNamespace
+    a owl:DatatypeProperty ;
+    rdfs:label "search namespace"@en ;
+    rdfs:comment "Whether the autocompletion also looks the entered term up in the namespace it belongs to."@en ;
+    rdfs:domain fdp-ri:SettingsAutocomplete ;
+    rdfs:range xsd:boolean .
+
+fdp-ri:autocompleteSource
+    a owl:ObjectProperty ;
+    rdfs:label "autocomplete source"@en ;
+    rdfs:comment "Relates the autocompletion to one of the sources it queries. The sources are ordered by fdp-ri:order."@en ;
+    rdfs:domain fdp-ri:SettingsAutocomplete ;
+    rdfs:range fdp-ri:SettingsAutocompleteSource .
+
+fdp-ri:rdfType
+    a owl:ObjectProperty ;
+    rdfs:label "RDF type"@en ;
+    rdfs:comment "The type of the entities an autocomplete source provides; the source is queried for the form fields that expect an entity of that type."@en ;
+    rdfs:domain fdp-ri:SettingsAutocompleteSource ;
+    rdfs:range rdfs:Class .
+
+fdp-ri:sparqlEndpoint
+    a owl:ObjectProperty ;
+    rdfs:label "SPARQL endpoint"@en ;
+    rdfs:comment "The SPARQL endpoint an autocomplete source is queried at."@en ;
+    rdfs:domain fdp-ri:SettingsAutocompleteSource ;
+    rdfs:range rdfs:Resource .
+
+fdp-ri:sparqlQuery
+    a owl:DatatypeProperty ;
+    rdfs:label "SPARQL query"@en ;
+    rdfs:comment "The query sent to the SPARQL endpoint of an autocomplete source; it is expected to bind ?entity and ?entityLabel."@en ;
+    rdfs:domain fdp-ri:SettingsAutocompleteSource ;
+    rdfs:range xsd:string .

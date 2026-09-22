@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.settings;
 
 import lombok.*;
+import org.fairdatateam.fairdatapoint.common.util.ValidIri;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,8 +33,10 @@ import lombok.*;
 @Builder(toBuilder = true)
 public class SettingsMetricsEntry {
 
+    @ValidIri
     private String metricUri;
 
+    @ValidIri
     private String resourceUri;
 
 }

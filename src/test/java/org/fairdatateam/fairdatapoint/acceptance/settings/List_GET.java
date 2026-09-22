@@ -88,7 +88,7 @@ public class List_GET extends WebIntegrationTest {
     public void res200_defaultSettings() {
         // GIVEN: prepare data
         Settings settings = Settings.getDefault();
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -102,7 +102,7 @@ public class List_GET extends WebIntegrationTest {
         ResponseEntity<SettingsDTO> result = client.exchange(request, responseType);
 
         // THEN
-        assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(0)));
+        assertThat("No settings are created", settingsRepository.find().isPresent(), is(false));
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Response contains default metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(settings.getMetadataMetrics())));
@@ -115,8 +115,8 @@ public class List_GET extends WebIntegrationTest {
     public void res200_customSettings() {
         // GIVEN: prepare data
         Settings settings = customSettings();
-        settingsRepository.deleteAll();
-        settingsRepository.insert(settings);
+        settingsRepository.delete();
+        settingsRepository.save(settings);
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -130,7 +130,7 @@ public class List_GET extends WebIntegrationTest {
         ResponseEntity<SettingsDTO> result = client.exchange(request, responseType);
 
         // THEN
-        assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(1)));
+        assertThat("The settings are stored", settingsRepository.find().isPresent(), is(true));
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Response contains custom metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(settings.getMetadataMetrics())));
@@ -173,7 +173,7 @@ public class List_GET extends WebIntegrationTest {
 
     @AfterEach
     public void teardown() {
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
     }
 }

@@ -43,7 +43,7 @@ public class SettingsCache {
 
     @PostConstruct
     public void updateCachedSettings() {
-        updateCachedSettings(settingsRepository.findFirstBy().orElse(Settings.getDefault()));
+        updateCachedSettings(settingsRepository.find().orElse(Settings.getDefault()));
     }
 
     public void updateCachedSettings(Settings settings) {

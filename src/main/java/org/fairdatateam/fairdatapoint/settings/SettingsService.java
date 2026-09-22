@@ -56,7 +56,8 @@ public class SettingsService {
 
     public SettingsDTO updateSettings(SettingsUpdateDTO dto) {
         final Settings oldSettings = getOrDefaults();
-        final Settings newSettings = repository.save(mapper.fromUpdateDTO(dto, getOrDefaults()));
+        final Settings newSettings = mapper.fromUpdateDTO(dto, oldSettings);
+        repository.save(newSettings);
         handleSearchFiltersChange(oldSettings, newSettings);
         settingsCache.updateCachedSettings(newSettings);
         return mapper.toDTO(newSettings);

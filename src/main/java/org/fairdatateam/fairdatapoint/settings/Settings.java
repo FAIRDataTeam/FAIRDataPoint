@@ -22,16 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.settings;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collections;
 import java.util.List;
 
-@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -50,10 +45,6 @@ public class Settings {
                     "https://www.wikidata.org/wiki/Q8777"
             )
     );
-
-    @Id
-    @JsonIgnore
-    private ObjectId id;
 
     private String appTitle;
 

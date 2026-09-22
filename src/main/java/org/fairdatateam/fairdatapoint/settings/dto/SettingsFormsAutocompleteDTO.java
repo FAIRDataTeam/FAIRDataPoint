@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.settings.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -38,5 +39,5 @@ public class SettingsFormsAutocompleteDTO {
     private Boolean searchNamespace;
 
     @NotNull
-    private List<SettingsAutocompleteSourceDTO> sources;
+    private List<@Valid SettingsAutocompleteSourceDTO> sources;
 }

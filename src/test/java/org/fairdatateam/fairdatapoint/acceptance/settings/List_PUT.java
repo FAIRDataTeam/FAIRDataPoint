@@ -23,6 +23,8 @@
 package org.fairdatateam.fairdatapoint.acceptance.settings;
 
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.search.SearchFilterType;
+import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 import org.fairdatateam.fairdatapoint.settings.SettingsRepository;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsMetricsEntry;
@@ -137,13 +139,32 @@ public class List_PUT extends WebIntegrationTest {
         );
     }
 
+    private SettingsUpdateDTO invalidPredicateUpdateDTO() {
+        return customSettingsUpdateDTO()
+                .toBuilder()
+                .search(SettingsSearchDTO
+                        .builder()
+                        .filters(List.of(SearchFilterDTO
+                                .builder()
+                                .type(SearchFilterType.IRI)
+                                .label("Bad filter")
+                                .predicate("not-an-iri")
+                                .values(Collections.emptyList())
+                                .queryFromRecords(false)
+                                .build()
+                        ))
+                        .build()
+                )
+                .build();
+    }
+
     @Test
     @DisplayName("HTTP 200: update settings")
     public void res200_updateSettings() {
         // GIVEN: prepare data
         Settings settings = customSettings();
-        settingsRepository.deleteAll();
-        settingsRepository.insert(settings);
+        settingsRepository.delete();
+        settingsRepository.save(settings);
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -157,7 +178,7 @@ public class List_PUT extends WebIntegrationTest {
         ResponseEntity<SettingsDTO> result = client.exchange(request, responseType);
 
         // THEN
-        assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(1)));
+        assertThat("The settings are stored", settingsRepository.find().isPresent(), is(true));
         assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat("Response body is not null", result.getBody(), is(notNullValue()));
         assertThat("Response contains custom metrics", Objects.requireNonNull(result.getBody()).getMetadataMetrics(), is(equalTo(settings.getMetadataMetrics())));
@@ -170,7 +191,7 @@ public class List_PUT extends WebIntegrationTest {
     public void res400_invalidList() {
         // GIVEN: prepare data
         SettingsUpdateDTO reqDTO = invalidUpdateDTO();
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -186,7 +207,31 @@ public class List_PUT extends WebIntegrationTest {
 
         // THEN
         assertThat("It indicates bad request", result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
-        assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(0)));
+        assertThat("No settings are created", settingsRepository.find().isPresent(), is(false));
+    }
+
+    @Test
+    @DisplayName("HTTP 400: invalid search filter predicate")
+    public void res400_invalidSearchFilterPredicate() {
+        // GIVEN: prepare data
+        SettingsUpdateDTO reqDTO = invalidPredicateUpdateDTO();
+        settingsRepository.delete();
+        settingsCache.updateCachedSettings();
+
+        // AND: prepare request
+        RequestEntity<?> request = RequestEntity
+                .put(url())
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDTO);
+
+        // WHEN
+        ResponseEntity<SettingsDTO> result = client.exchange(request, responseType);
+
+        // THEN
+        assertThat("It indicates bad request", result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
+        assertThat("No settings are created", settingsRepository.find().isPresent(), is(false));
     }
 
     @Test
@@ -194,7 +239,7 @@ public class List_PUT extends WebIntegrationTest {
     public void res403_noToken() {
         // GIVEN: prepare data
         SettingsUpdateDTO reqDTO = customSettingsUpdateDTO();
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -209,7 +254,7 @@ public class List_PUT extends WebIntegrationTest {
 
         // THEN
         assertThat("It is forbidden without auth", result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(0)));
+        assertThat("No settings are created", settingsRepository.find().isPresent(), is(false));
     }
 
     @Test
@@ -217,7 +262,7 @@ public class List_PUT extends WebIntegrationTest {
     public void res403_notAdmin() {
         // GIVEN: prepare data
         SettingsUpdateDTO reqDTO = customSettingsUpdateDTO();
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
 
         // AND: prepare request
@@ -233,12 +278,12 @@ public class List_PUT extends WebIntegrationTest {
 
         // THEN
         assertThat("It is forbidden for non-admin users", result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat("No settings are created", settingsRepository.findAll().size(), is(equalTo(0)));
+        assertThat("No settings are created", settingsRepository.find().isPresent(), is(false));
     }
 
     @AfterEach
     public void teardown() {
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
         settingsCache.updateCachedSettings();
     }
 }

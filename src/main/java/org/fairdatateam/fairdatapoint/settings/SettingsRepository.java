@@ -22,10 +22,51 @@
  */
 package org.fairdatateam.fairdatapoint.settings;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import lombok.RequiredArgsConstructor;
+import org.fairdatateam.fairdatapoint.rdf.system.SystemGraphStore;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDPRI;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-public interface SettingsRepository extends MongoRepository<Settings, String> {
-    Optional<Settings> findFirstBy();
+/**
+ * The settings of this installation, kept in the settings sub-graph of the system graph.
+ *
+ * <p>The graph holds the settings as a whole: saving replaces its entire content, so that the
+ * settings in the triple store are always the ones that were last saved, without leftovers from
+ * a previous version of them. The MongoDB to 2.0 importer copies the 1.x settings document into
+ * this graph; until it runs, an upgraded installation falls back on the defaults. {@link
+ * SettingsRdfMapper} describes the shape of the RDF.
+ */
+@Component
+@RequiredArgsConstructor
+public class SettingsRepository {
+
+    private final SystemGraphStore systemGraphStore;
+
+    private final SettingsRdfMapper mapper;
+
+    /**
+     * The settings of this installation.
+     *
+     * @return the settings, or empty if none were saved yet; the caller falls back on the defaults
+     */
+    public Optional<Settings> find() {
+        return mapper.fromModel(systemGraphStore.dump(FDPRI.SETTINGS_GRAPH));
+    }
+
+    /**
+     * Saves the settings, replacing the ones that were saved before.
+     *
+     * @param settings the settings to save
+     */
+    public void save(Settings settings) {
+        systemGraphStore.replace(FDPRI.SETTINGS_GRAPH, mapper.toModel(settings));
+    }
+
+    /** Removes the settings; the installation falls back on the defaults until it saves again. */
+    public void delete() {
+        systemGraphStore.clear(FDPRI.SETTINGS_GRAPH);
+    }
+
 }

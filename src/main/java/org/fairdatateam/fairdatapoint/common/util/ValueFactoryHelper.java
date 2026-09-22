@@ -98,6 +98,10 @@ public class ValueFactoryHelper {
         return l(literal.get());
     }
 
+    public static Literal l(boolean literal) {
+        return VF.createLiteral(literal);
+    }
+
     public static Literal l(int literal) {
         return VF.createLiteral(BigInteger.valueOf(literal));
     }

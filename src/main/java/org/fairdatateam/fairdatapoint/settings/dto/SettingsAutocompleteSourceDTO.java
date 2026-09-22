@@ -38,6 +38,7 @@ public class SettingsAutocompleteSourceDTO {
     private String rdfType;
 
     @NotNull
+    @ValidIri
     private String sparqlEndpoint;
 
     @NotNull

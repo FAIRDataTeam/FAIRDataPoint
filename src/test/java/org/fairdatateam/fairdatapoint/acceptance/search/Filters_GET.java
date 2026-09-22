@@ -52,7 +52,7 @@ public class Filters_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200")
     public void res200() {
         // GIVEN: Prepare data
-        settingsRepository.deleteAll();
+        settingsRepository.delete();
 
         // AND: Prepare request
         RequestEntity<Void> request = RequestEntity

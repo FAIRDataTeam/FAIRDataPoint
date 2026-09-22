@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.settings.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.fairdatateam.fairdatapoint.settings.SettingsMetricsEntry;
@@ -40,14 +41,17 @@ public class SettingsUpdateDTO {
     private String appSubtitle;
 
     @NotNull
-    private List<SettingsMetricsEntry> metadataMetrics;
+    private List<@Valid SettingsMetricsEntry> metadataMetrics;
 
     @NotNull
+    @Valid
     private SettingsPingUpdateDTO ping;
 
     @NotNull
+    @Valid
     private SettingsSearchDTO search;
 
     @NotNull
+    @Valid
     private SettingsFormsDTO forms;
 }
