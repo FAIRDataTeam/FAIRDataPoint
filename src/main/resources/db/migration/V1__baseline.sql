@@ -258,7 +258,7 @@ CREATE TABLE index_webhook_event
     CONSTRAINT fk__index_webhook_event_webhook FOREIGN KEY (webhook_id) REFERENCES index_webhook (uuid) ON DELETE CASCADE
 );
 
--- index entries (by UUID) a webhook is limited to, when all_entries is false
+-- index entries (by client URL) a webhook is limited to, when all_entries is false
 CREATE TABLE index_webhook_entry
 (
     webhook_id UUID NOT NULL,

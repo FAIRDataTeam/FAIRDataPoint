@@ -29,6 +29,8 @@ import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.TreeSet;
 
 @Service
 public class IndexSettingsMapper {
@@ -38,7 +40,10 @@ public class IndexSettingsMapper {
                 indexSettingsPing.getValidDuration().toString(),
                 indexSettingsPing.getRateLimitDuration().toString(),
                 indexSettingsPing.getRateLimitHits(),
-                indexSettingsPing.getDenyList()
+                // copied out of the entity: the DTO is serialized after the transaction that
+                // read the settings has ended, and Hibernate's own list belongs to that
+                // transaction
+                List.copyOf(indexSettingsPing.getDenyList())
         );
     }
 
@@ -75,7 +80,10 @@ public class IndexSettingsMapper {
                         .validDuration(Duration.parse(dto.getValidDuration()))
                         .rateLimitDuration(Duration.parse(dto.getRateLimitDuration()))
                         .rateLimitHits(dto.getRateLimitHits())
-                        .denyList(dto.getDenyList())
+                        // the entity constructor copies this into its own sorted set, so any
+                        // duplicate patterns in the request are silently collapsed rather than
+                        // tripping the collection table's primary key
+                        .denyList(new TreeSet<>(dto.getDenyList()))
                         .build();
     }
 

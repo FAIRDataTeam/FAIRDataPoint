@@ -26,14 +26,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class WebhookTrigger {
-    @DBRef
-    private Webhook webhook;
+    // The webhook itself lives in the relational store, which this (still MongoDB) event cannot
+    // reference; it is looked up by identifier when the trigger is processed.
+    private UUID webhookUuid;
 
     private WebhookEvent matchedEvent;
 

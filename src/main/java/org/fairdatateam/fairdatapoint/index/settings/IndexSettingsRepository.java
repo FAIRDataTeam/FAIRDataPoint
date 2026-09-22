@@ -22,10 +22,19 @@
  */
 package org.fairdatateam.fairdatapoint.index.settings;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface IndexSettingsRepository extends MongoRepository<IndexSettings, String> {
-    Optional<IndexSettings> findFirstBy();
+public interface IndexSettingsRepository extends JpaRepository<IndexSettings, UUID> {
+
+    /**
+     * Reads the one row of settings the Index runs on. The table is meant to hold a single row,
+     * but nothing in the schema enforces that, so the oldest row wins and the result is stable
+     * whatever order the database would otherwise return.
+     *
+     * @return the settings, or empty when no settings have ever been saved
+     */
+    Optional<IndexSettings> findFirstByOrderByCreatedAtAsc();
 }

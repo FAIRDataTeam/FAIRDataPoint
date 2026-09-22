@@ -30,6 +30,7 @@ import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -60,7 +61,7 @@ public class IndexSettingsService {
     @RequiredEnabledIndexFeature
     public IndexSettings getOrDefaults() {
         log.debug("Getting index settings");
-        final Optional<IndexSettings> settings = repository.findFirstBy();
+        final Optional<IndexSettings> settings = repository.findFirstByOrderByCreatedAtAsc();
         if (settings.isPresent()) {
             log.debug("Index settings found");
             return settings.orElseThrow();
@@ -83,6 +84,10 @@ public class IndexSettingsService {
         return settings;
     }
 
+    // Transactional so that reading the current settings, writing the new ones and reading the
+    // deny list back for the response all happen in one unit of work; the settings that come out
+    // of the save are still managed when the mapper reads their deny list.
+    @Transactional
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO updateSettings(IndexSettingsUpdateDTO dto) {
         return mapper.toDTO(
@@ -91,6 +96,9 @@ public class IndexSettingsService {
         );
     }
 
+    // Resetting stores the defaults rather than deleting the row: the row keeps its identifier
+    // and its creation time, and the response says the settings are the default ones again.
+    @Transactional
     @RequiredEnabledIndexFeature
     public IndexSettingsDTO resetSettings() {
         return updateSettings(mapper.toUpdateDTO(getDefaults()));

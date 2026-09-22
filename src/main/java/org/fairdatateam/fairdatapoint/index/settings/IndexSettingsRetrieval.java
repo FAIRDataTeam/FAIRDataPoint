@@ -22,13 +22,23 @@
  */
 package org.fairdatateam.fairdatapoint.index.settings;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embeddable;
 import lombok.*;
+import org.fairdatateam.fairdatapoint.common.persistence.DurationStringConverter;
 
 import java.time.Duration;
 
+/**
+ * How the Index retrieves metadata from the entries it knows: how long it waits before asking the
+ * same entry again, and how long it waits for an answer. Stored in the columns of the settings
+ * row itself.
+ */
+@Embeddable
 @NoArgsConstructor
-@AllArgsConstructor
+// Package-private for the same reason as in IndexSettings: @NoArgsConstructor stops Lombok from
+// synthesizing the all-args constructor @Builder needs, so it is declared here explicitly.
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 @Setter
 @Builder(toBuilder = true)
@@ -38,10 +48,10 @@ public class IndexSettingsRetrieval {
     private static final int DEFAULT_WAIT_MIN = 10;
     private static final int DEFAULT_TIMEOUT_MIN = 1;
 
-    @NotNull
+    @Convert(converter = DurationStringConverter.class)
     private Duration rateLimitWait;
 
-    @NotNull
+    @Convert(converter = DurationStringConverter.class)
     private Duration timeout;
 
     public static IndexSettingsRetrieval getDefault() {

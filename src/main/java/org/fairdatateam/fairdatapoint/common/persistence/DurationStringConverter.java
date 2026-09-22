@@ -20,24 +20,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.index.webhook;
+package org.fairdatateam.fairdatapoint.common.persistence;
 
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.Duration;
 
-public interface WebhookRepository extends JpaRepository<Webhook, UUID> {
-
-    // Both collections are mapped lazily and are read while deciding whether a webhook matches an
-    // event. That decision runs outside any transaction and possibly on another thread, with
-    // open-in-view disabled, so the collections have to be loaded while the query runs.
-    @EntityGraph(attributePaths = {"events", "entries"})
-    Optional<Webhook> findByUuid(UUID uuid);
+/**
+ * Stores a {@link Duration} as the ISO-8601 text it prints itself as, rather than as a number of
+ * some unit. Every relational database this application runs on has a text type, none of them
+ * agree on an interval type, and the REST API exchanges exactly the same ISO-8601 strings, so the
+ * column holds what the API carries.
+ *
+ * <p>Not applied automatically: only the columns that are declared as text in the baseline schema
+ * may use it, and they say so with {@code @Convert}.</p>
+ */
+@Converter(autoApply = false)
+public class DurationStringConverter implements AttributeConverter<Duration, String> {
 
     @Override
-    @EntityGraph(attributePaths = {"events", "entries"})
-    List<Webhook> findAll();
+    public String convertToDatabaseColumn(final Duration attribute) {
+        if (attribute == null) {
+            return null;
+        }
+        return attribute.toString();
+    }
+
+    @Override
+    public Duration convertToEntityAttribute(final String dbData) {
+        if (dbData == null) {
+            return null;
+        }
+        return Duration.parse(dbData);
+    }
 }

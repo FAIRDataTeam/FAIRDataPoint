@@ -79,13 +79,13 @@ public class WebhookUtils {
     }
 
     public static void postWebhook(
-            Event event, Duration timeout, String payload, String signature
+            Event event, Webhook webhook, Duration timeout, String payload, String signature
     ) {
         final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
         event.getWebhookTrigger().setExchange(ex);
         try {
             final HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(event.getWebhookTrigger().getWebhook().getPayloadUrl()))
+                    .uri(URI.create(webhook.getPayloadUrl()))
                     .timeout(timeout)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                     .header("X-Signature", signature)

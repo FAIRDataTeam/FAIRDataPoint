@@ -36,8 +36,9 @@ import org.springframework.http.*;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -64,7 +65,7 @@ public class List_GET extends WebIntegrationTest {
                 .ping(
                         new IndexSettingsPing()
                                 .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
+                                .denyList(Set.of("http://localhost.*$"))
                                 .rateLimitDuration(Duration.ofMinutes(17))
                                 .validDuration(Duration.ofDays(5))
                                 .rateLimitHits(666)
@@ -109,7 +110,7 @@ public class List_GET extends WebIntegrationTest {
         assertThat("Response contains default valid duration", Objects.requireNonNull(result.getBody()).getPing().getValidDuration(), is(equalTo(settings.getPing().getValidDuration().toString())));
         assertThat("Response contains default rate limit duration", Objects.requireNonNull(result.getBody()).getPing().getRateLimitDuration(), is(equalTo(settings.getPing().getRateLimitDuration().toString())));
         assertThat("Response contains default rate limit hits", Objects.requireNonNull(result.getBody()).getPing().getRateLimitHits(), is(equalTo(settings.getPing().getRateLimitHits())));
-        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(settings.getPing().getDenyList())));
+        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(List.copyOf(settings.getPing().getDenyList()))));
         assertThat("Response contains default timeout", Objects.requireNonNull(result.getBody()).getRetrieval().getTimeout(), is(equalTo(settings.getRetrieval().getTimeout().toString())));
         assertThat("Response contains default rate limit wait", Objects.requireNonNull(result.getBody()).getRetrieval().getRateLimitWait(), is(equalTo(settings.getRetrieval().getRateLimitWait().toString())));
         assertThat("Response indicated default settings", Objects.requireNonNull(result.getBody()).getIsDefault(), is(Boolean.TRUE));
@@ -121,7 +122,7 @@ public class List_GET extends WebIntegrationTest {
         // GIVEN: prepare data
         IndexSettings settings = customSettings();
         indexSettingsRepository.deleteAll();
-        indexSettingsRepository.insert(settings);
+        indexSettingsRepository.save(settings);
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -140,7 +141,7 @@ public class List_GET extends WebIntegrationTest {
         assertThat("Response contains custom valid duration", Objects.requireNonNull(result.getBody()).getPing().getValidDuration(), is(equalTo(settings.getPing().getValidDuration().toString())));
         assertThat("Response contains custom rate limit duration", Objects.requireNonNull(result.getBody()).getPing().getRateLimitDuration(), is(equalTo(settings.getPing().getRateLimitDuration().toString())));
         assertThat("Response contains custom rate limit hits", Objects.requireNonNull(result.getBody()).getPing().getRateLimitHits(), is(equalTo(settings.getPing().getRateLimitHits())));
-        assertThat("Response contains custom deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(settings.getPing().getDenyList())));
+        assertThat("Response contains custom deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(List.copyOf(settings.getPing().getDenyList()))));
         assertThat("Response contains custom timeout", Objects.requireNonNull(result.getBody()).getRetrieval().getTimeout(), is(equalTo(settings.getRetrieval().getTimeout().toString())));
         assertThat("Response contains custom rate limit wait", Objects.requireNonNull(result.getBody()).getRetrieval().getRateLimitWait(), is(equalTo(settings.getRetrieval().getRateLimitWait().toString())));
         assertThat("Response indicated non-default settings", Objects.requireNonNull(result.getBody()).getIsDefault(), is(Boolean.FALSE));

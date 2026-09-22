@@ -63,13 +63,32 @@ public class WebhookService {
     @Autowired
     private IndexSettingsService indexSettingsService;
 
+    // The event remembers its webhook by identifier only, so processing it starts by looking the
+    // webhook up. An event whose webhook has been deleted in the meantime cannot be delivered
+    // anywhere: it is finished off rather than retried forever by the resume of unfinished
+    // events.
     @RequiredEnabledIndexFeature
     public void processWebhookTrigger(Event event) {
+        final UUID webhookUuid = event.getWebhookTrigger().getWebhookUuid();
+        final Optional<Webhook> webhook = webhookRepository.findByUuid(webhookUuid);
+        if (webhook.isEmpty()) {
+            log.warn("Webhook {} of event {} no longer exists; the event is closed without "
+                    + "delivery", webhookUuid, event.getUuid());
+            event.execute();
+            event.finish();
+            eventRepository.save(event);
+            return;
+        }
+        processWebhookTrigger(event, webhook.get());
+    }
+
+    private void processWebhookTrigger(Event event, Webhook webhook) {
         final IndexSettingsRetrieval retrievalSettings =
                 indexSettingsService.getOrDefaults().getRetrieval();
         event.execute();
         eventRepository.save(event);
-        final WebhookPayloadDTO webhookPayload = webhookMapper.toWebhookPayloadDTO(event);
+        final WebhookPayloadDTO webhookPayload =
+                webhookMapper.toWebhookPayloadDTO(event, webhook);
         try {
             final String payloadWithSecret = jsonMapper.writeValueAsString(webhookPayload);
             final String signature = WebhookUtils.computeHashSignature(payloadWithSecret);
@@ -77,6 +96,7 @@ public class WebhookService {
             final String payloadWithoutSecret = jsonMapper.writeValueAsString(webhookPayload);
             WebhookUtils.postWebhook(
                     event,
+                    webhook,
                     retrievalSettings.getTimeout(),
                     payloadWithoutSecret,
                     signature
@@ -92,11 +112,13 @@ public class WebhookService {
         eventRepository.save(event);
     }
 
+    // The webhook is already at hand here, having just been matched against the event, so it is
+    // passed on instead of being looked up again.
     @Async
     @RequiredEnabledIndexFeature
     public void triggerWebhook(Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent) {
         final Event event = webhookMapper.toTriggerEvent(webhook, webhookEvent, triggerEvent);
-        processWebhookTrigger(event);
+        processWebhookTrigger(event, webhook);
     }
 
     @Async

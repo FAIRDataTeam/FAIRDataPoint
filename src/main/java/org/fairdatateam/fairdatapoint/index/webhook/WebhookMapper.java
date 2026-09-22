@@ -36,7 +36,7 @@ public class WebhookMapper {
 
     public Event toTriggerEvent(Webhook webhook, WebhookEvent webhookEvent, Event triggerEvent) {
         final WebhookTrigger webhookTrigger = new WebhookTrigger();
-        webhookTrigger.setWebhook(webhook);
+        webhookTrigger.setWebhookUuid(webhook.getUuid());
         webhookTrigger.setMatchedEvent(webhookEvent);
         return new Event(VERSION, webhookTrigger, triggerEvent);
     }
@@ -51,11 +51,13 @@ public class WebhookMapper {
         return new Event(VERSION, webhookPing);
     }
 
-    public WebhookPayloadDTO toWebhookPayloadDTO(Event event) {
+    // The webhook is passed in rather than read from the event: the event only remembers which
+    // webhook it belongs to, by identifier.
+    public WebhookPayloadDTO toWebhookPayloadDTO(Event event, Webhook webhook) {
         final WebhookPayloadDTO webhookPayload = new WebhookPayloadDTO();
         webhookPayload.setEvent(event.getWebhookTrigger().getMatchedEvent());
         webhookPayload.setClientUrl(event.getRelatedTo().getClientUrl());
-        webhookPayload.setSecret(event.getWebhookTrigger().getWebhook().getSecret());
+        webhookPayload.setSecret(webhook.getSecret());
         webhookPayload.setUuid(event.getUuid().toString());
         webhookPayload.setTimestamp(Instant.now().toString());
         return webhookPayload;

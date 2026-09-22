@@ -22,41 +22,112 @@
  */
 package org.fairdatateam.fairdatapoint.index.webhook;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SortNatural;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 
-@Data
+/**
+ * A URL the Index posts to when something happens to an entry it knows. A webhook listens either
+ * to every event or to the events it names, and either for every entry or for the entries it
+ * names by their client URL.
+ *
+ * <p>Note: no endpoint creates webhooks yet, so the table is only ever written by hand.</p>
+ */
+@Entity
+@Table(name = "index_webhook")
 @NoArgsConstructor
-@AllArgsConstructor
-// TODO: looks like no webhooks are ever saved using the WebhookRepository, so no collection is ever created...
-@Document(collection = "webhook")
+@Getter
+@Setter
 public class Webhook {
+
     @Id
-    private ObjectId id;
+    private UUID uuid;
 
-    @NotNull
-    private UUID uuid = UUID.randomUUID();
-
+    @Column(name = "payload_url", nullable = false)
     private String payloadUrl;
 
+    @Column(nullable = false)
     private String secret;
 
+    @Column(name = "all_events", nullable = false)
     private boolean allEvents;
 
-    private List<WebhookEvent> events = new ArrayList<>();
+    // Sets rather than lists, here and for the entries: the repository loads both collections in
+    // one query, and a join over two collections repeats every row of one for every row of the
+    // other. Lists would be bags and would keep those duplicates - and could not even be fetched
+    // together, since Hibernate refuses two bags in one query. The primary key of the collection
+    // table forbids duplicates in the database anyway. Sorted, because the collection table has
+    // no position column: events come back in the order the enum declares them, entries in
+    // alphabetical order.
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "index_webhook_event",
+            joinColumns = @JoinColumn(name = "webhook_id")
+    )
+    @Enumerated(EnumType.STRING)
+    @Column(name = "event", nullable = false)
+    @SortNatural
+    // the builder copies this set; call sites only ever read it or mutate it through the getter,
+    // so no setter is exposed
+    @Setter(AccessLevel.NONE)
+    private SortedSet<WebhookEvent> events = new TreeSet<>();
 
+    @Column(name = "all_entries", nullable = false)
     private boolean allEntries;
 
-    private List<String> entries = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "index_webhook_entry",
+            joinColumns = @JoinColumn(name = "webhook_id")
+    )
+    @Column(name = "entry", nullable = false)
+    @SortNatural
+    @Setter(AccessLevel.NONE)
+    private SortedSet<String> entries = new TreeSet<>();
 
+    @Column(nullable = false)
     private boolean enabled;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Instant updatedAt;
+
+    @Builder
+    Webhook(final UUID uuid, final String payloadUrl, final String secret, final boolean allEvents,
+            final Set<WebhookEvent> events, final boolean allEntries, final Set<String> entries,
+            final boolean enabled) {
+        this.uuid = uuid;
+        this.payloadUrl = payloadUrl;
+        this.secret = secret;
+        this.allEvents = allEvents;
+        this.allEntries = allEntries;
+        this.enabled = enabled;
+        if (events != null) {
+            this.events = new TreeSet<>(events);
+        }
+        if (entries != null) {
+            this.entries = new TreeSet<>(entries);
+        }
+    }
 }

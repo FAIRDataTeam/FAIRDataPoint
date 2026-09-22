@@ -39,8 +39,9 @@ import org.springframework.http.*;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -67,7 +68,7 @@ public class List_PUT extends WebIntegrationTest {
                 .ping(
                         new IndexSettingsPing()
                                 .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
+                                .denyList(Set.of("http://localhost.*$"))
                                 .rateLimitDuration(Duration.ofMinutes(17))
                                 .validDuration(Duration.ofDays(5))
                                 .rateLimitHits(666)
@@ -95,7 +96,7 @@ public class List_PUT extends WebIntegrationTest {
         IndexSettings customSettings = customSettings1();
         IndexSettingsUpdateDTO dto = new IndexSettingsUpdateDTO();
         IndexSettingsPingDTO pingDTO = new IndexSettingsPingDTO();
-        pingDTO.setDenyList(customSettings.getPing().getDenyList());
+        pingDTO.setDenyList(List.copyOf(customSettings.getPing().getDenyList()));
         pingDTO.setRateLimitDuration(customSettings.getPing().getRateLimitDuration().toString());
         pingDTO.setValidDuration(customSettings.getPing().getValidDuration().toString());
         pingDTO.setRateLimitHits(customSettings.getPing().getRateLimitHits());
@@ -145,7 +146,7 @@ public class List_PUT extends WebIntegrationTest {
         assertThat("Response contains default valid duration", Objects.requireNonNull(result.getBody()).getPing().getValidDuration(), is(equalTo(settings.getPing().getValidDuration().toString())));
         assertThat("Response contains default rate limit duration", Objects.requireNonNull(result.getBody()).getPing().getRateLimitDuration(), is(equalTo(settings.getPing().getRateLimitDuration().toString())));
         assertThat("Response contains default rate limit hits", Objects.requireNonNull(result.getBody()).getPing().getRateLimitHits(), is(equalTo(settings.getPing().getRateLimitHits())));
-        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(settings.getPing().getDenyList())));
+        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(List.copyOf(settings.getPing().getDenyList()))));
         assertThat("Response contains default timeout", Objects.requireNonNull(result.getBody()).getRetrieval().getTimeout(), is(equalTo(settings.getRetrieval().getTimeout().toString())));
         assertThat("Response contains default rate limit wait", Objects.requireNonNull(result.getBody()).getRetrieval().getRateLimitWait(), is(equalTo(settings.getRetrieval().getRateLimitWait().toString())));
     }
@@ -157,7 +158,7 @@ public class List_PUT extends WebIntegrationTest {
         IndexSettingsUpdateDTO reqDTO = customSettingsUpdateDTO();
         IndexSettings settings = customSettings1();
         indexSettingsRepository.deleteAll();
-        indexSettingsRepository.insert(customSettings2());
+        indexSettingsRepository.save(customSettings2());
 
         // AND: prepare request
         RequestEntity<?> request = RequestEntity
@@ -177,9 +178,35 @@ public class List_PUT extends WebIntegrationTest {
         assertThat("Response contains default valid duration", Objects.requireNonNull(result.getBody()).getPing().getValidDuration(), is(equalTo(settings.getPing().getValidDuration().toString())));
         assertThat("Response contains default rate limit duration", Objects.requireNonNull(result.getBody()).getPing().getRateLimitDuration(), is(equalTo(settings.getPing().getRateLimitDuration().toString())));
         assertThat("Response contains default rate limit hits", Objects.requireNonNull(result.getBody()).getPing().getRateLimitHits(), is(equalTo(settings.getPing().getRateLimitHits())));
-        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(settings.getPing().getDenyList())));
+        assertThat("Response contains default deny list", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(List.copyOf(settings.getPing().getDenyList()))));
         assertThat("Response contains default timeout", Objects.requireNonNull(result.getBody()).getRetrieval().getTimeout(), is(equalTo(settings.getRetrieval().getTimeout().toString())));
         assertThat("Response contains default rate limit wait", Objects.requireNonNull(result.getBody()).getRetrieval().getRateLimitWait(), is(equalTo(settings.getRetrieval().getRateLimitWait().toString())));
+    }
+
+    @Test
+    @DisplayName("HTTP 200: duplicate deny pattern is collapsed rather than rejected")
+    public void res200_updateSettingsWithDuplicateDenyPattern() {
+        // GIVEN: prepare data, an update whose deny list repeats one pattern
+        IndexSettingsUpdateDTO reqDTO = customSettingsUpdateDTO();
+        reqDTO.getPing().setDenyList(List.of("^b$", "^a$", "^b$"));
+        indexSettingsRepository.deleteAll();
+
+        // AND: prepare request
+        RequestEntity<?> request = RequestEntity
+                .put(url())
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(reqDTO);
+
+        // WHEN
+        ResponseEntity<IndexSettingsDTO> result = client.exchange(request, responseType);
+
+        // THEN: the duplicate is gone rather than tripping the collection table's primary key
+        assertThat("Settings are created", indexSettingsRepository.findAll().size(), is(equalTo(1)));
+        assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.OK)));
+        assertThat("Response body is not null", result.getBody(), is(notNullValue()));
+        assertThat("Response deny list has no duplicate", Objects.requireNonNull(result.getBody()).getPing().getDenyList(), is(equalTo(List.of("^a$", "^b$"))));
     }
 
     @Test
