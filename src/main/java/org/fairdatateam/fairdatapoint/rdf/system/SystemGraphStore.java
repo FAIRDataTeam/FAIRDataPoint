@@ -49,7 +49,30 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class SystemGraphStore {
 
+    private static final String MSG_READ_FAILED = "Reading the system graph '%s' failed";
+
+    private static final String MSG_WRITE_FAILED = "Writing the system graph '%s' failed";
+
+    private static final String SPARQL_EXCLUSION = "FILTER(!STRSTARTS(STR(?%s), \"%s\"))";
+
     private final Repository repository;
+
+    /**
+     * SPARQL filter that drops the bindings of a graph variable that point at a system graph.
+     *
+     * <p>Queries over the records have to exclude the system graphs, otherwise the configuration
+     * of the implementation shows up in search results. The filter is inlined in the five query
+     * files under {@code /sparql} (one per {@code GRAPH} variable each of them binds); this method
+     * is the single place that defines its shape. {@code SearchServiceSystemGraphTest} reads those
+     * files back and checks every inlined filter against this method, so the two cannot drift
+     * apart unnoticed.
+     *
+     * @param graphVariable name of the SPARQL variable bound by {@code GRAPH}, without the '?'
+     * @return the filter expression
+     */
+    public static String excludeSystemGraphs(String graphVariable) {
+        return String.format(SPARQL_EXCLUSION, graphVariable, FDPRI.SYSTEM_GRAPH_PREFIX);
+    }
 
     public IRI graph() {
         return FDPRI.SYSTEM_GRAPH;
@@ -57,16 +80,26 @@ public class SystemGraphStore {
 
     /** Runs a read-only operation on a connection; the operation must scope queries to {@link #graph()}. */
     public <T> T read(Function<RepositoryConnection, T> operation) {
+        return read(graph(), operation);
+    }
+
+    /** Runs a read-only operation on a connection; the operation must scope queries to {@code graph}. */
+    public <T> T read(IRI graph, Function<RepositoryConnection, T> operation) {
         try (RepositoryConnection conn = repository.getConnection()) {
             return operation.apply(conn);
         }
         catch (RepositoryException exception) {
-            throw new SystemGraphException("Reading the system graph failed", exception);
+            throw new SystemGraphException(String.format(MSG_READ_FAILED, graph), exception);
         }
     }
 
     /** Runs a write operation inside one transaction; rolled back if the operation does not commit. */
     public void write(Consumer<RepositoryConnection> operation) {
+        write(graph(), operation);
+    }
+
+    /** Runs a write operation on {@code graph} inside one transaction; rolled back if it does not commit. */
+    public void write(IRI graph, Consumer<RepositoryConnection> operation) {
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.begin();
             try {
@@ -81,8 +114,21 @@ public class SystemGraphStore {
             }
         }
         catch (RepositoryException exception) {
-            throw new SystemGraphException("Writing the system graph failed", exception);
+            throw new SystemGraphException(String.format(MSG_WRITE_FAILED, graph), exception);
         }
+    }
+
+    /** Replaces the content of a system graph by the given model in one transaction. */
+    public void replace(IRI graph, Model model) {
+        write(graph, conn -> {
+            conn.clear(graph);
+            conn.add(model, graph);
+        });
+    }
+
+    /** Removes every statement of a system graph. */
+    public void clear(IRI graph) {
+        write(graph, conn -> conn.clear(graph));
     }
 
     /** Returns every statement of the system graph, mainly for diagnostics and tests. */

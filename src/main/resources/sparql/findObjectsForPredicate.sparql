@@ -1,7 +1,20 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
+# The named graph of every pattern is bound and checked: the system graphs hold the configuration
+# of this implementation (https://w3id.org/fdp/fdp-ri-o/system...), not records, and must not show
+# up in the results.
+# Statements in the default (unnamed) graph are not matched: the FDP writes every record into its
+# own named graph.
 SELECT ?value ?label WHERE {
-	?resource ?predicate ?value .
+	GRAPH ?resourceGraph {
+		?resource ?predicate ?value .
+	}
 
-    OPTIONAL { ?value rdfs:label ?label }
+    OPTIONAL {
+        GRAPH ?labelGraph {
+            ?value rdfs:label ?label
+        }
+        FILTER(!STRSTARTS(STR(?labelGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+    }
+    FILTER(!STRSTARTS(STR(?resourceGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
 }

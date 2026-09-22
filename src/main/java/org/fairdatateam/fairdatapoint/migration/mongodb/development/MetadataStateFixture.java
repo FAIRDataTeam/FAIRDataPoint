@@ -20,17 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.rdf.metadata;
+package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface MetadataRepository extends MongoRepository<Metadata, String> {
-
-    Optional<Metadata> findByUri(String uri);
-
-    List<Metadata> findByUriIn(List<String> uris);
-
+/**
+ * Record of the development fixtures and the state it is seeded with.
+ *
+ * @param uri IRI of the record
+ * @param state state the record is seeded with
+ */
+public record MetadataStateFixture(String uri, MetadataState state) {
 }

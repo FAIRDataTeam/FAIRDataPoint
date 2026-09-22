@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class MetadataStateService {
     private static final String MSG_NOT_FOUND = "Metadata info '%s' was not found";
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private MetadataStateRepository metadataStateRepository;
 
     @Autowired
     private MetadataStateValidator metadataStateValidator;
@@ -57,12 +58,20 @@ public class MetadataStateService {
     @Autowired
     private CurrentUserProvider currentUserProvider;
 
-    public Metadata get(IRI metadataUri) {
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
-        if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
-        }
-        return oMetadata.get();
+    public MetadataState get(IRI metadataUri) {
+        return metadataStateRepository
+                .findByUri(metadataUri)
+                .orElseThrow(() -> new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri)));
+    }
+
+    /**
+     * States of several records at once; records without a state are absent from the map.
+     *
+     * @param metadataUris the records to look up
+     * @return the state of each record that has one
+     */
+    public Map<IRI, MetadataState> getStates(Collection<IRI> metadataUris) {
+        return metadataStateRepository.findByUris(metadataUris);
     }
 
     public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition definition) {
@@ -72,51 +81,53 @@ public class MetadataStateService {
         }
 
         // 2. Get metadata info for current
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
-        if (oMetadata.isEmpty()) {
-            throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
-        }
-        final Metadata metadata = oMetadata.get();
+        final MetadataState state = get(metadataUri);
 
         // 3. Get metadata info for children
-        final List<String> childrenUris = new ArrayList<>();
+        final List<IRI> childrenUris = new ArrayList<>();
         for (ResourceDefinitionChild rdChild : definition.getChildren()) {
             final IRI relationUri = i(rdChild.getRelationUri());
-            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(model, metadataUri, relationUri)) {
-                childrenUris.add(childUri.stringValue());
-            }
+            // children are Values in general; only IRIs can have a state, blank nodes and
+            // literals never do, so they are skipped rather than turned into an invalid IRI
+            getObjectsBy(model, metadataUri, relationUri)
+                    .stream()
+                    .filter(IRI.class::isInstance)
+                    .map(IRI.class::cast)
+                    .forEach(childrenUris::add);
         }
-        final Map<String, MetadataState> children =
-                metadataRepository.findByUriIn(childrenUris)
-                        .stream()
-                        .collect(Collectors.toMap(Metadata::getUri, Metadata::getState));
+        final Map<String, MetadataState> children = metadataStateRepository
+                .findByUris(childrenUris)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> entry.getKey().stringValue(), Map.Entry::getValue));
 
         // 4. Build response
         return new MetaStateDTO(
-                metadata.getState(),
+                state,
                 children
         );
     }
 
     public void initState(IRI metadataUri) {
-        final Metadata metadata = new Metadata(null, metadataUri.stringValue(), MetadataState.DRAFT);
-        metadataRepository.save(metadata);
+        metadataStateRepository.save(metadataUri, MetadataState.DRAFT);
     }
 
     public void modifyState(IRI metadataUri, MetaStateChangeDTO reqDto) {
         // 1. Get metadata info for current
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
-        if (oMetadata.isEmpty()) {
+        final Optional<MetadataState> oState = metadataStateRepository.findByUri(metadataUri);
+        if (oState.isEmpty()) {
             throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
-        final Metadata metadata = oMetadata.get();
 
         // 2. Validate
-        metadataStateValidator.validate(reqDto, metadata);
+        metadataStateValidator.validate(reqDto, oState.get());
 
         // 3. Update
-        metadata.setState(reqDto.getCurrent());
-        metadataRepository.save(metadata);
+        metadataStateRepository.save(metadataUri, reqDto.getCurrent());
+    }
+
+    public void deleteState(IRI metadataUri) {
+        metadataStateRepository.delete(metadataUri);
     }
 
 }

@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.search;
 
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
-import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
 import org.fairdatateam.fairdatapoint.search.dto.*;
@@ -183,17 +182,22 @@ public class SearchService {
     }
 
     private List<SearchResultDTO> processSearchResults(List<SearchResult> results) {
-        final Map<String, SearchResultDTO> resultDtos = results
+        final Map<String, List<SearchResult>> resultsByUri = results
                 .stream()
                 .collect(
                         Collectors.groupingBy(
                                 SearchResult::getUri,
                                 Collectors.mapping(Function.identity(), toList())
                         )
-                )
+                );
+        // one lookup for the whole batch rather than one per result
+        final Map<IRI, MetadataState> states = metadataStateService.getStates(
+                resultsByUri.keySet().stream().map(uri -> i(uri)).toList()
+        );
+        final Map<String, SearchResultDTO> resultDtos = resultsByUri
                 .entrySet()
                 .parallelStream()
-                .filter(entry -> isUsableForFilter(i(entry.getKey())))
+                .filter(entry -> isUsableForFilter(states.get(i(entry.getKey()))))
                 .map(entry -> searchMapper.toResultDTO(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(SearchResultDTO::getUri, Function.identity()));
         return results
@@ -205,16 +209,9 @@ public class SearchService {
                 .toList();
     }
 
-    private boolean isUsableForFilter(IRI iri) {
-        try {
-            return !metadataStateService
-                    .get(iri)
-                    .getState()
-                    .equals(MetadataState.DRAFT);
-        }
-        catch (ResourceNotFoundException exception) {
-            return true;
-        }
+    // records without a state, e.g. entities that are not records of this FDP, stay in the results
+    private boolean isUsableForFilter(MetadataState state) {
+        return !MetadataState.DRAFT.equals(state);
     }
 
     /**

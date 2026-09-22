@@ -31,6 +31,7 @@ import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDPRI;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -106,7 +107,19 @@ public abstract class AbstractMetadataRdfRepository implements MetadataRdfReposi
 
     public void removeAll() throws MetadataRdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
-            conn.clear();
+            // the system graphs hold the implementation's own state (e.g. record state) and are
+            // managed by SystemGraphStore, not by this repository; only the record graphs, plus
+            // the default graph, are cleared here. The only caller of removeAll() is the dev
+            // RdfMetadataMigration, which reseeds the records right after; the state graph is
+            // cleared separately and explicitly by MetadataMigration.
+            final List<Resource> recordGraphs = Iterations.asList(conn.getContextIDs())
+                    .stream()
+                    .filter(context -> !isSystemGraph(context))
+                    .toList();
+            if (!recordGraphs.isEmpty()) {
+                conn.clear(recordGraphs.toArray(new Resource[0]));
+            }
+            conn.clear((Resource) null);
         }
         catch (RepositoryException exception) {
             throw new MetadataRdfRepositoryException(MSG_ERROR_REMOVE_ALL + exception.getMessage());
@@ -161,5 +174,16 @@ public abstract class AbstractMetadataRdfRepository implements MetadataRdfReposi
     ) throws MetadataRdfRepositoryException {
         final String queryString = loadResource(queryFilePath);
         return runSparqlQuery(queryString, bindings);
+    }
+
+    /**
+     * Whether a context is (a sub-graph of) the system graph, i.e. it holds the implementation's
+     * own configuration rather than a record.
+     *
+     * @param context a context as returned by {@link RepositoryConnection#getContextIDs()}
+     * @return true if the context is a system graph
+     */
+    private static boolean isSystemGraph(Resource context) {
+        return context instanceof IRI iri && iri.stringValue().startsWith(FDPRI.SYSTEM_GRAPH_PREFIX);
     }
 }

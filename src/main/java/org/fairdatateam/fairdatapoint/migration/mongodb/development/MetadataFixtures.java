@@ -22,12 +22,15 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+/**
+ * States the development fixtures give to the records seeded by the RDF development migration.
+ * The states themselves are set by that migration; this class only names them, for the tests.
+ */
 @Service
 public class MetadataFixtures {
 
@@ -35,67 +38,32 @@ public class MetadataFixtures {
     @Qualifier("persistentUrl")
     private String persistentUrl;
 
-    public Metadata fdpMetadata() {
-        return
-                new Metadata(
-                        null,
-                        persistentUrl,
-                        MetadataState.PUBLISHED
-                );
+    public MetadataStateFixture fdpMetadata() {
+        return new MetadataStateFixture(persistentUrl, MetadataState.PUBLISHED);
     }
 
-    public Metadata catalog1() {
-        return
-                new Metadata(
-                        null,
-                        persistentUrl + "/catalog/catalog-1",
-                        MetadataState.PUBLISHED
-                );
+    public MetadataStateFixture catalog1() {
+        return new MetadataStateFixture(persistentUrl + "/catalog/catalog-1", MetadataState.PUBLISHED);
     }
 
-    public Metadata catalog2() {
-        return
-                new Metadata(
-                        null,
-                        persistentUrl + "/catalog/catalog-2",
-                        MetadataState.DRAFT
-                );
+    public MetadataStateFixture catalog2() {
+        return new MetadataStateFixture(persistentUrl + "/catalog/catalog-2", MetadataState.DRAFT);
     }
 
-    public Metadata dataset1() {
-        return
-                new Metadata(
-                        null,
-                        persistentUrl + "/dataset/dataset-1",
-                        MetadataState.PUBLISHED
-                );
+    public MetadataStateFixture dataset1() {
+        return new MetadataStateFixture(persistentUrl + "/dataset/dataset-1", MetadataState.PUBLISHED);
     }
 
-    public Metadata dataset2() {
-        return
-                new Metadata(
-                        null,
-                        persistentUrl + "/dataset/dataset-2",
-                        MetadataState.DRAFT
-                );
+    public MetadataStateFixture dataset2() {
+        return new MetadataStateFixture(persistentUrl + "/dataset/dataset-2", MetadataState.DRAFT);
     }
 
-    public Metadata distribution1() {
-        return
-                new Metadata(
-                        null,
-                        persistentUrl + "/distribution/distribution-1",
-                        MetadataState.PUBLISHED
-                );
+    public MetadataStateFixture distribution1() {
+        return new MetadataStateFixture(persistentUrl + "/distribution/distribution-1", MetadataState.PUBLISHED);
     }
 
-    public Metadata distribution2() {
-        return
-                new Metadata(
-                        null,
-                        persistentUrl + "/distribution/distribution-2",
-                        MetadataState.DRAFT
-                );
+    public MetadataStateFixture distribution2() {
+        return new MetadataStateFixture(persistentUrl + "/distribution/distribution-2", MetadataState.DRAFT);
     }
 
 }

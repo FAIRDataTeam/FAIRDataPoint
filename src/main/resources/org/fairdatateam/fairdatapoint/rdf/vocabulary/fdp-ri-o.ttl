@@ -26,3 +26,24 @@ fdp-ri:SystemGraph
     a owl:Class ;
     rdfs:label "system graph"@en ;
     rdfs:comment "The named graph in which a reference implementation keeps its configuration. The graph IRI is https://w3id.org/fdp/fdp-ri-o/system."@en .
+
+fdp-ri:RecordState
+    a owl:Class ;
+    rdfs:label "record state"@en ;
+    rdfs:comment "State of a metadata record in a reference implementation: a record is either a draft, visible to authenticated users only, or published."@en .
+
+fdp-ri:Draft
+    a owl:NamedIndividual, fdp-ri:RecordState ;
+    rdfs:label "draft"@en ;
+    rdfs:comment "The record is being prepared and is only served to authenticated users."@en .
+
+fdp-ri:Published
+    a owl:NamedIndividual, fdp-ri:RecordState ;
+    rdfs:label "published"@en ;
+    rdfs:comment "The record is served to everybody, including anonymous clients."@en .
+
+fdp-ri:hasState
+    a owl:ObjectProperty ;
+    rdfs:label "has state"@en ;
+    rdfs:comment "Relates a metadata record to its state. The statement is kept in the state sub-graph of the system graph (https://w3id.org/fdp/fdp-ri-o/system/state), never in the graph of the record itself. The domain is intentionally left open: records have no single RDF type, so the domain is any resource that is a metadata record of this FAIR Data Point."@en ;
+    rdfs:range fdp-ri:RecordState .

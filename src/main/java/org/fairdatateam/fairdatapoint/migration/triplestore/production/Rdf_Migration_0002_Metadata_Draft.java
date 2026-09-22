@@ -23,17 +23,21 @@
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
-import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
+import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDPRI;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
-import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RdfMigrationAnnotation(
         number = 2,
@@ -47,25 +51,32 @@ public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration
     private Repository repository;
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private MetadataStateRepository metadataStateRepository;
 
     public void runMigration() {
         createRepositoryInTripleStore();
     }
 
     private void createRepositoryInTripleStore() {
+        // the contexts are collected first: the state is written to the same repository, and
+        // writing while the iteration over the contexts is still open is not safe in every store
+        final List<IRI> records = new ArrayList<>();
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.getContextIDs()
                     .stream()
-                    .forEach(this::saveMetadataForResource);
+                    .filter(IRI.class::isInstance)
+                    .map(IRI.class::cast)
+                    // the system graphs hold the configuration of the implementation, not records
+                    .filter(context -> !context.stringValue().startsWith(FDPRI.SYSTEM_GRAPH_PREFIX))
+                    .forEach(records::add);
         }
         catch (RepositoryException exception) {
             log.error(exception.getMessage(), exception);
+            return;
         }
-    }
-
-    private void saveMetadataForResource(Resource resource) {
-        metadataRepository.save(new Metadata(null, resource.stringValue(), MetadataState.PUBLISHED));
+        metadataStateRepository.saveAll(
+                records.stream().collect(Collectors.toMap(recordUri -> recordUri, recordUri -> MetadataState.PUBLISHED))
+        );
     }
 
 }

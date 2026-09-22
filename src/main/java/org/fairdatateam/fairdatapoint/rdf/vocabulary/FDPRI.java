@@ -41,12 +41,43 @@ public final class FDPRI {
     public static final String PREFIX = "fdp-ri";
 
     /**
+     * IRI prefix shared by the system graph and all of its sub-graphs. Search excludes every graph
+     * whose IRI starts with it from its results.
+     */
+    public static final String SYSTEM_GRAPH_PREFIX = "https://w3id.org/fdp/fdp-ri-o/system";
+
+    /**
      * Named graph in the main repository that holds the implementation's own configuration.
      * Search and the SPARQL endpoint exclude it from their results.
      */
-    public static final IRI SYSTEM_GRAPH = i("https://w3id.org/fdp/fdp-ri-o/system");
+    public static final IRI SYSTEM_GRAPH = i(SYSTEM_GRAPH_PREFIX);
+
+    /** Sub-graph holding the state (draft or published) of every record. */
+    public static final IRI STATE_GRAPH = systemGraph("state");
+
+    /** Class of the states a record can be in. */
+    public static final IRI RECORD_STATE = i(NAMESPACE + "RecordState");
+
+    /** State of a record that is only visible to authenticated users. */
+    public static final IRI DRAFT = i(NAMESPACE + "Draft");
+
+    /** State of a record that is visible to everybody. */
+    public static final IRI PUBLISHED = i(NAMESPACE + "Published");
+
+    /** Relates a record to its {@link #RECORD_STATE}. */
+    public static final IRI HAS_STATE = i(NAMESPACE + "hasState");
 
     private FDPRI() {
+    }
+
+    /**
+     * Sub-graph of the system graph for one area of the configuration, e.g. {@code state}.
+     *
+     * @param area name of the area, used as the last segment of the graph IRI
+     * @return the IRI of the sub-graph
+     */
+    public static IRI systemGraph(String area) {
+        return i(SYSTEM_GRAPH_PREFIX + "/" + area);
     }
 
 }

@@ -29,12 +29,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MetadataStateValidator {
 
-    public void validate(MetaStateChangeDTO reqDto, Metadata metadata) {
+    public void validate(MetaStateChangeDTO reqDto, MetadataState currentState) {
         if (reqDto.getCurrent().equals(MetadataState.DRAFT)) {
             throw new ValidationException("You can not change state to DRAFT");
         }
 
-        if (metadata.getState().equals(MetadataState.PUBLISHED)) {
+        if (currentState.equals(MetadataState.PUBLISHED)) {
             throw new ValidationException("Metadata is already published");
         }
     }

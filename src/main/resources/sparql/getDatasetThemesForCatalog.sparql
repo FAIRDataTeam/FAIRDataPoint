@@ -1,6 +1,18 @@
 prefix dcat: <http://www.w3.org/ns/dcat#>
 
+# The named graph of every pattern is bound and checked: the system graphs hold the configuration
+# of this implementation (https://w3id.org/fdp/fdp-ri-o/system...), not records, and must not show
+# up in the results.
+# Statements in the default (unnamed) graph are not matched: the FDP writes every record into its
+# own named graph.
 SELECT ?theme WHERE {
-  ?catalog dcat:dataset ?dataset .
-  ?dataset dcat:theme ?theme .
+  GRAPH ?catalogGraph {
+    ?catalog dcat:dataset ?dataset .
+  }
+  GRAPH ?datasetGraph {
+    ?dataset dcat:theme ?theme .
+  }
+
+  FILTER(!STRSTARTS(STR(?catalogGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+  FILTER(!STRSTARTS(STR(?datasetGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
 }

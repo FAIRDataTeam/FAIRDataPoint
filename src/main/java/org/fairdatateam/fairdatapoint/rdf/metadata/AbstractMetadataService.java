@@ -31,6 +31,7 @@ import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.rdf.system.SystemGraphException;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -182,8 +183,17 @@ public abstract class AbstractMetadataService implements MetadataService {
                 }
             }
 
-            // Delete itself
+            // Delete itself, together with the state kept for it in the system graph
             metadataRepository.remove(uri);
+            try {
+                metadataStateService.deleteState(uri);
+            }
+            catch (SystemGraphException exception) {
+                // the record itself is already gone at this point; failing the request over its
+                // state would turn a successful delete into a 500. The orphan state triple left
+                // behind is harmless and is overwritten the next time this uri gets a state.
+                log.warn("Could not delete the state of '{}' after removing the record", uri, exception);
+            }
         }
         catch (MetadataRdfRepositoryException | MetadataServiceException exception) {
             throw new MetadataServiceException(exception.getMessage());

@@ -91,10 +91,10 @@ public class List_GET extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getMember(), is(equalTo(expMember)));
         assertThat(result.getBody().getState(), is(equalTo(new MetaStateDTO(
-                metadataFixtures.catalog1().getState(),
+                metadataFixtures.catalog1().state(),
                 Map.of(
-                        metadataFixtures.dataset1().getUri(), metadataFixtures.dataset1().getState(),
-                        metadataFixtures.dataset2().getUri(), metadataFixtures.dataset2().getState()
+                        metadataFixtures.dataset1().uri(), metadataFixtures.dataset1().state(),
+                        metadataFixtures.dataset2().uri(), metadataFixtures.dataset2().state()
                 )
         ))));
     }

@@ -127,9 +127,9 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 3. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
+        final MetadataState state = metadataStateService.get(entityUri);
         final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
+        if (state.equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
 
@@ -176,9 +176,9 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 4. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
+        final MetadataState state = metadataStateService.get(entityUri);
         final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
+        if (state.equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
 
@@ -186,8 +186,8 @@ public class GenericController {
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             final IRI relationUri = i(rdChild.getRelationUri());
             for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
-                final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                if (!(childState.getState().equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent())) {
+                final MetadataState childState = metadataStateService.get(i(childUri.stringValue()));
+                if (!(childState.equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent())) {
                     resultRdf.remove(entityUri, relationUri, childUri);
                 }
             }
@@ -337,9 +337,9 @@ public class GenericController {
         final Model entity = metadataService.retrieve(entityUri);
 
         // 3. Check if it is draft
-        final Metadata state = metadataStateService.get(entityUri);
+        final MetadataState state = metadataStateService.get(entityUri);
         final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
+        if (state.equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
 
@@ -363,8 +363,8 @@ public class GenericController {
                             if (oCurrentUser.isPresent()) {
                                 return true;
                             }
-                            final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                            return childState.getState().equals(MetadataState.PUBLISHED);
+                            final MetadataState childState = metadataStateService.get(i(childUri.stringValue()));
+                            return childState.equals(MetadataState.PUBLISHED);
                         })
                         .sorted((value1, value2) -> {
                             final String title1 = titles.get(value1.toString());

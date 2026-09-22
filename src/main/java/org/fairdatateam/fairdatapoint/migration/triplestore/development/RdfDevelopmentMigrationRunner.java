@@ -29,8 +29,11 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+// developmentMigrationRunner clears the state graph (via MetadataMigration) before this bean
+// reseeds the RDF records and their state; without this, @PostConstruct order between the two
+// beans is unspecified and a leftover state from a previous run could survive the reseed.
 @Service
-@DependsOn("mongockRunner")
+@DependsOn({"mongockRunner", "developmentMigrationRunner"})
 @Profile(Profiles.NON_PRODUCTION)
 public class RdfDevelopmentMigrationRunner {
 

@@ -22,23 +22,17 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import lombok.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+/**
+ * Type of a metadata record in the access control lists.
+ *
+ * <p>The class carries no data: a record itself lives in the triple store and its state in
+ * {@link MetadataStateRepository}. It is only used as the domain type of the object identities of
+ * the records, and Spring Security stores its name in the {@code acl_class} table, so it cannot be
+ * renamed or moved without migrating that table.
+ */
+public final class Metadata {
 
-@Document
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder(toBuilder = true)
-public class Metadata {
+    private Metadata() {
+    }
 
-    @Id
-    private ObjectId id;
-
-    private String uri;
-
-    private MetadataState state;
 }

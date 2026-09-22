@@ -24,8 +24,6 @@ package org.fairdatateam.fairdatapoint.reset;
 
 import org.fairdatateam.fairdatapoint.security.membership.Membership;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipPermission;
-import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaType;
 import org.fairdatateam.fairdatapoint.common.util.SemVer;
@@ -434,13 +432,6 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, publisherIri, RDF.TYPE, FOAF.AGENT, baseUrl);
         FactoryDefaults.add(s, publisherIri, FOAF.NAME, l(DEFAULT_PUBLISHER), baseUrl);
         return s;
-    }
-
-    public static Metadata metadataRepository(String persistentUrl) {
-        return Metadata.builder()
-                .uri(persistentUrl)
-                .state(MetadataState.PUBLISHED)
-                .build();
     }
 
     // Methods rather than constants: a Membership carries MembershipPermission instances that are

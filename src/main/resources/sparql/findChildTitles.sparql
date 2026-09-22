@@ -1,6 +1,18 @@
 PREFIX dct: <http://purl.org/dc/terms/>
 
+# The named graph of every pattern is bound and checked: the system graphs hold the configuration
+# of this implementation (https://w3id.org/fdp/fdp-ri-o/system...), not records, and must not show
+# up in the results.
+# Statements in the default (unnamed) graph are not matched: the FDP writes every record into its
+# own named graph.
 SELECT ?child ?title WHERE {
-	?parent ?relation ?child .
-	?child dct:title ?title .
+	GRAPH ?parentGraph {
+		?parent ?relation ?child .
+	}
+	GRAPH ?childGraph {
+		?child dct:title ?title .
+	}
+
+	FILTER(!STRSTARTS(STR(?parentGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+	FILTER(!STRSTARTS(STR(?childGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
 }

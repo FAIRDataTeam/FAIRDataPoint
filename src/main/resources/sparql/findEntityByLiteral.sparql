@@ -1,12 +1,31 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 
+# The named graph of every pattern is bound and checked: the system graphs hold the configuration
+# of this implementation (https://w3id.org/fdp/fdp-ri-o/system...), not records, and must not show
+# up in the results.
+# Statements in the default (unnamed) graph are not matched: the FDP writes every record into its
+# own named graph.
 SELECT ?entity ?rdfType ?title ?description ?relationPredicate ?relationObject WHERE {
-    ?entity ?relationPredicate ?relationObject .
-    ?entity rdf:type ?rdfType .
-    ?entity dct:title ?title .
+    GRAPH ?relationGraph {
+        ?entity ?relationPredicate ?relationObject .
+    }
+    GRAPH ?typeGraph {
+        ?entity rdf:type ?rdfType .
+    }
+    GRAPH ?titleGraph {
+        ?entity dct:title ?title .
+    }
 
-    OPTIONAL { ?entity dct:description ?description }
+    OPTIONAL {
+        GRAPH ?descriptionGraph {
+            ?entity dct:description ?description
+        }
+        FILTER(!STRSTARTS(STR(?descriptionGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+    }
     FILTER isLiteral(?relationObject)
     FILTER CONTAINS(LCASE(str(?relationObject)), LCASE(str(?query)))
+    FILTER(!STRSTARTS(STR(?relationGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+    FILTER(!STRSTARTS(STR(?typeGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+    FILTER(!STRSTARTS(STR(?titleGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
 }

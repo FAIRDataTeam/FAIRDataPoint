@@ -25,8 +25,7 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.repository.meta;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.MetadataFixtures;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
-import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +38,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.acceptance.common.ForbiddenTest.createNoUserForbiddenTestPut;
 import static org.fairdatateam.fairdatapoint.acceptance.metadata.Common.createMetadataStateAlreadyPublished;
 import static org.fairdatateam.fairdatapoint.acceptance.metadata.Common.createMetadataStateChangeToDraft;
@@ -53,7 +53,7 @@ public class List_State_PUT extends WebIntegrationTest {
     private MetadataFixtures metadataFixtures;
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private MetadataStateRepository metadataStateRepository;
 
     private URI url() {
         return URI.create("/meta/state");
@@ -76,9 +76,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).get();
-        metadata.setState(MetadataState.DRAFT);
-        metadataRepository.save(metadata);
+        metadataStateRepository.save(i(metadataFixtures.fdpMetadata().uri()), MetadataState.DRAFT);
 
         // WHEN:
         ResponseEntity<MetaStateChangeDTO> result = client.exchange(request, responseType);

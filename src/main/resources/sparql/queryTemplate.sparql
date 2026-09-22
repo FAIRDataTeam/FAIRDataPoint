@@ -2,12 +2,34 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 {{prefixes}}
 
+# The named graph of every pattern of the template is bound and checked: the system graphs hold the
+# configuration of this implementation (https://w3id.org/fdp/fdp-ri-o/system...), not records, and
+# must not show up in the results.
+# Statements in the default (unnamed) graph are not matched: the FDP writes every record into its
+# own named graph.
+# The user-supplied graph pattern substituted in at the bottom of the WHERE clause is deliberately
+# not wrapped in a GRAPH block of its own: one graph block would forbid legitimate joins across
+# records, since each record lives in its own graph. Consequently the system graphs must never
+# hold secrets: they are readable through this template as well as through /search/sparql.
+# NOTE: this comment must not itself contain the double-brace placeholder syntax used below, or
+# the template substitution would replace it too.
 SELECT ?entity ?rdfType ?title ?description
 WHERE {
-    ?entity rdf:type ?rdfType .
-    ?entity dct:title ?title .
+    GRAPH ?typeGraph {
+        ?entity rdf:type ?rdfType .
+    }
+    GRAPH ?titleGraph {
+        ?entity dct:title ?title .
+    }
 
-    OPTIONAL { ?entity dct:description ?description }
+    OPTIONAL {
+        GRAPH ?descriptionGraph {
+            ?entity dct:description ?description
+        }
+        FILTER(!STRSTARTS(STR(?descriptionGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+    }
+    FILTER(!STRSTARTS(STR(?typeGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
+    FILTER(!STRSTARTS(STR(?titleGraph), "https://w3id.org/fdp/fdp-ri-o/system"))
 
     {{graphPattern}}
 }

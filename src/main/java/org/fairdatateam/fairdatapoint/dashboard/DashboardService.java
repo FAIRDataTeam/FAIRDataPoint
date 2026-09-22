@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.dashboard;
 import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
@@ -93,7 +94,7 @@ public class DashboardService {
         final Optional<MemberDTO> member =
                 memberService.getMemberForCurrentUser(metadataUri.stringValue(), Metadata.class);
         final Optional<MembershipDTO> membership = member.map(MemberDTO::getMembership);
-        final Metadata state = metadataStateService.get(metadataUri);
+        final MetadataState state = metadataStateService.get(metadataUri);
         return new DashboardItemDTO(
                 metadataUri.toString(),
                 getTitle(model).getLabel(),
@@ -102,7 +103,7 @@ public class DashboardService {
                         .filter(this::childOnDashboard)
                         .toList(),
                 membership,
-                state.getState()
+                state
         );
     }
 
