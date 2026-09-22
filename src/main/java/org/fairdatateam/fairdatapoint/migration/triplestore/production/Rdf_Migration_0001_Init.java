@@ -22,22 +22,25 @@
  */
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
-import com.mongodb.client.MongoCollection;
-import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.reset.FactoryDefaults;
+import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
+import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
-import org.bson.Document;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -45,7 +48,6 @@ import java.util.List;
         number = 1,
         name = "Init migration",
         description = "Load basic fixtures for repository, catalog, dataset and distribution")
-@Slf4j
 @Service
 public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
@@ -66,7 +68,18 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     private IRI language;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private MemberService memberService;
+
+    // the runner takes this migration from the application context and calls it directly, so a
+    // @Transactional annotation would not necessarily be applied: the transaction is opened here
+    private final TransactionTemplate transactionTemplate;
+
+    public Rdf_Migration_0001_Init(final PlatformTransactionManager transactionManager) {
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
 
     public void runMigration() {
         createRepositoryInTripleStore();
@@ -83,18 +96,25 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
             );
             conn.add(statements);
         }
-        catch (RepositoryException exception) {
-            log.error(exception.getMessage(), exception);
-        }
     }
 
     private void storePermissionForRepository() {
-        final MongoCollection<Document> aclCol = mongoTemplate.getCollection("ACL");
-        aclCol.insertOne(repositoryPermission());
-    }
-
-    private Document repositoryPermission() {
-        return FactoryDefaults.aclRepository(persistentUrl);
+        // the ACL service derives the owner of a new access control list from the security context,
+        // and this migration runs at start-up, outside any request: install the seeded administrator
+        // for the duration of the call and leave no context behind on the start-up thread
+        final SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authenticationService.getAuthentication(KnownUUIDs.USER_ALBERT_UUID));
+        SecurityContextHolder.setContext(context);
+        try {
+            transactionTemplate.executeWithoutResult(status -> {
+                // TODO(PR 14): the owner of the root ACL must become the bootstrapped first
+                // administrator (D7), not the seeded fixture account
+                memberService.createOwner(persistentUrl, Metadata.class, KnownUUIDs.USER_ALBERT_UUID);
+            });
+        }
+        finally {
+            SecurityContextHolder.clearContext();
+        }
     }
 
 }

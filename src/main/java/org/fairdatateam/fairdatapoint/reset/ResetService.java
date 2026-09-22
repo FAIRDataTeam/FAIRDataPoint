@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.reset;
 
-import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
@@ -33,10 +33,11 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
+import org.fairdatateam.fairdatapoint.security.acl.AclEntryJdbcRepository;
 import org.fairdatateam.fairdatapoint.security.apikey.ApiKeyRepository;
+import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipRepository;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
-import org.bson.Document;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
@@ -45,11 +46,10 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,8 +66,7 @@ public class ResetService {
 
     private final AclCache aclCache;
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
-    private final AclRepository aclRepository;
+    private final AclEntryJdbcRepository aclEntryJdbcRepository;
 
     private final ApiKeyRepository apiKeyRepository;
 
@@ -77,13 +76,13 @@ public class ResetService {
 
     private final IRI license;
 
+    private final MemberService memberService;
+
     private final MembershipRepository membershipRepository;
 
     private final MetadataRepository metadataRepository;
 
     private final MetadataSchemaRepository metadataSchemaRepository;
-
-    private final MongoTemplate mongoTemplate;
 
     @Qualifier("persistentUrl")
     private final String persistentUrl;
@@ -100,6 +99,9 @@ public class ResetService {
 
     private final UserRepository userRepository;
 
+    // the transaction covers the relational part of the reset, i.e. the ACL tables; the triple
+    // store and MongoDB are written outside of it, which is accepted during the transition
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void resetToFactoryDefaults(ResetDTO reqDto) throws Exception {
         log.info("Resetting to factory defaults");
@@ -137,8 +139,8 @@ public class ResetService {
     private void clearMemberships() {
         log.debug("Clearing memberships");
         membershipRepository.deleteAll();
-        log.debug("Clearing ACL cache");
-        aclRepository.deleteAll();
+        log.debug("Clearing access control lists");
+        aclEntryJdbcRepository.deleteAll();
         aclCache.clearCache();
     }
 
@@ -178,9 +180,10 @@ public class ResetService {
         membershipRepository.save(FactoryDefaults.MEMBERSHIP_OWNER);
         membershipRepository.save(FactoryDefaults.MEMBERSHIP_DATA_PROVIDER);
 
-        final MongoCollection<Document> aclCol =
-                mongoTemplate.getCollection("ACL");
-        aclCol.insertOne(FactoryDefaults.aclRepository(persistentUrl));
+        log.debug("Creating the access control list of the repository record");
+        memberService.createOwner(
+                persistentUrl, Metadata.class, FactoryDefaults.USER_ALBERT.getUuid().toString()
+        );
     }
 
     private void restoreDefaultMetadata() {

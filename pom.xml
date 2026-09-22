@@ -56,7 +56,6 @@
         <!-- Project related -->
         <spring-rdf-migration.version>2.0.1</spring-rdf-migration.version>
         <rdf-resource-resolver.version>0.2.2</rdf-resource-resolver.version>
-        <spring-security-acl-mongodb.version>6.0.5</spring-security-acl-mongodb.version>
 
         <!-- Core -->
         <springdoc-openapi-starter-webmvc-ui.version>3.1.1</springdoc-openapi-starter-webmvc-ui.version>
@@ -140,12 +139,7 @@
             <version>${rdf-resource-resolver.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.fairdatateam.security</groupId>
-            <artifactId>spring-security-acl-mongodb</artifactId>
-            <version>${spring-security-acl-mongodb.version}</version>
-        </dependency>
-        <dependency>
-            <!-- standard JDBC ACL implementation, replaces the mongodb fork above (version from spring-security-bom) -->
+            <!-- standard JDBC ACL implementation (version from spring-security-bom) -->
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-acl</artifactId>
         </dependency>

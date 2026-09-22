@@ -38,9 +38,6 @@ import org.fairdatateam.fairdatapoint.rdf.vocabulary.DATACITE;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.DCAT3;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.R3D;
-import org.bson.BasicBSONObject;
-import org.bson.Document;
-import org.bson.types.BasicBSONList;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.*;
@@ -67,11 +64,6 @@ public class FactoryDefaults {
             + "blandit venenatis. Cras ullamcorper, justo vitae feugiat commodo, orci metus suscipit purus, "
             + "quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum "
             + "euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at.";
-    public static final String FIELD_SID = "sid";
-    public static final String FIELD_PERM = "permission";
-    public static final String FIELD_GRANT = "granting";
-    public static final String FIELD_AUDIT_FAILURE = "auditFailure";
-    public static final String FIELD_AUDIT_SUCCESS = "auditSuccess";
     public static final String DEFAULT_FDP_TITLE = "My FAIR Data Point";
     public static final String DEFAULT_PUBLISHER = "Default Publisher";
     public static final String SUFFIX_IDENTIFIER = "#identifier";
@@ -396,51 +388,6 @@ public class FactoryDefaults {
                 .suggestedResourceName(DISTRIBUTION_TITLE)
                 .suggestedUrlPrefix(DISTRIBUTION_PREFIX)
                 .build();
-    }
-
-    // Repository ACL
-    public static Document aclRepository(String persistentUrl) {
-        final BasicBSONObject owner = new BasicBSONObject()
-                .append("name", USER_ALBERT.getUuid().toString())
-                .append("isPrincipal", true);
-        final Document acl = new Document();
-        // TODO: there is no FDPMetadata class. This was already removed in 2020 (c37890f)
-        acl.append("className", "org.fairdatateam.fairdatapoint.entity.metadata.FDPMetadata");
-        acl.append("instanceId", persistentUrl);
-        acl.append("owner", owner);
-        acl.append("inheritPermissions", true);
-        final BasicBSONList permissions = new BasicBSONList();
-        permissions.add(
-                new Document()
-                        .append(FIELD_SID, owner)
-                        .append(FIELD_PERM, MASK_W)
-                        .append(FIELD_GRANT, true)
-                        .append(FIELD_AUDIT_FAILURE, false)
-                        .append(FIELD_AUDIT_SUCCESS, false));
-        permissions.add(
-                new Document()
-                        .append(FIELD_SID, owner)
-                        .append(FIELD_PERM, MASK_C)
-                        .append(FIELD_GRANT, true)
-                        .append(FIELD_AUDIT_FAILURE, false)
-                        .append(FIELD_AUDIT_SUCCESS, false));
-        permissions.add(
-                new Document()
-                        .append(FIELD_SID, owner)
-                        .append(FIELD_PERM, MASK_D)
-                        .append(FIELD_GRANT, true)
-                        .append(FIELD_AUDIT_FAILURE, false)
-                        .append(FIELD_AUDIT_SUCCESS, false));
-        permissions.add(
-                new Document()
-                        .append(FIELD_SID, owner)
-                        .append(FIELD_PERM, MASK_A)
-                        .append(FIELD_GRANT, true)
-                        .append(FIELD_AUDIT_FAILURE, false)
-                        .append(FIELD_AUDIT_SUCCESS, false));
-        acl.append("permissions", permissions);
-        acl.append("_class", "org.fairdatateam.security.acls.domain.MongoAcl");
-        return acl;
     }
 
     // Repository RDF statements

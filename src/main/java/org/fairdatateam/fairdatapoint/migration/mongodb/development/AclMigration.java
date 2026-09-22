@@ -25,10 +25,10 @@ package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
+import org.fairdatateam.fairdatapoint.security.acl.AclEntryJdbcRepository;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,8 +42,7 @@ public class AclMigration implements Migration {
 
     private final AclCache aclCache;
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
-    private final AclRepository aclRepository;
+    private final AclEntryJdbcRepository aclEntryJdbcRepository;
 
     private final MemberService memberService;
 
@@ -57,7 +56,7 @@ public class AclMigration implements Migration {
     private final UserFixtures userFixtures;
 
     public void runMigration() {
-        aclRepository.deleteAll();
+        aclEntryJdbcRepository.deleteAll();
         aclCache.clearCache();
 
         final String albertUuid = userFixtures.albert().getUuid().toString();

@@ -84,9 +84,12 @@ public class List_GET extends WebIntegrationTest {
         };
 
         // AND: prepare expectation
+        // the admin stores the development fixtures through the metadata service, so it owns the
+        // record as well as the members seeded by the ACL migration
+        MemberDTO adminMember = memberMapper.toDTO(userFixtures.admin(), membershipFixtures.owner());
         MemberDTO nikolaMember = memberMapper.toDTO(userFixtures.nikola(), membershipFixtures.owner());
         MemberDTO albertMember = memberMapper.toDTO(userFixtures.albert(), membershipFixtures.owner());
-        List<MemberDTO> expDto = List.of(nikolaMember, albertMember);
+        List<MemberDTO> expDto = List.of(adminMember, nikolaMember, albertMember);
 
         // WHEN:
         ResponseEntity<List<MemberDTO>> result = client.exchange(request, responseType);

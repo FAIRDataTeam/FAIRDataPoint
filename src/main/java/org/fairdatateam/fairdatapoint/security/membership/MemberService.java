@@ -28,14 +28,14 @@ import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.security.acl.AclEntryJdbcRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.fairdatateam.security.acls.dao.AclRepository;
 import org.springframework.security.acls.domain.BasePermission;
-import org.fairdatateam.security.acls.domain.MongoAcl;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,8 +47,7 @@ public class MemberService {
 
     private final AclCache aclCache;
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
-    private final AclRepository aclRepository;
+    private final AclEntryJdbcRepository aclEntryJdbcRepository;
 
     private final CurrentUserProvider currentUserProvider;
 
@@ -101,6 +100,7 @@ public class MemberService {
         return Optional.empty();
     }
 
+    @Transactional
     @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> MemberDTO createOrUpdateMember(String entityId, Class<T> entityType, String userUuid,
                                               String membershipUuid) {
@@ -136,19 +136,28 @@ public class MemberService {
         return memberMapper.toDTO(user, membership);
     }
 
+    @Transactional
     public <T> void createOwner(String entityId, Class<T> entityType, String userUuid) {
         createPermission(entityId, entityType, userUuid, BasePermission.WRITE);
         createPermission(entityId, entityType, userUuid, BasePermission.CREATE);
         createPermission(entityId, entityType, userUuid, BasePermission.DELETE);
         createPermission(entityId, entityType, userUuid, BasePermission.ADMINISTRATION);
+        // a new access control list is owned by whoever created it, which is not necessarily the
+        // user the permissions are granted to: make that user the owner of the list as well
+        final MutableAcl acl = retrieveAcl(entityId, entityType);
+        acl.setOwner(new PrincipalSid(userUuid));
+        aclService.updateAcl(acl);
     }
 
+    @Transactional
     public <T> void createPermission(
             String entityId, Class<T> entityType, String userUuid, Permission permission
     ) {
         final MutableAcl acl = retrieveAcl(entityId, entityType);
+        final PrincipalSid sid = new PrincipalSid(userUuid);
+        final int mask = permission.getMask();
         if (acl.getEntries().stream()
-                .filter(ace -> ace.getPermission().getMask() == permission.getMask())
+                .filter(ace -> ace.getSid().equals(sid) && ace.getPermission().getMask() == mask)
                 .findAny()
                 .isEmpty()) {
             insertAce(acl, userUuid, permission);
@@ -184,16 +193,13 @@ public class MemberService {
                 .anyMatch(permission2 -> permission2.getMask() == permission.getMask());
     }
 
+    @Transactional
     public <T> void deleteMembers(User user) {
-        final List<MongoAcl> acls = aclRepository.findAll();
-        for (MongoAcl acl : acls) {
-            acl.getPermissions()
-                    .removeIf(permission -> permission.getSid().getName().equals(user.getUuid().toString()));
-            aclRepository.save(acl);
-        }
+        aclEntryJdbcRepository.deleteEntriesOfPrincipal(user.getUuid().toString());
         aclCache.clearCache();
     }
 
+    @Transactional
     @PreAuthorize("hasPermission(#entityId, #entityType.getName(), 'WRITE') or hasRole('ADMIN')")
     public <T> void deleteMember(String entityId, Class<T> entityType, String userUuid) {
         // Get ACL

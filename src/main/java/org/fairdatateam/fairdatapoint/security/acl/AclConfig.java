@@ -26,41 +26,62 @@ import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.acls.AclPermissionCacheOptimizer;
 import org.springframework.security.acls.AclPermissionEvaluator;
-import org.fairdatateam.security.acls.dao.AclRepository;
-import org.springframework.security.acls.domain.*;
+import org.springframework.security.acls.domain.AclAuthorizationStrategy;
+import org.springframework.security.acls.domain.AclAuthorizationStrategyImpl;
+import org.springframework.security.acls.domain.ConsoleAuditLogger;
+import org.springframework.security.acls.domain.DefaultPermissionGrantingStrategy;
+import org.springframework.security.acls.domain.SpringCacheBasedAclCache;
+import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.jdbc.LookupStrategy;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
-import org.fairdatateam.security.acls.mongodb.BasicLookupStrategy;
-import org.fairdatateam.security.acls.mongodb.MongoDBMutableAclService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import javax.sql.DataSource;
 
 import static java.lang.String.format;
 
 /**
- * MongoDB-backed ACL wiring (FDP 1.x). Active unless {@code fdp.acl.store=jdbc} selects
- * {@link JdbcAclConfig}; removed once the persistence layer has moved to the relational store.
+ * ACL wiring on the standard Spring Security JDBC tables ({@code acl_sid}, {@code acl_class},
+ * {@code acl_object_identity}, {@code acl_entry}, created by the Flyway baseline).
+ *
+ * <p>The FDP identifies secured objects by their record IRI, hence the {@code object_id_identity}
+ * comparisons on text rather than the default numeric identity.
  */
 @Configuration
-@ConditionalOnProperty(name = "fdp.acl.store", havingValue = "mongo", matchIfMissing = true)
 @RequiredArgsConstructor
 public class AclConfig {
 
     public static final String ACL_CACHE = "ACL_CACHE";
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
-    private final AclRepository aclRepository;
+    private static final String OBJECT_IDENTITY_PRIMARY_KEY_QUERY = """
+            SELECT acl_object_identity.id
+            FROM acl_object_identity, acl_class
+            WHERE acl_object_identity.object_id_class = acl_class.id
+                  AND acl_class.class = ?
+                  AND acl_object_identity.object_id_identity = CAST(? AS varchar)
+            """;
 
-    private final MongoTemplate mongoTemplate;
+    private static final String FIND_CHILDREN_QUERY = """
+            SELECT obj.object_id_identity AS obj_id, class.class AS class, class.class_id_type AS class_id_type
+            FROM acl_object_identity obj, acl_object_identity parent, acl_class class
+            WHERE obj.parent_object = parent.id
+                  AND obj.object_id_class = class.id
+                  AND parent.object_id_identity = CAST(? AS varchar)
+                  AND parent.object_id_class = (SELECT id FROM acl_class WHERE acl_class.class = ?)
+            """;
+
+    private static final String LOOKUP_OBJECT_IDENTITIES_WHERE_CLAUSE =
+            "(acl_object_identity.object_id_identity = ? and acl_class.class = ?)";
+
+    private final DataSource dataSource;
 
     @Bean
     public AclCache aclCache(ConcurrentMapCacheManager cacheManager) {
@@ -72,7 +93,12 @@ public class AclConfig {
 
     @Bean
     public MutableAclService aclService(AclCache aclCache) {
-        return new MongoDBMutableAclService(aclRepository, lookupStrategy(aclCache), aclCache);
+        final PortableJdbcMutableAclService aclService =
+                new PortableJdbcMutableAclService(dataSource, lookupStrategy(aclCache), aclCache);
+        aclService.setObjectIdentityPrimaryKeyQuery(OBJECT_IDENTITY_PRIMARY_KEY_QUERY);
+        aclService.setFindChildrenQuery(FIND_CHILDREN_QUERY);
+        aclService.setAclClassIdSupported(true);
+        return aclService;
     }
 
     @Bean
@@ -86,9 +112,7 @@ public class AclConfig {
     }
 
     @Bean
-    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(
-            AclCache aclCache
-    ) {
+    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(AclCache aclCache) {
         final DefaultMethodSecurityExpressionHandler expressionHandler =
                 new DefaultMethodSecurityExpressionHandler();
         final AclPermissionEvaluator permissionEvaluator =
@@ -102,8 +126,11 @@ public class AclConfig {
 
     @Bean
     public LookupStrategy lookupStrategy(AclCache aclCache) {
-        return new BasicLookupStrategy(mongoTemplate, aclCache, aclAuthorizationStrategy(),
-                permissionGrantingStrategy());
+        final BasicLookupStrategy lookupStrategy = new BasicLookupStrategy(
+                dataSource, aclCache, aclAuthorizationStrategy(), new ConsoleAuditLogger());
+        lookupStrategy.setLookupObjectIdentitiesWhereClause(LOOKUP_OBJECT_IDENTITIES_WHERE_CLAUSE);
+        lookupStrategy.setAclClassIdSupported(true);
+        return lookupStrategy;
     }
 
 }
