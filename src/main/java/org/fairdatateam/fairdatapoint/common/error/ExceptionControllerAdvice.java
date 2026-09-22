@@ -41,6 +41,7 @@ import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +78,23 @@ public class ExceptionControllerAdvice {
     public ErrorDTO handleConstraintViolation(Exception exception) {
         log.warn(exception.getMessage());
         log.debug("Handling bad request (ConstraintViolation)", exception);
+        return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
+    public ErrorDTO handlePropertyReference(PropertyReferenceException exception) {
+        log.warn(exception.getMessage());
+        log.debug("Handling bad request (PropertyReferenceException)", exception);
         return new ErrorDTO(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 

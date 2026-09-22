@@ -36,7 +36,7 @@ public class TestIndexEntryFixtures {
 
     private static IndexEntry newIndexEntry(String uuid, String clientUrl, Instant timestamp) {
         IndexEntry indexEntry = new IndexEntry();
-        indexEntry.setUuid(uuid);
+        indexEntry.setUuid(UUID.fromString(uuid));
         indexEntry.setClientUrl(clientUrl);
         indexEntry.setModificationTime(timestamp);
         indexEntry.setRegistrationTime(timestamp);

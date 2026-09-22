@@ -76,7 +76,10 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
     public void cleanupHarvestedRecordsFrom(IndexEntry entry) {
         log.debug("Deleting harvested records for '{}'", entry.getClientUrl());
 
-        if (entry.getCurrentMetadata() == null) {
+        // An entry that has never been retrieved carries an empty metadata record rather than
+        // none at all, since the harvested properties are a NOT NULL column; the absent
+        // repository URI is what marks it as never retrieved.
+        if (entry.getCurrentMetadata() == null || entry.getCurrentMetadata().getRepositoryUri() == null) {
             log.debug("Deleting harvested records for '{}': no metadata retrieved", entry.getClientUrl());
             return;
         }

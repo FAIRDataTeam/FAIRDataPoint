@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Service
 public class IndexEntryFixtures {
@@ -42,7 +43,7 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         return IndexEntry.builder()
-                .uuid("8987abc1-15a4-4752-903c-8f8a5882cca6")
+                .uuid(UUID.fromString("8987abc1-15a4-4752-903c-8f8a5882cca6"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Valid)
                 .permit(IndexEntryPermit.ACCEPTED)
@@ -62,7 +63,7 @@ public class IndexEntryFixtures {
         );
         final Instant date = Instant.parse("2020-05-30T23:38:31.085Z");
         return IndexEntry.builder()
-                .uuid("c912331f-4a77-4300-a469-dbaf5fc0b4e2")
+                .uuid(UUID.fromString("c912331f-4a77-4300-a469-dbaf5fc0b4e2"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Valid)
                 .permit(IndexEntryPermit.ACCEPTED)
@@ -82,7 +83,7 @@ public class IndexEntryFixtures {
         );
         final Instant date = Instant.parse("2020-05-30T23:38:23.085Z");
         return IndexEntry.builder()
-                .uuid("b5851ebe-aacf-4de9-bf0a-3686e9256e73")
+                .uuid(UUID.fromString("b5851ebe-aacf-4de9-bf0a-3686e9256e73"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Valid)
                 .permit(IndexEntryPermit.ACCEPTED)
@@ -101,7 +102,7 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         return IndexEntry.builder()
-                .uuid("dae46b47-87fb-4fdf-995c-8aa3739a27fc")
+                .uuid(UUID.fromString("dae46b47-87fb-4fdf-995c-8aa3739a27fc"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Unreachable)
                 .permit(IndexEntryPermit.ACCEPTED)
@@ -120,7 +121,7 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         return IndexEntry.builder()
-                .uuid("b37e8c1f-ac0e-49f8-8e07-35571c4f8235")
+                .uuid(UUID.fromString("b37e8c1f-ac0e-49f8-8e07-35571c4f8235"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Invalid)
                 .permit(IndexEntryPermit.ACCEPTED)
@@ -139,7 +140,7 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         return IndexEntry.builder()
-                .uuid("4471d7c5-8c5b-4581-a9bc-d175456492c4")
+                .uuid(UUID.fromString("4471d7c5-8c5b-4581-a9bc-d175456492c4"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Unknown)
                 .permit(IndexEntryPermit.ACCEPTED)
@@ -158,7 +159,7 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         return IndexEntry.builder()
-                .uuid("4471d7c5-8c5b-4581-a9bc-d175456492c5")
+                .uuid(UUID.fromString("4471d7c5-8c5b-4581-a9bc-d175456492c5"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Valid)
                 .permit(IndexEntryPermit.REJECTED)
@@ -177,7 +178,7 @@ public class IndexEntryFixtures {
                 new HashMap<>()
         );
         return IndexEntry.builder()
-                .uuid("4471d7c5-8c5b-4581-a9bc-d175456492c6")
+                .uuid(UUID.fromString("4471d7c5-8c5b-4581-a9bc-d175456492c6"))
                 .clientUrl(clientUri)
                 .state(IndexEntryState.Valid)
                 .permit(IndexEntryPermit.PENDING)

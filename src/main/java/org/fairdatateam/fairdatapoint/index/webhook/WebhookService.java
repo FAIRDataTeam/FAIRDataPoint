@@ -167,12 +167,12 @@ public class WebhookService {
         final Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
         final Optional<Webhook> webhook = webhookRepository.findByUuid(webhookUuid);
-        final Event event = eventRepository.save(
-                webhookMapper.toPingEvent(authentication, webhookUuid, request.getRemoteAddr())
-        );
+        final Event event = webhookMapper.toPingEvent(authentication, webhookUuid, request.getRemoteAddr());
+        eventRepository.save(event);
         if (webhook.isEmpty()) {
             throw new ResourceNotFoundException("There is no such webhook: " + webhookUuid);
         }
+        // See EventService#acceptIncomingPing: the instance built here, not the merged copy save() returns.
         return event;
     }
 }

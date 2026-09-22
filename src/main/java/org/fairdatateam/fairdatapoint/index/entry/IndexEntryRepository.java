@@ -24,15 +24,35 @@ package org.fairdatateam.fairdatapoint.index.entry;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface IndexEntryRepository extends MongoRepository<IndexEntry, String> {
+public interface IndexEntryRepository extends JpaRepository<IndexEntry, UUID> {
 
-    Optional<IndexEntry> findByUuid(String uuid);
+    Optional<IndexEntry> findByUuid(UUID uuid);
+
+    /**
+     * Looks an entry up by the string form of its identifier, as it arrives from the REST API.
+     * A malformed identifier is treated as "no such entry" instead of an error.
+     *
+     * @param uuid identifier in string form, possibly malformed
+     * @return the entry, or empty if the identifier is malformed or unknown
+     */
+    default Optional<IndexEntry> findByUuid(String uuid) {
+        if (uuid == null) {
+            return Optional.empty();
+        }
+        try {
+            return findByUuid(UUID.fromString(uuid));
+        }
+        catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
+    }
 
     Optional<IndexEntry> findByClientUrl(String clientUrl);
 
@@ -50,7 +70,12 @@ public interface IndexEntryRepository extends MongoRepository<IndexEntry, String
 
     Page<IndexEntry> findAllByPermitIn(Pageable pageable, List<IndexEntryPermit> permit);
 
-    Iterable<IndexEntry> findAllByPermitIn(List<IndexEntryPermit> permit);
+    // Mongo, the previous store, listed entries in insertion order; Postgres makes no such
+    // guarantee, so the order the API reports has to be pinned explicitly. Newest registration
+    // first, which is the order the acceptance tests observe and the useful one for a listing of
+    // registered instances. The paged endpoint gets the same ordering, in the service, where the
+    // ordering the request asks for still takes precedence.
+    List<IndexEntry> findAllByPermitInOrderByRegistrationTimeDesc(List<IndexEntryPermit> permit);
 
     long countAllByPermitIn(List<IndexEntryPermit> permit);
 

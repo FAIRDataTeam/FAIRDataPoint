@@ -22,62 +22,96 @@
  */
 package org.fairdatateam.fairdatapoint.index.event;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.fairdatateam.fairdatapoint.common.persistence.EventPayloadJsonConverter;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
-import org.bson.types.ObjectId;
 import org.fairdatateam.fairdatapoint.index.webhook.WebhookPing;
 import org.fairdatateam.fairdatapoint.index.webhook.WebhookTrigger;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
+/**
+ * Something that happened to the Index: a ping came in, metadata was retrieved, an administrator
+ * asked for a retrieval, a webhook was delivered or pinged.
+ */
+@Entity
+@Table(name = "index_event")
 @NoArgsConstructor
-@AllArgsConstructor
-@Document(collection = "event")
+@Getter
+@Setter
 public class Event {
+
     @Id
-    private ObjectId id;
-    @NotNull
     private UUID uuid = UUID.randomUUID();
-    @NotNull
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EventType type;
-    @NotNull
+
+    @Column(nullable = false)
     private Integer version;
 
-    @DBRef
+    // The event that caused this one. Nothing reads it back - it is recorded for the audit trail
+    // and followed by hand - so it is loaded only on demand.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "triggered_by")
     private Event triggeredBy;
-    @DBRef
+
+    // The entry this event is about. Eager on purpose: the asynchronous triggers and the resume
+    // of unfinished events at start-up read the entry, and its client URL and state, from events
+    // that have long left the session they were loaded in, with open-in-view disabled.
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "related_to")
     private IndexEntry relatedTo;
 
-    // Content (one of those)
-    private IncomingPing incomingPing;
-    private MetadataRetrieval metadataRetrieval;
-    private AdminTrigger adminTrigger;
-    private WebhookPing webhookPing;
-    private WebhookTrigger webhookTrigger;
+    @Convert(converter = EventPayloadJsonConverter.class)
+    @Column(nullable = false)
+    private EventPayload payload = new EventPayload();
 
-    @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    // Copied out of whichever branch of the payload carries it, so that the rate limit on
+    // incoming pings stays a query over an indexed column instead of a search through JSON.
+    @Setter(AccessLevel.NONE)
+    @Column(name = "remote_addr")
+    private String remoteAddr;
+
+    // Set here rather than by Hibernate: an event is timestamped when it is created, which is
+    // not when it is first saved - a metadata retrieval is prepared, then executed, then stored -
+    // and the resume of unfinished events relies on that being the moment it was created.
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant created = Instant.now();
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "executed_at")
     private Instant executed;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "finished_at")
     private Instant finished;
+
+    // Only there because the column is NOT NULL for every table of the schema; not exposed.
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
 
     public Event(Integer version, IncomingPing incomingPing) {
         this.type = EventType.IncomingPing;
         this.version = version;
-        this.incomingPing = incomingPing;
+        payload.setIncomingPing(incomingPing);
     }
 
     public Event(Integer version, Event triggerEvent, IndexEntry relatedTo,
@@ -86,19 +120,19 @@ public class Event {
         this.version = version;
         this.triggeredBy = triggerEvent;
         this.relatedTo = relatedTo;
-        this.metadataRetrieval = metadataRetrieval;
+        payload.setMetadataRetrieval(metadataRetrieval);
     }
 
     public Event(Integer version, AdminTrigger adminTrigger) {
         this.type = EventType.AdminTrigger;
         this.version = version;
-        this.adminTrigger = adminTrigger;
+        payload.setAdminTrigger(adminTrigger);
     }
 
     public Event(Integer version, WebhookTrigger webhookTrigger, Event triggerEvent) {
         this.type = EventType.WebhookTrigger;
         this.version = version;
-        this.webhookTrigger = webhookTrigger;
+        payload.setWebhookTrigger(webhookTrigger);
         this.triggeredBy = triggerEvent;
         this.relatedTo = triggerEvent.getRelatedTo();
     }
@@ -106,7 +140,27 @@ public class Event {
     public Event(Integer version, WebhookPing webhookPing) {
         this.type = EventType.WebhookPing;
         this.version = version;
-        this.webhookPing = webhookPing;
+        payload.setWebhookPing(webhookPing);
+    }
+
+    public IncomingPing getIncomingPing() {
+        return payload.getIncomingPing();
+    }
+
+    public MetadataRetrieval getMetadataRetrieval() {
+        return payload.getMetadataRetrieval();
+    }
+
+    public AdminTrigger getAdminTrigger() {
+        return payload.getAdminTrigger();
+    }
+
+    public WebhookPing getWebhookPing() {
+        return payload.getWebhookPing();
+    }
+
+    public WebhookTrigger getWebhookTrigger() {
+        return payload.getWebhookTrigger();
     }
 
     public boolean isExecuted() {
@@ -123,5 +177,25 @@ public class Event {
 
     public void finish() {
         finished = Instant.now();
+    }
+
+    @PrePersist
+    @PreUpdate
+    void copyRemoteAddrFromPayload() {
+        remoteAddr = findRemoteAddr();
+    }
+
+    private String findRemoteAddr() {
+        final IncomingPing incomingPing = payload.getIncomingPing();
+        if (incomingPing != null && incomingPing.getExchange() != null) {
+            return incomingPing.getExchange().getRemoteAddr();
+        }
+        if (payload.getAdminTrigger() != null) {
+            return payload.getAdminTrigger().getRemoteAddr();
+        }
+        if (payload.getWebhookPing() != null) {
+            return payload.getWebhookPing().getRemoteAddr();
+        }
+        return null;
     }
 }

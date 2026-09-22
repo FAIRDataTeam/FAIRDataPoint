@@ -22,12 +22,28 @@
  */
 package org.fairdatateam.fairdatapoint.index;
 
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.fairdatateam.fairdatapoint.common.persistence.StringMapJsonConverter;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * What the Index knows about the FAIR Data Point behind an entry, as of the last retrieval.
+ *
+ * <p>Stored in the columns of the entry itself rather than in a table of its own: an entry has
+ * exactly one of these, and it is replaced as a whole every time the metadata is retrieved. The
+ * column names are given by the entry's {@code @AttributeOverrides}, since an embeddable only
+ * knows the names of its own fields. The harvested properties are whatever the remote instance
+ * describes itself with, so they stay a map, kept as a JSON object in a single column.</p>
+ *
+ * <p>Also serialized as-is into the JSON payload of a metadata retrieval event and into the
+ * detail representation of an entry, which is why it is a plain bean with public accessors.</p>
+ */
+@Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,6 +59,7 @@ public class RepositoryMetadata {
     private String repositoryUri;
 
     @NotNull
+    @Convert(converter = StringMapJsonConverter.class)
     private Map<String, String> metadata = new HashMap<>();
 
 }

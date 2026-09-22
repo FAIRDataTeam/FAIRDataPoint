@@ -38,10 +38,13 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
@@ -60,6 +63,10 @@ public class IndexEntryService {
     private static final String MSG_NOT_FOUND = "Index entry not found";
 
     private static final String FILTER_ALL = "ALL";
+
+    // The order the listings fall back on when the request does not ask for one, matching the
+    // order the repository pins for the unpaged listing.
+    private static final Sort DEFAULT_ORDER = Sort.by(Sort.Direction.DESC, "registrationTime");
 
     @Autowired
     private IndexEntryRepository repository;
@@ -90,7 +97,7 @@ public class IndexEntryService {
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries(String permitQuery) {
         final List<IndexEntryPermit> permit = getPermits(permitQuery);
-        return repository.findAllByPermitIn(permit);
+        return repository.findAllByPermitInOrderByRegistrationTimeDesc(permit);
     }
 
     @RequiredEnabledIndexFeature
@@ -126,8 +133,20 @@ public class IndexEntryService {
                 .toList();
     }
 
-    private Page<IndexEntry> getEntriesPageWithPermits(Pageable pageable, String state,
+    // Mongo, the previous store, listed entries in insertion order when the request asked for no
+    // ordering; Postgres makes no such guarantee, so an ordering is supplied here. An ordering
+    // the request does ask for is left alone, which is why this is not simply an OrderBy in the
+    // repository: a static one would take precedence over the sort properties of the API.
+    private static Pageable withDefaultOrder(Pageable pageable) {
+        if (pageable.isUnpaged() || pageable.getSort().isSorted()) {
+            return pageable;
+        }
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), DEFAULT_ORDER);
+    }
+
+    private Page<IndexEntry> getEntriesPageWithPermits(Pageable requested, String state,
                                                        List<IndexEntryPermit> permit) {
+        final Pageable pageable = withDefaultOrder(requested);
         final Instant validThreshold = getValidThreshold();
         if (state.equalsIgnoreCase(ACTIVE.name())) {
             return repository.findAllByStateEqualsAndLastRetrievalTimeAfterAndPermitIn(
@@ -170,12 +189,17 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
+    public Optional<IndexEntry> getEntry(UUID uuid) {
+        return repository.findByUuid(uuid);
+    }
+
+    @RequiredEnabledIndexFeature
     public Optional<IndexEntryDetailDTO> getEntryDetailDTO(String uuid) {
         final Instant validThreshold = getValidThreshold();
         return getEntry(uuid)
                 .map(entry -> {
                     return mapper.toDetailDTO(
-                            entry, eventService.getEvents(entry.getUuid()), validThreshold
+                            entry, eventService.getEvents(entry), validThreshold
                     );
                 });
     }
@@ -217,6 +241,7 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
+    @Transactional
     public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Optional<IndexEntry> entity = repository.findByClientUrl(clientUrl);
@@ -231,7 +256,7 @@ public class IndexEntryService {
         else {
             log.info("Storing new entry {}", clientUrl);
             entry = new IndexEntry();
-            entry.setUuid(UUID.randomUUID().toString());
+            entry.setUuid(UUID.randomUUID());
             entry.setClientUrl(clientUrl);
             entry.setRegistrationTime(now);
             if (settings.getAutoPermit()) {
@@ -281,6 +306,7 @@ public class IndexEntryService {
         return model;
     }
 
+    @Transactional
     public Optional<IndexEntryDetailDTO> updateEntry(String uuid, IndexEntryUpdateDTO reqDto) {
         final Optional<IndexEntry> entry = getEntry(uuid);
         if (entry.isPresent() && !reqDto.getPermit().equals(entry.get().getPermit())) {

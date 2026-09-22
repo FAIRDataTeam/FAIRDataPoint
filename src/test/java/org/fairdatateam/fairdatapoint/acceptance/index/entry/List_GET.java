@@ -76,6 +76,12 @@ public class List_GET extends WebIntegrationTest {
                 .build().toUri();
     }
 
+    private URI urlWithSort(String sort) {
+        return UriComponentsBuilder.fromUri(url())
+                .queryParam("sort", sort)
+                .build().toUri();
+    }
+
     @Test
     @DisplayName("HTTP 200: page empty")
     public void res200_pageEmpty() {
@@ -286,5 +292,21 @@ public class List_GET extends WebIntegrationTest {
                 is(equalTo(Integer.toUnsignedLong(1))));
         assertThat("There is correct number of entries in the response", result.getBody().getContent().get(0).getPermit(),
                 is(equalTo(IndexEntryPermit.REJECTED)));
+    }
+
+    @Test
+    @DisplayName("HTTP 400: unknown sort property")
+    public void res400_unknownSortProperty() {
+        // GIVEN: prepare request for a sort property that does not exist on the entity
+        RequestEntity<?> request = RequestEntity
+                .get(urlWithSort("bogus"))
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+
+        // WHEN
+        ResponseEntity<String> result = client.exchange(request, String.class);
+
+        // THEN
+        assertThat("Correct response code is received", result.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
     }
 }

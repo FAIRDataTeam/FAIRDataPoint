@@ -41,7 +41,7 @@ public class IndexEntryMapper {
 
     public IndexEntryDTO toDTO(IndexEntry indexEntry, Instant validThreshold) {
         return new IndexEntryDTO(
-                indexEntry.getUuid(),
+                indexEntry.getUuid().toString(),
                 indexEntry.getClientUrl(),
                 toStateDTO(indexEntry.getState(),
                         indexEntry.getLastRetrievalTime(),
@@ -56,19 +56,19 @@ public class IndexEntryMapper {
             IndexEntry indexEntry, Iterable<Event> events, Instant validThreshold
     ) {
         return new IndexEntryDetailDTO(
-                indexEntry.getUuid(),
+                indexEntry.getUuid().toString(),
                 indexEntry.getClientUrl(),
                 toStateDTO(indexEntry.getState(),
                         indexEntry.getLastRetrievalTime(),
                         validThreshold),
                 indexEntry.getPermit(),
-                indexEntry.getCurrentMetadata(),
+                indexEntry.getLastRetrievalTime() == null ? null : indexEntry.getCurrentMetadata(),
                 StreamSupport.stream(events.spliterator(), false)
                         .map(eventMapper::toDTO)
                         .toList(),
                 indexEntry.getRegistrationTime().toString(),
                 indexEntry.getModificationTime().toString(),
-                indexEntry.getLastRetrievalTime().toString()
+                indexEntry.getLastRetrievalTime() == null ? null : indexEntry.getLastRetrievalTime().toString()
         );
     }
 

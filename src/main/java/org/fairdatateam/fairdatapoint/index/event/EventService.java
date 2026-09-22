@@ -52,11 +52,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -99,13 +98,10 @@ public class EventService {
                 PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "created")));
     }
 
-    @RequiredEnabledIndexFeature
-    public Iterable<Event> getEvents(String indexEntryUuid) {
-        return indexEntryService
-                .getEntry(indexEntryUuid)
-                .map(this::getEvents).orElse(Collections.emptyList());
-    }
-
+    // Deliberately not transactional: a ping the Index cannot parse is still recorded, with the
+    // response it produced, and only then rejected. One transaction around the whole method would
+    // roll that record back together with the rejection. Every save below therefore commits on
+    // its own, exactly as it did against the document store.
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
@@ -118,11 +114,9 @@ public class EventService {
         }
 
         final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
-        final List<Event> previousPings =
-                eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
-                        remoteAddr, rateLimitSince
-                );
-        if (previousPings.size() > pingSettings.getRateLimitHits()) {
+        final long previousPingCount = eventRepository.countByTypeAndRemoteAddrAndCreatedAfter(
+                EventType.IncomingPing, remoteAddr, rateLimitSince);
+        if (previousPingCount > pingSettings.getRateLimitHits()) {
             log.warn("Rate limit for PING reached by {}", remoteAddr);
             throw new RateLimitException(String.format(
                     "Rate limit reached for %s (max. %d per %s) - PING ignored",
@@ -155,7 +149,11 @@ public class EventService {
             throw nextException;
         }
         event.setFinished(Instant.now());
-        return eventRepository.save(event);
+        eventRepository.save(event);
+        // The caller keeps working with this instance rather than with what save() returns:
+        // saving a detached entity merges it into a copy, whose entry reference would be a proxy
+        // that no longer has a session by the time the asynchronous triggers read it.
+        return event;
     }
 
     private void processMetadataRetrieval(Event event) {
@@ -204,9 +202,9 @@ public class EventService {
         }
         event.getRelatedTo().setLastRetrievalTime(Instant.now());
         event.finish();
-        final Event newEvent = eventRepository.save(event);
-        indexEntryRepository.save(newEvent.getRelatedTo());
-        webhookService.triggerWebhooks(newEvent);
+        eventRepository.save(event);
+        indexEntryRepository.save(event.getRelatedTo());
+        webhookService.triggerWebhooks(event);
     }
 
     @Async
@@ -256,6 +254,7 @@ public class EventService {
     }
 
     @RequiredEnabledIndexFeature
+    @Transactional
     public Event acceptAdminTrigger(HttpServletRequest request, PingDTO pingDTO) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event =
@@ -263,14 +262,18 @@ public class EventService {
         final IndexEntry entry = indexEntryService.storeEntry(pingDTO);
         event.setRelatedTo(entry);
         event.finish();
-        return eventRepository.save(event);
+        eventRepository.save(event);
+        // See acceptIncomingPing: the instance that was built here, not the merged copy.
+        return event;
     }
 
     @RequiredEnabledIndexFeature
+    @Transactional
     public Event acceptAdminTriggerAll(HttpServletRequest request) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event = eventMapper.toAdminTriggerEvent(authentication, null, request.getRemoteAddr());
         event.finish();
-        return eventRepository.save(event);
+        eventRepository.save(event);
+        return event;
     }
 }

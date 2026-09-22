@@ -22,46 +22,76 @@
  */
 package org.fairdatateam.fairdatapoint.index.entry;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.bson.types.ObjectId;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
-@Document
+/**
+ * A FAIR Data Point the Index knows about, identified by the URL it pings from.
+ */
+@Entity
+@Table(name = "index_entry")
 @NoArgsConstructor
-@AllArgsConstructor
+// Package-private for the same reason as in User: Lombok's @Builder needs an all-args
+// constructor to build from, and @NoArgsConstructor stops it from being synthesized implicitly.
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 @Setter
-@EqualsAndHashCode
-@Builder
+@Builder(toBuilder = true)
 public class IndexEntry {
 
     @Id
-    private ObjectId id;
+    private UUID uuid;
 
-    private String uuid;
-
+    @Column(name = "client_url", nullable = false, unique = true)
     private String clientUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
     private IndexEntryState state = IndexEntryState.Unknown;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
     private IndexEntryPermit permit = IndexEntryPermit.PENDING;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    // Named after what they mean to the REST API rather than after their columns: the API hands
+    // the names of these very fields to Spring Data as sort properties.
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant registrationTime;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "updated_at", nullable = false)
     private Instant modificationTime;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "last_retrieval_at")
     private Instant lastRetrievalTime;
 
-    private RepositoryMetadata currentMetadata;
+    // Never null, unlike in the document store: the harvested properties are a NOT NULL column,
+    // so an entry that has never been retrieved carries an empty metadata record rather than
+    // none at all. Callers tell the two apart by the absent repository URI.
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(
+                name = "metadataVersion", column = @Column(name = "metadata_version", nullable = false)
+        ),
+        @AttributeOverride(name = "repositoryUri", column = @Column(name = "repository_uri")),
+        @AttributeOverride(name = "metadata", column = @Column(name = "metadata", nullable = false))
+    })
+    @Builder.Default
+    private RepositoryMetadata currentMetadata = new RepositoryMetadata();
 
     public Duration getLastRetrievalAgo() {
         if (lastRetrievalTime == null) {

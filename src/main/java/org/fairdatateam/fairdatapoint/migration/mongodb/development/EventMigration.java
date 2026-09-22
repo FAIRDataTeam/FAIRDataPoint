@@ -33,7 +33,10 @@ public class EventMigration {
     private EventRepository eventRepository;
 
     public void runMigration() {
-        eventRepository.deleteAll();
+        // Not deleteAll(): that deletes row by row, and the self-referencing triggered_by
+        // foreign key has no ON DELETE action, so a parent event deleted before its child would
+        // fail. A batch delete is a single statement, with the constraint checked at its end.
+        eventRepository.deleteAllInBatch();
     }
 
 }

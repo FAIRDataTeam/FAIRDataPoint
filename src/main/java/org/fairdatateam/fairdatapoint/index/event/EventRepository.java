@@ -25,19 +25,35 @@ package org.fairdatateam.fairdatapoint.index.event;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
-public interface EventRepository extends MongoRepository<Event, String> {
+public interface EventRepository extends JpaRepository<Event, UUID> {
 
     List<Event> getAllByType(EventType type);
 
+    // The entry is read from every one of these events, at start-up, without a session left to
+    // fetch it lazily; the graph turns that into one join instead of one secondary select per
+    // event.
+    @EntityGraph(attributePaths = "relatedTo")
     List<Event> getAllByFinishedIsNull();
 
+    @EntityGraph(attributePaths = "relatedTo")
     Page<Event> getAllByRelatedTo(IndexEntry indexEntry, Pageable pageable);
 
-    List<Event> findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
-            String remoteAddr, Instant after);
+    /**
+     * Counts what a caller has done recently, for the rate limit on incoming pings. The address
+     * used to be read out of the ping payload; it is now copied into a column of its own when the
+     * event is written, so that this stays an indexed lookup rather than a search through JSON.
+     *
+     * @param type only events of this type count
+     * @param remoteAddr the address the events came from
+     * @param after only events created after this moment count
+     * @return how many matching events there are
+     */
+    long countByTypeAndRemoteAddrAndCreatedAfter(EventType type, String remoteAddr, Instant after);
 }

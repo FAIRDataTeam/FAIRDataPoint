@@ -89,8 +89,10 @@ public class DevelopmentMigrationRunner {
         metadataSchemaMigration.runMigration();
         apiKeyMigration.runMigration();
         metadataMigration.runMigration();
-        indexEntryMigration.runMigration();
+        // Events first: an event points at the entry it is about, and the database removes the
+        // events of an entry along with the entry itself.
         eventMigration.runMigration();
+        indexEntryMigration.runMigration();
         resourceDefinitionTargetClassesCache.computeCache();
         resourceDefinitionCache.computeCache();
         searchFilterCache.clearCache();
