@@ -22,65 +22,64 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
-import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQuery;
 import org.fairdatateam.fairdatapoint.search.SearchSavedQueryType;
-import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
+import org.fairdatateam.fairdatapoint.search.SearchSavedQueryVariables;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Service
 public class SearchSavedQueryFixtures {
 
     private static final String PREFIX_DCAT = "PREFIX dcat: <http://www.w3.org/ns/dcat#>";
+
     private static final String ORDER_TITLE = "ASC(?title)";
+
+    @Autowired
+    private UserFixtures userFixtures;
 
     public SearchSavedQuery savedQueryPublic01() {
         return SearchSavedQuery.builder()
-                .uuid(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID())
                 .name("All datasets")
                 .description("Quickly query all datasets (DCAT)")
                 .type(SearchSavedQueryType.PUBLIC)
-                .userUuid(KnownUUIDs.USER_ALBERT_UUID)
-                .variables(SearchQueryVariablesDTO.builder()
+                .user(userFixtures.albert())
+                .variables(SearchSavedQueryVariables.builder()
                         .prefixes(PREFIX_DCAT)
                         .graphPattern("?entity rdf:type dcat:Dataset .")
                         .ordering(ORDER_TITLE)
                         .build()
                 )
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
                 .build();
     }
 
     public SearchSavedQuery savedQueryInternal01() {
         return SearchSavedQuery.builder()
-                .uuid(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID())
                 .name("All distributions")
                 .description("Quickly query all distributions (DCAT)")
                 .type(SearchSavedQueryType.INTERNAL)
-                .userUuid(KnownUUIDs.USER_ADMIN_UUID)
-                .variables(SearchQueryVariablesDTO.builder()
+                .user(userFixtures.admin())
+                .variables(SearchSavedQueryVariables.builder()
                         .prefixes(PREFIX_DCAT)
                         .graphPattern("?entity rdf:type dcat:Distribution .")
                         .ordering(ORDER_TITLE)
                         .build()
                 )
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
                 .build();
     }
 
     public SearchSavedQuery savedQueryPrivate01() {
         return SearchSavedQuery.builder()
-                .uuid(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID())
                 .name("Things with data")
                 .description("This is private query of Nikola Tesla.")
                 .type(SearchSavedQueryType.PRIVATE)
-                .userUuid(KnownUUIDs.USER_NIKOLA_UUID)
-                .variables(SearchQueryVariablesDTO.builder()
+                .user(userFixtures.nikola())
+                .variables(SearchSavedQueryVariables.builder()
                         .prefixes("")
                         .graphPattern("""
                                 ?entity ?relationPredicate ?relationObject .
@@ -89,8 +88,6 @@ public class SearchSavedQueryFixtures {
                         .ordering(ORDER_TITLE)
                         .build()
                 )
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
                 .build();
     }
 }

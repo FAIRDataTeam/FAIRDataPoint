@@ -65,7 +65,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .build();
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
         };
@@ -75,7 +75,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid())));
+        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid().toString())));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
         };
@@ -108,7 +108,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
         };
@@ -129,7 +129,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -140,7 +140,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid())));
+        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid().toString())));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -163,7 +163,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid())));
+        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid().toString())));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -186,7 +186,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid())));
+        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid().toString())));
     }
 
     @Test
@@ -198,7 +198,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -220,7 +220,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .get(url(query.getUuid()))
+                .get(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<SearchSavedQueryDTO> responseType = new ParameterizedTypeReference<>() {
@@ -231,7 +231,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
-        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid())));
+        assertThat(Objects.requireNonNull(result.getBody()).getUuid(), is(equalTo(query.getUuid().toString())));
     }
 
 }

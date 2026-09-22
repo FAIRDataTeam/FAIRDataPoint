@@ -63,7 +63,7 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(query.getUuid()))
+                .delete(url(query.getUuid().toString()))
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
         };
@@ -85,7 +85,7 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(query.getUuid()))
+                .delete(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -108,7 +108,7 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(query.getUuid()))
+                .delete(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -131,7 +131,7 @@ public class Detail_DELETE extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<Void> request = RequestEntity
-                .delete(url(query.getUuid()))
+                .delete(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .build();
         ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {

@@ -68,7 +68,7 @@ public class Detail_PUT extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
-                .put(url(query.getUuid()))
+                .put(url(query.getUuid().toString()))
                 .body(
                         SearchSavedQueryChangeDTO.builder()
                                 .name("Edited query")
@@ -101,7 +101,7 @@ public class Detail_PUT extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
-                .put(url(query.getUuid()))
+                .put(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .body(
                         SearchSavedQueryChangeDTO.builder()
@@ -135,7 +135,7 @@ public class Detail_PUT extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
-                .put(url(query.getUuid()))
+                .put(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
                 .body(
                         SearchSavedQueryChangeDTO.builder()
@@ -156,6 +156,9 @@ public class Detail_PUT extends WebIntegrationTest {
         // WHEN:
         ResponseEntity<SearchSavedQueryDTO> result = client.exchange(request, responseType);
 
+        // AND: the query is reloaded to check its updated timestamp against the original one
+        final SearchSavedQuery reloaded = searchSavedQueryRepository.findByUuid(query.getUuid()).orElseThrow();
+
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
@@ -164,6 +167,11 @@ public class Detail_PUT extends WebIntegrationTest {
         assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
         assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));
         assertThat(result.getBody().getVariables().getOrdering(), is(equalTo("C")));
+
+        // THEN: updatedAt moved forward relative to createdAt and to its own original value
+        assertThat(reloaded.getUpdatedAt().isAfter(reloaded.getCreatedAt()), is(true));
+        assertThat(reloaded.getUpdatedAt().isAfter(query.getUpdatedAt()), is(true));
+        assertThat(result.getBody().getUpdatedAt(), is(equalTo(reloaded.getUpdatedAt())));
     }
 
     @Test
@@ -175,7 +183,7 @@ public class Detail_PUT extends WebIntegrationTest {
 
         // AND: prepare request
         RequestEntity<SearchSavedQueryChangeDTO> request = RequestEntity
-                .put(url(query.getUuid()))
+                .put(url(query.getUuid().toString()))
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .body(
                         SearchSavedQueryChangeDTO.builder()
@@ -196,6 +204,9 @@ public class Detail_PUT extends WebIntegrationTest {
         // WHEN:
         ResponseEntity<SearchSavedQueryDTO> result = client.exchange(request, responseType);
 
+        // AND: the query is reloaded to check its updated timestamp against the original one
+        final SearchSavedQuery reloaded = searchSavedQueryRepository.findByUuid(query.getUuid()).orElseThrow();
+
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         assertThat(result.getBody().getUser().getUuid(), is(equalTo(KnownUUIDs.USER_ALBERT_UUID)));
@@ -204,5 +215,10 @@ public class Detail_PUT extends WebIntegrationTest {
         assertThat(result.getBody().getVariables().getPrefixes(), is(equalTo("A")));
         assertThat(result.getBody().getVariables().getGraphPattern(), is(equalTo("B")));
         assertThat(result.getBody().getVariables().getOrdering(), is(equalTo("C")));
+
+        // THEN: updatedAt moved forward relative to createdAt and to its own original value
+        assertThat(reloaded.getUpdatedAt().isAfter(reloaded.getCreatedAt()), is(true));
+        assertThat(reloaded.getUpdatedAt().isAfter(query.getUpdatedAt()), is(true));
+        assertThat(result.getBody().getUpdatedAt(), is(equalTo(reloaded.getUpdatedAt())));
     }
 }

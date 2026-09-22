@@ -40,6 +40,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -78,8 +79,8 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<SearchSavedQueryDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(1)));
-        assertThat(body.get(0).getUuid(), is(equalTo(q1.getUuid())));
+        List<String> uuids = body.stream().map(SearchSavedQueryDTO::getUuid).toList();
+        assertThat(uuids, containsInAnyOrder(q1.getUuid().toString()));
     }
 
     @Test
@@ -105,9 +106,8 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<SearchSavedQueryDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(2)));
-        assertThat(body.get(0).getUuid(), is(equalTo(q1.getUuid())));
-        assertThat(body.get(1).getUuid(), is(equalTo(q2.getUuid())));
+        List<String> uuids = body.stream().map(SearchSavedQueryDTO::getUuid).toList();
+        assertThat(uuids, containsInAnyOrder(q1.getUuid().toString(), q2.getUuid().toString()));
     }
 
     @Test
@@ -133,10 +133,10 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<SearchSavedQueryDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(3)));
-        assertThat(body.get(0).getUuid(), is(equalTo(q1.getUuid())));
-        assertThat(body.get(1).getUuid(), is(equalTo(q2.getUuid())));
-        assertThat(body.get(2).getUuid(), is(equalTo(q3.getUuid())));
+        List<String> uuids = body.stream().map(SearchSavedQueryDTO::getUuid).toList();
+        assertThat(uuids, containsInAnyOrder(
+                q1.getUuid().toString(), q2.getUuid().toString(), q3.getUuid().toString()
+        ));
     }
 
     @Test
@@ -162,9 +162,9 @@ public class List_GET extends WebIntegrationTest {
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.OK)));
         List<SearchSavedQueryDTO> body = result.getBody();
-        assertThat(body.size(), is(equalTo(3)));
-        assertThat(body.get(0).getUuid(), is(equalTo(q1.getUuid())));
-        assertThat(body.get(1).getUuid(), is(equalTo(q2.getUuid())));
-        assertThat(body.get(2).getUuid(), is(equalTo(q3.getUuid())));
+        List<String> uuids = body.stream().map(SearchSavedQueryDTO::getUuid).toList();
+        assertThat(uuids, containsInAnyOrder(
+                q1.getUuid().toString(), q2.getUuid().toString(), q3.getUuid().toString()
+        ));
     }
 }

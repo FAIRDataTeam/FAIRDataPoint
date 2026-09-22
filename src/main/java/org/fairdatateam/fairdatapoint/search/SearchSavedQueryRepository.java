@@ -22,12 +22,44 @@
  */
 package org.fairdatateam.fairdatapoint.search;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface SearchSavedQueryRepository extends MongoRepository<SearchSavedQuery, String> {
+public interface SearchSavedQueryRepository extends JpaRepository<SearchSavedQuery, UUID> {
 
-    Optional<SearchSavedQuery> findByUuid(String uuid);
+    // The owner is mapped lazily but the mapper reads its identifier after the query has
+    // returned, and open-in-view is disabled, so it has to be loaded while the query runs.
+    @EntityGraph(attributePaths = "user")
+    Optional<SearchSavedQuery> findByUuid(UUID uuid);
+
+    /**
+     * Looks a saved query up by the string form of its identifier, as it arrives from the REST
+     * API. A malformed identifier is treated as "no such saved query" instead of an error.
+     *
+     * @param uuid identifier in string form, possibly malformed
+     * @return the saved query, or empty if the identifier is malformed or unknown
+     */
+    default Optional<SearchSavedQuery> findByUuid(String uuid) {
+        if (uuid == null) {
+            return Optional.empty();
+        }
+        try {
+            return findByUuid(UUID.fromString(uuid));
+        }
+        catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
+    }
+
+    // Mongo, the previous store, listed saved queries in insertion order; Postgres makes no such
+    // guarantee, so the order the API reports has to be pinned explicitly. Ordering by creation
+    // time with the identifier as a tie-breaker gives a stable order, though not strictly
+    // insertion order for two queries created within the same clock tick.
+    @EntityGraph(attributePaths = "user")
+    List<SearchSavedQuery> findAllByOrderByCreatedAtAscUuidAsc();
 
 }

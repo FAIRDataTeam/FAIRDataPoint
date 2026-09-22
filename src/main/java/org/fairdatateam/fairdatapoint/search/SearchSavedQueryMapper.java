@@ -22,32 +22,35 @@
  */
 package org.fairdatateam.fairdatapoint.search;
 
+import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
+import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.dto.UserDTO;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Component
 public class SearchSavedQueryMapper {
+
     public SearchSavedQueryDTO toDTO(SearchSavedQuery query) {
         // anonymize the userDTO object as much as possible without breaking backward compatibility
         // TODO: replace UserDTO object by simple userUuid string (breaking change, postpone until next major release)
         final String hidden = "***";
+        final String userUuid = query.getUser().getUuid().toString();
         final UserDTO userDTO = new UserDTO();
-        userDTO.setUuid(query.getUserUuid());
-        userDTO.setFirstName(String.format("%.8s", query.getUserUuid()));
+        userDTO.setUuid(userUuid);
+        userDTO.setFirstName(String.format("%.8s", userUuid));
         userDTO.setLastName(hidden);
         userDTO.setEmail(hidden);
         userDTO.setRole(UserRole.USER);
         return SearchSavedQueryDTO.builder()
-                .uuid(query.getUuid())
+                .uuid(query.getUuid().toString())
                 .name(query.getName())
                 .description(query.getDescription())
-                .variables(query.getVariables())
+                .variables(toVariablesDTO(query.getVariables()))
                 .user(userDTO)
                 .type(query.getType())
                 .createdAt(query.getCreatedAt())
@@ -56,30 +59,44 @@ public class SearchSavedQueryMapper {
     }
 
     public SearchSavedQuery fromChangeDTO(
-            SearchSavedQueryChangeDTO reqDto, String userUuid
+            SearchSavedQueryChangeDTO reqDto, User user
     ) {
         return SearchSavedQuery.builder()
-                .uuid(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID())
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
                 .type(reqDto.getType())
-                .variables(reqDto.getVariables())
-                .userUuid(userUuid)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .variables(fromVariablesDTO(reqDto.getVariables()))
+                .user(user)
                 .build();
     }
 
-    public SearchSavedQuery fromChangeDTO(
+    // The query passed in is the managed entity loaded by the service, so the requested changes
+    // are applied to it in place; building a detached copy instead would make the caller's save
+    // a merge of a second instance carrying the same identifier. The owner and the timestamps are
+    // left alone: ownership does not change, and Hibernate maintains updatedAt on flush.
+    public void applyChangeDTO(
             SearchSavedQuery query, SearchSavedQueryChangeDTO reqDto
     ) {
-        return query.toBuilder()
-                .name(reqDto.getName())
-                .description(reqDto.getDescription())
-                .variables(reqDto.getVariables())
-                .userUuid(query.getUserUuid())
-                .type(reqDto.getType())
-                .updatedAt(Instant.now())
+        query.setName(reqDto.getName());
+        query.setDescription(reqDto.getDescription());
+        query.setType(reqDto.getType());
+        query.setVariables(fromVariablesDTO(reqDto.getVariables()));
+    }
+
+    private SearchQueryVariablesDTO toVariablesDTO(SearchSavedQueryVariables variables) {
+        return SearchQueryVariablesDTO.builder()
+                .prefixes(variables.getPrefixes())
+                .graphPattern(variables.getGraphPattern())
+                .ordering(variables.getOrdering())
+                .build();
+    }
+
+    private SearchSavedQueryVariables fromVariablesDTO(SearchQueryVariablesDTO reqDto) {
+        return SearchSavedQueryVariables.builder()
+                .prefixes(reqDto.getPrefixes())
+                .graphPattern(reqDto.getGraphPattern())
+                .ordering(reqDto.getOrdering())
                 .build();
     }
 }

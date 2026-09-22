@@ -25,11 +25,13 @@ package org.fairdatateam.fairdatapoint.search;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
+import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +41,8 @@ import java.util.Optional;
 public class SearchSavedQueryService {
 
     private static final String MSG_CANNOT_UPDATE = "User is not allowed to update the query";
+
+    private static final String MSG_LOGIN_FIRST = "You have to log in";
 
     @Autowired
     private SearchSavedQueryRepository repository;
@@ -52,8 +56,8 @@ public class SearchSavedQueryService {
     public List<SearchSavedQueryDTO> getAll() {
         final Optional<User> optionalUser = currentUserProvider.getCurrentUser();
         return repository
-                .findAll()
-                .parallelStream()
+                .findAllByOrderByCreatedAtAscUuidAsc()
+                .stream()
                 .filter(savedQuery -> canSeeQuery(optionalUser, savedQuery))
                 .map(savedQuery -> mapper.toDTO(savedQuery))
                 .toList();
@@ -66,6 +70,7 @@ public class SearchSavedQueryService {
                 .map(savedQuery -> mapper.toDTO(savedQuery));
     }
 
+    @Transactional
     public boolean delete(String uuid) {
         final Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
         if (optionalSearchQuery.isEmpty()) {
@@ -80,14 +85,21 @@ public class SearchSavedQueryService {
         return true;
     }
 
+    @Transactional
     public SearchSavedQueryDTO create(SearchSavedQueryChangeDTO reqDto) {
-        final String currentUserUuid = currentUserProvider.getCurrentUserUuid().orElse(null);
+        // the current user is loaded inside this transaction, so it is a managed entity that can
+        // be attached to the new saved query straight away
+        final Optional<User> optionalUser = currentUserProvider.getCurrentUser();
+        if (optionalUser.isEmpty()) {
+            throw new UnauthorizedException(MSG_LOGIN_FIRST);
+        }
         final SearchSavedQuery searchSavedQuery = repository.save(
-                mapper.fromChangeDTO(reqDto, currentUserUuid)
+                mapper.fromChangeDTO(reqDto, optionalUser.get())
         );
         return mapper.toDTO(searchSavedQuery);
     }
 
+    @Transactional
     public Optional<SearchSavedQueryDTO> update(String uuid, SearchSavedQueryChangeDTO reqDto) {
         final Optional<SearchSavedQuery> optionalSearchQuery = repository.findByUuid(uuid);
         if (optionalSearchQuery.isEmpty()) {
@@ -98,9 +110,11 @@ public class SearchSavedQueryService {
         if (!canManageQuery(optionalUser, searchSavedQuery)) {
             throw new ForbiddenException(MSG_CANNOT_UPDATE);
         }
-        final SearchSavedQuery updatedQuery = repository.save(
-                mapper.fromChangeDTO(searchSavedQuery, reqDto)
-        );
+        mapper.applyChangeDTO(searchSavedQuery, reqDto);
+        // saveAndFlush so that @UpdateTimestamp is applied before the entity is mapped to the
+        // response: a plain save on a managed entity does not flush until commit, which returned
+        // a stale updatedAt.
+        final SearchSavedQuery updatedQuery = repository.saveAndFlush(searchSavedQuery);
         return Optional.of(mapper.toDTO(updatedQuery));
     }
 
@@ -116,7 +130,7 @@ public class SearchSavedQueryService {
 
     private boolean isOwnOrInternal(User user, SearchSavedQuery query) {
         return query.getType().equals(SearchSavedQueryType.INTERNAL)
-                || Objects.equals(query.getUserUuid(), user.getUuid().toString());
+                || isSameUser(user, query);
     }
 
     private boolean canManageQuery(Optional<User> optionalUser, SearchSavedQuery query) {
@@ -130,6 +144,10 @@ public class SearchSavedQueryService {
 
     private boolean isOwner(User user, SearchSavedQuery query) {
         return user.getRole().equals(UserRole.ADMIN)
-                || Objects.equals(query.getUserUuid(), user.getUuid().toString());
+                || isSameUser(user, query);
+    }
+
+    private boolean isSameUser(User user, SearchSavedQuery query) {
+        return Objects.equals(query.getUser().getUuid(), user.getUuid());
     }
 }

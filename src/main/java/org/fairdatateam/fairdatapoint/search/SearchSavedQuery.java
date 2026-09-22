@@ -22,38 +22,66 @@
  */
 package org.fairdatateam.fairdatapoint.search;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.fairdatateam.fairdatapoint.search.dto.SearchQueryVariablesDTO;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.fairdatateam.fairdatapoint.user.User;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.UUID;
 
-@Document
+@Entity
+@Table(name = "search_saved_query")
 @NoArgsConstructor
-@AllArgsConstructor
+// Package-private for the same reason as in User: Lombok's @Builder needs an all-args
+// constructor to build from, and @NoArgsConstructor stops it from being synthesized
+// implicitly; keeping it out of the public API leaves SearchSavedQuery.builder() as the only
+// public way to construct a fully populated instance.
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 @Setter
 @Builder(toBuilder = true)
 public class SearchSavedQuery {
 
     @Id
-    private ObjectId id;
+    private UUID uuid;
 
-    private String uuid;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
+    private User user;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String description;
 
-    private String userUuid;
-
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private SearchSavedQueryType type;
 
+    // The three variables live in the same row as the query itself (var_prefixes,
+    // var_graph_pattern, var_ordering), so they are mapped as an embeddable rather than as a
+    // table of their own.
+    @Embedded
+    private SearchSavedQueryVariables variables;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
 
-    private SearchQueryVariablesDTO variables;
 }
