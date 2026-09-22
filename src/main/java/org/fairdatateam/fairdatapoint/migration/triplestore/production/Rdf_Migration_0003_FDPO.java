@@ -25,8 +25,8 @@ package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.R3D;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfProductionMigration;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
@@ -44,7 +44,7 @@ import java.util.List;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.s;
 
-@RdfMigrationAnnotation(
+@RdfMigration(
         number = 3,
         name = "FDPO Compliance",
         description = "Comply with FDP-O Metadata Service")

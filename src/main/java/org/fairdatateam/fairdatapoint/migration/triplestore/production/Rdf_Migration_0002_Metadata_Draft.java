@@ -26,8 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDPRI;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfProductionMigration;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RdfMigrationAnnotation(
+@RdfMigration(
         number = 2,
         name = "Metadata Draft",
         description = "Support metadata in DRAFT state")
@@ -67,7 +67,7 @@ public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration
                     .filter(IRI.class::isInstance)
                     .map(IRI.class::cast)
                     // the system graphs hold the configuration of the implementation, not records
-                    .filter(context -> !context.stringValue().startsWith(FDPRI.SYSTEM_GRAPH_PREFIX))
+                    .filter(context -> !FDPRI.isSystemGraph(context))
                     .forEach(records::add);
         }
         catch (RepositoryException exception) {

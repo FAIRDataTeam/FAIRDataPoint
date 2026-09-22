@@ -26,6 +26,7 @@ import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.XSD;
 
+import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -95,6 +96,10 @@ public class ValueFactoryHelper {
             return null;
         }
         return l(literal.get());
+    }
+
+    public static Literal l(int literal) {
+        return VF.createLiteral(BigInteger.valueOf(literal));
     }
 
     public static Literal l(float literal) {

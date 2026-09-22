@@ -27,8 +27,8 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.reset.FactoryDefaults;
 import org.fairdatateam.fairdatapoint.security.auth.AuthenticationService;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfProductionMigration;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
@@ -44,7 +44,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
-@RdfMigrationAnnotation(
+@RdfMigration(
         number = 1,
         name = "Init migration",
         description = "Load basic fixtures for repository, catalog, dataset and distribution")

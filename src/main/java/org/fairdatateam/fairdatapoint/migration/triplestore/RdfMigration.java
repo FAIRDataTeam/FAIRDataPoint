@@ -20,33 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration;
+package org.fairdatateam.fairdatapoint.migration.triplestore;
 
-import org.eclipse.rdf4j.repository.Repository;
-import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.migration.triplestore.RdfMigrationLog;
-import org.fairdatateam.fairdatapoint.migration.triplestore.RdfProductionMigrationRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Profile;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Configuration
-public class TripleStoreMigrationConfig {
+/**
+ * Marks a {@link RdfProductionMigration} bean and carries the identity of the migration.
+ *
+ * <p>The number is the identity of the migration in the {@link RdfMigrationLog} and orders the
+ * migrations among each other; it must never be reused or renumbered, because an installation that
+ * already applied a number will not apply it again.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface RdfMigration {
 
-    @Bean
-    @DependsOn("mongockRunner")
-    @Profile(Profiles.PRODUCTION)
-    public RdfProductionMigrationRunner rdfProductionMigrationRunner(
-            RdfMigrationLog rdfMigrationLog,
-            Repository repository,
-            ApplicationContext appContext
-    ) {
-        final RdfProductionMigrationRunner runner =
-                new RdfProductionMigrationRunner(rdfMigrationLog, repository, appContext);
-        runner.run();
-        return runner;
-    }
+    int number();
+
+    String name();
+
+    String description();
 
 }

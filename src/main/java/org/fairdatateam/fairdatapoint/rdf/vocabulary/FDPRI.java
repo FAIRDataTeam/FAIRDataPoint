@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.vocabulary;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
 
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
@@ -67,6 +68,18 @@ public final class FDPRI {
     /** Relates a record to its {@link #RECORD_STATE}. */
     public static final IRI HAS_STATE = i(NAMESPACE + "hasState");
 
+    /** Sub-graph holding the log of the RDF migrations that were applied to this installation. */
+    public static final IRI MIGRATIONS_GRAPH = systemGraph("migrations");
+
+    /** Class of the entries of the RDF-migration log. */
+    public static final IRI APPLIED_MIGRATION = i(NAMESPACE + "AppliedMigration");
+
+    /** Number that identifies an applied migration and orders it among the others. */
+    public static final IRI MIGRATION_NUMBER = i(NAMESPACE + "migrationNumber");
+
+    /** Moment at which a migration was applied. */
+    public static final IRI APPLIED_AT = i(NAMESPACE + "appliedAt");
+
     private FDPRI() {
     }
 
@@ -78,6 +91,18 @@ public final class FDPRI {
      */
     public static IRI systemGraph(String area) {
         return i(SYSTEM_GRAPH_PREFIX + "/" + area);
+    }
+
+    /**
+     * Whether a context is the system graph or one of its sub-graphs, i.e. it holds the
+     * configuration of the implementation rather than a record.
+     *
+     * @param context a context, e.g. as returned by
+     *     {@link org.eclipse.rdf4j.repository.RepositoryConnection#getContextIDs()}
+     * @return true if the context is a system graph
+     */
+    public static boolean isSystemGraph(Resource context) {
+        return context instanceof IRI iri && iri.stringValue().startsWith(SYSTEM_GRAPH_PREFIX);
     }
 
 }

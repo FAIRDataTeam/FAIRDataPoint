@@ -20,33 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.migration;
+package org.fairdatateam.fairdatapoint.migration.triplestore;
 
-import org.eclipse.rdf4j.repository.Repository;
-import org.fairdatateam.fairdatapoint.Profiles;
-import org.fairdatateam.fairdatapoint.migration.triplestore.RdfMigrationLog;
-import org.fairdatateam.fairdatapoint.migration.triplestore.RdfProductionMigrationRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Profile;
+/**
+ * One migration of the content of the triple store, run once per installation on start-up.
+ *
+ * <p>An implementation is a Spring bean annotated with {@link RdfMigration}; the
+ * {@link RdfProductionMigrationRunner} collects those beans, runs the ones that the
+ * {@link RdfMigrationLog} does not list yet, in ascending order of their number, and records each
+ * of them after it returned. A migration that throws aborts the start-up and is not recorded, so
+ * it runs again on the next start: migrations have to be written so that a partial run can be
+ * repeated.
+ */
+public interface RdfProductionMigration {
 
-@Configuration
-public class TripleStoreMigrationConfig {
-
-    @Bean
-    @DependsOn("mongockRunner")
-    @Profile(Profiles.PRODUCTION)
-    public RdfProductionMigrationRunner rdfProductionMigrationRunner(
-            RdfMigrationLog rdfMigrationLog,
-            Repository repository,
-            ApplicationContext appContext
-    ) {
-        final RdfProductionMigrationRunner runner =
-                new RdfProductionMigrationRunner(rdfMigrationLog, repository, appContext);
-        runner.run();
-        return runner;
-    }
+    void runMigration();
 
 }

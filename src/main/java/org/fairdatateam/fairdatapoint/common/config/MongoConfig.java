@@ -39,12 +39,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoAuditing
-@EnableMongoRepositories(
-        basePackages = {
-            "org.fairdatateam.fairdatapoint",
-            "org.fairdatateam.rdf.migration"
-        }
-)
+@EnableMongoRepositories(basePackages = "org.fairdatateam.fairdatapoint")
 public class MongoConfig {
 
     @Autowired

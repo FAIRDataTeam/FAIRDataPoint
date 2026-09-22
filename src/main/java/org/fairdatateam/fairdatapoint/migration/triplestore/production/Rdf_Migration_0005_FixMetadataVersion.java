@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.DCAT3;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.repository.Repository;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.s;
 
-@RdfMigrationAnnotation(
+@RdfMigration(
         number = 5,
         name = "Fix Metadata Version",
         description = "Use dcat:version instead of dcterms:hasVersion")

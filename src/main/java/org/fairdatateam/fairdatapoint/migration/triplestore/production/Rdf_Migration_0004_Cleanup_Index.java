@@ -28,8 +28,8 @@ import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
-import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
-import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfMigration;
+import org.fairdatateam.fairdatapoint.migration.triplestore.RdfProductionMigration;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
-@RdfMigrationAnnotation(
+@RdfMigration(
         number = 4,
         name = "Cleanup Index",
         description = "Cleanup harvested record stored in separate named graphs")
@@ -104,7 +104,7 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
                             genericMetadataRepository.remove(i(contextId));
                         }
                         catch (MetadataRdfRepositoryException exception) {
-                            throw new RuntimeException(exception);
+                            throw new IllegalStateException(exception);
                         }
                     });
         }

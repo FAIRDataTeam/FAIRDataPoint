@@ -114,7 +114,7 @@ public abstract class AbstractMetadataRdfRepository implements MetadataRdfReposi
             // cleared separately and explicitly by MetadataMigration.
             final List<Resource> recordGraphs = Iterations.asList(conn.getContextIDs())
                     .stream()
-                    .filter(context -> !isSystemGraph(context))
+                    .filter(context -> !FDPRI.isSystemGraph(context))
                     .toList();
             if (!recordGraphs.isEmpty()) {
                 conn.clear(recordGraphs.toArray(new Resource[0]));
@@ -174,16 +174,5 @@ public abstract class AbstractMetadataRdfRepository implements MetadataRdfReposi
     ) throws MetadataRdfRepositoryException {
         final String queryString = loadResource(queryFilePath);
         return runSparqlQuery(queryString, bindings);
-    }
-
-    /**
-     * Whether a context is (a sub-graph of) the system graph, i.e. it holds the implementation's
-     * own configuration rather than a record.
-     *
-     * @param context a context as returned by {@link RepositoryConnection#getContextIDs()}
-     * @return true if the context is a system graph
-     */
-    private static boolean isSystemGraph(Resource context) {
-        return context instanceof IRI iri && iri.stringValue().startsWith(FDPRI.SYSTEM_GRAPH_PREFIX);
     }
 }

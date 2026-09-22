@@ -47,3 +47,22 @@ fdp-ri:hasState
     rdfs:label "has state"@en ;
     rdfs:comment "Relates a metadata record to its state. The statement is kept in the state sub-graph of the system graph (https://w3id.org/fdp/fdp-ri-o/system/state), never in the graph of the record itself. The domain is intentionally left open: records have no single RDF type, so the domain is any resource that is a metadata record of this FAIR Data Point."@en ;
     rdfs:range fdp-ri:RecordState .
+
+fdp-ri:AppliedMigration
+    a owl:Class ;
+    rdfs:label "applied migration"@en ;
+    rdfs:comment "An RDF migration that has been applied to this reference implementation. The entries form the migration log, kept in the migrations sub-graph of the system graph (https://w3id.org/fdp/fdp-ri-o/system/migrations); a migration whose number is listed there is never applied again."@en .
+
+fdp-ri:migrationNumber
+    a owl:DatatypeProperty ;
+    rdfs:label "migration number"@en ;
+    rdfs:comment "Number that identifies an applied migration and orders it among the others. Numbers are never reused or renumbered."@en ;
+    rdfs:domain fdp-ri:AppliedMigration ;
+    rdfs:range xsd:integer .
+
+fdp-ri:appliedAt
+    a owl:DatatypeProperty ;
+    rdfs:label "applied at"@en ;
+    rdfs:comment "Moment at which the migration was applied to this reference implementation."@en ;
+    rdfs:domain fdp-ri:AppliedMigration ;
+    rdfs:range xsd:dateTime .
