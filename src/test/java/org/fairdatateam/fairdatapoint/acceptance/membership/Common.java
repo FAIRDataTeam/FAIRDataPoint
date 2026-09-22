@@ -32,7 +32,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class Common {
 
     public static void compare(Membership entity, MembershipDTO dto) {
-        assertThat(dto.getUuid(), is(equalTo(entity.getUuid())));
+        assertThat(dto.getUuid(), is(equalTo(entity.getUuid().toString())));
         assertThat(dto.getName(), is(equalTo(entity.getName())));
         assertThat(dto.getPermissions().size(), is(equalTo(entity.getPermissions().size())));
         for (int i = 0; i < dto.getPermissions().size(); i++) {

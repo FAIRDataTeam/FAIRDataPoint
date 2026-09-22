@@ -22,12 +22,47 @@
  */
 package org.fairdatateam.fairdatapoint.security.membership;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface MembershipRepository extends MongoRepository<Membership, String> {
+public interface MembershipRepository extends JpaRepository<Membership, UUID> {
 
-    Optional<Membership> findByUuid(String uuid);
+    // Both collections are mapped lazily and are needed by the mappers and by MemberService;
+    // open-in-view is disabled, so they have to be loaded while the query runs.
+    @EntityGraph(attributePaths = {"permissions", "allowedEntities"})
+    Optional<Membership> findByUuid(UUID uuid);
+
+    /**
+     * Looks a membership up by the string form of its identifier, as it arrives from the REST API.
+     * A malformed identifier is treated as "no such membership" instead of an error.
+     *
+     * @param uuid identifier in string form, possibly malformed
+     * @return the membership, or empty if the identifier is malformed or unknown
+     */
+    default Optional<Membership> findByUuid(String uuid) {
+        if (uuid == null) {
+            return Optional.empty();
+        }
+        try {
+            return findByUuid(UUID.fromString(uuid));
+        }
+        catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
+    }
+
+    // Mongo, the previous store, returned memberships in insertion order; Postgres makes no such
+    // guarantee, so the order has to be pinned explicitly. Ordering by uuid also happens to keep
+    // the order the API and its tests rely on, with the Owner (49f2...) preceding the Data
+    // Provider (87a2...).
+    @Override
+    @EntityGraph(attributePaths = {"permissions", "allowedEntities"})
+    @Query("select m from Membership m order by m.uuid")
+    List<Membership> findAll();
 
 }

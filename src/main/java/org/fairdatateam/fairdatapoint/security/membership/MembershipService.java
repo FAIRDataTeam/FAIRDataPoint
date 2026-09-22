@@ -26,6 +26,7 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,52 +50,41 @@ public class MembershipService {
                         .collect(toList());
     }
 
+    @Transactional
     public void addToMembership(ResourceDefinition resourceDefinition) {
         final String uuid = resourceDefinition.getUuid();
 
         // Add to owner
         final Membership owner =
                 membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
-        addEntityIfMissing(owner, uuid);
+        owner.getAllowedEntities().add(uuid);
         membershipRepository.save(owner);
 
         // Add to data provider
         if (resourceDefinition.isCatalog()) {
             final Membership dataProvider =
                     membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
-            addEntityIfMissing(dataProvider, uuid);
+            dataProvider.getAllowedEntities().add(uuid);
             membershipRepository.save(dataProvider);
         }
     }
 
+    @Transactional
     public void removeFromMembership(ResourceDefinition resourceDefinition) {
         final String uuid = resourceDefinition.getUuid();
 
         // Add to owner
         final Membership owner =
                 membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID).get();
-        removeEntityIfPresent(owner, uuid);
+        owner.getAllowedEntities().remove(uuid);
         membershipRepository.save(owner);
 
         // Add to data provider
         if (resourceDefinition.isCatalog()) {
             final Membership dataProvider =
                     membershipRepository.findByUuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID).get();
-            removeEntityIfPresent(dataProvider, uuid);
+            dataProvider.getAllowedEntities().remove(uuid);
             membershipRepository.save(dataProvider);
-        }
-    }
-
-    private void addEntityIfMissing(Membership membership, String rdUuid) {
-        if (!membership.getAllowedEntities().contains(rdUuid)) {
-            membership.getAllowedEntities().add(rdUuid);
-        }
-    }
-
-    private void removeEntityIfPresent(Membership membership, String rdUuid) {
-        final int index = membership.getAllowedEntities().indexOf(rdUuid);
-        if (index != -1) {
-            membership.getAllowedEntities().remove(index);
         }
     }
 

@@ -138,7 +138,10 @@ public class ResetService {
 
     private void clearMemberships() {
         log.debug("Clearing memberships");
-        membershipRepository.deleteAll();
+        // the baseline schema declares membership_permission and membership_allowed_entity with
+        // ON DELETE CASCADE, so the batch delete below removes the child rows too; it runs
+        // immediately, ahead of the factory memberships being re-inserted in this same transaction
+        membershipRepository.deleteAllInBatch();
         log.debug("Clearing access control lists");
         aclEntryJdbcRepository.deleteAll();
         aclCache.clearCache();
@@ -177,8 +180,8 @@ public class ResetService {
 
     private void restoreDefaultMemberships() {
         log.debug("Creating default memberships");
-        membershipRepository.save(FactoryDefaults.MEMBERSHIP_OWNER);
-        membershipRepository.save(FactoryDefaults.MEMBERSHIP_DATA_PROVIDER);
+        membershipRepository.save(FactoryDefaults.membershipOwner());
+        membershipRepository.save(FactoryDefaults.membershipDataProvider());
 
         log.debug("Creating the access control list of the repository record");
         memberService.createOwner(

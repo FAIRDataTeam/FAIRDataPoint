@@ -60,7 +60,7 @@ public class Detail_PUT extends WebIntegrationTest {
     }
 
     private MemberCreateDTO reqDto() {
-        return new MemberCreateDTO(membershipFixtures.owner().getUuid());
+        return new MemberCreateDTO(membershipFixtures.owner().getUuid().toString());
     }
 
     @Test

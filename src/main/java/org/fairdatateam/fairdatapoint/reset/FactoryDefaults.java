@@ -45,6 +45,7 @@ import org.eclipse.rdf4j.model.vocabulary.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -99,33 +100,6 @@ public class FactoryDefaults {
     public static final int MASK_C = 4;
     public static final int MASK_D = 8;
     public static final int MASK_A = 16;
-
-    public static final Membership MEMBERSHIP_OWNER = Membership.builder()
-            .uuid(KnownUUIDs.MEMBERSHIP_OWNER_UUID)
-            .name("Owner")
-            .permissions(List.of(
-                    new MembershipPermission(MASK_W, 'W'),
-                    new MembershipPermission(MASK_C, 'C'),
-                    new MembershipPermission(MASK_D, 'D'),
-                    new MembershipPermission(MASK_A, 'A')
-            ))
-            .allowedEntities(List.of(
-                    KnownUUIDs.RD_CATALOG_UUID,
-                    KnownUUIDs.RD_DATASET_UUID,
-                    KnownUUIDs.RD_DISTRIBUTION_UUID
-            ))
-            .build();
-
-    public static final Membership MEMBERSHIP_DATA_PROVIDER = Membership.builder()
-            .uuid(KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID)
-            .name("Data Provider")
-            .permissions(List.of(
-                    new MembershipPermission(MASK_C, 'C')
-            ))
-            .allowedEntities(List.of(
-                    KnownUUIDs.RD_CATALOG_UUID
-            ))
-            .build();
 
     // == RESOURCE DEFINITIONS
     // Changes: Migration_0002_CustomMetamodel, Migration_0004_ResourceDefinition, Migration_0010_ComplyFDPO
@@ -467,6 +441,50 @@ public class FactoryDefaults {
                 .uri(persistentUrl)
                 .state(MetadataState.PUBLISHED)
                 .build();
+    }
+
+    // Methods rather than constants: a Membership carries MembershipPermission instances that are
+    // each attached to exactly one membership (see Membership.addPermission), so a single shared
+    // instance could not be saved more than once. Every call builds fresh entities instead, with
+    // permissions attached through Membership.addPermission so that the back-reference the
+    // membership_permission foreign key needs is set on both sides.
+    public static Membership membershipOwner() {
+        return membership(
+                KnownUUIDs.MEMBERSHIP_OWNER_UUID,
+                "Owner",
+                List.of(
+                        KnownUUIDs.RD_CATALOG_UUID,
+                        KnownUUIDs.RD_DATASET_UUID,
+                        KnownUUIDs.RD_DISTRIBUTION_UUID
+                ),
+                new MembershipPermission(MASK_W, 'W'),
+                new MembershipPermission(MASK_C, 'C'),
+                new MembershipPermission(MASK_D, 'D'),
+                new MembershipPermission(MASK_A, 'A')
+        );
+    }
+
+    public static Membership membershipDataProvider() {
+        return membership(
+                KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID,
+                "Data Provider",
+                List.of(KnownUUIDs.RD_CATALOG_UUID),
+                new MembershipPermission(MASK_C, 'C')
+        );
+    }
+
+    private static Membership membership(final String uuid, final String name,
+                                         final List<String> allowedEntities,
+                                         final MembershipPermission... permissions) {
+        final Membership membership = Membership.builder()
+                .uuid(UUID.fromString(uuid))
+                .name(name)
+                .allowedEntities(new LinkedHashSet<>(allowedEntities))
+                .build();
+        for (final MembershipPermission permission : permissions) {
+            membership.addPermission(permission);
+        }
+        return membership;
     }
 
     private static void add(List<Statement> statements, IRI predicate,

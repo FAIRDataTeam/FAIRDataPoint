@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.security.membership;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,13 +32,14 @@ public class MembershipMapper {
 
     public MembershipDTO toDTO(Membership membership) {
         return new MembershipDTO(
-                membership.getUuid(),
+                membership.getUuid().toString(),
                 membership.getName(),
                 membership.getPermissions()
                         .stream()
                         .map(this::toPermissionDTO)
                         .collect(Collectors.toList()),
-                membership.getAllowedEntities());
+                // the entity keeps the allowed entities in a set, the API contract is a list
+                new ArrayList<>(membership.getAllowedEntities()));
     }
 
     public MembershipPermissionDTO toPermissionDTO(MembershipPermission permission) {
@@ -45,4 +47,3 @@ public class MembershipMapper {
     }
 
 }
-

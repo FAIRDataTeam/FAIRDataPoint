@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import lombok.RequiredArgsConstructor;
+import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.security.acl.AclEntryJdbcRepository;
@@ -46,8 +47,6 @@ public class AclMigration implements Migration {
 
     private final MemberService memberService;
 
-    private final MembershipFixtures membershipFixtures;
-
     private final AuthenticationService authenticationService;
 
     @Qualifier("persistentUrl")
@@ -61,8 +60,8 @@ public class AclMigration implements Migration {
 
         final String albertUuid = userFixtures.albert().getUuid().toString();
         final String nicolaUuid = userFixtures.nikola().getUuid().toString();
-        final String ownerUuid = membershipFixtures.owner().getUuid();
-        final String dataProviderUuid = membershipFixtures.dataProvider().getUuid();
+        final String ownerUuid = KnownUUIDs.MEMBERSHIP_OWNER_UUID;
+        final String dataProviderUuid = KnownUUIDs.MEMBERSHIP_DATAPROVIDER_UUID;
         final Authentication auth = authenticationService.getAuthentication(albertUuid);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
