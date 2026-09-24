@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -61,10 +62,14 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @Tag(name = "Metadata")
 @RestController
 @RequestMapping("/")
+// constructor autowiring with the help of lombok
+@RequiredArgsConstructor
 public class GenericController {
 
     private static final String MSG_ERROR_DRAFT_FORBIDDEN = "You are not allowed to view this record in state DRAFT";
 
+    // lombok is configured to copy the qualifier into the generated constructor, see lombok.config
+    @Qualifier("persistentUrl")
     private final String persistentUrl;
 
     private final CurrentUserProvider currentUserProvider;
@@ -82,31 +87,6 @@ public class GenericController {
     private final ResourceDefinitionService resourceDefinitionService;
 
     private final SearchFilterCache searchFilterCache;
-
-    /**
-     * Constructor (autowired)
-     */
-    public GenericController(
-            @Qualifier("persistentUrl") String persistentUrl,
-            CurrentUserProvider currentUserProvider,
-            GenericMetadataRdfRepository metadataRepository,
-            MetadataEnhancer metadataEnhancer,
-            MetadataSchemaService metadataSchemaService,
-            MetadataServiceFactory metadataServiceFactory,
-            MetadataStateService metadataStateService,
-            ResourceDefinitionService resourceDefinitionService,
-            SearchFilterCache searchFilterCache
-    ) {
-        this.persistentUrl = persistentUrl;
-        this.currentUserProvider = currentUserProvider;
-        this.metadataRepository = metadataRepository;
-        this.metadataEnhancer = metadataEnhancer;
-        this.metadataSchemaService = metadataSchemaService;
-        this.metadataServiceFactory = metadataServiceFactory;
-        this.metadataStateService = metadataStateService;
-        this.resourceDefinitionService = resourceDefinitionService;
-        this.searchFilterCache = searchFilterCache;
-    }
 
     @Operation(hidden = true)
     @GetMapping(path = {"/spec", "{oUrlPrefix:[^.]+}/spec"}, produces = "!application/json")
