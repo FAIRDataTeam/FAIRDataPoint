@@ -59,6 +59,9 @@ import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.read;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
+/**
+ * This is the main controller that handles RDF metadata resources
+ */
 @Tag(name = "Metadata")
 @RestController
 @RequestMapping("/")
