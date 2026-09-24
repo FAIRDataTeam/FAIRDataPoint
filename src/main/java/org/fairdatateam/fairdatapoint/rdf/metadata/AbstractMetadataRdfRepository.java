@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
@@ -48,6 +49,7 @@ public abstract class AbstractMetadataRdfRepository implements MetadataRdfReposi
     private static final String MSG_ERROR_REMOVE_ALL = "Error remove all: ";
     private static final String MSG_ERROR_EXISTS = "Error check statement existence: ";
     private static final String MSG_ERROR_SAVE = "Error storing statements: ";
+    private static final String MSG_ERROR_QUERY = "Error evaluating SPARQL query: ";
 
     private static final String FIELD_CHILD = "child";
     private static final String FIELD_TITLE = "title";
@@ -147,6 +149,12 @@ public abstract class AbstractMetadataRdfRepository implements MetadataRdfReposi
         }
         catch (RepositoryException exception) {
             throw new MetadataRdfRepositoryException(MSG_ERROR_URI + exception.getMessage());
+        }
+        catch (QueryEvaluationException exception) {
+            // Thrown when the query fails to execute against the triple store (e.g. it is
+            // unreachable mid-query), not when the query text itself is malformed - treat it
+            // as a repository/infrastructure failure rather than a client error.
+            throw new MetadataRdfRepositoryException(MSG_ERROR_QUERY + exception.getMessage());
         }
     }
 
