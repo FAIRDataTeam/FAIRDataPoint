@@ -322,30 +322,36 @@ public class GenericController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRdfRepositoryException {
-        // 1. Init
+        // Initialize new RDF graph
         final Model resultRdf = new LinkedHashModel();
+
+        // Note that urlPrefix and childPrefix actually represent resource types (or LDP container names).
+        // The recordId is basically the resource Id.
+        // todo: should rename for clarity, but that is a tough job because these terms are also used in db fields etc.
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
+        // Get the metadata services for the specified resource types
+        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+        final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
+
+        // Get the RDF graph for the specified resource
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final Model entity = metadataService.retrieve(entityUri);
 
-        // 3. Check if it is draft
+        // Check if the specified resource is still a draft
         final Metadata state = metadataStateService.get(entityUri);
         final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
         if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
 
-        // 4. Get Children
-        final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
-        final ResourceDefinition currentChildRd = resourceDefinitionService.getByUrlPrefix(childPrefix);
-        final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
+        // Get the resource definitions for the specified resource type and child resource type
+        final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+        final ResourceDefinition childResourceDefinition = resourceDefinitionService.getByUrlPrefix(childPrefix);
 
-        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            if (rdChild.getResourceDefinitionUuid().equals(currentChildRd.getUuid())) {
+        for (ResourceDefinitionChild rdChild : resourceDefinition.getChildren()) {
+            if (rdChild.getResourceDefinitionUuid().equals(childResourceDefinition.getUuid())) {
                 final IRI relationUri = i(rdChild.getRelationUri());
 
                 // 4.1 Get all titles for sort
