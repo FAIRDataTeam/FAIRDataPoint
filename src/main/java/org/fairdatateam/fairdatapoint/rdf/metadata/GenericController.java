@@ -323,13 +323,11 @@ public class GenericController {
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
 
-        // Get the metadata services for the specified resource types
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+        // Get the metadata service for the specified child resource type
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
 
-        // Get the RDF graph for the specified resource
+        // Get the IRI for the specified resource
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model entity = metadataService.retrieve(entityUri);
 
         // Check resource access
         abortIfUserCannotAccessResource(entityUri);
@@ -341,31 +339,13 @@ public class GenericController {
         // A ResourceDefinitionChild defines the RDF-predicate and RDF-object (another ResourceDefinition) of the
         // membership relation defined in an LDP direct container.
         for (ResourceDefinitionChild resourceDefinitionChild : resourceDefinition.getChildren()) {
-            // Get the RDF-predicate
-            final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
-
             // A resource may have multiple types of children, so we only select the resource type specified in the uri
             if (resourceDefinitionChild.getResourceDefinitionUuid().equals(childResourceDefinition.getUuid())) {
+                // Get the RDF-predicate
+                final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
 
-                // Get the titles of the child resources contained in the current resource (entityUri) using SPARQL.
-                // For example, the titles of the datasets that are contained in the specified catalog.
-                // These child resources are identified by the RDF-predicate (relationUri) defined in the
-                // ResourceDefinitionChild, i.e., dcat:dataset in our example.
-                final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
-
-                // Get the RDF-object values (children) for the specified RDF-subject (entityUri) and
-                // RDF-predicate (relationUri), filtered by access and sorted by title. For example, the full list of
-                // URIs (childUri) of all the dataset resources that are part of our catalog.
-                final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
-                        .stream()
-                        .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
-                        .filter(this::userCanAccessResource)
-                        .sorted((value1, value2) -> {
-                            final String title1 = titles.get(value1.toString());
-                            final String title2 = titles.get(value2.toString());
-                            return title1.compareTo(title2);
-                        })
-                        .toList();
+                // Get child resources
+                final List<Value> children = getChildResources(urlPrefix, childPrefix, entityUri, relationUri);
 
                 // Apply paging to limit the result size
                 final List<Value> selectedChildren = children.stream().skip((long) page * size).limit(size).toList();
@@ -373,7 +353,7 @@ public class GenericController {
                 // Add the RDF statements for each of the selected child resources to the result graph
                 for (Value childUri : selectedChildren) {
                     // see AbstractMetadataService.retrieve
-                    resultRdf.addAll(childMetadataService.retrieve(i(childUri.stringValue())));
+                    resultRdf.addAll(childMetadataService.retrieve(i(childUri)));
                 }
 
                 // Set HTTP Link headers and return response
@@ -388,6 +368,39 @@ public class GenericController {
 
         // Send empty response in case nothing was found
         return ResponseEntity.ok(resultRdf);
+    }
+
+    /**
+     * Returns a list of child resource IRIs sorted by title
+     */
+    private List<Value> getChildResources(
+            String urlPrefix, String childPrefix, IRI entityUri, IRI relationUri
+    ) throws MetadataRdfRepositoryException, MetadataServiceException {
+        // Get the metadata service for the specified parent resource type
+        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+
+        // Get the RDF graph for the parent resource
+        final Model entity = metadataService.retrieve(entityUri);
+
+        // Get the titles of the child resources contained in the current resource (entityUri) using SPARQL.
+        // For example, the titles of the datasets that are contained in the specified catalog.
+        // These child resources are identified by the RDF-predicate (relationUri) defined in the
+        // ResourceDefinitionChild, i.e., dcat:dataset in our example.
+        final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
+
+        // Get the RDF-object values (children) for the specified RDF-subject (entityUri) and
+        // RDF-predicate (relationUri), filtered by access and sorted by title. For example, the full list of
+        // URIs (childUri) of all the dataset resources that are part of our catalog.
+        return getObjectsBy(entity, entityUri, relationUri)
+                .stream()
+                .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
+                .filter(this::userCanAccessResource)
+                .sorted((value1, value2) -> {
+                    final String title1 = titles.get(value1.toString());
+                    final String title2 = titles.get(value2.toString());
+                    return title1.compareTo(title2);
+                })
+                .toList();
     }
 
     private String getResourceNameForChild(String url) {
