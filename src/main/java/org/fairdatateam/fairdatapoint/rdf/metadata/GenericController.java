@@ -326,7 +326,8 @@ public class GenericController {
         final Model resultRdf = new LinkedHashModel();
 
         // Note that urlPrefix and childPrefix actually represent resource types (or LDP container names).
-        // The recordId is basically the resource Id.
+        // The recordId is basically the resource id.
+        // For example, the catalog (urlPrefix) with given uuid (recordId) contains dataset (childPrefix) resources.
         // todo: should rename for clarity, but that is a tough job because these terms are also used in db fields etc.
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
@@ -350,9 +351,14 @@ public class GenericController {
         final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
         final ResourceDefinition childResourceDefinition = resourceDefinitionService.getByUrlPrefix(childPrefix);
 
-        for (ResourceDefinitionChild rdChild : resourceDefinition.getChildren()) {
-            if (rdChild.getResourceDefinitionUuid().equals(childResourceDefinition.getUuid())) {
-                final IRI relationUri = i(rdChild.getRelationUri());
+        // A ResourceDefinitionChild defines the RDF-predicate and RDF-object (another ResourceDefinition) of the
+        // membership relation defined in an LDP direct container.
+        for (ResourceDefinitionChild resourceDefinitionChild : resourceDefinition.getChildren()) {
+            // Get the RDF-predicate
+            final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
+
+            // A resource may have multiple types of children, so we only select the resource type specified in the uri
+            if (resourceDefinitionChild.getResourceDefinitionUuid().equals(childResourceDefinition.getUuid())) {
 
                 // 4.1 Get all titles for sort
                 final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
