@@ -397,11 +397,11 @@ public class GenericController {
                     resultRdf.addAll(childMetadataService.retrieve(i(childUri.stringValue())));
                 }
 
-                // 4.4 Set Link headers and send response
+                // Set HTTP Link headers and return response
                 final HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(
                         "Link",
-                        createLinkHeader(entityUri.stringValue(), childPrefix, childrenCount, page, size)
+                        createPagingLinkHeader(entityUri.stringValue(), childPrefix, children.size(), page, size)
                 );
                 return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
             }
@@ -428,25 +428,25 @@ public class GenericController {
         return parts[1];
     }
 
-    private String createLinkHeader(String entityUrl, String childPrefix, int childrenCount, int page, int size) {
-        final List<String> links = new LinkedList<String>();
+    private String createPagingLinkHeader(String entityUrl, String childPrefix, int childrenCount, int page, int size) {
+        final List<String> links = new LinkedList<>();
         final int lastPage = (int) Math.ceil((float) childrenCount / size) - 1;
 
-        links.add(createLink(entityUrl, childPrefix, 0, size, "first"));
-        links.add(createLink(entityUrl, childPrefix, lastPage, size, "last"));
+        links.add(createPagingLink(entityUrl, childPrefix, 0, size, "first"));
+        links.add(createPagingLink(entityUrl, childPrefix, lastPage, size, "last"));
 
         if (page > 0 && page <= lastPage) {
-            links.add(createLink(entityUrl, childPrefix, page - 1, size, "prev"));
+            links.add(createPagingLink(entityUrl, childPrefix, page - 1, size, "prev"));
         }
 
         if (page < lastPage && page >= 0) {
-            links.add(createLink(entityUrl, childPrefix, page + 1, size, "next"));
+            links.add(createPagingLink(entityUrl, childPrefix, page + 1, size, "next"));
         }
 
         return String.join(", ", links);
     }
 
-    private String createLink(String entityUrl, String childPrefix, int page, int size, String rel) {
+    private String createPagingLink(String entityUrl, String childPrefix, int page, int size, String rel) {
         return format("<%s/page/%s?page=%d&size=%d>; rel=\"%s\"", entityUrl, childPrefix, page, size, rel);
     }
 }
