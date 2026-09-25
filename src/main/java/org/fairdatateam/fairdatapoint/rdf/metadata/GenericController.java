@@ -396,7 +396,9 @@ public class GenericController {
                 .map(value -> (IRI) value)
                 .filter(childUri -> getUrlPrefix(childUri).equals(childPrefix))
                 .filter(this::userCanAccessResource)
-                .sorted(Comparator.comparing(childUri -> titles.get(childUri.stringValue())))
+                .sorted(Comparator.comparing(
+                        childUri -> titles.get(childUri.stringValue()),
+                        String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
 
