@@ -99,7 +99,7 @@ public class Detail_GET extends WebIntegrationTest {
 
         // THEN:
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
-        assertThat(result.getBody(), is(equalTo("You are not allow to view this record in state DRAFT")));
+        assertThat(result.getBody(), is(equalTo("You are not allowed to view this record in state DRAFT")));
     }
 
     @Test
