@@ -340,10 +340,8 @@ public class GenericController {
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final Model entity = metadataService.retrieve(entityUri);
 
-        // Check if the specified resource is still a draft
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
+        // Abort if the request user is not allowed to see this resource
+        if (!userCanSeeResource(entityUri)) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
 
@@ -372,15 +370,7 @@ public class GenericController {
                 final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
                         .stream()
                         .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
-                        .filter(childUri -> {
-                            // authenticated users can see both drafts and published resources
-                            if (oCurrentUser.isPresent()) {
-                                return true;
-                            }
-                            // unauthenticated users can only see public resources
-                            final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                            return childState.getState().equals(MetadataState.PUBLISHED);
-                        })
+                        .filter(this::userCanSeeResource)
                         .sorted((value1, value2) -> {
                             final String title1 = titles.get(value1.toString());
                             final String title2 = titles.get(value2.toString());
@@ -409,6 +399,16 @@ public class GenericController {
 
         // Send empty response in case nothing was found
         return ResponseEntity.ok(resultRdf);
+    }
+
+    /**
+     * Checks if the specified resource is visible for the current user.
+     * PUBLISHED resources are always visible, but DRAFT resources are only visible for authenticated users.
+     */
+    private boolean userCanSeeResource(Value entityUri) {
+        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
+        final Metadata publicationState = metadataStateService.get(i(entityUri));
+        return oCurrentUser.isPresent() || publicationState.getState().equals(MetadataState.PUBLISHED);
     }
 
     private String getResourceNameForChild(String url) {
