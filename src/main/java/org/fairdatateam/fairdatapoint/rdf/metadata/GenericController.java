@@ -123,7 +123,7 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 3. Check if it is DRAFT
-        abortIfUserCannotSeeResource(entityUri);
+        abortIfUserCannotAccessResource(entityUri);
 
         // 4. Enhance
         metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
@@ -168,13 +168,13 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 4. Check if it is DRAFT
-        abortIfUserCannotSeeResource(entityUri);
+        abortIfUserCannotAccessResource(entityUri);
 
         // 5. Filter children
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             final IRI relationUri = i(rdChild.getRelationUri());
             for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
-                if (!metadataStateService.userCanSee(childUri)) {
+                if (!userCanAccessResource(childUri)) {
                     resultRdf.remove(entityUri, relationUri, childUri);
                 }
             }
@@ -331,8 +331,8 @@ public class GenericController {
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final Model entity = metadataService.retrieve(entityUri);
 
-        // Check resource visibility
-        abortIfUserCannotSeeResource(entityUri);
+        // Check resource access
+        abortIfUserCannotAccessResource(entityUri);
 
         // Get the resource definitions for the specified resource type and child resource type
         final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
@@ -359,7 +359,7 @@ public class GenericController {
                 final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
                         .stream()
                         .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
-                        .filter(metadataStateService::userCanSee)
+                        .filter(this::userCanAccessResource)
                         .sorted((value1, value2) -> {
                             final String title1 = titles.get(value1.toString());
                             final String title2 = titles.get(value2.toString());
@@ -430,11 +430,21 @@ public class GenericController {
     }
 
     /**
+     * Checks if the specified resource is visible for the current user.
+     * DRAFT resources are only visible for authenticated users, PUBLISHED resources are always visible.
+     */
+    private boolean userCanAccessResource(Value metadataUri) {
+        final boolean userIsAuthenticated = currentUserProvider.getCurrentUser().isPresent();
+        final MetadataState publicationState = metadataStateService.get(i(metadataUri)).getState();
+        return userIsAuthenticated || publicationState.equals(MetadataState.PUBLISHED);
+    }
+
+    /**
      * Raises an exception if the request user is not allowed to see the specified resource.
      * This is handled by the ExceptionControllerAdvice class, which then returns HTTP status 403 FORBIDDEN.
      */
-    private void abortIfUserCannotSeeResource(IRI resourceUri) {
-        if (!metadataStateService.userCanSee(resourceUri)) {
+    private void abortIfUserCannotAccessResource(IRI resourceUri) {
+        if (!userCanAccessResource(resourceUri)) {
             throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
         }
     }

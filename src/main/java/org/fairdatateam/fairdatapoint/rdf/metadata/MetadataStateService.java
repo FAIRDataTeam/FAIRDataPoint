@@ -23,7 +23,6 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import lombok.RequiredArgsConstructor;
-import org.eclipse.rdf4j.model.Value;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateDTO;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
@@ -59,19 +58,6 @@ public class MetadataStateService {
             throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
         return oMetadata.get();
-    }
-
-    /**
-     * Checks if the specified resource is visible for the current user.
-     * DRAFT resources are only visible for authenticated users, PUBLISHED resources are always visible.
-     */
-    public boolean userCanSee(IRI metadataUri, boolean userIsAuthenticated) {
-        final boolean resourceIsPublished = get(metadataUri).getState().equals(MetadataState.PUBLISHED);
-        return userIsAuthenticated || resourceIsPublished;
-    }
-
-    public boolean userCanSee(Value metadataUri) {
-        return userCanSee(i(metadataUri));
     }
 
     public MetaStateDTO getState(
