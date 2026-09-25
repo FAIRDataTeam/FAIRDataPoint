@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaPathDTO;
@@ -59,6 +60,9 @@ public class GenericMetaController {
     @Autowired
     @Qualifier("persistentUrl")
     private String persistentUrl;
+
+    @Autowired
+    private CurrentUserProvider currentUserProvider;
 
     @Autowired
     private MemberService memberService;
@@ -98,7 +102,8 @@ public class GenericMetaController {
         final MemberDTO member = oMember.orElse(new MemberDTO(null, null));
 
         // 5. Get state
-        final MetaStateDTO state = metadataStateService.getState(entityUri, entity, definition);
+        final boolean userIsAuthenticated = currentUserProvider.getCurrentUser().isPresent();
+        final MetaStateDTO state = metadataStateService.getState(entityUri, entity, definition, userIsAuthenticated);
 
         // 6. Make path map
         final Map<String, MetaPathDTO> pathMap = new HashMap<>();

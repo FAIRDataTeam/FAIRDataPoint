@@ -28,7 +28,6 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateDTO;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
-import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Service;
@@ -53,8 +52,6 @@ public class MetadataStateService {
 
     private final MetadataStateValidator metadataStateValidator;
 
-    private final CurrentUserProvider currentUserProvider;
-
     public Metadata get(IRI metadataUri) {
         final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
@@ -63,9 +60,11 @@ public class MetadataStateService {
         return oMetadata.get();
     }
 
-    public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition definition) {
-        // 1. Return null if user is not log in
-        if (currentUserProvider.getCurrentUser().isEmpty()) {
+    public MetaStateDTO getState(
+            IRI metadataUri, Model model, ResourceDefinition definition, boolean userIsAuthenticated
+    ) {
+        // 1. Return null if the user is not logged in
+        if (!userIsAuthenticated) {
             return null;
         }
 
