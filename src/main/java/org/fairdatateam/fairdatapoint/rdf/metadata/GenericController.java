@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.rdf4j.model.Statement;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -391,8 +392,9 @@ public class GenericController {
         // Get the RDF-object values (children) for the specified RDF-subject (entityUri) and
         // RDF-predicate (relationUri), filtered by access and sorted by title. For example, the full list of
         // URIs (childUri) of all the dataset resources that are part of our catalog.
-        return getObjectsBy(entity, entityUri, relationUri)
+        return entity.filter(entityUri, relationUri, null)
                 .stream()
+                .map(Statement::getObject)
                 .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
                 .filter(this::userCanAccessResource)
                 .sorted((value1, value2) -> {
