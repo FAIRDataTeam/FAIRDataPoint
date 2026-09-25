@@ -123,11 +123,7 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 3. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
+        abortIfUserCannotSeeResource(entityUri);
 
         // 4. Enhance
         metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
@@ -172,18 +168,13 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 4. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
+        abortIfUserCannotSeeResource(entityUri);
 
         // 5. Filter children
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             final IRI relationUri = i(rdChild.getRelationUri());
             for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
-                final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                if (!(childState.getState().equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent())) {
+                if (!metadataStateService.userCanSee(childUri)) {
                     resultRdf.remove(entityUri, relationUri, childUri);
                 }
             }
@@ -340,10 +331,8 @@ public class GenericController {
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final Model entity = metadataService.retrieve(entityUri);
 
-        // Abort if the request user is not allowed to see this resource
-        if (!userCanSeeResource(entityUri)) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
+        // Check resource visibility
+        abortIfUserCannotSeeResource(entityUri);
 
         // Get the resource definitions for the specified resource type and child resource type
         final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
@@ -370,7 +359,7 @@ public class GenericController {
                 final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
                         .stream()
                         .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
-                        .filter(this::userCanSeeResource)
+                        .filter(metadataStateService::userCanSee)
                         .sorted((value1, value2) -> {
                             final String title1 = titles.get(value1.toString());
                             final String title2 = titles.get(value2.toString());
@@ -399,16 +388,6 @@ public class GenericController {
 
         // Send empty response in case nothing was found
         return ResponseEntity.ok(resultRdf);
-    }
-
-    /**
-     * Checks if the specified resource is visible for the current user.
-     * PUBLISHED resources are always visible, but DRAFT resources are only visible for authenticated users.
-     */
-    private boolean userCanSeeResource(Value entityUri) {
-        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        final Metadata publicationState = metadataStateService.get(i(entityUri));
-        return oCurrentUser.isPresent() || publicationState.getState().equals(MetadataState.PUBLISHED);
     }
 
     private String getResourceNameForChild(String url) {
@@ -448,5 +427,15 @@ public class GenericController {
 
     private String createPagingLink(String entityUrl, String childPrefix, int page, int size, String rel) {
         return format("<%s/page/%s?page=%d&size=%d>; rel=\"%s\"", entityUrl, childPrefix, page, size, rel);
+    }
+
+    /**
+     * Raises an exception if the request user is not allowed to see the specified resource.
+     * This is handled by the ExceptionControllerAdvice class, which then returns HTTP status 403 FORBIDDEN.
+     */
+    private void abortIfUserCannotSeeResource(IRI resourceUri) {
+        if (!metadataStateService.userCanSee(resourceUri)) {
+            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
+        }
     }
 }
