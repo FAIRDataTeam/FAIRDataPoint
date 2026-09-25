@@ -360,17 +360,24 @@ public class GenericController {
             // A resource may have multiple types of children, so we only select the resource type specified in the uri
             if (resourceDefinitionChild.getResourceDefinitionUuid().equals(childResourceDefinition.getUuid())) {
 
-                // 4.1 Get all titles for sort
+                // Get the titles of the child resources contained in the current resource (entityUri) using SPARQL.
+                // For example, the titles of the datasets that are contained in the specified catalog.
+                // These child resources are identified by the RDF-predicate (relationUri) defined in the
+                // ResourceDefinitionChild, i.e., dcat:dataset in our example.
                 final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
 
-                // 4.2 Get all children sorted
+                // Get the RDF-object values (children) for the specified RDF-subject (entityUri) and
+                // RDF-predicate (relationUri), filtered by access and sorted by title. For example, the full list of
+                // URIs (childUri) of all the dataset resources that are part of our catalog.
                 final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
                         .stream()
                         .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
                         .filter(childUri -> {
+                            // authenticated users can see both drafts and published resources
                             if (oCurrentUser.isPresent()) {
                                 return true;
                             }
+                            // unauthenticated users can only see public resources
                             final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
                             return childState.getState().equals(MetadataState.PUBLISHED);
                         })
@@ -381,9 +388,12 @@ public class GenericController {
                         })
                         .toList();
 
-                // 4.3 Retrieve children metadata only for requested page
-                final int childrenCount = children.size();
-                for (Value childUri : children.stream().skip((long) page * size).limit(size).toList()) {
+                // Apply paging to limit the result size
+                final List<Value> childrenPage = children.stream().skip((long) page * size).limit(size).toList();
+
+                // Add the RDF statements for each of the selected child resources to the result graph
+                for (Value childUri : childrenPage) {
+                    // see AbstractMetadataService.retrieve
                     resultRdf.addAll(childMetadataService.retrieve(i(childUri.stringValue())));
                 }
 
