@@ -389,10 +389,10 @@ public class GenericController {
                         .toList();
 
                 // Apply paging to limit the result size
-                final List<Value> childrenPage = children.stream().skip((long) page * size).limit(size).toList();
+                final List<Value> selectedChildren = children.stream().skip((long) page * size).limit(size).toList();
 
                 // Add the RDF statements for each of the selected child resources to the result graph
-                for (Value childUri : childrenPage) {
+                for (Value childUri : selectedChildren) {
                     // see AbstractMetadataService.retrieve
                     resultRdf.addAll(childMetadataService.retrieve(i(childUri.stringValue())));
                 }
