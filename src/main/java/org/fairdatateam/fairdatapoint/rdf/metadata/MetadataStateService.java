@@ -22,15 +22,14 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateDTO;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
-import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,18 +43,14 @@ import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
+@RequiredArgsConstructor
 public class MetadataStateService {
 
     private static final String MSG_NOT_FOUND = "Metadata info '%s' was not found";
 
-    @Autowired
-    private MetadataRepository metadataRepository;
+    private final MetadataRepository metadataRepository;
 
-    @Autowired
-    private MetadataStateValidator metadataStateValidator;
-
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final MetadataStateValidator metadataStateValidator;
 
     public Metadata get(IRI metadataUri) {
         final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
@@ -65,9 +60,11 @@ public class MetadataStateService {
         return oMetadata.get();
     }
 
-    public MetaStateDTO getState(IRI metadataUri, Model model, ResourceDefinition definition) {
-        // 1. Return null if user is not log in
-        if (currentUserProvider.getCurrentUser().isEmpty()) {
+    public MetaStateDTO getState(
+            IRI metadataUri, Model model, ResourceDefinition definition, boolean userIsAuthenticated
+    ) {
+        // 1. Return null if the user is not logged in
+        if (!userIsAuthenticated) {
             return null;
         }
 
