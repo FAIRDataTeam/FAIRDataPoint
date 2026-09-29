@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.rdf4j.model.Statement;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
+import org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.user.User;
@@ -55,10 +56,10 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.*;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.changeBaseUri;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.read;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
-import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 /**
  * This is the main controller that handles RDF metadata resources
@@ -346,16 +347,15 @@ public class GenericController {
                 final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
 
                 // Get child resources IRIs
-                final List<Value> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
+                final List<IRI> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
 
                 // Apply paging to limit the result size
-                final List<Value> selectedChildUris = childUris.stream()
-                        .skip((long) page * size).limit(size).toList();
+                final List<IRI> selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
 
                 // Add the RDF statements for each of the selected child resources to the result graph
-                for (Value childUri : selectedChildUris) {
+                for (IRI childUri : selectedChildUris) {
                     // see AbstractMetadataService.retrieve
-                    resultRdf.addAll(childMetadataService.retrieve(i(childUri)));
+                    resultRdf.addAll(childMetadataService.retrieve(childUri));
                 }
 
                 // Set HTTP Link headers and return response
@@ -375,7 +375,7 @@ public class GenericController {
     /**
      * Returns a list of child resource URIs (IRIs) sorted by title
      */
-    private List<Value> getChildResourceUris(
+    private List<IRI> getChildResourceUris(
             String urlPrefix, String childPrefix, IRI entityUri, IRI relationUri
     ) throws MetadataRdfRepositoryException, MetadataServiceException {
         // Get the metadata service for the specified parent resource type
@@ -396,6 +396,7 @@ public class GenericController {
         return entity.filter(entityUri, relationUri, null)
                 .stream()
                 .map(Statement::getObject)
+                .map(ValueFactoryHelper::i)
                 .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
                 .filter(this::userCanAccessResource)
                 .sorted((value1, value2) -> {
