@@ -380,14 +380,14 @@ public class GenericController {
         // Get the metadata service for the specified parent resource type
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // Get the RDF graph for the parent resource
-        final Model entity = metadataService.retrieve(entityUri);
-
         // Get the titles of the child resources contained in the current resource (entityUri) using SPARQL.
         // For example, the titles of the datasets that are contained in the specified catalog.
         // These child resources are identified by the RDF-predicate (relationUri) defined in the
         // ResourceDefinitionChild, i.e., dcat:dataset in our example.
         final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
+
+        // Get the RDF graph for the parent resource
+        final Model entity = metadataService.retrieve(entityUri);
 
         // Get the RDF-object URIs for the specified RDF-subject (entityUri) and RDF-predicate (relationUri),
         // filtered by access and sorted by title. For example, the full list of URIs (childUri) of all the dataset
