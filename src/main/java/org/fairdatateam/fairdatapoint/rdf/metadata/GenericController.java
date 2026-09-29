@@ -342,7 +342,7 @@ public class GenericController {
                 // Get the RDF-predicate
                 final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
 
-                // Get child resources IRIs
+                // Get child resources URIs
                 final List<IRI> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
 
                 // Apply paging to limit the result size
@@ -364,7 +364,7 @@ public class GenericController {
             }
         }
 
-        // Send empty response in case nothing was found
+        // Return empty response in case nothing was found
         return ResponseEntity.ok(resultRdf);
     }
 
