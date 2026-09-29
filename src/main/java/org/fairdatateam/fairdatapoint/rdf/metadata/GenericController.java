@@ -104,7 +104,7 @@ public class GenericController {
             path = {"/expanded", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/expanded"},
             produces = "!application/json"
     )
-    public Model getMetaDataExpanded(
+    public Model getMetadataExpanded(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId
     ) throws MetadataServiceException {
@@ -147,7 +147,7 @@ public class GenericController {
             path = {"", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}"},
             produces = "!application/json"
     )
-    public Model getMetaData(
+    public Model getMetadata(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId
     ) throws MetadataServiceException {
@@ -188,7 +188,7 @@ public class GenericController {
 
     @Operation(hidden = true)
     @PostMapping(path = "{urlPrefix:[^.]+}", produces = "!application/json")
-    public ResponseEntity<Model> storeMetaData(
+    public ResponseEntity<Model> storeMetadata(
             @PathVariable final String urlPrefix,
             @RequestBody String reqBody,
             @RequestHeader(value = "Content-Type", required = false) String contentType
@@ -233,7 +233,7 @@ public class GenericController {
             path = {"", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}"},
             produces = "!application/json"
     )
-    public ResponseEntity<Model> updateMetaData(
+    public ResponseEntity<Model> updateMetadata(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId,
             @RequestBody String reqBody,
@@ -304,7 +304,7 @@ public class GenericController {
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
             produces = "!application/json"
     )
-    public ResponseEntity<Model> getMetaDataChildren(
+    public ResponseEntity<Model> getMetadataChildren(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId,
             @PathVariable final String childPrefix,
