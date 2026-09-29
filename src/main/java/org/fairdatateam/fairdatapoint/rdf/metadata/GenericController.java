@@ -174,8 +174,8 @@ public class GenericController {
         // 5. Filter children
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             final IRI relationUri = i(rdChild.getRelationUri());
-            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
-                if (!userCanAccessResource(childUri)) {
+            for (Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
+                if (!userCanAccessResource(i(childUri))) {
                     resultRdf.remove(entityUri, relationUri, childUri);
                 }
             }
@@ -450,9 +450,9 @@ public class GenericController {
      * Checks if the specified resource is visible for the current user.
      * DRAFT resources are only visible for authenticated users, PUBLISHED resources are always visible.
      */
-    private boolean userCanAccessResource(Value metadataUri) {
+    private boolean userCanAccessResource(IRI metadataUri) {
         final boolean userIsAuthenticated = currentUserProvider.getCurrentUser().isPresent();
-        final MetadataState publicationState = metadataStateService.get(i(metadataUri)).getState();
+        final MetadataState publicationState = metadataStateService.get(metadataUri).getState();
         return userIsAuthenticated || publicationState.equals(MetadataState.PUBLISHED);
     }
 
