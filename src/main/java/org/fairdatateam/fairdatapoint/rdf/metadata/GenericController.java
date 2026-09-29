@@ -394,16 +394,16 @@ public class GenericController {
                 .map(Statement::getObject)
                 .filter(Value::isIRI)
                 .map(value -> (IRI) value)
-                .filter(childUri -> getResourceNameForChild(childUri.stringValue()).equals(childPrefix))
+                .filter(childUri -> getUrlPrefix(childUri.stringValue()).equals(childPrefix))
                 .filter(this::userCanAccessResource)
                 .sorted(Comparator.comparing(childUri -> titles.get(childUri.stringValue())))
                 .toList();
     }
 
     /**
-     * Extracts the resource/container name (urlPrefix) from the specified url
+     * Extracts the urlPrefix (representing the resource/container name) from the specified url
      */
-    private String getResourceNameForChild(String url) {
+    private String getUrlPrefix(String url) {
         final String[] parts = url.replace(persistentUrl, "").split("/");
 
         if (parts.length < 2) {
