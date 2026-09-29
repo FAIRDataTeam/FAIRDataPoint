@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.rdf4j.model.Statement;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
-import org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.user.User;
@@ -396,7 +395,8 @@ public class GenericController {
         return entity.filter(entityUri, relationUri, null)
                 .stream()
                 .map(Statement::getObject)
-                .map(ValueFactoryHelper::i)
+                .filter(Value::isIRI)
+                .map(value -> (IRI) value)
                 .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
                 .filter(this::userCanAccessResource)
                 .sorted((value1, value2) -> {
