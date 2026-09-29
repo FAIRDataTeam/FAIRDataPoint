@@ -400,21 +400,18 @@ public class GenericController {
                 .toList();
     }
 
+    /**
+     * Extracts the resource/container name (urlPrefix) from the specified url
+     */
     private String getResourceNameForChild(String url) {
-        final String[] parts = url
-                .replace(persistentUrl, "")
-                .split("/");
+        final String[] parts = url.replace(persistentUrl, "").split("/");
 
         if (parts.length < 2) {
             throw new ValidationException("Unsupported URL");
         }
 
-        // If URL is a repository -> return empty string
-        if (parts[1].equals("page")) {
-            return "";
-        }
-
-        return parts[1];
+        // If the URL represents the FDP root, return an empty string
+        return parts[1].equals("page") ? "" : parts[1];
     }
 
     private String createPagingLinkHeader(String entityUrl, String childPrefix, int childrenCount, int page, int size) {
