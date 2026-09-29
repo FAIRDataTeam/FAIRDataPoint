@@ -255,7 +255,7 @@ public class GenericController {
         final RDFFormat rdfContentType = getRdfContentType(contentType);
         final Model reqDto = read(reqBody, uri.stringValue(), rdfContentType);
         for (ResourceDefinitionChild child : rd.getChildren()) {
-            final org.eclipse.rdf4j.model.Value childEntity = getObjectBy(reqDto, null, i(child.getRelationUri()));
+            final Value childEntity = getObjectBy(reqDto, null, i(child.getRelationUri()));
             if (childEntity != null) {
                 reqDto.remove(i(childEntity.stringValue()), null, null);
             }
