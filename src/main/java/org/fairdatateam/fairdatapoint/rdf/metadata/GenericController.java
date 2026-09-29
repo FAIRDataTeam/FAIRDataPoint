@@ -397,11 +397,11 @@ public class GenericController {
                 .map(Statement::getObject)
                 .filter(Value::isIRI)
                 .map(value -> (IRI) value)
-                .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
+                .filter(childUri -> getResourceNameForChild(childUri.stringValue()).equals(childPrefix))
                 .filter(this::userCanAccessResource)
                 .sorted((value1, value2) -> {
-                    final String title1 = titles.get(value1.toString());
-                    final String title2 = titles.get(value2.toString());
+                    final String title1 = titles.get(value1.stringValue());
+                    final String title2 = titles.get(value2.stringValue());
                     return title1.compareTo(title2);
                 })
                 .toList();
