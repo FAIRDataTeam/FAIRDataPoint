@@ -394,23 +394,24 @@ public class GenericController {
                 .map(Statement::getObject)
                 .filter(Value::isIRI)
                 .map(value -> (IRI) value)
-                .filter(childUri -> getUrlPrefix(childUri.stringValue()).equals(childPrefix))
+                .filter(childUri -> getUrlPrefix(childUri).equals(childPrefix))
                 .filter(this::userCanAccessResource)
                 .sorted(Comparator.comparing(childUri -> titles.get(childUri.stringValue())))
                 .toList();
     }
 
     /**
-     * Extracts the urlPrefix (representing the resource/container name) from the specified url
+     * Extracts the urlPrefix (representing the resource/container name) from the specified URI
      */
-    private String getUrlPrefix(String url) {
-        final String[] parts = url.replace(persistentUrl, "").split("/");
+    private String getUrlPrefix(IRI uri) {
+        //  Extract url path and split into parts
+        final String[] parts = uri.stringValue().replace(persistentUrl, "").split("/");
 
         if (parts.length < 2) {
             throw new ValidationException("Unsupported URL");
         }
 
-        // If the URL represents the FDP root, return an empty string
+        // If the path represents the FDP root, return an empty string
         return parts[1].equals("page") ? "" : parts[1];
     }
 
