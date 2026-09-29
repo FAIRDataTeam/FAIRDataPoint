@@ -24,41 +24,144 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
-import org.fairdatateam.fairdatapoint.Profiles;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactory;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
+import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaService;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.user.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@ActiveProfiles(Profiles.TESTING)
-@SpringBootTest
+@SpringJUnitConfig(classes = { GenericController.class, GenericControllerTest.Config.class })
 public class GenericControllerTest {
 
-    @Autowired
-    GenericController genericController;
+    @TestConfiguration
+    static class Config {
+        @Bean
+        public String persistentUrl() {
+            return "http://localhost:8088";
+        }
+    }
 
     @Autowired
     String persistentUrl;
 
+    @Autowired
+    GenericController genericController;
+
+    Model catalog;
+    Model datasetLower;
+    Model datasetUpper;
+
+    IRI catalogUrl;
+    IRI datasetUpperUrl;
+    IRI datasetLowerUrl;
+    Map<String, String> titles;
+
+    @MockitoBean
+    CurrentUserProvider currentUserProvider;
+
+    @MockitoBean
+    GenericMetadataRdfRepository metadataRepository;
+
+    @MockitoBean
+    MetadataEnhancer metadataEnhancer;
+
+    @MockitoBean
+    MetadataSchemaService metadataSchemaService;
+
+    @MockitoBean
+    MetadataServiceFactory metadataServiceFactory;
+
+    @MockitoBean
+    MetadataService metadataService;
+
+    @MockitoBean
+    MetadataStateService metadataStateService;
+
+    @MockitoBean
+    ResourceDefinitionService resourceDefinitionService;
+
+    @MockitoBean
+    SearchFilterCache searchFilterCache;
+
+    @BeforeEach
+    public void setup() {
+        final MetadataFactory factory = new MetadataFactoryImpl();
+        catalogUrl = i(persistentUrl + "/catalog/my-catalog");
+        datasetUpperUrl = i(persistentUrl + "/dataset/my-dataset-upper");
+        datasetLowerUrl = i(persistentUrl + "/dataset/my-dataset-lower");
+        titles = Map.of(
+                datasetUpperUrl.stringValue(), "MY DATASET",
+                datasetLowerUrl.stringValue(), "my dataset");
+        catalog = factory.createCatalogMetadata(
+                "My Catalog",
+                "",
+                "my-catalog",
+                List.of(),
+                persistentUrl,
+                i(persistentUrl));
+        datasetUpper = factory.createDatasetMetadata(
+                titles.get(datasetUpperUrl.stringValue()),
+                "",
+                "my-dataset-upper",
+                List.of(),
+                List.of(),
+                persistentUrl,
+                catalogUrl);
+        datasetLower = factory.createDatasetMetadata(
+                titles.get(datasetLowerUrl.stringValue()),
+                "",
+                "my-dataset-lower",
+                List.of(),
+                List.of(),
+                persistentUrl,
+                catalogUrl);
+        // add DCAT statements
+        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetUpperUrl);
+        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetLowerUrl);
+    }
+
     @Test
     public void getChildResourceUrisReturnsSorted(
     ) throws MetadataRdfRepositoryException, MetadataServiceException {
+        // given
         final String urlPrefix = "catalog";
         final String childPrefix = "dataset";
-        final IRI entityUri = i(persistentUrl + "/catalog/catalog-1");
+        final IRI entityUri = i(persistentUrl + "/catalog/my-catalog");
         final IRI relationUri = DCAT.HAS_DATASET;
+
+        // set up mocks
+        when(metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix)).thenReturn(metadataService);
+        when(metadataService.retrieve(entityUri)).thenReturn(catalog);
+        when(currentUserProvider.getCurrentUser()).thenReturn(Optional.of(new User()));
+        when(metadataStateService.get(any(IRI.class))).thenReturn(new Metadata(null, null, MetadataState.PUBLISHED));
+        when(metadataRepository.findChildTitles(entityUri, relationUri)).thenReturn(titles);
+
+        // evaluate
         final List<IRI> actualUris = genericController.getChildResourceUris(
                 urlPrefix, childPrefix, entityUri, relationUri);
-        // expectations based on TestRdfMetadataFixtures
-        final List<IRI> expectedUris = List.of(
-                i(persistentUrl + "/dataset/dataset-1"),
-                i(persistentUrl + "/dataset/dataset-2"));
+
+        // based on default lexicographic order we expect uppercase before lowercase
+        final List<IRI> expectedUris = List.of(datasetUpperUrl, datasetLowerUrl);
         assertEquals(expectedUris, actualUris);
     }
 }
