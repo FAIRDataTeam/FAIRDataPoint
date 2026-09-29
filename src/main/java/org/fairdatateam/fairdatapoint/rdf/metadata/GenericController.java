@@ -345,14 +345,15 @@ public class GenericController {
                 // Get the RDF-predicate
                 final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
 
-                // Get child resources
-                final List<Value> children = getChildResources(urlPrefix, childPrefix, entityUri, relationUri);
+                // Get child resources IRIs
+                final List<Value> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
 
                 // Apply paging to limit the result size
-                final List<Value> selectedChildren = children.stream().skip((long) page * size).limit(size).toList();
+                final List<Value> selectedChildUris = childUris.stream()
+                        .skip((long) page * size).limit(size).toList();
 
                 // Add the RDF statements for each of the selected child resources to the result graph
-                for (Value childUri : selectedChildren) {
+                for (Value childUri : selectedChildUris) {
                     // see AbstractMetadataService.retrieve
                     resultRdf.addAll(childMetadataService.retrieve(i(childUri)));
                 }
@@ -361,7 +362,7 @@ public class GenericController {
                 final HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(
                         "Link",
-                        createPagingLinkHeader(entityUri.stringValue(), childPrefix, children.size(), page, size)
+                        createPagingLinkHeader(entityUri.stringValue(), childPrefix, childUris.size(), page, size)
                 );
                 return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
             }
@@ -372,9 +373,9 @@ public class GenericController {
     }
 
     /**
-     * Returns a list of child resource IRIs sorted by title
+     * Returns a list of child resource URIs (IRIs) sorted by title
      */
-    private List<Value> getChildResources(
+    private List<Value> getChildResourceUris(
             String urlPrefix, String childPrefix, IRI entityUri, IRI relationUri
     ) throws MetadataRdfRepositoryException, MetadataServiceException {
         // Get the metadata service for the specified parent resource type
