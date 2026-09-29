@@ -234,7 +234,7 @@ public class OpenApiGenerator {
     private static final String GET_SPEC_OP_ID = "get%sSpec";
     private static final String GET_SPEC_OP_DESC = "Get SHACL shape specification for %s";
     private static final String GET_EXPANDED_OP_ID = "get%sExpanded";
-    private static final String GET_EXPANDED_OP_DESC = "Get %s with its children";
+    private static final String GET_EXPANDED_OP_DESC = "[DEPRECATED] Get %s with its parents";
     private static final String GET_CHILDPAGE_OP_ID = "get%sChildrenPage";
     private static final String GET_CHILDPAGE_OP_DESC = "Get a page of %s children";
     private static final String GET_META_OP_ID = "get%sMeta";
