@@ -389,9 +389,9 @@ public class GenericController {
         // ResourceDefinitionChild, i.e., dcat:dataset in our example.
         final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
 
-        // Get the RDF-object values (children) for the specified RDF-subject (entityUri) and
-        // RDF-predicate (relationUri), filtered by access and sorted by title. For example, the full list of
-        // URIs (childUri) of all the dataset resources that are part of our catalog.
+        // Get the RDF-object URIs for the specified RDF-subject (entityUri) and RDF-predicate (relationUri),
+        // filtered by access and sorted by title. For example, the full list of URIs (childUri) of all the dataset
+        // resources that are part of our catalog.
         return entity.filter(entityUri, relationUri, null)
                 .stream()
                 .map(Statement::getObject)
