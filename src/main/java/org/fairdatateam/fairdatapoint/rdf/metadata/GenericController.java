@@ -48,10 +48,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.*;
@@ -399,11 +396,7 @@ public class GenericController {
                 .map(value -> (IRI) value)
                 .filter(childUri -> getResourceNameForChild(childUri.stringValue()).equals(childPrefix))
                 .filter(this::userCanAccessResource)
-                .sorted((value1, value2) -> {
-                    final String title1 = titles.get(value1.stringValue());
-                    final String title2 = titles.get(value2.stringValue());
-                    return title1.compareTo(title2);
-                })
+                .sorted(Comparator.comparing(childUri -> titles.get(childUri.stringValue())))
                 .toList();
     }
 
