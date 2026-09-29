@@ -371,7 +371,7 @@ public class GenericController {
     /**
      * Returns a list of child resource URIs (IRIs) sorted by title
      */
-    private List<IRI> getChildResourceUris(
+    List<IRI> getChildResourceUris(
             String urlPrefix, String childPrefix, IRI entityUri, IRI relationUri
     ) throws MetadataRdfRepositoryException, MetadataServiceException {
         // Get the metadata service for the specified parent resource type
