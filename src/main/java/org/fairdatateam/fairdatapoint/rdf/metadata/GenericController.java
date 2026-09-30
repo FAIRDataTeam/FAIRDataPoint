@@ -24,6 +24,8 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.eclipse.rdf4j.model.Statement;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -39,7 +41,6 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -47,53 +48,46 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.*;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.changeBaseUri;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.read;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
-import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
+/**
+ * This is the main controller that handles RDF metadata resources
+ */
 @Tag(name = "Metadata")
 @RestController
 @RequestMapping("/")
+// constructor autowiring with the help of lombok
+@RequiredArgsConstructor
 public class GenericController {
 
-    private static final String MSG_ERROR_DRAFT_FORBIDDEN =
-            "You are not allow to view this record in state DRAFT";
+    private static final String MSG_ERROR_DRAFT_FORBIDDEN = "You are not allowed to view this record in state DRAFT";
 
-    @Autowired
+    // lombok is configured to copy the qualifier into the generated constructor, see lombok.config
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private final CurrentUserProvider currentUserProvider;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final GenericMetadataRdfRepository metadataRepository;
 
-    @Autowired
-    private MetadataSchemaService metadataSchemaService;
+    private final MetadataEnhancer metadataEnhancer;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataSchemaService metadataSchemaService;
 
-    @Autowired
-    private MetadataEnhancer metadataEnhancer;
+    private final MetadataServiceFactory metadataServiceFactory;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private GenericMetadataRdfRepository metadataRepository;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
 
     @Operation(hidden = true)
     @GetMapping(path = {"/spec", "{oUrlPrefix:[^.]+}/spec"}, produces = "!application/json")
@@ -110,7 +104,7 @@ public class GenericController {
             path = {"/expanded", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/expanded"},
             produces = "!application/json"
     )
-    public Model getMetaDataExpanded(
+    public Model getMetadataExpanded(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId
     ) throws MetadataServiceException {
@@ -127,11 +121,7 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 3. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
+        abortIfUserCannotAccessResource(entityUri);
 
         // 4. Enhance
         metadataEnhancer.enhanceWithResourceDefinition(entityUri, rd, resultRdf);
@@ -157,7 +147,7 @@ public class GenericController {
             path = {"", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}"},
             produces = "!application/json"
     )
-    public Model getMetaData(
+    public Model getMetadata(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId
     ) throws MetadataServiceException {
@@ -176,18 +166,13 @@ public class GenericController {
         resultRdf.addAll(entity);
 
         // 4. Check if it is DRAFT
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
+        abortIfUserCannotAccessResource(entityUri);
 
         // 5. Filter children
         for (ResourceDefinitionChild rdChild : rd.getChildren()) {
             final IRI relationUri = i(rdChild.getRelationUri());
-            for (org.eclipse.rdf4j.model.Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
-                final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                if (!(childState.getState().equals(MetadataState.PUBLISHED) || oCurrentUser.isPresent())) {
+            for (Value childUri : getObjectsBy(entity, entityUri, relationUri)) {
+                if (!userCanAccessResource(i(childUri))) {
                     resultRdf.remove(entityUri, relationUri, childUri);
                 }
             }
@@ -203,7 +188,7 @@ public class GenericController {
 
     @Operation(hidden = true)
     @PostMapping(path = "{urlPrefix:[^.]+}", produces = "!application/json")
-    public ResponseEntity<Model> storeMetaData(
+    public ResponseEntity<Model> storeMetadata(
             @PathVariable final String urlPrefix,
             @RequestBody String reqBody,
             @RequestHeader(value = "Content-Type", required = false) String contentType
@@ -248,7 +233,7 @@ public class GenericController {
             path = {"", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}"},
             produces = "!application/json"
     )
-    public ResponseEntity<Model> updateMetaData(
+    public ResponseEntity<Model> updateMetadata(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId,
             @RequestBody String reqBody,
@@ -267,7 +252,7 @@ public class GenericController {
         final RDFFormat rdfContentType = getRdfContentType(contentType);
         final Model reqDto = read(reqBody, uri.stringValue(), rdfContentType);
         for (ResourceDefinitionChild child : rd.getChildren()) {
-            final org.eclipse.rdf4j.model.Value childEntity = getObjectBy(reqDto, null, i(child.getRelationUri()));
+            final Value childEntity = getObjectBy(reqDto, null, i(child.getRelationUri()));
             if (childEntity != null) {
                 reqDto.remove(i(childEntity.stringValue()), null, null);
             }
@@ -319,116 +304,156 @@ public class GenericController {
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
             produces = "!application/json"
     )
-    public ResponseEntity<Model> getMetaDataChildren(
+    public ResponseEntity<Model> getMetadataChildren(
             @PathVariable final Optional<String> oUrlPrefix,
             @PathVariable final Optional<String> oRecordId,
             @PathVariable final String childPrefix,
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRdfRepositoryException {
-        // 1. Init
+        // Initialize new RDF graph
         final Model resultRdf = new LinkedHashModel();
+
+        // Note that urlPrefix and childPrefix actually represent resource types (or LDP container names).
+        // The recordId is basically the resource id.
+        // For example, the catalog (urlPrefix) with given uuid (recordId) contains dataset (childPrefix) resources.
+        // todo: should rename for clarity, but that is a tough job because these terms are also used in db fields etc.
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
-        // 2. Get entity
-        final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model entity = metadataService.retrieve(entityUri);
-
-        // 3. Check if it is draft
-        final Metadata state = metadataStateService.get(entityUri);
-        final Optional<User> oCurrentUser = currentUserProvider.getCurrentUser();
-        if (state.getState().equals(MetadataState.DRAFT) && oCurrentUser.isEmpty()) {
-            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
-        }
-
-        // 4. Get Children
-        final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
-        final ResourceDefinition currentChildRd = resourceDefinitionService.getByUrlPrefix(childPrefix);
+        // Get the metadata service for the specified child resource type
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
 
-        for (ResourceDefinitionChild rdChild : rd.getChildren()) {
-            if (rdChild.getResourceDefinitionUuid().equals(currentChildRd.getUuid())) {
-                final IRI relationUri = i(rdChild.getRelationUri());
+        // Get the IRI for the specified resource
+        final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
 
-                // 4.1 Get all titles for sort
-                final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
+        // Check resource access
+        abortIfUserCannotAccessResource(entityUri);
 
-                // 4.2 Get all children sorted
-                final List<Value> children = getObjectsBy(entity, entityUri, relationUri)
-                        .stream()
-                        .filter(childUri -> getResourceNameForChild(childUri.toString()).equals(childPrefix))
-                        .filter(childUri -> {
-                            if (oCurrentUser.isPresent()) {
-                                return true;
-                            }
-                            final Metadata childState = metadataStateService.get(i(childUri.stringValue()));
-                            return childState.getState().equals(MetadataState.PUBLISHED);
-                        })
-                        .sorted((value1, value2) -> {
-                            final String title1 = titles.get(value1.toString());
-                            final String title2 = titles.get(value2.toString());
-                            return title1.compareTo(title2);
-                        })
-                        .toList();
+        // Get the resource definitions for the specified resource type and child resource type
+        final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
+        final ResourceDefinition childResourceDefinition = resourceDefinitionService.getByUrlPrefix(childPrefix);
 
-                // 4.3 Retrieve children metadata only for requested page
-                final int childrenCount = children.size();
-                for (Value childUri : children.stream().skip((long) page * size).limit(size).toList()) {
-                    resultRdf.addAll(childMetadataService.retrieve(i(childUri.stringValue())));
+        // A ResourceDefinitionChild defines the RDF-predicate and RDF-object (another ResourceDefinition) of the
+        // membership relation defined in an LDP direct container.
+        for (ResourceDefinitionChild resourceDefinitionChild : resourceDefinition.getChildren()) {
+            // A resource may have multiple types of children, so we only select the resource type specified in the uri
+            if (resourceDefinitionChild.getResourceDefinitionUuid().equals(childResourceDefinition.getUuid())) {
+                // Get the RDF-predicate
+                final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
+
+                // Get child resources URIs
+                final List<IRI> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
+
+                // Apply paging to limit the result size
+                final List<IRI> selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
+
+                // Add the RDF statements for each of the selected child resources to the result graph
+                for (IRI childUri : selectedChildUris) {
+                    // see AbstractMetadataService.retrieve
+                    resultRdf.addAll(childMetadataService.retrieve(childUri));
                 }
 
-                // 4.4 Set Link headers and send response
+                // Set HTTP Link headers and return response
                 final HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(
                         "Link",
-                        createLinkHeader(entityUri.stringValue(), childPrefix, childrenCount, page, size)
+                        createPagingLinkHeader(entityUri.stringValue(), childPrefix, childUris.size(), page, size)
                 );
                 return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
             }
         }
 
-        // Send empty response in case nothing was found
+        // Return empty response in case nothing was found
         return ResponseEntity.ok(resultRdf);
     }
 
-    private String getResourceNameForChild(String url) {
-        final String[] parts = url
-                .replace(persistentUrl, "")
-                .split("/");
+    /**
+     * Returns a list of child resource URIs (IRIs) sorted by title
+     */
+    List<IRI> getChildResourceUris(
+            String urlPrefix, String childPrefix, IRI entityUri, IRI relationUri
+    ) throws MetadataRdfRepositoryException, MetadataServiceException {
+        // Get the metadata service for the specified parent resource type
+        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
+
+        // Get the titles of the child resources contained in the current resource (entityUri) using SPARQL.
+        // For example, the titles of the datasets that are contained in the specified catalog.
+        // These child resources are identified by the RDF-predicate (relationUri) defined in the
+        // ResourceDefinitionChild, i.e., dcat:dataset in our example.
+        final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
+
+        // Get the RDF graph for the parent resource
+        final Model entity = metadataService.retrieve(entityUri);
+
+        // Get the RDF-object URIs for the specified RDF-subject (entityUri) and RDF-predicate (relationUri),
+        // filtered by access and sorted by title. For example, the full list of URIs (childUri) of all the dataset
+        // resources that are part of our catalog.
+        return entity.filter(entityUri, relationUri, null)
+                .stream()
+                .map(Statement::getObject)
+                .filter(Value::isIRI)
+                .map(value -> (IRI) value)
+                .filter(childUri -> getUrlPrefix(childUri).equals(childPrefix))
+                .filter(this::userCanAccessResource)
+                .sorted(Comparator.comparing(childUri -> titles.get(childUri.stringValue())))
+                .toList();
+    }
+
+    /**
+     * Extracts the urlPrefix (representing the resource/container name) from the specified URI
+     */
+    private String getUrlPrefix(IRI uri) {
+        //  Extract url path and split into parts
+        final String[] parts = uri.stringValue().replace(persistentUrl, "").split("/");
 
         if (parts.length < 2) {
             throw new ValidationException("Unsupported URL");
         }
 
-        // If URL is a repository -> return empty string
-        if (parts[1].equals("page")) {
-            return "";
-        }
-
-        return parts[1];
+        // If the path represents the FDP root, return an empty string
+        return parts[1].equals("page") ? "" : parts[1];
     }
 
-    private String createLinkHeader(String entityUrl, String childPrefix, int childrenCount, int page, int size) {
-        final List<String> links = new LinkedList<String>();
+    private String createPagingLinkHeader(String entityUrl, String childPrefix, int childrenCount, int page, int size) {
+        final List<String> links = new LinkedList<>();
         final int lastPage = (int) Math.ceil((float) childrenCount / size) - 1;
 
-        links.add(createLink(entityUrl, childPrefix, 0, size, "first"));
-        links.add(createLink(entityUrl, childPrefix, lastPage, size, "last"));
+        links.add(createPagingLink(entityUrl, childPrefix, 0, size, "first"));
+        links.add(createPagingLink(entityUrl, childPrefix, lastPage, size, "last"));
 
         if (page > 0 && page <= lastPage) {
-            links.add(createLink(entityUrl, childPrefix, page - 1, size, "prev"));
+            links.add(createPagingLink(entityUrl, childPrefix, page - 1, size, "prev"));
         }
 
         if (page < lastPage && page >= 0) {
-            links.add(createLink(entityUrl, childPrefix, page + 1, size, "next"));
+            links.add(createPagingLink(entityUrl, childPrefix, page + 1, size, "next"));
         }
 
         return String.join(", ", links);
     }
 
-    private String createLink(String entityUrl, String childPrefix, int page, int size, String rel) {
+    private String createPagingLink(String entityUrl, String childPrefix, int page, int size, String rel) {
         return format("<%s/page/%s?page=%d&size=%d>; rel=\"%s\"", entityUrl, childPrefix, page, size, rel);
+    }
+
+    /**
+     * Checks if the specified resource is visible for the current user.
+     * DRAFT resources are only visible for authenticated users, PUBLISHED resources are always visible.
+     */
+    private boolean userCanAccessResource(IRI metadataUri) {
+        final boolean userIsAuthenticated = currentUserProvider.getCurrentUser().isPresent();
+        final MetadataState publicationState = metadataStateService.get(metadataUri).getState();
+        return userIsAuthenticated || publicationState.equals(MetadataState.PUBLISHED);
+    }
+
+    /**
+     * Raises an exception if the request user is not allowed to see the specified resource.
+     * This is handled by the ExceptionControllerAdvice class, which then returns HTTP status 403 FORBIDDEN.
+     */
+    private void abortIfUserCannotAccessResource(IRI resourceUri) {
+        if (!userCanAccessResource(resourceUri)) {
+            throw new ForbiddenException(MSG_ERROR_DRAFT_FORBIDDEN);
+        }
     }
 }
