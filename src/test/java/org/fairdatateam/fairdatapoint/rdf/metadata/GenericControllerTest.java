@@ -67,14 +67,15 @@ public class GenericControllerTest {
     @Autowired
     GenericController genericController;
 
-    Model catalog;
-    Model datasetLowercase;
-    Model datasetUppercase;
-
-    IRI catalogUrl;
-    IRI datasetLowercaseUrl;
-    IRI datasetUppercaseUrl;
-    Map<String, String> titles;
+    private final String CATALOG = "catalog";
+    private final String DATASET = "dataset";
+    private Model catalog0;
+    private IRI catalog0Url;
+    private IRI dataset0Url;
+    private IRI dataset1Url;
+    private IRI dataset2Url;
+    private IRI dataset3Url;
+    private Map<String, String> datasetTitles;
 
     @MockitoBean
     CurrentUserProvider currentUserProvider;
@@ -112,70 +113,72 @@ public class GenericControllerTest {
 
     @BeforeEach
     public void setup() {
+        // test data
+        final String catalogId = "my-catalog-0";
+        final String dataset0Id = "my-dataset-0";
+        final String dataset1Id = "my-dataset-1";
+        final String dataset2Id = "my-dataset-2";
+        final String dataset3Id = "my-dataset-3";
+
+        catalog0Url = resourceUrl(CATALOG, catalogId);
+        dataset0Url = resourceUrl(DATASET, dataset0Id);
+        dataset1Url = resourceUrl(DATASET, dataset1Id);
+        dataset2Url = resourceUrl(DATASET, dataset2Id);
+        dataset3Url = resourceUrl(DATASET, dataset3Id);
+
+        datasetTitles = Map.of(
+                dataset0Url.stringValue(), "B",
+                dataset1Url.stringValue(), "b",
+                dataset2Url.stringValue(), "a",
+                dataset3Url.stringValue(), "A");
+
+        // create in-memory rdf graphs for catalog and datasets
         final MetadataFactory factory = new MetadataFactoryImpl();
 
-        final String catalogId = "my-catalog";
-        final String datasetLowercaseId = "my-dataset-lowercase";
-        final String datasetUppercaseId = "my-dataset-uppercase";
-
-        catalogUrl = resourceUrl("catalog", catalogId);
-        datasetLowercaseUrl = resourceUrl("dataset", datasetLowercaseId);
-        datasetUppercaseUrl = resourceUrl("dataset", datasetUppercaseId);
-
-        titles = Map.of(
-                datasetLowercaseUrl.stringValue(), "my dataset",
-                datasetUppercaseUrl.stringValue(), "MY DATASET");
-
-        catalog = factory.createCatalogMetadata(
+        catalog0 = factory.createCatalogMetadata(
                 "My Catalog",
                 "",
                 catalogId,
                 List.of(),
                 persistentUrl,
                 i(persistentUrl));
-        datasetUppercase = factory.createDatasetMetadata(
-                titles.get(datasetUppercaseUrl.stringValue()),
-                "",
-                datasetUppercaseId,
-                List.of(),
-                List.of(),
-                persistentUrl,
-                catalogUrl);
-        datasetLowercase = factory.createDatasetMetadata(
-                titles.get(datasetLowercaseUrl.stringValue()),
-                "",
-                datasetLowercaseId,
-                List.of(),
-                List.of(),
-                persistentUrl,
-                catalogUrl);
-        // add DCAT statements
-        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetUppercaseUrl);
-        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetLowercaseUrl);
+
+        datasetTitles.forEach((datasetUrl, datasetTitle) -> {
+            final String datasetId = List.of(datasetUrl.split("/")).getLast();
+            factory.createDatasetMetadata(
+                    datasetTitle,
+                    "",
+                    datasetId,
+                    List.of(),
+                    List.of(),
+                    persistentUrl,
+                    catalog0Url);
+            catalog0.add(catalog0Url, DCAT.HAS_DATASET, i(datasetUrl));
+        });
     }
 
     @Test
-    public void getChildResourceUrisReturnsSorted(
+    public void childResourceUrisCaseInsensitiveSortingIsStable(
     ) throws MetadataRdfRepositoryException, MetadataServiceException {
         // given
-        final String urlPrefix = "catalog";
-        final String childPrefix = "dataset";
-        final IRI entityUri = catalogUrl;
+        final String urlPrefix = CATALOG;
+        final String childPrefix = DATASET;
+        final IRI entityUri = catalog0Url;
         final IRI relationUri = DCAT.HAS_DATASET;
 
         // set up mocks
         when(metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix)).thenReturn(metadataService);
-        when(metadataService.retrieve(entityUri)).thenReturn(catalog);
+        when(metadataService.retrieve(entityUri)).thenReturn(catalog0);
         when(currentUserProvider.getCurrentUser()).thenReturn(Optional.of(new User()));
         when(metadataStateService.get(any(IRI.class))).thenReturn(new Metadata(null, null, MetadataState.PUBLISHED));
-        when(metadataRepository.findChildTitles(entityUri, relationUri)).thenReturn(titles);
+        when(metadataRepository.findChildTitles(entityUri, relationUri)).thenReturn(datasetTitles);
 
         // evaluate
         final List<IRI> actualUris = genericController.getChildResourceUris(
                 urlPrefix, childPrefix, entityUri, relationUri);
 
-        // based on default lexicographic order we expect uppercase before lowercase
-        final List<IRI> expectedUris = List.of(datasetUppercaseUrl, datasetLowercaseUrl);
+        // expect case-insensitive but stable sorting "A", "a", "B", "b"
+        final List<IRI> expectedUris = List.of(dataset3Url, dataset2Url, dataset0Url, dataset1Url);
         assertEquals(expectedUris, actualUris);
     }
 }
