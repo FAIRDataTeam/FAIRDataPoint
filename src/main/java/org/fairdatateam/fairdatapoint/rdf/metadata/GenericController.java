@@ -299,7 +299,11 @@ public class GenericController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(hidden = true)
+    /**
+     * @deprecated Use <code>getResources</code> or <code>getChildResources</code> instead.
+     */
+    @Deprecated(forRemoval = true)
+    @Operation(hidden = true, deprecated = true)
     @GetMapping(
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
             produces = "!application/json"

@@ -236,7 +236,7 @@ public class OpenApiGenerator {
     private static final String GET_EXPANDED_OP_ID = "get%sExpanded";
     private static final String GET_EXPANDED_OP_DESC = "[DEPRECATED] Get %s with its parents";
     private static final String GET_CHILDPAGE_OP_ID = "get%sChildrenPage";
-    private static final String GET_CHILDPAGE_OP_DESC = "Get a page of %s children";
+    private static final String GET_CHILDPAGE_OP_DESC = "[DEPRECATED] Get a page of %s children";
     private static final String GET_META_OP_ID = "get%sMeta";
     private static final String GET_META_OP_DESC = "Get metadata (memberships and state) for %s";
     private static final String PUT_METASTATE_OP_ID = "put%sMetaState";
