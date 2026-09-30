@@ -311,8 +311,27 @@ public class GenericController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRdfRepositoryException {
+        return getContainedResources(childPrefix, oUrlPrefix, oRecordId, Optional.of(page), Optional.of(size));
+    }
+
+    @Operation(hidden = true, description = "Get a list of resources in the container, with optional paging.")
+    @GetMapping(
+            path = {"{childPrefix}/", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/{childPrefix}/"},
+            produces = "!application/json"
+    )
+    public ResponseEntity<Model> getContainedResources(
+            @PathVariable final String childPrefix,
+            @PathVariable final Optional<String> oUrlPrefix,
+            @PathVariable final Optional<String> oRecordId,
+            @RequestParam final Optional<Integer> oPage,
+            @RequestParam final Optional<Integer> oSize
+    ) throws MetadataServiceException, MetadataRdfRepositoryException {
         // Initialize new RDF graph
         final Model resultRdf = new LinkedHashModel();
+
+        // Prepare response
+        final HttpHeaders responseHeaders = new HttpHeaders();
+        ResponseEntity<Model> response = ResponseEntity.ok(resultRdf);
 
         // Note that urlPrefix and childPrefix actually represent resource types (or LDP container names).
         // The recordId is basically the resource id.
@@ -345,8 +364,19 @@ public class GenericController {
                 // Get child resources URIs
                 final List<IRI> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
 
-                // Apply paging to limit the result size
-                final List<IRI> selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
+                // Optional paging
+                List<IRI> selectedChildUris = childUris;
+                if (oPage.isPresent() && oSize.isPresent()) {
+                    final int page = oPage.get();
+                    final int size = oSize.get();
+                    // Apply paging to limit the result size
+                    selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
+                    // Add HTTP Link headers
+                    responseHeaders.set(
+                            "Link",
+                            createPagingLinkHeader(entityUri.stringValue(), childPrefix, childUris.size(), page, size)
+                    );
+                }
 
                 // Add the RDF statements for each of the selected child resources to the result graph
                 for (IRI childUri : selectedChildUris) {
@@ -354,18 +384,12 @@ public class GenericController {
                     resultRdf.addAll(childMetadataService.retrieve(childUri));
                 }
 
-                // Set HTTP Link headers and return response
-                final HttpHeaders responseHeaders = new HttpHeaders();
-                responseHeaders.set(
-                        "Link",
-                        createPagingLinkHeader(entityUri.stringValue(), childPrefix, childUris.size(), page, size)
-                );
-                return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
+                // Update response with headers and updated rdf graph
+                response = ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
             }
         }
 
-        // Return empty response in case nothing was found
-        return ResponseEntity.ok(resultRdf);
+        return response;
     }
 
     /**
