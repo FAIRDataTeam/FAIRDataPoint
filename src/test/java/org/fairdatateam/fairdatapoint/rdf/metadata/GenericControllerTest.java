@@ -68,12 +68,12 @@ public class GenericControllerTest {
     GenericController genericController;
 
     Model catalog;
-    Model datasetLower;
-    Model datasetUpper;
+    Model datasetLowercase;
+    Model datasetUppercase;
 
     IRI catalogUrl;
-    IRI datasetUpperUrl;
-    IRI datasetLowerUrl;
+    IRI datasetLowercaseUrl;
+    IRI datasetUppercaseUrl;
     Map<String, String> titles;
 
     @MockitoBean
@@ -103,41 +103,55 @@ public class GenericControllerTest {
     @MockitoBean
     SearchFilterCache searchFilterCache;
 
+    /**
+     * Returns an absolute resource IRI
+     */
+    private IRI resourceUrl(String resourceType, String resourceId) {
+        return i("%s/%s/%s".formatted(persistentUrl, resourceType, resourceId));
+    }
+
     @BeforeEach
     public void setup() {
         final MetadataFactory factory = new MetadataFactoryImpl();
-        catalogUrl = i(persistentUrl + "/catalog/my-catalog");
-        datasetUpperUrl = i(persistentUrl + "/dataset/my-dataset-upper");
-        datasetLowerUrl = i(persistentUrl + "/dataset/my-dataset-lower");
+
+        final String catalogId = "my-catalog";
+        final String datasetLowercaseId = "my-dataset-lowercase";
+        final String datasetUppercaseId = "my-dataset-uppercase";
+
+        catalogUrl = resourceUrl("catalog", catalogId);
+        datasetLowercaseUrl = resourceUrl("dataset", datasetLowercaseId);
+        datasetUppercaseUrl = resourceUrl("dataset", datasetUppercaseId);
+
         titles = Map.of(
-                datasetUpperUrl.stringValue(), "MY DATASET",
-                datasetLowerUrl.stringValue(), "my dataset");
+                datasetLowercaseUrl.stringValue(), "my dataset",
+                datasetUppercaseUrl.stringValue(), "MY DATASET");
+
         catalog = factory.createCatalogMetadata(
                 "My Catalog",
                 "",
-                "my-catalog",
+                catalogId,
                 List.of(),
                 persistentUrl,
                 i(persistentUrl));
-        datasetUpper = factory.createDatasetMetadata(
-                titles.get(datasetUpperUrl.stringValue()),
+        datasetUppercase = factory.createDatasetMetadata(
+                titles.get(datasetUppercaseUrl.stringValue()),
                 "",
-                "my-dataset-upper",
+                datasetUppercaseId,
                 List.of(),
                 List.of(),
                 persistentUrl,
                 catalogUrl);
-        datasetLower = factory.createDatasetMetadata(
-                titles.get(datasetLowerUrl.stringValue()),
+        datasetLowercase = factory.createDatasetMetadata(
+                titles.get(datasetLowercaseUrl.stringValue()),
                 "",
-                "my-dataset-lower",
+                datasetLowercaseId,
                 List.of(),
                 List.of(),
                 persistentUrl,
                 catalogUrl);
         // add DCAT statements
-        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetUpperUrl);
-        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetLowerUrl);
+        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetUppercaseUrl);
+        catalog.add(catalogUrl, DCAT.HAS_DATASET, datasetLowercaseUrl);
     }
 
     @Test
@@ -146,7 +160,7 @@ public class GenericControllerTest {
         // given
         final String urlPrefix = "catalog";
         final String childPrefix = "dataset";
-        final IRI entityUri = i(persistentUrl + "/catalog/my-catalog");
+        final IRI entityUri = catalogUrl;
         final IRI relationUri = DCAT.HAS_DATASET;
 
         // set up mocks
@@ -161,7 +175,7 @@ public class GenericControllerTest {
                 urlPrefix, childPrefix, entityUri, relationUri);
 
         // based on default lexicographic order we expect uppercase before lowercase
-        final List<IRI> expectedUris = List.of(datasetUpperUrl, datasetLowerUrl);
+        final List<IRI> expectedUris = List.of(datasetUppercaseUrl, datasetLowercaseUrl);
         assertEquals(expectedUris, actualUris);
     }
 }
