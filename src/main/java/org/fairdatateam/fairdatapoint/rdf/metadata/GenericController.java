@@ -305,7 +305,7 @@ public class GenericController {
     /**
      * @deprecated Use <code>getResources</code> or <code>getChildResources</code> instead.
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "v1.23.0")
     @Operation(hidden = true, deprecated = true)
     @GetMapping(
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
