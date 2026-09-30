@@ -325,6 +325,11 @@ public class GenericController {
         return getResources(childPrefix, page, size);
     }
 
+    /**
+     * Returns an RDF representation of the resources of type <code>urlPrefix</code> contained in the FDP.
+     * Query parameters <code>page</code> and <code>size</code> can be specified to enable paging.
+     * For example, <code>/catalog/?page=0&size=10</code> returns the first page of (up to) 10 `catalog` resources.
+     */
     @Operation(hidden = true, description = "Get a list of resources with optional paging")
     @GetMapping(path = "{urlPrefix}/", produces = "!application/json")
     public ResponseEntity<Model> getResources(
@@ -335,6 +340,13 @@ public class GenericController {
         return getChildResources("", "", urlPrefix, page, size);
     }
 
+    /**
+     * Returns an RDF representation of the resources of type <code>childPrefix</code> contained in the resource
+     * of type <code>urlPrefix</code> that is identified by <code>recordId</code>.
+     * Query parameters <code>page</code> and <code>size</code> can be specified to enable paging.
+     * For example, <code>/catalog/uuid/dataset/</code> returns the `dataset` resources contained in the `catalog` with
+     * the specified uuid.
+     */
     @Operation(hidden = true, description = "Get a list of child resources with optional paging")
     @GetMapping(path = "{urlPrefix}/{recordId}/{childPrefix}/", produces = "!application/json")
     public ResponseEntity<Model> getChildResources(
