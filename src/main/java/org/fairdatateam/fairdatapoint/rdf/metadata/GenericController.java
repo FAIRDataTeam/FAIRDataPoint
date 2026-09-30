@@ -315,20 +315,31 @@ public class GenericController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRdfRepositoryException {
-        return getContainedResources(childPrefix, oUrlPrefix, oRecordId, Optional.of(page), Optional.of(size));
+        // delegate to the new controller methods
+        if (oUrlPrefix.isPresent() && oRecordId.isPresent()) {
+            return getChildResources(oUrlPrefix.get(), oRecordId.get(), childPrefix, page, size);
+        }
+        return getResources(childPrefix, page, size);
     }
 
-    @Operation(hidden = true, description = "Get a list of resources in the container, with optional paging.")
-    @GetMapping(
-            path = {"{childPrefix}/", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/{childPrefix}/"},
-            produces = "!application/json"
-    )
-    public ResponseEntity<Model> getContainedResources(
+    @Operation(hidden = true, description = "Get a list of resources with optional paging")
+    @GetMapping(path = "{urlPrefix}/", produces = "!application/json")
+    public ResponseEntity<Model> getResources(
+            @PathVariable final String urlPrefix,
+            @RequestParam(required = false) final Integer page,
+            @RequestParam(required = false) final Integer size
+    ) throws MetadataServiceException, MetadataRdfRepositoryException {
+        return getChildResources("", "", urlPrefix, page, size);
+    }
+
+    @Operation(hidden = true, description = "Get a list of child resources with optional paging")
+    @GetMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}/{childPrefix}/", produces = "!application/json")
+    public ResponseEntity<Model> getChildResources(
+            @PathVariable final String urlPrefix,
+            @PathVariable final String recordId,
             @PathVariable final String childPrefix,
-            @PathVariable final Optional<String> oUrlPrefix,
-            @PathVariable final Optional<String> oRecordId,
-            @RequestParam final Optional<Integer> oPage,
-            @RequestParam final Optional<Integer> oSize
+            @RequestParam(required = false) final Integer page,
+            @RequestParam(required = false) final Integer size
     ) throws MetadataServiceException, MetadataRdfRepositoryException {
         // Initialize new RDF graph
         final Model resultRdf = new LinkedHashModel();
@@ -338,11 +349,9 @@ public class GenericController {
         ResponseEntity<Model> response = ResponseEntity.ok(resultRdf);
 
         // Note that urlPrefix and childPrefix actually represent resource types (or LDP container names).
-        // The recordId is basically the resource id.
-        // For example, the catalog (urlPrefix) with given uuid (recordId) contains dataset (childPrefix) resources.
+        // The recordId is basically the resource id. For example, the resource of type "catalog" (urlPrefix),
+        // with given uuid (recordId), contains resources of type "dataset" (childPrefix).
         // todo: should rename for clarity, but that is a tough job because these terms are also used in db fields etc.
-        final String urlPrefix = oUrlPrefix.orElse("");
-        final String recordId = oRecordId.orElse("");
 
         // Get the metadata service for the specified child resource type
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
@@ -370,9 +379,7 @@ public class GenericController {
 
                 // Optional paging
                 List<IRI> selectedChildUris = childUris;
-                if (oPage.isPresent() && oSize.isPresent()) {
-                    final int page = oPage.get();
-                    final int size = oSize.get();
+                if (page != null && size != null) {
                     // Apply paging to limit the result size
                     selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
                     // Add HTTP Link headers
@@ -382,7 +389,7 @@ public class GenericController {
                     );
                 }
 
-                // Add the RDF statements for each of the selected child resources to the result graph
+                // Add the RDF statements from each of the selected child resources to the result graph
                 for (IRI childUri : selectedChildUris) {
                     // see AbstractMetadataService.retrieve
                     resultRdf.addAll(childMetadataService.retrieve(childUri));
