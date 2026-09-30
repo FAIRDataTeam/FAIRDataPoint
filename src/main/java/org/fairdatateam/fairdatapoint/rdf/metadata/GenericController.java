@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.rdf4j.model.Statement;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
@@ -66,6 +67,8 @@ import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
 // constructor autowiring with the help of lombok
 @RequiredArgsConstructor
 public class GenericController {
+
+    private static final String NO_DOTS = "[^.]+";
 
     private static final String MSG_ERROR_DRAFT_FORBIDDEN = "You are not allowed to view this record in state DRAFT";
 
@@ -333,10 +336,10 @@ public class GenericController {
     }
 
     @Operation(hidden = true, description = "Get a list of child resources with optional paging")
-    @GetMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}/{childPrefix}/", produces = "!application/json")
+    @GetMapping(path = "{urlPrefix}/{recordId}/{childPrefix}/", produces = "!application/json")
     public ResponseEntity<Model> getChildResources(
-            @PathVariable final String urlPrefix,
-            @PathVariable final String recordId,
+            @PathVariable @Pattern(regexp = NO_DOTS) final String urlPrefix,
+            @PathVariable @Pattern(regexp = NO_DOTS) final String recordId,
             @PathVariable final String childPrefix,
             @RequestParam(required = false) final Integer page,
             @RequestParam(required = false) final Integer size
