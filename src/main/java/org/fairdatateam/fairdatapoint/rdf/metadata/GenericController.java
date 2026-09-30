@@ -396,7 +396,12 @@ public class GenericController {
                 .map(value -> (IRI) value)
                 .filter(childUri -> getUrlPrefix(childUri).equals(childPrefix))
                 .filter(this::userCanAccessResource)
-                .sorted(Comparator.comparing(childUri -> titles.get(childUri.stringValue())))
+                .sorted(Comparator.comparing(
+                        childUri -> titles.get(childUri.stringValue()),
+                        // Default lexicographic order yields a stable "ABab". Case-insensitive order may yield "AaBb",
+                        // but this is unstable: It may as well yield "aABb", "AabB", or "aAbB". To stabilize the
+                        // sorted output, we use natural order (lexicographic) as a tie-breaker, which leads to "AaBb".
+                        String.CASE_INSENSITIVE_ORDER.thenComparing(Comparator.naturalOrder())))
                 .toList();
     }
 
