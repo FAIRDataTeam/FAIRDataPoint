@@ -83,20 +83,20 @@ public class MetadataEnhancer {
 
     private final AppInfoContributor appInfoContributor;
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition definition, Model oldMetadata) {
-        enhance(metadata, uri, definition);
+    public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition, Model oldMetadata) {
+        enhance(metadata, uri, resourceDefinition);
 
         // Populate with current data from the triple store
         setIssued(metadata, uri, l(getIssued(oldMetadata)));
-        if (definition.isCatalog()) {
+        if (resourceDefinition.isCatalog()) {
             setMetadataIssued(metadata, uri, l(getMetadataIssued(oldMetadata)));
         }
     }
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition definition) {
+    public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
         // Add RDF Type
         final List<IRI> targetClassUris = resourceDefinitionService
-                .getTargetClassUris(definition)
+                .getTargetClassUris(resourceDefinition)
                 .stream()
                 .map(ValueFactoryHelper::i)
                 .collect(Collectors.toList());
@@ -134,16 +134,16 @@ public class MetadataEnhancer {
         final OffsetDateTime timestamp = OffsetDateTime.now();
         setIssued(metadata, uri, l(timestamp));
         setModified(metadata, uri, l(timestamp));
-        if (definition.isCatalog()) {
+        if (resourceDefinition.isCatalog()) {
             setMetadataIssued(metadata, uri, l(timestamp));
             setMetadataModified(metadata, uri, l(timestamp));
         }
     }
 
     public void enhanceWithLinks(
-            IRI entityUri, Model entity, ResourceDefinition definition, String url, Model resultRdf
+            IRI entityUri, Model entity, ResourceDefinition resourceDefinition, String url, Model resultRdf
     ) {
-        for (ResourceDefinitionChild child : definition.getChildren()) {
+        for (ResourceDefinitionChild child : resourceDefinition.getChildren()) {
             final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid());
             final IRI container = i(format("%s/%s/", url, rdChild.getUrlPrefix()));
 
@@ -157,11 +157,11 @@ public class MetadataEnhancer {
         }
     }
 
-    public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition definition, Model resultRdf) {
-        resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(definition));
-        resultRdf.add(profileService.getProfileUri(definition), RDFS.LABEL,
-                l(format("%s Profile", definition.getName())));
-        if (definition.isRoot()) {
+    public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition resourceDefinition, Model resultRdf) {
+        resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(resourceDefinition));
+        resultRdf.add(profileService.getProfileUri(resourceDefinition), RDFS.LABEL,
+                l(format("%s Profile", resourceDefinition.getName())));
+        if (resourceDefinition.isRoot()) {
             resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
             resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
             // add dcat:endpointDescription statements for api-docs path and swagger-ui path from config
