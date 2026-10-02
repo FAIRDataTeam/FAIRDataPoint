@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
@@ -36,7 +37,6 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -54,43 +54,34 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
 @Service
+@RequiredArgsConstructor
 public class MetadataEnhancer {
 
     // https://springdoc.org/#springdoc-openapi-core-properties
-    @Autowired
-    private SpringDocConfigProperties springDocConfig;
+    private final SpringDocConfigProperties springDocConfig;
 
-    @Autowired
-    private SwaggerUiConfigProperties swaggerUiConfig;
+    private final SwaggerUiConfigProperties swaggerUiConfig;
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
-    private String accessRightsDescription;
+    private final String accessRightsDescription;
 
-    @Autowired
     @Qualifier("language")
-    private IRI language;
+    private final IRI language;
 
-    @Autowired
     @Qualifier("license")
-    private IRI license;
+    private final IRI license;
 
-    @Autowired
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MetricsMetadataService metricsMetadataService;
+    private final MetricsMetadataService metricsMetadataService;
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private AppInfoContributor appInfoContributor;
+    private final AppInfoContributor appInfoContributor;
 
     public void enhance(Model metadata, IRI uri, ResourceDefinition definition, Model oldMetadata) {
         enhance(metadata, uri, definition);
