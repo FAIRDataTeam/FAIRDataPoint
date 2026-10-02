@@ -57,15 +57,10 @@ public class FactoryDefaults {
 
     public static final String PASSWORD_HASH =
             "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW";
-    public static final String LIPSUM_TEXT = "Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec "
-            + "ultricies augue turpis sed velit. Donec id consectetur ligula. Suspendisse pharetra egestas "
-            + "massa, vel varius leo viverra at. Donec scelerisque id ipsum id semper. Maecenas facilisis augue"
-            + " vel justo molestie aliquet. Maecenas sed mattis lacus, sed viverra risus. Donec iaculis quis "
-            + "lacus vitae scelerisque. Nullam fermentum lectus nisi, id vulputate nisi congue nec. Morbi "
-            + "fermentum justo at justo bibendum, at tempus ipsum tempor. Donec facilisis nibh sed lectus "
-            + "blandit venenatis. Cras ullamcorper, justo vitae feugiat commodo, orci metus suscipit purus, "
-            + "quis sagittis turpis ante eget ex. Pellentesque malesuada a metus eu pulvinar. Morbi rutrum "
-            + "euismod eros at varius. Duis finibus dapibus ex, a hendrerit mauris efficitur at.";
+    public static final String FDP_DESCRIPTION = """
+            The FAIR Data Point (FDP) is a tool for publishing metadata about digital objects on the semantic web,
+             following the FAIR principles. These metadata are published in the form of Resource Description Framework
+             (RDF) triples, compliant with the Data Catalog Vocabulary (DCAT).""";
     public static final String FIELD_SID = "sid";
     public static final String FIELD_PERM = "permission";
     public static final String FIELD_GRANT = "granting";
@@ -455,7 +450,7 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
-        FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(LIPSUM_TEXT), baseUrl);
+        FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
         FactoryDefaults.add(s, DCTERMS.CONFORMS_TO,
                 i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
@@ -493,7 +488,7 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
-        FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(LIPSUM_TEXT), baseUrl);
+        FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
         FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
         // Identifier
         final IRI identifierIri = i(persistentUrl + SUFFIX_IDENTIFIER);
