@@ -140,8 +140,9 @@ public class MetadataEnhancer {
         }
     }
 
-    public void enhanceWithLinks(IRI entityUri, Model entity, ResourceDefinition definition, String url,
-                                 Model resultRdf) {
+    public void enhanceWithLinks(
+            IRI entityUri, Model entity, ResourceDefinition definition, String url, Model resultRdf
+    ) {
         for (ResourceDefinitionChild child : definition.getChildren()) {
             final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid());
             final IRI container = i(format("%s/%s/", url, rdChild.getUrlPrefix()));
