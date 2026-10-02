@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
@@ -36,14 +37,13 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
@@ -53,69 +53,79 @@ import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
+/**
+ * Provides methods that add RDF statements to an in-memory metadata graph, based on the specified resource definition.
+ * This is done on-the-fly, so these statements do not come from the triple store.
+ */
 @Service
+@RequiredArgsConstructor
 public class MetadataEnhancer {
 
     // https://springdoc.org/#springdoc-openapi-core-properties
-    @Autowired
-    private SpringDocConfigProperties springDocConfig;
+    private final SpringDocConfigProperties springDocConfig;
 
-    @Autowired
-    private SwaggerUiConfigProperties swaggerUiConfig;
+    private final SwaggerUiConfigProperties swaggerUiConfig;
 
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
-    private String accessRightsDescription;
+    private final String accessRightsDescription;
 
-    @Autowired
     @Qualifier("language")
-    private IRI language;
+    private final IRI language;
 
-    @Autowired
     @Qualifier("license")
-    private IRI license;
+    private final IRI license;
 
-    @Autowired
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MetricsMetadataService metricsMetadataService;
+    private final MetricsMetadataService metricsMetadataService;
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private AppInfoContributor appInfoContributor;
+    private final AppInfoContributor appInfoContributor;
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition definition, Model oldMetadata) {
-        enhance(metadata, uri, definition);
+    /**
+     * Does the same as <code>enhance(metadata, uri, resourceDefinition)</code> but replaces the newly generated
+     * timestamp values for <code>dcterms:issued</code> and/or <code>fdp-o:metadataIssued</code> by the original values
+     * from the triple store (<code>oldMetadata</code>).
+     */
+    public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition, Model oldMetadata) {
+        enhance(metadata, uri, resourceDefinition);
 
         // Populate with current data from the triple store
         setIssued(metadata, uri, l(getIssued(oldMetadata)));
-        if (definition.isCatalog()) {
+        if (resourceDefinition.isCatalog()) {
             setMetadataIssued(metadata, uri, l(getMetadataIssued(oldMetadata)));
         }
     }
 
-    public void enhance(Model metadata, IRI uri, ResourceDefinition definition) {
+    /**
+     * Adds generic RDF statements for <code>#identifier</code>, <code>#accessRights</code>, <code>#publisher</code>,
+     * <code>rdfs:label</code>, <code>dcterms:language</code>, <code>dcterms:license</code>, metrics
+     * <code>SIO_000332</code> (is about) and <code>SIO_000628</code> (refers to), and the timestamps
+     * <code>fdp-o:metadataIssued/Modified</code> and <code>dcterms:issued/modified</code>.
+     * Also adds RDF type statements based on the specified resource definition (<code>rdf:type</code>, a.k.a.
+     * <code>a</code>).
+     */
+    public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
         // Add RDF Type
         final List<IRI> targetClassUris = resourceDefinitionService
-                .getTargetClassUris(definition)
+                .getTargetClassUris(resourceDefinition)
                 .stream()
                 .map(ValueFactoryHelper::i)
-                .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .toList();
         setRdfTypes(metadata, uri, targetClassUris);
 
-        // Add identifiers
-        final Identifier identifier = createMetadataIdentifier(uri);
+        // Add #identifier
+        final IRI identifierUri = i(uri.stringValue() + "#identifier");
+        final Identifier identifier = new Identifier(identifierUri, DATACITE.IDENTIFIER, l(uri));
         setMetadataIdentifier(metadata, uri, identifier);
 
-        // Add label
+        // Add label equal to title
         if (containsObject(metadata, uri.stringValue(), DCTERMS.TITLE.stringValue())) {
             setLabel(metadata, uri, getTitle(metadata));
         }
@@ -143,15 +153,21 @@ public class MetadataEnhancer {
         final OffsetDateTime timestamp = OffsetDateTime.now();
         setIssued(metadata, uri, l(timestamp));
         setModified(metadata, uri, l(timestamp));
-        if (definition.isCatalog()) {
+        if (resourceDefinition.isCatalog()) {
             setMetadataIssued(metadata, uri, l(timestamp));
             setMetadataModified(metadata, uri, l(timestamp));
         }
     }
 
-    public void enhanceWithLinks(IRI entityUri, Model entity, ResourceDefinition definition, String url,
-                                 Model resultRdf) {
-        for (ResourceDefinitionChild child : definition.getChildren()) {
+    /**
+     * Adds RDF statements describing an LDP direct container and its contained resources for each of the specified
+     * resource definition's children: <code>ldp:DirectContainer</code>, <code>ldp:membershipResource</code>,
+     * <code>ldp:hasMemberRelation</code>, <code>ldp:contains</code>, and a <code>dcterms:title</code>
+     */
+    public void enhanceWithLinks(
+            IRI entityUri, Model entity, ResourceDefinition resourceDefinition, String url, Model resultRdf
+    ) {
+        for (ResourceDefinitionChild child : resourceDefinition.getChildren()) {
             final ResourceDefinition rdChild = resourceDefinitionCache.getByUuid(child.getResourceDefinitionUuid());
             final IRI container = i(format("%s/%s/", url, rdChild.getUrlPrefix()));
 
@@ -165,22 +181,23 @@ public class MetadataEnhancer {
         }
     }
 
-    public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition definition, Model resultRdf) {
-        resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(definition));
-        resultRdf.add(profileService.getProfileUri(definition), RDFS.LABEL,
-                l(format("%s Profile", definition.getName())));
-        if (definition.isRoot()) {
+    /**
+     * Adds RDF statements describing the profile for the specified resource definition
+     * (<code>dcterms:conformsTo</code> and <code>rdfs:label</code>).
+     * If the specified resource definition represents the FDP itself (root), also adds statements for
+     * <code>fdp-o:fdpSoftwareVersion</code>, <code>dcat:endpointURL</code>, and <code>dcat:endpointDescription</code>.
+     */
+    public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition resourceDefinition, Model resultRdf) {
+        resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(resourceDefinition));
+        resultRdf.add(profileService.getProfileUri(resourceDefinition), RDFS.LABEL,
+                l(format("%s Profile", resourceDefinition.getName())));
+        if (resourceDefinition.isRoot()) {
             resultRdf.add(entityUri, FDP.FDPSOFTWAREVERSION, l(format("FDP:%s", appInfoContributor.getFdpVersion())));
             resultRdf.add(entityUri, DCAT.ENDPOINT_URL, i(persistentUrl));
             // add dcat:endpointDescription statements for api-docs path and swagger-ui path from config
             List.of(springDocConfig.getApiDocs().getPath(), swaggerUiConfig.getPath()).forEach(
                     path -> resultRdf.add(entityUri, DCAT.ENDPOINT_DESCRIPTION, i(persistentUrl + path)));
         }
-    }
-
-    private Identifier createMetadataIdentifier(IRI uri) {
-        final IRI identifierUri = i(uri.stringValue() + "#identifier");
-        return new Identifier(identifierUri, DATACITE.IDENTIFIER, l(uri));
     }
 
 }
