@@ -121,7 +121,8 @@ public class MetadataEnhancer {
         setRdfTypes(metadata, uri, targetClassUris);
 
         // Add #identifier
-        final Identifier identifier = createMetadataIdentifier(uri);
+        final IRI identifierUri = i(uri.stringValue() + "#identifier");
+        final Identifier identifier = new Identifier(identifierUri, DATACITE.IDENTIFIER, l(uri));
         setMetadataIdentifier(metadata, uri, identifier);
 
         // Add label equal to title
@@ -197,11 +198,6 @@ public class MetadataEnhancer {
             List.of(springDocConfig.getApiDocs().getPath(), swaggerUiConfig.getPath()).forEach(
                     path -> resultRdf.add(entityUri, DCAT.ENDPOINT_DESCRIPTION, i(persistentUrl + path)));
         }
-    }
-
-    private Identifier createMetadataIdentifier(IRI uri) {
-        final IRI identifierUri = i(uri.stringValue() + "#identifier");
-        return new Identifier(identifierUri, DATACITE.IDENTIFIER, l(uri));
     }
 
 }
