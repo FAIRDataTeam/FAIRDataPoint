@@ -97,6 +97,8 @@ public class MetadataSetter {
         update(metadata, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription));
     }
 
+    // todo: this is confusing, setIssued actually sets metadataIssued, whereas setMetadataIssued actually sets issued.
+    //  and same for modified/metadataModified
     public static void setIssued(Model metadata, IRI uri, Literal dateTime) {
         update(metadata, uri, FDP.METADATAISSUED, dateTime);
     }
