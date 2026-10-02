@@ -43,7 +43,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
@@ -99,7 +99,8 @@ public class MetadataEnhancer {
                 .getTargetClassUris(resourceDefinition)
                 .stream()
                 .map(ValueFactoryHelper::i)
-                .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .toList();
         setRdfTypes(metadata, uri, targetClassUris);
 
         // Add identifiers
