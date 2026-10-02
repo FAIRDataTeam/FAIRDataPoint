@@ -81,7 +81,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         when(catalogMetadataRepository.getDatasetThemesForCatalog(getUri(catalog))).thenReturn(themes);
 
         // WHEN:
-        Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
+        Model catalogMetadata = catalogMetadataService.read(getUri(catalog));
 
         // THEN:
         List<IRI> themeTaxonomys = getThemeTaxonomies(catalogMetadata);

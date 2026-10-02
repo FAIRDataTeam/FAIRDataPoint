@@ -68,7 +68,7 @@ public class GenericMemberController {
 
         // 2. Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model metadata = metadataService.retrieve(entityUri);
+        final Model metadata = metadataService.read(entityUri);
 
         // 3. Get members
         final String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
@@ -92,7 +92,7 @@ public class GenericMemberController {
 
         // 2. Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model metadata = metadataService.retrieve(entityUri);
+        final Model metadata = metadataService.read(entityUri);
 
         // 3. Create / Update member
         final String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
@@ -114,7 +114,7 @@ public class GenericMemberController {
 
         // 2. Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model metadata = metadataService.retrieve(entityUri);
+        final Model metadata = metadataService.read(entityUri);
 
         // 3. Delete member
         final String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();

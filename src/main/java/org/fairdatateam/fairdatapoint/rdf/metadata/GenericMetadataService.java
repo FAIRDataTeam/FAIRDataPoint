@@ -39,7 +39,7 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getPare
 public class GenericMetadataService extends AbstractMetadataService {
 
     @Override
-    public Model store(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
+    public Model create(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         if (!rd.isRoot()) {
             // 1. Check permissions
             final String parentId = Optional.ofNullable(getParent(metadata))
@@ -51,7 +51,7 @@ public class GenericMetadataService extends AbstractMetadataService {
         }
 
         // 2. Store
-        return super.store(metadata, uri, rd);
+        return super.create(metadata, uri, rd);
     }
 
 }
