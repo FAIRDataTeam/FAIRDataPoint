@@ -31,9 +31,9 @@ import java.util.List;
 
 public interface MetadataService {
 
-    Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException;
+    Model read(IRI uri) throws MetadataServiceException, ResourceNotFoundException;
 
-    List<Model> retrieve(List<IRI> uri) throws MetadataServiceException, ResourceNotFoundException;
+    List<Model> read(List<IRI> uri) throws MetadataServiceException, ResourceNotFoundException;
 
     Model store(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition

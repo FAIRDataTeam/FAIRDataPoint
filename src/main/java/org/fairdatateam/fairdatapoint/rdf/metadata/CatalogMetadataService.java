@@ -42,8 +42,8 @@ public class CatalogMetadataService extends AbstractMetadataService {
     private CatalogMetadataRdfRepository metadataRepository;
 
     @Override
-    public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
-        final Model catalog = super.retrieve(uri);
+    public Model read(@Nonnull IRI uri) throws MetadataServiceException {
+        final Model catalog = super.read(uri);
         try {
             final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);

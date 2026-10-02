@@ -79,7 +79,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
-                () -> genericMetadataService.retrieve(metadataUri)
+                () -> genericMetadataService.read(metadataUri)
         );
 
         // THEN:
@@ -96,7 +96,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         genericMetadataService.store(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(metadataFromDB);
     }
 
@@ -146,7 +146,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         genericMetadataService.store(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getMetadataIdentifier(metadataFromDB));
     }
 
@@ -161,7 +161,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         genericMetadataService.store(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getLicence(metadataFromDB));
     }
 
@@ -176,7 +176,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         genericMetadataService.store(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getLanguage(metadataFromDB));
     }
 
@@ -193,10 +193,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         genericMetadataService.store(distribution, getUri(distribution), metadataRd);
 
         // THEN:
-        Model updatedRepository = genericMetadataService.retrieve(getUri(repository));
-        Model updatedCatalog = catalogMetadataService.retrieve(getUri(catalog));
-        Model updatedDataset = genericMetadataService.retrieve(getUri(dataset));
-        Model storedDistribution = genericMetadataService.retrieve(getUri(distribution));
+        Model updatedRepository = genericMetadataService.read(getUri(repository));
+        Model updatedCatalog = catalogMetadataService.read(getUri(catalog));
+        Model updatedDataset = genericMetadataService.read(getUri(dataset));
+        Model storedDistribution = genericMetadataService.read(getUri(distribution));
         OffsetDateTime repositoryModified = getModified(updatedRepository);
         OffsetDateTime catalogModified = getModified(updatedCatalog);
         OffsetDateTime datasetModified = getModified(updatedDataset);
