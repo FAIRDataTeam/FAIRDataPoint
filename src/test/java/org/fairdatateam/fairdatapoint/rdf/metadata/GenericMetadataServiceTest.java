@@ -93,7 +93,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
@@ -110,7 +110,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> genericMetadataService.store(metadata, getUri(metadata), metadataRd)
+                () -> genericMetadataService.create(metadata, getUri(metadata), metadataRd)
         );
 
         // THEN:
@@ -128,7 +128,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> genericMetadataService.store(metadata, getUri(metadata), metadataRd)
+                () -> genericMetadataService.create(metadata, getUri(metadata), metadataRd)
         );
 
         // THEN:
@@ -143,7 +143,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         setMetadataIdentifier(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
@@ -158,7 +158,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         setLicence(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
@@ -173,7 +173,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         setLanguage(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
@@ -190,7 +190,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         Model distribution = testMetadataFixtures.c1_d1_distribution1();
 
         // WHEN:
-        genericMetadataService.store(distribution, getUri(distribution), metadataRd);
+        genericMetadataService.create(distribution, getUri(distribution), metadataRd);
 
         // THEN:
         Model updatedRepository = genericMetadataService.read(getUri(repository));

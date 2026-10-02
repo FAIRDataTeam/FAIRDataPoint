@@ -56,11 +56,11 @@ public class CatalogMetadataService extends AbstractMetadataService {
     }
 
     @Override
-    public Model store(
+    public Model create(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition
     ) throws MetadataServiceException {
         setThemeTaxonomies(metadata, uri, null);
-        return super.store(metadata, uri, resourceDefinition);
+        return super.create(metadata, uri, resourceDefinition);
     }
 
     @Override

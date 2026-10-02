@@ -107,7 +107,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     }
 
     @Override
-    public Model store(
+    public Model create(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition
     ) throws MetadataServiceException {
         try {
