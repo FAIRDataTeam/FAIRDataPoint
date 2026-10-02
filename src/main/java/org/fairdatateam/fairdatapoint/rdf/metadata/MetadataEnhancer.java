@@ -53,6 +53,10 @@ import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.l;
 
+/**
+ * Provides methods that add RDF statements to an in-memory metadata graph, based on the specified resource definition.
+ * This is done on-the-fly, so these statements do not come from the triple store.
+ */
 @Service
 @RequiredArgsConstructor
 public class MetadataEnhancer {
@@ -83,6 +87,11 @@ public class MetadataEnhancer {
 
     private final AppInfoContributor appInfoContributor;
 
+    /**
+     * Does the same as <code>enhance(metadata, uri, resourceDefinition)</code> but replaces the newly generated
+     * timestamp values for <code>dcterms:issued</code> and/or <code>fdp-o:metadataIssued</code> by the original values
+     * from the triple store (<code>oldMetadata</code>).
+     */
     public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition, Model oldMetadata) {
         enhance(metadata, uri, resourceDefinition);
 
@@ -93,6 +102,14 @@ public class MetadataEnhancer {
         }
     }
 
+    /**
+     * Adds generic RDF statements for <code>#identifier</code>, <code>#accessRights</code>, <code>#publisher</code>,
+     * <code>rdfs:label</code>, <code>dcterms:language</code>, <code>dcterms:license</code>, metrics
+     * <code>SIO_000332</code> (is about) and <code>SIO_000628</code> (refers to), and the timestamps
+     * <code>fdp-o:metadataIssued/Modified</code> and <code>dcterms:issued/modified</code>.
+     * Also adds RDF type statements based on the specified resource definition (<code>rdf:type</code>, a.k.a.
+     * <code>a</code>).
+     */
     public void enhance(Model metadata, IRI uri, ResourceDefinition resourceDefinition) {
         // Add RDF Type
         final List<IRI> targetClassUris = resourceDefinitionService
@@ -103,11 +120,11 @@ public class MetadataEnhancer {
                 .toList();
         setRdfTypes(metadata, uri, targetClassUris);
 
-        // Add identifiers
+        // Add #identifier
         final Identifier identifier = createMetadataIdentifier(uri);
         setMetadataIdentifier(metadata, uri, identifier);
 
-        // Add label
+        // Add label equal to title
         if (containsObject(metadata, uri.stringValue(), DCTERMS.TITLE.stringValue())) {
             setLabel(metadata, uri, getTitle(metadata));
         }
@@ -141,6 +158,11 @@ public class MetadataEnhancer {
         }
     }
 
+    /**
+     * Adds RDF statements describing an LDP direct container and its contained resources for each of the specified
+     * resource definition's children: <code>ldp:DirectContainer</code>, <code>ldp:membershipResource</code>,
+     * <code>ldp:hasMemberRelation</code>, <code>ldp:contains</code>, and a <code>dcterms:title</code>
+     */
     public void enhanceWithLinks(
             IRI entityUri, Model entity, ResourceDefinition resourceDefinition, String url, Model resultRdf
     ) {
@@ -158,6 +180,12 @@ public class MetadataEnhancer {
         }
     }
 
+    /**
+     * Adds RDF statements describing the profile for the specified resource definition
+     * (<code>dcterms:conformsTo</code> and <code>rdfs:label</code>).
+     * If the specified resource definition represents the FDP itself (root), also adds statements for
+     * <code>fdp-o:fdpSoftwareVersion</code>, <code>dcat:endpointURL</code>, and <code>dcat:endpointDescription</code>.
+     */
     public void enhanceWithResourceDefinition(IRI entityUri, ResourceDefinition resourceDefinition, Model resultRdf) {
         resultRdf.add(entityUri, DCTERMS.CONFORMS_TO, profileService.getProfileUri(resourceDefinition));
         resultRdf.add(profileService.getProfileUri(resourceDefinition), RDFS.LABEL,
