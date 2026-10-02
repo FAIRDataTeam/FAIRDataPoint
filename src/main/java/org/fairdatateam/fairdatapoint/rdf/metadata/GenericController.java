@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.rdf4j.model.Statement;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
@@ -66,6 +67,8 @@ import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
 // constructor autowiring with the help of lombok
 @RequiredArgsConstructor
 public class GenericController {
+
+    private static final String NO_DOTS = "[^.]+";
 
     private static final String MSG_ERROR_DRAFT_FORBIDDEN = "You are not allowed to view this record in state DRAFT";
 
@@ -299,7 +302,11 @@ public class GenericController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(hidden = true)
+    /**
+     * @deprecated Use <code>getResources</code> or <code>getChildResources</code> instead.
+     */
+    @Deprecated(forRemoval = true, since = "v1.23.0")
+    @Operation(hidden = true, deprecated = true)
     @GetMapping(
             path = {"page/{childPrefix}", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/page/{childPrefix}"},
             produces = "!application/json"
@@ -311,15 +318,55 @@ public class GenericController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
     ) throws MetadataServiceException, MetadataRdfRepositoryException {
+        // delegate to the new controller methods
+        if (oUrlPrefix.isPresent() && oRecordId.isPresent()) {
+            return getChildResources(oUrlPrefix.get(), oRecordId.get(), childPrefix, page, size);
+        }
+        return getResources(childPrefix, page, size);
+    }
+
+    /**
+     * Returns an RDF representation of the resources of type <code>urlPrefix</code> contained in the FDP.
+     * Query parameters <code>page</code> and <code>size</code> can be specified to enable paging.
+     * For example, <code>/catalog/?page=0&size=10</code> returns the first page of (up to) 10 `catalog` resources.
+     */
+    @Operation(hidden = true, description = "Get a list of resources with optional paging")
+    @GetMapping(path = "{urlPrefix}/", produces = "!application/json")
+    public ResponseEntity<Model> getResources(
+            @PathVariable final String urlPrefix,
+            @RequestParam(required = false) final Integer page,
+            @RequestParam(required = false) final Integer size
+    ) throws MetadataServiceException, MetadataRdfRepositoryException {
+        return getChildResources("", "", urlPrefix, page, size);
+    }
+
+    /**
+     * Returns an RDF representation of the resources of type <code>childPrefix</code> contained in the resource
+     * of type <code>urlPrefix</code> that is identified by <code>recordId</code>.
+     * Query parameters <code>page</code> and <code>size</code> can be specified to enable paging.
+     * For example, <code>/catalog/uuid/dataset/</code> returns the `dataset` resources contained in the `catalog` with
+     * the specified uuid.
+     */
+    @Operation(hidden = true, description = "Get a list of child resources with optional paging")
+    @GetMapping(path = "{urlPrefix}/{recordId}/{childPrefix}/", produces = "!application/json")
+    public ResponseEntity<Model> getChildResources(
+            @PathVariable @Pattern(regexp = NO_DOTS) final String urlPrefix,
+            @PathVariable @Pattern(regexp = NO_DOTS) final String recordId,
+            @PathVariable final String childPrefix,
+            @RequestParam(required = false) final Integer page,
+            @RequestParam(required = false) final Integer size
+    ) throws MetadataServiceException, MetadataRdfRepositoryException {
         // Initialize new RDF graph
         final Model resultRdf = new LinkedHashModel();
 
+        // Prepare response
+        final HttpHeaders responseHeaders = new HttpHeaders();
+        ResponseEntity<Model> response = ResponseEntity.ok(resultRdf);
+
         // Note that urlPrefix and childPrefix actually represent resource types (or LDP container names).
-        // The recordId is basically the resource id.
-        // For example, the catalog (urlPrefix) with given uuid (recordId) contains dataset (childPrefix) resources.
+        // The recordId is basically the resource id. For example, the resource of type "catalog" (urlPrefix),
+        // with given uuid (recordId), contains resources of type "dataset" (childPrefix).
         // todo: should rename for clarity, but that is a tough job because these terms are also used in db fields etc.
-        final String urlPrefix = oUrlPrefix.orElse("");
-        final String recordId = oRecordId.orElse("");
 
         // Get the metadata service for the specified child resource type
         final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
@@ -345,27 +392,30 @@ public class GenericController {
                 // Get child resources URIs
                 final List<IRI> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
 
-                // Apply paging to limit the result size
-                final List<IRI> selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
+                // Optional paging
+                List<IRI> selectedChildUris = childUris;
+                if (page != null && size != null) {
+                    // Apply paging to limit the result size
+                    selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
+                    // Add HTTP Link headers
+                    responseHeaders.set(
+                            "Link",
+                            createPagingLinkHeader(entityUri.stringValue(), childPrefix, childUris.size(), page, size)
+                    );
+                }
 
-                // Add the RDF statements for each of the selected child resources to the result graph
+                // Add the RDF statements from each of the selected child resources to the result graph
                 for (IRI childUri : selectedChildUris) {
                     // see AbstractMetadataService.retrieve
                     resultRdf.addAll(childMetadataService.retrieve(childUri));
                 }
 
-                // Set HTTP Link headers and return response
-                final HttpHeaders responseHeaders = new HttpHeaders();
-                responseHeaders.set(
-                        "Link",
-                        createPagingLinkHeader(entityUri.stringValue(), childPrefix, childUris.size(), page, size)
-                );
-                return ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
+                // Update response with headers and updated rdf graph
+                response = ResponseEntity.ok().headers(responseHeaders).body(resultRdf);
             }
         }
 
-        // Return empty response in case nothing was found
-        return ResponseEntity.ok(resultRdf);
+        return response;
     }
 
     /**
