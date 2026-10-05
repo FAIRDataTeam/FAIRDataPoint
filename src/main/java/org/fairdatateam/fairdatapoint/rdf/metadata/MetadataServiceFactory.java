@@ -22,21 +22,25 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MetadataServiceFactory {
 
-    @Autowired
     @Qualifier("catalogMetadataService")
-    private MetadataService catalogMetadataService;
+    private final MetadataService catalogMetadataService;
 
-    @Autowired
     @Qualifier("genericMetadataService")
-    private MetadataService genericMetadataService;
+    private final MetadataService genericMetadataService;
 
+    /**
+     * Returns a <code>CatalogMetadataService</code> if the URL represents a catalog.
+     * Otherwise returns a <code>GenericMetadataService</code> which handles all other resource types.
+     * The catalog is treated separately because it is annotated with a summary of the themes from all its members.
+     */
     public MetadataService getMetadataServiceByUrlPrefix(String urlPrefix) {
         if ("catalog".equals(urlPrefix)) {
             return catalogMetadataService;

@@ -39,19 +39,19 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getPare
 public class GenericMetadataService extends AbstractMetadataService {
 
     @Override
-    public Model store(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
+    public Model create(Model metadata, IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         if (!rd.isRoot()) {
             // 1. Check permissions
             final String parentId = Optional.ofNullable(getParent(metadata))
                     .orElseThrow(() -> new ValidationException("Metadata has no parent")).stringValue();
             if (!(getMemberService().checkPermission(parentId, Metadata.class, BasePermission.CREATE)
                     || getMemberService().checkRole(UserRole.ADMIN))) {
-                throw new ForbiddenException("You are not allow to add new entry");
+                throw new ForbiddenException("You are not allowed to create a new entry");
             }
         }
 
         // 2. Store
-        return super.store(metadata, uri, rd);
+        return super.create(metadata, uri, rd);
     }
 
 }

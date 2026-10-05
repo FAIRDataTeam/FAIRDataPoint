@@ -93,7 +93,7 @@ public class GenericMetaController {
 
         // 3. Get and check existence entity
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        Model entity = metadataService.retrieve(entityUri);
+        Model entity = metadataService.read(entityUri);
 
         // 4. Get member
         final String entityId = getMetadataIdentifier(entity).getIdentifier().getLabel();
@@ -117,7 +117,7 @@ public class GenericMetaController {
             if (parentUri == null) {
                 break;
             }
-            entity = metadataService.retrieve(parentUri);
+            entity = metadataService.read(parentUri);
             entityUri = parentUri;
             urlPrefix = getResourceNameForList(parentUri.toString());
             definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
@@ -141,7 +141,7 @@ public class GenericMetaController {
 
         // 2. Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model model = metadataService.retrieve(entityUri);
+        final Model model = metadataService.read(entityUri);
 
         // 3. Get state
         metadataStateService.modifyState(entityUri, reqDto);

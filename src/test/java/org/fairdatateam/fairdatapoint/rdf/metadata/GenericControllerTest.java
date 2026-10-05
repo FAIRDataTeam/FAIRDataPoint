@@ -168,7 +168,7 @@ public class GenericControllerTest {
 
         // set up mocks
         when(metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix)).thenReturn(metadataService);
-        when(metadataService.retrieve(entityUri)).thenReturn(catalog0);
+        when(metadataService.read(entityUri)).thenReturn(catalog0);
         when(currentUserProvider.getCurrentUser()).thenReturn(Optional.of(new User()));
         when(metadataStateService.get(any(IRI.class))).thenReturn(new Metadata(null, null, MetadataState.PUBLISHED));
         when(metadataRepository.findChildTitles(entityUri, relationUri)).thenReturn(datasetTitles);

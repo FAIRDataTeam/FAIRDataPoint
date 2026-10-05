@@ -117,7 +117,7 @@ public class GenericController {
 
         // 2. Get entity
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        Model entity = metadataService.retrieve(entityUri);
+        Model entity = metadataService.read(entityUri);
         resultRdf.addAll(entity);
 
         // 3. Check if it is DRAFT
@@ -132,7 +132,7 @@ public class GenericController {
             if (parentUri == null) {
                 break;
             }
-            final Model parent = metadataService.retrieve(parentUri);
+            final Model parent = metadataService.read(parentUri);
             resultRdf.addAll(parent);
             entity = parent;
             entityUri = parentUri;
@@ -162,7 +162,7 @@ public class GenericController {
 
         // 3. Get entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model entity = metadataService.retrieve(entityUri);
+        final Model entity = metadataService.read(entityUri);
         resultRdf.addAll(entity);
 
         // 4. Check if it is DRAFT
@@ -217,7 +217,7 @@ public class GenericController {
         }
 
         // 5. Store metadata
-        final Model metadata = metadataService.store(reqDto, uri, rd);
+        final Model metadata = metadataService.create(reqDto, uri, rd);
 
         // 6. Invalidate search filters cache
         searchFilterCache.clearCache();
@@ -351,7 +351,7 @@ public class GenericController {
                 // Add the RDF statements for each of the selected child resources to the result graph
                 for (IRI childUri : selectedChildUris) {
                     // see AbstractMetadataService.retrieve
-                    resultRdf.addAll(childMetadataService.retrieve(childUri));
+                    resultRdf.addAll(childMetadataService.read(childUri));
                 }
 
                 // Set HTTP Link headers and return response
@@ -384,7 +384,7 @@ public class GenericController {
         final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
 
         // Get the RDF graph for the parent resource
-        final Model entity = metadataService.retrieve(entityUri);
+        final Model entity = metadataService.read(entityUri);
 
         // Get the RDF-object URIs for the specified RDF-subject (entityUri) and RDF-predicate (relationUri),
         // filtered by access and sorted by title. For example, the full list of URIs (childUri) of all the dataset
