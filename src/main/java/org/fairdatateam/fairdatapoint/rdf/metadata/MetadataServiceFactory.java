@@ -36,6 +36,11 @@ public class MetadataServiceFactory {
     @Qualifier("genericMetadataService")
     private final MetadataService genericMetadataService;
 
+    /**
+     * Returns a <code>CatalogMetadataService</code> if the URL represents a catalog.
+     * Otherwise returns a <code>GenericMetadataService</code> which handles all other resource types.
+     * The catalog is treated separately because it is annotated with a summary of the themes from all its members.
+     */
     public MetadataService getMetadataServiceByUrlPrefix(String urlPrefix) {
         if ("catalog".equals(urlPrefix)) {
             return catalogMetadataService;
