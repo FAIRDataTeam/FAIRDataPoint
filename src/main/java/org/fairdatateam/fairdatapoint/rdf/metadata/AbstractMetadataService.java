@@ -52,6 +52,8 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 @Slf4j
 public abstract class AbstractMetadataService implements MetadataService {
 
+    // Field autowiring is used intentionally here, because constructor autowiring in abstract classes
+    // leads to bloated subclass constructors.
     @Autowired
     private GenericMetadataRdfRepository metadataRepository;
 
