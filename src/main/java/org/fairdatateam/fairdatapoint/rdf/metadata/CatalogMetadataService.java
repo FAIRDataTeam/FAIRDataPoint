@@ -34,6 +34,12 @@ import java.util.List;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
+/**
+ * Adds <code>dcat:themeTaxonomy</code> statements to the in-memory graph for the catalog,
+ * based on the <code>dcat:theme</code> statements for the datasets in this catalog.
+ * Removes all theme taxonomy statements from the in-memory graph before create or update operations,
+ * to make sure they do not end up in the triple store.
+ */
 @Service("catalogMetadataService")
 @Slf4j
 @RequiredArgsConstructor
