@@ -22,20 +22,19 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MetadataServiceFactory {
 
-    @Autowired
     @Qualifier("catalogMetadataService")
-    private MetadataService catalogMetadataService;
+    private final MetadataService catalogMetadataService;
 
-    @Autowired
     @Qualifier("genericMetadataService")
-    private MetadataService genericMetadataService;
+    private final MetadataService genericMetadataService;
 
     public MetadataService getMetadataServiceByUrlPrefix(String urlPrefix) {
         if ("catalog".equals(urlPrefix)) {
