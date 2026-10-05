@@ -46,7 +46,7 @@ public class GenericMetadataService extends AbstractMetadataService {
                     .orElseThrow(() -> new ValidationException("Metadata has no parent")).stringValue();
             if (!(getMemberService().checkPermission(parentId, Metadata.class, BasePermission.CREATE)
                     || getMemberService().checkRole(UserRole.ADMIN))) {
-                throw new ForbiddenException("You are not allow to add new entry");
+                throw new ForbiddenException("You are not allowed to create a new entry");
             }
         }
 
