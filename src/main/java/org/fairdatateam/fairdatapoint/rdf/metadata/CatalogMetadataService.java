@@ -31,9 +31,7 @@ import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
-import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
 /**
  * Adds <code>dcat:themeTaxonomy</code> statements to the in-memory graph for the catalog,
@@ -47,17 +45,13 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThem
 @RequiredArgsConstructor
 public class CatalogMetadataService extends AbstractMetadataService {
 
+// TODO: this class is now completely redundant, so we need to remove it,
+//  merge GenericMetadataService and AbstractMetadataService into a single MetadataService,
+//  and remove MetadataServiceFactory
+
     @Override
     public Model read(@Nonnull IRI uri) throws MetadataServiceException {
         final Model catalog = super.read(uri);
-        try {
-            final List<IRI> themes = getMetadataRdfRepository().getDatasetThemesForCatalog(uri);
-            setThemeTaxonomies(catalog, uri, themes);
-        }
-        catch (RdfRepositoryException exception) {
-            log.error("Error retrieving the metadata");
-            throw new MetadataServiceException(exception.getMessage());
-        }
         return catalog;
     }
 
@@ -65,7 +59,6 @@ public class CatalogMetadataService extends AbstractMetadataService {
     public Model create(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition
     ) throws MetadataServiceException {
-        setThemeTaxonomies(metadata, uri, null);
         return super.create(metadata, uri, resourceDefinition);
     }
 
@@ -73,7 +66,6 @@ public class CatalogMetadataService extends AbstractMetadataService {
     public Model update(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition, boolean validate
     ) throws MetadataServiceException {
-        setThemeTaxonomies(metadata, uri, null);
         return super.update(metadata, uri, resourceDefinition, validate);
     }
 }
