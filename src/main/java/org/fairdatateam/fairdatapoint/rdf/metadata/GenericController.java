@@ -353,7 +353,7 @@ public class GenericController {
                 for (IRI childUri : selectedChildUris) {
                     // see AbstractMetadataService.retrieve
                     final Model childMetadata = childMetadataService.retrieve(childUri);
-                    // annotate child metadata with themes
+                    // annotate child metadata with themes (todo: getDatasetThemesForCatalog needs to be moved into a service first)
                     final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(childUri);
                     setThemeTaxonomies(childMetadata, childUri, themes);
                     // add child metadata to graph
