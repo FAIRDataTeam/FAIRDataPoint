@@ -31,12 +31,17 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
 @Service("catalogMetadataService")
 @Slf4j
 public class CatalogMetadataService extends AbstractMetadataService {
+
+    private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
     @Autowired
     private CatalogMetadataRdfRepository metadataRepository;
@@ -45,7 +50,7 @@ public class CatalogMetadataService extends AbstractMetadataService {
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
         final Model catalog = super.retrieve(uri);
         try {
-            final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
+            final List<IRI> themes = getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
         }
         catch (MetadataRdfRepositoryException exception) {
@@ -69,5 +74,13 @@ public class CatalogMetadataService extends AbstractMetadataService {
     ) throws MetadataServiceException {
         setThemeTaxonomies(metadata, uri, null);
         return super.update(metadata, uri, resourceDefinition, validate);
+    }
+
+    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRdfRepositoryException {
+        // todo: re-implement caching using spring @Cacheable etc.
+        return metadataRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
+                .stream()
+                .map(item -> i(item.getValue("theme").stringValue()))
+                .collect(Collectors.toList());
     }
 }
