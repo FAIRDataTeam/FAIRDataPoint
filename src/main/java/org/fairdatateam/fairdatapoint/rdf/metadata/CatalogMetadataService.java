@@ -26,32 +26,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
-import java.util.List;
 
-import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
 @Service("catalogMetadataService")
 @Slf4j
 public class CatalogMetadataService extends AbstractMetadataService {
 
-    @Autowired
-    private CatalogMetadataRdfRepository metadataRepository;
+// TODO: this class is now completely redundant, so we need to remove it,
+//  merge GenericMetadataService and AbstractMetadataService into a single MetadataService,
+//  and remove MetadataServiceFactory
 
     @Override
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
         final Model catalog = super.retrieve(uri);
-        try {
-            final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
-            setThemeTaxonomies(catalog, uri, themes);
-        }
-        catch (MetadataRdfRepositoryException exception) {
-            log.error("Error retrieving the metadata");
-            throw new MetadataServiceException(exception.getMessage());
-        }
         return catalog;
     }
 
@@ -59,7 +49,6 @@ public class CatalogMetadataService extends AbstractMetadataService {
     public Model store(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition
     ) throws MetadataServiceException {
-        setThemeTaxonomies(metadata, uri, null);
         return super.store(metadata, uri, resourceDefinition);
     }
 
@@ -67,7 +56,6 @@ public class CatalogMetadataService extends AbstractMetadataService {
     public Model update(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition, boolean validate
     ) throws MetadataServiceException {
-        setThemeTaxonomies(metadata, uri, null);
         return super.update(metadata, uri, resourceDefinition, validate);
     }
 }
