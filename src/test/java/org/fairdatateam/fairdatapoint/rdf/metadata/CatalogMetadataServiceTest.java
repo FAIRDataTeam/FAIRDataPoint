@@ -24,23 +24,28 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.query.BindingSet;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getThemeTaxonomies;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
@@ -48,7 +53,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CatalogMetadataServiceTest extends BaseIntegrationTest {
@@ -92,5 +97,42 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         assertThat(themeTaxonomys.get(0), is(equalTo(theme1)));
         assertThat(themeTaxonomys.get(1), is(equalTo(theme2_duplicated)));
     }
+
+//    private final IRI catalogUri = i("http://localhost/textmining");
+//
+//    @Spy
+//    @InjectMocks
+//    private CatalogMetadataRdfRepository catalogMetadataRdfRepository;
+//
+//    @Test
+//    @DisplayName("Themes for catalog are in cache (no query to triple store)")
+//    public void themesInCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
+//        when(cache.get(catalogUri.toString(), List.class)).thenReturn(Collections.emptyList());
+//
+//        // WHEN:
+//        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // THEN:
+//        verify(catalogMetadataRdfRepository, never()).runSparqlQueryFromFile(any(), any());
+//    }
+//
+//    @Test
+//    @DisplayName("Themes for catalog are not in cache (we have to query to triple store)")
+//    public void themesNotInCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
+//        when(repository.getConnection()).thenReturn(repositoryConnection);
+//        when(repositoryConnection.prepareTupleQuery(any())).thenReturn(tupleQuery);
+//        when(tupleQuery.evaluate()).thenReturn(tupleQueryResult);
+//
+//        // WHEN:
+//        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // THEN:
+//        verify(catalogMetadataRdfRepository, times(1)).runSparqlQueryFromFile(any(), any());
+//    }
+
 
 }
