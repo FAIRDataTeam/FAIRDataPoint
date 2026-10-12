@@ -62,9 +62,6 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
     @Autowired
     private MetadataRdfRepository metadataRdfRepository;
 
-    @Autowired
-    private CatalogMetadataRdfRepository catalogMetadataRdfRepository;
-
     @Test
     @DisplayName("'save' should evict cache")
     public void saveEvictsCache() throws RdfRepositoryException {
@@ -74,7 +71,7 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
@@ -95,7 +92,7 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
@@ -116,7 +113,7 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));

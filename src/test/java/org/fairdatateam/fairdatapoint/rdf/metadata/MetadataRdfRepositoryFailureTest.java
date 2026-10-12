@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -55,11 +54,11 @@ public class MetadataRdfRepositoryFailureTest {
     @Mock
     private TupleQuery query;
 
-    private MetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @BeforeEach
     public void setUp() {
-        metadataRepository = new MetadataRdfRepository(new ConcurrentMapCacheManager(), repository);
+        metadataRdfRepository = new MetadataRdfRepository(repository);
     }
 
     @Test
@@ -72,7 +71,7 @@ public class MetadataRdfRepositoryFailureTest {
         // WHEN/THEN:
         assertThrows(
                 RdfRepositoryException.class,
-                () -> metadataRepository.runSparqlQuery("SELECT * WHERE { ?s ?p ?o }", null)
+                () -> metadataRdfRepository.runSparqlQuery("SELECT * WHERE { ?s ?p ?o }", null)
         );
     }
 }
