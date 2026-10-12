@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import org.eclipse.rdf4j.query.BindingSet;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getThemeTaxonomies;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
@@ -45,6 +47,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,10 +57,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Mock
-    private MetadataRdfRepository metadataRepository;
-
-    @Mock
-    private CatalogMetadataRdfRepository catalogMetadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @InjectMocks
     private CatalogMetadataService catalogMetadataService;
@@ -72,13 +72,16 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         // GIVEN: Retrieve catalog from Repository
         Model catalog = testMetadataFixtures.catalog1();
         List<Statement> catalogStatements = new ArrayList<>(catalog);
-        when(metadataRepository.find(getUri(catalog))).thenReturn(catalogStatements);
+        when(metadataRdfRepository.find(getUri(catalog))).thenReturn(catalogStatements);
 
         // AND: Retrieve themes from datasets
         IRI theme1 = i("http://localhost/my_theme_1");
         IRI theme2_duplicated = i("http://localhost/my_theme_2_duplicated");
-        List<IRI> themes = List.of(theme1, theme2_duplicated, theme2_duplicated);
-        when(catalogMetadataRepository.getDatasetThemesForCatalog(getUri(catalog))).thenReturn(themes);
+        List<BindingSet> themes = List.of(
+                (BindingSet) Map.of("theme", theme1),
+                (BindingSet) Map.of("theme", theme2_duplicated),
+                (BindingSet) Map.of("theme", theme2_duplicated));
+        when(metadataRdfRepository.runSparqlQueryFromFile(any(), any())).thenReturn(themes);
 
         // WHEN:
         Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
