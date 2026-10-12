@@ -25,12 +25,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.rdf.metadata;
+package org.fairdatateam.fairdatapoint.rdf;
 
-public class MetadataRdfRepositoryException extends Exception {
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.query.BindingSet;
 
-    public MetadataRdfRepositoryException(String msg) {
-        super(msg);
-    }
+import java.util.List;
+import java.util.Map;
 
+public interface RdfRepository {
+
+    List<Statement> find(IRI context) throws RdfRepositoryException;
+
+    Map<String, String> findChildTitles(IRI parent, IRI relation)
+            throws RdfRepositoryException;
+
+    boolean checkExistence(Resource subject, IRI predicate, Value object)
+            throws RdfRepositoryException;
+
+    void save(List<Statement> statements, IRI context) throws RdfRepositoryException;
+
+    void removeAll() throws RdfRepositoryException;
+
+    void remove(IRI uri) throws RdfRepositoryException;
+
+    void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+            throws RdfRepositoryException;
+
+    List<BindingSet> runSparqlQuery(String queryString, Map<String, Value> bindings)
+            throws RdfRepositoryException;
 }

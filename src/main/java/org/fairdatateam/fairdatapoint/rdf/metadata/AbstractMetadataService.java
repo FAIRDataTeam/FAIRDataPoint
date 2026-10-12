@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.user.User;
@@ -92,7 +93,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             metadata.addAll(statements);
             return metadata;
         }
-        catch (MetadataRdfRepositoryException exception) {
+        catch (RdfRepositoryException exception) {
             throw new MetadataServiceException(exception.getMessage());
         }
     }
@@ -119,7 +120,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             addState(uri);
             return metadata;
         }
-        catch (MetadataRdfRepositoryException exception) {
+        catch (RdfRepositoryException exception) {
             throw new MetadataServiceException(exception.getMessage());
         }
     }
@@ -144,7 +145,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             updateParent(metadata, uri, resourceDefinition);
             return metadata;
         }
-        catch (MetadataRdfRepositoryException | MetadataServiceException exception) {
+        catch (RdfRepositoryException | MetadataServiceException exception) {
             throw new MetadataServiceException(exception.getMessage());
         }
     }
@@ -185,7 +186,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             // Delete itself
             metadataRepository.remove(uri);
         }
-        catch (MetadataRdfRepositoryException | MetadataServiceException exception) {
+        catch (RdfRepositoryException | MetadataServiceException exception) {
             throw new MetadataServiceException(exception.getMessage());
         }
     }
@@ -210,7 +211,7 @@ public abstract class AbstractMetadataService implements MetadataService {
                     statements.add(s(parent, FDP.METADATAMODIFIED, l(OffsetDateTime.now())));
                     metadataRepository.save(statements, parent);
                 }
-                catch (MetadataRdfRepositoryException exception) {
+                catch (RdfRepositoryException exception) {
                     throw new MetadataServiceException("Problem with updating parent timestamp");
                 }
                 final Model parentMetadata = retrieve(parent);

@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.repository.Repository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
@@ -47,25 +48,25 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     }
 
     @Override
-    public void save(List<Statement> statements, IRI context) throws MetadataRdfRepositoryException {
+    public void save(List<Statement> statements, IRI context) throws RdfRepositoryException {
         super.save(statements, context);
         clearCatalogCache(context);
     }
 
     @Override
-    public void remove(IRI uri) throws MetadataRdfRepositoryException {
+    public void remove(IRI uri) throws RdfRepositoryException {
         clearCatalogCache(uri);
         super.remove(uri);
     }
 
     @Override
     public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
-            throws MetadataRdfRepositoryException {
+            throws RdfRepositoryException {
         clearCatalogCache(context);
         super.removeStatement(subject, predicate, object, context);
     }
 
-    private void clearCatalogCache(IRI uri) throws MetadataRdfRepositoryException {
+    private void clearCatalogCache(IRI uri) throws RdfRepositoryException {
         final Model metadata = new LinkedHashModel();
         metadata.addAll(find(uri));
         final IRI parent = getParent(metadata);

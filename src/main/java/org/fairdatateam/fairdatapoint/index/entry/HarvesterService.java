@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.index.entry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -72,12 +72,12 @@ public class HarvesterService {
         this.restClient = restClientBuilder.build();
     }
 
-    public void deleteHarvestedData(String clientUrl) throws MetadataRdfRepositoryException {
+    public void deleteHarvestedData(String clientUrl) throws RdfRepositoryException {
         genericMetadataRdfRepository.remove(i(clientUrl));
     }
 
     @Async
-    public void harvest(String clientUrl) throws MetadataRdfRepositoryException {
+    public void harvest(String clientUrl) throws RdfRepositoryException {
         log.info("Start harvesting '{}'", clientUrl);
 
         // 0. Remove previously harvested metadata

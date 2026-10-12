@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -53,7 +54,7 @@ public class CatalogMetadataService extends AbstractMetadataService {
             final List<IRI> themes = getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
         }
-        catch (MetadataRdfRepositoryException exception) {
+        catch (RdfRepositoryException exception) {
             log.error("Error retrieving the metadata");
             throw new MetadataServiceException(exception.getMessage());
         }
@@ -76,7 +77,7 @@ public class CatalogMetadataService extends AbstractMetadataService {
         return super.update(metadata, uri, resourceDefinition, validate);
     }
 
-    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRdfRepositoryException {
+    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws RdfRepositoryException {
         // todo: re-implement caching using spring @Cacheable etc.
         return metadataRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()

@@ -32,6 +32,8 @@ import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -63,18 +65,18 @@ public abstract class AbstractMetadataRdfRepository implements RdfRepository {
         this.repository = repository;
     }
 
-    public List<Statement> find(IRI context) throws MetadataRdfRepositoryException {
+    public List<Statement> find(IRI context) throws RdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             return Iterations.asList(
                     conn.getStatements(null, null, null, context)
             );
         }
         catch (RepositoryException exception) {
-            throw new MetadataRdfRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
+            throw new RdfRepositoryException(MSG_ERROR_RESOURCE + exception.getMessage());
         }
     }
 
-    public Map<String, String> findChildTitles(IRI parent, IRI relation) throws MetadataRdfRepositoryException {
+    public Map<String, String> findChildTitles(IRI parent, IRI relation) throws RdfRepositoryException {
         final Map<String, String> titles = new HashMap<>();
         final List<BindingSet> results = runSparqlQueryFromFile(
                 FIND_CHILD_TITLES, Map.of("parent", parent, "relation", relation)
@@ -88,44 +90,44 @@ public abstract class AbstractMetadataRdfRepository implements RdfRepository {
     }
 
     public boolean checkExistence(Resource subject, IRI predicate, Value object)
-            throws MetadataRdfRepositoryException {
+            throws RdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             return conn.hasStatement(subject, predicate, object, false);
         }
         catch (RepositoryException exception) {
-            throw new MetadataRdfRepositoryException(MSG_ERROR_EXISTS + exception.getMessage());
+            throw new RdfRepositoryException(MSG_ERROR_EXISTS + exception.getMessage());
         }
     }
 
-    public void save(List<Statement> statements, IRI context) throws MetadataRdfRepositoryException {
+    public void save(List<Statement> statements, IRI context) throws RdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.add(statements, context);
         }
         catch (RepositoryException exception) {
-            throw new MetadataRdfRepositoryException(MSG_ERROR_SAVE + exception.getMessage());
+            throw new RdfRepositoryException(MSG_ERROR_SAVE + exception.getMessage());
         }
     }
 
-    public void removeAll() throws MetadataRdfRepositoryException {
+    public void removeAll() throws RdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.clear();
         }
         catch (RepositoryException exception) {
-            throw new MetadataRdfRepositoryException(MSG_ERROR_REMOVE_ALL + exception.getMessage());
+            throw new RdfRepositoryException(MSG_ERROR_REMOVE_ALL + exception.getMessage());
         }
     }
 
-    public void remove(IRI uri) throws MetadataRdfRepositoryException {
+    public void remove(IRI uri) throws RdfRepositoryException {
         removeStatement(null, null, null, uri);
     }
 
     public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
-            throws MetadataRdfRepositoryException {
+            throws RdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             conn.remove(subject, predicate, object, context);
         }
         catch (RepositoryException exception) {
-            throw new MetadataRdfRepositoryException(MSG_ERROR_REMOVE);
+            throw new RdfRepositoryException(MSG_ERROR_REMOVE);
         }
     }
 
@@ -138,7 +140,7 @@ public abstract class AbstractMetadataRdfRepository implements RdfRepository {
      */
     public List<BindingSet> runSparqlQuery(
             String queryString, @Nullable Map<String, Value> bindings
-    ) throws MetadataRdfRepositoryException {
+    ) throws RdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {
             final TupleQuery query = conn.prepareTupleQuery(queryString);
             if (bindings != null) {
@@ -148,13 +150,13 @@ public abstract class AbstractMetadataRdfRepository implements RdfRepository {
             return QueryResults.asList(query.evaluate());
         }
         catch (RepositoryException exception) {
-            throw new MetadataRdfRepositoryException(MSG_ERROR_URI + exception.getMessage());
+            throw new RdfRepositoryException(MSG_ERROR_URI + exception.getMessage());
         }
         catch (QueryEvaluationException exception) {
             // Thrown when the query fails to execute against the triple store (e.g. it is
             // unreachable mid-query), not when the query text itself is malformed - treat it
             // as a repository/infrastructure failure rather than a client error.
-            throw new MetadataRdfRepositoryException(MSG_ERROR_QUERY + exception.getMessage());
+            throw new RdfRepositoryException(MSG_ERROR_QUERY + exception.getMessage());
         }
     }
 
@@ -166,7 +168,7 @@ public abstract class AbstractMetadataRdfRepository implements RdfRepository {
      */
     public List<BindingSet> runSparqlQueryFromFile(
             String queryFilePath, @Nullable Map<String, Value> bindings
-    ) throws MetadataRdfRepositoryException {
+    ) throws RdfRepositoryException {
         final String queryString = loadResource(queryFilePath);
         return runSparqlQuery(queryString, bindings);
     }

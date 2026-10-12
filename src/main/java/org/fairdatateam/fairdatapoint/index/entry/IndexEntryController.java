@@ -29,7 +29,7 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDetailDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryInfoDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryUpdateDTO;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
 import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
@@ -85,7 +85,7 @@ public class IndexEntryController {
             @PathVariable final String uuid,
             @RequestBody IndexEntryUpdateDTO reqDto,
             HttpServletRequest request
-    ) throws MetadataRdfRepositoryException {
+    ) throws RdfRepositoryException {
         final Optional<IndexEntryDetailDTO> resDto = service.updateEntry(uuid, reqDto);
         if (resDto.isPresent()) {
             final String clientUrl = resDto.get().getClientUrl();
@@ -103,13 +103,13 @@ public class IndexEntryController {
     }
 
     @GetMapping(path = "/{uuid}/data", produces = "!application/json")
-    public Model getEntryData(@PathVariable final String uuid) throws MetadataRdfRepositoryException {
+    public Model getEntryData(@PathVariable final String uuid) throws RdfRepositoryException {
         return service.getEntryHarvestedData(uuid);
     }
 
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteEntry(@PathVariable final String uuid) throws MetadataRdfRepositoryException {
+    public void deleteEntry(@PathVariable final String uuid) throws RdfRepositoryException {
         service.deleteEntry(uuid);
     }
 

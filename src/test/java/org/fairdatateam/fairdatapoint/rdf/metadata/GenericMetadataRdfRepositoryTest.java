@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -66,7 +67,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
 
     @Test
     @DisplayName("'save' should evict cache")
-    public void saveEvictsCache() throws MetadataRdfRepositoryException {
+    public void saveEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
@@ -87,7 +88,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
 
     @Test
     @DisplayName("'removeStatement' should evict cache")
-    public void removeStatementEvictsCache() throws MetadataRdfRepositoryException {
+    public void removeStatementEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
@@ -108,7 +109,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
 
     @Test
     @DisplayName("'remove' should evict cache")
-    public void removeEvictsCache() throws MetadataRdfRepositoryException {
+    public void removeEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
@@ -159,7 +160,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     }
 
     @Test
-    public void findChildTitlesWorks() throws MetadataRdfRepositoryException {
+    public void findChildTitlesWorks() throws RdfRepositoryException {
         // given
         final IRI parent = getUri(testMetadataFixtures.catalog1());
 

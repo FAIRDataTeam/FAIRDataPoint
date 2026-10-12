@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.index.entry;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
@@ -88,7 +88,7 @@ public class HarvesterServiceTest {
     }
 
     @Test
-    public void harvestSucceeded() throws MetadataRdfRepositoryException {
+    public void harvestSucceeded() throws RdfRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
         mockEndpoint(catalogUrl, catalog);
@@ -102,7 +102,7 @@ public class HarvesterServiceTest {
     }
 
     @Test
-    public void harvestFailedDueToServerError() throws MetadataRdfRepositoryException {
+    public void harvestFailedDueToServerError() throws RdfRepositoryException {
         // GIVEN: Mock webserver
         mockRemoteServer
                 .expect(ExpectedCount.once(), requestTo(repositoryUrl))
@@ -118,7 +118,7 @@ public class HarvesterServiceTest {
     }
 
     @Test
-    public void harvestFailedForLinkedChildren() throws MetadataRdfRepositoryException {
+    public void harvestFailedForLinkedChildren() throws RdfRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
         mockRemoteServer
