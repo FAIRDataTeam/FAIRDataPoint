@@ -22,12 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
@@ -40,12 +40,12 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThem
 
 @Service("catalogMetadataService")
 @Slf4j
+@RequiredArgsConstructor
 public class CatalogMetadataService extends AbstractMetadataService {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
-    @Autowired
-    private CatalogMetadataRdfRepository metadataRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
     @Override
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
@@ -79,7 +79,7 @@ public class CatalogMetadataService extends AbstractMetadataService {
 
     public List<IRI> getDatasetThemesForCatalog(IRI uri) throws RdfRepositoryException {
         // todo: re-implement caching using spring @Cacheable etc.
-        return metadataRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
+        return metadataRdfRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
                 .collect(Collectors.toList());

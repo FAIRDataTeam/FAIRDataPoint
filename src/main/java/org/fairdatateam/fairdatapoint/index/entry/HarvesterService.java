@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.index.entry;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -58,7 +58,7 @@ public class HarvesterService {
 
     private static final String DEFAULT_NAVIGATION_SHACL = "defaultNavigationShacl.ttl";
 
-    private final GenericMetadataRdfRepository genericMetadataRdfRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
     private final RestClient restClient;
 
@@ -66,14 +66,14 @@ public class HarvesterService {
      * Constructor (autowired)
      */
     public HarvesterService(
-            GenericMetadataRdfRepository genericMetadataRdfRepository, RestClient.Builder restClientBuilder
+            MetadataRdfRepository metadataRdfRepository, RestClient.Builder restClientBuilder
     ) {
-        this.genericMetadataRdfRepository = genericMetadataRdfRepository;
+        this.metadataRdfRepository = metadataRdfRepository;
         this.restClient = restClientBuilder.build();
     }
 
     public void deleteHarvestedData(String clientUrl) throws RdfRepositoryException {
-        genericMetadataRdfRepository.remove(i(clientUrl));
+        metadataRdfRepository.remove(i(clientUrl));
     }
 
     @Async
@@ -92,7 +92,7 @@ public class HarvesterService {
 
         // 3. Store data
         for (Map.Entry<String, Model> item : result.entrySet()) {
-            genericMetadataRdfRepository.save(new ArrayList<>(item.getValue()), i(clientUrl));
+            metadataRdfRepository.save(new ArrayList<>(item.getValue()), i(clientUrl));
         }
 
         log.info("Harvesting for '{}' completed", clientUrl);

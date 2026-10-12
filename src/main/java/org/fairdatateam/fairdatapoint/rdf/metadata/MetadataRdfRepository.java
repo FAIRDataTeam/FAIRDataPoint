@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.eclipse.rdf4j.model.*;
@@ -35,13 +36,16 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepository;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.jspecify.annotations.Nullable;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadResource;
 
 @Slf4j
-public abstract class AbstractMetadataRdfRepository implements RdfRepository {
+@Service
+@RequiredArgsConstructor
+public class MetadataRdfRepository implements RdfRepository {
 
     private static final String FIND_CHILD_TITLES = "/sparql/findChildTitles.sparql";
 
@@ -57,13 +61,6 @@ public abstract class AbstractMetadataRdfRepository implements RdfRepository {
     private static final String FIELD_TITLE = "title";
 
     private final Repository repository;
-
-    /**
-     * Constructor (autowired)
-     */
-    public AbstractMetadataRdfRepository(Repository repository) {
-        this.repository = repository;
-    }
 
     public List<Statement> find(IRI context) throws RdfRepositoryException {
         try (RepositoryConnection conn = repository.getConnection()) {

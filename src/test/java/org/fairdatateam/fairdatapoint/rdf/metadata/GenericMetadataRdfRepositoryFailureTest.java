@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
  * failure, not left as an unchecked exception that gets misclassified further up the stack.
  */
 @ExtendWith(MockitoExtension.class)
-public class GenericMetadataRdfRepositoryFailureTest {
+public class MetadataRdfRepositoryFailureTest {
 
     @Mock
     private Repository repository;
@@ -55,11 +55,11 @@ public class GenericMetadataRdfRepositoryFailureTest {
     @Mock
     private TupleQuery query;
 
-    private GenericMetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRepository;
 
     @BeforeEach
     public void setUp() {
-        metadataRepository = new GenericMetadataRdfRepository(new ConcurrentMapCacheManager(), repository);
+        metadataRepository = new MetadataRdfRepository(new ConcurrentMapCacheManager(), repository);
     }
 
     @Test

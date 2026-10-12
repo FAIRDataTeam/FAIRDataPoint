@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
@@ -51,7 +51,7 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
     private Repository repository;
 
     @Autowired
-    private GenericMetadataRdfRepository genericMetadataRepository;
+    private MetadataRdfRepository genericMetadataRepository;
 
     @Autowired
     private String persistentUrl;

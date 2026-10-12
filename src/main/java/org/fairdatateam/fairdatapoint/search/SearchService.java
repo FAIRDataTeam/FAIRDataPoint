@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.search;
 
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.settings.SettingsSearchFilter;
@@ -60,7 +60,7 @@ public class SearchService {
 
     private static String queryTemplate;
 
-    private final GenericMetadataRdfRepository metadataRepository;
+    private final MetadataRdfRepository metadataRepository;
 
     private final MetadataStateService metadataStateService;
 
@@ -77,7 +77,7 @@ public class SearchService {
      * Constructor (autowired)
      */
     public SearchService(
-            GenericMetadataRdfRepository metadataRepository,
+            MetadataRdfRepository metadataRepository,
             MetadataStateService metadataStateService,
             String persistentUrl,
             SearchMapper searchMapper,

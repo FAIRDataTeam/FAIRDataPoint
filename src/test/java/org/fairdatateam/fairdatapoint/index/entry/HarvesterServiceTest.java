@@ -26,7 +26,7 @@ import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefi
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.Model;
@@ -60,7 +60,7 @@ public class HarvesterServiceTest {
     private HarvesterService harvesterService;
 
     @MockitoBean
-    private GenericMetadataRdfRepository genericMetadataRdfRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     private final String repositoryUrl = "http://fairdatapoint.example";
 
@@ -98,7 +98,7 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRdfRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
+        verify(metadataRdfRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRdfRepository, never()).save(any(), any());
+        verify(metadataRdfRepository, never()).save(any(), any());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRdfRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
+        verify(metadataRdfRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     private void mockEndpoint(String url, Model body) {

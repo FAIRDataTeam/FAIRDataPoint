@@ -27,7 +27,7 @@ import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
@@ -49,7 +49,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 public class RdfMetadataMigration implements Migration {
 
     @Autowired
-    private GenericMetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRepository;
 
     @Autowired
     private RdfMetadataFixtures rdfMetadataFixtures;

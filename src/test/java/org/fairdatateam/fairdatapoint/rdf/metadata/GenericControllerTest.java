@@ -82,7 +82,7 @@ public class GenericControllerTest {
     CurrentUserProvider currentUserProvider;
 
     @MockitoBean
-    GenericMetadataRdfRepository metadataRepository;
+    MetadataRdfRepository metadataRepository;
 
     @MockitoBean
     MetadataEnhancer metadataEnhancer;
