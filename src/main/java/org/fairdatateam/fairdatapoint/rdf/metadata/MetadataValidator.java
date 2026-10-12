@@ -43,7 +43,7 @@ public class MetadataValidator {
 
     @Autowired
     @Qualifier("genericMetadataRdfRepository")
-    private MetadataRdfRepository metadataRepository;
+    private RdfRepository metadataRepository;
 
     @Autowired
     private StandaloneShaclValidator standaloneShaclValidator;

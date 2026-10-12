@@ -39,7 +39,7 @@ import java.util.*;
 import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadResource;
 
 @Slf4j
-public abstract class AbstractMetadataRdfRepository implements MetadataRdfRepository {
+public abstract class AbstractMetadataRdfRepository implements RdfRepository {
 
     private static final String FIND_CHILD_TITLES = "/sparql/findChildTitles.sparql";
 

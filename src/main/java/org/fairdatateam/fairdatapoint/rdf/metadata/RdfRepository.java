@@ -33,7 +33,7 @@ import org.eclipse.rdf4j.query.BindingSet;
 import java.util.List;
 import java.util.Map;
 
-public interface MetadataRdfRepository {
+public interface RdfRepository {
 
     List<Statement> find(IRI context) throws MetadataRdfRepositoryException;
 
