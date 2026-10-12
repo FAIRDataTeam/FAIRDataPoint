@@ -65,6 +65,8 @@ public class PingService {
         this.settingsService = settingsService;
     }
 
+    // The scheduled ping and related properties are deprecated for removal, but a single ping will be sent at startup.
+    @Deprecated(since = "1.23.0", forRemoval = true)
     @Scheduled(
             initialDelayString = "${ping.initDelay:#{10*1000}}",
             fixedRateString = "${ping.interval:P7D}"
