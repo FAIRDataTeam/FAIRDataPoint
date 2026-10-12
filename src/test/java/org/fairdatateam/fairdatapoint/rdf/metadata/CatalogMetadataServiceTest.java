@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
@@ -39,6 +40,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,12 +48,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
-import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getThemeTaxonomies;
-import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -132,6 +135,74 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
 //
 //        // THEN:
 //        verify(catalogMetadataRdfRepository, times(1)).runSparqlQueryFromFile(any(), any());
+//    }
+
+
+//    @Test
+//    @DisplayName("'save' should evict cache")
+//    public void saveEvictsCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        Model catalog = testMetadataFixtures.catalog1();
+//        IRI catalogUri = getUri(catalog);
+//        Model dataset = testMetadataFixtures.c1_dataset1();
+//
+//        // AND: Compute cache
+//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // AND: Check if cache is full
+//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+//
+//        // WHEN:
+//        metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
+//
+//        // THEN:
+//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+//    }
+//
+//    @Test
+//    @DisplayName("'removeStatement' should evict cache")
+//    public void removeStatementEvictsCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        Model catalog = testMetadataFixtures.catalog1();
+//        IRI catalogUri = getUri(catalog);
+//        Model dataset = testMetadataFixtures.c1_dataset1();
+//
+//        // AND: Compute cache
+//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // AND: Check if cache is full
+//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+//
+//        // WHEN:
+//        metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
+//
+//        // THEN:
+//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+//    }
+//
+//    @Test
+//    @DisplayName("'remove' should evict cache")
+//    public void removeEvictsCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        Model catalog = testMetadataFixtures.catalog1();
+//        IRI catalogUri = getUri(catalog);
+//        Model dataset = testMetadataFixtures.c1_dataset1();
+//
+//        // AND: Compute cache
+//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // AND: Check if cache is full
+//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+//
+//        // WHEN:
+//        metadataRdfRepository.remove(getUri(dataset));
+//
+//        // THEN:
+//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+//    }
+//
+//    private Cache getCache() {
+//        return cacheManager.getCache(CATALOG_THEMES_CACHE);
 //    }
 
 

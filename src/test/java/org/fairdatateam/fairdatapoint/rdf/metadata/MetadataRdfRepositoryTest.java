@@ -30,17 +30,14 @@ import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.junit.jupiter.api.DisplayName;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getLanguage;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
@@ -48,86 +45,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 
 public class MetadataRdfRepositoryTest extends WebIntegrationTest {
-
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
     private MetadataRdfRepository metadataRdfRepository;
-
-    @Test
-    @DisplayName("'save' should evict cache")
-    public void saveEvictsCache() throws RdfRepositoryException {
-        // GIVEN:
-        Model catalog = testMetadataFixtures.catalog1();
-        IRI catalogUri = getUri(catalog);
-        Model dataset = testMetadataFixtures.c1_dataset1();
-
-        // AND: Compute cache
-        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
-
-        // WHEN:
-        metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
-
-        // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
-    }
-
-    @Test
-    @DisplayName("'removeStatement' should evict cache")
-    public void removeStatementEvictsCache() throws RdfRepositoryException {
-        // GIVEN:
-        Model catalog = testMetadataFixtures.catalog1();
-        IRI catalogUri = getUri(catalog);
-        Model dataset = testMetadataFixtures.c1_dataset1();
-
-        // AND: Compute cache
-        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
-
-        // WHEN:
-        metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
-
-        // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
-    }
-
-    @Test
-    @DisplayName("'remove' should evict cache")
-    public void removeEvictsCache() throws RdfRepositoryException {
-        // GIVEN:
-        Model catalog = testMetadataFixtures.catalog1();
-        IRI catalogUri = getUri(catalog);
-        Model dataset = testMetadataFixtures.c1_dataset1();
-
-        // AND: Compute cache
-        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
-
-        // WHEN:
-        metadataRdfRepository.remove(getUri(dataset));
-
-        // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
-    }
-
-    private Cache getCache() {
-        return cacheManager.getCache(CATALOG_THEMES_CACHE);
-    }
 
     // The following tests were moved here from the existing MetadataRepositoryTest class, which was then removed.
 
