@@ -28,4 +28,6 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles(Profiles.TESTING)
 @SpringBootTest
 public abstract class BaseIntegrationTest {
+    // NOTE: This class causes DevelopmentMigrationRunner to run because the TESTING profile matches
+    // the migration runner's @Profile(Profiles.NON_PRODUCTION)
 }
