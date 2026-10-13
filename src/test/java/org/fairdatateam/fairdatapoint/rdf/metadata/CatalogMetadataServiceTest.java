@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.impl.ListBindingSet;
 import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
@@ -46,7 +45,6 @@ import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cache.Cache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -62,8 +60,6 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -94,6 +90,8 @@ public class CatalogMetadataServiceTest {
             return i("http://example.org/license");
         }
     }
+
+    private final IRI catalogUri = i("http://localhost/textmining");
 
     @Autowired
     private CatalogMetadataService catalogMetadataService;
@@ -167,109 +165,34 @@ public class CatalogMetadataServiceTest {
         assertThat(themeTaxonomies.get(1), is(equalTo(duplicatedThemeIri)));
     }
 
-//    private final IRI catalogUri = i("http://localhost/textmining");
-//
-//    @Spy
-//    @InjectMocks
-//    private CatalogMetadataRdfRepository catalogMetadataRdfRepository;
-//
-//    @Test
-//    @DisplayName("Themes for catalog are in cache (no query to triple store)")
-//    public void themesInCache() throws RdfRepositoryException {
-//        // GIVEN:
+    @Test
+    @DisplayName("Themes for catalog are in cache (no query to triple store)")
+    public void themesInCache() throws RdfRepositoryException {
+        // GIVEN:
 //        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
 //        when(cache.get(catalogUri.toString(), List.class)).thenReturn(Collections.emptyList());
-//
-//        // WHEN:
-//        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-//
-//        // THEN:
-//        verify(catalogMetadataRdfRepository, never()).runSparqlQueryFromFile(any(), any());
-//    }
-//
-//    @Test
-//    @DisplayName("Themes for catalog are not in cache (we have to query to triple store)")
-//    public void themesNotInCache() throws RdfRepositoryException {
-//        // GIVEN:
+
+        // WHEN:
+        catalogMetadataService.getDatasetThemesForCatalog(catalogUri);
+
+        // THEN:
+        verify(metadataRdfRepository, never()).runSparqlQueryFromFile(any(), any());
+    }
+
+    @Test
+    @DisplayName("Themes for catalog are not in cache (we have to query to triple store)")
+    public void themesNotInCache() throws RdfRepositoryException {
+        // GIVEN:
 //        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
 //        when(repository.getConnection()).thenReturn(repositoryConnection);
 //        when(repositoryConnection.prepareTupleQuery(any())).thenReturn(tupleQuery);
 //        when(tupleQuery.evaluate()).thenReturn(tupleQueryResult);
-//
-//        // WHEN:
-//        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-//
-//        // THEN:
-//        verify(catalogMetadataRdfRepository, times(1)).runSparqlQueryFromFile(any(), any());
-//    }
 
+        // WHEN:
+        catalogMetadataService.getDatasetThemesForCatalog(catalogUri);
 
-//    @Test
-//    @DisplayName("'save' should evict cache")
-//    public void saveEvictsCache() throws RdfRepositoryException {
-//        // GIVEN:
-//        Model catalog = testMetadataFixtures.catalog1();
-//        IRI catalogUri = getUri(catalog);
-//        Model dataset = testMetadataFixtures.c1_dataset1();
-//
-//        // AND: Compute cache
-//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-//
-//        // AND: Check if cache is full
-//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
-//
-//        // WHEN:
-//        metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
-//
-//        // THEN:
-//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
-//    }
-//
-//    @Test
-//    @DisplayName("'removeStatement' should evict cache")
-//    public void removeStatementEvictsCache() throws RdfRepositoryException {
-//        // GIVEN:
-//        Model catalog = testMetadataFixtures.catalog1();
-//        IRI catalogUri = getUri(catalog);
-//        Model dataset = testMetadataFixtures.c1_dataset1();
-//
-//        // AND: Compute cache
-//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-//
-//        // AND: Check if cache is full
-//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
-//
-//        // WHEN:
-//        metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
-//
-//        // THEN:
-//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
-//    }
-//
-//    @Test
-//    @DisplayName("'remove' should evict cache")
-//    public void removeEvictsCache() throws RdfRepositoryException {
-//        // GIVEN:
-//        Model catalog = testMetadataFixtures.catalog1();
-//        IRI catalogUri = getUri(catalog);
-//        Model dataset = testMetadataFixtures.c1_dataset1();
-//
-//        // AND: Compute cache
-//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-//
-//        // AND: Check if cache is full
-//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
-//
-//        // WHEN:
-//        metadataRdfRepository.remove(getUri(dataset));
-//
-//        // THEN:
-//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
-//    }
-//
-//    private Cache getCache() {
-//        return cacheManager.getCache(CATALOG_THEMES_CACHE);
-//    }
-
+        // THEN:
+        verify(metadataRdfRepository, times(1)).runSparqlQueryFromFile(any(), any());
+    }
 
 }

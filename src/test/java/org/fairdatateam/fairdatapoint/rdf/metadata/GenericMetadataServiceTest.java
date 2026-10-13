@@ -207,4 +207,71 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         assertFalse(repositoryModified.isBefore(distributionModified), "FDP modified is not after Dataset modified");
     }
 
+//    @Test
+//    @DisplayName("'save' should evict cache")
+//    public void saveEvictsCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        Model catalog = testMetadataFixtures.catalog1();
+//        IRI catalogUri = getUri(catalog);
+//        Model dataset = testMetadataFixtures.c1_dataset1();
+//
+//        // AND: Compute cache
+//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // AND: Check if cache is full
+//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+//
+//        // WHEN:
+//        metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
+//
+//        // THEN:
+//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+//    }
+//
+//    @Test
+//    @DisplayName("'removeStatement' should evict cache")
+//    public void removeStatementEvictsCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        Model catalog = testMetadataFixtures.catalog1();
+//        IRI catalogUri = getUri(catalog);
+//        Model dataset = testMetadataFixtures.c1_dataset1();
+//
+//        // AND: Compute cache
+//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // AND: Check if cache is full
+//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+//
+//        // WHEN:
+//        metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
+//
+//        // THEN:
+//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+//    }
+//
+//    @Test
+//    @DisplayName("'remove' should evict cache")
+//    public void removeEvictsCache() throws RdfRepositoryException {
+//        // GIVEN:
+//        Model catalog = testMetadataFixtures.catalog1();
+//        IRI catalogUri = getUri(catalog);
+//        Model dataset = testMetadataFixtures.c1_dataset1();
+//
+//        // AND: Compute cache
+//        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+//
+//        // AND: Check if cache is full
+//        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+//
+//        // WHEN:
+//        metadataRdfRepository.remove(getUri(dataset));
+//
+//        // THEN:
+//        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+//    }
+//
+//    private Cache getCache() {
+//        return cacheManager.getCache(CATALOG_THEMES_CACHE);
+//    }
+
 }
