@@ -121,9 +121,9 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     public void storeWithWrongParentURIThrowsError() {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
-        Model repository = testMetadataFixtures.fdpMetadata();
+        Model fdp = testMetadataFixtures.fdpMetadata();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
-        setParent(metadata, getUri(metadata), getUri(repository));
+        setParent(metadata, getUri(metadata), getUri(fdp));
 
         // WHEN:
         ValidationException exception = assertThrows(
@@ -184,7 +184,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     public void updateParent() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
-        Model repository = testMetadataFixtures.fdpMetadata();
+        Model fdp = testMetadataFixtures.fdpMetadata();
         Model catalog = testMetadataFixtures.catalog1();
         Model dataset = testMetadataFixtures.c1_dataset1();
         Model distribution = testMetadataFixtures.c1_d1_distribution1();
@@ -193,7 +193,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         genericMetadataService.store(distribution, getUri(distribution), metadataRd);
 
         // THEN:
-        Model updatedRepository = genericMetadataService.retrieve(getUri(repository));
+        Model updatedRepository = genericMetadataService.retrieve(getUri(fdp));
         Model updatedCatalog = catalogMetadataService.retrieve(getUri(catalog));
         Model updatedDataset = genericMetadataService.retrieve(getUri(dataset));
         Model storedDistribution = genericMetadataService.retrieve(getUri(distribution));
