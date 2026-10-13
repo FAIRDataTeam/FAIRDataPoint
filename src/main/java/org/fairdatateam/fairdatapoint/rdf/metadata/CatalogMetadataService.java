@@ -79,6 +79,8 @@ public class CatalogMetadataService extends AbstractMetadataService {
 
     public List<IRI> getDatasetThemesForCatalog(IRI uri) throws RdfRepositoryException {
         // todo: re-implement caching using spring @Cacheable etc.
+        // note: whenever a resource is created, updated, or removed and this change affects the resource's themes,
+        // and the resource has a parent that is a dcat:Catalog, then the cache for that parent needs to be cleared
         return metadataRdfRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
