@@ -82,12 +82,12 @@ public class CatalogMetadataServiceTest {
 
         @Bean
         public IRI language() {
-            return i("http://example.org/language");
+            return i("https://example.org/language");
         }
 
         @Bean
         public IRI license() {
-            return i("http://example.org/license");
+            return i("https://example.org/license");
         }
     }
 
