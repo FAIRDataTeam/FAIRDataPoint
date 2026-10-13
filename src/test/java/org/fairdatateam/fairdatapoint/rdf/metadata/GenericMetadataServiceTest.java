@@ -64,6 +64,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
 
     @BeforeEach
     public void before() {
+        // todo: replace authHelper by simple mock of MemberService.check* methods
         authHelper.authenticateAsAdmin();
     }
 
