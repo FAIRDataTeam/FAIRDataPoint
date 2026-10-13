@@ -33,7 +33,6 @@ import org.eclipse.rdf4j.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.OffsetDateTime;
 
@@ -52,12 +51,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
-    @Qualifier("genericMetadataService")
-    private MetadataService genericMetadataService;
+    private GenericMetadataService genericMetadataService;
 
     @Autowired
-    @Qualifier("catalogMetadataService")
-    private MetadataService catalogMetadataService;
+    private CatalogMetadataService catalogMetadataService;
 
     @Autowired
     private AuthHelper authHelper;
