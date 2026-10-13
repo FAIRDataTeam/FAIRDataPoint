@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
@@ -84,6 +83,6 @@ public class CatalogMetadataService extends AbstractMetadataService {
         return metadataRdfRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
