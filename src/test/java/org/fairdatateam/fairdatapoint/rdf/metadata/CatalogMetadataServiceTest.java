@@ -24,8 +24,16 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.query.BindingSet;
-import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
+import org.eclipse.rdf4j.query.impl.ListBindingSet;
+import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
+import org.fairdatateam.fairdatapoint.profile.ProfileService;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
+import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
+import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
+import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -33,19 +41,20 @@ import org.eclipse.rdf4j.model.Statement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cache.Cache;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
@@ -58,17 +67,75 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class CatalogMetadataServiceTest extends BaseIntegrationTest {
+@SpringJUnitConfig(classes = {
+        CatalogMetadataService.class,
+        CatalogMetadataServiceTest.Config.class,
+        MetadataEnhancer.class,
+        MetadataFactoryImpl.class,
+        ResourceDefinitionFixtures.class,
+        TestRdfMetadataFixtures.class
+})
+public class CatalogMetadataServiceTest {
+
+    @TestConfiguration
+    static class Config {
+        @Bean
+        public String persistentUrl() {
+            return "http://localhost:8088";
+        }
+
+        @Bean
+        public IRI language() {
+            return i("http://example.org/language");
+        }
+
+        @Bean
+        public IRI license() {
+            return i("http://example.org/license");
+        }
+    }
+
+    @Autowired
+    private CatalogMetadataService catalogMetadataService;
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
 
-    @Mock
+    @MockitoBean
+    private AppInfoContributor appInfoContributor;
+
+    @MockitoBean
+    private CurrentUserProvider currentUserProvider;
+
+    @MockitoBean
+    private MemberService memberService;
+
+    @MockitoBean
     private MetadataRdfRepository metadataRdfRepository;
 
-    @InjectMocks
-    private CatalogMetadataService catalogMetadataService;
+    @MockitoBean
+    private MetadataStateService metadataStateService;
+
+    @MockitoBean
+    private MetadataValidator metadataValidator;
+
+    @MockitoBean
+    private MetricsMetadataService metricsMetadataService;
+
+    @MockitoBean
+    private ProfileService profileService;
+
+    @MockitoBean
+    private ResourceDefinitionCache resourceDefinitionCache;
+
+    @MockitoBean
+    private ResourceDefinitionService resourceDefinitionService;
+
+    @MockitoBean
+    private SpringDocConfigProperties springDocConfigProperties;
+
+    @MockitoBean
+    private SwaggerUiConfigProperties swaggerUiConfigProperties;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -83,22 +150,21 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         when(metadataRdfRepository.find(getUri(catalog))).thenReturn(catalogStatements);
 
         // AND: Retrieve themes from datasets
-        IRI theme1 = i("http://localhost/my_theme_1");
-        IRI theme2_duplicated = i("http://localhost/my_theme_2_duplicated");
-        List<BindingSet> themes = List.of(
-                (BindingSet) Map.of("theme", theme1),
-                (BindingSet) Map.of("theme", theme2_duplicated),
-                (BindingSet) Map.of("theme", theme2_duplicated));
+        IRI uniqueThemeIri = i("http://localhost/unique-theme");
+        IRI duplicatedThemeIri = i("http://localhost/duplicated-theme");
+        List<BindingSet> themes = Stream.of(uniqueThemeIri, duplicatedThemeIri, duplicatedThemeIri).map(
+                iri -> (BindingSet) new ListBindingSet(List.of("theme"), i(iri))
+        ).toList();
         when(metadataRdfRepository.runSparqlQueryFromFile(any(), any())).thenReturn(themes);
 
         // WHEN:
         Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
 
         // THEN:
-        List<IRI> themeTaxonomys = getThemeTaxonomies(catalogMetadata);
-        assertThat(themeTaxonomys.size(), is(equalTo(2)));
-        assertThat(themeTaxonomys.get(0), is(equalTo(theme1)));
-        assertThat(themeTaxonomys.get(1), is(equalTo(theme2_duplicated)));
+        List<IRI> themeTaxonomies = getThemeTaxonomies(catalogMetadata);
+        assertThat(themeTaxonomies.size(), is(equalTo(2)));
+        assertThat(themeTaxonomies.get(0), is(equalTo(uniqueThemeIri)));
+        assertThat(themeTaxonomies.get(1), is(equalTo(duplicatedThemeIri)));
     }
 
 //    private final IRI catalogUri = i("http://localhost/textmining");
