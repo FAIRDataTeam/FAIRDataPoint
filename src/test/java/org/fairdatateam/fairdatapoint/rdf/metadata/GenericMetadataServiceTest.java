@@ -68,7 +68,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void retrieveNonExitingMetadataThrowsError() {
+    public void retrieveNonExistingMetadataThrowsError() {
         // GIVEN:
         IRI fdpUri = getUri(testMetadataFixtures.fdpMetadata());
         IRI metadataUri = i(format("%s/distribution/non-existing", fdpUri));
