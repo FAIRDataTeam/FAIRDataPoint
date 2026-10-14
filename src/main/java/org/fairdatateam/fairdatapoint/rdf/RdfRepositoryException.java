@@ -25,11 +25,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fairdatateam.fairdatapoint.rdf.metadata;
+package org.fairdatateam.fairdatapoint.rdf;
 
-public class MetadataRdfRepositoryException extends Exception {
+public class RdfRepositoryException extends Exception {
 
-    public MetadataRdfRepositoryException(String msg) {
+    public RdfRepositoryException(String msg) {
         super(msg);
     }
 

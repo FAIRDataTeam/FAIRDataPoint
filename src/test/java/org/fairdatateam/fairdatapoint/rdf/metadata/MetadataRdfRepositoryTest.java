@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -49,7 +50,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
+public class MetadataRdfRepositoryTest extends WebIntegrationTest {
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
@@ -58,10 +59,10 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
-    private GenericMetadataRdfRepository genericMetadataRdfRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Test
-    public void themesAreCached() throws MetadataRdfRepositoryException {
+    public void themesAreCached() throws RdfRepositoryException {
         // given
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
@@ -70,67 +71,67 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         assertThat(getCache().get(catalogUri), is(nullValue()));
 
         // when
-        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // then ensure cache is now populated
         assertThat(getCache().get(catalogUri), is(notNullValue()));
     }
 
     @Test
-    public void saveEvictsCache() throws MetadataRdfRepositoryException {
+    public void saveEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
-        genericMetadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
+        metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
 
         // THEN:
         assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     @Test
-    public void removeStatementEvictsCache() throws MetadataRdfRepositoryException {
+    public void removeStatementEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
-        genericMetadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
+        metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
 
         // THEN:
         assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     @Test
-    public void removeEvictsCache() throws MetadataRdfRepositoryException {
+    public void removeEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
-        genericMetadataRdfRepository.remove(getUri(dataset));
+        metadataRdfRepository.remove(getUri(dataset));
 
         // THEN:
         assertThat(getCache().get(catalogUri), is(nullValue()));
@@ -149,7 +150,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(testMetadataFixtures.catalog1());
 
         // WHEN:
-        List<Statement> result = genericMetadataRdfRepository.find(context);
+        List<Statement> result = metadataRdfRepository.find(context);
 
         // THEN:
         assertThat(result.size(), is(equalTo(metadata.size())));
@@ -161,19 +162,19 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI context = i("http://localhost/non-existing");
 
         // WHEN:
-        List<Statement> result = genericMetadataRdfRepository.find(context);
+        List<Statement> result = metadataRdfRepository.find(context);
 
         // THEN:
         assertThat(result.size(), is(equalTo(0)));
     }
 
     @Test
-    public void findChildTitlesWorks() throws MetadataRdfRepositoryException {
+    public void findChildTitlesWorks() throws RdfRepositoryException {
         // given
         final IRI parent = getUri(testMetadataFixtures.catalog1());
 
         // when
-        final Map<String, String> result = genericMetadataRdfRepository.findChildTitles(parent, DCAT.HAS_DATASET);
+        final Map<String, String> result = metadataRdfRepository.findChildTitles(parent, DCAT.HAS_DATASET);
 
         // then
         assertThat(result.size(), is(greaterThan(0)));
@@ -185,7 +186,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model metadata = testMetadataFixtures.catalog1();
 
         // WHEN:
-        boolean result = genericMetadataRdfRepository.checkExistence(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata));
+        boolean result = metadataRdfRepository.checkExistence(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata));
 
         // THEN:
         assertThat(result, is(equalTo(true)));
@@ -199,10 +200,10 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         ArrayList<Statement> statements = new ArrayList<>(metadata);
 
         // WHEN:
-        genericMetadataRdfRepository.save(statements, context);
+        metadataRdfRepository.save(statements, context);
 
         // THEN:
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(28)));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(28)));
     }
 
     @Test
@@ -212,13 +213,13 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
 
         // WHEN:
-        genericMetadataRdfRepository.remove(context);
+        metadataRdfRepository.remove(context);
 
         // THEN:
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(0)));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(0)));
     }
 
     @Test
@@ -228,13 +229,13 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
 
         // WHEN:
-        genericMetadataRdfRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
+        metadataRdfRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
 
         // THEN:
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(metadata.size() - 1)));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(metadata.size() - 1)));
     }
 
 }

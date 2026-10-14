@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
@@ -41,10 +42,10 @@ public class CatalogMetadataService extends AbstractMetadataService {
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
         final Model catalog = super.retrieve(uri);
         try {
-            final List<IRI> themes = getMetadataRepository().getDatasetThemesForCatalog(uri);
+            final List<IRI> themes = getMetadataRdfRepository().getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
         }
-        catch (MetadataRdfRepositoryException exception) {
+        catch (RdfRepositoryException exception) {
             log.error("Error retrieving the metadata");
             throw new MetadataServiceException(exception.getMessage());
         }

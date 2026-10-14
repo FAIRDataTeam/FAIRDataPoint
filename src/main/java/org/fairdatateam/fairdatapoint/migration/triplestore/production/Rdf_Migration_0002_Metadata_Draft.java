@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
@@ -47,7 +47,7 @@ public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration
     private Repository repository;
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private MetadataStateRepository metadataStateRepository;
 
     public void runMigration() {
         createRepositoryInTripleStore();
@@ -65,7 +65,7 @@ public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration
     }
 
     private void saveMetadataForResource(Resource resource) {
-        metadataRepository.save(new Metadata(null, resource.stringValue(), MetadataState.PUBLISHED));
+        metadataStateRepository.save(new Metadata(null, resource.stringValue(), MetadataState.PUBLISHED));
     }
 
 }

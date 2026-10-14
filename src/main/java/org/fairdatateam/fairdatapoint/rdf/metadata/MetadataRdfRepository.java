@@ -20,38 +20,82 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.*;
-import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.repository.Repository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
-public interface MetadataRdfRepository {
+import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
 
-    List<Statement> find(IRI context) throws MetadataRdfRepositoryException;
+@Service
+public class MetadataRdfRepository extends AbstractMetadataRdfRepository {
 
-    Map<String, String> findChildTitles(IRI parent, IRI relation)
-            throws MetadataRdfRepositoryException;
+    private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
-    boolean checkExistence(Resource subject, IRI predicate, Value object)
-            throws MetadataRdfRepositoryException;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    void save(List<Statement> statements, IRI context) throws MetadataRdfRepositoryException;
+    /**
+     * Constructor (autowired)
+     */
+    public MetadataRdfRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
+        super(repository);
+        this.cacheManager = cacheManager;
+    }
 
-    void removeAll() throws MetadataRdfRepositoryException;
+    @Override
+    public void save(List<Statement> statements, IRI context) throws RdfRepositoryException {
+        super.save(statements, context);
+        clearCatalogThemesCache(context);
+    }
 
-    void remove(IRI uri) throws MetadataRdfRepositoryException;
+    @Override
+    public void remove(IRI uri) throws RdfRepositoryException {
+        clearCatalogThemesCache(uri);
+        super.remove(uri);
+    }
 
-    void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
-            throws MetadataRdfRepositoryException;
+    @Override
+    public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
+            throws RdfRepositoryException {
+        clearCatalogThemesCache(context);
+        super.removeStatement(subject, predicate, object, context);
+    }
 
-    List<BindingSet> runSparqlQuery(String queryString, Map<String, Value> bindings)
-            throws MetadataRdfRepositoryException;
+    /**
+     * Returns a list of dcat:theme URIs representing the aggregated themes from all datasets in the catalog
+     */
+    @Cacheable(cacheNames = CATALOG_THEMES_CACHE)
+    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws RdfRepositoryException {
+        // todo: this assumes the uri represents a dcat:Catalog, but we should probably check that
+        return runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
+                .stream()
+                .map(item -> i(item.getValue("theme").stringValue()))
+                .toList();
+    }
+
+    /**
+     * Clears the catalog themes cache for the parent of the resource represented by the specified <code>uri</code>.
+     * This is necessary whenever a resource is removed or changes in such a way that the parent's cache becomes
+     * outdated. Typically, this would only happen if the themes change, but we don't check that explicitly.
+     */
+    private void clearCatalogThemesCache(IRI uri) throws RdfRepositoryException {
+        final Model metadata = new LinkedHashModel();
+        metadata.addAll(find(uri));
+        final IRI parentUri = getParent(metadata);
+        if (parentUri != null) {
+            // No need to check if the parent is actually a catalog, because non-existent cache keys are simply ignored
+            cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parentUri);
+        }
+    }
+
 }
