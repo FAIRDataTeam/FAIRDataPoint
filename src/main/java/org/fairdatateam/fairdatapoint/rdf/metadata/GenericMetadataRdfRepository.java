@@ -68,6 +68,8 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     /**
      * Clears the catalog themes cache for the parent of the resource represented by the specified <code>uri</code>.
      * No need to check if the parent is actually a catalog, because non-existent cache keys are simply ignored.
+     * This is necessary whenever a resource is removed or changes in such a way that the parent's cache becomes
+     * outdated. Typically, this would only happen if the themes change, but we don't check that explicitly.
      */
     private void clearCatalogThemesCache(IRI uri) throws MetadataRdfRepositoryException {
         final Model metadata = new LinkedHashModel();
