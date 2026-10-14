@@ -72,9 +72,9 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     private void clearCatalogThemesCache(IRI uri) throws MetadataRdfRepositoryException {
         final Model metadata = new LinkedHashModel();
         metadata.addAll(find(uri));
-        final IRI parent = getParent(metadata);
-        if (parent != null) {
-            cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parent.stringValue());
+        final IRI parentUri = getParent(metadata);
+        if (parentUri != null) {
+            cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parentUri);
         }
     }
 

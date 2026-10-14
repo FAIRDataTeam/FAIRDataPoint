@@ -74,13 +74,13 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         cachedThemeService.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
         genericMetadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     @Test
@@ -94,13 +94,13 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         cachedThemeService.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
         genericMetadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     @Test
@@ -114,13 +114,13 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         cachedThemeService.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
         genericMetadataRdfRepository.remove(getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     private Cache getCache() {
