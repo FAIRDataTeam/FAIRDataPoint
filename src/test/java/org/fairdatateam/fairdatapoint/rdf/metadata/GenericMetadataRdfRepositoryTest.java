@@ -60,8 +60,21 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     @Autowired
     private GenericMetadataRdfRepository genericMetadataRdfRepository;
 
-    @Autowired
-    private CachedThemeService cachedThemeService;
+    @Test
+    public void themesAreCached() throws MetadataRdfRepositoryException {
+        // given
+        Model catalog = testMetadataFixtures.catalog1();
+        IRI catalogUri = getUri(catalog);
+
+        // and ensure cache is empty
+        assertThat(getCache().get(catalogUri), is(nullValue()));
+
+        // when
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+
+        // then ensure cache is now populated
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
+    }
 
     @Test
     public void saveEvictsCache() throws MetadataRdfRepositoryException {
@@ -71,7 +84,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        cachedThemeService.getDatasetThemesForCatalog(catalogUri);
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri), is(notNullValue()));
@@ -91,7 +104,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        cachedThemeService.getDatasetThemesForCatalog(catalogUri);
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri), is(notNullValue()));
@@ -111,7 +124,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        cachedThemeService.getDatasetThemesForCatalog(catalogUri);
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri), is(notNullValue()));

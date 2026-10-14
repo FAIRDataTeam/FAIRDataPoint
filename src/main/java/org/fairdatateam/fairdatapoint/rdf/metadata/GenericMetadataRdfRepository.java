@@ -25,16 +25,21 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.repository.Repository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
 
 @Service
 public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository {
+
+    private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
     private final ConcurrentMapCacheManager cacheManager;
 
@@ -66,8 +71,19 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     }
 
     /**
+     * Returns a list of dcat:theme URIs representing the aggregated themes from all datasets in the catalog
+     */
+    @Cacheable(cacheNames = CATALOG_THEMES_CACHE)
+    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRdfRepositoryException {
+        // todo: this assumes the uri represents a dcat:Catalog, but we should probably check that
+        return runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
+                .stream()
+                .map(item -> i(item.getValue("theme").stringValue()))
+                .toList();
+    }
+
+    /**
      * Clears the catalog themes cache for the parent of the resource represented by the specified <code>uri</code>.
-     * No need to check if the parent is actually a catalog, because non-existent cache keys are simply ignored.
      * This is necessary whenever a resource is removed or changes in such a way that the parent's cache becomes
      * outdated. Typically, this would only happen if the themes change, but we don't check that explicitly.
      */
@@ -76,6 +92,7 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
         metadata.addAll(find(uri));
         final IRI parentUri = getParent(metadata);
         if (parentUri != null) {
+            // No need to check if the parent is actually a catalog, because non-existent cache keys are simply ignored
             cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parentUri);
         }
     }
