@@ -82,7 +82,7 @@ public class GenericControllerTest {
     CurrentUserProvider currentUserProvider;
 
     @MockitoBean
-    MetadataRdfRepository metadataRepository;
+    MetadataRdfRepository metadataRdfRepository;
 
     @MockitoBean
     MetadataEnhancer metadataEnhancer;
@@ -172,7 +172,7 @@ public class GenericControllerTest {
         when(metadataService.retrieve(entityUri)).thenReturn(catalog0);
         when(currentUserProvider.getCurrentUser()).thenReturn(Optional.of(new User()));
         when(metadataStateService.get(any(IRI.class))).thenReturn(new Metadata(null, null, MetadataState.PUBLISHED));
-        when(metadataRepository.findChildTitles(entityUri, relationUri)).thenReturn(datasetTitles);
+        when(metadataRdfRepository.findChildTitles(entityUri, relationUri)).thenReturn(datasetTitles);
 
         // evaluate
         final List<IRI> actualUris = genericController.getChildResourceUris(

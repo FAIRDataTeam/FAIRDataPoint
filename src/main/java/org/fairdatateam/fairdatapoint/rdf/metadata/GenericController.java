@@ -76,7 +76,7 @@ public class GenericController {
 
     private final CurrentUserProvider currentUserProvider;
 
-    private final MetadataRdfRepository metadataRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
     private final MetadataEnhancer metadataEnhancer;
 
@@ -382,7 +382,7 @@ public class GenericController {
         // For example, the titles of the datasets that are contained in the specified catalog.
         // These child resources are identified by the RDF-predicate (relationUri) defined in the
         // ResourceDefinitionChild, i.e., dcat:dataset in our example.
-        final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
+        final Map<String, String> titles = metadataRdfRepository.findChildTitles(entityUri, relationUri);
 
         // Get the RDF graph for the parent resource
         final Model entity = metadataService.retrieve(entityUri);

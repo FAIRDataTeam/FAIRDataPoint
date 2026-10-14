@@ -74,7 +74,7 @@ public class IndexEntryService {
     private IndexEntryMapper mapper;
 
     @Autowired
-    private MetadataRdfRepository genericMetadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private HarvesterService harvesterService;
@@ -277,7 +277,7 @@ public class IndexEntryService {
                 .findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
         final Model model = new TreeModel();
-        model.addAll(genericMetadataRepository.find(i(entry.getClientUrl())));
+        model.addAll(metadataRdfRepository.find(i(entry.getClientUrl())));
         return model;
     }
 

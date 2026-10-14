@@ -54,7 +54,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
-    private MetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private MemberService memberService;
@@ -78,17 +78,17 @@ public abstract class AbstractMetadataService implements MetadataService {
     private ResourceDefinitionService resourceDefinitionService;
 
     /**
-     * Exposes the metadataRepository to subclasses (annoying checkstyle requirement)
+     * Exposes the metadataRdfRepository to subclasses (annoying checkstyle requirement)
      */
-    protected MetadataRdfRepository getMetadataRepository() {
-        return metadataRepository;
+    protected MetadataRdfRepository getMetadataRdfRepository() {
+        return metadataRdfRepository;
     }
 
     @Override
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
         try {
             // 1. Get metadata
-            final List<Statement> statements = metadataRepository.find(uri);
+            final List<Statement> statements = metadataRdfRepository.find(uri);
             if (statements.isEmpty()) {
                 throw new ResourceNotFoundException(
                         format("No metadata found for the uri '%s'", uri)
@@ -121,7 +121,7 @@ public abstract class AbstractMetadataService implements MetadataService {
         try {
             metadataValidator.validate(metadata, uri, resourceDefinition);
             metadataEnhancer.enhance(metadata, uri, resourceDefinition);
-            metadataRepository.save(new ArrayList<>(metadata), uri);
+            metadataRdfRepository.save(new ArrayList<>(metadata), uri);
             updateParent(metadata, uri, resourceDefinition);
             addPermissions(uri);
             addState(uri);
@@ -147,8 +147,8 @@ public abstract class AbstractMetadataService implements MetadataService {
             }
             final Model oldMetadata = retrieve(uri);
             metadataEnhancer.enhance(metadata, uri, resourceDefinition, oldMetadata);
-            metadataRepository.remove(uri);
-            metadataRepository.save(new ArrayList<>(metadata), uri);
+            metadataRdfRepository.remove(uri);
+            metadataRdfRepository.save(new ArrayList<>(metadata), uri);
             updateParent(metadata, uri, resourceDefinition);
             return metadata;
         }
@@ -191,7 +191,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             }
 
             // Delete itself
-            metadataRepository.remove(uri);
+            metadataRdfRepository.remove(uri);
         }
         catch (RdfRepositoryException | MetadataServiceException exception) {
             throw new MetadataServiceException(exception.getMessage());
@@ -214,9 +214,9 @@ public abstract class AbstractMetadataService implements MetadataService {
                             statements.add(s(parent, i(rdChild.getRelationUri()), uri));
                         }
                     }
-                    metadataRepository.removeStatement(parent, FDP.METADATAMODIFIED, null, parent);
+                    metadataRdfRepository.removeStatement(parent, FDP.METADATAMODIFIED, null, parent);
                     statements.add(s(parent, FDP.METADATAMODIFIED, l(OffsetDateTime.now())));
-                    metadataRepository.save(statements, parent);
+                    metadataRdfRepository.save(statements, parent);
                 }
                 catch (RdfRepositoryException exception) {
                     throw new MetadataServiceException("Problem with updating parent timestamp");

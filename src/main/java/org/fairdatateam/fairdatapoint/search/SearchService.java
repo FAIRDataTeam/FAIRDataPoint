@@ -60,7 +60,7 @@ public class SearchService {
 
     private static String queryTemplate;
 
-    private final MetadataRdfRepository metadataRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
     private final MetadataStateService metadataStateService;
 
@@ -77,14 +77,14 @@ public class SearchService {
      * Constructor (autowired)
      */
     public SearchService(
-            MetadataRdfRepository metadataRepository,
+            MetadataRdfRepository metadataRdfRepository,
             MetadataStateService metadataStateService,
             String persistentUrl,
             SearchMapper searchMapper,
             SearchFilterCache searchFilterCache,
             SettingsService settingsService
     ) {
-        this.metadataRepository = metadataRepository;
+        this.metadataRdfRepository = metadataRdfRepository;
         this.metadataStateService = metadataStateService;
         this.persistentUrl = persistentUrl;
         this.searchMapper = searchMapper;
@@ -233,14 +233,14 @@ public class SearchService {
     }
 
     public List<SearchResult> findByLiteral(Literal query) throws RdfRepositoryException {
-        return metadataRepository.runSparqlQueryFromFile(FIND_ENTITY_BY_LITERAL, Map.of("query", query))
+        return metadataRdfRepository.runSparqlQueryFromFile(FIND_ENTITY_BY_LITERAL, Map.of("query", query))
                 .stream()
                 .map(item -> searchMapper.toSearchResult(item, true))
                 .toList();
     }
 
     public List<SearchResult> findBySparqlQuery(String query) throws RdfRepositoryException {
-        return metadataRepository
+        return metadataRdfRepository
                 .runSparqlQuery(query, null)
                 .stream()
                 .map(item -> searchMapper.toSearchResult(item, false))
@@ -249,7 +249,7 @@ public class SearchService {
 
     public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws RdfRepositoryException {
         final Map<String, String> values = new HashMap<>();
-        metadataRepository.runSparqlQueryFromFile(
+        metadataRdfRepository.runSparqlQueryFromFile(
                 FIND_OBJECT_FOR_PREDICATE,
                 Map.of("predicate", predicateUri)
         ).forEach(entry -> {

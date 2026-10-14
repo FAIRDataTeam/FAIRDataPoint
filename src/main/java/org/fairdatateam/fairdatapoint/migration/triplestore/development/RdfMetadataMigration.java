@@ -49,7 +49,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 public class RdfMetadataMigration implements Migration {
 
     @Autowired
-    private MetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private RdfMetadataFixtures rdfMetadataFixtures;
@@ -81,7 +81,7 @@ public class RdfMetadataMigration implements Migration {
     public void runMigration() {
         try {
             // 1. Remove all previous metadata
-            metadataRepository.removeAll();
+            metadataRdfRepository.removeAll();
 
             // 2. Auth user
             final String adminUuid = userFixtures.admin().getUuid();

@@ -51,7 +51,7 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
     private Repository repository;
 
     @Autowired
-    private MetadataRdfRepository genericMetadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private String persistentUrl;
@@ -98,7 +98,7 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
                     .forEach(contextId -> {
                         log.info("Deleting harvested records for '{}': {}", entry.getClientUrl(), contextId);
                         try {
-                            genericMetadataRepository.remove(i(contextId));
+                            metadataRdfRepository.remove(i(contextId));
                         }
                         catch (RdfRepositoryException exception) {
                             throw new RuntimeException(exception);

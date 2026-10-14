@@ -55,11 +55,11 @@ public class MetadataRdfRepositoryFailureTest {
     @Mock
     private TupleQuery query;
 
-    private MetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @BeforeEach
     public void setUp() {
-        metadataRepository = new MetadataRdfRepository(new ConcurrentMapCacheManager(), repository);
+        metadataRdfRepository = new MetadataRdfRepository(new ConcurrentMapCacheManager(), repository);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class MetadataRdfRepositoryFailureTest {
         // WHEN/THEN:
         assertThrows(
                 RdfRepositoryException.class,
-                () -> metadataRepository.runSparqlQuery("SELECT * WHERE { ?s ?p ?o }", null)
+                () -> metadataRdfRepository.runSparqlQuery("SELECT * WHERE { ?s ?p ?o }", null)
         );
     }
 }

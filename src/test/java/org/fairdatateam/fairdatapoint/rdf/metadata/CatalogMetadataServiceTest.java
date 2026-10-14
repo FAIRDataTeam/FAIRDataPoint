@@ -53,7 +53,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Mock
-    private MetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @InjectMocks
     private CatalogMetadataService catalogMetadataService;
@@ -75,8 +75,8 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         List<IRI> themes = List.of(theme1, theme2_duplicated, theme2_duplicated);
 
         // mock repository methods
-        when(metadataRepository.find(catalogUri)).thenReturn(new ArrayList<>(catalog));
-        when(metadataRepository.getDatasetThemesForCatalog(catalogUri)).thenReturn(themes);
+        when(metadataRdfRepository.find(catalogUri)).thenReturn(new ArrayList<>(catalog));
+        when(metadataRdfRepository.getDatasetThemesForCatalog(catalogUri)).thenReturn(themes);
 
         // WHEN:
         Model catalogMetadata = catalogMetadataService.retrieve(catalogUri);

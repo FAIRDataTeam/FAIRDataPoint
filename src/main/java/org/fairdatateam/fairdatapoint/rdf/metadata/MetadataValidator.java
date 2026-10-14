@@ -44,8 +44,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 public class MetadataValidator {
 
     @Autowired
-    @Qualifier("metadataRdfRepository")
-    private RdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private StandaloneShaclValidator standaloneShaclValidator;
@@ -89,7 +88,7 @@ public class MetadataValidator {
         try {
             // select parent based on URI prefix
             for (String rdfType : resourceDefinitionService.getTargetClassUris(rdParent)) {
-                if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
+                if (!metadataRdfRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
                     throw new ValidationException(format("Parent is not of type (missing type: %s)", rdfType));
                 }
             }
