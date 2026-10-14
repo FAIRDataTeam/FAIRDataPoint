@@ -29,7 +29,6 @@ import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -65,7 +64,6 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     private ThemesService themesService;
 
     @Test
-    @DisplayName("'save' should evict cache")
     public void saveEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
@@ -86,7 +84,6 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("'removeStatement' should evict cache")
     public void removeStatementEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
@@ -107,7 +104,6 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     }
 
     @Test
-    @DisplayName("'remove' should evict cache")
     public void removeEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
