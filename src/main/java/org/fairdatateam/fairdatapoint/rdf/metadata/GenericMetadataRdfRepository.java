@@ -25,16 +25,21 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.repository.Repository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
+import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
 
 @Service
 public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository {
+
+    private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
     private final ConcurrentMapCacheManager cacheManager;
 
@@ -49,28 +54,46 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     @Override
     public void save(List<Statement> statements, IRI context) throws MetadataRdfRepositoryException {
         super.save(statements, context);
-        clearCatalogCache(context);
+        clearCatalogThemesCache(context);
     }
 
     @Override
     public void remove(IRI uri) throws MetadataRdfRepositoryException {
-        clearCatalogCache(uri);
+        clearCatalogThemesCache(uri);
         super.remove(uri);
     }
 
     @Override
     public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
             throws MetadataRdfRepositoryException {
-        clearCatalogCache(context);
+        clearCatalogThemesCache(context);
         super.removeStatement(subject, predicate, object, context);
     }
 
-    private void clearCatalogCache(IRI uri) throws MetadataRdfRepositoryException {
+    /**
+     * Returns a list of dcat:theme URIs representing the aggregated themes from all datasets in the catalog
+     */
+    @Cacheable(cacheNames = CATALOG_THEMES_CACHE)
+    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRdfRepositoryException {
+        // todo: this assumes the uri represents a dcat:Catalog, but we should probably check that
+        return runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
+                .stream()
+                .map(item -> i(item.getValue("theme").stringValue()))
+                .toList();
+    }
+
+    /**
+     * Clears the catalog themes cache for the parent of the resource represented by the specified <code>uri</code>.
+     * This is necessary whenever a resource is removed or changes in such a way that the parent's cache becomes
+     * outdated. Typically, this would only happen if the themes change, but we don't check that explicitly.
+     */
+    private void clearCatalogThemesCache(IRI uri) throws MetadataRdfRepositoryException {
         final Model metadata = new LinkedHashModel();
         metadata.addAll(find(uri));
-        final IRI parent = getParent(metadata);
-        if (parent != null) {
-            cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parent.stringValue());
+        final IRI parentUri = getParent(metadata);
+        if (parentUri != null) {
+            // No need to check if the parent is actually a catalog, because non-existent cache keys are simply ignored
+            cacheManager.getCache(CATALOG_THEMES_CACHE).evict(parentUri);
         }
     }
 

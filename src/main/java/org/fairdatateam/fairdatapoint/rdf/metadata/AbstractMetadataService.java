@@ -76,6 +76,13 @@ public abstract class AbstractMetadataService implements MetadataService {
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
 
+    /**
+     * Exposes the metadataRepository to subclasses (annoying checkstyle requirement)
+     */
+    protected GenericMetadataRdfRepository getMetadataRepository() {
+        return metadataRepository;
+    }
+
     @Override
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
         try {

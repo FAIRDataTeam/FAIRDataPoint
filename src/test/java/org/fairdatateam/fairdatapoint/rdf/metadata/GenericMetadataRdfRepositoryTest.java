@@ -29,7 +29,6 @@ import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -61,11 +60,23 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     @Autowired
     private GenericMetadataRdfRepository genericMetadataRdfRepository;
 
-    @Autowired
-    private CatalogMetadataRdfRepository catalogMetadataRdfRepository;
+    @Test
+    public void themesAreCached() throws MetadataRdfRepositoryException {
+        // given
+        Model catalog = testMetadataFixtures.catalog1();
+        IRI catalogUri = getUri(catalog);
+
+        // and ensure cache is empty
+        assertThat(getCache().get(catalogUri), is(nullValue()));
+
+        // when
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+
+        // then ensure cache is now populated
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
+    }
 
     @Test
-    @DisplayName("'save' should evict cache")
     public void saveEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
@@ -73,20 +84,19 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
         genericMetadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     @Test
-    @DisplayName("'removeStatement' should evict cache")
     public void removeStatementEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
@@ -94,20 +104,19 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
         genericMetadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     @Test
-    @DisplayName("'remove' should evict cache")
     public void removeEvictsCache() throws MetadataRdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
@@ -115,16 +124,16 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        genericMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
         genericMetadataRdfRepository.remove(getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     private Cache getCache() {

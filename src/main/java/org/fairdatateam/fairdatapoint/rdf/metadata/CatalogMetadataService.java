@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
@@ -38,14 +37,11 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThem
 @Slf4j
 public class CatalogMetadataService extends AbstractMetadataService {
 
-    @Autowired
-    private CatalogMetadataRdfRepository metadataRepository;
-
     @Override
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
         final Model catalog = super.retrieve(uri);
         try {
-            final List<IRI> themes = metadataRepository.getDatasetThemesForCatalog(uri);
+            final List<IRI> themes = getMetadataRepository().getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
         }
         catch (MetadataRdfRepositoryException exception) {
