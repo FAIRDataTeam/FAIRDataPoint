@@ -45,13 +45,16 @@ public class ThemesService {
 
     private final GenericMetadataRdfRepository metadataRdfRepository;
 
+    /**
+     * Returns a list of dcat:theme URIs representing the aggregated themes from all datasets in the catalog
+     */
     @Cacheable(cacheNames = CATALOG_THEMES_CACHE)
     public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRdfRepositoryException {
-        // note: whenever a resource is created, updated, or removed and this change affects the resource's themes,
-        // and the resource has a parent that is a dcat:Catalog, then the cache for that parent needs to be cleared
+        // todo: this assumes the uri represents a dcat:Catalog, but we should probably check that
         return metadataRdfRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
                 .toList();
     }
+
 }
