@@ -70,6 +70,7 @@ public class CachedThemeServiceTest {
         final int numberOfCalls = 3;
         for (int j = 0; j < numberOfCalls; j++) {
             List<IRI> catalogThemes = cachedThemeService.getDatasetThemesForCatalog(catalogUri);
+            // returns the expected themes for every call
             assertEquals(themes, catalogThemes);
         }
         // then runSparqlQueryFromFile is only called once
