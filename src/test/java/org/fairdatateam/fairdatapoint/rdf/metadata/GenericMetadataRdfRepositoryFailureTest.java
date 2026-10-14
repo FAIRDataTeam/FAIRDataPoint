@@ -26,6 +26,7 @@ import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,7 +71,7 @@ public class GenericMetadataRdfRepositoryFailureTest {
 
         // WHEN/THEN:
         assertThrows(
-                MetadataRdfRepositoryException.class,
+                RdfRepositoryException.class,
                 () -> metadataRepository.runSparqlQuery("SELECT * WHERE { ?s ?p ?o }", null)
         );
     }

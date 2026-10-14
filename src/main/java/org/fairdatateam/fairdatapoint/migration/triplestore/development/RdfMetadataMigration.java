@@ -26,7 +26,7 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -91,7 +91,7 @@ public class RdfMetadataMigration implements Migration {
             // 3. Load metadata fixtures
             importDefaultFixtures(persistentUrl);
         }
-        catch (MetadataServiceException | MetadataRdfRepositoryException exception) {
+        catch (MetadataServiceException | RdfRepositoryException exception) {
             exception.printStackTrace();
         }
     }

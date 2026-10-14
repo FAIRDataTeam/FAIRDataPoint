@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.search;
 
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
@@ -98,7 +98,7 @@ public class SearchService {
      * @param simpleQuery Object containing a search string literal
      * @return List of search result objects
      */
-    public List<SearchResultDTO> search(SearchQueryDTO simpleQuery) throws MetadataRdfRepositoryException {
+    public List<SearchResultDTO> search(SearchQueryDTO simpleQuery) throws RdfRepositoryException {
         final List<SearchResult> results = findByLiteral(l(simpleQuery.getQuery()));
         return processSearchResults(results);
     }
@@ -110,7 +110,7 @@ public class SearchService {
      */
     public List<SearchResultDTO> search(
             SearchQueryVariablesDTO queryVariables
-    ) throws MetadataRdfRepositoryException, MalformedQueryException {
+    ) throws RdfRepositoryException, MalformedQueryException {
         // Compose query
         final String query = composeQuery(queryVariables);
         // Verify query
@@ -177,7 +177,7 @@ public class SearchService {
             searchFilterCache.setFilter(predicate, new SearchFilterCacheContainer(result));
             return result;
         }
-        catch (MetadataRdfRepositoryException exception) {
+        catch (RdfRepositoryException exception) {
             throw new RuntimeException(exception);
         }
     }
@@ -232,14 +232,14 @@ public class SearchService {
         return substitutor.replace(queryTemplate);
     }
 
-    public List<SearchResult> findByLiteral(Literal query) throws MetadataRdfRepositoryException {
+    public List<SearchResult> findByLiteral(Literal query) throws RdfRepositoryException {
         return metadataRepository.runSparqlQueryFromFile(FIND_ENTITY_BY_LITERAL, Map.of("query", query))
                 .stream()
                 .map(item -> searchMapper.toSearchResult(item, true))
                 .toList();
     }
 
-    public List<SearchResult> findBySparqlQuery(String query) throws MetadataRdfRepositoryException {
+    public List<SearchResult> findBySparqlQuery(String query) throws RdfRepositoryException {
         return metadataRepository
                 .runSparqlQuery(query, null)
                 .stream()
@@ -247,7 +247,7 @@ public class SearchService {
                 .toList();
     }
 
-    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws MetadataRdfRepositoryException {
+    public List<SearchFilterValue> findByFilterPredicate(IRI predicateUri) throws RdfRepositoryException {
         final Map<String, String> values = new HashMap<>();
         metadataRepository.runSparqlQueryFromFile(
                 FIND_OBJECT_FOR_PREDICATE,

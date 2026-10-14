@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.repository.Repository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -52,20 +53,20 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     }
 
     @Override
-    public void save(List<Statement> statements, IRI context) throws MetadataRdfRepositoryException {
+    public void save(List<Statement> statements, IRI context) throws RdfRepositoryException {
         super.save(statements, context);
         clearCatalogThemesCache(context);
     }
 
     @Override
-    public void remove(IRI uri) throws MetadataRdfRepositoryException {
+    public void remove(IRI uri) throws RdfRepositoryException {
         clearCatalogThemesCache(uri);
         super.remove(uri);
     }
 
     @Override
     public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
-            throws MetadataRdfRepositoryException {
+            throws RdfRepositoryException {
         clearCatalogThemesCache(context);
         super.removeStatement(subject, predicate, object, context);
     }
@@ -74,7 +75,7 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
      * Returns a list of dcat:theme URIs representing the aggregated themes from all datasets in the catalog
      */
     @Cacheable(cacheNames = CATALOG_THEMES_CACHE)
-    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRdfRepositoryException {
+    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws RdfRepositoryException {
         // todo: this assumes the uri represents a dcat:Catalog, but we should probably check that
         return runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
@@ -87,7 +88,7 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
      * This is necessary whenever a resource is removed or changes in such a way that the parent's cache becomes
      * outdated. Typically, this would only happen if the themes change, but we don't check that explicitly.
      */
-    private void clearCatalogThemesCache(IRI uri) throws MetadataRdfRepositoryException {
+    private void clearCatalogThemesCache(IRI uri) throws RdfRepositoryException {
         final Model metadata = new LinkedHashModel();
         metadata.addAll(find(uri));
         final IRI parentUri = getParent(metadata);

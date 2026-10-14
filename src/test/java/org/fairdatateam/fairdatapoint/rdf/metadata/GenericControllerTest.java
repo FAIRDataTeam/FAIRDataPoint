@@ -28,6 +28,7 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactory;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
@@ -159,7 +160,7 @@ public class GenericControllerTest {
 
     @Test
     public void childResourceUrisCaseInsensitiveSortingIsStable(
-    ) throws MetadataRdfRepositoryException, MetadataServiceException {
+    ) throws RdfRepositoryException, MetadataServiceException {
         // given
         final String urlPrefix = CATALOG;
         final String childPrefix = DATASET;
