@@ -53,7 +53,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
-    protected GenericMetadataRdfRepository metadataRepository;
+    private GenericMetadataRdfRepository metadataRepository;
 
     @Autowired
     private MemberService memberService;
@@ -75,6 +75,13 @@ public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
     private ResourceDefinitionService resourceDefinitionService;
+
+    /**
+     * Exposes the metadataRepository to subclasses (annoying checkstyle requirement)
+     */
+    protected GenericMetadataRdfRepository getMetadataRepository() {
+        return metadataRepository;
+    }
 
     @Override
     public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
