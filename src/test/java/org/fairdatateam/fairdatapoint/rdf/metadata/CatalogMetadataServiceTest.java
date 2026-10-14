@@ -44,7 +44,6 @@ import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -67,9 +66,9 @@ import static org.mockito.Mockito.*;
         MetadataEnhancer.class,
         MetadataFactoryImpl.class,
         ResourceDefinitionFixtures.class,
-        TestRdfMetadataFixtures.class
+        TestRdfMetadataFixtures.class,
+        ThemesService.class
 })
-@EnableCaching(proxyTargetClass = true)
 public class CatalogMetadataServiceTest {
 
     @TestConfiguration
@@ -90,7 +89,7 @@ public class CatalogMetadataServiceTest {
         }
     }
 
-    private final IRI catalogUri = i("http://localhost/textmining");
+    private Model catalog;
 
     private final IRI uniqueThemeIri = i("http://localhost/unique-theme");
 
@@ -146,33 +145,25 @@ public class CatalogMetadataServiceTest {
 
     @BeforeEach
     public void setup() throws RdfRepositoryException {
+        catalog = testMetadataFixtures.catalog1();
+        List<Statement> catalogStatements = new ArrayList<>(catalog);
+        when(metadataRdfRepository.find(getUri(catalog))).thenReturn(catalogStatements);
         when(metadataRdfRepository.runSparqlQueryFromFile(any(), any())).thenReturn(themesQueryResult);
     }
 
     @Test
-    public void retrieve() throws Exception {
-        // GIVEN: Retrieve catalog from Repository
-        Model catalog = testMetadataFixtures.catalog1();
-        List<Statement> catalogStatements = new ArrayList<>(catalog);
-        when(metadataRdfRepository.find(getUri(catalog))).thenReturn(catalogStatements);
-
-        // WHEN:
-        Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
-
-        // THEN:
-        List<IRI> themeTaxonomies = getThemeTaxonomies(catalogMetadata);
-        assertThat(themeTaxonomies.size(), is(equalTo(2)));
-        assertThat(themeTaxonomies.get(0), is(equalTo(uniqueThemeIri)));
-        assertThat(themeTaxonomies.get(1), is(equalTo(duplicatedThemeIri)));
-    }
-
-    @Test
-    public void datasetThemesForCatalogAreCached() throws RdfRepositoryException {
-        // given multiple calls, each call returns the expected list of themes
+    public void retrieveCatalogThemesAreCached() throws Exception {
+        // given multiple calls to retrieve(), each call returns the expected set of themes
         final int n = 3;
         for (int i = 0; i<n; i++) {
-            List<IRI> catalogThemes = catalogMetadataService.getDatasetThemesForCatalog(catalogUri);
-            assertThat(catalogThemes, is(equalTo(themes)));
+            // WHEN:
+            Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
+
+            // THEN:
+            List<IRI> themeTaxonomies = getThemeTaxonomies(catalogMetadata);
+            assertThat(themeTaxonomies.size(), is(equalTo(2)));
+            assertThat(themeTaxonomies.get(0), is(equalTo(uniqueThemeIri)));
+            assertThat(themeTaxonomies.get(1), is(equalTo(duplicatedThemeIri)));
         }
         // but the actual query has only been executed once, so subsequent calls came from cache
         verify(metadataRdfRepository, times(1)).runSparqlQueryFromFile(any(), any());

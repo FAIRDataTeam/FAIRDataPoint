@@ -32,9 +32,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 
-import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
 @Service("catalogMetadataService")
@@ -42,15 +40,13 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThem
 @RequiredArgsConstructor
 public class CatalogMetadataService extends AbstractMetadataService {
 
-    private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
-
-    private final MetadataRdfRepository metadataRdfRepository;
+    private final ThemesService themesService;
 
     @Override
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
         final Model catalog = super.retrieve(uri);
         try {
-            final List<IRI> themes = getDatasetThemesForCatalog(uri);
+            final List<IRI> themes = themesService.getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
         }
         catch (RdfRepositoryException exception) {
@@ -76,13 +72,4 @@ public class CatalogMetadataService extends AbstractMetadataService {
         return super.update(metadata, uri, resourceDefinition, validate);
     }
 
-    public List<IRI> getDatasetThemesForCatalog(IRI uri) throws RdfRepositoryException {
-        // todo: re-implement caching using spring @Cacheable etc.
-        // note: whenever a resource is created, updated, or removed and this change affects the resource's themes,
-        // and the resource has a parent that is a dcat:Catalog, then the cache for that parent needs to be cleared
-        return metadataRdfRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
-                .stream()
-                .map(item -> i(item.getValue("theme").stringValue()))
-                .toList();
-    }
 }
