@@ -26,7 +26,6 @@ import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Statement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,9 +50,6 @@ import static org.mockito.Mockito.when;
 public class CatalogMetadataServiceTest extends BaseIntegrationTest {
 
     @Autowired
-    private CachedThemeService cachedThemeService;
-
-    @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Mock
@@ -68,20 +64,22 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void retrieve() throws Exception {
+    public void retrieveAddsThemes() throws Exception {
         // GIVEN: Retrieve catalog from Repository
         Model catalog = testMetadataFixtures.catalog1();
-        List<Statement> catalogStatements = new ArrayList<>(catalog);
-        when(metadataRepository.find(getUri(catalog))).thenReturn(catalogStatements);
+        final IRI catalogUri = getUri(catalog);
 
         // AND: Retrieve themes from datasets
         IRI theme1 = i("http://localhost/my_theme_1");
         IRI theme2_duplicated = i("http://localhost/my_theme_2_duplicated");
         List<IRI> themes = List.of(theme1, theme2_duplicated, theme2_duplicated);
-        when(cachedThemeService.getDatasetThemesForCatalog(getUri(catalog))).thenReturn(themes);
+
+        // mock repository methods
+        when(metadataRepository.find(catalogUri)).thenReturn(new ArrayList<>(catalog));
+        when(metadataRepository.getDatasetThemesForCatalog(catalogUri)).thenReturn(themes);
 
         // WHEN:
-        Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
+        Model catalogMetadata = catalogMetadataService.retrieve(catalogUri);
 
         // THEN:
         List<IRI> themeTaxonomys = getThemeTaxonomies(catalogMetadata);

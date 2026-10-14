@@ -53,7 +53,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
-    private GenericMetadataRdfRepository metadataRepository;
+    protected GenericMetadataRdfRepository metadataRepository;
 
     @Autowired
     private MemberService memberService;
