@@ -44,7 +44,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 public class MetadataValidator {
 
     @Autowired
-    @Qualifier("genericMetadataRdfRepository")
+    @Qualifier("metadataRdfRepository")
     private RdfRepository metadataRepository;
 
     @Autowired

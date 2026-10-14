@@ -38,7 +38,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
 
 @Service
-public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository {
+public class MetadataRdfRepository extends AbstractMetadataRdfRepository {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
@@ -47,7 +47,7 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     /**
      * Constructor (autowired)
      */
-    public GenericMetadataRdfRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
+    public MetadataRdfRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
         super(repository);
         this.cacheManager = cacheManager;
     }

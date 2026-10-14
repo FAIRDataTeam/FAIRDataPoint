@@ -53,7 +53,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Mock
-    private GenericMetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRepository;
 
     @InjectMocks
     private CatalogMetadataService catalogMetadataService;

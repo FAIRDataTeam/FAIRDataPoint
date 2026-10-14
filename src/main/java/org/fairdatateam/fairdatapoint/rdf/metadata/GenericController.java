@@ -76,7 +76,7 @@ public class GenericController {
 
     private final CurrentUserProvider currentUserProvider;
 
-    private final GenericMetadataRdfRepository metadataRepository;
+    private final MetadataRdfRepository metadataRepository;
 
     private final MetadataEnhancer metadataEnhancer;
 

@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.index.entry;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.fairdatateam.fairdatapoint.index.entry.dto.*;
@@ -74,7 +74,7 @@ public class IndexEntryService {
     private IndexEntryMapper mapper;
 
     @Autowired
-    private GenericMetadataRdfRepository genericMetadataRepository;
+    private MetadataRdfRepository genericMetadataRepository;
 
     @Autowired
     private HarvesterService harvesterService;

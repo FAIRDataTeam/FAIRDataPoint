@@ -54,7 +54,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 public abstract class AbstractMetadataService implements MetadataService {
 
     @Autowired
-    private GenericMetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRepository;
 
     @Autowired
     private MemberService memberService;
@@ -80,7 +80,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     /**
      * Exposes the metadataRepository to subclasses (annoying checkstyle requirement)
      */
-    protected GenericMetadataRdfRepository getMetadataRepository() {
+    protected MetadataRdfRepository getMetadataRepository() {
         return metadataRepository;
     }
 
