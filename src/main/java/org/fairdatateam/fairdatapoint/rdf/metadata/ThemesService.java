@@ -22,55 +22,36 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.repository.Repository;
-import org.springframework.cache.Cache;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
+/**
+ * Provides transient dcat:theme statements for dcat:Catalog resources, based on the themes from the datasets in the
+ * catalog. The transient statements are cached per catalog resource.
+ */
 @Service
-public class CatalogMetadataRdfRepository extends AbstractMetadataRdfRepository {
+@RequiredArgsConstructor
+public class ThemesService {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
-    private final ConcurrentMapCacheManager cacheManager;
+    private final GenericMetadataRdfRepository metadataRdfRepository;
 
-    /**
-     * Constructor (autowired)
-     */
-    public CatalogMetadataRdfRepository(ConcurrentMapCacheManager cacheManager, Repository repository) {
-        super(repository);
-        this.cacheManager = cacheManager;
-    }
-
-    @PostConstruct
-    public void init() {
-        cacheManager.setCacheNames(List.of(CATALOG_THEMES_CACHE));
-    }
-
+    @Cacheable(cacheNames = CATALOG_THEMES_CACHE)
     public List<IRI> getDatasetThemesForCatalog(IRI uri) throws MetadataRdfRepositoryException {
-        List<IRI> result = cache().get(uri.toString(), List.class);
-        if (result != null) {
-            return result;
-        }
-        result = runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
+        // note: whenever a resource is created, updated, or removed and this change affects the resource's themes,
+        // and the resource has a parent that is a dcat:Catalog, then the cache for that parent needs to be cleared
+        return metadataRdfRepository.runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
-                .collect(Collectors.toList());
-        cache().put(uri.toString(), result);
-        return result;
+                .toList();
     }
-
-    private Cache cache() {
-        return cacheManager.getCache(CATALOG_THEMES_CACHE);
-    }
-
 }
