@@ -49,23 +49,27 @@ public class GenericMetadataRdfRepository extends AbstractMetadataRdfRepository 
     @Override
     public void save(List<Statement> statements, IRI context) throws MetadataRdfRepositoryException {
         super.save(statements, context);
-        clearCatalogCache(context);
+        clearCatalogThemesCache(context);
     }
 
     @Override
     public void remove(IRI uri) throws MetadataRdfRepositoryException {
-        clearCatalogCache(uri);
+        clearCatalogThemesCache(uri);
         super.remove(uri);
     }
 
     @Override
     public void removeStatement(Resource subject, IRI predicate, Value object, IRI context)
             throws MetadataRdfRepositoryException {
-        clearCatalogCache(context);
+        clearCatalogThemesCache(context);
         super.removeStatement(subject, predicate, object, context);
     }
 
-    private void clearCatalogCache(IRI uri) throws MetadataRdfRepositoryException {
+    /**
+     * Clears the catalog themes cache for the parent of the resource represented by the specified <code>uri</code>.
+     * No need to check if the parent is actually a catalog, because non-existent cache keys are simply ignored.
+     */
+    private void clearCatalogThemesCache(IRI uri) throws MetadataRdfRepositoryException {
         final Model metadata = new LinkedHashModel();
         metadata.addAll(find(uri));
         final IRI parent = getParent(metadata);
