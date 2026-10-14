@@ -24,7 +24,6 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.RdfRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.StandaloneShaclValidator;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
@@ -33,7 +32,6 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
