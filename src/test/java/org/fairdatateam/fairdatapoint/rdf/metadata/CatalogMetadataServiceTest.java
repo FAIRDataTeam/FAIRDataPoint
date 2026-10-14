@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.impl.ListBindingSet;
 import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
+import org.fairdatateam.fairdatapoint.common.config.CacheConfig;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
 import org.fairdatateam.fairdatapoint.profile.ProfileService;
@@ -38,23 +39,19 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,6 +61,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringJUnitConfig(classes = {
+        CacheConfig.class,
         CatalogMetadataService.class,
         CatalogMetadataServiceTest.Config.class,
         MetadataEnhancer.class,
@@ -71,6 +69,7 @@ import static org.mockito.Mockito.*;
         ResourceDefinitionFixtures.class,
         TestRdfMetadataFixtures.class
 })
+@EnableCaching(proxyTargetClass = true)
 public class CatalogMetadataServiceTest {
 
     @TestConfiguration
@@ -92,6 +91,16 @@ public class CatalogMetadataServiceTest {
     }
 
     private final IRI catalogUri = i("http://localhost/textmining");
+
+    private final IRI uniqueThemeIri = i("http://localhost/unique-theme");
+
+    private final IRI duplicatedThemeIri = i("http://localhost/duplicated-theme");
+
+    private final List<IRI> themes = List.of(uniqueThemeIri, duplicatedThemeIri, duplicatedThemeIri);
+
+    private final List<BindingSet> themesQueryResult = themes.stream().map(
+            iri -> (BindingSet) new ListBindingSet(List.of("theme"), i(iri))
+    ).toList();
 
     @Autowired
     private CatalogMetadataService catalogMetadataService;
@@ -136,8 +145,8 @@ public class CatalogMetadataServiceTest {
     private SwaggerUiConfigProperties swaggerUiConfigProperties;
 
     @BeforeEach
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this).close();
+    public void setup() throws RdfRepositoryException {
+        when(metadataRdfRepository.runSparqlQueryFromFile(any(), any())).thenReturn(themesQueryResult);
     }
 
     @Test
@@ -146,14 +155,6 @@ public class CatalogMetadataServiceTest {
         Model catalog = testMetadataFixtures.catalog1();
         List<Statement> catalogStatements = new ArrayList<>(catalog);
         when(metadataRdfRepository.find(getUri(catalog))).thenReturn(catalogStatements);
-
-        // AND: Retrieve themes from datasets
-        IRI uniqueThemeIri = i("http://localhost/unique-theme");
-        IRI duplicatedThemeIri = i("http://localhost/duplicated-theme");
-        List<BindingSet> themes = Stream.of(uniqueThemeIri, duplicatedThemeIri, duplicatedThemeIri).map(
-                iri -> (BindingSet) new ListBindingSet(List.of("theme"), i(iri))
-        ).toList();
-        when(metadataRdfRepository.runSparqlQueryFromFile(any(), any())).thenReturn(themes);
 
         // WHEN:
         Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));
@@ -166,32 +167,14 @@ public class CatalogMetadataServiceTest {
     }
 
     @Test
-    @DisplayName("Themes for catalog are in cache (no query to triple store)")
-    public void themesInCache() throws RdfRepositoryException {
-        // GIVEN:
-//        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
-//        when(cache.get(catalogUri.toString(), List.class)).thenReturn(Collections.emptyList());
-
-        // WHEN:
-        catalogMetadataService.getDatasetThemesForCatalog(catalogUri);
-
-        // THEN:
-        verify(metadataRdfRepository, never()).runSparqlQueryFromFile(any(), any());
-    }
-
-    @Test
-    @DisplayName("Themes for catalog are not in cache (we have to query to triple store)")
-    public void themesNotInCache() throws RdfRepositoryException {
-        // GIVEN:
-//        when(cacheManager.getCache(CATALOG_THEMES_CACHE)).thenReturn(cache);
-//        when(repository.getConnection()).thenReturn(repositoryConnection);
-//        when(repositoryConnection.prepareTupleQuery(any())).thenReturn(tupleQuery);
-//        when(tupleQuery.evaluate()).thenReturn(tupleQueryResult);
-
-        // WHEN:
-        catalogMetadataService.getDatasetThemesForCatalog(catalogUri);
-
-        // THEN:
+    public void datasetThemesForCatalogAreCached() throws RdfRepositoryException {
+        // given multiple calls, each call returns the expected list of themes
+        final int n = 3;
+        for (int i = 0; i<n; i++) {
+            List<IRI> catalogThemes = catalogMetadataService.getDatasetThemesForCatalog(catalogUri);
+            assertThat(catalogThemes, is(equalTo(themes)));
+        }
+        // but the actual query has only been executed once, so subsequent calls came from cache
         verify(metadataRdfRepository, times(1)).runSparqlQueryFromFile(any(), any());
     }
 
