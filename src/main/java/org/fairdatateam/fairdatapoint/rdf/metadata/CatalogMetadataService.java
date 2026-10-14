@@ -39,13 +39,13 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThem
 @RequiredArgsConstructor
 public class CatalogMetadataService extends AbstractMetadataService {
 
-    private final ThemesService themesService;
+    private final CachedThemeService cachedThemeService;
 
     @Override
     public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
         final Model catalog = super.retrieve(uri);
         try {
-            final List<IRI> themes = themesService.getDatasetThemesForCatalog(uri);
+            final List<IRI> themes = cachedThemeService.getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
         }
         catch (MetadataRdfRepositoryException exception) {

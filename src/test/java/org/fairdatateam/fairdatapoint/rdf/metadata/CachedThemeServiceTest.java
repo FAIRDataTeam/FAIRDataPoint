@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 
-@SpringJUnitConfig(classes = { CacheConfig.class, ThemesService.class })
-public class ThemesServiceTest {
+@SpringJUnitConfig(classes = { CacheConfig.class, CachedThemeService.class })
+public class CachedThemeServiceTest {
 
     private final IRI catalogUri = i("https://fdp.example.org/catalog/");
 
@@ -53,7 +53,7 @@ public class ThemesServiceTest {
     ).toList();
 
     @Autowired
-    private ThemesService themesService;
+    private CachedThemeService cachedThemeService;
 
     @MockitoBean
     private GenericMetadataRdfRepository metadataRdfRepository;
@@ -69,7 +69,7 @@ public class ThemesServiceTest {
         // when getDatasetThemesForCatalog is called multiple times
         final int numberOfCalls = 3;
         for (int j = 0; j < numberOfCalls; j++) {
-            List<IRI> catalogThemes = themesService.getDatasetThemesForCatalog(catalogUri);
+            List<IRI> catalogThemes = cachedThemeService.getDatasetThemesForCatalog(catalogUri);
             assertEquals(themes, catalogThemes);
         }
         // then runSparqlQueryFromFile is only called once

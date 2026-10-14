@@ -61,7 +61,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     private GenericMetadataRdfRepository genericMetadataRdfRepository;
 
     @Autowired
-    private ThemesService themesService;
+    private CachedThemeService cachedThemeService;
 
     @Test
     public void saveEvictsCache() throws MetadataRdfRepositoryException {
@@ -71,7 +71,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        themesService.getDatasetThemesForCatalog(catalogUri);
+        cachedThemeService.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
@@ -91,7 +91,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        themesService.getDatasetThemesForCatalog(catalogUri);
+        cachedThemeService.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
@@ -111,7 +111,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        themesService.getDatasetThemesForCatalog(catalogUri);
+        cachedThemeService.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
         assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));

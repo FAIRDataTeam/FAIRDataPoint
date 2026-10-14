@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 public class CatalogMetadataServiceTest extends BaseIntegrationTest {
 
     @Autowired
-    private ThemesService themesService;
+    private CachedThemeService cachedThemeService;
 
     @Autowired
     private TestRdfMetadataFixtures testMetadataFixtures;
@@ -78,7 +78,7 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         IRI theme1 = i("http://localhost/my_theme_1");
         IRI theme2_duplicated = i("http://localhost/my_theme_2_duplicated");
         List<IRI> themes = List.of(theme1, theme2_duplicated, theme2_duplicated);
-        when(themesService.getDatasetThemesForCatalog(getUri(catalog))).thenReturn(themes);
+        when(cachedThemeService.getDatasetThemesForCatalog(getUri(catalog))).thenReturn(themes);
 
         // WHEN:
         Model catalogMetadata = catalogMetadataService.retrieve(getUri(catalog));

@@ -39,7 +39,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
  */
 @Service
 @RequiredArgsConstructor
-public class ThemesService {
+public class CachedThemeService {
 
     private static final String GET_DATASET_THEMES_FOR_CATALOG = "/sparql/getDatasetThemesForCatalog.sparql";
 
