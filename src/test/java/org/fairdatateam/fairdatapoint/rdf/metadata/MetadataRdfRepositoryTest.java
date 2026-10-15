@@ -28,6 +28,7 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
+import org.fairdatateam.fairdatapoint.common.config.CacheConfig;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
 import org.fairdatateam.fairdatapoint.profile.ProfileService;
@@ -57,14 +58,14 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getLang
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
 @SpringJUnitConfig(classes = {
-        ConcurrentMapCacheManager.class,
+        CacheConfig.class,
         MetadataEnhancer.class,
         MetadataFactoryImpl.class,
         MetadataRdfRepository.class,
