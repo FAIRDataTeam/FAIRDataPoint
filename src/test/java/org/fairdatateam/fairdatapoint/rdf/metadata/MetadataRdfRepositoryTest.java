@@ -133,6 +133,19 @@ public class MetadataRdfRepositoryTest {
         return cacheManager.getCache(CATALOG_THEMES_CACHE);
     }
 
+    private void assertThatCacheKeyDoesNotExist(IRI uri) {
+        assertThat(getCache().get(uri), is(nullValue()));
+    }
+
+    private void assertThatCacheIsPopulated(IRI uri) {
+        final Cache.ValueWrapper cachedThemes = getCache().get(uri);
+        // verify that cache key exists (otherwise get() returns null for ValueWrapper)
+        assertThat(cachedThemes, is(notNullValue()));
+        assertThat(cachedThemes.get(), is(instanceOf(List.class)));
+        // verify that the cached value is not empty
+        assertThat((List<?>) cachedThemes.get(), is(not(empty())));
+    }
+
     @Test
     public void themesAreCached() throws RdfRepositoryException {
         // given
@@ -140,13 +153,13 @@ public class MetadataRdfRepositoryTest {
         IRI catalogUri = getUri(catalog);
 
         // and ensure cache is empty
-        assertThat(getCache().get(catalogUri), is(nullValue()));
+        assertThatCacheKeyDoesNotExist(catalogUri);
 
         // when
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
-        // then ensure cache is now populated
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        // then
+        assertThatCacheIsPopulated(catalogUri);
     }
 
     @Test
@@ -158,15 +171,13 @@ public class MetadataRdfRepositoryTest {
 
         // AND: Compute cache
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        assertThatCacheIsPopulated(catalogUri);
 
         // WHEN:
         metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri), is(nullValue()));
+        assertThatCacheKeyDoesNotExist(catalogUri);
     }
 
     @Test
@@ -179,14 +190,14 @@ public class MetadataRdfRepositoryTest {
         // AND: Compute cache
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        // AND:
+        assertThatCacheIsPopulated(catalogUri);
 
         // WHEN:
         metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri), is(nullValue()));
+        assertThatCacheKeyDoesNotExist(catalogUri);
     }
 
     @Test
@@ -199,14 +210,14 @@ public class MetadataRdfRepositoryTest {
         // AND: Compute cache
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        // AND:
+        assertThatCacheIsPopulated(catalogUri);
 
         // WHEN:
         metadataRdfRepository.remove(getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri), is(nullValue()));
+        assertThatCacheKeyDoesNotExist(catalogUri);
     }
 
     // The following tests were moved here from the existing MetadataRepositoryTest class, which was then removed.
