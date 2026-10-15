@@ -129,6 +129,10 @@ public class MetadataRdfRepositoryTest {
     @MockitoBean
     SwaggerUiConfigProperties swaggerUiConfigProperties;
 
+    private Cache getCache() {
+        return cacheManager.getCache(CATALOG_THEMES_CACHE);
+    }
+
     @Test
     public void themesAreCached() throws RdfRepositoryException {
         // given
@@ -203,10 +207,6 @@ public class MetadataRdfRepositoryTest {
 
         // THEN:
         assertThat(getCache().get(catalogUri), is(nullValue()));
-    }
-
-    private Cache getCache() {
-        return cacheManager.getCache(CATALOG_THEMES_CACHE);
     }
 
     // The following tests were moved here from the existing MetadataRepositoryTest class, which was then removed.
