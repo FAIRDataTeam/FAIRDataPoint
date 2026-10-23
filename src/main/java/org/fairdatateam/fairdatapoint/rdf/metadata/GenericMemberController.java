@@ -25,13 +25,13 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.security.membership.MemberCreateDTO;
 import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,17 +45,15 @@ import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.getMetadataIRI
 
 @Tag(name = "Authentication and Authorization")
 @RestController
+@RequiredArgsConstructor
 public class GenericMemberController {
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MemberService memberService;
+    private final GenericMetadataService metadataService;
 
-    @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private final MemberService memberService;
 
     @Operation(hidden = true)
     @GetMapping(path = "{urlPrefix:[^.]+}/{recordId:[^.]+}/members", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,14 +61,11 @@ public class GenericMemberController {
             @PathVariable final String urlPrefix,
             @PathVariable final String recordId
     ) throws ResourceNotFoundException, MetadataServiceException {
-        // 1. Init
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-
-        // 2. Get and check existence entity
+        // Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final Model metadata = metadataService.read(entityUri);
 
-        // 3. Get members
+        // Get members
         final String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         final List<MemberDTO> dto = memberService.getMembers(entityId, Metadata.class);
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -87,14 +82,11 @@ public class GenericMemberController {
             @PathVariable final String userUuid,
             @RequestBody @Valid MemberCreateDTO reqBody
     ) throws MetadataServiceException {
-        // 1. Init
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-
-        // 2. Get and check existence entity
+        // Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final Model metadata = metadataService.read(entityUri);
 
-        // 3. Create / Update member
+        // Create / Update member
         final String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         final MemberDTO dto = memberService.createOrUpdateMember(entityId, Metadata.class, userUuid,
                 reqBody.getMembershipUuid());
@@ -109,14 +101,11 @@ public class GenericMemberController {
             @PathVariable final String recordId,
             @PathVariable final String userUuid
     ) throws ResourceNotFoundException, MetadataServiceException {
-        // 1. Init
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-
-        // 2. Get and check existence entity
+        // Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
         final Model metadata = metadataService.read(entityUri);
 
-        // 3. Delete member
+        // Delete member
         final String entityId = getMetadataIdentifier(metadata).getIdentifier().getLabel();
         memberService.deleteMember(entityId, Metadata.class, userUuid);
         return ResponseEntity.noContent().build();

@@ -55,10 +55,6 @@ public class RdfMetadataMigration implements Migration {
     private RdfMetadataFixtures rdfMetadataFixtures;
 
     @Autowired
-    @Qualifier("catalogMetadataService")
-    private MetadataService catalogMetadataService;
-
-    @Autowired
     @Qualifier("genericMetadataService")
     private MetadataService genericMetadataService;
 
@@ -109,12 +105,12 @@ public class RdfMetadataMigration implements Migration {
 
         final Model catalog1 = rdfMetadataFixtures.catalog1(fdpUrl, i(fdpUrl));
         final IRI catalog1Uri = getUri(catalog1);
-        catalogMetadataService.create(catalog1, catalog1Uri, catalogRd);
+        genericMetadataService.create(catalog1, catalog1Uri, catalogRd);
         metadataStateService.modifyState(catalog1Uri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
         final Model catalog2 = rdfMetadataFixtures.catalog2(fdpUrl, fdpUri);
         final IRI catalog2Uri = getUri(catalog2);
-        catalogMetadataService.create(catalog2, catalog2Uri, catalogRd);
+        genericMetadataService.create(catalog2, catalog2Uri, catalogRd);
 
         final Model dataset1 = rdfMetadataFixtures.dataset1(fdpUrl, catalog1Uri);
         final IRI dataset1Uri = getUri(dataset1);

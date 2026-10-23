@@ -65,10 +65,10 @@ public class GenericMetaController {
     private CurrentUserProvider currentUserProvider;
 
     @Autowired
-    private MemberService memberService;
+    private GenericMetadataService metadataService;
 
     @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private MemberService memberService;
 
     @Autowired
     private MetadataStateService metadataStateService;
@@ -85,8 +85,6 @@ public class GenericMetaController {
         // 1. Init
         String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService =
-                metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get resource definition
         ResourceDefinition definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
@@ -136,8 +134,6 @@ public class GenericMetaController {
         // 1. Init
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService =
-                metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
