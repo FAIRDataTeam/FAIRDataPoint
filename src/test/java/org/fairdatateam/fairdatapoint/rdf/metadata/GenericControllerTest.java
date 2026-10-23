@@ -28,6 +28,7 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactory;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaService;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
@@ -81,7 +82,7 @@ public class GenericControllerTest {
     CurrentUserProvider currentUserProvider;
 
     @MockitoBean
-    GenericMetadataRdfRepository metadataRepository;
+    MetadataRdfRepository metadataRdfRepository;
 
     @MockitoBean
     MetadataEnhancer metadataEnhancer;
@@ -159,7 +160,7 @@ public class GenericControllerTest {
 
     @Test
     public void childResourceUrisCaseInsensitiveSortingIsStable(
-    ) throws MetadataRdfRepositoryException, MetadataServiceException {
+    ) throws RdfRepositoryException, MetadataServiceException {
         // given
         final String urlPrefix = CATALOG;
         final String childPrefix = DATASET;
@@ -171,7 +172,7 @@ public class GenericControllerTest {
         when(metadataService.read(entityUri)).thenReturn(catalog0);
         when(currentUserProvider.getCurrentUser()).thenReturn(Optional.of(new User()));
         when(metadataStateService.get(any(IRI.class))).thenReturn(new Metadata(null, null, MetadataState.PUBLISHED));
-        when(metadataRepository.findChildTitles(entityUri, relationUri)).thenReturn(datasetTitles);
+        when(metadataRdfRepository.findChildTitles(entityUri, relationUri)).thenReturn(datasetTitles);
 
         // evaluate
         final List<IRI> actualUris = genericController.getChildResourceUris(

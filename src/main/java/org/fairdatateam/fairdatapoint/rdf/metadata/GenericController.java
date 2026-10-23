@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.rdf4j.model.Statement;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.fairdatateam.fairdatapoint.user.User;
@@ -75,7 +76,7 @@ public class GenericController {
 
     private final CurrentUserProvider currentUserProvider;
 
-    private final GenericMetadataRdfRepository metadataRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
     private final MetadataEnhancer metadataEnhancer;
 
@@ -310,7 +311,7 @@ public class GenericController {
             @PathVariable final String childPrefix,
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "10") final int size
-    ) throws MetadataServiceException, MetadataRdfRepositoryException {
+    ) throws MetadataServiceException, RdfRepositoryException {
         // Initialize new RDF graph
         final Model resultRdf = new LinkedHashModel();
 
@@ -373,7 +374,7 @@ public class GenericController {
      */
     List<IRI> getChildResourceUris(
             String urlPrefix, String childPrefix, IRI entityUri, IRI relationUri
-    ) throws MetadataRdfRepositoryException, MetadataServiceException {
+    ) throws RdfRepositoryException, MetadataServiceException {
         // Get the metadata service for the specified parent resource type
         final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
@@ -381,7 +382,7 @@ public class GenericController {
         // For example, the titles of the datasets that are contained in the specified catalog.
         // These child resources are identified by the RDF-predicate (relationUri) defined in the
         // ResourceDefinitionChild, i.e., dcat:dataset in our example.
-        final Map<String, String> titles = metadataRepository.findChildTitles(entityUri, relationUri);
+        final Map<String, String> titles = metadataRdfRepository.findChildTitles(entityUri, relationUri);
 
         // Get the RDF graph for the parent resource
         final Model entity = metadataService.read(entityUri);

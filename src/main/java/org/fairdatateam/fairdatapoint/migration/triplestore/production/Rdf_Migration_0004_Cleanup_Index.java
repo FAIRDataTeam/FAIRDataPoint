@@ -25,8 +25,8 @@ package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
@@ -51,7 +51,7 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
     private Repository repository;
 
     @Autowired
-    private GenericMetadataRdfRepository genericMetadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private String persistentUrl;
@@ -98,9 +98,9 @@ public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration 
                     .forEach(contextId -> {
                         log.info("Deleting harvested records for '{}': {}", entry.getClientUrl(), contextId);
                         try {
-                            genericMetadataRepository.remove(i(contextId));
+                            metadataRdfRepository.remove(i(contextId));
                         }
-                        catch (MetadataRdfRepositoryException exception) {
+                        catch (RdfRepositoryException exception) {
                             throw new RuntimeException(exception);
                         }
                     });

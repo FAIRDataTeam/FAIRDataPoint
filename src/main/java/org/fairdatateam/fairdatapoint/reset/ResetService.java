@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.reset;
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataServiceException;
@@ -79,7 +79,7 @@ public class ResetService {
 
     private final MembershipRepository membershipRepository;
 
-    private final MetadataRepository metadataRepository;
+    private final MetadataStateRepository metadataStateRepository;
 
     private final MetadataSchemaRepository metadataSchemaRepository;
 
@@ -163,7 +163,7 @@ public class ResetService {
                 resourceDefinitionRepository.findByUrlPrefix("");
         if (resourceDefinition.isPresent()) {
             genericMetadataService.delete(i(persistentUrl), resourceDefinition.get());
-            metadataRepository.deleteAll();
+            metadataStateRepository.deleteAll();
         }
     }
 
@@ -193,7 +193,7 @@ public class ResetService {
                     accessRightsDescription
             );
             conn.add(statements);
-            metadataRepository.save(FactoryDefaults.metadataRepository(persistentUrl));
+            metadataStateRepository.save(FactoryDefaults.metadataRepository(persistentUrl));
         }
         catch (RepositoryException exception) {
             log.error(exception.getMessage(), exception);
