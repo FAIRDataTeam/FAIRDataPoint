@@ -77,13 +77,13 @@ public class GenericController {
 
     private final CurrentUserProvider currentUserProvider;
 
+    private final GenericMetadataService metadataService;
+
     private final MetadataRdfRepository metadataRdfRepository;
 
     private final MetadataEnhancer metadataEnhancer;
 
     private final MetadataSchemaService metadataSchemaService;
-
-    private final MetadataServiceFactory metadataServiceFactory;
 
     private final MetadataStateService metadataStateService;
 
@@ -114,7 +114,6 @@ public class GenericController {
         final Model resultRdf = new LinkedHashModel();
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Get entity
@@ -157,7 +156,6 @@ public class GenericController {
         final Model resultRdf = new LinkedHashModel();
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get resource definition
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
@@ -204,7 +202,6 @@ public class GenericController {
 
         // 2. Init
         // String urlPrefix = getResourceNameForList(getRequestURL(request, persistentUrl));
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Generate URI
@@ -244,7 +241,6 @@ public class GenericController {
         // 1. Init
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Extract URI
@@ -280,7 +276,6 @@ public class GenericController {
     ) throws MetadataServiceException {
         // 1. Init
         // String urlPrefix = getResourceNameForDetail(getRequestURL(request, persistentUrl));
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
         final ResourceDefinition rd = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 2. Skip if Repository (we don't support delete for repository)
@@ -323,9 +318,6 @@ public class GenericController {
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
 
-        // Get the metadata service for the specified child resource type
-        final MetadataService childMetadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(childPrefix);
-
         // Get the IRI for the specified resource
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
 
@@ -345,7 +337,7 @@ public class GenericController {
                 final IRI relationUri = i(resourceDefinitionChild.getRelationUri());
 
                 // Get child resources URIs
-                final List<IRI> childUris = getChildResourceUris(urlPrefix, childPrefix, entityUri, relationUri);
+                final List<IRI> childUris = getChildResourceUris(childPrefix, entityUri, relationUri);
 
                 // Apply paging to limit the result size
                 final List<IRI> selectedChildUris = childUris.stream().skip((long) page * size).limit(size).toList();
@@ -353,7 +345,7 @@ public class GenericController {
                 // Add the RDF statements for each of the selected child resources to the result graph
                 for (IRI childUri : selectedChildUris) {
                     // see AbstractMetadataService.retrieve
-                    final Model childMetadata = childMetadataService.read(childUri);
+                    final Model childMetadata = metadataService.read(childUri);
                     // annotate child metadata with themes (todo: #1033)
                     final List<IRI> themes = metadataRdfRepository.getDatasetThemesForCatalog(childUri);
                     setThemeTaxonomies(childMetadata, childUri, themes);
@@ -379,11 +371,8 @@ public class GenericController {
      * Returns a list of child resource URIs (IRIs) sorted by title
      */
     List<IRI> getChildResourceUris(
-            String urlPrefix, String childPrefix, IRI entityUri, IRI relationUri
+            String childPrefix, IRI entityUri, IRI relationUri
     ) throws RdfRepositoryException, MetadataServiceException {
-        // Get the metadata service for the specified parent resource type
-        final MetadataService metadataService = metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
-
         // Get the titles of the child resources contained in the current resource (entityUri) using SPARQL.
         // For example, the titles of the datasets that are contained in the specified catalog.
         // These child resources are identified by the RDF-predicate (relationUri) defined in the

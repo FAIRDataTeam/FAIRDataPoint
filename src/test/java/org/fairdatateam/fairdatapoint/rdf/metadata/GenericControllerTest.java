@@ -91,10 +91,7 @@ public class GenericControllerTest {
     MetadataSchemaService metadataSchemaService;
 
     @MockitoBean
-    MetadataServiceFactory metadataServiceFactory;
-
-    @MockitoBean
-    MetadataService metadataService;
+    GenericMetadataService metadataService;
 
     @MockitoBean
     MetadataStateService metadataStateService;
@@ -162,21 +159,18 @@ public class GenericControllerTest {
     public void childResourceUrisCaseInsensitiveSortingIsStable(
     ) throws RdfRepositoryException, MetadataServiceException {
         // given
-        final String urlPrefix = CATALOG;
         final String childPrefix = DATASET;
         final IRI entityUri = catalog0Url;
         final IRI relationUri = DCAT.HAS_DATASET;
 
         // set up mocks
-        when(metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix)).thenReturn(metadataService);
         when(metadataService.read(entityUri)).thenReturn(catalog0);
         when(currentUserProvider.getCurrentUser()).thenReturn(Optional.of(new User()));
         when(metadataStateService.get(any(IRI.class))).thenReturn(new Metadata(null, null, MetadataState.PUBLISHED));
         when(metadataRdfRepository.findChildTitles(entityUri, relationUri)).thenReturn(datasetTitles);
 
         // evaluate
-        final List<IRI> actualUris = genericController.getChildResourceUris(
-                urlPrefix, childPrefix, entityUri, relationUri);
+        final List<IRI> actualUris = genericController.getChildResourceUris(childPrefix, entityUri, relationUri);
 
         // expect case-insensitive but stable sorting "A", "a", "B", "b"
         final List<IRI> expectedUris = List.of(dataset3Url, dataset2Url, dataset0Url, dataset1Url);
