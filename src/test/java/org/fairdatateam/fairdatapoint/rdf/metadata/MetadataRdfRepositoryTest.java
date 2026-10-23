@@ -24,16 +24,30 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
-import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.fairdatateam.fairdatapoint.actuator.AppInfoContributor;
+import org.fairdatateam.fairdatapoint.common.config.CacheConfig;
+import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
+import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
+import org.fairdatateam.fairdatapoint.profile.ProfileService;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
+import org.fairdatateam.fairdatapoint.resource.*;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.junit.jupiter.api.Test;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +58,45 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getLang
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class MetadataRdfRepositoryTest extends WebIntegrationTest {
+@SpringJUnitConfig(classes = {
+        CacheConfig.class,
+        MetadataEnhancer.class,
+        MetadataFactoryImpl.class,
+        MetadataRdfRepository.class,
+        MetadataRdfRepositoryTest.Config.class,
+        ResourceDefinitionFixtures.class,
+        TestRdfMetadataFixtures.class
+})
+public class MetadataRdfRepositoryTest {
+
+    @TestConfiguration
+    static class Config {
+        @Bean
+        public String persistentUrl() {
+            return "http://localhost:8088";
+        }
+
+        @Bean
+        public IRI language() {
+            return i("https://example.org/language");
+        }
+
+        @Bean
+        public IRI license() {
+            return i("https://example.org/license");
+        }
+
+        @Bean(initMethod = "init", destroyMethod = "shutDown")
+        public Repository repository() {
+            return new SailRepository(new MemoryStore());
+        }
+    }
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
@@ -61,6 +107,46 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
     @Autowired
     private MetadataRdfRepository metadataRdfRepository;
 
+    // mocks for MetadataEnhancer
+
+    @MockitoBean
+    AppInfoContributor appInfoContributor;
+
+    @MockitoBean
+    MetricsMetadataService metricsMetadataService;
+
+    @MockitoBean
+    ProfileService profileService;
+
+    @MockitoBean
+    ResourceDefinitionCache resourceDefinitionCache;
+
+    @MockitoBean
+    ResourceDefinitionService resourceDefinitionService;
+
+    @MockitoBean
+    SpringDocConfigProperties springDocConfigProperties;
+
+    @MockitoBean
+    SwaggerUiConfigProperties swaggerUiConfigProperties;
+
+    private Cache getCache() {
+        return cacheManager.getCache(CATALOG_THEMES_CACHE);
+    }
+
+    private void assertThatCacheKeyDoesNotExist(IRI uri) {
+        assertThat(getCache().get(uri), is(nullValue()));
+    }
+
+    private void assertThatCacheIsPopulated(IRI uri) {
+        final Cache.ValueWrapper cachedThemes = getCache().get(uri);
+        // verify that cache key exists (otherwise get() returns null for ValueWrapper)
+        assertThat(cachedThemes, is(notNullValue()));
+        assertThat(cachedThemes.get(), is(instanceOf(List.class)));
+        // verify that the cached value is not empty
+        assertThat((List<?>) cachedThemes.get(), is(not(empty())));
+    }
+
     @Test
     public void themesAreCached() throws RdfRepositoryException {
         // given
@@ -68,13 +154,13 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI catalogUri = getUri(catalog);
 
         // and ensure cache is empty
-        assertThat(getCache().get(catalogUri), is(nullValue()));
+        assertThatCacheKeyDoesNotExist(catalogUri);
 
         // when
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
-        // then ensure cache is now populated
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        // then
+        assertThatCacheIsPopulated(catalogUri);
     }
 
     @Test
@@ -86,15 +172,13 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
 
         // AND: Compute cache
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
-
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        assertThatCacheIsPopulated(catalogUri);
 
         // WHEN:
         metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri), is(nullValue()));
+        assertThatCacheKeyDoesNotExist(catalogUri);
     }
 
     @Test
@@ -107,14 +191,14 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
         // AND: Compute cache
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        // AND:
+        assertThatCacheIsPopulated(catalogUri);
 
         // WHEN:
         metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri), is(nullValue()));
+        assertThatCacheKeyDoesNotExist(catalogUri);
     }
 
     @Test
@@ -127,18 +211,14 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
         // AND: Compute cache
         metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri), is(notNullValue()));
+        // AND:
+        assertThatCacheIsPopulated(catalogUri);
 
         // WHEN:
         metadataRdfRepository.remove(getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri), is(nullValue()));
-    }
-
-    private Cache getCache() {
-        return cacheManager.getCache(CATALOG_THEMES_CACHE);
+        assertThatCacheKeyDoesNotExist(catalogUri);
     }
 
     // The following tests were moved here from the existing MetadataRepositoryTest class, which was then removed.
