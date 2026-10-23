@@ -24,14 +24,12 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
-
 
 /**
  * Adds <code>dcat:themeTaxonomy</code> statements to the in-memory graph for the catalog,
@@ -45,9 +43,9 @@ import jakarta.annotation.Nonnull;
 @RequiredArgsConstructor
 public class CatalogMetadataService extends AbstractMetadataService {
 
-// TODO: this class is now completely redundant, so we need to remove it,
-//  merge GenericMetadataService and AbstractMetadataService into a single MetadataService,
-//  and remove MetadataServiceFactory
+    // TODO: this class is now completely redundant, so we need to remove it,
+    //  merge GenericMetadataService and AbstractMetadataService into a single MetadataService,
+    //  and remove MetadataServiceFactory
 
     @Override
     public Model read(@Nonnull IRI uri) throws MetadataServiceException {
