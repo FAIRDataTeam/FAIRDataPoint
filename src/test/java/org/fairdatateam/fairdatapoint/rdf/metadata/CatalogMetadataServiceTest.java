@@ -79,13 +79,13 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         when(metadataRdfRepository.getDatasetThemesForCatalog(catalogUri)).thenReturn(themes);
 
         // WHEN:
-        Model catalogMetadata = catalogMetadataService.retrieve(catalogUri);
+        Model catalogMetadata = catalogMetadataService.read(getUri(catalog));
 
         // THEN:
-        List<IRI> themeTaxonomys = getThemeTaxonomies(catalogMetadata);
-        assertThat(themeTaxonomys.size(), is(equalTo(2)));
-        assertThat(themeTaxonomys.get(0), is(equalTo(theme1)));
-        assertThat(themeTaxonomys.get(1), is(equalTo(theme2_duplicated)));
+        List<IRI> themeTaxonomies = getThemeTaxonomies(catalogMetadata);
+        assertThat(themeTaxonomies.size(), is(equalTo(2)));
+        assertThat(themeTaxonomies.get(0), is(equalTo(theme1)));
+        assertThat(themeTaxonomies.get(1), is(equalTo(theme2_duplicated)));
     }
 
 }

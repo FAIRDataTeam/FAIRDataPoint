@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -34,13 +35,21 @@ import java.util.List;
 
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
+/**
+ * Adds <code>dcat:themeTaxonomy</code> statements to the in-memory graph for the catalog,
+ * based on the <code>dcat:theme</code> statements for the datasets in this catalog.
+ * Removes all theme taxonomy statements from the in-memory graph before create or update operations,
+ * to make sure they do not end up in the triple store.
+ * However, these statements do still end up in any harvester's triple store, as explained in #1037.
+ */
 @Service("catalogMetadataService")
 @Slf4j
+@RequiredArgsConstructor
 public class CatalogMetadataService extends AbstractMetadataService {
 
     @Override
-    public Model retrieve(@Nonnull IRI uri) throws MetadataServiceException {
-        final Model catalog = super.retrieve(uri);
+    public Model read(@Nonnull IRI uri) throws MetadataServiceException {
+        final Model catalog = super.read(uri);
         try {
             final List<IRI> themes = getMetadataRdfRepository().getDatasetThemesForCatalog(uri);
             setThemeTaxonomies(catalog, uri, themes);
@@ -53,11 +62,11 @@ public class CatalogMetadataService extends AbstractMetadataService {
     }
 
     @Override
-    public Model store(
+    public Model create(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition
     ) throws MetadataServiceException {
         setThemeTaxonomies(metadata, uri, null);
-        return super.store(metadata, uri, resourceDefinition);
+        return super.create(metadata, uri, resourceDefinition);
     }
 
     @Override

@@ -53,6 +53,8 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 @Slf4j
 public abstract class AbstractMetadataService implements MetadataService {
 
+    // Field autowiring is used intentionally here, because constructor autowiring in abstract classes
+    // leads to bloated subclass constructors.
     @Autowired
     private MetadataRdfRepository metadataRdfRepository;
 
@@ -85,7 +87,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     }
 
     @Override
-    public Model retrieve(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
+    public Model read(IRI uri) throws MetadataServiceException, ResourceNotFoundException {
         try {
             // 1. Get metadata
             final List<Statement> statements = metadataRdfRepository.find(uri);
@@ -106,16 +108,16 @@ public abstract class AbstractMetadataService implements MetadataService {
     }
 
     @Override
-    public List<Model> retrieve(List<IRI> uris) {
+    public List<Model> read(List<IRI> uris) {
         return uris
                 .stream()
-                .map(suppress(this::retrieve))
+                .map(suppress(this::read))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Model store(
+    public Model create(
             Model metadata, IRI uri, ResourceDefinition resourceDefinition
     ) throws MetadataServiceException {
         try {
@@ -145,7 +147,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             if (validate) {
                 metadataValidator.validate(metadata, uri, resourceDefinition);
             }
-            final Model oldMetadata = retrieve(uri);
+            final Model oldMetadata = read(uri);
             metadataEnhancer.enhance(metadata, uri, resourceDefinition, oldMetadata);
             metadataRdfRepository.remove(uri);
             metadataRdfRepository.save(new ArrayList<>(metadata), uri);
@@ -161,7 +163,7 @@ public abstract class AbstractMetadataService implements MetadataService {
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(IRI uri, ResourceDefinition rd) throws MetadataServiceException {
         try {
-            final Model metadata = retrieve(uri);
+            final Model metadata = read(uri);
 
             // Delete all children
             for (ResourceDefinitionChild child : rd.getChildren()) {
@@ -181,7 +183,7 @@ public abstract class AbstractMetadataService implements MetadataService {
             // select parent based on URI prefix
             for (ResourceDefinition rdParent : rdParents) {
                 final IRI parentUri = getParent(metadata);
-                final Model parentMetadata = retrieve(parentUri);
+                final Model parentMetadata = read(parentUri);
                 for (ResourceDefinitionChild rdChild : rdParent.getChildren()) {
                     if (rdChild.getResourceDefinitionUuid().equals(rd.getUuid())) {
                         parentMetadata.remove(null, i(rdChild.getRelationUri()), uri);
@@ -221,7 +223,7 @@ public abstract class AbstractMetadataService implements MetadataService {
                 catch (RdfRepositoryException exception) {
                     throw new MetadataServiceException("Problem with updating parent timestamp");
                 }
-                final Model parentMetadata = retrieve(parent);
+                final Model parentMetadata = read(parent);
                 updateParent(parentMetadata, parent, rdParent);
             }
         }

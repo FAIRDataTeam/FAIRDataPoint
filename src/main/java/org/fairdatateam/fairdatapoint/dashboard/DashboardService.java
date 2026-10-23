@@ -69,7 +69,7 @@ public class DashboardService {
 
     public List<DashboardItemDTO> getDashboard(IRI repositoryUri) throws MetadataServiceException {
         final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix("");
-        final Model repository = metadataService.retrieve(repositoryUri);
+        final Model repository = metadataService.read(repositoryUri);
         return getDashboardItem(repositoryUri, repository, resourceDefinition).getChildren();
     }
 
@@ -83,7 +83,7 @@ public class DashboardService {
                 final IRI childIri = i(childUri.stringValue());
                 final DashboardItemDTO child = getDashboardItem(
                         childIri,
-                        metadataService.retrieve(childIri),
+                        metadataService.read(childIri),
                         resourceDefinitionCache.getByUuid(rdChild.getResourceDefinitionUuid())
                 );
                 children.add(child);

@@ -79,7 +79,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
-                () -> genericMetadataService.retrieve(metadataUri)
+                () -> genericMetadataService.read(metadataUri)
         );
 
         // THEN:
@@ -93,10 +93,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(metadataFromDB);
     }
 
@@ -110,7 +110,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> genericMetadataService.store(metadata, getUri(metadata), metadataRd)
+                () -> genericMetadataService.create(metadata, getUri(metadata), metadataRd)
         );
 
         // THEN:
@@ -128,7 +128,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> genericMetadataService.store(metadata, getUri(metadata), metadataRd)
+                () -> genericMetadataService.create(metadata, getUri(metadata), metadataRd)
         );
 
         // THEN:
@@ -143,10 +143,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         setMetadataIdentifier(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getMetadataIdentifier(metadataFromDB));
     }
 
@@ -158,10 +158,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         setLicence(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getLicence(metadataFromDB));
     }
 
@@ -173,10 +173,10 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         setLanguage(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getLanguage(metadataFromDB));
     }
 
@@ -190,13 +190,13 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         Model distribution = testMetadataFixtures.c1_d1_distribution1();
 
         // WHEN:
-        genericMetadataService.store(distribution, getUri(distribution), metadataRd);
+        genericMetadataService.create(distribution, getUri(distribution), metadataRd);
 
         // THEN:
-        Model updatedRepository = genericMetadataService.retrieve(getUri(repository));
-        Model updatedCatalog = catalogMetadataService.retrieve(getUri(catalog));
-        Model updatedDataset = genericMetadataService.retrieve(getUri(dataset));
-        Model storedDistribution = genericMetadataService.retrieve(getUri(distribution));
+        Model updatedRepository = genericMetadataService.read(getUri(repository));
+        Model updatedCatalog = catalogMetadataService.read(getUri(catalog));
+        Model updatedDataset = genericMetadataService.read(getUri(dataset));
+        Model storedDistribution = genericMetadataService.read(getUri(distribution));
         OffsetDateTime repositoryModified = getModified(updatedRepository);
         OffsetDateTime catalogModified = getModified(updatedCatalog);
         OffsetDateTime datasetModified = getModified(updatedDataset);
