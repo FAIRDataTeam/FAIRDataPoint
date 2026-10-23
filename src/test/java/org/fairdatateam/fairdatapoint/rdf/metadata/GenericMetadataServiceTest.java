@@ -53,11 +53,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
 
     @Autowired
     @Qualifier("genericMetadataService")
-    private MetadataService genericMetadataService;
-
-    @Autowired
-    @Qualifier("catalogMetadataService")
-    private MetadataService catalogMetadataService;
+    private GenericMetadataService genericMetadataService;
 
     @Autowired
     private AuthHelper authHelper;
@@ -194,7 +190,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
 
         // THEN:
         Model updatedRepository = genericMetadataService.read(getUri(repository));
-        Model updatedCatalog = catalogMetadataService.read(getUri(catalog));
+        Model updatedCatalog = genericMetadataService.read(getUri(catalog));
         Model updatedDataset = genericMetadataService.read(getUri(dataset));
         Model storedDistribution = genericMetadataService.read(getUri(distribution));
         OffsetDateTime repositoryModified = getModified(updatedRepository);

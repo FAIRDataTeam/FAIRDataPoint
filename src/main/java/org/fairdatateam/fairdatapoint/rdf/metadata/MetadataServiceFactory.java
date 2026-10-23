@@ -30,21 +30,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MetadataServiceFactory {
 
-    @Qualifier("catalogMetadataService")
-    private final MetadataService catalogMetadataService;
-
     @Qualifier("genericMetadataService")
     private final MetadataService genericMetadataService;
 
     /**
-     * Returns a <code>CatalogMetadataService</code> if the URL represents a catalog.
-     * Otherwise returns a <code>GenericMetadataService</code> which handles all other resource types.
-     * The catalog is treated separately because it is annotated with a summary of the themes from all its members.
+     * todo: this class is now redundant, so remove it
      */
     public MetadataService getMetadataServiceByUrlPrefix(String urlPrefix) {
-        if ("catalog".equals(urlPrefix)) {
-            return catalogMetadataService;
-        }
         return genericMetadataService;
     }
 

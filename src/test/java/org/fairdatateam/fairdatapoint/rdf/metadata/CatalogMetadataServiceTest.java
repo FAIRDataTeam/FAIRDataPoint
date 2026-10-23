@@ -56,16 +56,17 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
     private MetadataRdfRepository metadataRdfRepository;
 
     @InjectMocks
-    private CatalogMetadataService catalogMetadataService;
+    private GenericMetadataService genericMetadataService;
 
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 
+    // TODO: move this test to the GenericControllerTest class (or perhaps we should even put the whole functionality in a speara)
     @Test
-    public void retrieveAddsThemes() throws Exception {
-        // GIVEN: Retrieve catalog from Repository
+    public void readAddsThemes() throws Exception {
+        // GIVEN: read catalog from Repository
         Model catalog = testMetadataFixtures.catalog1();
         final IRI catalogUri = getUri(catalog);
 
@@ -79,7 +80,8 @@ public class CatalogMetadataServiceTest extends BaseIntegrationTest {
         when(metadataRdfRepository.getDatasetThemesForCatalog(catalogUri)).thenReturn(themes);
 
         // WHEN:
-        Model catalogMetadata = catalogMetadataService.read(getUri(catalog));
+        // todo: this is now expected to fail, because the themes are now added on the controller
+        Model catalogMetadata = genericMetadataService.read(getUri(catalog));
 
         // THEN:
         List<IRI> themeTaxonomies = getThemeTaxonomies(catalogMetadata);
