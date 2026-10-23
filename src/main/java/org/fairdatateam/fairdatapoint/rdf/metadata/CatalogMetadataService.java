@@ -40,6 +40,7 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThem
  * based on the <code>dcat:theme</code> statements for the datasets in this catalog.
  * Removes all theme taxonomy statements from the in-memory graph before create or update operations,
  * to make sure they do not end up in the triple store.
+ * However, these statements do still end up in any harvester's triple store, as explained in #1037.
  */
 @Service("catalogMetadataService")
 @Slf4j
