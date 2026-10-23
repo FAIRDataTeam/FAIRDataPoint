@@ -344,7 +344,6 @@ public class GenericController {
 
                 // Add the RDF statements for each of the selected child resources to the result graph
                 for (IRI childUri : selectedChildUris) {
-                    // see AbstractMetadataService.retrieve
                     final Model childMetadata = metadataService.read(childUri);
                     // annotate child metadata with themes (todo: #1033)
                     final List<IRI> themes = metadataRdfRepository.getDatasetThemesForCatalog(childUri);
