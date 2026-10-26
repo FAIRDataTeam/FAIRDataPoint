@@ -36,6 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
@@ -201,6 +204,28 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
                 "modified");
         assertFalse(catalogModified.isBefore(distributionModified), "Catalog modified is not after Dataset modified");
         assertFalse(repositoryModified.isBefore(distributionModified), "FDP modified is not after Dataset modified");
+    }
+
+    @Test
+    public void annotateWithDatasetThemes() throws Exception {
+        // GIVEN: catalog test fixture
+        Model catalog = testMetadataFixtures.catalog1();
+
+        // AND: dataset test fixtures are loaded, so we can expect the following themes
+        Set<IRI> expectedThemes = Set.of(
+                i("https://www.wikidata.org/wiki/Q27318"),
+                i("https://www.wikidata.org/wiki/Q27319"),
+                i("https://purl.org/example#theme")
+        );
+
+        // WHEN: update the catalog model with dataset themes
+        genericMetadataService.annotateWithDatasetThemes(catalog, getUri(catalog));
+
+        // THEN:
+        // todo: #1033
+        List<IRI> themeTaxonomies = getThemeTaxonomies(catalog);
+        assertThat(themeTaxonomies.size(), is(equalTo(expectedThemes.size())));
+        assertThat(new HashSet<>(themeTaxonomies), is(equalTo(expectedThemes)));
     }
 
 }
