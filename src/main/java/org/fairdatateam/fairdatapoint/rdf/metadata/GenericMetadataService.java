@@ -53,6 +53,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ThrowingFunction.suppre
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getChildren;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getParent;
+import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
 @Service
 @RequiredArgsConstructor
@@ -197,6 +198,17 @@ public class GenericMetadataService implements MetadataService {
         catch (RdfRepositoryException | MetadataServiceException exception) {
             throw new MetadataServiceException(exception.getMessage());
         }
+    }
+
+    /**
+     * Updates the specified resource metadata with themes obtained from any datasets it contains.
+     */
+    public void annotateWithDatasetThemes(Model resourceMetadata, IRI resourceUri) throws RdfRepositoryException {
+        // No need to check if the resourceUri actually represents a dcat:Catalog, because the underlying SPARQL query
+        // simply returns empty if it does not (assuming the RDF properly observes the domain of dcat:dataset).
+        final List<IRI> themes = metadataRdfRepository.getDatasetThemesForCatalog(resourceUri);
+        // todo: themes instead of themeTaxonomies (#1033)
+        setThemeTaxonomies(resourceMetadata, resourceUri, themes);
     }
 
     protected void updateParent(

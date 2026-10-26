@@ -57,7 +57,6 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.changeBaseUri;
 import static org.fairdatateam.fairdatapoint.rdf.RdfIOUtil.read;
 import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.*;
-import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.setThemeTaxonomies;
 
 /**
  * This is the main controller that handles RDF metadata resources
@@ -346,8 +345,7 @@ public class GenericController {
                 for (IRI childUri : selectedChildUris) {
                     final Model childMetadata = metadataService.read(childUri);
                     // annotate child metadata with themes (todo: #1033)
-                    final List<IRI> themes = metadataRdfRepository.getDatasetThemesForCatalog(childUri);
-                    setThemeTaxonomies(childMetadata, childUri, themes);
+                    metadataService.annotateWithDatasetThemes(childMetadata, childUri);
                     // add child metadata to graph
                     resultRdf.addAll(childMetadata);
                 }
