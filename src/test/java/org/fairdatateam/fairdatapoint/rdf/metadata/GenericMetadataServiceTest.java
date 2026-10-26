@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 import static java.lang.String.format;
+import static org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures.*;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.*;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
@@ -211,12 +212,9 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // GIVEN: catalog test fixture
         Model catalog = testMetadataFixtures.catalog1();
 
-        // AND: dataset test fixtures are loaded, so we can expect the following themes
-        Set<IRI> expectedThemes = Set.of(
-                i("https://www.wikidata.org/wiki/Q27318"),
-                i("https://www.wikidata.org/wiki/Q27319"),
-                i("https://purl.org/example#theme")
-        );
+        // AND: rdf metadata fixtures are loaded by the RdfDevelopmentMigrationRunner (non-production profile),
+        // so we expect catalog1 to contain the themes from dataset1 and dataset2
+        Set<IRI> expectedThemes = Set.of(i(THEME_ATEAM), i(THEME_EXAMPLE), i(THEME_TEST));
 
         // WHEN: update the catalog model with dataset themes
         genericMetadataService.annotateWithDatasetThemes(catalog, getUri(catalog));
