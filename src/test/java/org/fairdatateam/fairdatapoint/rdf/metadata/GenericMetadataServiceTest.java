@@ -86,7 +86,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWorks() throws Exception {
+    public void createWorks() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
@@ -100,7 +100,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithNoParentURIThrowsError() {
+    public void createWithNoParentURIThrowsError() {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
@@ -117,7 +117,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithWrongParentURIThrowsError() {
+    public void createWithWrongParentURIThrowsError() {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model repository = testMetadataFixtures.fdpMetadata();
@@ -135,7 +135,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithNoMetadataIdentifier() throws Exception {
+    public void createWithNoMetadataIdentifier() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
@@ -150,7 +150,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithNoLicense() throws Exception {
+    public void createWithNoLicense() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
@@ -165,7 +165,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithNoLanguage() throws Exception {
+    public void createWithNoLanguage() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
@@ -195,11 +195,11 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         Model updatedRepository = genericMetadataService.read(getUri(repository));
         Model updatedCatalog = genericMetadataService.read(getUri(catalog));
         Model updatedDataset = genericMetadataService.read(getUri(dataset));
-        Model storedDistribution = genericMetadataService.read(getUri(distribution));
+        Model createdDistribution = genericMetadataService.read(getUri(distribution));
         OffsetDateTime repositoryModified = getModified(updatedRepository);
         OffsetDateTime catalogModified = getModified(updatedCatalog);
         OffsetDateTime datasetModified = getModified(updatedDataset);
-        OffsetDateTime distributionModified = getModified(storedDistribution);
+        OffsetDateTime distributionModified = getModified(createdDistribution);
         assertFalse(datasetModified.isBefore(distributionModified), "Dataset modified is not after Distribution " +
                 "modified");
         assertFalse(catalogModified.isBefore(distributionModified), "Catalog modified is not after Dataset modified");
