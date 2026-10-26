@@ -369,6 +369,7 @@ public class GenericController {
     /**
      * Returns a list of child resource URIs (IRIs) sorted by title
      */
+    // todo: move to GenericMetadataService (so the controller doesn't need direct access to the metadataRdfRepository)
     List<IRI> getChildResourceUris(
             String childPrefix, IRI entityUri, IRI relationUri
     ) throws RdfRepositoryException, MetadataServiceException {
