@@ -25,6 +25,8 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
@@ -204,11 +206,15 @@ public class GenericMetadataService implements MetadataService {
      * Updates the specified resource metadata with themes obtained from any datasets it contains.
      */
     public void annotateWithDatasetThemes(Model resourceMetadata, IRI resourceUri) throws RdfRepositoryException {
-        // No need to check if the resourceUri actually represents a dcat:Catalog, because the underlying SPARQL query
-        // simply returns empty if it does not (assuming the RDF properly observes the domain of dcat:dataset).
-        final List<IRI> themes = metadataRdfRepository.getDatasetThemesForCatalog(resourceUri);
-        // todo: themes instead of themeTaxonomies (#1033)
-        setThemeTaxonomies(resourceMetadata, resourceUri, themes);
+        // Strictly speaking there is no need to check if the resourceUri actually represents a dcat:Catalog,
+        // because the underlying SPARQL query simply returns empty if it does not (assuming the RDF properly observes
+        // the domain of dcat:dataset). Nevertheless, we do check if it is a catalog, to limit the number of SPARQL
+        // queries and the number of corresponding cache keys.
+        if (resourceMetadata.contains(resourceUri, RDF.TYPE, DCAT.CATALOG)) {
+            final List<IRI> themes = metadataRdfRepository.getDatasetThemesForCatalog(resourceUri);
+            // todo: themes instead of themeTaxonomies (#1033)
+            setThemeTaxonomies(resourceMetadata, resourceUri, themes);
+        }
     }
 
     protected void updateParent(
