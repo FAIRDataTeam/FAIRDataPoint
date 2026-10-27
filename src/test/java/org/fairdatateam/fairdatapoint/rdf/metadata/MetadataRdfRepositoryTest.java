@@ -25,7 +25,6 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
-import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
@@ -36,9 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getLanguage;
@@ -52,6 +49,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
 public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
+
+    private final static int EXPECTED_CATALOG_TRIPLE_COUNT = 30;
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
@@ -146,15 +145,28 @@ public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
 
     @Test
     public void findWorks() throws Exception {
-        // GIVEN:
-        Model metadata = testMetadataFixtures.catalog1();
-        IRI context = getUri(testMetadataFixtures.catalog1());
+        // GIVEN: catalog fixture
+        // Note that this fixture does not include dcat:dataset statements, because these are only added when
+        // GenericMetadataService.create() calls updateParent().
+        Model catalog1 = testMetadataFixtures.catalog1();
+        Set<String> expectedTriples = tripleSet(catalog1);
 
-        // WHEN:
-        List<Statement> result = metadataRdfRepository.find(context);
+        // AND: expected size based on catalog fixture
+        assertThat(expectedTriples.size(), is(equalTo(EXPECTED_CATALOG_TRIPLE_COUNT)));
+
+        // WHEN: get the stored catalog fixture (created by the RdfDevelopmentMigrationRunner)
+        // Note that the stored fixture *does* include dcat:dataset statements *and* has different timestamp values.
+        Set<String> resultTriples = tripleSet(metadataRdfRepository.find(getUri(catalog1)));
 
         // THEN:
-        assertThat(result.size(), is(equalTo(metadata.size())));
+        // ignore statements with timestamps...
+        Set<String> expectedTriplesWithoutTimestamps = new HashSet<>(expectedTriples);
+        expectedTriples.forEach(triple -> {
+            if (triple.contains("#dateTime")) {
+                expectedTriplesWithoutTimestamps.remove(triple);
+            }
+        });
+        assertThat(resultTriples.containsAll(expectedTriplesWithoutTimestamps), is(true));
     }
 
     @Test
@@ -237,6 +249,16 @@ public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
 
         // THEN:
         assertThat(metadataRdfRepository.find(context).size(), is(equalTo(metadata.size() - 1)));
+    }
+
+    /** Returns a set of strings representing rdf triples (subject, predicate, object) */
+    private Set<String> tripleSet(Collection<Statement> statements) {
+        Set<String> tripleStrings = new HashSet<>();
+        for (Statement statement : statements) {
+            tripleStrings.add(
+                    "%s,%s,%s".formatted(statement.getSubject(), statement.getPredicate(), statement.getObject()));
+        }
+        return tripleStrings;
     }
 
 }
