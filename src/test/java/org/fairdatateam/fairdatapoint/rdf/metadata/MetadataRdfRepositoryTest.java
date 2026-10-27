@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.util.Statements;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
@@ -252,14 +253,13 @@ public class MetadataRdfRepositoryTest extends WebIntegrationTest {
     }
 
     /**
-     * Returns a set of strings representing rdf triples (subject, predicate, object).
+     * Returns a set of strings representing rdf triples (subject, predicate, object), ignoring the context.
      * This is convenient for comparing graph contents.
      */
     private Set<String> tripleSet(Collection<Statement> statements) {
         Set<String> tripleStrings = new HashSet<>();
         for (Statement statement : statements) {
-            tripleStrings.add(
-                    "%s,%s,%s".formatted(statement.getSubject(), statement.getPredicate(), statement.getObject()));
+            tripleStrings.add(Statements.stripContext(statement).toString());
         }
         return tripleStrings;
     }
