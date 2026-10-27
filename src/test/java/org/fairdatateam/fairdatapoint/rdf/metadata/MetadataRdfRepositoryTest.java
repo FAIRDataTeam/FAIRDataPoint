@@ -24,7 +24,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
-import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
+import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
@@ -48,7 +48,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
+public class MetadataRdfRepositoryTest extends WebIntegrationTest {
 
     // The catalog1 fixture is amended with two dcat:dataset statements before it is persisted
     private final static int EXPECTED_CATALOG1_SIZE_TRANSIENT = 30;
