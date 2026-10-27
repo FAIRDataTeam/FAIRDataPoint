@@ -50,7 +50,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 
 public class MetadataRdfRepositoryTest extends WebIntegrationTest {
 
-    // The catalog1 fixture is amended with two dcat:dataset statements before it is persisted
+    // The catalog1 fixture is amended with two dcat:dataset statements before it is persisted (also see comments #1050)
     private final static int EXPECTED_CATALOG1_SIZE_TRANSIENT = 30;
     private final static int EXPECTED_CATALOG1_SIZE_PERSISTENT = 32;
 
