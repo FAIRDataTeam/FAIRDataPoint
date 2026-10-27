@@ -145,11 +145,14 @@ public class MetadataRdfRepository implements RdfRepository {
     }
 
     /**
-     * Returns a list of dcat:theme URIs representing the aggregated themes from all datasets in the catalog
+     * Returns a list of <code>dcat:theme</code> URIs representing the aggregated themes from all datasets in the
+     * specified catalog. If called with a <code>uri</code> that does not represent a <code>dcat:Catalog</code>,
+     * this will simply return an empty list, because the themes are obtained via a SPARQL query that
+     * looks for <code>dcat:dataset</code>. Of course this does assume that the domain <code>dcat:Catalog</code> is
+     * strictly observed.
      */
     @Cacheable(cacheNames = CATALOG_THEMES_CACHE)
     public List<IRI> getDatasetThemesForCatalog(IRI uri) throws RdfRepositoryException {
-        // todo: this assumes the uri represents a dcat:Catalog, but we should probably check that
         return runSparqlQueryFromFile(GET_DATASET_THEMES_FOR_CATALOG, Map.of("catalog", uri))
                 .stream()
                 .map(item -> i(item.getValue("theme").stringValue()))
