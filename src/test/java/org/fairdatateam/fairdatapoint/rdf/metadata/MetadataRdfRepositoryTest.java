@@ -50,7 +50,9 @@ import static org.hamcrest.core.IsNull.nullValue;
 
 public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
 
-    private final static int EXPECTED_CATALOG_TRIPLE_COUNT = 30;
+    // The catalog1 fixture is amended with two dcat:dataset statements before it is persisted
+    private final static int EXPECTED_CATALOG1_SIZE_TRANSIENT = 30;
+    private final static int EXPECTED_CATALOG1_SIZE_PERSISTENT = 32;
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
@@ -151,8 +153,8 @@ public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
         Model catalog1 = testMetadataFixtures.catalog1();
         Set<String> expectedTriples = tripleSet(catalog1);
 
-        // AND: verify expected size based on catalog fixture
-        assertThat(expectedTriples.size(), is(equalTo(EXPECTED_CATALOG_TRIPLE_COUNT)));
+        // AND: verify expected size based on catalog1 fixture
+        assertThat(expectedTriples.size(), is(equalTo(EXPECTED_CATALOG1_SIZE_TRANSIENT)));
 
         // WHEN: get the stored catalog fixture (created by the RdfDevelopmentMigrationRunner)
         // Note that the stored fixture *does* include dcat:dataset statements *and* has different timestamp values.
@@ -224,7 +226,7 @@ public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(EXPECTED_CATALOG1_SIZE_PERSISTENT)));
 
         // WHEN:
         metadataRdfRepository.remove(context);
@@ -240,16 +242,19 @@ public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(EXPECTED_CATALOG1_SIZE_PERSISTENT)));
 
         // WHEN:
         metadataRdfRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
 
         // THEN:
-        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(metadata.size() - 1)));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(EXPECTED_CATALOG1_SIZE_PERSISTENT - 1)));
     }
 
-    /** Returns a set of strings representing rdf triples (subject, predicate, object) */
+    /**
+     * Returns a set of strings representing rdf triples (subject, predicate, object).
+     * This is convenient for comparing graph contents.
+     */
     private Set<String> tripleSet(Collection<Statement> statements) {
         Set<String> tripleStrings = new HashSet<>();
         for (Statement statement : statements) {
