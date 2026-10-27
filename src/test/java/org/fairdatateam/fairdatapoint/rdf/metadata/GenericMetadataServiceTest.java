@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -208,7 +210,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void annotateWithDatasetThemes() throws Exception {
+    public void annotateWithDatasetThemesWorks() throws Exception {
         // GIVEN: catalog test fixture
         Model catalog = testMetadataFixtures.catalog1();
 
@@ -224,6 +226,23 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         List<IRI> themeTaxonomies = getThemeTaxonomies(catalog);
         assertThat(themeTaxonomies.size(), is(equalTo(expectedThemes.size())));
         assertThat(new HashSet<>(themeTaxonomies), is(equalTo(expectedThemes)));
+    }
+
+    @Test
+    public void readDoesNotAnnotateWithDatasetThemes() throws MetadataServiceException {
+        // GIVEN: a catalog fixture URI
+        final IRI catalog1Uri = getUri(testMetadataFixtures.catalog1());
+
+        // WHEN: we read the catalog fixture
+        final Model catalog1 = genericMetadataService.read(catalog1Uri);
+
+        // THEN: The catalog1 fixture has two themeTaxonomy statements itself, viz. THEME_THEATRE and THEME_EXAMPLE,
+        // so we do expect to see those, but we do not expect to see the theme taxonomies from the corresponding
+        // dataset fixtures, viz. THEME_ATEAM, THEME_TEST.
+        final Map<String, Boolean> expectations = Map.of(
+                THEME_THEATRE, true, THEME_EXAMPLE, true, THEME_ATEAM, false, THEME_TEST, false);
+        expectations.forEach((theme, expected) -> assertThat(
+                catalog1.contains(null, DCAT.THEME_TAXONOMY, i(theme)), is(expected)));
     }
 
 }
