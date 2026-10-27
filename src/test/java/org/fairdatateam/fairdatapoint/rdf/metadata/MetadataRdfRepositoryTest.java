@@ -151,7 +151,7 @@ public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
         Model catalog1 = testMetadataFixtures.catalog1();
         Set<String> expectedTriples = tripleSet(catalog1);
 
-        // AND: expected size based on catalog fixture
+        // AND: verify expected size based on catalog fixture
         assertThat(expectedTriples.size(), is(equalTo(EXPECTED_CATALOG_TRIPLE_COUNT)));
 
         // WHEN: get the stored catalog fixture (created by the RdfDevelopmentMigrationRunner)
@@ -159,14 +159,12 @@ public class MetadataRdfRepositoryTest extends BaseIntegrationTest {
         Set<String> resultTriples = tripleSet(metadataRdfRepository.find(getUri(catalog1)));
 
         // THEN:
-        // ignore statements with timestamps...
-        Set<String> expectedTriplesWithoutTimestamps = new HashSet<>(expectedTriples);
-        expectedTriples.forEach(triple -> {
-            if (triple.contains("#dateTime")) {
-                expectedTriplesWithoutTimestamps.remove(triple);
+        for (String expectedTriple : expectedTriples) {
+            // ignore timestamps because these are expected to be different due to the way "fixtures" are implemented
+            if (!expectedTriple.contains("#dateTime")) {
+                assertThat(resultTriples.contains(expectedTriple), is(true));
             }
-        });
-        assertThat(resultTriples.containsAll(expectedTriplesWithoutTimestamps), is(true));
+        }
     }
 
     @Test
