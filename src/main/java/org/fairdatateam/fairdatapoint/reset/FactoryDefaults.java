@@ -59,8 +59,8 @@ public class FactoryDefaults {
             "$2a$10$t2foZfp7cZFQo2u/33ZqTu2WNitBqYd2EY2tQO0/rBUdf8QfsAxyW";
     public static final String FDP_DESCRIPTION = """
             The FAIR Data Point (FDP) is a tool for publishing metadata about digital resources on the semantic web,
-             following the FAIR principles. The metadata are published in the form of Resource Description Framework
-             (RDF) triples, using the Data Catalog Vocabulary (DCAT).""";
+            following the FAIR principles. The metadata are published in the form of Resource Description Framework
+            (RDF) triples, using the Data Catalog Vocabulary (DCAT).""";
     public static final String FIELD_SID = "sid";
     public static final String FIELD_PERM = "permission";
     public static final String FIELD_GRANT = "granting";
