@@ -43,6 +43,7 @@ public class SettingsPingDTO {
     @NotNull
     private List<String> endpointsFromConfig;
 
+    @Deprecated(since = "1.20.3", forRemoval = true)
     @NotNull
     private String interval;
 }
