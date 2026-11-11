@@ -65,11 +65,8 @@ public class PingService {
         this.settingsService = settingsService;
     }
 
-    // The scheduled ping and related properties are deprecated for removal, but a single ping will be sent at startup.
-    @Deprecated(since = "1.23.0", forRemoval = true)
-    @Scheduled(
-            initialDelayString = "${ping.initDelay:#{10*1000}}"
-    )
+    // from the @Scheduled docs: "For a one-time task, it is sufficient to just specify an initialDelay."
+    @Scheduled(initialDelayString = "${ping.initialDelay}")
     public void ping() {
         final Settings settings = settingsService.getOrDefaults();
         if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {

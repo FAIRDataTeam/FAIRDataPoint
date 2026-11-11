@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Duration;
 import java.util.List;
 
 @NoArgsConstructor
@@ -37,6 +38,6 @@ import java.util.List;
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
     private boolean enabled = true;
-    private String initDelay = "10000";
+    private Duration initialDelay = Duration.ofSeconds(10);
     private List<String> endpoints = List.of("https://home.fairdatapoint.org");
 }
