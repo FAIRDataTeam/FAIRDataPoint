@@ -89,7 +89,7 @@ public class PingServiceTest {
                 .andRespond(withSuccess());
 
         // Execute ping
-        pingService.ping();
+        pingService.schedulePings();
 
         // Check mock server expectations
         mockRemoteServer.verify();

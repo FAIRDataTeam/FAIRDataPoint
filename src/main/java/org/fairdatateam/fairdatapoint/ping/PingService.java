@@ -74,7 +74,7 @@ public class PingService {
     @Scheduled(
             initialDelayString = "#{@'ping-org.fairdatateam.fairdatapoint.ping.PingProperties'.initialDelay.toString()}"
     )
-    public void ping() {
+    public void schedulePings() {
         final Settings settings = settingsService.getOrDefaults();
         if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
             return;
@@ -84,7 +84,7 @@ public class PingService {
                 settings.getPing().getEndpoints().stream()
         ).distinct().toList();
         for (String endpoint : endpoints) {
-            pingEndpoint(
+            executePing(
                     endpoint.trim(),
                     Map.of("clientUrl", instanceProperties.getClientUrl())
             );
@@ -95,7 +95,7 @@ public class PingService {
      * POSTs the <code>pingContent</code> as JSON to the specified FDP-index endpoint
      */
     @Async
-    void pingEndpoint(String endpoint, Map<String, String> pingContent) {
+    void executePing(String endpoint, Map<String, String> pingContent) {
         try {
             log.info("Pinging {}", endpoint);
             restClient.post()
