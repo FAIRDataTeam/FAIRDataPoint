@@ -71,7 +71,9 @@ public class PingService {
     // From the @Scheduled docs: "For a one-time task, it is sufficient to just specify an initialDelay."
     // Note: Spring docs do not clearly state when the initialDelay really starts counting. If necessary,
     // we could switch to a manual TaskScheduler.schedule() call triggered by ApplicationReadyEvent.
-    @Scheduled(initialDelayString = "${ping.initialDelay}")
+    @Scheduled(
+            initialDelayString = "#{@'ping-org.fairdatateam.fairdatapoint.ping.PingProperties'.initialDelay.toString()}"
+    )
     public void ping() {
         final Settings settings = settingsService.getOrDefaults();
         if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
