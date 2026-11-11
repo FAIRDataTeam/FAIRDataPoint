@@ -35,6 +35,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+// beware: binding config properties is a one-way thing, so the defaults below only apply if the property is not set
+// in application.yaml or environment variable
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
     private static final int DEFAULT_INITIAL_DELAY_SECONDS = 10;
