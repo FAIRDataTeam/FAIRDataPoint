@@ -65,6 +65,9 @@ public class PingService {
         this.settingsService = settingsService;
     }
 
+    /**
+     * Schedules a single ping for registration with the FDP index(es) specified in the <code>endpoints</code> property
+     */
     // from the @Scheduled docs: "For a one-time task, it is sufficient to just specify an initialDelay."
     @Scheduled(initialDelayString = "${ping.initialDelay}")
     public void ping() {
@@ -84,6 +87,9 @@ public class PingService {
         }
     }
 
+    /**
+     * POSTs the <code>pingContent</code> as JSON to the specified FDP-index endpoint
+     */
     @Async
     void pingEndpoint(String endpoint, Map<String, String> pingContent) {
         try {
