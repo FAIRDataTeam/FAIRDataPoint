@@ -27,12 +27,15 @@ import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -50,6 +53,8 @@ public class PingService {
 
     private final SettingsService settingsService;
 
+    private final ThreadPoolTaskScheduler scheduler;
+
     /**
      * Constructor (autowired)
      */
@@ -57,36 +62,35 @@ public class PingService {
             InstanceProperties instanceProperties,
             PingProperties pingProperties,
             RestClient.Builder restClientBuilder,
-            SettingsService settingsService
+            SettingsService settingsService,
+            ThreadPoolTaskScheduler scheduler
     ) {
         this.restClient = restClientBuilder.build();
         this.instanceProperties = instanceProperties;
         this.pingProperties = pingProperties;
         this.settingsService = settingsService;
+        this.scheduler = scheduler;
     }
 
     /**
-     * Schedules a single ping for registration with the FDP index(es) specified in the <code>endpoints</code> property
+     * Schedules a single registration ping for each FDP index specified in the <code>endpoints</code> property,
+     * as soon as the application is ready.
      */
-    // From the @Scheduled docs: "For a one-time task, it is sufficient to just specify an initialDelay."
-    // Note: Spring docs do not clearly state when the initialDelay really starts counting. If necessary,
-    // we could switch to a manual TaskScheduler.schedule() call triggered by ApplicationReadyEvent.
-    @Scheduled(
-            initialDelayString = "#{@'ping-org.fairdatateam.fairdatapoint.ping.PingProperties'.initialDelay.toString()}"
-    )
+    @EventListener(ApplicationReadyEvent.class)
     public void schedulePings() {
         final Settings settings = settingsService.getOrDefaults();
         if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
             return;
         }
-        final List<String> endpoints = Stream.concat(
+        final List<String> indexUrls = Stream.concat(
                 pingProperties.getEndpoints().stream(),
                 settings.getPing().getEndpoints().stream()
-        ).distinct().toList();
-        for (String endpoint : endpoints) {
-            executePing(
-                    endpoint.trim(),
-                    Map.of("clientUrl", instanceProperties.getClientUrl())
+        ).map(String::trim).distinct().toList();
+        for (String indexUrl : indexUrls) {
+            final Instant startTime = Instant.now().plus(pingProperties.getInitialDelay());
+            scheduler.schedule(
+                    () -> executePing(indexUrl, Map.of("clientUrl", instanceProperties.getClientUrl())),
+                    startTime
             );
         }
     }
