@@ -68,7 +68,9 @@ public class PingService {
     /**
      * Schedules a single ping for registration with the FDP index(es) specified in the <code>endpoints</code> property
      */
-    // from the @Scheduled docs: "For a one-time task, it is sufficient to just specify an initialDelay."
+    // From the @Scheduled docs: "For a one-time task, it is sufficient to just specify an initialDelay."
+    // Note: Spring docs do not clearly state when the initialDelay really starts counting. If necessary,
+    // we could switch to a manual TaskScheduler.schedule() call triggered by ApplicationReadyEvent.
     @Scheduled(initialDelayString = "${ping.initialDelay}")
     public void ping() {
         final Settings settings = settingsService.getOrDefaults();
