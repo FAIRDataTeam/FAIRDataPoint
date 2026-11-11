@@ -37,7 +37,8 @@ import java.util.List;
 @Setter
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
+    private static final int DEFAULT_INITIAL_DELAY_SECONDS = 10;
     private boolean enabled = true;
-    private Duration initialDelay = Duration.ofSeconds(10);
+    private Duration initialDelay = Duration.ofSeconds(DEFAULT_INITIAL_DELAY_SECONDS);
     private List<String> endpoints = List.of("https://home.fairdatapoint.org");
 }
