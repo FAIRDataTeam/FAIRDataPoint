@@ -77,7 +77,7 @@ public class PingService {
      * as soon as the application is ready.
      */
     @EventListener(ApplicationReadyEvent.class)
-    public void schedulePings() {
+    void schedulePings() {
         final Settings settings = settingsService.getOrDefaults();
         // handle possibly missing settings
         final boolean settingsPingEnabled = settings != null
