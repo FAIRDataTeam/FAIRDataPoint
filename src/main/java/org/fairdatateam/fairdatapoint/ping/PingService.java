@@ -102,6 +102,7 @@ public class PingService {
     void executePing(String endpoint, Map<String, String> pingContent) {
         try {
             log.info("Pinging {}", endpoint);
+            // blocking request, raises HttpClientErrorException for 4xx or HttpServerErrorException for 5xx response
             restClient.post()
                     .uri(endpoint)
                     .contentType(MediaType.APPLICATION_JSON)
