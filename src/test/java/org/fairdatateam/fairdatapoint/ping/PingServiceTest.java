@@ -57,7 +57,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @ContextConfiguration(classes = PingService.class)
 public class PingServiceTest {
 
-    private static final String MOCK_ENDPOINT = "https://fdp-index.example.org";
+    private static final String MOCK_INDEX_URL = "https://fdp-index.example.org";
 
     private static final String MOCK_CLIENT_URL = "https://fdp.example.org";
 
@@ -85,7 +85,7 @@ public class PingServiceTest {
     public void setup() {
         // mock config properties
         when(pingProperties.isEnabled()).thenReturn(true);
-        when(pingProperties.getEndpoints()).thenReturn(List.of(MOCK_ENDPOINT));
+        when(pingProperties.getEndpoints()).thenReturn(List.of(MOCK_INDEX_URL));
         when(pingProperties.getInitialDelay()).thenReturn(Duration.ZERO);
         when(instanceProperties.getClientUrl()).thenReturn(MOCK_CLIENT_URL);
         // mock settings
@@ -108,7 +108,7 @@ public class PingServiceTest {
     public void pingIsPosted() throws JsonProcessingException {
         // Configure mock server
         mockRemoteServer
-                .expect(requestTo(MOCK_ENDPOINT))
+                .expect(requestTo(MOCK_INDEX_URL))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(jsonMapper.writeValueAsString(Map.of("clientUrl", MOCK_CLIENT_URL))))
