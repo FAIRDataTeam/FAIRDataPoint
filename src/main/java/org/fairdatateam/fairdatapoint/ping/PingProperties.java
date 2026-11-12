@@ -35,14 +35,19 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-// beware: binding config properties is a one-way thing, so the defaults below only apply if the property is not set
-// in application.yaml or environment variable
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
+    // defaults
+    // beware: @ConfigurationProperties binding is a one-way thing, so these defaults only apply if the property is not
+    // defined externally, e.g. in application.yaml or in an environment variable
     private static final int DEFAULT_DELAY_SECONDS = 10;
+    private static final boolean DEFAULT_ENABLED = true;
+    private static final String DEFAULT_INDEX_URL = "https://home.fairdatapoint.org";
     private static final int DEFAULT_MAX_ATTEMPTS = 5;
-    private boolean enabled = true;
+
+    // config properties
+    private boolean enabled = DEFAULT_ENABLED;
     private Duration delay = Duration.ofSeconds(DEFAULT_DELAY_SECONDS);
     private int maxAttempts = DEFAULT_MAX_ATTEMPTS;
-    private List<String> endpoints = List.of("https://home.fairdatapoint.org");
+    private List<String> endpoints = List.of(DEFAULT_INDEX_URL);
 }
