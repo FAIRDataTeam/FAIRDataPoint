@@ -88,10 +88,7 @@ public class PingService {
         ).map(String::trim).distinct().toList();
         for (String indexUrl : indexUrls) {
             final Instant startTime = Instant.now().plus(pingProperties.getInitialDelay());
-            scheduler.schedule(
-                    () -> executePing(indexUrl, Map.of("clientUrl", instanceProperties.getClientUrl())),
-                    startTime
-            );
+            scheduler.schedule(() -> executePing(indexUrl), startTime);
         }
     }
 
@@ -99,14 +96,14 @@ public class PingService {
      * POSTs the <code>pingContent</code> as JSON to the specified FDP-index endpoint
      */
     @Async
-    void executePing(String endpoint, Map<String, String> pingContent) {
+    void executePing(String endpoint) {
         try {
             log.info("Pinging {}", endpoint);
             // blocking request, raises HttpClientErrorException for 4xx or HttpServerErrorException for 5xx response
             restClient.post()
                     .uri(endpoint)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(pingContent)
+                    .body(Map.of("clientUrl", instanceProperties.getClientUrl()))
                     .retrieve()
                     .toEntity(String.class);
         }
