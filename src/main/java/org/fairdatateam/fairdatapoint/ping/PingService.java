@@ -79,9 +79,16 @@ public class PingService {
     @EventListener(ApplicationReadyEvent.class)
     public void schedulePings() {
         final Settings settings = settingsService.getOrDefaults();
-        if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
+        // handle possibly missing settings
+        final boolean settingsPingEnabled = settings != null
+                && settings.getPing() != null
+                && settings.getPing().isEnabled();
+        // only continue if ping is enabled in both settings and config properties
+        // (config determines if ping can be enabled via settings)
+        if (!settingsPingEnabled || !pingProperties.isEnabled()) {
             return;
         }
+        // combine endpoints from both settings and config properties
         final List<String> indexUrls = Stream.concat(
                 pingProperties.getEndpoints().stream(),
                 settings.getPing().getEndpoints().stream()
