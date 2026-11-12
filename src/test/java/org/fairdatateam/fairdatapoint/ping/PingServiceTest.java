@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -68,6 +69,9 @@ public class PingServiceTest {
 
     @MockitoBean
     private SettingsService settingsService;
+
+    @MockitoBean
+    private ThreadPoolTaskScheduler scheduler;
 
     @BeforeEach
     public void setup() {
