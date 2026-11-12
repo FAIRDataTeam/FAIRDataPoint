@@ -23,8 +23,11 @@
 package org.fairdatateam.fairdatapoint.ping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
+import org.fairdatateam.fairdatapoint.common.config.WorkerConfig;
 import org.fairdatateam.fairdatapoint.settings.Settings;
+import org.fairdatateam.fairdatapoint.settings.SettingsPing;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,18 +36,24 @@ import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+@ActiveProfiles(Profiles.TESTING)
 @RestClientTest
 @ContextConfiguration(classes = PingService.class)
 public class PingServiceTest {
@@ -75,11 +84,25 @@ public class PingServiceTest {
 
     @BeforeEach
     public void setup() {
-        // Configure mocks
+        // mock config properties
         when(pingProperties.isEnabled()).thenReturn(true);
         when(pingProperties.getEndpoints()).thenReturn(List.of(MOCK_ENDPOINT));
+        when(pingProperties.getInitialDelay()).thenReturn(Duration.ZERO);
         when(instanceProperties.getClientUrl()).thenReturn(MOCK_CLIENT_URL);
-        when(settingsService.getOrDefaults()).thenReturn(Settings.getDefault());
+        // mock settings
+        final SettingsPing mockSettingsPing = mock(SettingsPing.class);
+        final Settings mockSettings = mock(Settings.class);
+        when(mockSettings.getPing()).thenReturn(mockSettingsPing);
+        when(mockSettingsPing.isEnabled()).thenReturn(true);
+        when(mockSettingsPing.getEndpoints()).thenReturn(List.of());
+        when(settingsService.getOrDefaults()).thenReturn(mockSettings);
+        // mock scheduler
+        when(scheduler.schedule(any(Runnable.class), any(Instant.class))).thenAnswer(invocation -> {
+            // run the runnable argument, i.e. the lambda that calls executePing()
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        });
     }
 
     @Test
