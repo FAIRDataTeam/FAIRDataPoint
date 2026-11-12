@@ -97,15 +97,20 @@ public class PingService {
         ).map(String::trim).distinct().toList();
         for (String indexUrl : indexUrls) {
             final Instant startTime = Instant.now().plus(pingProperties.getInitialDelay());
-            scheduler.schedule(() -> executePing(indexUrl), startTime);
+            scheduler.schedule(() -> executePing(indexUrl, 1), startTime);
         }
     }
 
     /**
-     * POSTs the <code>pingContent</code> as JSON to the specified FDP-index endpoint
+     * POSTs the <code>pingContent</code> as JSON to the specified FDP-index endpoint.
+     * Reschedules itself if the ping fails, up to specified maximum number of attempts.
      */
     @Async
-    void executePing(String endpoint) {
+    void executePing(String endpoint, int attempt) {
+        if (attempt > pingProperties.getMaxAttempts()) {
+            log.warn("Index registration failed {} times. Restart app to try again.", pingProperties.getMaxAttempts());
+            return;
+        }
         try {
             log.info("Pinging {}", endpoint);
             // blocking request, raises HttpClientErrorException for 4xx or HttpServerErrorException for 5xx response
