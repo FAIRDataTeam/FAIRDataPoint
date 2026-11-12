@@ -73,6 +73,14 @@ public class PingService {
     }
 
     /**
+     * Schedules a single ping attempt to the specified index URL with delay specified in config
+     */
+    private void schedulePingAttempt(String indexUrl, int attempt) {
+        final Instant startTime = Instant.now().plus(pingProperties.getInitialDelay());
+        scheduler.schedule(() -> executePing(indexUrl, attempt), startTime);
+    }
+
+    /**
      * Schedules a single registration ping for each FDP index specified in the <code>endpoints</code> property,
      * as soon as the application is ready.
      */
@@ -95,9 +103,9 @@ public class PingService {
                 pingProperties.getEndpoints().stream(),
                 settings.getPing().getEndpoints().stream()
         ).map(String::trim).distinct().toList();
+        // schedule initial ping attempts
         for (String indexUrl : indexUrls) {
-            final Instant startTime = Instant.now().plus(pingProperties.getInitialDelay());
-            scheduler.schedule(() -> executePing(indexUrl, 1), startTime);
+            schedulePingAttempt(indexUrl, 1);
         }
     }
 
@@ -123,6 +131,8 @@ public class PingService {
         }
         catch (Exception exception) {
             log.warn("Failed to ping {}: {}", endpoint, exception.getMessage());
+            // schedule new attempt
+            schedulePingAttempt(endpoint, attempt + 1);
         }
     }
 }
