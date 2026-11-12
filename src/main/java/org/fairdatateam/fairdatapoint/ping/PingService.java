@@ -73,15 +73,15 @@ public class PingService {
     }
 
     /**
-     * Schedules a single ping attempt to the specified index URL with delay specified in config
+     * Schedules a single ping attempt to the specified index URL after delay specified in <code>ping.delay</code>
      */
     private void schedulePingAttempt(String indexUrl, int attempt) {
-        final Instant startTime = Instant.now().plus(pingProperties.getInitialDelay());
+        final Instant startTime = Instant.now().plus(pingProperties.getDelay());
         scheduler.schedule(() -> executePing(indexUrl, attempt), startTime);
     }
 
     /**
-     * Schedules a single registration ping for each FDP index specified in the <code>endpoints</code> property,
+     * Schedules a single registration ping for each FDP index specified in the <code>ping.endpoints</code> property,
      * as soon as the application is ready.
      */
     @EventListener(ApplicationReadyEvent.class)

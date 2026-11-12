@@ -39,10 +39,10 @@ import java.util.List;
 // in application.yaml or environment variable
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
-    private static final int DEFAULT_INITIAL_DELAY_SECONDS = 10;
+    private static final int DEFAULT_DELAY_SECONDS = 10;
     private static final int DEFAULT_MAX_ATTEMPTS = 5;
     private boolean enabled = true;
-    private Duration initialDelay = Duration.ofSeconds(DEFAULT_INITIAL_DELAY_SECONDS);
+    private Duration delay = Duration.ofSeconds(DEFAULT_DELAY_SECONDS);
     private int maxAttempts = DEFAULT_MAX_ATTEMPTS;
     private List<String> endpoints = List.of("https://home.fairdatapoint.org");
 }
