@@ -85,7 +85,9 @@ public class PingService {
                 && settings.getPing().isEnabled();
         // only continue if ping is enabled in both settings and config properties
         // (config determines if ping can be enabled via settings)
-        if (!settingsPingEnabled || !pingProperties.isEnabled()) {
+        final boolean configPingEnabled = pingProperties.isEnabled();
+        if (!settingsPingEnabled || !configPingEnabled) {
+            log.info("Index ping is disabled (settings: {}, config: {})", settingsPingEnabled, configPingEnabled);
             return;
         }
         // combine endpoints from both settings and config properties
