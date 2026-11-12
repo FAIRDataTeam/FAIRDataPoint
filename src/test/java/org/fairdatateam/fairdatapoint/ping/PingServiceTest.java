@@ -25,7 +25,6 @@ package org.fairdatateam.fairdatapoint.ping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
-import org.fairdatateam.fairdatapoint.common.config.WorkerConfig;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsPing;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
@@ -116,6 +115,8 @@ public class PingServiceTest {
                 .andRespond(withSuccess());
 
         // Execute ping
+        // Note that schedulePings is actually called twice: First due to the ApplicationReadyEvent,
+        // then due to the call below. The first call returns directly because settings are not available at that time.
         pingService.schedulePings();
 
         // Check mock server expectations
