@@ -132,7 +132,7 @@ public class PingService {
         }
         catch (Exception exception) {
             log.warn("Failed to ping {}: {}", indexUrl, exception.getMessage());
-            // schedule new attempt
+            // schedule new attempt (indirect recursion)
             schedulePingAttempt(indexUrl, attempt + 1);
         }
     }
