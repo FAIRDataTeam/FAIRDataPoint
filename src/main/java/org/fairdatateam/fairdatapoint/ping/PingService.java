@@ -103,7 +103,7 @@ public class PingService {
                 pingProperties.getEndpoints().stream(),
                 settings.getPing().getEndpoints().stream()
         ).map(String::trim).distinct().toList();
-        // schedule initial ping attempts
+        // schedule initial ping attempts for all index URLs
         for (String indexUrl : indexUrls) {
             schedulePingAttempt(indexUrl, 1);
         }
@@ -114,25 +114,26 @@ public class PingService {
      * Reschedules itself if the ping fails, up to specified maximum number of attempts.
      */
     @Async
-    void executePing(String endpoint, int attempt) {
+    void executePing(String indexUrl, int attempt) {
         if (attempt > pingProperties.getMaxAttempts()) {
-            log.warn("Index registration failed {} times. Restart app to try again.", pingProperties.getMaxAttempts());
+            log.warn("Registration for index {} failed. Aborting after {} attempts. Restart app to try again.",
+                    indexUrl, pingProperties.getMaxAttempts());
             return;
         }
         try {
-            log.info("Pinging {}", endpoint);
+            log.info("Pinging {}", indexUrl);
             // blocking request, raises HttpClientErrorException for 4xx or HttpServerErrorException for 5xx response
             restClient.post()
-                    .uri(endpoint)
+                    .uri(indexUrl)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Map.of("clientUrl", instanceProperties.getClientUrl()))
                     .retrieve()
                     .toEntity(String.class);
         }
         catch (Exception exception) {
-            log.warn("Failed to ping {}: {}", endpoint, exception.getMessage());
+            log.warn("Failed to ping {}: {}", indexUrl, exception.getMessage());
             // schedule new attempt
-            schedulePingAttempt(endpoint, attempt + 1);
+            schedulePingAttempt(indexUrl, attempt + 1);
         }
     }
 }
