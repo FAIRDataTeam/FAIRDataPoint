@@ -136,11 +136,11 @@ public class PingServiceTest {
 
     @ParameterizedTest
     @FieldSource("errorResponses")
-    public void failedPingIsRetriedLimitedNumberOfTimes() throws JsonProcessingException {
+    public void failedPingIsRetriedLimitedNumberOfTimes(ResponseCreator errorResponse) throws JsonProcessingException {
         // Configure mock server
         mockRemoteServer
                 .expect(ExpectedCount.times(MOCK_MAX_ATTEMPTS), requestTo(MOCK_INDEX_URL))
-                .andRespond(withBadRequest());
+                .andRespond(errorResponse);
 
         // Execute pings
         pingService.schedulePings();
