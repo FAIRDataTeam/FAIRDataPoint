@@ -61,6 +61,10 @@ public class PingServiceTest {
 
     private static final String MOCK_CLIENT_URL = "https://fdp.example.org";
 
+    private static final Duration MOCK_DELAY = Duration.ZERO;
+
+    private static final int MOCK_MAX_ATTEMPTS = 3;
+
     private final JsonMapper jsonMapper = new JsonMapper();
 
     @Autowired
@@ -86,7 +90,8 @@ public class PingServiceTest {
         // mock config properties
         when(pingProperties.isEnabled()).thenReturn(true);
         when(pingProperties.getEndpoints()).thenReturn(List.of(MOCK_INDEX_URL));
-        when(pingProperties.getInitialDelay()).thenReturn(Duration.ZERO);
+        when(pingProperties.getDelay()).thenReturn(MOCK_DELAY);
+        when(pingProperties.getMaxAttempts()).thenReturn(MOCK_MAX_ATTEMPTS);
         when(instanceProperties.getClientUrl()).thenReturn(MOCK_CLIENT_URL);
         // mock settings
         final SettingsPing mockSettingsPing = mock(SettingsPing.class);
