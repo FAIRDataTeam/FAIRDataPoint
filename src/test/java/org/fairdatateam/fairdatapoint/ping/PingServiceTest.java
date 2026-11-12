@@ -30,6 +30,8 @@ import org.fairdatateam.fairdatapoint.settings.SettingsPing;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.FieldSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.HttpMethod;
@@ -38,7 +40,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.ResponseCreator;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
@@ -50,7 +54,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @ActiveProfiles(Profiles.TESTING)
 @RestClientTest
@@ -122,6 +126,23 @@ public class PingServiceTest {
         // Execute ping
         // Note that schedulePings is actually called twice: First due to the ApplicationReadyEvent,
         // then due to the call below. The first call returns directly because settings are not available at that time.
+        pingService.schedulePings();
+
+        // Check mock server expectations
+        mockRemoteServer.verify();
+    }
+
+    private static final List<ResponseCreator> errorResponses = List.of(withBadRequest(), withServerError());
+
+    @ParameterizedTest
+    @FieldSource("errorResponses")
+    public void failedPingIsRetriedLimitedNumberOfTimes() throws JsonProcessingException {
+        // Configure mock server
+        mockRemoteServer
+                .expect(ExpectedCount.times(MOCK_MAX_ATTEMPTS), requestTo(MOCK_INDEX_URL))
+                .andRespond(withBadRequest());
+
+        // Execute pings
         pingService.schedulePings();
 
         // Check mock server expectations
