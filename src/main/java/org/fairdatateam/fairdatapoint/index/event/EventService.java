@@ -102,17 +102,11 @@ public class EventService {
                 .map(this::getEvents).orElse(Collections.emptyList());
     }
 
-    @RequiredEnabledIndexFeature
-    @SneakyThrows
-    public Event acceptIncomingPing(PingDTO pingDTO, HttpServletRequest request) {
-        final String remoteAddr = request.getRemoteAddr();
+    /**
+     * Raises a <code>RateLimitException</code> if the rate limit is exceeded.
+     */
+    private void checkRateLimit(String remoteAddr) {
         final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
-
-        if (indexSettingsService.isPingDenied(pingDTO)) {
-            log.info("Received ping is denied");
-            throw new PingDeniedException(pingDTO.getClientUrl());
-        }
-
         final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
         final List<Event> previousPings =
                 eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
@@ -125,10 +119,26 @@ public class EventService {
                     remoteAddr, pingSettings.getRateLimitHits(), pingSettings.getRateLimitDuration().toString())
             );
         }
+    }
 
+    @RequiredEnabledIndexFeature
+    @SneakyThrows
+    public Event acceptIncomingPing(PingDTO pingDTO, HttpServletRequest request) {
+        final String remoteAddr = request.getRemoteAddr();
+
+        // abort if FDP URL is denied or rate limit is exceeded
+        if (indexSettingsService.isPingDenied(pingDTO)) {
+            log.info("Received ping is denied");
+            throw new PingDeniedException(pingDTO.getClientUrl());
+        }
+        checkRateLimit(remoteAddr);
+
+        // create and execute new event
         final Event event = incomingPingUtils.prepareEvent(pingDTO, request, remoteAddr);
         eventRepository.save(event);
         event.execute();
+
+        // ...?
         try {
             final IndexEntry indexEntry = indexEntryService.storeEntry(pingDTO);
             event.getIncomingPing()
