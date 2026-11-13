@@ -41,7 +41,7 @@ public class IncomingPingUtils {
 
     private final JsonMapper jsonMapper;
 
-    public Event prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
+    public Event prepareEvent(PingDTO pingDto, HttpServletRequest request, String remoteAddr) {
         final IncomingPing incomingPing = new IncomingPing();
         final Exchange ex = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
         incomingPing.setExchange(ex);
@@ -49,7 +49,7 @@ public class IncomingPingUtils {
         ex.getRequest().setHeaders(getHeaders(request));
         ex.getRequest().setFromHttpServletRequest(request);
         try {
-            ex.getRequest().setBody(jsonMapper.writeValueAsString(reqDto));
+            ex.getRequest().setBody(jsonMapper.writeValueAsString(pingDto));
         }
         catch (JacksonException exception) {
             ex.getRequest().setBody(null);
