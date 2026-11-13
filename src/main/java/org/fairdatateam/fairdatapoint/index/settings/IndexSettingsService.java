@@ -47,6 +47,10 @@ public class IndexSettingsService {
     @Autowired
     private InstanceProperties instanceProperties;
 
+    /**
+     * Returns true if the FDP URL in the ping body matches any of the patterns in the
+     * <code>IndexSettingsPing.denyList</code>
+     */
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
         log.info("Checking if ping.clientUrl is on deny list: {}", ping.getClientUrl());
