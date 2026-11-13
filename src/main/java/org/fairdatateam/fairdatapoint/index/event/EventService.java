@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
@@ -41,7 +42,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -60,34 +60,27 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class EventService {
 
     private static final int PAGE_SIZE = 10;
 
-    @Autowired
-    private JsonMapper jsonMapper;
+    private final JsonMapper jsonMapper;
 
-    @Autowired
-    private ThreadPoolTaskExecutor executor;
+    private final ThreadPoolTaskExecutor executor;
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    @Autowired
-    private IndexEntryRepository indexEntryRepository;
+    private final IndexEntryRepository indexEntryRepository;
 
-    @Autowired
     @Lazy
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
-    @Autowired
-    private EventMapper eventMapper;
+    private final EventMapper eventMapper;
 
-    @Autowired
-    private IncomingPingUtils incomingPingUtils;
+    private final IncomingPingUtils incomingPingUtils;
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
         // TODO: make events pagination in the future
