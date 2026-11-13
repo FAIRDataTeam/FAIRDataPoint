@@ -136,17 +136,20 @@ public class EventService {
         eventRepository.save(event);
         event.setExecutedNow();
 
-        // ...?
+        // populate the event with an index entry, possibly newly created
         try {
             final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateIndexEntry(pingDTO);
             event.setRelatedTo(indexEntryResult.object());
             event.getIncomingPing().setNewEntry(indexEntryResult.created());
+            // todo: what does the CREATED status code refer to? the indexentry may already exist, so that seems wrong
             event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.CREATED.value());
             log.info("Accepted incoming ping as a new event");
         }
         catch (Exception exception) {
+            // todo: how can you be sure the exception is due to unparsable ping body?
             final IncorrectPingFormatException nextException =
                     new IncorrectPingFormatException("Could not parse PING: " + exception.getMessage());
+            // todo: again, what does the response code refer to? an event is still created here...
             event.getIncomingPing().getExchange().getResponse()
                     .setCode(HttpStatus.BAD_REQUEST.value());
             event.getIncomingPing().getExchange().getResponse()
