@@ -213,30 +213,29 @@ public class IndexEntryService {
     @RequiredEnabledIndexFeature
     public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
-        final Optional<IndexEntry> indexEntry = repository.findByClientUrl(clientUrl);
         final Instant now = Instant.now();
-        final IndexEntry entry;
-        if (indexEntry.isPresent()) {
-            log.info("Updating timestamp of existing entry {}", clientUrl);
-            entry = indexEntry.orElseThrow();
+        final IndexEntry indexEntry = repository.findByClientUrl(clientUrl).orElse(createNewIndexEntry(clientUrl, now));
+        // todo: this is sort of redundant because we should not modify the existing entry at all
+        indexEntry.setModificationTime(Instant.now());
+        return repository.save(indexEntry);
+    }
+
+    private IndexEntry createNewIndexEntry(String url, Instant now) {
+        log.info("Creating new IndexEntry for {}", url);
+        final IndexEntry indexEntry = IndexEntry.builder()
+                .uuid(UUID.randomUUID().toString())
+                .clientUrl(url)
+                .registrationTime(now)
+                .modificationTime(now)
+                .build();
+        final IndexSettings settings = indexSettingsService.getOrDefaults();
+        if (settings.getAutoPermit()) {
+            indexEntry.setPermit(IndexEntryPermit.ACCEPTED);
         }
         else {
-            log.info("Storing new entry {}", clientUrl);
-            entry = new IndexEntry();
-            entry.setUuid(UUID.randomUUID().toString());
-            entry.setClientUrl(clientUrl);
-            entry.setRegistrationTime(now);
-            final IndexSettings settings = indexSettingsService.getOrDefaults();
-            if (settings.getAutoPermit()) {
-                entry.setPermit(IndexEntryPermit.ACCEPTED);
-            }
-            else {
-                entry.setPermit(IndexEntryPermit.PENDING);
-            }
+            indexEntry.setPermit(IndexEntryPermit.PENDING);
         }
-
-        entry.setModificationTime(now);
-        return repository.save(entry);
+        return indexEntry;
     }
 
     @RequiredEnabledIndexFeature
