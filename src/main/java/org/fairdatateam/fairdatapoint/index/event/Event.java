@@ -91,16 +91,8 @@ public class Event {
         this.adminTrigger = adminTrigger;
     }
 
-    public boolean isExecuted() {
-        return executed != null;
-    }
-
     public void execute() {
         executed = Instant.now();
-    }
-
-    public boolean isFinished() {
-        return finished != null;
     }
 
     public void finish() {
