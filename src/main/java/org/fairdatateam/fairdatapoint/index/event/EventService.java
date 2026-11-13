@@ -27,6 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.common.util.GetOrCreateResult;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
@@ -137,12 +138,10 @@ public class EventService {
 
         // ...?
         try {
-            final IndexEntry indexEntry = indexEntryService.storeEntry(pingDTO);
-            event.getIncomingPing()
-                    .setNewEntry(indexEntry.getRegistrationTime().equals(indexEntry.getModificationTime()));
-            event.getIncomingPing().getExchange().getResponse()
-                    .setCode(HttpStatus.CREATED.value());
-            event.setRelatedTo(indexEntry);
+            final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateIndexEntry(pingDTO);
+            event.setRelatedTo(indexEntryResult.object());
+            event.getIncomingPing().setNewEntry(indexEntryResult.created());
+            event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.CREATED.value());
             log.info("Accepted incoming ping as a new event");
         }
         catch (Exception exception) {
@@ -259,8 +258,8 @@ public class EventService {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event =
                 eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
-        final IndexEntry entry = indexEntryService.storeEntry(pingDTO);
-        event.setRelatedTo(entry);
+        final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateIndexEntry(pingDTO);
+        event.setRelatedTo(indexEntryResult.object());
         event.setFinishedNow();
         return eventRepository.save(event);
     }

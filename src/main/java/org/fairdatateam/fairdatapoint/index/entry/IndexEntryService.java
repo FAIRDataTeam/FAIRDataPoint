@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.index.entry;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.common.util.GetOrCreateResult;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
@@ -210,19 +211,24 @@ public class IndexEntryService {
         return new IndexEntryInfoDTO(entriesCount);
     }
 
+    /**
+     * Returns a <code>GetOrCreateResult</code> with an <code>IndexEntry</code> matching the FDP URL from the ping body.
+     * If no matching <code>IndexEntry</code> is found in the database, a new one is created and saved to the database.
+     */
     @RequiredEnabledIndexFeature
-    public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
+    public GetOrCreateResult<IndexEntry> getOrCreateIndexEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Instant now = Instant.now();
         final IndexEntry indexEntry = repository.findByClientUrl(clientUrl).orElse(createNewIndexEntry(clientUrl, now));
-        // todo: this is sort of redundant because we should not modify the existing entry at all
-        indexEntry.setModificationTime(Instant.now());
-        return repository.save(indexEntry);
+        return new GetOrCreateResult<>(indexEntry, indexEntry.getRegistrationTime().equals(now));
     }
 
+    /**
+     * Returns a newly created <code>IndexEntry</code> for the specified FDP URL after saving it to the database.
+     */
     private IndexEntry createNewIndexEntry(String url, Instant now) {
         log.info("Creating new IndexEntry for {}", url);
-        final IndexEntry indexEntry = IndexEntry.builder()
+        final IndexEntry newIndexEntry = IndexEntry.builder()
                 .uuid(UUID.randomUUID().toString())
                 .clientUrl(url)
                 .registrationTime(now)
@@ -230,12 +236,12 @@ public class IndexEntryService {
                 .build();
         final IndexSettings settings = indexSettingsService.getOrDefaults();
         if (settings.getAutoPermit()) {
-            indexEntry.setPermit(IndexEntryPermit.ACCEPTED);
+            newIndexEntry.setPermit(IndexEntryPermit.ACCEPTED);
         }
         else {
-            indexEntry.setPermit(IndexEntryPermit.PENDING);
+            newIndexEntry.setPermit(IndexEntryPermit.PENDING);
         }
-        return indexEntry;
+        return repository.save(newIndexEntry);
     }
 
     @RequiredEnabledIndexFeature
