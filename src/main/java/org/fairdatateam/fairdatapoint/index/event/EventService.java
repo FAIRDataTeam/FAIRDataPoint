@@ -41,7 +41,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
-import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
@@ -80,9 +79,6 @@ public class EventService {
     @Autowired
     @Lazy
     private IndexEntryService indexEntryService;
-
-    @Autowired
-    private WebhookService webhookService;
 
     @Autowired
     private EventMapper eventMapper;
@@ -206,7 +202,6 @@ public class EventService {
         event.finish();
         final Event newEvent = eventRepository.save(event);
         indexEntryRepository.save(newEvent.getRelatedTo());
-        webhookService.triggerWebhooks(newEvent);
     }
 
     @Async
@@ -235,9 +230,6 @@ public class EventService {
             try {
                 if (event.getType() == EventType.MetadataRetrieval) {
                     processMetadataRetrieval(event);
-                }
-                else if (event.getType() == EventType.WebhookTrigger) {
-                    webhookService.processWebhookTrigger(event);
                 }
                 else {
                     log.warn("Unknown event type {} ({})", event.getUuid(), event.getType());
