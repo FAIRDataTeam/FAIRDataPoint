@@ -36,7 +36,6 @@ import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
-import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,9 +50,6 @@ public class IndexPingController {
 
     @Autowired
     private EventService eventService;
-
-    @Autowired
-    private WebhookService webhookService;
 
     @Autowired
     private IndexEntryService indexEntryService;
@@ -97,7 +93,6 @@ public class IndexPingController {
         log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(reqDto.getClientUrl());
-        webhookService.triggerWebhooks(event);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
