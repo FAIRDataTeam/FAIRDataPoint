@@ -104,13 +104,13 @@ public class EventService {
 
     @RequiredEnabledIndexFeature
     @SneakyThrows
-    public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
+    public Event acceptIncomingPing(PingDTO pingDTO, HttpServletRequest request) {
         final String remoteAddr = request.getRemoteAddr();
         final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
 
-        if (indexSettingsService.isPingDenied(reqDto)) {
+        if (indexSettingsService.isPingDenied(pingDTO)) {
             log.info("Received ping is denied");
-            throw new PingDeniedException(reqDto.getClientUrl());
+            throw new PingDeniedException(pingDTO.getClientUrl());
         }
 
         final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
@@ -126,11 +126,11 @@ public class EventService {
             );
         }
 
-        final Event event = incomingPingUtils.prepareEvent(reqDto, request, remoteAddr);
+        final Event event = incomingPingUtils.prepareEvent(pingDTO, request, remoteAddr);
         eventRepository.save(event);
         event.execute();
         try {
-            final IndexEntry indexEntry = indexEntryService.storeEntry(reqDto);
+            final IndexEntry indexEntry = indexEntryService.storeEntry(pingDTO);
             event.getIncomingPing()
                     .setNewEntry(indexEntry.getRegistrationTime().equals(indexEntry.getModificationTime()));
             event.getIncomingPing().getExchange().getResponse()
