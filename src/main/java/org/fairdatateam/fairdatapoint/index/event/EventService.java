@@ -136,7 +136,7 @@ public class EventService {
         // create and execute new event
         final Event event = incomingPingUtils.prepareEvent(pingDTO, request, remoteAddr);
         eventRepository.save(event);
-        event.execute();
+        event.setExecutedNow();
 
         // ...?
         try {
@@ -170,7 +170,7 @@ public class EventService {
         if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
             indexEntryRepository.save(event.getRelatedTo());
             eventRepository.save(event);
-            event.execute();
+            event.setExecutedNow();
 
             log.info("Retrieving metadata for {}", clientUrl);
             MetadataRetrievalUtils.retrieveRepositoryMetadata(event, retrievalSettings.getTimeout());
@@ -209,7 +209,7 @@ public class EventService {
             event.getMetadataRetrieval().setError("Rate limit reached (skipping)");
         }
         event.getRelatedTo().setLastRetrievalTime(Instant.now());
-        event.finish();
+        event.setFinishedNow();
         final Event newEvent = eventRepository.save(event);
         indexEntryRepository.save(newEvent.getRelatedTo());
     }
@@ -264,7 +264,7 @@ public class EventService {
                 eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
         final IndexEntry entry = indexEntryService.storeEntry(pingDTO);
         event.setRelatedTo(entry);
-        event.finish();
+        event.setFinishedNow();
         return eventRepository.save(event);
     }
 
@@ -272,7 +272,7 @@ public class EventService {
     public Event acceptAdminTriggerAll(HttpServletRequest request) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event = eventMapper.toAdminTriggerEvent(authentication, null, request.getRemoteAddr());
-        event.finish();
+        event.setFinishedNow();
         return eventRepository.save(event);
     }
 }
