@@ -44,8 +44,6 @@ public class IncomingPingUtils {
     public Event prepareEvent(PingDTO pingDto, HttpServletRequest request, String remoteAddr) {
         final IncomingPing incomingPing = new IncomingPing();
         final Exchange exchange = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
-        incomingPing.setExchange(exchange);
-
         exchange.getRequest().setHeaders(getHeaders(request));
         exchange.getRequest().setFromHttpServletRequest(request);
         try {
@@ -54,7 +52,7 @@ public class IncomingPingUtils {
         catch (JacksonException exception) {
             exchange.getRequest().setBody(null);
         }
-
+        incomingPing.setExchange(exchange);
         return new Event(VERSION, incomingPing);
     }
 
