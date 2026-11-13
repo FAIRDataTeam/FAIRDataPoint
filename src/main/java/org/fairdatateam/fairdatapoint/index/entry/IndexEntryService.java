@@ -219,7 +219,8 @@ public class IndexEntryService {
     public GetOrCreateResult<IndexEntry> getOrCreateIndexEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Instant now = Instant.now();
-        final IndexEntry indexEntry = repository.findByClientUrl(clientUrl).orElse(createNewIndexEntry(clientUrl, now));
+        final IndexEntry indexEntry = repository.findByClientUrl(clientUrl)
+                .orElseGet(() -> createNewIndexEntry(clientUrl, now));
         return new GetOrCreateResult<>(indexEntry, indexEntry.getRegistrationTime().equals(now));
     }
 
