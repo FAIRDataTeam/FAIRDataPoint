@@ -23,10 +23,10 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
@@ -34,27 +34,28 @@ import tools.jackson.databind.json.JsonMapper;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class IncomingPingUtils {
 
     private static final Integer VERSION = 1;
 
-    @Autowired
-    private JsonMapper jsonMapper;
+    private final JsonMapper jsonMapper;
 
-    public Event prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
+    /**
+     * Returns a new <code>Event</code> for an incoming ping, including a copy of the request headers and body.
+     */
+    public Event prepareEvent(PingDTO pingDto, HttpServletRequest request, String remoteAddr) {
         final IncomingPing incomingPing = new IncomingPing();
-        final Exchange ex = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
-        incomingPing.setExchange(ex);
-
-        ex.getRequest().setHeaders(getHeaders(request));
-        ex.getRequest().setFromHttpServletRequest(request);
+        final Exchange exchange = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
+        exchange.getRequest().setHeaders(getHeaders(request));
+        exchange.getRequest().setFromHttpServletRequest(request);
         try {
-            ex.getRequest().setBody(jsonMapper.writeValueAsString(reqDto));
+            exchange.getRequest().setBody(jsonMapper.writeValueAsString(pingDto));
         }
         catch (JacksonException exception) {
-            ex.getRequest().setBody(null);
+            exchange.getRequest().setBody(null);
         }
-
+        incomingPing.setExchange(exchange);
         return new Event(VERSION, incomingPing);
     }
 

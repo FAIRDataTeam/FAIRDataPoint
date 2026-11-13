@@ -23,7 +23,9 @@
 package org.fairdatateam.fairdatapoint.index.entry;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.common.util.GetOrCreateResult;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
@@ -36,7 +38,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -55,32 +56,26 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @Slf4j
 @Service
 @Validated
+@RequiredArgsConstructor
 public class IndexEntryService {
 
     private static final String MSG_NOT_FOUND = "Index entry not found";
 
     private static final String FILTER_ALL = "ALL";
 
-    @Autowired
-    private IndexEntryRepository repository;
+    private final IndexEntryRepository repository;
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private IndexEntryMapper mapper;
+    private final IndexEntryMapper mapper;
 
-    @Autowired
-    private MetadataRdfRepository metadataRdfRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
-    @Autowired
-    private HarvesterService harvesterService;
+    private final HarvesterService harvesterService;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries() {
@@ -216,34 +211,38 @@ public class IndexEntryService {
         return new IndexEntryInfoDTO(entriesCount);
     }
 
+    /**
+     * Returns a <code>GetOrCreateResult</code> with an <code>IndexEntry</code> matching the FDP URL from the ping body.
+     * If no matching <code>IndexEntry</code> is found in the database, a new one is created and saved to the database.
+     */
     @RequiredEnabledIndexFeature
-    public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
+    public GetOrCreateResult<IndexEntry> getOrCreateIndexEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
-        final Optional<IndexEntry> entity = repository.findByClientUrl(clientUrl);
         final Instant now = Instant.now();
-        final IndexSettings settings = indexSettingsService.getOrDefaults();
+        final IndexEntry indexEntry = repository.findByClientUrl(clientUrl)
+                .orElseGet(() -> createNewIndexEntry(clientUrl, now));
+        return new GetOrCreateResult<>(indexEntry, indexEntry.getRegistrationTime().equals(now));
+    }
 
-        final IndexEntry entry;
-        if (entity.isPresent()) {
-            log.info("Updating timestamp of existing entry {}", clientUrl);
-            entry = entity.orElseThrow();
+    /**
+     * Returns a newly created <code>IndexEntry</code> for the specified FDP URL after saving it to the database.
+     */
+    private IndexEntry createNewIndexEntry(String url, Instant now) {
+        log.info("Creating new IndexEntry for {}", url);
+        final IndexEntry newIndexEntry = IndexEntry.builder()
+                .uuid(UUID.randomUUID().toString())
+                .clientUrl(url)
+                .registrationTime(now)
+                .modificationTime(now)
+                .build();
+        final IndexSettings settings = indexSettingsService.getOrDefaults();
+        if (settings.getAutoPermit()) {
+            newIndexEntry.setPermit(IndexEntryPermit.ACCEPTED);
         }
         else {
-            log.info("Storing new entry {}", clientUrl);
-            entry = new IndexEntry();
-            entry.setUuid(UUID.randomUUID().toString());
-            entry.setClientUrl(clientUrl);
-            entry.setRegistrationTime(now);
-            if (settings.getAutoPermit()) {
-                entry.setPermit(IndexEntryPermit.ACCEPTED);
-            }
-            else {
-                entry.setPermit(IndexEntryPermit.PENDING);
-            }
+            newIndexEntry.setPermit(IndexEntryPermit.PENDING);
         }
-
-        entry.setModificationTime(now);
-        return repository.save(entry);
+        return repository.save(newIndexEntry);
     }
 
     @RequiredEnabledIndexFeature

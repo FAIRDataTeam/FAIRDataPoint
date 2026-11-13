@@ -91,11 +91,11 @@ public class Event {
         this.adminTrigger = adminTrigger;
     }
 
-    public void execute() {
+    public void setExecutedNow() {
         executed = Instant.now();
     }
 
-    public void finish() {
+    public void setFinishedNow() {
         finished = Instant.now();
     }
 }

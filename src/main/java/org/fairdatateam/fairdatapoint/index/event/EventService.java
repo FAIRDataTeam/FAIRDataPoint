@@ -24,8 +24,10 @@ package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.common.util.GetOrCreateResult;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
@@ -41,7 +43,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -60,34 +61,27 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class EventService {
 
     private static final int PAGE_SIZE = 10;
 
-    @Autowired
-    private JsonMapper jsonMapper;
+    private final JsonMapper jsonMapper;
 
-    @Autowired
-    private ThreadPoolTaskExecutor executor;
+    private final ThreadPoolTaskExecutor executor;
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    @Autowired
-    private IndexEntryRepository indexEntryRepository;
+    private final IndexEntryRepository indexEntryRepository;
 
-    @Autowired
     @Lazy
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
-    @Autowired
-    private EventMapper eventMapper;
+    private final EventMapper eventMapper;
 
-    @Autowired
-    private IncomingPingUtils incomingPingUtils;
+    private final IncomingPingUtils incomingPingUtils;
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
         // TODO: make events pagination in the future
@@ -102,17 +96,11 @@ public class EventService {
                 .map(this::getEvents).orElse(Collections.emptyList());
     }
 
-    @RequiredEnabledIndexFeature
-    @SneakyThrows
-    public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
-        final String remoteAddr = request.getRemoteAddr();
+    /**
+     * Raises a <code>RateLimitException</code> if the rate limit is exceeded.
+     */
+    private void checkRateLimit(String remoteAddr) {
         final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
-
-        if (indexSettingsService.isPingDenied(reqDto)) {
-            log.info("Received ping is denied");
-            throw new PingDeniedException(reqDto.getClientUrl());
-        }
-
         final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
         final List<Event> previousPings =
                 eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
@@ -125,22 +113,43 @@ public class EventService {
                     remoteAddr, pingSettings.getRateLimitHits(), pingSettings.getRateLimitDuration().toString())
             );
         }
+    }
 
-        final Event event = incomingPingUtils.prepareEvent(reqDto, request, remoteAddr);
+    /**
+     * Creates a new ping event for a matching index entry in the database. Creates the index entry if necessary.
+     * Aborts if the FDP URL from the ping body is denied, e.g. contains localhost, or if the rate limit is exceeded.
+     */
+    @RequiredEnabledIndexFeature
+    @SneakyThrows
+    public Event handleIncomingPing(PingDTO pingDTO, HttpServletRequest request) {
+        final String remoteAddr = request.getRemoteAddr();
+
+        // abort if FDP URL is denied or rate limit is exceeded
+        if (indexSettingsService.isPingDenied(pingDTO)) {
+            log.info("Received ping is denied");
+            throw new PingDeniedException(pingDTO.getClientUrl());
+        }
+        checkRateLimit(remoteAddr);
+
+        // create new event in database
+        final Event event = incomingPingUtils.prepareEvent(pingDTO, request, remoteAddr);
         eventRepository.save(event);
-        event.execute();
+        event.setExecutedNow();
+
+        // populate the event with an index entry, possibly newly created
         try {
-            final IndexEntry indexEntry = indexEntryService.storeEntry(reqDto);
-            event.getIncomingPing()
-                    .setNewEntry(indexEntry.getRegistrationTime().equals(indexEntry.getModificationTime()));
-            event.getIncomingPing().getExchange().getResponse()
-                    .setCode(HttpStatus.CREATED.value());
-            event.setRelatedTo(indexEntry);
+            final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateIndexEntry(pingDTO);
+            event.setRelatedTo(indexEntryResult.object());
+            event.getIncomingPing().setNewEntry(indexEntryResult.created());
+            // todo: what does the CREATED status code refer to? the indexentry may already exist, so that seems wrong
+            event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.CREATED.value());
             log.info("Accepted incoming ping as a new event");
         }
         catch (Exception exception) {
+            // todo: how can you be sure the exception is due to unparsable ping body?
             final IncorrectPingFormatException nextException =
                     new IncorrectPingFormatException("Could not parse PING: " + exception.getMessage());
+            // todo: again, what does the response code refer to? an event is still created here...
             event.getIncomingPing().getExchange().getResponse()
                     .setCode(HttpStatus.BAD_REQUEST.value());
             event.getIncomingPing().getExchange().getResponse()
@@ -160,7 +169,7 @@ public class EventService {
         if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
             indexEntryRepository.save(event.getRelatedTo());
             eventRepository.save(event);
-            event.execute();
+            event.setExecutedNow();
 
             log.info("Retrieving metadata for {}", clientUrl);
             MetadataRetrievalUtils.retrieveRepositoryMetadata(event, retrievalSettings.getTimeout());
@@ -199,7 +208,7 @@ public class EventService {
             event.getMetadataRetrieval().setError("Rate limit reached (skipping)");
         }
         event.getRelatedTo().setLastRetrievalTime(Instant.now());
-        event.finish();
+        event.setFinishedNow();
         final Event newEvent = eventRepository.save(event);
         indexEntryRepository.save(newEvent.getRelatedTo());
     }
@@ -252,9 +261,9 @@ public class EventService {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event =
                 eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
-        final IndexEntry entry = indexEntryService.storeEntry(pingDTO);
-        event.setRelatedTo(entry);
-        event.finish();
+        final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateIndexEntry(pingDTO);
+        event.setRelatedTo(indexEntryResult.object());
+        event.setFinishedNow();
         return eventRepository.save(event);
     }
 
@@ -262,7 +271,7 @@ public class EventService {
     public Event acceptAdminTriggerAll(HttpServletRequest request) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event = eventMapper.toAdminTriggerEvent(authentication, null, request.getRemoteAddr());
-        event.finish();
+        event.setFinishedNow();
         return eventRepository.save(event);
     }
 }

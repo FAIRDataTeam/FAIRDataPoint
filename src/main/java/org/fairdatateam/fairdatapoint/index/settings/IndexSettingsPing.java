@@ -40,6 +40,7 @@ public class IndexSettingsPing {
     private static final int DEFAULT_VALID_DAYS = 7;
     private static final int DEFAULT_LIMIT_DURATION_HOURS = 6;
     private static final int DEFAULT_LIMIT_HITS = 10;
+    private static final String DEFAULT_DENY_PATTERN = "^(http|https)://localhost(:[0-9]+){0,1}.*$";
 
     @NotNull
     private Duration validDuration;
@@ -58,7 +59,7 @@ public class IndexSettingsPing {
         ping.setValidDuration(Duration.ofDays(DEFAULT_VALID_DAYS));
         ping.setRateLimitDuration(Duration.ofHours(DEFAULT_LIMIT_DURATION_HOURS));
         ping.setRateLimitHits(DEFAULT_LIMIT_HITS);
-        ping.setDenyList(Collections.singletonList("^(http|https)://localhost(:[0-9]+){0,1}.*$"));
+        ping.setDenyList(Collections.singletonList(DEFAULT_DENY_PATTERN));
         return ping;
     }
 }

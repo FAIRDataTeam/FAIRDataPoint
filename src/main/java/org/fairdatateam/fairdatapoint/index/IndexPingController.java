@@ -30,13 +30,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,25 +46,25 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/")
+@RequiredArgsConstructor
 public class IndexPingController {
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
     @Operation(
-            description = "Inform about running FAIR Data Point. It is expected to "
-                    + "send pings regularly (at least weekly). There is a rate limit set "
-                    + "both per single IP within a period of time and per URL in message.",
+            description = """
+                    Ping this index endpoint once to register a new FAIR Data Point. After registration, subsequent
+                    pings are ignored. A rate limit applies, both per IP, within a period of time, and per URL in the
+                    request body.""",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Ping payload with FAIR Data Point info",
+                    description = "Ping payload with FAIR Data Point URL",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
                             examples = {
-                                @ExampleObject(value = "{\"clientUrl\": \"https://example.com\"}")
+                                @ExampleObject(value = "{\"clientUrl\": \"https://fdp.example.org\"}")
                             },
                             schema = @Schema(
                                     type = "object",
@@ -89,7 +89,7 @@ public class IndexPingController {
             HttpServletRequest request
     ) throws RdfRepositoryException {
         log.info("Received ping from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptIncomingPing(reqDto, request);
+        final Event event = eventService.handleIncomingPing(reqDto, request);
         log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(reqDto.getClientUrl());
