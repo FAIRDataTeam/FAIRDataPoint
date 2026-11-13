@@ -54,16 +54,17 @@ public class IndexPingController {
     private final IndexEntryService indexEntryService;
 
     @Operation(
-            description = "Inform about running FAIR Data Point. It is expected to "
-                    + "send pings regularly (at least weekly). There is a rate limit set "
-                    + "both per single IP within a period of time and per URL in message.",
+            description = """
+                    Ping this index endpoint once to register a new FAIR Data Point. After registration, subsequent
+                    pings are ignored. A rate limit applies, both per IP, within a period of time, and per URL in the
+                    request body.""",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Ping payload with FAIR Data Point info",
+                    description = "Ping payload with FAIR Data Point URL",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
                             examples = {
-                                @ExampleObject(value = "{\"clientUrl\": \"https://example.com\"}")
+                                @ExampleObject(value = "{\"clientUrl\": \"https://fdp.example.org\"}")
                             },
                             schema = @Schema(
                                     type = "object",
