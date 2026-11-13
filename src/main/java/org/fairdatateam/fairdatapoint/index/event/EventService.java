@@ -116,12 +116,12 @@ public class EventService {
     }
 
     /**
-     * Creates a new ping event and a new index entry in the database.
+     * Creates a new ping event for a matching index entry in the database. Creates the index entry if necessary.
      * Aborts if the FDP URL from the ping body is denied, e.g. contains localhost, or if the rate limit is exceeded.
      */
     @RequiredEnabledIndexFeature
     @SneakyThrows
-    public Event acceptIncomingPing(PingDTO pingDTO, HttpServletRequest request) {
+    public Event handleIncomingPing(PingDTO pingDTO, HttpServletRequest request) {
         final String remoteAddr = request.getRemoteAddr();
 
         // abort if FDP URL is denied or rate limit is exceeded
