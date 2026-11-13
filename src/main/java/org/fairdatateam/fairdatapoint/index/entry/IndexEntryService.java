@@ -213,14 +213,12 @@ public class IndexEntryService {
     @RequiredEnabledIndexFeature
     public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
-        final Optional<IndexEntry> entity = repository.findByClientUrl(clientUrl);
+        final Optional<IndexEntry> indexEntry = repository.findByClientUrl(clientUrl);
         final Instant now = Instant.now();
-        final IndexSettings settings = indexSettingsService.getOrDefaults();
-
         final IndexEntry entry;
-        if (entity.isPresent()) {
+        if (indexEntry.isPresent()) {
             log.info("Updating timestamp of existing entry {}", clientUrl);
-            entry = entity.orElseThrow();
+            entry = indexEntry.orElseThrow();
         }
         else {
             log.info("Storing new entry {}", clientUrl);
@@ -228,6 +226,7 @@ public class IndexEntryService {
             entry.setUuid(UUID.randomUUID().toString());
             entry.setClientUrl(clientUrl);
             entry.setRegistrationTime(now);
+            final IndexSettings settings = indexSettingsService.getOrDefaults();
             if (settings.getAutoPermit()) {
                 entry.setPermit(IndexEntryPermit.ACCEPTED);
             }
