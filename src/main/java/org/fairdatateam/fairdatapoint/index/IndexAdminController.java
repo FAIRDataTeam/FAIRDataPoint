@@ -37,8 +37,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @Tag(name = "Index")
 @Slf4j
 @RestController
@@ -73,13 +71,5 @@ public class IndexAdminController {
         log.info("Received ping trigger all request from {}", request.getRemoteAddr());
         final Event event = eventService.acceptAdminTriggerAll(request);
         eventService.triggerMetadataRetrieval(event);
-    }
-
-    @Operation(hidden = true)
-    @PostMapping("/ping-webhook")
-    @PreAuthorize("hasRole('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void webhookPing(@RequestParam UUID webhook, HttpServletRequest request) {
-        log.info("Received webhook {} ping trigger from {}", webhook, request.getRemoteAddr());
     }
 }
