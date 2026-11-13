@@ -22,13 +22,13 @@
  */
 package org.fairdatateam.fairdatapoint.index.settings;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -36,16 +36,14 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class IndexSettingsService {
 
-    @Autowired
-    private IndexSettingsRepository repository;
+    private final IndexSettingsRepository repository;
 
-    @Autowired
-    private IndexSettingsMapper mapper;
+    private final IndexSettingsMapper mapper;
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
     /**
      * Returns true if the FDP URL in the ping body matches any of the patterns in the
