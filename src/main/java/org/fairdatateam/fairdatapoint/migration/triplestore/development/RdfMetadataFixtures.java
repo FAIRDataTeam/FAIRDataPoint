@@ -32,6 +32,11 @@ import java.util.Arrays;
 @Service
 public class RdfMetadataFixtures {
 
+    public static final String THEME_THEATRE = "https://www.wikidata.org/wiki/Q27317";
+    public static final String THEME_TEST = "https://www.wikidata.org/wiki/Q27318";
+    public static final String THEME_ATEAM = "https://www.wikidata.org/wiki/Q27319";
+    public static final String THEME_EXAMPLE = "https://purl.org/example#theme";
+
     private static final String LIPSUM_1 =
             "Duis pellentesque, nunc a fringilla varius, magna dui porta quam, nec ultricies augue turpis sed "
                     + "velit. Donec id consectetur ligula. Suspendisse pharetra egestas massa, vel varius leo "
@@ -73,11 +78,6 @@ public class RdfMetadataFixtures {
     private static final String EXAMPLE_URL = "http://example.com/";
 
     private static final String PLAIN_TYPE = "text/plain";
-
-    private static final String THEME_THEATRE = "https://www.wikidata.org/wiki/Q27317";
-    private static final String THEME_TEST = "https://www.wikidata.org/wiki/Q27318";
-    private static final String THEME_ATEAM = "https://www.wikidata.org/wiki/Q27319";
-    private static final String THEME_EXAMPLE = "https://purl.org/example#theme";
 
     private final MetadataFactory metadataFactory;
 

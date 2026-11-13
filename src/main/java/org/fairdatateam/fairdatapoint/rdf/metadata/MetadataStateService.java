@@ -48,12 +48,12 @@ public class MetadataStateService {
 
     private static final String MSG_NOT_FOUND = "Metadata info '%s' was not found";
 
-    private final MetadataRepository metadataRepository;
+    private final MetadataStateRepository metadataStateRepository;
 
     private final MetadataStateValidator metadataStateValidator;
 
     public Metadata get(IRI metadataUri) {
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
+        final Optional<Metadata> oMetadata = metadataStateRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
             throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
@@ -69,7 +69,7 @@ public class MetadataStateService {
         }
 
         // 2. Get metadata info for current
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
+        final Optional<Metadata> oMetadata = metadataStateRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
             throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
@@ -84,7 +84,7 @@ public class MetadataStateService {
             }
         }
         final Map<String, MetadataState> children =
-                metadataRepository.findByUriIn(childrenUris)
+                metadataStateRepository.findByUriIn(childrenUris)
                         .stream()
                         .collect(Collectors.toMap(Metadata::getUri, Metadata::getState));
 
@@ -97,12 +97,12 @@ public class MetadataStateService {
 
     public void initState(IRI metadataUri) {
         final Metadata metadata = new Metadata(null, metadataUri.stringValue(), MetadataState.DRAFT);
-        metadataRepository.save(metadata);
+        metadataStateRepository.save(metadata);
     }
 
     public void modifyState(IRI metadataUri, MetaStateChangeDTO reqDto) {
         // 1. Get metadata info for current
-        final Optional<Metadata> oMetadata = metadataRepository.findByUri(metadataUri.stringValue());
+        final Optional<Metadata> oMetadata = metadataStateRepository.findByUri(metadataUri.stringValue());
         if (oMetadata.isEmpty()) {
             throw new ResourceNotFoundException(format(MSG_NOT_FOUND, metadataUri));
         }
@@ -113,7 +113,7 @@ public class MetadataStateService {
 
         // 3. Update
         metadata.setState(reqDto.getCurrent());
-        metadataRepository.save(metadata);
+        metadataStateRepository.save(metadata);
     }
 
 }

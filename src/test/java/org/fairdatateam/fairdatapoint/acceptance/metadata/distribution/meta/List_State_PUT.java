@@ -25,7 +25,7 @@ package org.fairdatateam.fairdatapoint.acceptance.metadata.distribution.meta;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.MetadataFixtures;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +54,7 @@ public class List_State_PUT extends WebIntegrationTest {
     private MetadataFixtures metadataFixtures;
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private MetadataStateRepository metadataStateRepository;
 
     private URI url(String id) {
         return URI.create(format("/distribution/%s/meta/state", id));
@@ -77,9 +77,9 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataRepository.findByUri(metadataFixtures.distribution1().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.distribution1().getUri()).get();
         metadata.setState(MetadataState.DRAFT);
-        metadataRepository.save(metadata);
+        metadataStateRepository.save(metadata);
 
         // WHEN:
         ResponseEntity<MetaStateChangeDTO> result = client.exchange(request, responseType);

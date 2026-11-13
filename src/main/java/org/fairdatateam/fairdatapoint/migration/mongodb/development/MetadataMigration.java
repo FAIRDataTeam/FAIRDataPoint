@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import org.fairdatateam.fairdatapoint.migration.Migration;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRepository;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +31,10 @@ import org.springframework.stereotype.Service;
 public class MetadataMigration implements Migration {
 
     @Autowired
-    private MetadataRepository metadataRepository;
+    private MetadataStateRepository metadataStateRepository;
 
     public void runMigration() {
-        metadataRepository.deleteAll();
+        metadataStateRepository.deleteAll();
     }
 
 }

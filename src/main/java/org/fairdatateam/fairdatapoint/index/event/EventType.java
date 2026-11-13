@@ -25,7 +25,5 @@ package org.fairdatateam.fairdatapoint.index.event;
 public enum EventType {
     AdminTrigger,
     MetadataRetrieval,
-    WebhookTrigger,
     IncomingPing,
-    WebhookPing,
 }

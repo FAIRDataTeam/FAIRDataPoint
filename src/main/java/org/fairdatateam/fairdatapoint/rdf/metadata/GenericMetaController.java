@@ -65,10 +65,10 @@ public class GenericMetaController {
     private CurrentUserProvider currentUserProvider;
 
     @Autowired
-    private MemberService memberService;
+    private GenericMetadataService metadataService;
 
     @Autowired
-    private MetadataServiceFactory metadataServiceFactory;
+    private MemberService memberService;
 
     @Autowired
     private MetadataStateService metadataStateService;
@@ -85,15 +85,13 @@ public class GenericMetaController {
         // 1. Init
         String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService =
-                metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get resource definition
         ResourceDefinition definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
 
         // 3. Get and check existence entity
         IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        Model entity = metadataService.retrieve(entityUri);
+        Model entity = metadataService.read(entityUri);
 
         // 4. Get member
         final String entityId = getMetadataIdentifier(entity).getIdentifier().getLabel();
@@ -117,7 +115,7 @@ public class GenericMetaController {
             if (parentUri == null) {
                 break;
             }
-            entity = metadataService.retrieve(parentUri);
+            entity = metadataService.read(parentUri);
             entityUri = parentUri;
             urlPrefix = getResourceNameForList(parentUri.toString());
             definition = resourceDefinitionService.getByUrlPrefix(urlPrefix);
@@ -136,12 +134,10 @@ public class GenericMetaController {
         // 1. Init
         final String urlPrefix = oUrlPrefix.orElse("");
         final String recordId = oRecordId.orElse("");
-        final MetadataService metadataService =
-                metadataServiceFactory.getMetadataServiceByUrlPrefix(urlPrefix);
 
         // 2. Get and check existence entity
         final IRI entityUri = getMetadataIRI(persistentUrl, urlPrefix, recordId);
-        final Model model = metadataService.retrieve(entityUri);
+        final Model model = metadataService.read(entityUri);
 
         // 3. Get state
         metadataStateService.modifyState(entityUri, reqDto);

@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.BaseIntegrationTest;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
@@ -36,8 +37,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.lang.String.format;
+import static org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures.*;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataSetter.*;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
@@ -53,11 +59,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
 
     @Autowired
     @Qualifier("genericMetadataService")
-    private MetadataService genericMetadataService;
-
-    @Autowired
-    @Qualifier("catalogMetadataService")
-    private MetadataService catalogMetadataService;
+    private GenericMetadataService genericMetadataService;
 
     @Autowired
     private AuthHelper authHelper;
@@ -71,7 +73,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void retrieveNonExitingMetadataThrowsError() {
+    public void readNonExitingMetadataThrowsError() {
         // GIVEN:
         IRI fdpUri = getUri(testMetadataFixtures.fdpMetadata());
         IRI metadataUri = i(format("%s/distribution/non-existing", fdpUri));
@@ -79,7 +81,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
-                () -> genericMetadataService.retrieve(metadataUri)
+                () -> genericMetadataService.read(metadataUri)
         );
 
         // THEN:
@@ -87,21 +89,21 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWorks() throws Exception {
+    public void createWorks() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(metadataFromDB);
     }
 
     @Test
-    public void storeWithNoParentURIThrowsError() {
+    public void createWithNoParentURIThrowsError() {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
@@ -110,7 +112,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> genericMetadataService.store(metadata, getUri(metadata), metadataRd)
+                () -> genericMetadataService.create(metadata, getUri(metadata), metadataRd)
         );
 
         // THEN:
@@ -118,7 +120,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithWrongParentURIThrowsError() {
+    public void createWithWrongParentURIThrowsError() {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model repository = testMetadataFixtures.fdpMetadata();
@@ -128,7 +130,7 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> genericMetadataService.store(metadata, getUri(metadata), metadataRd)
+                () -> genericMetadataService.create(metadata, getUri(metadata), metadataRd)
         );
 
         // THEN:
@@ -136,47 +138,47 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void storeWithNoMetadataIdentifier() throws Exception {
+    public void createWithNoMetadataIdentifier() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setMetadataIdentifier(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getMetadataIdentifier(metadataFromDB));
     }
 
     @Test
-    public void storeWithNoLicense() throws Exception {
+    public void createWithNoLicense() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setLicence(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getLicence(metadataFromDB));
     }
 
     @Test
-    public void storeWithNoLanguage() throws Exception {
+    public void createWithNoLanguage() throws Exception {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
         setLanguage(metadata, getUri(metadata), null);
 
         // WHEN:
-        genericMetadataService.store(metadata, getUri(metadata), metadataRd);
+        genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
-        Model metadataFromDB = genericMetadataService.retrieve(getUri(metadata));
+        Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getLanguage(metadataFromDB));
     }
 
@@ -190,21 +192,57 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         Model distribution = testMetadataFixtures.c1_d1_distribution1();
 
         // WHEN:
-        genericMetadataService.store(distribution, getUri(distribution), metadataRd);
+        genericMetadataService.create(distribution, getUri(distribution), metadataRd);
 
         // THEN:
-        Model updatedRepository = genericMetadataService.retrieve(getUri(repository));
-        Model updatedCatalog = catalogMetadataService.retrieve(getUri(catalog));
-        Model updatedDataset = genericMetadataService.retrieve(getUri(dataset));
-        Model storedDistribution = genericMetadataService.retrieve(getUri(distribution));
+        Model updatedRepository = genericMetadataService.read(getUri(repository));
+        Model updatedCatalog = genericMetadataService.read(getUri(catalog));
+        Model updatedDataset = genericMetadataService.read(getUri(dataset));
+        Model createdDistribution = genericMetadataService.read(getUri(distribution));
         OffsetDateTime repositoryModified = getModified(updatedRepository);
         OffsetDateTime catalogModified = getModified(updatedCatalog);
         OffsetDateTime datasetModified = getModified(updatedDataset);
-        OffsetDateTime distributionModified = getModified(storedDistribution);
+        OffsetDateTime distributionModified = getModified(createdDistribution);
         assertFalse(datasetModified.isBefore(distributionModified), "Dataset modified is not after Distribution " +
                 "modified");
         assertFalse(catalogModified.isBefore(distributionModified), "Catalog modified is not after Dataset modified");
         assertFalse(repositoryModified.isBefore(distributionModified), "FDP modified is not after Dataset modified");
+    }
+
+    @Test
+    public void annotateWithDatasetThemesWorks() throws Exception {
+        // GIVEN: catalog test fixture
+        Model catalog = testMetadataFixtures.catalog1();
+
+        // AND: rdf metadata fixtures are loaded by the RdfDevelopmentMigrationRunner (non-production profile),
+        // so we expect catalog1 to contain the themes from dataset1 and dataset2
+        Set<IRI> expectedThemes = Set.of(i(THEME_ATEAM), i(THEME_EXAMPLE), i(THEME_TEST));
+
+        // WHEN: update the catalog model with dataset themes
+        genericMetadataService.annotateWithDatasetThemes(catalog, getUri(catalog));
+
+        // THEN:
+        // todo: #1033
+        List<IRI> themeTaxonomies = getThemeTaxonomies(catalog);
+        assertThat(themeTaxonomies.size(), is(equalTo(expectedThemes.size())));
+        assertThat(new HashSet<>(themeTaxonomies), is(equalTo(expectedThemes)));
+    }
+
+    @Test
+    public void readDoesNotAnnotateWithDatasetThemes() throws MetadataServiceException {
+        // GIVEN: a catalog fixture URI
+        final IRI catalog1Uri = getUri(testMetadataFixtures.catalog1());
+
+        // WHEN: we read the catalog fixture
+        final Model catalog1 = genericMetadataService.read(catalog1Uri);
+
+        // THEN: The catalog1 fixture has two themeTaxonomy statements itself, viz. THEME_THEATRE and THEME_EXAMPLE,
+        // so we do expect to see those, but we do not expect to see the theme taxonomies from the corresponding
+        // dataset fixtures, viz. THEME_ATEAM, THEME_TEST.
+        final Map<String, Boolean> expectations = Map.of(
+                THEME_THEATRE, true, THEME_EXAMPLE, true, THEME_ATEAM, false, THEME_TEST, false);
+        expectations.forEach((theme, expected) -> assertThat(
+                catalog1.contains(null, DCAT.THEME_TAXONOMY, i(theme)), is(expected)));
     }
 
 }

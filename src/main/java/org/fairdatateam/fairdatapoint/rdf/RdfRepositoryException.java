@@ -20,17 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.index.webhook;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.fairdatateam.fairdatapoint.rdf;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public class RdfRepositoryException extends Exception {
 
-@Data
-@NoArgsConstructor
-public class WebhookPayloadDTO {
-    private WebhookEvent event;
-    private String uuid;
-    private String clientUrl;
-    private String timestamp;
-    private String secret;
+    public RdfRepositoryException(String msg) {
+        super(msg);
+    }
+
 }

@@ -29,10 +29,9 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDetailDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryInfoDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryUpdateDTO;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
-import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,9 +59,6 @@ public class IndexEntryController {
     private EventService eventService;
 
     @Autowired
-    private WebhookService webhookService;
-
-    @Autowired
     private IndexEntryService indexEntryService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -85,13 +81,12 @@ public class IndexEntryController {
             @PathVariable final String uuid,
             @RequestBody IndexEntryUpdateDTO reqDto,
             HttpServletRequest request
-    ) throws MetadataRdfRepositoryException {
+    ) throws RdfRepositoryException {
         final Optional<IndexEntryDetailDTO> resDto = service.updateEntry(uuid, reqDto);
         if (resDto.isPresent()) {
             final String clientUrl = resDto.get().getClientUrl();
             if (resDto.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
                 final Event event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
-                webhookService.triggerWebhooks(event);
                 eventService.triggerMetadataRetrieval(event);
                 indexEntryService.harvest(clientUrl);
             }
@@ -103,13 +98,13 @@ public class IndexEntryController {
     }
 
     @GetMapping(path = "/{uuid}/data", produces = "!application/json")
-    public Model getEntryData(@PathVariable final String uuid) throws MetadataRdfRepositoryException {
+    public Model getEntryData(@PathVariable final String uuid) throws RdfRepositoryException {
         return service.getEntryHarvestedData(uuid);
     }
 
     @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteEntry(@PathVariable final String uuid) throws MetadataRdfRepositoryException {
+    public void deleteEntry(@PathVariable final String uuid) throws RdfRepositoryException {
         service.deleteEntry(uuid);
     }
 

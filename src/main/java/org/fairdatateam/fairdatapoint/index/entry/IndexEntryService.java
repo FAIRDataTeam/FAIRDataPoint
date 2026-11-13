@@ -24,8 +24,8 @@ package org.fairdatateam.fairdatapoint.index.entry;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.fairdatateam.fairdatapoint.index.entry.dto.*;
@@ -74,7 +74,7 @@ public class IndexEntryService {
     private IndexEntryMapper mapper;
 
     @Autowired
-    private GenericMetadataRdfRepository genericMetadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private HarvesterService harvesterService;
@@ -248,7 +248,7 @@ public class IndexEntryService {
 
     @RequiredEnabledIndexFeature
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteEntry(String uuid) throws MetadataRdfRepositoryException {
+    public void deleteEntry(String uuid) throws RdfRepositoryException {
         final IndexEntry entry = repository.findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
         harvesterService.deleteHarvestedData(entry.getClientUrl());
@@ -256,7 +256,7 @@ public class IndexEntryService {
     }
 
     @Async
-    public void harvest(String clientUrl) throws MetadataRdfRepositoryException {
+    public void harvest(String clientUrl) throws RdfRepositoryException {
         log.info("Checking index entry for '{}'", clientUrl);
         final Optional<IndexEntry> indexEntry = getEntryByClientUrl(clientUrl);
         if (indexEntry.isEmpty() || indexEntry.get().getPermit() != IndexEntryPermit.ACCEPTED) {
@@ -272,12 +272,12 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
-    public Model getEntryHarvestedData(String uuid) throws MetadataRdfRepositoryException {
+    public Model getEntryHarvestedData(String uuid) throws RdfRepositoryException {
         final IndexEntry entry = repository
                 .findByUuid(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(MSG_NOT_FOUND));
         final Model model = new TreeModel();
-        model.addAll(genericMetadataRepository.find(i(entry.getClientUrl())));
+        model.addAll(metadataRdfRepository.find(i(entry.getClientUrl())));
         return model;
     }
 

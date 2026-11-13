@@ -25,8 +25,8 @@ package org.fairdatateam.fairdatapoint.index.entry;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.RdfMetadataFixtures;
 import org.fairdatateam.fairdatapoint.migration.triplestore.development.MetadataFactoryImpl;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.eclipse.rdf4j.model.Model;
@@ -60,7 +60,7 @@ public class HarvesterServiceTest {
     private HarvesterService harvesterService;
 
     @MockitoBean
-    private GenericMetadataRdfRepository genericMetadataRdfRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     private final String repositoryUrl = "http://fairdatapoint.example";
 
@@ -88,7 +88,7 @@ public class HarvesterServiceTest {
     }
 
     @Test
-    public void harvestSucceeded() throws MetadataRdfRepositoryException {
+    public void harvestSucceeded() throws RdfRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
         mockEndpoint(catalogUrl, catalog);
@@ -98,11 +98,11 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRdfRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
+        verify(metadataRdfRepository, times(2)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     @Test
-    public void harvestFailedDueToServerError() throws MetadataRdfRepositoryException {
+    public void harvestFailedDueToServerError() throws RdfRepositoryException {
         // GIVEN: Mock webserver
         mockRemoteServer
                 .expect(ExpectedCount.once(), requestTo(repositoryUrl))
@@ -114,11 +114,11 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRdfRepository, never()).save(any(), any());
+        verify(metadataRdfRepository, never()).save(any(), any());
     }
 
     @Test
-    public void harvestFailedForLinkedChildren() throws MetadataRdfRepositoryException {
+    public void harvestFailedForLinkedChildren() throws RdfRepositoryException {
         // GIVEN: Mock webserver
         mockEndpoint(repositoryUrl, repository);
         mockRemoteServer
@@ -131,7 +131,7 @@ public class HarvesterServiceTest {
 
         // THEN:
         mockRemoteServer.verify();
-        verify(genericMetadataRdfRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
+        verify(metadataRdfRepository, times(1)).save(anyList(), eq(i(repositoryUrl)));
     }
 
     private void mockEndpoint(String url, Model body) {

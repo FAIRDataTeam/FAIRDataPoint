@@ -26,8 +26,8 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.UserFixtures;
-import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepositoryException;
-import org.fairdatateam.fairdatapoint.rdf.metadata.GenericMetadataRdfRepository;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataState;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataService;
@@ -49,14 +49,10 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 public class RdfMetadataMigration implements Migration {
 
     @Autowired
-    private GenericMetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private RdfMetadataFixtures rdfMetadataFixtures;
-
-    @Autowired
-    @Qualifier("catalogMetadataService")
-    private MetadataService catalogMetadataService;
 
     @Autowired
     @Qualifier("genericMetadataService")
@@ -81,7 +77,7 @@ public class RdfMetadataMigration implements Migration {
     public void runMigration() {
         try {
             // 1. Remove all previous metadata
-            metadataRepository.removeAll();
+            metadataRdfRepository.removeAll();
 
             // 2. Auth user
             final String adminUuid = userFixtures.admin().getUuid();
@@ -91,7 +87,7 @@ public class RdfMetadataMigration implements Migration {
             // 3. Load metadata fixtures
             importDefaultFixtures(persistentUrl);
         }
-        catch (MetadataServiceException | MetadataRdfRepositoryException exception) {
+        catch (MetadataServiceException | RdfRepositoryException exception) {
             exception.printStackTrace();
         }
     }
@@ -104,35 +100,35 @@ public class RdfMetadataMigration implements Migration {
 
         final Model fdpM = rdfMetadataFixtures.fdpMetadata(fdpUrl);
         final IRI fdpUri = getUri(fdpM);
-        genericMetadataService.store(fdpM, i(fdpUrl), fdpRd);
+        genericMetadataService.create(fdpM, i(fdpUrl), fdpRd);
         metadataStateService.modifyState(fdpUri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
         final Model catalog1 = rdfMetadataFixtures.catalog1(fdpUrl, i(fdpUrl));
         final IRI catalog1Uri = getUri(catalog1);
-        catalogMetadataService.store(catalog1, catalog1Uri, catalogRd);
+        genericMetadataService.create(catalog1, catalog1Uri, catalogRd);
         metadataStateService.modifyState(catalog1Uri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
         final Model catalog2 = rdfMetadataFixtures.catalog2(fdpUrl, fdpUri);
         final IRI catalog2Uri = getUri(catalog2);
-        catalogMetadataService.store(catalog2, catalog2Uri, catalogRd);
+        genericMetadataService.create(catalog2, catalog2Uri, catalogRd);
 
         final Model dataset1 = rdfMetadataFixtures.dataset1(fdpUrl, catalog1Uri);
         final IRI dataset1Uri = getUri(dataset1);
-        genericMetadataService.store(dataset1, dataset1Uri, datasetRd);
+        genericMetadataService.create(dataset1, dataset1Uri, datasetRd);
         metadataStateService.modifyState(dataset1Uri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
         final Model dataset2 = rdfMetadataFixtures.dataset2(fdpUrl, catalog1Uri);
         final IRI dataset2Uri = getUri(dataset2);
-        genericMetadataService.store(dataset2, dataset2Uri, datasetRd);
+        genericMetadataService.create(dataset2, dataset2Uri, datasetRd);
 
         final Model distribution1 = rdfMetadataFixtures.distribution1(fdpUrl, dataset1Uri);
         final IRI distribution1Uri = getUri(distribution1);
-        genericMetadataService.store(distribution1, distribution1Uri, distributionRd);
+        genericMetadataService.create(distribution1, distribution1Uri, distributionRd);
         metadataStateService.modifyState(distribution1Uri, new MetaStateChangeDTO(MetadataState.PUBLISHED));
 
         final Model distribution2 = rdfMetadataFixtures.distribution2(fdpUrl, dataset1Uri);
         final IRI distribution2Uri = getUri(distribution2);
-        genericMetadataService.store(distribution2, distribution2Uri, distributionRd);
+        genericMetadataService.create(distribution2, distribution2Uri, distributionRd);
     }
 
 }

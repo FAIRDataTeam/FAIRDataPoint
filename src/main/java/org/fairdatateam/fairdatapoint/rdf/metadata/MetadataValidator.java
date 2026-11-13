@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.StandaloneShaclValidator;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
@@ -31,7 +32,6 @@ import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
@@ -42,8 +42,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 public class MetadataValidator {
 
     @Autowired
-    @Qualifier("genericMetadataRdfRepository")
-    private MetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Autowired
     private StandaloneShaclValidator standaloneShaclValidator;
@@ -87,12 +86,12 @@ public class MetadataValidator {
         try {
             // select parent based on URI prefix
             for (String rdfType : resourceDefinitionService.getTargetClassUris(rdParent)) {
-                if (!metadataRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
+                if (!metadataRdfRepository.checkExistence(parent, RDF.TYPE, i(rdfType))) {
                     throw new ValidationException(format("Parent is not of type (missing type: %s)", rdfType));
                 }
             }
         }
-        catch (MetadataRdfRepositoryException exception) {
+        catch (RdfRepositoryException exception) {
             throw new MetadataServiceException(exception.getMessage());
         }
     }

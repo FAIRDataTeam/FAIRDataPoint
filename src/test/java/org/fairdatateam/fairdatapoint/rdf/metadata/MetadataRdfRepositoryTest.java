@@ -23,21 +23,20 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.util.Statements;
 import org.eclipse.rdf4j.model.vocabulary.DCAT;
 import org.fairdatateam.fairdatapoint.WebIntegrationTest;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.testfixtures.TestRdfMetadataFixtures;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.CATALOG_THEMES_CACHE;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getLanguage;
@@ -50,7 +49,11 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
+public class MetadataRdfRepositoryTest extends WebIntegrationTest {
+
+    // The catalog1 fixture is amended with two dcat:dataset statements before it is persisted (also see comments #1050)
+    private final static int EXPECTED_CATALOG1_SIZE_TRANSIENT = 30;
+    private final static int EXPECTED_CATALOG1_SIZE_PERSISTENT = 32;
 
     @Autowired
     private ConcurrentMapCacheManager cacheManager;
@@ -59,72 +62,82 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
     private TestRdfMetadataFixtures testMetadataFixtures;
 
     @Autowired
-    private GenericMetadataRdfRepository genericMetadataRdfRepository;
-
-    @Autowired
-    private CatalogMetadataRdfRepository catalogMetadataRdfRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @Test
-    @DisplayName("'save' should evict cache")
-    public void saveEvictsCache() throws MetadataRdfRepositoryException {
-        // GIVEN:
+    public void themesAreCached() throws RdfRepositoryException {
+        // given
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
-        Model dataset = testMetadataFixtures.c1_dataset1();
 
-        // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        // and ensure cache is empty
+        assertThat(getCache().get(catalogUri), is(nullValue()));
 
-        // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        // when
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
-        // WHEN:
-        genericMetadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
-
-        // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        // then ensure cache is now populated
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
     }
 
     @Test
-    @DisplayName("'removeStatement' should evict cache")
-    public void removeStatementEvictsCache() throws MetadataRdfRepositoryException {
+    public void saveEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
-        genericMetadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
+        metadataRdfRepository.save(new ArrayList<>(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     @Test
-    @DisplayName("'remove' should evict cache")
-    public void removeEvictsCache() throws MetadataRdfRepositoryException {
+    public void removeStatementEvictsCache() throws RdfRepositoryException {
         // GIVEN:
         Model catalog = testMetadataFixtures.catalog1();
         IRI catalogUri = getUri(catalog);
         Model dataset = testMetadataFixtures.c1_dataset1();
 
         // AND: Compute cache
-        catalogMetadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
 
         // AND: Check if cache is full
-        assertThat(getCache().get(catalogUri.stringValue()), is(notNullValue()));
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
 
         // WHEN:
-        genericMetadataRdfRepository.remove(getUri(dataset));
+        metadataRdfRepository.removeStatement(getUri(dataset), DCTERMS.LANGUAGE, getLanguage(dataset), getUri(dataset));
 
         // THEN:
-        assertThat(getCache().get(catalogUri.stringValue()), is(nullValue()));
+        assertThat(getCache().get(catalogUri), is(nullValue()));
+    }
+
+    @Test
+    public void removeEvictsCache() throws RdfRepositoryException {
+        // GIVEN:
+        Model catalog = testMetadataFixtures.catalog1();
+        IRI catalogUri = getUri(catalog);
+        Model dataset = testMetadataFixtures.c1_dataset1();
+
+        // AND: Compute cache
+        metadataRdfRepository.getDatasetThemesForCatalog(catalogUri);
+
+        // AND: Check if cache is full
+        assertThat(getCache().get(catalogUri), is(notNullValue()));
+
+        // WHEN:
+        metadataRdfRepository.remove(getUri(dataset));
+
+        // THEN:
+        assertThat(getCache().get(catalogUri), is(nullValue()));
     }
 
     private Cache getCache() {
@@ -135,15 +148,26 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
 
     @Test
     public void findWorks() throws Exception {
-        // GIVEN:
-        Model metadata = testMetadataFixtures.catalog1();
-        IRI context = getUri(testMetadataFixtures.catalog1());
+        // GIVEN: catalog fixture
+        // Note that this fixture does not include dcat:dataset statements, because these are only added when
+        // GenericMetadataService.create() calls updateParent().
+        Model catalog1 = testMetadataFixtures.catalog1();
+        Set<String> expectedTriples = tripleSet(catalog1);
 
-        // WHEN:
-        List<Statement> result = genericMetadataRdfRepository.find(context);
+        // AND: verify expected size based on catalog1 fixture
+        assertThat(expectedTriples.size(), is(equalTo(EXPECTED_CATALOG1_SIZE_TRANSIENT)));
+
+        // WHEN: get the stored catalog fixture (created by the RdfDevelopmentMigrationRunner)
+        // Note that the stored fixture *does* include dcat:dataset statements *and* has different timestamp values.
+        Set<String> resultTriples = tripleSet(metadataRdfRepository.find(getUri(catalog1)));
 
         // THEN:
-        assertThat(result.size(), is(equalTo(metadata.size())));
+        for (String expectedTriple : expectedTriples) {
+            // ignore timestamps because these are expected to be different due to the way "fixtures" are implemented
+            if (!expectedTriple.contains("#dateTime")) {
+                assertThat(resultTriples.contains(expectedTriple), is(true));
+            }
+        }
     }
 
     @Test
@@ -152,19 +176,19 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI context = i("http://localhost/non-existing");
 
         // WHEN:
-        List<Statement> result = genericMetadataRdfRepository.find(context);
+        List<Statement> result = metadataRdfRepository.find(context);
 
         // THEN:
         assertThat(result.size(), is(equalTo(0)));
     }
 
     @Test
-    public void findChildTitlesWorks() throws MetadataRdfRepositoryException {
+    public void findChildTitlesWorks() throws RdfRepositoryException {
         // given
         final IRI parent = getUri(testMetadataFixtures.catalog1());
 
         // when
-        final Map<String, String> result = genericMetadataRdfRepository.findChildTitles(parent, DCAT.HAS_DATASET);
+        final Map<String, String> result = metadataRdfRepository.findChildTitles(parent, DCAT.HAS_DATASET);
 
         // then
         assertThat(result.size(), is(greaterThan(0)));
@@ -176,7 +200,7 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         Model metadata = testMetadataFixtures.catalog1();
 
         // WHEN:
-        boolean result = genericMetadataRdfRepository.checkExistence(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata));
+        boolean result = metadataRdfRepository.checkExistence(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata));
 
         // THEN:
         assertThat(result, is(equalTo(true)));
@@ -190,10 +214,10 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         ArrayList<Statement> statements = new ArrayList<>(metadata);
 
         // WHEN:
-        genericMetadataRdfRepository.save(statements, context);
+        metadataRdfRepository.save(statements, context);
 
         // THEN:
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(28)));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(28)));
     }
 
     @Test
@@ -203,13 +227,13 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(EXPECTED_CATALOG1_SIZE_PERSISTENT)));
 
         // WHEN:
-        genericMetadataRdfRepository.remove(context);
+        metadataRdfRepository.remove(context);
 
         // THEN:
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(0)));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(0)));
     }
 
     @Test
@@ -219,13 +243,25 @@ public class GenericMetadataRdfRepositoryTest extends WebIntegrationTest {
         IRI context = getUri(metadata);
 
         // AND: Check existence before delete
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(metadata.size())));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(EXPECTED_CATALOG1_SIZE_PERSISTENT)));
 
         // WHEN:
-        genericMetadataRdfRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
+        metadataRdfRepository.removeStatement(getUri(metadata), DCTERMS.LANGUAGE, getLanguage(metadata), context);
 
         // THEN:
-        assertThat(genericMetadataRdfRepository.find(context).size(), is(equalTo(metadata.size() - 1)));
+        assertThat(metadataRdfRepository.find(context).size(), is(equalTo(EXPECTED_CATALOG1_SIZE_PERSISTENT - 1)));
+    }
+
+    /**
+     * Returns a set of strings representing rdf triples (subject, predicate, object), ignoring the context.
+     * This is convenient for comparing graph contents.
+     */
+    private Set<String> tripleSet(Collection<Statement> statements) {
+        Set<String> tripleStrings = new HashSet<>();
+        for (Statement statement : statements) {
+            tripleStrings.add(Statements.stripContext(statement).toString());
+        }
+        return tripleStrings;
     }
 
 }

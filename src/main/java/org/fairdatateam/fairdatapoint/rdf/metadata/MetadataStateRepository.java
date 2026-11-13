@@ -20,43 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.fairdatapoint.index.webhook;
+package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-// TODO: looks like no webhooks are ever saved using the WebhookRepository, so no collection is ever created...
-@Document(collection = "webhook")
-public class Webhook {
-    @Id
-    private ObjectId id;
+public interface MetadataStateRepository extends MongoRepository<Metadata, String> {
 
-    @NotNull
-    private UUID uuid = UUID.randomUUID();
+    Optional<Metadata> findByUri(String uri);
 
-    private String payloadUrl;
+    List<Metadata> findByUriIn(List<String> uris);
 
-    private String secret;
-
-    private boolean allEvents;
-
-    private List<WebhookEvent> events = new ArrayList<>();
-
-    private boolean allEntries;
-
-    private List<String> entries = new ArrayList<>();
-
-    private boolean enabled;
 }

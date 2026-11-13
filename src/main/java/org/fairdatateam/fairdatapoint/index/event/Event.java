@@ -28,8 +28,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.bson.types.ObjectId;
-import org.fairdatateam.fairdatapoint.index.webhook.WebhookPing;
-import org.fairdatateam.fairdatapoint.index.webhook.WebhookTrigger;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -61,8 +59,6 @@ public class Event {
     private IncomingPing incomingPing;
     private MetadataRetrieval metadataRetrieval;
     private AdminTrigger adminTrigger;
-    private WebhookPing webhookPing;
-    private WebhookTrigger webhookTrigger;
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -95,30 +91,8 @@ public class Event {
         this.adminTrigger = adminTrigger;
     }
 
-    public Event(Integer version, WebhookTrigger webhookTrigger, Event triggerEvent) {
-        this.type = EventType.WebhookTrigger;
-        this.version = version;
-        this.webhookTrigger = webhookTrigger;
-        this.triggeredBy = triggerEvent;
-        this.relatedTo = triggerEvent.getRelatedTo();
-    }
-
-    public Event(Integer version, WebhookPing webhookPing) {
-        this.type = EventType.WebhookPing;
-        this.version = version;
-        this.webhookPing = webhookPing;
-    }
-
-    public boolean isExecuted() {
-        return executed != null;
-    }
-
     public void execute() {
         executed = Instant.now();
-    }
-
-    public boolean isFinished() {
-        return finished != null;
     }
 
     public void finish() {

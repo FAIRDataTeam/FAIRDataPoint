@@ -26,6 +26,7 @@ import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.when;
  * failure, not left as an unchecked exception that gets misclassified further up the stack.
  */
 @ExtendWith(MockitoExtension.class)
-public class GenericMetadataRdfRepositoryFailureTest {
+public class MetadataRdfRepositoryFailureTest {
 
     @Mock
     private Repository repository;
@@ -54,11 +55,11 @@ public class GenericMetadataRdfRepositoryFailureTest {
     @Mock
     private TupleQuery query;
 
-    private GenericMetadataRdfRepository metadataRepository;
+    private MetadataRdfRepository metadataRdfRepository;
 
     @BeforeEach
     public void setUp() {
-        metadataRepository = new GenericMetadataRdfRepository(new ConcurrentMapCacheManager(), repository);
+        metadataRdfRepository = new MetadataRdfRepository(new ConcurrentMapCacheManager(), repository);
     }
 
     @Test
@@ -70,8 +71,8 @@ public class GenericMetadataRdfRepositoryFailureTest {
 
         // WHEN/THEN:
         assertThrows(
-                MetadataRdfRepositoryException.class,
-                () -> metadataRepository.runSparqlQuery("SELECT * WHERE { ?s ?p ?o }", null)
+                RdfRepositoryException.class,
+                () -> metadataRdfRepository.runSparqlQuery("SELECT * WHERE { ?s ?p ?o }", null)
         );
     }
 }
