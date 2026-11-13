@@ -41,6 +41,9 @@ public class IncomingPingUtils {
 
     private final JsonMapper jsonMapper;
 
+    /**
+     * Returns a new <code>Event</code> for an incoming ping, including a copy of the request headers and body.
+     */
     public Event prepareEvent(PingDTO pingDto, HttpServletRequest request, String remoteAddr) {
         final IncomingPing incomingPing = new IncomingPing();
         final Exchange exchange = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
