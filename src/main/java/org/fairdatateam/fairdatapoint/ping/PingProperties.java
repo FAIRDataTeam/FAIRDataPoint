@@ -37,9 +37,17 @@ import java.util.List;
 @Setter
 @ConfigurationProperties(prefix = "ping")
 public class PingProperties {
-    private static final int DEFAULT_INTERVAL_DAYS = 7;
-    private boolean enabled = true;
-    private String initDelay = "10000";
-    private Duration interval = Duration.ofDays(DEFAULT_INTERVAL_DAYS);
-    private List<String> endpoints = List.of("https://home.fairdatapoint.org");
+    // defaults
+    // beware: @ConfigurationProperties binding is a one-way thing, so these defaults only apply if the property is not
+    // defined externally, e.g. in application.yaml or in an environment variable
+    private static final int DEFAULT_DELAY_SECONDS = 10;
+    private static final boolean DEFAULT_ENABLED = true;
+    private static final String DEFAULT_INDEX_URL = "https://home.fairdatapoint.org";
+    private static final int DEFAULT_MAX_ATTEMPTS = 5;
+
+    // config properties
+    private boolean enabled = DEFAULT_ENABLED;
+    private Duration delay = Duration.ofSeconds(DEFAULT_DELAY_SECONDS);
+    private int maxAttempts = DEFAULT_MAX_ATTEMPTS;
+    private List<String> endpoints = List.of(DEFAULT_INDEX_URL);
 }
