@@ -32,7 +32,6 @@ import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
-import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
 import org.eclipse.rdf4j.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,9 +57,6 @@ public class IndexEntryController {
 
     @Autowired
     private EventService eventService;
-
-    @Autowired
-    private WebhookService webhookService;
 
     @Autowired
     private IndexEntryService indexEntryService;
@@ -91,7 +87,6 @@ public class IndexEntryController {
             final String clientUrl = resDto.get().getClientUrl();
             if (resDto.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
                 final Event event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
-                webhookService.triggerWebhooks(event);
                 eventService.triggerMetadataRetrieval(event);
                 indexEntryService.harvest(clientUrl);
             }
