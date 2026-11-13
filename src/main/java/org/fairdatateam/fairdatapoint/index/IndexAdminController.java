@@ -32,7 +32,6 @@ import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
-import org.fairdatateam.fairdatapoint.index.webhook.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,9 +49,6 @@ public class IndexAdminController {
     private EventService eventService;
 
     @Autowired
-    private WebhookService webhookService;
-
-    @Autowired
     private IndexEntryService indexEntryService;
 
     @Operation(hidden = true)
@@ -65,7 +61,6 @@ public class IndexAdminController {
     ) throws RdfRepositoryException {
         log.info("Received ping trigger request from {}", request.getRemoteAddr());
         final Event event = eventService.acceptAdminTrigger(request, reqDto);
-        webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(reqDto.getClientUrl());
     }
@@ -77,7 +72,6 @@ public class IndexAdminController {
     public void triggerMetadataRetrieveAll(HttpServletRequest request) {
         log.info("Received ping trigger all request from {}", request.getRemoteAddr());
         final Event event = eventService.acceptAdminTriggerAll(request);
-        webhookService.triggerWebhooks(event);
         eventService.triggerMetadataRetrieval(event);
     }
 
@@ -87,7 +81,5 @@ public class IndexAdminController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void webhookPing(@RequestParam UUID webhook, HttpServletRequest request) {
         log.info("Received webhook {} ping trigger from {}", webhook, request.getRemoteAddr());
-        final Event event = webhookService.handleWebhookPing(request, webhook);
-        webhookService.triggerWebhooks(event);
     }
 }
