@@ -94,7 +94,7 @@ public class EventService {
     /**
      * Raises a <code>RateLimitException</code> if the rate limit is exceeded.
      */
-    private void checkRateLimit(String remoteAddr) {
+    public void checkRateLimit(String remoteAddr) {
         final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
         final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
         final List<Event> previousPings =
@@ -112,26 +112,25 @@ public class EventService {
 
     /**
      * Creates a new ping event for a matching index entry in the database. Creates the index entry if necessary.
-     * Aborts if the FDP URL from the ping body is denied, e.g. contains localhost, or if the rate limit is exceeded.
+     * Aborts if the clientUrl from the ping body is denied, e.g. if it contains localhost.
      */
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event handleIncomingPing(String clientUrl, HttpServletRequest request) {
-        final String remoteAddr = request.getRemoteAddr();
 
-        // abort if FDP URL is denied or rate limit is exceeded
+        // abort if clientUrl matches denyList
         if (indexSettingsService.isPingDenied(clientUrl)) {
             log.info("Received ping is denied");
             throw new PingDeniedException(clientUrl);
         }
-        checkRateLimit(remoteAddr);
 
         // create new event in database
-        final Event event = incomingPingUtils.prepareEvent(pingDTO, request, remoteAddr);
+        final Event event = incomingPingUtils.prepareEvent(clientUrl, request);
         eventRepository.save(event);
         event.setExecutedNow();
 
         // populate the event with an index entry, possibly newly created
+        event.setExecutedNow();
         try {
             final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
             event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
@@ -213,7 +212,8 @@ public class EventService {
     @Async
     @RequiredEnabledIndexFeature
     public void triggerMetadataRetrieval(Event triggerEvent) {
-        log.info("Initiating metadata retrieval triggered by {}", triggerEvent.getUuid());
+        log.info("Initiating metadata retrieval for {} (triggered by event {})",
+                triggerEvent.getRelatedTo().getClientUrl(), triggerEvent.getUuid());
         final Iterable<Event> events = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
         for (Event event : events) {
             log.info("Triggering metadata retrieval for {} as {}", event.getRelatedTo().getClientUrl(),

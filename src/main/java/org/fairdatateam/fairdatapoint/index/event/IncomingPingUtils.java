@@ -44,13 +44,14 @@ public class IncomingPingUtils {
     /**
      * Returns a new <code>Event</code> for an incoming ping, including a copy of the request headers and body.
      */
-    public Event prepareEvent(PingDTO pingDto, HttpServletRequest request, String remoteAddr) {
+    public Event prepareEvent(String clientUrl, HttpServletRequest request) {
         final IncomingPing incomingPing = new IncomingPing();
-        final Exchange exchange = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
+        final Exchange exchange = new Exchange(ExchangeDirection.INCOMING, request.getRemoteAddr());
         exchange.getRequest().setHeaders(getHeaders(request));
         exchange.getRequest().setFromHttpServletRequest(request);
         try {
-            exchange.getRequest().setBody(jsonMapper.writeValueAsString(pingDto));
+            // we have to restore the body because it has already been consumed from the request
+            exchange.getRequest().setBody(jsonMapper.writeValueAsString(new PingDTO(clientUrl)));
         }
         catch (JacksonException exception) {
             exchange.getRequest().setBody(null);

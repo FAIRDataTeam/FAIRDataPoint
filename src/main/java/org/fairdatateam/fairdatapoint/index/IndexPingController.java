@@ -89,9 +89,10 @@ public class IndexPingController {
             HttpServletRequest request
     ) throws RdfRepositoryException {
         final String clientUrl = pingDTO.getClientUrl();
-        log.info("Received ping from {}", request.getRemoteAddr());
+        final String remoteAddr = request.getRemoteAddr();
+        log.info("Received ping from {} ({})", remoteAddr, clientUrl);
+        eventService.checkRateLimit(remoteAddr);
         final Event event = eventService.handleIncomingPing(clientUrl, request);
-        log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(clientUrl);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
