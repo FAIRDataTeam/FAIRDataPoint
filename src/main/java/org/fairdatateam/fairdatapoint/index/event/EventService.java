@@ -133,10 +133,19 @@ public class EventService {
         event.setExecutedNow();
         try {
             final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
-            // this ping creates a new entry if there is no existing entry for clientUrl
+            // indicate if a new entry will be created for this ping
             event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
-            final IndexEntry indexEntry = optionalIndexEntry
-                    .orElseGet(() -> indexEntryService.createNewEntry(clientUrl));
+            IndexEntry indexEntry;
+            if (optionalIndexEntry.isPresent()) {
+                // update modification time for existing entry
+                indexEntry = optionalIndexEntry.get();
+                indexEntry.setModificationTime(Instant.now());
+                indexEntryService.saveEntry(indexEntry);
+            }
+            else {
+                // create new entry
+                indexEntry = indexEntryService.createNewEntry(clientUrl);
+            }
             event.setRelatedTo(indexEntry);
             // todo: what does the CREATED status code refer to? the indexentry may already exist, so that seems wrong
             event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.CREATED.value());
