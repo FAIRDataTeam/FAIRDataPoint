@@ -39,7 +39,6 @@ public class IndexSettingsPing {
     private static final int DEFAULT_VALID_DAYS = 7;
     private static final int DEFAULT_LIMIT_DURATION_HOURS = 6;
     private static final int DEFAULT_LIMIT_HITS = 10;
-    // todo: we should parse the URL and check denied hostname instead of using regexes
     private static final String DEFAULT_DENY_PATTERN = "^https?://localhost(?::\\d+)?.*$";
 
     @NotNull
@@ -51,6 +50,8 @@ public class IndexSettingsPing {
     @NotNull
     private Integer rateLimitHits;
 
+    // denyList will be replaced by a deniedHosts list in the future, accepting hostnames instead of regexes
+    @Deprecated(since = "1.22.3", forRemoval = true)
     @NotNull
     private List<String> denyList;
 
