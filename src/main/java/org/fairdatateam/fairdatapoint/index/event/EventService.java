@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.common.util.GetOrCreateResult;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
@@ -71,8 +70,6 @@ public class EventService {
     private final ThreadPoolTaskExecutor executor;
 
     private final EventRepository eventRepository;
-
-    private final IndexEntryRepository indexEntryRepository;
 
     @Lazy
     private final IndexEntryService indexEntryService;
@@ -167,7 +164,7 @@ public class EventService {
         final IndexSettingsRetrieval retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
         final String clientUrl = event.getRelatedTo().getClientUrl();
         if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
-            indexEntryRepository.save(event.getRelatedTo());
+            indexEntryService.saveEntry(event.getRelatedTo());
             eventRepository.save(event);
             event.setExecutedNow();
 
@@ -184,7 +181,7 @@ public class EventService {
                         event.getRelatedTo().setCurrentMetadata(metadata.get());
                         event.getRelatedTo().setState(IndexEntryState.Valid);
                         log.info("Storing metadata for {}", clientUrl);
-                        indexEntryRepository.save(event.getRelatedTo());
+                        indexEntryService.saveEntry(event.getRelatedTo());
                     }
                     else {
                         log.info("Repository not found in metadata for {}", clientUrl);
@@ -210,7 +207,7 @@ public class EventService {
         event.getRelatedTo().setLastRetrievalTime(Instant.now());
         event.setFinishedNow();
         final Event newEvent = eventRepository.save(event);
-        indexEntryRepository.save(newEvent.getRelatedTo());
+        indexEntryService.saveEntry(newEvent.getRelatedTo());
     }
 
     @Async

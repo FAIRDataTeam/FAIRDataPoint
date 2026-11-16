@@ -247,6 +247,14 @@ public class IndexEntryService {
         return repository.save(newIndexEntry);
     }
 
+    /**
+     * Saves an <code>IndexEntry</code> to the database.
+     */
+    @RequiredEnabledIndexFeature
+    public void saveEntry(IndexEntry indexEntry) {
+        repository.save(indexEntry);
+    }
+
     @RequiredEnabledIndexFeature
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteEntry(String uuid) throws RdfRepositoryException {
