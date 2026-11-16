@@ -129,9 +129,10 @@ public class EventService {
         eventRepository.save(event);
         event.setExecutedNow();
 
-        // populate the event with an index entry, possibly newly created
+        // populate the event with an index entry
         event.setExecutedNow();
         try {
+            // entry will ne newly created if not in the database
             final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
             event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
             final IndexEntry indexEntry = optionalIndexEntry
