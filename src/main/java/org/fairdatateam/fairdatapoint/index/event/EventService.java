@@ -132,8 +132,8 @@ public class EventService {
         // populate the event with an index entry
         event.setExecutedNow();
         try {
-            // entry will ne newly created if not in the database
             final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
+            // this ping creates a new entry if there is no existing entry for clientUrl
             event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
             final IndexEntry indexEntry = optionalIndexEntry
                     .orElseGet(() -> indexEntryService.createNewEntry(clientUrl));
