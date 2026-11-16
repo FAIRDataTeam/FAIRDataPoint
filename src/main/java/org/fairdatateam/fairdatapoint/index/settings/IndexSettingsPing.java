@@ -39,7 +39,7 @@ public class IndexSettingsPing {
     private static final int DEFAULT_VALID_DAYS = 7;
     private static final int DEFAULT_LIMIT_DURATION_HOURS = 6;
     private static final int DEFAULT_LIMIT_HITS = 10;
-    private static final String DEFAULT_DENY_PATTERN = "^(http|https)://localhost(:[0-9]+){0,1}.*$";
+    private static final String DEFAULT_DENY_PATTERN = "^https?://localhost(?::\\d+)?.*$";
 
     @NotNull
     private Duration validDuration;
