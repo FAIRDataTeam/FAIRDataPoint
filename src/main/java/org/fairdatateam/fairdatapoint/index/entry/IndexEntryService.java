@@ -222,14 +222,14 @@ public class IndexEntryService {
         // note: I suppose this could lead to duplicates in concurrent calls, but I'm not sure if it would be a problem
         // in actual practice.
         final IndexEntry indexEntry = repository.findByClientUrl(clientUrl)
-                .orElseGet(() -> createNewIndexEntry(clientUrl, now));
+                .orElseGet(() -> createNewEntry(clientUrl, now));
         return new GetOrCreateResult<>(indexEntry, indexEntry.getRegistrationTime().equals(now));
     }
 
     /**
      * Returns a newly created <code>IndexEntry</code> for the specified FDP URL after saving it to the database.
      */
-    private IndexEntry createNewIndexEntry(String url, Instant now) {
+    private IndexEntry createNewEntry(String url, Instant now) {
         log.info("Creating new IndexEntry for {}", url);
         final IndexEntry newIndexEntry = IndexEntry.builder()
                 .uuid(UUID.randomUUID().toString())
