@@ -31,6 +31,8 @@ import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -51,13 +53,21 @@ public class IndexSettingsService {
      */
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(PingDTO ping) {
-        log.info("Checking if ping.clientUrl is on deny list: {}", ping.getClientUrl());
-        return getOrDefaults()
-                .getPing()
-                .getDenyList()
-                .parallelStream()
-                // todo: instead of checking regexes, parse URL and check host against a deniedHosts list
-                .anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
+        final String userSuppliedUrl = ping.getClientUrl();
+        try {
+            final String validatedUrl = new URI(userSuppliedUrl).toString();
+            log.info("Checking if ping.clientUrl is on deny list: {}", validatedUrl);
+            return getOrDefaults()
+                    .getPing()
+                    .getDenyList()
+                    .parallelStream()
+                    // todo: instead of using regexes we should check the parsed URL host against a list of denied hosts
+                    .anyMatch(pattern -> Pattern.matches(pattern, validatedUrl));
+        }
+        catch (URISyntaxException exception) {
+            log.warn("Ping denied because clientUrl is invalid: {}", userSuppliedUrl);
+            return true;
+        }
     }
 
     @RequiredEnabledIndexFeature
