@@ -138,7 +138,7 @@ public class EventService {
 
         // populate the event with an index entry, possibly newly created
         try {
-            final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateIndexEntry(pingDTO);
+            final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateEntry(pingDTO);
             event.setRelatedTo(indexEntryResult.object());
             event.getIncomingPing().setNewEntry(indexEntryResult.created());
             // todo: what does the CREATED status code refer to? the indexentry may already exist, so that seems wrong
@@ -261,7 +261,7 @@ public class EventService {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event =
                 eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
-        final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateIndexEntry(pingDTO);
+        final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateEntry(pingDTO);
         event.setRelatedTo(indexEntryResult.object());
         event.setFinishedNow();
         return eventRepository.save(event);

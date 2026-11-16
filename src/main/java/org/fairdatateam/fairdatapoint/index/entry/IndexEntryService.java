@@ -216,7 +216,7 @@ public class IndexEntryService {
      * If no matching <code>IndexEntry</code> is found in the database, a new one is created and saved to the database.
      */
     @RequiredEnabledIndexFeature
-    public GetOrCreateResult<IndexEntry> getOrCreateIndexEntry(@Valid PingDTO pingDTO) {
+    public GetOrCreateResult<IndexEntry> getOrCreateEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Instant now = Instant.now();
         // note: I suppose this could lead to duplicates in concurrent calls, but I'm not sure if it would be a problem
