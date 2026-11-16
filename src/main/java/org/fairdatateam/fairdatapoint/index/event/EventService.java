@@ -116,14 +116,13 @@ public class EventService {
      */
     @RequiredEnabledIndexFeature
     @SneakyThrows
-    public Event handleIncomingPing(@Valid PingDTO pingDTO, HttpServletRequest request) {
-        final String clientUrl = pingDTO.getClientUrl();
+    public Event handleIncomingPing(String clientUrl, HttpServletRequest request) {
         final String remoteAddr = request.getRemoteAddr();
 
         // abort if FDP URL is denied or rate limit is exceeded
-        if (indexSettingsService.isPingDenied(pingDTO)) {
+        if (indexSettingsService.isPingDenied(clientUrl)) {
             log.info("Received ping is denied");
-            throw new PingDeniedException(pingDTO.getClientUrl());
+            throw new PingDeniedException(clientUrl);
         }
         checkRateLimit(remoteAddr);
 

@@ -85,14 +85,15 @@ public class IndexPingController {
     )
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> receivePing(
-            @RequestBody @Valid PingDTO reqDto,
+            @RequestBody @Valid PingDTO pingDTO,
             HttpServletRequest request
     ) throws RdfRepositoryException {
+        final String clientUrl = pingDTO.getClientUrl();
         log.info("Received ping from {}", request.getRemoteAddr());
-        final Event event = eventService.handleIncomingPing(reqDto, request);
+        final Event event = eventService.handleIncomingPing(clientUrl, request);
         log.info("Triggering metadata retrieval for {}", event.getRelatedTo().getClientUrl());
         eventService.triggerMetadataRetrieval(event);
-        indexEntryService.harvest(reqDto.getClientUrl());
+        indexEntryService.harvest(clientUrl);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
