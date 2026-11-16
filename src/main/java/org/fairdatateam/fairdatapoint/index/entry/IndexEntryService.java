@@ -219,6 +219,8 @@ public class IndexEntryService {
     public GetOrCreateResult<IndexEntry> getOrCreateIndexEntry(@Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Instant now = Instant.now();
+        // note: I suppose this could lead to duplicates in concurrent calls, but I'm not sure if it would be a problem
+        // in actual practice.
         final IndexEntry indexEntry = repository.findByClientUrl(clientUrl)
                 .orElseGet(() -> createNewIndexEntry(clientUrl, now));
         return new GetOrCreateResult<>(indexEntry, indexEntry.getRegistrationTime().equals(now));
