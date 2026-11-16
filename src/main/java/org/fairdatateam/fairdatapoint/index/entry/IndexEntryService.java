@@ -22,16 +22,13 @@
  */
 package org.fairdatateam.fairdatapoint.index.entry;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.common.util.GetOrCreateResult;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.fairdatateam.fairdatapoint.index.entry.dto.*;
-import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
@@ -198,25 +195,12 @@ public class IndexEntryService {
     }
 
     /**
-     * Returns a <code>GetOrCreateResult</code> with an <code>IndexEntry</code> matching the FDP URL from the ping body.
-     * If no matching <code>IndexEntry</code> is found in the database, a new one is created and saved to the database.
-     */
-    @RequiredEnabledIndexFeature
-    public GetOrCreateResult<IndexEntry> getOrCreateEntry(@Valid PingDTO pingDTO) {
-        final String clientUrl = pingDTO.getClientUrl();
-        final Instant now = Instant.now();
-        // note: I suppose this could lead to duplicates in concurrent calls, but I'm not sure if it would be a problem
-        // in actual practice.
-        final IndexEntry indexEntry = repository.findByClientUrl(clientUrl)
-                .orElseGet(() -> createNewEntry(clientUrl, now));
-        return new GetOrCreateResult<>(indexEntry, indexEntry.getRegistrationTime().equals(now));
-    }
-
-    /**
      * Returns a newly created <code>IndexEntry</code> for the specified FDP URL after saving it to the database.
      */
-    private IndexEntry createNewEntry(String url, Instant now) {
+    @RequiredEnabledIndexFeature
+    public IndexEntry createNewEntry(String url) {
         log.info("Creating new IndexEntry for {}", url);
+        final Instant now = Instant.now();
         final IndexEntry newIndexEntry = IndexEntry.builder()
                 .uuid(UUID.randomUUID().toString())
                 .clientUrl(url)

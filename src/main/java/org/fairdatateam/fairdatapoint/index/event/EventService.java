@@ -24,10 +24,10 @@ package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.common.util.GetOrCreateResult;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
@@ -116,7 +116,8 @@ public class EventService {
      */
     @RequiredEnabledIndexFeature
     @SneakyThrows
-    public Event handleIncomingPing(PingDTO pingDTO, HttpServletRequest request) {
+    public Event handleIncomingPing(@Valid PingDTO pingDTO, HttpServletRequest request) {
+        final String fdpUrl = pingDTO.getClientUrl();
         final String remoteAddr = request.getRemoteAddr();
 
         // abort if FDP URL is denied or rate limit is exceeded
@@ -133,9 +134,10 @@ public class EventService {
 
         // populate the event with an index entry, possibly newly created
         try {
-            final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateEntry(pingDTO);
-            event.setRelatedTo(indexEntryResult.object());
-            event.getIncomingPing().setNewEntry(indexEntryResult.created());
+            final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(fdpUrl);
+            event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
+            final IndexEntry indexEntry = optionalIndexEntry.orElseGet(() -> indexEntryService.createNewEntry(fdpUrl));
+            event.setRelatedTo(indexEntry);
             // todo: what does the CREATED status code refer to? the indexentry may already exist, so that seems wrong
             event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.CREATED.value());
             log.info("Accepted incoming ping as a new event");
@@ -252,12 +254,14 @@ public class EventService {
     }
 
     @RequiredEnabledIndexFeature
-    public Event acceptAdminTrigger(HttpServletRequest request, PingDTO pingDTO) {
+    public Event acceptAdminTrigger(HttpServletRequest request, @Valid PingDTO pingDTO) {
+        final String fdpUrl = pingDTO.getClientUrl();
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event =
                 eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
-        final GetOrCreateResult<IndexEntry> indexEntryResult = indexEntryService.getOrCreateEntry(pingDTO);
-        event.setRelatedTo(indexEntryResult.object());
+        final IndexEntry indexEntry = indexEntryService.getEntryByClientUrl(fdpUrl)
+                .orElseGet(() -> indexEntryService.createNewEntry(fdpUrl));
+        event.setRelatedTo(indexEntry);
         event.setFinishedNow();
         return eventRepository.save(event);
     }
