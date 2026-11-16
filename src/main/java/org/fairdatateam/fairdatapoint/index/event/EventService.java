@@ -256,12 +256,11 @@ public class EventService {
 
     @RequiredEnabledIndexFeature
     public Event acceptAdminTrigger(HttpServletRequest request, @Valid PingDTO pingDTO) {
-        final String fdpUrl = pingDTO.getClientUrl();
+        final String clientUrl = pingDTO.getClientUrl();
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Event event =
-                eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
-        final IndexEntry indexEntry = indexEntryService.getEntryByClientUrl(fdpUrl)
-                .orElseGet(() -> indexEntryService.createNewEntry(fdpUrl));
+        final Event event = eventMapper.toAdminTriggerEvent(authentication, clientUrl, request.getRemoteAddr());
+        final IndexEntry indexEntry = indexEntryService.getEntryByClientUrl(clientUrl)
+                .orElseGet(() -> indexEntryService.createNewEntry(clientUrl));
         event.setRelatedTo(indexEntry);
         event.setFinishedNow();
         return eventRepository.save(event);
