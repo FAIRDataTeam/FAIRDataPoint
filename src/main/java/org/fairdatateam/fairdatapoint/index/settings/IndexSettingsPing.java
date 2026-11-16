@@ -26,7 +26,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -59,7 +58,7 @@ public class IndexSettingsPing {
         ping.setValidDuration(Duration.ofDays(DEFAULT_VALID_DAYS));
         ping.setRateLimitDuration(Duration.ofHours(DEFAULT_LIMIT_DURATION_HOURS));
         ping.setRateLimitHits(DEFAULT_LIMIT_HITS);
-        ping.setDenyList(Collections.singletonList(DEFAULT_DENY_PATTERN));
+        ping.setDenyList(List.of(DEFAULT_DENY_PATTERN));
         return ping;
     }
 }
