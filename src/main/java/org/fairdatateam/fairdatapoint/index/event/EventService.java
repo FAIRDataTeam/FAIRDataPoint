@@ -42,7 +42,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -71,7 +70,6 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
-    @Lazy
     private final IndexEntryService indexEntryService;
 
     private final EventMapper eventMapper;

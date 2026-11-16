@@ -41,6 +41,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,8 @@ public class IndexEntryController {
 
     private final EventService eventService;
 
+    private final IndexEntryMapper indexEntryMapper;
+
     private final IndexEntryService indexEntryService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,20 +72,21 @@ public class IndexEntryController {
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Optional<IndexEntryDetailDTO> getEntry(@PathVariable final String uuid) {
-        return service.getEntryDetailDTO(uuid);
+        return getEntryDetailDTO(uuid);
     }
 
     @PutMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public Optional<IndexEntryDetailDTO> updateEntry(
             @PathVariable final String uuid,
-            @RequestBody IndexEntryUpdateDTO reqDto,
+            @RequestBody IndexEntryUpdateDTO updateDTO,
             HttpServletRequest request
     ) throws RdfRepositoryException {
-        final Optional<IndexEntryDetailDTO> resDto = service.updateEntry(uuid, reqDto);
-        if (resDto.isPresent()) {
-            final String clientUrl = resDto.get().getClientUrl();
-            if (resDto.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
+        service.updateEntry(uuid, updateDTO);
+        final Optional<IndexEntryDetailDTO> detailDto = getEntryDetailDTO(uuid);
+        if (detailDto.isPresent()) {
+            final String clientUrl = detailDto.get().getClientUrl();
+            if (detailDto.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
                 final Event event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
                 eventService.triggerMetadataRetrieval(event);
                 indexEntryService.harvest(clientUrl);
@@ -91,7 +95,7 @@ public class IndexEntryController {
                 harvesterService.deleteHarvestedData(clientUrl);
             }
         }
-        return resDto;
+        return detailDto;
     }
 
     @GetMapping(path = "/{uuid}/data", produces = "!application/json")
@@ -117,5 +121,15 @@ public class IndexEntryController {
             @RequestParam(required = false, defaultValue = "accepted") String permit
     ) {
         return service.getEntriesInfo(permit);
+    }
+
+    private Optional<IndexEntryDetailDTO> getEntryDetailDTO(String uuid) {
+        final Instant validThreshold = service.getValidThreshold();
+        return service.getEntry(uuid)
+                .map(entry -> {
+                    return indexEntryMapper.toDetailDTO(
+                            entry, eventService.getEvents(entry.getUuid()), validThreshold
+                    );
+                });
     }
 }

@@ -33,7 +33,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.fairdatateam.fairdatapoint.index.entry.dto.*;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
-import org.fairdatateam.fairdatapoint.index.event.EventService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
@@ -66,8 +65,6 @@ public class IndexEntryService {
     private final IndexEntryRepository repository;
 
     private final IndexSettingsService indexSettingsService;
-
-    private final EventService eventService;
 
     private final IndexEntryMapper mapper;
 
@@ -162,17 +159,6 @@ public class IndexEntryService {
     @RequiredEnabledIndexFeature
     public Optional<IndexEntry> getEntry(String uuid) {
         return repository.findByUuid(uuid);
-    }
-
-    @RequiredEnabledIndexFeature
-    public Optional<IndexEntryDetailDTO> getEntryDetailDTO(String uuid) {
-        final Instant validThreshold = getValidThreshold();
-        return getEntry(uuid)
-                .map(entry -> {
-                    return mapper.toDetailDTO(
-                            entry, eventService.getEvents(entry.getUuid()), validThreshold
-                    );
-                });
     }
 
     @RequiredEnabledIndexFeature
@@ -275,7 +261,7 @@ public class IndexEntryService {
         harvesterService.harvest(clientUrl);
     }
 
-    private Instant getValidThreshold() {
+    Instant getValidThreshold() {
         return Instant.now()
                 .minus(indexSettingsService.getOrDefaults().getPing().getValidDuration());
     }
@@ -290,13 +276,15 @@ public class IndexEntryService {
         return model;
     }
 
-    public Optional<IndexEntryDetailDTO> updateEntry(String uuid, IndexEntryUpdateDTO reqDto) {
+    /**
+     * Updates the <code>IndexEntry.permit</code> value if the entry exists and the value has changed.
+     */
+    public void updateEntry(String uuid, IndexEntryUpdateDTO permitDto) {
         final Optional<IndexEntry> entry = getEntry(uuid);
-        if (entry.isPresent() && !reqDto.getPermit().equals(entry.get().getPermit())) {
-            entry.get().setPermit(reqDto.getPermit());
+        if (entry.isPresent() && !permitDto.getPermit().equals(entry.get().getPermit())) {
+            entry.get().setPermit(permitDto.getPermit());
             repository.save(entry.get());
         }
-        return getEntryDetailDTO(uuid);
     }
 
     public Optional<IndexEntry> getEntryByClientUrl(String clientUrl) {
