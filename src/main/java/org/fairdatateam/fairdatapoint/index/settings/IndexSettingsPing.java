@@ -50,6 +50,8 @@ public class IndexSettingsPing {
     @NotNull
     private Integer rateLimitHits;
 
+    // denyList will be replaced by a deniedHosts list in the future, accepting hostnames instead of regexes
+    @Deprecated(since = "1.22.3", forRemoval = true)
     @NotNull
     private List<String> denyList;
 

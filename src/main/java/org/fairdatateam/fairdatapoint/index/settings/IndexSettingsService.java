@@ -56,6 +56,7 @@ public class IndexSettingsService {
                 .getPing()
                 .getDenyList()
                 .parallelStream()
+                // todo: instead of checking regexes, parse URL and check host against a deniedHosts list
                 .anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
     }
 
