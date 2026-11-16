@@ -117,7 +117,7 @@ public class EventService {
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event handleIncomingPing(@Valid PingDTO pingDTO, HttpServletRequest request) {
-        final String fdpUrl = pingDTO.getClientUrl();
+        final String clientUrl = pingDTO.getClientUrl();
         final String remoteAddr = request.getRemoteAddr();
 
         // abort if FDP URL is denied or rate limit is exceeded
@@ -134,9 +134,10 @@ public class EventService {
 
         // populate the event with an index entry, possibly newly created
         try {
-            final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(fdpUrl);
+            final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
             event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
-            final IndexEntry indexEntry = optionalIndexEntry.orElseGet(() -> indexEntryService.createNewEntry(fdpUrl));
+            final IndexEntry indexEntry = optionalIndexEntry
+                    .orElseGet(() -> indexEntryService.createNewEntry(clientUrl));
             event.setRelatedTo(indexEntry);
             // todo: what does the CREATED status code refer to? the indexentry may already exist, so that seems wrong
             event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.CREATED.value());

@@ -198,12 +198,12 @@ public class IndexEntryService {
      * Returns a newly created <code>IndexEntry</code> for the specified FDP URL after saving it to the database.
      */
     @RequiredEnabledIndexFeature
-    public IndexEntry createNewEntry(String url) {
-        log.info("Creating new IndexEntry for {}", url);
+    public IndexEntry createNewEntry(String clientUrl) {
+        log.info("Creating new IndexEntry for {}", clientUrl);
         final Instant now = Instant.now();
         final IndexEntry newIndexEntry = IndexEntry.builder()
                 .uuid(UUID.randomUUID().toString())
-                .clientUrl(url)
+                .clientUrl(clientUrl)
                 .registrationTime(now)
                 .modificationTime(now)
                 .build();
