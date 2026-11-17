@@ -74,7 +74,7 @@ public class MetadataEnhancer {
     private final Optional<IRI> language;
 
     @Qualifier("license")
-    private final IRI license;
+    private final Optional<IRI> license;
 
     private final String persistentUrl;
 
@@ -137,8 +137,8 @@ public class MetadataEnhancer {
         }
 
         // Add default license
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue()) && license != null) {
-            setLicence(metadata, uri, license);
+        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue()) && license.isPresent()) {
+            setLicence(metadata, uri, license.orElseThrow());
         }
 
         // Add access rights

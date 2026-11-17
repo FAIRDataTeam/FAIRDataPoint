@@ -51,12 +51,7 @@ public class MetadataConfig {
     }
 
     @Bean(name = "license")
-    public IRI license(@Value("${metadataProperties.license:}") String licenseURI) {
-
-        IRI license = null;
-        if (!licenseURI.isEmpty()) {
-            license = i(licenseURI);
-        }
-        return license;
+    public Optional<IRI> license(@Value("${metadataProperties.license:}") String licenseURI) {
+        return licenseURI.isEmpty() ? Optional.empty() : Optional.of(i(licenseURI));
     }
 }
