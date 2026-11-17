@@ -35,12 +35,11 @@ import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @RdfMigrationAnnotation(
         number = 1,
@@ -50,16 +49,21 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @Service
 public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
-    private static final String ACCESS_RIGHTS_DESCRIPTION = "This resource has no access restriction";
-    private static final IRI LANGUAGE = i("http://id.loc.gov/vocabulary/iso639-1/en");
-    private static final IRI LICENSE = i("http://purl.org/NET/rdflicense/cc-zero1.0");
-
     @Autowired
     private Repository repository;
 
     @Autowired
     @Qualifier("persistentUrl")
     private String persistentUrl;
+
+    @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
+    private String accessRightsDescription;
+
+    @Autowired
+    private IRI license;
+
+    @Autowired
+    private IRI language;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -73,9 +77,9 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
         try (RepositoryConnection conn = repository.getConnection()) {
             final List<Statement> statements = FactoryDefaults.repositoryStatements(
                     persistentUrl,
-                    LICENSE,
-                    LANGUAGE,
-                    ACCESS_RIGHTS_DESCRIPTION
+                    license,
+                    language,
+                    accessRightsDescription
             );
             conn.add(statements);
         }
