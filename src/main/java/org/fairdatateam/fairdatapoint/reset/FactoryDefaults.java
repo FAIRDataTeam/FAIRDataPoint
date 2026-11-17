@@ -466,7 +466,9 @@ public class FactoryDefaults {
         final IRI arIri = i(persistentUrl + SUFFIX_ACCESS_RIGHTS);
         FactoryDefaults.add(s, DCTERMS.ACCESS_RIGHTS, arIri, baseUrl);
         FactoryDefaults.add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT, baseUrl);
-        FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        if (!accessRightsDescription.isEmpty()) {
+            FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        }
         // Publisher
         final IRI publisherIri = i(persistentUrl + SUFFIX_PUBLISHER);
         FactoryDefaults.add(s, DCTERMS.PUBLISHER, publisherIri, baseUrl);
@@ -501,7 +503,9 @@ public class FactoryDefaults {
         final IRI arIri = i(persistentUrl + SUFFIX_ACCESS_RIGHTS);
         FactoryDefaults.add(s, DCTERMS.ACCESS_RIGHTS, arIri, baseUrl);
         FactoryDefaults.add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT, baseUrl);
-        FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        if (!accessRightsDescription.isEmpty()) {
+            FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        }
         // Publisher
         final IRI publisherIri = i(persistentUrl + SUFFIX_PUBLISHER);
         FactoryDefaults.add(s, DCTERMS.PUBLISHER, publisherIri, baseUrl);

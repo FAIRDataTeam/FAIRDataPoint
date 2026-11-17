@@ -142,7 +142,9 @@ public class MetadataEnhancer {
         }
 
         // Add access rights
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.ACCESS_RIGHTS.stringValue())) {
+        if (!containsObject(metadata, uri.stringValue(), DCTERMS.ACCESS_RIGHTS.stringValue())
+                && !accessRightsDescription.isEmpty()
+        ) {
             final IRI arIri = i(uri.stringValue() + "#accessRights");
             setAccessRights(metadata, uri, arIri, accessRightsDescription);
         }
