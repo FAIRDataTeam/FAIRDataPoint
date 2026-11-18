@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.reset;
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataProperties;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
@@ -43,7 +44,6 @@ import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.fairdatateam.security.acls.dao.AclRepository;
@@ -60,9 +60,6 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @RequiredArgsConstructor
 public class ResetService {
 
-    @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
-    private String accessRightsDescription;
-
     private final AclCache aclCache;
 
     /** @noinspection SpringJavaInjectionPointsAutowiringInspection (bean is created in external dependency) */
@@ -72,13 +69,9 @@ public class ResetService {
 
     private final GenericMetadataService genericMetadataService;
 
-    @Value("${metadataProperties.language:}")
-    private final String language;
-
-    @Value("${metadataProperties.license:}")
-    private final String license;
-
     private final MembershipRepository membershipRepository;
+
+    private final MetadataProperties metadataProperties;
 
     private final MetadataStateRepository metadataStateRepository;
 
@@ -189,9 +182,9 @@ public class ResetService {
         try (RepositoryConnection conn = repository.getConnection()) {
             final List<Statement> statements = FactoryDefaults.fdpStatements(
                     persistentUrl,
-                    license,
-                    language,
-                    accessRightsDescription
+                    metadataProperties.license(),
+                    metadataProperties.language(),
+                    metadataProperties.accessRightsDescription()
             );
             conn.add(statements);
             metadataStateRepository.save(FactoryDefaults.metadataRepository(persistentUrl));

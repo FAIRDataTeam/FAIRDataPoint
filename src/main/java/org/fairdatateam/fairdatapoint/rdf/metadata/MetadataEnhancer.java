@@ -37,7 +37,6 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -65,14 +64,7 @@ public class MetadataEnhancer {
 
     private final SwaggerUiConfigProperties swaggerUiConfig;
 
-    @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
-    private final String accessRightsDescription;
-
-    @Value("${metadataProperties.language:}")
-    private final String language;
-
-    @Value("${metadataProperties.license:}")
-    private final String license;
+    private final MetadataProperties metadataProperties;
 
     private final String persistentUrl;
 
@@ -130,21 +122,22 @@ public class MetadataEnhancer {
         }
 
         // Add default language
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LANGUAGE.stringValue()) && !language.isEmpty()) {
-            setLanguage(metadata, uri, i(language));
+        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LANGUAGE.stringValue())
+                && !metadataProperties.language().isEmpty()) {
+            setLanguage(metadata, uri, i(metadataProperties.language()));
         }
 
         // Add default license
         if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue())) {
-            setLicense(metadata, uri, i(license));
+            setLicense(metadata, uri, i(metadataProperties.license()));
         }
 
         // Add access rights
         if (!containsObject(metadata, uri.stringValue(), DCTERMS.ACCESS_RIGHTS.stringValue())
-                && !accessRightsDescription.isEmpty()
+                && !metadataProperties.accessRightsDescription().isEmpty()
         ) {
             final IRI arIri = i(uri.stringValue() + "#accessRights");
-            setAccessRights(metadata, uri, arIri, accessRightsDescription);
+            setAccessRights(metadata, uri, arIri, metadataProperties.accessRightsDescription());
         }
 
         // Add FAIR metrics
