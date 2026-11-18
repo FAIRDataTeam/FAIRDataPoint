@@ -35,6 +35,7 @@ public class MetadataConfig {
     @Autowired
     private InstanceProperties instanceProperties;
 
+    // todo: get rid of the removeLastSlash() hack and then remove this class altogether (see #1061)
     @Bean(name = "persistentUrl")
     public String persistentUrl() {
         return removeLastSlash(instanceProperties.getUrl());
