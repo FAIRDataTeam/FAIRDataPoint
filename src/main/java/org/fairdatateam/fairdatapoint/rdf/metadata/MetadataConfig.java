@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.removeLastSlash;
 
+@Deprecated(since = "1.22.3", forRemoval = true)
 @Configuration
 public class MetadataConfig {
 
