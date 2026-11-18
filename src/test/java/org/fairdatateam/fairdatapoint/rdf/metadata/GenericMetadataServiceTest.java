@@ -157,12 +157,13 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
+        // remove any existing license statements from the triple store
         setLicense(metadata, getUri(metadata), null);
 
         // WHEN:
         genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
-        // THEN:
+        // THEN: default license statement is created in triple store based on the config value
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
         assertNotNull(getLicense(metadataFromDB));
     }
@@ -172,14 +173,15 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
+        // remove any existing language statements from the triple store
         setLanguage(metadata, getUri(metadata), null);
 
         // WHEN:
         genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
-        // THEN:
+        // THEN: there should be no language statement in the triple store if the config value is empty
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
-        assertNotNull(getLanguage(metadataFromDB));
+        assertNull(getLanguage(metadataFromDB));
     }
 
     @Test
