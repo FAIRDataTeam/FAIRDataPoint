@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestPropertySource(properties = {
         "metadataProperties.accessRightsDescription=",
         "metadataProperties.language=",
-        "metadataProperties.license=http://license.example.org"
+        "metadataProperties.license=https://license.example.org"
 })
 @EnableConfigurationProperties(value = {InstanceProperties.class, MetadataProperties.class})
 public class MetadataEnhancerTest {
@@ -94,6 +94,6 @@ public class MetadataEnhancerTest {
         // then the expected metadata statements should be present
         assertFalse(metadata.contains(i(uri + "#accessRights"), DCTERMS.DESCRIPTION, null));
         assertFalse(metadata.contains(null, DCTERMS.LANGUAGE, null));
-        assertTrue(metadata.contains(null, DCTERMS.LICENSE, null));
+        assertTrue(metadata.contains(null, DCTERMS.LICENSE, i("https://license.example.org")));
     }
 }
