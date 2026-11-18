@@ -47,13 +47,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests ability to disable default language and accessRightsDescription (#1065)
  */
-@SpringJUnitConfig(classes = { InstanceProperties.class, MetadataConfig.class, MetadataEnhancer.class })
+@SpringJUnitConfig(classes = { MetadataConfig.class, MetadataEnhancer.class })
 @TestPropertySource(properties = {
         "metadataProperties.accessRightsDescription=",
         "metadataProperties.language=",
         "metadataProperties.license=http://license.example.org"
 })
-@EnableConfigurationProperties(MetadataProperties.class)
+@EnableConfigurationProperties(value = {InstanceProperties.class, MetadataProperties.class})
 public class MetadataEnhancerTest {
 
     @Autowired
