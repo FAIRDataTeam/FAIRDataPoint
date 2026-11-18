@@ -157,14 +157,14 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // GIVEN:
         ResourceDefinition metadataRd = resourceDefinitionFixtures.distributionDefinition();
         Model metadata = testMetadataFixtures.c1_d1_distribution1();
-        setLicence(metadata, getUri(metadata), null);
+        setLicense(metadata, getUri(metadata), null);
 
         // WHEN:
         genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
         // THEN:
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
-        assertNotNull(getLicence(metadataFromDB));
+        assertNotNull(getLicense(metadataFromDB));
     }
 
     @Test

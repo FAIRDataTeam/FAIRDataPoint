@@ -64,7 +64,7 @@ public class Detail_PUT extends WebIntegrationTest {
         setTitle(repository, uri, l("EDITED: Some title"));
         setDescription(repository, uri, l("EDITED: Some description"));
         setVersion(repository, uri, l("99.0"));
-        setLicence(repository, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
+        setLicense(repository, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
         setLanguage(repository, uri, i("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"));
         return RdfIOUtil.write(repository, RDFFormat.TURTLE);
     }

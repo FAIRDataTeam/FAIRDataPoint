@@ -138,7 +138,7 @@ public class MetadataEnhancer {
 
         // Add default license
         if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue()) && license.isPresent()) {
-            setLicence(metadata, uri, license.orElseThrow());
+            setLicense(metadata, uri, license.orElseThrow());
         }
 
         // Add access rights
