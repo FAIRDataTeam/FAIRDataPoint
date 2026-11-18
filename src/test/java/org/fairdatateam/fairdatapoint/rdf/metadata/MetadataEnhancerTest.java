@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "metadataProperties.language=",
         "metadataProperties.license=http://license.example.org"
 })
+@EnableConfigurationProperties(MetadataProperties.class)
 public class MetadataEnhancerTest {
 
     @Autowired
