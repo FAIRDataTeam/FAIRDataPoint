@@ -74,10 +74,10 @@ public class ResetService {
     private final GenericMetadataService genericMetadataService;
 
     @Qualifier("language")
-    private final Optional<IRI> language;
+    private final IRI language;
 
     @Qualifier("license")
-    private final Optional<IRI> license;
+    private final IRI license;
 
     private final MembershipRepository membershipRepository;
 

@@ -179,9 +179,9 @@ public class GenericMetadataServiceTest extends BaseIntegrationTest {
         // WHEN:
         genericMetadataService.create(metadata, getUri(metadata), metadataRd);
 
-        // THEN: there should be no language statement in the triple store if the config value is empty
+        // THEN: default language statement is created in the triple store based on the config value
         Model metadataFromDB = genericMetadataService.read(getUri(metadata));
-        assertNull(getLanguage(metadataFromDB));
+        assertNotNull(getLanguage(metadataFromDB));
     }
 
     @Test

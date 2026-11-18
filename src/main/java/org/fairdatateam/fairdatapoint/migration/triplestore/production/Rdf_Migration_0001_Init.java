@@ -40,7 +40,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RdfMigrationAnnotation(
         number = 1,
@@ -61,10 +60,10 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     private String accessRightsDescription;
 
     @Autowired
-    private Optional<IRI> license;
+    private IRI license;
 
     @Autowired
-    private Optional<IRI> language;
+    private IRI language;
 
     @Autowired
     private MongoTemplate mongoTemplate;

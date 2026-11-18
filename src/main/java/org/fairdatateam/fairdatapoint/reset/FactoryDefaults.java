@@ -49,7 +49,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.fairdatateam.fairdatapoint.common.util.SpringResourceReader.loadClassResource;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
@@ -439,7 +438,7 @@ public class FactoryDefaults {
     // Repository RDF statements
 
     public static List<Statement> repositoryStatements(
-            String persistentUrl, Optional<IRI> license, Optional<IRI> language, String accessRightsDescription
+            String persistentUrl, IRI license, IRI language, String accessRightsDescription
     ) {
         final List<Statement> s = new ArrayList<>();
         final IRI baseUrl = i(persistentUrl);
@@ -450,8 +449,10 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
-        language.ifPresent(languageIri -> FactoryDefaults.add(s, DCTERMS.LANGUAGE, languageIri, baseUrl));
-        license.ifPresent(licenseIri -> FactoryDefaults.add(s, DCTERMS.LICENSE, licenseIri, baseUrl));
+        if (language != null) {
+            FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
+        };
+        FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
         FactoryDefaults.add(s, DCTERMS.CONFORMS_TO,
                 i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"), baseUrl);
@@ -478,7 +479,7 @@ public class FactoryDefaults {
     }
 
     public static List<Statement> fdpStatements(
-            String persistentUrl, Optional<IRI> license, Optional<IRI> language, String accessRightsDescription
+            String persistentUrl, IRI license, IRI language, String accessRightsDescription
     ) {
         final List<Statement> s = new ArrayList<>();
         final IRI baseUrl = i(persistentUrl);
@@ -491,8 +492,10 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
-        language.ifPresent(languageIri -> FactoryDefaults.add(s, DCTERMS.LANGUAGE, languageIri, baseUrl));
-        license.ifPresent(licenseIri -> FactoryDefaults.add(s, DCTERMS.LICENSE, licenseIri, baseUrl));
+        if (language != null) {
+            FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
+        };
+        FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
         // Identifier
         final IRI identifierIri = i(persistentUrl + SUFFIX_IDENTIFIER);

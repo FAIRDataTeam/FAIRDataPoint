@@ -44,7 +44,6 @@ import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.*;
@@ -71,10 +70,10 @@ public class MetadataEnhancer {
     private final String accessRightsDescription;
 
     @Qualifier("language")
-    private final Optional<IRI> language;
+    private final IRI language;
 
     @Qualifier("license")
-    private final Optional<IRI> license;
+    private final IRI license;
 
     private final String persistentUrl;
 
@@ -132,13 +131,13 @@ public class MetadataEnhancer {
         }
 
         // Add default language
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LANGUAGE.stringValue()) && language.isPresent()) {
-            setLanguage(metadata, uri, language.orElseThrow());
+        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LANGUAGE.stringValue()) && language != null) {
+            setLanguage(metadata, uri, language);
         }
 
         // Add default license
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue()) && license.isPresent()) {
-            setLicense(metadata, uri, license.orElseThrow());
+        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue()) && license != null) {
+            setLicense(metadata, uri, license);
         }
 
         // Add access rights

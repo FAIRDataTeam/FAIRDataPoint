@@ -29,8 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Optional;
-
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.removeLastSlash;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
@@ -46,12 +44,12 @@ public class MetadataConfig {
     }
 
     @Bean(name = "language")
-    public Optional<IRI> language(@Value("${metadataProperties.language:}") String languageURI) {
-        return languageURI.isEmpty() ? Optional.empty() : Optional.of(i(languageURI));
+    public IRI language(@Value("${metadataProperties.language:}") String languageURI) {
+        return languageURI.isEmpty() ? null : i(languageURI);
     }
 
     @Bean(name = "license")
-    public Optional<IRI> license(@Value("${metadataProperties.license:}") String licenseURI) {
-        return licenseURI.isEmpty() ? Optional.empty() : Optional.of(i(licenseURI));
+    public IRI license(@Value("${metadataProperties.license:}") String licenseURI) {
+        return licenseURI.isEmpty() ? null : i(licenseURI);
     }
 }
