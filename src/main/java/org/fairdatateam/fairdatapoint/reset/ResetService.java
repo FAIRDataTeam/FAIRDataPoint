@@ -37,7 +37,6 @@ import org.fairdatateam.fairdatapoint.security.apikey.ApiKeyRepository;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipRepository;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.bson.Document;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
@@ -73,11 +72,11 @@ public class ResetService {
 
     private final GenericMetadataService genericMetadataService;
 
-    @Qualifier("language")
-    private final IRI language;
+    @Value("${metadataProperties.language:}")
+    private final String language;
 
-    @Qualifier("license")
-    private final IRI license;
+    @Value("${metadataProperties.license:}")
+    private final String license;
 
     private final MembershipRepository membershipRepository;
 

@@ -23,14 +23,11 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
-import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.removeLastSlash;
-import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Configuration
 public class MetadataConfig {
@@ -43,13 +40,4 @@ public class MetadataConfig {
         return removeLastSlash(instanceProperties.getUrl());
     }
 
-    @Bean(name = "language")
-    public IRI language(@Value("${metadataProperties.language:}") String languageURI) {
-        return languageURI.isEmpty() ? null : i(languageURI);
-    }
-
-    @Bean(name = "license")
-    public IRI license(@Value("${metadataProperties.license:}") String licenseURI) {
-        return licenseURI.isEmpty() ? null : i(licenseURI);
-    }
 }

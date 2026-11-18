@@ -28,7 +28,6 @@ import org.fairdatateam.fairdatapoint.reset.FactoryDefaults;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.bson.Document;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
@@ -59,11 +58,11 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private String accessRightsDescription;
 
-    @Autowired
-    private IRI license;
+    @Value("${metadataProperties.language:}")
+    private String language;
 
-    @Autowired
-    private IRI language;
+    @Value("${metadataProperties.license:}")
+    private String license;
 
     @Autowired
     private MongoTemplate mongoTemplate;

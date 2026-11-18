@@ -37,7 +37,6 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.*;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -69,11 +68,11 @@ public class MetadataEnhancer {
     @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
     private final String accessRightsDescription;
 
-    @Qualifier("language")
-    private final IRI language;
+    @Value("${metadataProperties.language:}")
+    private final String language;
 
-    @Qualifier("license")
-    private final IRI license;
+    @Value("${metadataProperties.license:}")
+    private final String license;
 
     private final String persistentUrl;
 
@@ -131,13 +130,13 @@ public class MetadataEnhancer {
         }
 
         // Add default language
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LANGUAGE.stringValue()) && language != null) {
-            setLanguage(metadata, uri, language);
+        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LANGUAGE.stringValue()) && !language.isEmpty()) {
+            setLanguage(metadata, uri, i(language));
         }
 
         // Add default license
-        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue()) && license != null) {
-            setLicense(metadata, uri, license);
+        if (!containsObject(metadata, uri.stringValue(), DCTERMS.LICENSE.stringValue())) {
+            setLicense(metadata, uri, i(license));
         }
 
         // Add access rights

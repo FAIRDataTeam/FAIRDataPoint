@@ -438,7 +438,7 @@ public class FactoryDefaults {
     // Repository RDF statements
 
     public static List<Statement> repositoryStatements(
-            String persistentUrl, IRI license, IRI language, String accessRightsDescription
+            String persistentUrl, String license, String language, String accessRightsDescription
     ) {
         final List<Statement> s = new ArrayList<>();
         final IRI baseUrl = i(persistentUrl);
@@ -449,10 +449,10 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
-        if (language != null) {
-            FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
-        };
-        FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
+        if (language != null && !language.isEmpty()) {
+            FactoryDefaults.add(s, DCTERMS.LANGUAGE, i(language), baseUrl);
+        }
+        FactoryDefaults.add(s, DCTERMS.LICENSE, i(license), baseUrl);
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
         FactoryDefaults.add(s, DCTERMS.CONFORMS_TO,
                 i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"), baseUrl);
@@ -479,7 +479,7 @@ public class FactoryDefaults {
     }
 
     public static List<Statement> fdpStatements(
-            String persistentUrl, IRI license, IRI language, String accessRightsDescription
+            String persistentUrl, String license, String language, String accessRightsDescription
     ) {
         final List<Statement> s = new ArrayList<>();
         final IRI baseUrl = i(persistentUrl);
@@ -492,10 +492,10 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
-        if (language != null) {
-            FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
-        };
-        FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
+        if (language != null && !language.isEmpty()) {
+            FactoryDefaults.add(s, DCTERMS.LANGUAGE, i(language), baseUrl);
+        }
+        FactoryDefaults.add(s, DCTERMS.LICENSE, i(license), baseUrl);
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
         // Identifier
         final IRI identifierIri = i(persistentUrl + SUFFIX_IDENTIFIER);
