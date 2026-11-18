@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.DynamicModelFactory;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
