@@ -123,13 +123,13 @@ public class List_State_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 400: Metadata is already published")
     public void res400_already_published() {
-        createMetadataStateAlreadyPublished(client, url("distribution-1"));
+        createMetadataStateAlreadyPublished(client, url("distribution-1"), ALBERT_TOKEN);
     }
 
     @Test
     @DisplayName("HTTP 400: You can not change state to DRAFT")
     public void res400_change_to_draft() {
-        createMetadataStateChangeToDraft(client, url("distribution-1"));
+        createMetadataStateChangeToDraft(client, url("distribution-1"), ALBERT_TOKEN);
     }
 
     @Test
