@@ -40,6 +40,15 @@ import java.net.UnknownHostException;
  */
 public final class SafeUrlValidator {
 
+    private static final int IPV6_ADDRESS_LENGTH_BYTES = 16;
+
+    // The first byte of an IPv6 address, masked against this, identifies the unique-local
+    // range fc00::/7 when it equals IPV6_UNIQUE_LOCAL_PREFIX: that range covers both
+    // 0xFC and 0xFD as a first byte, so the low bit is masked off before comparing.
+    private static final int IPV6_UNIQUE_LOCAL_MASK = 0xFE;
+
+    private static final int IPV6_UNIQUE_LOCAL_PREFIX = 0xFC;
+
     private SafeUrlValidator() {
     }
 
@@ -73,7 +82,8 @@ public final class SafeUrlValidator {
         final byte[] bytes = address.getAddress();
         // IPv6 unique-local addresses (fc00::/7) are not covered by isSiteLocalAddress(),
         // which only recognises the deprecated site-local range (fec0::/10).
-        return bytes.length == 16 && (bytes[0] & 0xFE) == 0xFC;
+        return bytes.length == IPV6_ADDRESS_LENGTH_BYTES
+                && (bytes[0] & IPV6_UNIQUE_LOCAL_MASK) == IPV6_UNIQUE_LOCAL_PREFIX;
     }
 
 }
