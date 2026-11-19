@@ -65,7 +65,7 @@ public class Detail_PUT extends WebIntegrationTest {
         setTitle(distribution, uri, l("EDITED: Some title"));
         setDescription(distribution, uri, l("EDITED: Some description"));
         setVersion(distribution, uri, l("99.0"));
-        setLicence(distribution, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
+        setLicense(distribution, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
         setLanguage(distribution, uri, i("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"));
         setMediaType(distribution, uri, l("text/edited"));
         setDownloadURL(distribution, uri, i("http://example.com/edited"));

@@ -88,7 +88,7 @@ public class MetadataGetter {
         return i(getObjectBy(metadata, null, DCTERMS.LANGUAGE));
     }
 
-    public static IRI getLicence(Model metadata) {
+    public static IRI getLicense(Model metadata) {
         return i(getObjectBy(metadata, null, DCTERMS.LICENSE));
     }
 

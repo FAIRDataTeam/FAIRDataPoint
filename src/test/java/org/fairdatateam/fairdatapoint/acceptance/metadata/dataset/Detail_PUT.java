@@ -66,7 +66,7 @@ public class Detail_PUT extends WebIntegrationTest {
         setTitle(dataset, uri, l("EDITED: Some title"));
         setDescription(dataset, uri, l("EDITED: Some description"));
         setVersion(dataset, uri, l("99.0"));
-        setLicence(dataset, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
+        setLicense(dataset, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
         setLanguage(dataset, uri, i("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"));
         setThemes(dataset, uri, List.of(i("https://purl.org/example#theme/EDITED")));
         setKeywords(dataset, uri, List.of(l("EDITED: Text Mining")));
