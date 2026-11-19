@@ -77,7 +77,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -102,7 +102,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: the record starts out as a draft
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -113,7 +113,7 @@ public class List_State_PUT extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
 
         // AND: the record was not actually published
-        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).get();
+        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).orElseThrow();
         assertThat(metadataAfter.getState(), is(equalTo(MetadataState.DRAFT)));
     }
 

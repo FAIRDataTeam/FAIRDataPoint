@@ -66,17 +66,20 @@ public class List_State_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 200")
     public void res200() {
-        // GIVEN:
+        // GIVEN: ADMIN_TOKEN, not ALBERT_TOKEN — the fixtures grant no one Owner-level
+        // membership on the repository record itself (unlike catalog-1/dataset-1/
+        // distribution-1, which Albert owns), so only the ADMIN role satisfies the
+        // permission check now that modifyState() has one.
         RequestEntity<MetaStateChangeDTO> request = RequestEntity
                 .put(url())
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .body(reqDto());
         ParameterizedTypeReference<MetaStateChangeDTO> responseType = new ParameterizedTypeReference<>() {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -101,7 +104,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: the record starts out as a draft
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -112,7 +115,7 @@ public class List_State_PUT extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
 
         // AND: the record was not actually published
-        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).get();
+        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.fdpMetadata().getUri()).orElseThrow();
         assertThat(metadataAfter.getState(), is(equalTo(MetadataState.DRAFT)));
     }
 

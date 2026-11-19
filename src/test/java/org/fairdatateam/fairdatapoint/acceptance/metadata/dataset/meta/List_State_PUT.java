@@ -77,7 +77,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.dataset1().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.dataset1().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -92,9 +92,13 @@ public class List_State_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User without permission")
     public void res403_noPermission() {
-        // GIVEN: an authenticated user who has no permission on this dataset
+        // GIVEN: an authenticated user who has no permission on this dataset. NIKOLA_TOKEN
+        // cannot be used here: the fixtures grant Nikola Owner-level membership (WRITE,
+        // DELETE, CREATE, ADMINISTRATION) on dataset-1 specifically, unlike catalog-1 where
+        // Nikola only gets the lesser Data Provider (CREATE-only) role. dataset-2 has no
+        // membership for Nikola at all, so it is the one dataset fixture this actually tests.
         RequestEntity<MetaStateChangeDTO> request = RequestEntity
-                .put(url("dataset-1"))
+                .put(url("dataset-2"))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .body(reqDto());
@@ -102,7 +106,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: the record starts out as a draft
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.dataset1().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.dataset2().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -113,7 +117,7 @@ public class List_State_PUT extends WebIntegrationTest {
         assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
 
         // AND: the record was not actually published
-        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.dataset1().getUri()).get();
+        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.dataset2().getUri()).orElseThrow();
         assertThat(metadataAfter.getState(), is(equalTo(MetadataState.DRAFT)));
     }
 
