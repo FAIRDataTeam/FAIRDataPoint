@@ -22,7 +22,6 @@
  */
 package org.fairdatateam.fairdatapoint.form;
 
-import lombok.SneakyThrows;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -33,6 +32,7 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.fairdatateam.fairdatapoint.common.util.SafeUrlValidator;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -49,7 +49,11 @@ public class RdfEntitiesNamespaceRetriever implements RdfEntitiesRetriever {
 
     @Override
     public Map<String, String> retrieve(String rdfType) {
-        return retrieve(getNamespaceUrl(rdfType), i(rdfType));
+        final URL namespaceUrl = getNamespaceUrl(rdfType);
+        if (namespaceUrl == null || !SafeUrlValidator.isSafeHttpUrl(namespaceUrl)) {
+            return null;
+        }
+        return retrieve(namespaceUrl, i(rdfType));
     }
 
     private Map<String, String> retrieve(URL namespaceUrl, IRI rdfType) {
@@ -75,12 +79,20 @@ public class RdfEntitiesNamespaceRetriever implements RdfEntitiesRetriever {
         }
     }
 
-    @SneakyThrows
     private URL getNamespaceUrl(String rdfType) {
-        if (rdfType.contains(SEP_FRAGMENT)) {
-            return new URL(rdfType.split(SEP_FRAGMENT)[0]);
+        try {
+            if (rdfType.contains(SEP_FRAGMENT)) {
+                return new URL(rdfType.split(SEP_FRAGMENT)[0]);
+            }
+            return new URL(rdfType.substring(0, rdfType.lastIndexOf("/")));
         }
-        return new URL(rdfType.substring(0, rdfType.lastIndexOf("/")));
+        catch (Exception exception) {
+            // Not a URL at all (an unrecognised scheme, or no "/" to truncate at): there
+            // is no namespace address to fetch, so fall through to the SPARQL retriever
+            // the same way an unreachable or non-RDF namespace URL already does, rather
+            // than let the caller see an unhandled exception.
+            return null;
+        }
     }
 
     @Override
