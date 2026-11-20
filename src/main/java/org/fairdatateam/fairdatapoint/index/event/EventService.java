@@ -138,6 +138,8 @@ public class EventService {
             final IndexEntry indexEntry;
             if (optionalIndexEntry.isPresent()) {
                 // update modification time for existing entry
+                // todo: We're keeping the original behavior, but I think this is wrong:
+                //  The entry is not modified, so why update the timestamp?
                 indexEntry = optionalIndexEntry.get();
                 indexEntry.setModificationTime(Instant.now());
                 indexEntryService.saveEntry(indexEntry);
