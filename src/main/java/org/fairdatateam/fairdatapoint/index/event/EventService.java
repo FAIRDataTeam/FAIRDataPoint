@@ -171,54 +171,54 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    private void processMetadataRetrieval(Event event) {
+    private void processMetadataRetrieval(Event retrievalEvent) {
         final IndexSettingsRetrieval retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
-        final String clientUrl = event.getRelatedTo().getClientUrl();
-        if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
-            indexEntryService.saveEntry(event.getRelatedTo());
-            eventRepository.save(event);
-            event.setExecutedNow();
+        final String clientUrl = retrievalEvent.getRelatedTo().getClientUrl();
+        if (MetadataRetrievalUtils.shouldRetrieve(retrievalEvent, retrievalSettings.getRateLimitWait())) {
+            indexEntryService.saveEntry(retrievalEvent.getRelatedTo());
+            eventRepository.save(retrievalEvent);
+            retrievalEvent.setExecutedNow();
 
             log.info("Retrieving metadata for {}", clientUrl);
-            MetadataRetrievalUtils.retrieveRepositoryMetadata(event, retrievalSettings.getTimeout());
-            final Exchange exchange = event.getMetadataRetrieval().getExchange();
+            MetadataRetrievalUtils.retrieveRepositoryMetadata(retrievalEvent, retrievalSettings.getTimeout());
+            final Exchange exchange = retrievalEvent.getMetadataRetrieval().getExchange();
             if (exchange.getState() == ExchangeState.Retrieved) {
                 try {
                     log.info("Parsing metadata for {}", clientUrl);
                     final Optional<RepositoryMetadata> metadata =
                             MetadataRetrievalUtils.parseRepositoryMetadata(exchange.getResponse().getBody());
                     if (metadata.isPresent()) {
-                        event.getMetadataRetrieval().setMetadata(metadata.orElseThrow());
-                        event.getRelatedTo().setCurrentMetadata(metadata.orElseThrow());
-                        event.getRelatedTo().setState(IndexEntryState.Valid);
+                        retrievalEvent.getMetadataRetrieval().setMetadata(metadata.orElseThrow());
+                        retrievalEvent.getRelatedTo().setCurrentMetadata(metadata.orElseThrow());
+                        retrievalEvent.getRelatedTo().setState(IndexEntryState.Valid);
                         log.info("Storing metadata for {}", clientUrl);
-                        indexEntryService.saveEntry(event.getRelatedTo());
+                        indexEntryService.saveEntry(retrievalEvent.getRelatedTo());
                     }
                     else {
                         log.info("Repository not found in metadata for {}", clientUrl);
-                        event.getRelatedTo().setState(IndexEntryState.Invalid);
-                        event.getMetadataRetrieval().setError("Repository not found in metadata");
+                        retrievalEvent.getRelatedTo().setState(IndexEntryState.Invalid);
+                        retrievalEvent.getMetadataRetrieval().setError("Repository not found in metadata");
                     }
                 }
                 catch (Exception exception) {
                     log.info("Cannot parse metadata for {}", clientUrl);
-                    event.getRelatedTo().setState(IndexEntryState.Invalid);
-                    event.getMetadataRetrieval().setError("Cannot parse metadata");
+                    retrievalEvent.getRelatedTo().setState(IndexEntryState.Invalid);
+                    retrievalEvent.getMetadataRetrieval().setError("Cannot parse metadata");
                 }
             }
             else {
-                event.getRelatedTo().setState(IndexEntryState.Unreachable);
+                retrievalEvent.getRelatedTo().setState(IndexEntryState.Unreachable);
                 log.info("Cannot retrieve metadata for {}: {}", clientUrl, exchange.getError());
             }
         }
         else {
             log.info("Rate limit reached for {} (skipping metadata retrieval)", clientUrl);
-            event.getMetadataRetrieval().setError("Rate limit reached (skipping)");
+            retrievalEvent.getMetadataRetrieval().setError("Rate limit reached (skipping)");
         }
-        event.getRelatedTo().setLastRetrievalTime(Instant.now());
-        event.setFinishedNow();
-        final Event newEvent = eventRepository.save(event);
-        indexEntryService.saveEntry(newEvent.getRelatedTo());
+        retrievalEvent.getRelatedTo().setLastRetrievalTime(Instant.now());
+        retrievalEvent.setFinishedNow();
+        final Event newRetrievalEvent = eventRepository.save(retrievalEvent);
+        indexEntryService.saveEntry(newRetrievalEvent.getRelatedTo());
     }
 
     @Async
