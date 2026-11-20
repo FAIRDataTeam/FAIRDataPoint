@@ -171,6 +171,11 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    /**
+     * Retrieves the metadata from the {@code Event}'s {@code IndexEntry} (i.e. FDP) by looking up the
+     * {@code clientUrl}, then parses the metadata and stores it on the {@code IndexEntry}. This also sets the
+     * {@code IndexEntryState} to {@code Valid}, {@code Invalid}, or {@code Unreachable} (default is {@code Unknown}).
+     */
     private void processMetadataRetrieval(Event retrievalEvent) {
         final IndexSettingsRetrieval retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
         final String clientUrl = retrievalEvent.getRelatedTo().getClientUrl();
