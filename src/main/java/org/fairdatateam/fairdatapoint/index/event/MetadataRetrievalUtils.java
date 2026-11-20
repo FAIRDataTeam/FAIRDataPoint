@@ -76,6 +76,7 @@ public class MetadataRetrievalUtils {
             R3D.COUNTRY, "country"
     );
 
+    // todo: replace by RestClient (#1035)
     private static final HttpClient CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.ALWAYS)
