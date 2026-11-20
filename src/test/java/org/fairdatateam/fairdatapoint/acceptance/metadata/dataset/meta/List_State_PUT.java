@@ -92,11 +92,12 @@ public class List_State_PUT extends WebIntegrationTest {
     @Test
     @DisplayName("HTTP 403: User without permission")
     public void res403_noPermission() {
-        // GIVEN: an authenticated user who has no permission on this dataset. NIKOLA_TOKEN
-        // cannot be used here: the fixtures grant Nikola Owner-level membership (WRITE,
-        // DELETE, CREATE, ADMINISTRATION) on dataset-1 specifically, unlike catalog-1 where
-        // Nikola only gets the lesser Data Provider (CREATE-only) role. dataset-2 has no
-        // membership for Nikola at all, so it is the one dataset fixture this actually tests.
+        // GIVEN: an authenticated user who has no permission on this dataset. In this case
+        // dataset-1 cannot be used together with NIKOLA_TOKEN: the fixtures grant Nikola
+        // Owner-level membership (WRITE, DELETE, CREATE, ADMINISTRATION) on dataset-1
+        // specifically, unlike catalog-1 where Nikola only gets the lesser Data Provider
+        // (CREATE-only) role. We can use dataset-2 in this test, because that has no
+        // membership for Nikola at all.
         RequestEntity<MetaStateChangeDTO> request = RequestEntity
                 .put(url("dataset-2"))
                 .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
