@@ -132,7 +132,6 @@ public class EventService {
         // create new event in database
         final Event event = incomingPingUtils.prepareEvent(clientUrl, request);
         eventRepository.save(event);
-        event.setExecutedNow();
 
         // populate the event with an index entry
         event.setExecutedNow();
