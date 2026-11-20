@@ -230,6 +230,8 @@ public class EventService {
         indexEntry.setLastRetrievalTime(Instant.now());
         retrievalEvent.setFinishedNow();
         final Event updatedRetrievalEvent = eventRepository.save(retrievalEvent);
+        // save the updated index entry (updatedRetrievalEvent.getRelatedTo() should be exactly the same as indexEntry,
+        // and currently is, but this is not 100% guaranteed for all repository implementations)
         indexEntryService.saveEntry(updatedRetrievalEvent.getRelatedTo());
     }
 
