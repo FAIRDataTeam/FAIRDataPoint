@@ -185,8 +185,10 @@ public class EventService {
             retrievalEvent.setExecutedNow();
 
             log.info("Retrieving metadata for {}", clientUrl);
-            MetadataRetrievalUtils.retrieveRepositoryMetadata(retrievalEvent, retrievalSettings.getTimeout());
-            final Exchange exchange = retrievalEvent.getMetadataRetrieval().getExchange();
+            final Exchange exchange = MetadataRetrievalUtils.retrieveRepositoryMetadata(clientUrl, retrievalSettings.getTimeout());
+            retrievalEvent.getMetadataRetrieval().setExchange(exchange);
+
+            log.info("Processing result of metadata retrieval");
             if (exchange.getState() == ExchangeState.Retrieved) {
                 try {
                     log.info("Parsing metadata for {}", clientUrl);

@@ -127,21 +127,17 @@ public class MetadataRetrievalUtils {
     }
 
     /**
-     * Performs the actual HTTP request that retrieves metadata from an indexed FDP.
-     * This method is synchronous, blocking until the HTTP response is obtained.
-     * The resulting response body, headers, etc., are copied over to the {@code Exchange.response} in the specified
-     * {@code retrievalEvent}. Also updates the {@code ExchangeState}.
+     * Performs the actual HTTP request that retrieves metadata from an indexed FDP, and returns the result in an
+     * {@code Exchange} object. The resulting response body, headers, etc., are copied over to the
+     * {@code Exchange.response}. The {@code ExchangeState} is updated based on the request outcome.
+     * Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
      */
-    public static void retrieveRepositoryMetadata(Event retrievalEvent, Duration timeout) {
-        if (retrievalEvent.getType() != EventType.MetadataRetrieval) {
-            throw new IllegalArgumentException("Invalid event type");
-        }
+    public static Exchange retrieveRepositoryMetadata(String clientUrl, Duration timeout) {
         final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
-        retrievalEvent.getMetadataRetrieval().setExchange(ex);
         try {
             // define request
             final HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(retrievalEvent.getRelatedTo().getClientUrl()))
+                    .uri(URI.create(clientUrl))
                     .timeout(timeout)
                     .header(HttpHeaders.ACCEPT, RDFFormat.TURTLE.getDefaultMIMEType())
                     .GET().build();
@@ -164,6 +160,7 @@ public class MetadataRetrievalUtils {
             ex.setState(ExchangeState.Failed);
             ex.setError("IO error: " + exception.getMessage());
         }
+        return ex;
     }
 
     public static Optional<RepositoryMetadata> parseRepositoryMetadata(
