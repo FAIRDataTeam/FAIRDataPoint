@@ -140,7 +140,7 @@ public class EventService {
                 // update modification time for existing entry
                 // todo: We're keeping the original behavior, but I think this is wrong:
                 //  The entry is not modified, so why update the timestamp?
-                indexEntry = optionalIndexEntry.get();
+                indexEntry = optionalIndexEntry.orElseThrow();
                 indexEntry.setModificationTime(Instant.now());
                 indexEntryService.saveEntry(indexEntry);
             }
@@ -188,8 +188,8 @@ public class EventService {
                     final Optional<RepositoryMetadata> metadata =
                             MetadataRetrievalUtils.parseRepositoryMetadata(exchange.getResponse().getBody());
                     if (metadata.isPresent()) {
-                        event.getMetadataRetrieval().setMetadata(metadata.get());
-                        event.getRelatedTo().setCurrentMetadata(metadata.get());
+                        event.getMetadataRetrieval().setMetadata(metadata.orElseThrow());
+                        event.getRelatedTo().setCurrentMetadata(metadata.orElseThrow());
                         event.getRelatedTo().setState(IndexEntryState.Valid);
                         log.info("Storing metadata for {}", clientUrl);
                         indexEntryService.saveEntry(event.getRelatedTo());
