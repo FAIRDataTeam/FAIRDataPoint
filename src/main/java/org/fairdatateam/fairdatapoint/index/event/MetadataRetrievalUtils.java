@@ -132,7 +132,7 @@ public class MetadataRetrievalUtils {
      * {@code Exchange.response}. The {@code ExchangeState} is updated based on the request outcome.
      * Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
      */
-    public static Exchange retrieveRepositoryMetadata(String clientUrl, Duration timeout) {
+    public static Exchange retrieveFDPMetadata(String clientUrl, Duration timeout) {
         final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
         try {
             // define request
@@ -163,7 +163,7 @@ public class MetadataRetrievalUtils {
         return ex;
     }
 
-    public static Optional<RepositoryMetadata> parseRepositoryMetadata(
+    public static Optional<RepositoryMetadata> parseFDPMetadata(
             String metadata
     ) throws IOException {
         final RDFParser parser = Rio.createParser(RDFFormat.TURTLE);
@@ -173,22 +173,22 @@ public class MetadataRetrievalUtils {
         parser.parse(new StringReader(metadata), String.valueOf(StandardCharsets.UTF_8));
         final ArrayList<Statement> statements = new ArrayList<>(collector.getStatements());
 
-        return findRepository(statements)
-                .map(repository -> extractRepositoryMetadata(statements, repository));
+        return findFDPResource(statements)
+                .map(fdp -> extractFDPMetadata(statements, fdp));
     }
 
-    private static RepositoryMetadata extractRepositoryMetadata(
-            ArrayList<Statement> statements, Resource repository
+    private static RepositoryMetadata extractFDPMetadata(
+            ArrayList<Statement> statements, Resource fdp
     ) {
-        final RepositoryMetadata repositoryMetadata = new RepositoryMetadata();
-        repositoryMetadata.setMetadataVersion(VERSION);
-        repositoryMetadata.setRepositoryUri(repository.toString());
+        final RepositoryMetadata fdpMetadata = new RepositoryMetadata();
+        fdpMetadata.setMetadataVersion(VERSION);
+        fdpMetadata.setRepositoryUri(fdp.toString());
 
         Value publisher = null;
         for (Statement statement : statements) {
-            if (statement.getSubject().equals(repository)) {
+            if (statement.getSubject().equals(fdp)) {
                 if (MAPPING.containsKey(statement.getPredicate())) {
-                    repositoryMetadata.getMetadata()
+                    fdpMetadata.getMetadata()
                             .put(MAPPING.get(
                                     statement.getPredicate()),
                                     statement.getObject().stringValue());
@@ -203,17 +203,16 @@ public class MetadataRetrievalUtils {
             for (Statement statement : statements) {
                 if (statement.getSubject().equals(publisher)) {
                     if (statement.getPredicate().equals(FOAF.NAME)) {
-                        repositoryMetadata.getMetadata()
+                        fdpMetadata.getMetadata()
                                 .put("publisherName", statement.getObject().stringValue());
                     }
                 }
             }
         }
-
-        return repositoryMetadata;
+        return fdpMetadata;
     }
 
-    private static Optional<Resource> findRepository(ArrayList<Statement> statements) {
+    private static Optional<Resource> findFDPResource(ArrayList<Statement> statements) {
         for (Statement statement : statements) {
             if (statement.getPredicate().equals(RDF.TYPE)
                     && REPOSITORY_TYPES.stream().anyMatch(statement.getObject()::equals)) {

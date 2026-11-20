@@ -185,7 +185,8 @@ public class EventService {
             retrievalEvent.setExecutedNow();
 
             log.info("Retrieving metadata for {}", clientUrl);
-            final Exchange exchange = MetadataRetrievalUtils.retrieveRepositoryMetadata(clientUrl, retrievalSettings.getTimeout());
+            final Exchange exchange = MetadataRetrievalUtils.retrieveFDPMetadata(
+                    clientUrl, retrievalSettings.getTimeout());
             retrievalEvent.getMetadataRetrieval().setExchange(exchange);
 
             log.info("Processing result of metadata retrieval");
@@ -193,7 +194,7 @@ public class EventService {
                 try {
                     log.info("Parsing metadata for {}", clientUrl);
                     final Optional<RepositoryMetadata> metadata =
-                            MetadataRetrievalUtils.parseRepositoryMetadata(exchange.getResponse().getBody());
+                            MetadataRetrievalUtils.parseFDPMetadata(exchange.getResponse().getBody());
                     if (metadata.isPresent()) {
                         retrievalEvent.getMetadataRetrieval().setMetadata(metadata.orElseThrow());
                         retrievalEvent.getRelatedTo().setCurrentMetadata(metadata.orElseThrow());
