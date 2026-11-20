@@ -117,6 +117,11 @@ public class EventService {
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event handleIncomingPing(String clientUrl, HttpServletRequest request) {
+        // todo: Note that the events stored in the database contain an exchange with copies of the ping request and
+        //  corresponding response. These are never used internally and are not exposed via the API (EventDTO only
+        //  contains uuid, type, created, and finished). So, it looks like this is only intended for audit or diagnostic
+        //  purposes, but that is not documented anywhere. So it is just a bunch of overhead which I would like to get
+        //  rid of.
 
         // abort if clientUrl matches denyList
         if (indexSettingsService.isPingDenied(clientUrl)) {
@@ -149,8 +154,7 @@ public class EventService {
                 indexEntry = indexEntryService.createNewEntry(clientUrl);
             }
             event.setRelatedTo(indexEntry);
-            // todo: what does the CREATED status code refer to? the indexentry may already exist, so that seems wrong
-            event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.CREATED.value());
+            event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.NO_CONTENT.value());
             log.info("Accepted incoming ping as a new event");
         }
         catch (Exception exception) {
