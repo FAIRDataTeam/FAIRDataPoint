@@ -87,7 +87,7 @@ public class MetadataSetter {
         update(metadata, uri, DCTERMS.LANGUAGE, language);
     }
 
-    public static void setLicence(Model metadata, IRI uri, IRI license) {
+    public static void setLicense(Model metadata, IRI uri, IRI license) {
         update(metadata, uri, DCTERMS.LICENSE, license);
     }
 

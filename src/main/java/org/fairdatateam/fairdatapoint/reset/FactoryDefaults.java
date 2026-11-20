@@ -437,8 +437,9 @@ public class FactoryDefaults {
 
     // Repository RDF statements
 
-    public static List<Statement> repositoryStatements(String persistentUrl, IRI license,
-                                                       IRI language, String accessRightsDescription) {
+    public static List<Statement> repositoryStatements(
+            String persistentUrl, String license, String language, String accessRightsDescription
+    ) {
         final List<Statement> s = new ArrayList<>();
         final IRI baseUrl = i(persistentUrl);
         FactoryDefaults.add(s, RDF.TYPE, R3D.REPOSITORY, baseUrl);
@@ -448,11 +449,13 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
+        if (language != null && !language.isEmpty()) {
+            FactoryDefaults.add(s, DCTERMS.LANGUAGE, i(language), baseUrl);
+        }
+        FactoryDefaults.add(s, DCTERMS.LICENSE, i(license), baseUrl);
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
         FactoryDefaults.add(s, DCTERMS.CONFORMS_TO,
                 i("https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata"), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
         // Identifier
         final IRI identifierIri = i(persistentUrl + SUFFIX_IDENTIFIER);
         FactoryDefaults.add(s, FDP.METADATAIDENTIFIER, identifierIri, baseUrl);
@@ -464,7 +467,9 @@ public class FactoryDefaults {
         final IRI arIri = i(persistentUrl + SUFFIX_ACCESS_RIGHTS);
         FactoryDefaults.add(s, DCTERMS.ACCESS_RIGHTS, arIri, baseUrl);
         FactoryDefaults.add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT, baseUrl);
-        FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        if (!accessRightsDescription.isEmpty()) {
+            FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        }
         // Publisher
         final IRI publisherIri = i(persistentUrl + SUFFIX_PUBLISHER);
         FactoryDefaults.add(s, DCTERMS.PUBLISHER, publisherIri, baseUrl);
@@ -473,8 +478,9 @@ public class FactoryDefaults {
         return s;
     }
 
-    public static List<Statement> fdpStatements(String persistentUrl, IRI license,
-                                                IRI language, String accessRightsDescription) {
+    public static List<Statement> fdpStatements(
+            String persistentUrl, String license, String language, String accessRightsDescription
+    ) {
         final List<Statement> s = new ArrayList<>();
         final IRI baseUrl = i(persistentUrl);
         FactoryDefaults.add(s, RDF.TYPE, FDP.FAIRDATAPOINT, baseUrl);
@@ -486,9 +492,11 @@ public class FactoryDefaults {
         FactoryDefaults.add(s, DCAT3.VERSION, l(1.0f), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAISSUED, l(OffsetDateTime.now()), baseUrl);
         FactoryDefaults.add(s, FDP.METADATAMODIFIED, l(OffsetDateTime.now()), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.LICENSE, license, baseUrl);
+        if (language != null && !language.isEmpty()) {
+            FactoryDefaults.add(s, DCTERMS.LANGUAGE, i(language), baseUrl);
+        }
+        FactoryDefaults.add(s, DCTERMS.LICENSE, i(license), baseUrl);
         FactoryDefaults.add(s, DCTERMS.DESCRIPTION, l(FDP_DESCRIPTION), baseUrl);
-        FactoryDefaults.add(s, DCTERMS.LANGUAGE, language, baseUrl);
         // Identifier
         final IRI identifierIri = i(persistentUrl + SUFFIX_IDENTIFIER);
         FactoryDefaults.add(s, FDP.METADATAIDENTIFIER, identifierIri, baseUrl);
@@ -498,7 +506,9 @@ public class FactoryDefaults {
         final IRI arIri = i(persistentUrl + SUFFIX_ACCESS_RIGHTS);
         FactoryDefaults.add(s, DCTERMS.ACCESS_RIGHTS, arIri, baseUrl);
         FactoryDefaults.add(s, arIri, RDF.TYPE, DCTERMS.RIGHTS_STATEMENT, baseUrl);
-        FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        if (!accessRightsDescription.isEmpty()) {
+            FactoryDefaults.add(s, arIri, DCTERMS.DESCRIPTION, l(accessRightsDescription), baseUrl);
+        }
         // Publisher
         final IRI publisherIri = i(persistentUrl + SUFFIX_PUBLISHER);
         FactoryDefaults.add(s, DCTERMS.PUBLISHER, publisherIri, baseUrl);

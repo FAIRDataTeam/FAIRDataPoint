@@ -30,6 +30,7 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionChild;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -100,6 +101,11 @@ public class MetadataStateService {
         metadataStateRepository.save(metadata);
     }
 
+    @PreAuthorize("""
+            hasPermission(#metadataUri.stringValue(),
+            T(org.fairdatateam.fairdatapoint.rdf.metadata.Metadata).getName(), 'WRITE')
+            or hasRole('ADMIN')
+            """)
     public void modifyState(IRI metadataUri, MetaStateChangeDTO reqDto) {
         // 1. Get metadata info for current
         final Optional<Metadata> oMetadata = metadataStateRepository.findByUri(metadataUri.stringValue());

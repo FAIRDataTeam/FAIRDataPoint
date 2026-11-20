@@ -23,19 +23,18 @@
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
 import com.mongodb.client.MongoCollection;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataProperties;
 import org.fairdatateam.fairdatapoint.reset.FactoryDefaults;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.fairdatateam.rdf.migration.runner.RdfProductionMigration;
 import org.bson.Document;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -47,26 +46,17 @@ import java.util.List;
         description = "Load basic fixtures for repository, catalog, dataset and distribution")
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
-    @Autowired
-    private Repository repository;
+    private final Repository repository;
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Value("${metadataProperties.accessRightsDescription:This resource has no access restriction}")
-    private String accessRightsDescription;
+    private final MetadataProperties metadataProperties;
 
-    @Autowired
-    private IRI license;
-
-    @Autowired
-    private IRI language;
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     public void runMigration() {
         createRepositoryInTripleStore();
@@ -77,9 +67,9 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
         try (RepositoryConnection conn = repository.getConnection()) {
             final List<Statement> statements = FactoryDefaults.repositoryStatements(
                     persistentUrl,
-                    license,
-                    language,
-                    accessRightsDescription
+                    metadataProperties.license(),
+                    metadataProperties.language(),
+                    metadataProperties.accessRightsDescription()
             );
             conn.add(statements);
         }

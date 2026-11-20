@@ -23,43 +23,23 @@
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
-import org.eclipse.rdf4j.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.removeLastSlash;
-import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
+@Deprecated(since = "1.22.3", forRemoval = true)
 @Configuration
 public class MetadataConfig {
 
     @Autowired
     private InstanceProperties instanceProperties;
 
+    // todo: get rid of the removeLastSlash() hack and then remove this class altogether (see #1061)
     @Bean(name = "persistentUrl")
     public String persistentUrl() {
         return removeLastSlash(instanceProperties.getUrl());
     }
 
-    @Bean(name = "language")
-    public IRI language(@Value("${metadataProperties.language:}") String languageURI) {
-
-        IRI language = null;
-        if (!languageURI.isEmpty()) {
-            language = i(languageURI);
-        }
-        return language;
-    }
-
-    @Bean(name = "license")
-    public IRI license(@Value("${metadataProperties.license:}") String licenseURI) {
-
-        IRI license = null;
-        if (!licenseURI.isEmpty()) {
-            license = i(licenseURI);
-        }
-        return license;
-    }
 }

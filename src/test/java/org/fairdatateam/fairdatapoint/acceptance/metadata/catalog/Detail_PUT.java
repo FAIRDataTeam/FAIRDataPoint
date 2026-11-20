@@ -67,7 +67,7 @@ public class Detail_PUT extends WebIntegrationTest {
         setTitle(catalog, uri, l("EDITED: Some title"));
         setDescription(catalog, uri, l("EDITED: Some description"));
         setVersion(catalog, uri, l("99.0"));
-        setLicence(catalog, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
+        setLicense(catalog, uri, i("http://rdflicense.appspot.com/rdflicense/cc-by-nc-nd3.0/EDITED"));
         setLanguage(catalog, uri, i("http://id.loc.gov/vocabulary/iso639-1/en/EDITED"));
         setThemeTaxonomies(catalog, uri, List.of(i("https://purl.org/example#theme/EDITED")));
         return RdfIOUtil.write(catalog, RDFFormat.TURTLE);
