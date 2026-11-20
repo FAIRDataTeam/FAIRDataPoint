@@ -37,12 +37,13 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
 
 /**
- * This is a plain unit test, deliberately not a {@code WebIntegrationTest}: it needs no
- * Mongo, no triple store and no Spring context, because the point being tested — whether
- * {@link RdfEntitiesNamespaceRetriever} will make an outbound request to an address the
- * caller chose — does not depend on any of those. A tiny JDK {@link HttpServer} bound to
- * loopback stands in for an internal service (an admin UI, a database, a cloud metadata
- * endpoint) that a caller-supplied rdfType must not be able to reach.
+ * A tiny JDK {@link HttpServer} bound to loopback stands in for an internal service (an
+ * admin UI, a database, a cloud metadata endpoint) that a caller-supplied rdfType must not
+ * be able to reach. Asserting that this server is never contacted checks the real outcome
+ * — no request reaches the network — rather than mocking the private {@code retrieve(URL,
+ * IRI)} call and asserting it is never invoked, which would stop catching a regression the
+ * moment that internal call shape changed, even if the method it feeds kept making the
+ * request.
  */
 class RdfEntitiesNamespaceRetrieverTest {
 

@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.common.util;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -39,8 +40,6 @@ import java.net.UnknownHostException;
  * first one.
  */
 public final class SafeUrlValidator {
-
-    private static final int IPV6_ADDRESS_LENGTH_BYTES = 16;
 
     // The first byte of an IPv6 address, masked against this, identifies the unique-local
     // range fc00::/7 when it equals IPV6_UNIQUE_LOCAL_PREFIX: that range covers both
@@ -79,10 +78,10 @@ public final class SafeUrlValidator {
                 || address.isSiteLocalAddress() || address.isMulticastAddress()) {
             return true;
         }
-        final byte[] bytes = address.getAddress();
         // IPv6 unique-local addresses (fc00::/7) are not covered by isSiteLocalAddress(),
         // which only recognises the deprecated site-local range (fec0::/10).
-        return bytes.length == IPV6_ADDRESS_LENGTH_BYTES
+        final byte[] bytes = address.getAddress();
+        return address instanceof Inet6Address
                 && (bytes[0] & IPV6_UNIQUE_LOCAL_MASK) == IPV6_UNIQUE_LOCAL_PREFIX;
     }
 
