@@ -53,13 +53,13 @@ public class IndexAdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerMetadataRetrieve(
-            @RequestBody @Valid PingDTO reqDto,
+            @RequestBody @Valid PingDTO reqDTO,
             HttpServletRequest request
     ) throws RdfRepositoryException {
         log.info("Received ping trigger request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTrigger(request, reqDto);
+        final Event event = eventService.acceptAdminTrigger(request, reqDTO);
         eventService.triggerMetadataRetrieval(event);
-        indexEntryService.harvest(reqDto.getClientUrl());
+        indexEntryService.harvest(reqDTO.getClientUrl());
     }
 
     @Operation(hidden = true)

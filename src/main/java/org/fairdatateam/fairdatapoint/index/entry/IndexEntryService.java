@@ -263,10 +263,10 @@ public class IndexEntryService {
     /**
      * Updates the <code>IndexEntry.permit</code> value if the entry exists and the value has changed.
      */
-    public void updateEntry(String uuid, IndexEntryUpdateDTO permitDto) {
+    public void updateEntry(String uuid, IndexEntryUpdateDTO permitDTO) {
         final Optional<IndexEntry> entry = getEntry(uuid);
-        if (entry.isPresent() && !permitDto.getPermit().equals(entry.get().getPermit())) {
-            entry.get().setPermit(permitDto.getPermit());
+        if (entry.isPresent() && !permitDTO.getPermit().equals(entry.get().getPermit())) {
+            entry.get().setPermit(permitDTO.getPermit());
             repository.save(entry.get());
         }
     }

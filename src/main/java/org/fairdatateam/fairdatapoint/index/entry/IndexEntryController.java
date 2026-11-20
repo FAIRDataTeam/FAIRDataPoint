@@ -83,10 +83,10 @@ public class IndexEntryController {
             HttpServletRequest request
     ) throws RdfRepositoryException {
         service.updateEntry(uuid, updateDTO);
-        final Optional<IndexEntryDetailDTO> detailDto = getEntryDetailDTO(uuid);
-        if (detailDto.isPresent()) {
-            final String clientUrl = detailDto.get().getClientUrl();
-            if (detailDto.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
+        final Optional<IndexEntryDetailDTO> detailDTO = getEntryDetailDTO(uuid);
+        if (detailDTO.isPresent()) {
+            final String clientUrl = detailDTO.get().getClientUrl();
+            if (detailDTO.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
                 final Event event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
                 eventService.triggerMetadataRetrieval(event);
                 indexEntryService.harvest(clientUrl);
@@ -95,7 +95,7 @@ public class IndexEntryController {
                 harvesterService.deleteHarvestedData(clientUrl);
             }
         }
-        return detailDto;
+        return detailDTO;
     }
 
     @GetMapping(path = "/{uuid}/data", produces = "!application/json")
