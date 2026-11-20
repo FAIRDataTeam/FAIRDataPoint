@@ -85,27 +85,4 @@ public class RdfEntitiesSparqlRetriever implements RdfEntitiesRetriever {
         return RdfEntitySourceType.SPARQL;
     }
 
-    public static void main(String[] args) {
-        // TODO: remove (just for dev/testing out)
-        final RdfEntitiesSparqlRetriever retriever = new RdfEntitiesSparqlRetriever();
-        final Map<String, String> result = retriever.retrieve(
-                SettingsAutocompleteSource
-                        .builder()
-                        .rdfType("https://example.com/ontology#Country")
-                        .sparqlEndpoint("https://query.wikidata.org/sparql")
-                        .sparqlQuery("""
-                                SELECT DISTINCT ?entity ?entityLabel
-                                WHERE {
-                                  ?entity wdt:P31 wd:Q6256 .
-                                  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
-                                }
-                                """)
-                        .build()
-        );
-        if (result != null) {
-            result.forEach((entity, label) -> {
-                System.out.printf("%s => %s%n", entity, label);
-            });
-        }
-    }
 }
