@@ -56,6 +56,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.fairdatateam.fairdatapoint.index.event.MetadataRetrievalUtils.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -173,8 +175,9 @@ public class EventService {
 
     /**
      * Retrieves the metadata from the {@code Event}'s {@code IndexEntry} (i.e. FDP) by looking up the
-     * {@code clientUrl}, then parses the metadata and stores it on the {@code IndexEntry}. This also sets the
-     * {@code IndexEntryState} to {@code Valid}, {@code Invalid}, or {@code Unreachable} (default is {@code Unknown}).
+     * {@code clientUrl}, then parses the metadata and stores it on the {@code IndexEntry} that is linked to the
+     * {@code retrievalEvent}. This also sets the {@code IndexEntryState} to {@code Valid}, {@code Invalid},
+     * or {@code Unreachable} (default is {@code Unknown}).
      */
     private void processMetadataRetrieval(Event retrievalEvent) {
         final IndexSettingsRetrieval retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
@@ -182,22 +185,20 @@ public class EventService {
         final IndexEntry indexEntry = retrievalEvent.getRelatedTo();
         final String clientUrl = indexEntry.getClientUrl();
 
-        if (MetadataRetrievalUtils.shouldRetrieve(retrievalEvent, retrievalSettings.getRateLimitWait())) {
+        if (shouldRetrieveFDPMetadata(retrievalEvent, retrievalSettings.getRateLimitWait())) {
             indexEntryService.saveEntry(indexEntry);
             eventRepository.save(retrievalEvent);
             retrievalEvent.setExecutedNow();
 
             log.info("Retrieving metadata for {}", clientUrl);
-            final Exchange exchange = MetadataRetrievalUtils.retrieveFDPMetadata(
-                    clientUrl, retrievalSettings.getTimeout());
+            final Exchange exchange = retrieveFDPMetadata(clientUrl, retrievalSettings.getTimeout());
             retrieval.setExchange(exchange);
 
             log.info("Processing result of metadata retrieval");
             if (exchange.getState() == ExchangeState.Retrieved) {
                 try {
                     log.info("Parsing metadata for {}", clientUrl);
-                    final Optional<RepositoryMetadata> metadata =
-                            MetadataRetrievalUtils.parseFDPMetadata(exchange.getResponse().getBody());
+                    final Optional<RepositoryMetadata> metadata = parseFDPMetadata(exchange.getResponse().getBody());
                     if (metadata.isPresent()) {
                         retrieval.setMetadata(metadata.orElseThrow());
                         indexEntry.setCurrentMetadata(metadata.orElseThrow());

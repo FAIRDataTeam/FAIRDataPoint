@@ -84,7 +84,7 @@ public class MetadataRetrievalUtils {
     /**
      * Returns true if the event has an index entry and the retrieval rate limit has not been exceeded.
      */
-    public static boolean shouldRetrieve(Event triggerEvent, Duration rateLimitWait) {
+    public static boolean shouldRetrieveFDPMetadata(Event triggerEvent, Duration rateLimitWait) {
         final IndexEntry indexEntry = triggerEvent.getRelatedTo();
         if (indexEntry == null) {
             return false;
