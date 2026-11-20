@@ -28,6 +28,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.common.error.ErrorDTO;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
@@ -120,8 +121,8 @@ public class EventService {
         // todo: Note that the events stored in the database contain an exchange with copies of the ping request and
         //  corresponding response. These are never used internally and are not exposed via the API (EventDTO only
         //  contains uuid, type, created, and finished). So, it looks like this is only intended for audit or diagnostic
-        //  purposes, but that is not documented anywhere. So it is just a bunch of overhead which I would like to get
-        //  rid of.
+        //  purposes, but that is not documented anywhere. For example fdp home has over 60k events with full request
+        //  info just sitting there doing nothing.
 
         // abort if clientUrl matches denyList
         if (indexSettingsService.isPingDenied(clientUrl)) {
@@ -158,18 +159,14 @@ public class EventService {
             log.info("Accepted incoming ping as a new event");
         }
         catch (Exception exception) {
-            // todo: how can you be sure the exception is due to unparsable ping body?
-            final IncorrectPingFormatException nextException =
-                    new IncorrectPingFormatException("Could not parse PING: " + exception.getMessage());
-            // todo: again, what does the response code refer to? an event is still created here...
+            log.info("Error updating ping event with index entry: {}", exception.getMessage());
+            final HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            event.getIncomingPing().getExchange().getResponse().setCode(httpStatus.value());
             event.getIncomingPing().getExchange().getResponse()
-                    .setCode(HttpStatus.BAD_REQUEST.value());
-            event.getIncomingPing().getExchange().getResponse()
-                    .setBody(jsonMapper.writeValueAsString(nextException.getErrorDTO()));
+                    .setBody(jsonMapper.writeValueAsString(new ErrorDTO(httpStatus, exception.getMessage())));
             event.setFinished(Instant.now());
             eventRepository.save(event);
-            log.info("Incoming ping has incorrect format: {}", exception.getMessage());
-            throw nextException;
+            throw exception;
         }
         event.setFinished(Instant.now());
         return eventRepository.save(event);
