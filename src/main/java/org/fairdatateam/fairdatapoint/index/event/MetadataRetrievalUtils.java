@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeState;
@@ -82,11 +83,15 @@ public class MetadataRetrievalUtils {
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
+    /**
+     * Returns true if the event has an index entry and the retrieval rate limit has not been exceeded.
+     */
     public static boolean shouldRetrieve(Event triggerEvent, Duration rateLimitWait) {
-        if (triggerEvent.getRelatedTo() == null) {
+        final IndexEntry indexEntry = triggerEvent.getRelatedTo();
+        if (indexEntry == null) {
             return false;
         }
-        final Instant lastRetrieval = triggerEvent.getRelatedTo().getLastRetrievalTime();
+        final Instant lastRetrieval = indexEntry.getLastRetrievalTime();
         if (lastRetrieval == null) {
             return true;
         }
