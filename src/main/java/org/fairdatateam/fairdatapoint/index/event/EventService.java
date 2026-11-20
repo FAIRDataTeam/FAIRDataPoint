@@ -28,7 +28,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.common.error.ErrorDTO;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
@@ -117,11 +116,11 @@ public class EventService {
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event handleIncomingPing(String clientUrl, HttpServletRequest request) {
-        // todo: Note that the events stored in the database contain an exchange with copies of the ping request and
-        //  corresponding response. These are never used internally and are not exposed via the API (EventDTO only
+        // todo: Note that the events stored in the database contain an Exchange with copies of the ping Request and
+        //  corresponding Response. These are never used internally and are not exposed via the API (EventDTO only
         //  contains uuid, type, created, and finished). So, it looks like this is only intended for audit or diagnostic
-        //  purposes, but that is not documented anywhere. For example fdp home has over 60k events with full request
-        //  info just sitting there doing nothing.
+        //  purposes, although that is not documented anywhere. These events can only be viewed by accessing mongodb
+        //  directly. For example fdp home has over 60k events with full request info just sitting there doing nothing.
 
         // abort if clientUrl matches denyList
         if (indexSettingsService.isPingDenied(clientUrl)) {
@@ -134,6 +133,7 @@ public class EventService {
         eventRepository.save(event);
 
         // populate the event with an index entry
+        // BEWARE: the IncomingPing.exchange stuff is only stored in mongodb but never really used...
         event.setExecutedNow();
         try {
             final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
@@ -153,15 +153,16 @@ public class EventService {
                 indexEntry = indexEntryService.createNewEntry(clientUrl);
             }
             event.setRelatedTo(indexEntry);
+            // note these status codes are not used in the actual http response, so they may become inconsistent
             event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.NO_CONTENT.value());
             log.info("Accepted incoming ping as a new event");
         }
         catch (Exception exception) {
-            log.info("Error updating ping event with index entry: {}", exception.getMessage());
-            final HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            event.getIncomingPing().getExchange().getResponse().setCode(httpStatus.value());
+            log.error("Something went wrong updating the ping event with an index entry", exception);
+            // note these status codes are not used in the actual http response, so they may become inconsistent
+            event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             event.getIncomingPing().getExchange().getResponse()
-                    .setBody(jsonMapper.writeValueAsString(new ErrorDTO(httpStatus, exception.getMessage())));
+                    .setBody(jsonMapper.writeValueAsString(exception.getMessage()));
             event.setFinished(Instant.now());
             eventRepository.save(event);
             throw exception;
