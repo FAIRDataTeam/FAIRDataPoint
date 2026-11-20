@@ -76,8 +76,7 @@ public class Event {
         this.incomingPing = incomingPing;
     }
 
-    public Event(Integer version, Event triggerEvent, IndexEntry relatedTo,
-                 MetadataRetrieval metadataRetrieval) {
+    public Event(Integer version, Event triggerEvent, IndexEntry relatedTo, MetadataRetrieval metadataRetrieval) {
         this.type = EventType.MetadataRetrieval;
         this.version = version;
         this.triggeredBy = triggerEvent;

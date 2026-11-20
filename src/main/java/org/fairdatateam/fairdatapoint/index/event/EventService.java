@@ -224,17 +224,19 @@ public class EventService {
     @Async
     @RequiredEnabledIndexFeature
     public void triggerMetadataRetrieval(Event triggerEvent) {
-        log.info("Initiating metadata retrieval for {} (triggered by event {})",
-                triggerEvent.getRelatedTo().getClientUrl(), triggerEvent.getUuid());
-        final Iterable<Event> events = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
-        for (Event event : events) {
-            log.info("Triggering metadata retrieval for {} as {}", event.getRelatedTo().getClientUrl(),
-                    event.getUuid());
+        final String clientUrl = triggerEvent.getRelatedTo().getClientUrl();
+        log.info("Initiating metadata retrieval for {} (triggered by event {})", clientUrl, triggerEvent.getUuid());
+        final Iterable<Event> retrievalEvents = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
+        for (Event retrievalEvent : retrievalEvents) {
+            // prepareEvents assigns the triggerEvent from IndexEntry to retrievalEvent, so the clientUrl must be the
+            // same, but we'll log the actual value just in case prepareEvents is ever changed
+            final String retrievalUrl = retrievalEvent.getRelatedTo().getClientUrl();
+            log.info("Triggering metadata retrieval for {} as {}", retrievalUrl, retrievalEvent.getUuid());
             try {
-                processMetadataRetrieval(event);
+                processMetadataRetrieval(retrievalEvent);
             }
             catch (Exception exception) {
-                log.error("Failed to retrieve metadata: {}", exception.getMessage());
+                log.error("Failed to retrieve metadata from {}: {}", retrievalUrl, exception.getMessage());
             }
         }
         log.info("Finished metadata retrieval triggered by {}", triggerEvent.getUuid());

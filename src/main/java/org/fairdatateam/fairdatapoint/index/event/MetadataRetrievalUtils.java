@@ -93,28 +93,31 @@ public class MetadataRetrievalUtils {
         return Duration.between(lastRetrieval, Instant.now()).compareTo(rateLimitWait) > 0;
     }
 
+    /**
+     * Returns a list of metadata retrieval Events. If the trigger event is an incoming ping or an admin trigger with a
+     * clientUrl, the list contains a single event. If the trigger event is an admin trigger without clientUrl, the list
+     * contains events for all registered index entries (FDPs).
+     */
     public static Iterable<Event> prepareEvents(
             Event triggerEvent, IndexEntryService indexEntryService
     ) {
         final ArrayList<Event> events = new ArrayList<>();
         if (triggerEvent.getType() == EventType.IncomingPing) {
-            events.add(new Event(VERSION, triggerEvent,
-                    triggerEvent.getRelatedTo(), new MetadataRetrieval()));
+            // create a single retrieval event for the index entry from the incoming ping event
+            events.add(new Event(VERSION, triggerEvent, triggerEvent.getRelatedTo(), new MetadataRetrieval()));
         }
         else if (triggerEvent.getType() == EventType.AdminTrigger) {
             if (triggerEvent.getAdminTrigger().getClientUrl() == null) {
+                // create retrieval events for *all* registered index entries
                 indexEntryService.getAllEntries().forEach(
                         entry -> {
-                            events.add(
-                                    new Event(VERSION, triggerEvent,
-                                            entry, new MetadataRetrieval())
-                            );
+                            events.add(new Event(VERSION, triggerEvent, entry, new MetadataRetrieval()));
                         }
                 );
             }
             else {
-                events.add(new Event(VERSION, triggerEvent,
-                        triggerEvent.getRelatedTo(), new MetadataRetrieval()));
+                // create a single retrieval event for the index entry from the admin trigger event
+                events.add(new Event(VERSION, triggerEvent, triggerEvent.getRelatedTo(), new MetadataRetrieval()));
             }
         }
         return events;
