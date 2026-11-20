@@ -60,8 +60,6 @@ import java.util.Optional;
 
 public class MetadataRetrievalUtils {
 
-    private static final EventType EVENT_TYPE = EventType.MetadataRetrieval;
-
     private static final Integer VERSION = 1;
 
     private static final List<IRI> REPOSITORY_TYPES = List.of(
@@ -128,22 +126,29 @@ public class MetadataRetrievalUtils {
         return events;
     }
 
-    public static void retrieveRepositoryMetadata(Event event, Duration timeout) {
-        if (event.getType() != EVENT_TYPE) {
+    /**
+     * Performs the actual HTTP request that retrieves metadata from an indexed FDP.
+     * This method is synchronous, blocking until the HTTP response is obtained.
+     * The resulting response body, headers, etc., are copied over to the {@code Exchange.response} in the specified
+     * {@code retrievalEvent}. Also updates the {@code ExchangeState}.
+     */
+    public static void retrieveRepositoryMetadata(Event retrievalEvent, Duration timeout) {
+        if (retrievalEvent.getType() != EventType.MetadataRetrieval) {
             throw new IllegalArgumentException("Invalid event type");
         }
         final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
-        event.getMetadataRetrieval().setExchange(ex);
+        retrievalEvent.getMetadataRetrieval().setExchange(ex);
         try {
+            // define request
             final HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(event.getRelatedTo().getClientUrl()))
+                    .uri(URI.create(retrievalEvent.getRelatedTo().getClientUrl()))
                     .timeout(timeout)
                     .header(HttpHeaders.ACCEPT, RDFFormat.TURTLE.getDefaultMIMEType())
                     .GET().build();
             ex.getRequest().setFromHttpRequest(request);
             ex.setState(ExchangeState.Requested);
-            final HttpResponse<String> response =
-                    CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+            // execute request (blocking)
+            final HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
             ex.getResponse().setFromHttpResponse(response);
             ex.setState(ExchangeState.Retrieved);
         }
