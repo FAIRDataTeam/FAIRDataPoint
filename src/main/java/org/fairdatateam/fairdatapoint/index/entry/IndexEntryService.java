@@ -22,21 +22,18 @@
  */
 package org.fairdatateam.fairdatapoint.index.entry;
 
-import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.fairdatateam.fairdatapoint.index.entry.dto.*;
-import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
-import org.fairdatateam.fairdatapoint.index.event.EventService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -55,32 +52,24 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @Slf4j
 @Service
 @Validated
+@RequiredArgsConstructor
 public class IndexEntryService {
 
     private static final String MSG_NOT_FOUND = "Index entry not found";
 
     private static final String FILTER_ALL = "ALL";
 
-    @Autowired
-    private IndexEntryRepository repository;
+    private final IndexEntryRepository repository;
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
-    @Autowired
-    private EventService eventService;
+    private final IndexEntryMapper mapper;
 
-    @Autowired
-    private IndexEntryMapper mapper;
+    private final MetadataRdfRepository metadataRdfRepository;
 
-    @Autowired
-    private MetadataRdfRepository metadataRdfRepository;
+    private final HarvesterService harvesterService;
 
-    @Autowired
-    private HarvesterService harvesterService;
-
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries() {
@@ -170,17 +159,6 @@ public class IndexEntryService {
     }
 
     @RequiredEnabledIndexFeature
-    public Optional<IndexEntryDetailDTO> getEntryDetailDTO(String uuid) {
-        final Instant validThreshold = getValidThreshold();
-        return getEntry(uuid)
-                .map(entry -> {
-                    return mapper.toDetailDTO(
-                            entry, eventService.getEvents(entry.getUuid()), validThreshold
-                    );
-                });
-    }
-
-    @RequiredEnabledIndexFeature
     public IndexEntryInfoDTO getEntriesInfo(String permitQuery) {
         final List<IndexEntryPermit> permit = getPermits(permitQuery);
         final Instant validThreshold = getValidThreshold();
@@ -216,34 +194,35 @@ public class IndexEntryService {
         return new IndexEntryInfoDTO(entriesCount);
     }
 
+    /**
+     * Returns a newly created <code>IndexEntry</code> for the specified FDP URL after saving it to the database.
+     */
     @RequiredEnabledIndexFeature
-    public IndexEntry storeEntry(@Valid PingDTO pingDTO) {
-        final String clientUrl = pingDTO.getClientUrl();
-        final Optional<IndexEntry> entity = repository.findByClientUrl(clientUrl);
+    public IndexEntry createNewEntry(String clientUrl) {
+        log.info("Creating new IndexEntry for {}", clientUrl);
         final Instant now = Instant.now();
+        final IndexEntry newIndexEntry = IndexEntry.builder()
+                .uuid(UUID.randomUUID().toString())
+                .clientUrl(clientUrl)
+                .registrationTime(now)
+                .modificationTime(now)
+                .build();
         final IndexSettings settings = indexSettingsService.getOrDefaults();
-
-        final IndexEntry entry;
-        if (entity.isPresent()) {
-            log.info("Updating timestamp of existing entry {}", clientUrl);
-            entry = entity.orElseThrow();
+        if (settings.getAutoPermit()) {
+            newIndexEntry.setPermit(IndexEntryPermit.ACCEPTED);
         }
         else {
-            log.info("Storing new entry {}", clientUrl);
-            entry = new IndexEntry();
-            entry.setUuid(UUID.randomUUID().toString());
-            entry.setClientUrl(clientUrl);
-            entry.setRegistrationTime(now);
-            if (settings.getAutoPermit()) {
-                entry.setPermit(IndexEntryPermit.ACCEPTED);
-            }
-            else {
-                entry.setPermit(IndexEntryPermit.PENDING);
-            }
+            newIndexEntry.setPermit(IndexEntryPermit.PENDING);
         }
+        return repository.save(newIndexEntry);
+    }
 
-        entry.setModificationTime(now);
-        return repository.save(entry);
+    /**
+     * Saves an <code>IndexEntry</code> to the database.
+     */
+    @RequiredEnabledIndexFeature
+    public void saveEntry(IndexEntry indexEntry) {
+        repository.save(indexEntry);
     }
 
     @RequiredEnabledIndexFeature
@@ -266,7 +245,7 @@ public class IndexEntryService {
         harvesterService.harvest(clientUrl);
     }
 
-    private Instant getValidThreshold() {
+    Instant getValidThreshold() {
         return Instant.now()
                 .minus(indexSettingsService.getOrDefaults().getPing().getValidDuration());
     }
@@ -281,13 +260,15 @@ public class IndexEntryService {
         return model;
     }
 
-    public Optional<IndexEntryDetailDTO> updateEntry(String uuid, IndexEntryUpdateDTO reqDto) {
+    /**
+     * Updates the <code>IndexEntry.permit</code> value if the entry exists and the value has changed.
+     */
+    public void updateEntry(String uuid, IndexEntryUpdateDTO permitDTO) {
         final Optional<IndexEntry> entry = getEntry(uuid);
-        if (entry.isPresent() && !reqDto.getPermit().equals(entry.get().getPermit())) {
-            entry.get().setPermit(reqDto.getPermit());
+        if (entry.isPresent() && !permitDTO.getPermit().equals(entry.get().getPermit())) {
+            entry.get().setPermit(permitDTO.getPermit());
             repository.save(entry.get());
         }
-        return getEntryDetailDTO(uuid);
     }
 
     public Optional<IndexEntry> getEntryByClientUrl(String clientUrl) {

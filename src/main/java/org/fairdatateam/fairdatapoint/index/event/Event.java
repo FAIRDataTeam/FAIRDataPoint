@@ -70,14 +70,17 @@ public class Event {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Instant finished;
 
+    // todo: Use dedicated Event subclasses instead of this single Event class with varying EventType. Subclasses could
+    //  prevent invalid combinations of attributes. Not so easy to fix now because we need to consider existing mongodb
+    //  documents. Think of single-table inheritance in the relational-db world.
+
     public Event(Integer version, IncomingPing incomingPing) {
         this.type = EventType.IncomingPing;
         this.version = version;
         this.incomingPing = incomingPing;
     }
 
-    public Event(Integer version, Event triggerEvent, IndexEntry relatedTo,
-                 MetadataRetrieval metadataRetrieval) {
+    public Event(Integer version, Event triggerEvent, IndexEntry relatedTo, MetadataRetrieval metadataRetrieval) {
         this.type = EventType.MetadataRetrieval;
         this.version = version;
         this.triggeredBy = triggerEvent;
@@ -91,11 +94,11 @@ public class Event {
         this.adminTrigger = adminTrigger;
     }
 
-    public void execute() {
+    public void setExecutedNow() {
         executed = Instant.now();
     }
 
-    public void finish() {
+    public void setFinishedNow() {
         finished = Instant.now();
     }
 }

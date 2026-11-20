@@ -22,22 +22,22 @@
  */
 package org.fairdatateam.fairdatapoint.index.entry;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDetailDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryStateDTO;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.stream.StreamSupport;
 
 @Service
+@RequiredArgsConstructor
 public class IndexEntryMapper {
 
-    @Autowired
-    private EventMapper eventMapper;
+    private final EventMapper eventMapper;
 
     public IndexEntryDTO toDTO(IndexEntry indexEntry, Instant validThreshold) {
         return new IndexEntryDTO(

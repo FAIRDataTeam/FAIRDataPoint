@@ -22,13 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.index.settings;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -36,25 +35,28 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class IndexSettingsService {
 
-    @Autowired
-    private IndexSettingsRepository repository;
+    private final IndexSettingsRepository repository;
 
-    @Autowired
-    private IndexSettingsMapper mapper;
+    private final IndexSettingsMapper mapper;
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
+    /**
+     * Returns true if the FDP URL in the ping body matches any of the patterns in the
+     * <code>IndexSettingsPing.denyList</code>
+     */
     @RequiredEnabledIndexFeature
-    public boolean isPingDenied(PingDTO ping) {
-        log.info("Checking if ping.clientUrl is on deny list: " + ping.getClientUrl());
+    public boolean isPingDenied(String clientUrl) {
+        log.info("Checking if clientUrl matches deny list: {}", clientUrl);
         return getOrDefaults()
                 .getPing()
                 .getDenyList()
                 .parallelStream()
-                .anyMatch(pattern -> Pattern.matches(pattern, ping.getClientUrl()));
+                // todo: check parsed URL hostname against denyList instead of using regex
+                .anyMatch(pattern -> Pattern.matches(pattern, clientUrl));
     }
 
     @RequiredEnabledIndexFeature

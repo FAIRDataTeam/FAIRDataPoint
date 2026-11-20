@@ -26,13 +26,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,26 +41,25 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/index/admin")
+@RequiredArgsConstructor
 public class IndexAdminController {
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
     @Operation(hidden = true)
     @PostMapping("/trigger")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerMetadataRetrieve(
-            @RequestBody @Valid PingDTO reqDto,
+            @RequestBody @Valid PingDTO reqDTO,
             HttpServletRequest request
     ) throws RdfRepositoryException {
         log.info("Received ping trigger request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTrigger(request, reqDto);
+        final Event event = eventService.acceptAdminTrigger(request, reqDTO);
         eventService.triggerMetadataRetrieval(event);
-        indexEntryService.harvest(reqDto.getClientUrl());
+        indexEntryService.harvest(reqDTO.getClientUrl());
     }
 
     @Operation(hidden = true)

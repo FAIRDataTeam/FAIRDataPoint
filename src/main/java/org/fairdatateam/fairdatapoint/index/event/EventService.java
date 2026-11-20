@@ -24,14 +24,14 @@ package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.index.exception.IncorrectPingFormatException;
 import org.fairdatateam.fairdatapoint.index.exception.PingDeniedException;
 import org.fairdatateam.fairdatapoint.index.exception.RateLimitException;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
@@ -41,8 +41,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -58,36 +56,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.fairdatateam.fairdatapoint.index.event.MetadataRetrievalUtils.*;
+
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class EventService {
 
     private static final int PAGE_SIZE = 10;
 
-    @Autowired
-    private JsonMapper jsonMapper;
+    private final JsonMapper jsonMapper;
 
-    @Autowired
-    private ThreadPoolTaskExecutor executor;
+    private final ThreadPoolTaskExecutor executor;
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    @Autowired
-    private IndexEntryRepository indexEntryRepository;
+    private final IndexEntryService indexEntryService;
 
-    @Autowired
-    @Lazy
-    private IndexEntryService indexEntryService;
+    private final EventMapper eventMapper;
 
-    @Autowired
-    private EventMapper eventMapper;
+    private final IncomingPingUtils incomingPingUtils;
 
-    @Autowired
-    private IncomingPingUtils incomingPingUtils;
-
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
         // TODO: make events pagination in the future
@@ -102,17 +92,11 @@ public class EventService {
                 .map(this::getEvents).orElse(Collections.emptyList());
     }
 
-    @RequiredEnabledIndexFeature
-    @SneakyThrows
-    public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
-        final String remoteAddr = request.getRemoteAddr();
+    /**
+     * Raises a <code>RateLimitException</code> if the rate limit is exceeded.
+     */
+    public void checkRateLimit(String remoteAddr) {
         final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
-
-        if (indexSettingsService.isPingDenied(reqDto)) {
-            log.info("Received ping is denied");
-            throw new PingDeniedException(reqDto.getClientUrl());
-        }
-
         final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
         final List<Event> previousPings =
                 eventRepository.findAllByIncomingPingExchangeRemoteAddrAndCreatedAfter(
@@ -125,98 +109,148 @@ public class EventService {
                     remoteAddr, pingSettings.getRateLimitHits(), pingSettings.getRateLimitDuration().toString())
             );
         }
+    }
 
-        final Event event = incomingPingUtils.prepareEvent(reqDto, request, remoteAddr);
+    /**
+     * Creates a new ping event for a matching index entry in the database. Creates the index entry if necessary.
+     * Aborts if the clientUrl from the ping body is denied, e.g. if it contains localhost.
+     */
+    @RequiredEnabledIndexFeature
+    @SneakyThrows
+    public Event handleIncomingPing(String clientUrl, HttpServletRequest request) {
+        // todo: Note that the events stored in the database contain an Exchange with copies of the ping Request and
+        //  corresponding Response. These are never used internally and are not exposed via the API (EventDTO only
+        //  contains uuid, type, created, and finished). So, it looks like this is only intended for audit or diagnostic
+        //  purposes, although that is not documented anywhere. These events can only be viewed by accessing mongodb
+        //  directly. For example fdp home has over 60k events with full request info just sitting there doing nothing.
+
+        // abort if clientUrl matches denyList
+        if (indexSettingsService.isPingDenied(clientUrl)) {
+            log.info("Received ping is denied");
+            throw new PingDeniedException(clientUrl);
+        }
+
+        // create new event in database
+        final Event event = incomingPingUtils.prepareEvent(clientUrl, request);
         eventRepository.save(event);
-        event.execute();
+
+        // populate the event with an index entry
+        // BEWARE: the IncomingPing.exchange stuff is only stored in mongodb but never really used...
+        event.setExecutedNow();
         try {
-            final IndexEntry indexEntry = indexEntryService.storeEntry(reqDto);
-            event.getIncomingPing()
-                    .setNewEntry(indexEntry.getRegistrationTime().equals(indexEntry.getModificationTime()));
-            event.getIncomingPing().getExchange().getResponse()
-                    .setCode(HttpStatus.CREATED.value());
+            final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
+            // indicate if a new entry will be created for this ping
+            event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
+            final IndexEntry indexEntry;
+            if (optionalIndexEntry.isPresent()) {
+                // update modification time for existing entry
+                // todo: We're keeping the original behavior, but I think this is wrong:
+                //  The entry is not modified, so why update the timestamp?
+                indexEntry = optionalIndexEntry.orElseThrow();
+                indexEntry.setModificationTime(Instant.now());
+                indexEntryService.saveEntry(indexEntry);
+            }
+            else {
+                // create new entry
+                indexEntry = indexEntryService.createNewEntry(clientUrl);
+            }
             event.setRelatedTo(indexEntry);
+            // note these status codes are not used in the actual http response, so they may become inconsistent
+            event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.NO_CONTENT.value());
             log.info("Accepted incoming ping as a new event");
         }
         catch (Exception exception) {
-            final IncorrectPingFormatException nextException =
-                    new IncorrectPingFormatException("Could not parse PING: " + exception.getMessage());
+            log.error("Something went wrong updating the ping event with an index entry", exception);
+            // note these status codes are not used in the actual http response, so they may become inconsistent
+            event.getIncomingPing().getExchange().getResponse().setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             event.getIncomingPing().getExchange().getResponse()
-                    .setCode(HttpStatus.BAD_REQUEST.value());
-            event.getIncomingPing().getExchange().getResponse()
-                    .setBody(jsonMapper.writeValueAsString(nextException.getErrorDTO()));
+                    .setBody(jsonMapper.writeValueAsString(exception.getMessage()));
             event.setFinished(Instant.now());
             eventRepository.save(event);
-            log.info("Incoming ping has incorrect format: {}", exception.getMessage());
-            throw nextException;
+            throw exception;
         }
         event.setFinished(Instant.now());
         return eventRepository.save(event);
     }
 
-    private void processMetadataRetrieval(Event event) {
+    /**
+     * Retrieves the metadata from the {@code Event}'s {@code IndexEntry} (i.e. FDP) by looking up the
+     * {@code clientUrl}, then parses the metadata and stores it on the {@code IndexEntry} that is linked to the
+     * {@code retrievalEvent}. This also sets the {@code IndexEntryState} to {@code Valid}, {@code Invalid},
+     * or {@code Unreachable} (default is {@code Unknown}).
+     */
+    private void processMetadataRetrieval(Event retrievalEvent) {
         final IndexSettingsRetrieval retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
-        final String clientUrl = event.getRelatedTo().getClientUrl();
-        if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
-            indexEntryRepository.save(event.getRelatedTo());
-            eventRepository.save(event);
-            event.execute();
+        final MetadataRetrieval retrieval = retrievalEvent.getMetadataRetrieval();
+        final IndexEntry indexEntry = retrievalEvent.getRelatedTo();
+        final String clientUrl = indexEntry.getClientUrl();
+
+        if (shouldRetrieveFDPMetadata(retrievalEvent, retrievalSettings.getRateLimitWait())) {
+            indexEntryService.saveEntry(indexEntry);
+            eventRepository.save(retrievalEvent);
+            retrievalEvent.setExecutedNow();
 
             log.info("Retrieving metadata for {}", clientUrl);
-            MetadataRetrievalUtils.retrieveRepositoryMetadata(event, retrievalSettings.getTimeout());
-            final Exchange exchange = event.getMetadataRetrieval().getExchange();
+            final Exchange exchange = retrieveFDPMetadata(clientUrl, retrievalSettings.getTimeout());
+            retrieval.setExchange(exchange);
+
+            log.info("Processing result of metadata retrieval");
             if (exchange.getState() == ExchangeState.Retrieved) {
                 try {
                     log.info("Parsing metadata for {}", clientUrl);
-                    final Optional<RepositoryMetadata> metadata =
-                            MetadataRetrievalUtils.parseRepositoryMetadata(exchange.getResponse().getBody());
+                    final Optional<RepositoryMetadata> metadata = parseFDPMetadata(exchange.getResponse().getBody());
                     if (metadata.isPresent()) {
-                        event.getMetadataRetrieval().setMetadata(metadata.get());
-                        event.getRelatedTo().setCurrentMetadata(metadata.get());
-                        event.getRelatedTo().setState(IndexEntryState.Valid);
+                        retrieval.setMetadata(metadata.orElseThrow());
+                        indexEntry.setCurrentMetadata(metadata.orElseThrow());
+                        indexEntry.setState(IndexEntryState.Valid);
                         log.info("Storing metadata for {}", clientUrl);
-                        indexEntryRepository.save(event.getRelatedTo());
+                        indexEntryService.saveEntry(indexEntry);
                     }
                     else {
                         log.info("Repository not found in metadata for {}", clientUrl);
-                        event.getRelatedTo().setState(IndexEntryState.Invalid);
-                        event.getMetadataRetrieval().setError("Repository not found in metadata");
+                        indexEntry.setState(IndexEntryState.Invalid);
+                        retrieval.setError("Repository not found in metadata");
                     }
                 }
                 catch (Exception exception) {
                     log.info("Cannot parse metadata for {}", clientUrl);
-                    event.getRelatedTo().setState(IndexEntryState.Invalid);
-                    event.getMetadataRetrieval().setError("Cannot parse metadata");
+                    indexEntry.setState(IndexEntryState.Invalid);
+                    retrieval.setError("Cannot parse metadata");
                 }
             }
             else {
-                event.getRelatedTo().setState(IndexEntryState.Unreachable);
+                indexEntry.setState(IndexEntryState.Unreachable);
                 log.info("Cannot retrieve metadata for {}: {}", clientUrl, exchange.getError());
             }
         }
         else {
             log.info("Rate limit reached for {} (skipping metadata retrieval)", clientUrl);
-            event.getMetadataRetrieval().setError("Rate limit reached (skipping)");
+            retrieval.setError("Rate limit reached (skipping)");
         }
-        event.getRelatedTo().setLastRetrievalTime(Instant.now());
-        event.finish();
-        final Event newEvent = eventRepository.save(event);
-        indexEntryRepository.save(newEvent.getRelatedTo());
+        indexEntry.setLastRetrievalTime(Instant.now());
+        retrievalEvent.setFinishedNow();
+        final Event updatedRetrievalEvent = eventRepository.save(retrievalEvent);
+        // save the updated index entry (updatedRetrievalEvent.getRelatedTo() should be exactly the same as indexEntry,
+        // and currently is, but this is not 100% guaranteed for all repository implementations)
+        indexEntryService.saveEntry(updatedRetrievalEvent.getRelatedTo());
     }
 
     @Async
     @RequiredEnabledIndexFeature
     public void triggerMetadataRetrieval(Event triggerEvent) {
-        log.info("Initiating metadata retrieval triggered by {}", triggerEvent.getUuid());
-        final Iterable<Event> events = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
-        for (Event event : events) {
-            log.info("Triggering metadata retrieval for {} as {}", event.getRelatedTo().getClientUrl(),
-                    event.getUuid());
+        final String clientUrl = triggerEvent.getRelatedTo().getClientUrl();
+        log.info("Initiating metadata retrieval for {} (triggered by event {})", clientUrl, triggerEvent.getUuid());
+        final Iterable<Event> retrievalEvents = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
+        for (Event retrievalEvent : retrievalEvents) {
+            // prepareEvents assigns the triggerEvent from IndexEntry to retrievalEvent, so the clientUrl must be the
+            // same, but we'll log the actual value just in case prepareEvents is ever changed
+            final String retrievalUrl = retrievalEvent.getRelatedTo().getClientUrl();
+            log.info("Triggering metadata retrieval for {} as {}", retrievalUrl, retrievalEvent.getUuid());
             try {
-                processMetadataRetrieval(event);
+                processMetadataRetrieval(retrievalEvent);
             }
             catch (Exception exception) {
-                log.error("Failed to retrieve metadata: {}", exception.getMessage());
+                log.error("Failed to retrieve metadata from {}: {}", retrievalUrl, exception.getMessage());
             }
         }
         log.info("Finished metadata retrieval triggered by {}", triggerEvent.getUuid());
@@ -248,13 +282,14 @@ public class EventService {
     }
 
     @RequiredEnabledIndexFeature
-    public Event acceptAdminTrigger(HttpServletRequest request, PingDTO pingDTO) {
+    public Event acceptAdminTrigger(HttpServletRequest request, @Valid PingDTO pingDTO) {
+        final String clientUrl = pingDTO.getClientUrl();
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Event event =
-                eventMapper.toAdminTriggerEvent(authentication, pingDTO.getClientUrl(), request.getRemoteAddr());
-        final IndexEntry entry = indexEntryService.storeEntry(pingDTO);
-        event.setRelatedTo(entry);
-        event.finish();
+        final Event event = eventMapper.toAdminTriggerEvent(authentication, clientUrl, request.getRemoteAddr());
+        final IndexEntry indexEntry = indexEntryService.getEntryByClientUrl(clientUrl)
+                .orElseGet(() -> indexEntryService.createNewEntry(clientUrl));
+        event.setRelatedTo(indexEntry);
+        event.setFinishedNow();
         return eventRepository.save(event);
     }
 
@@ -262,7 +297,7 @@ public class EventService {
     public Event acceptAdminTriggerAll(HttpServletRequest request) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event = eventMapper.toAdminTriggerEvent(authentication, null, request.getRemoteAddr());
-        event.finish();
+        event.setFinishedNow();
         return eventRepository.save(event);
     }
 }

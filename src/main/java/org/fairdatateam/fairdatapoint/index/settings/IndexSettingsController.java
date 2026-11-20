@@ -24,9 +24,9 @@ package org.fairdatateam.fairdatapoint.index.settings;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsDTO;
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Index")
 @RestController
 @RequestMapping("/index/settings")
+@RequiredArgsConstructor
 public class IndexSettingsController {
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -47,8 +47,8 @@ public class IndexSettingsController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public IndexSettingsDTO updateIndexSettings(@RequestBody @Valid IndexSettingsUpdateDTO reqDto) {
-        return indexSettingsService.updateSettings(reqDto);
+    public IndexSettingsDTO updateIndexSettings(@RequestBody @Valid IndexSettingsUpdateDTO reqDTO) {
+        return indexSettingsService.updateSettings(reqDTO);
     }
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
