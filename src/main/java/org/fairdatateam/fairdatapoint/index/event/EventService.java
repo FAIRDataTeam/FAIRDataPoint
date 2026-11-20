@@ -33,7 +33,6 @@ import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
-import org.fairdatateam.fairdatapoint.index.exception.IncorrectPingFormatException;
 import org.fairdatateam.fairdatapoint.index.exception.PingDeniedException;
 import org.fairdatateam.fairdatapoint.index.exception.RateLimitException;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
