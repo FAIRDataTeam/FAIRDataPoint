@@ -135,7 +135,7 @@ public class EventService {
             final Optional<IndexEntry> optionalIndexEntry = indexEntryService.getEntryByClientUrl(clientUrl);
             // indicate if a new entry will be created for this ping
             event.getIncomingPing().setNewEntry(optionalIndexEntry.isEmpty());
-            IndexEntry indexEntry;
+            final IndexEntry indexEntry;
             if (optionalIndexEntry.isPresent()) {
                 // update modification time for existing entry
                 indexEntry = optionalIndexEntry.get();
