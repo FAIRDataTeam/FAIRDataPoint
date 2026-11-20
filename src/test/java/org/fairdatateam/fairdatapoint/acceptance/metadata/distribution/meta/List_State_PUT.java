@@ -77,7 +77,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.distribution1().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.distribution1().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -90,15 +90,46 @@ public class List_State_PUT extends WebIntegrationTest {
     }
 
     @Test
+    @DisplayName("HTTP 403: User without permission")
+    public void res403_noPermission() {
+        // GIVEN: an authenticated user who has no permission on this distribution.
+        // NIKOLA_TOKEN cannot be used on distribution-1: the fixtures grant Nikola
+        // Owner-level membership (WRITE, DELETE, CREATE, ADMINISTRATION) there, the same
+        // as on dataset-1. distribution-2 has no membership for Nikola at all.
+        RequestEntity<MetaStateChangeDTO> request = RequestEntity
+                .put(url("distribution-2"))
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .body(reqDto());
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // AND: the record starts out as a draft
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.distribution2().getUri()).orElseThrow();
+        metadata.setState(MetadataState.DRAFT);
+        metadataStateRepository.save(metadata);
+
+        // WHEN:
+        ResponseEntity<String> result = client.exchange(request, responseType);
+
+        // THEN: the request is refused
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
+
+        // AND: the record was not actually published
+        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.distribution2().getUri()).orElseThrow();
+        assertThat(metadataAfter.getState(), is(equalTo(MetadataState.DRAFT)));
+    }
+
+    @Test
     @DisplayName("HTTP 400: Metadata is already published")
     public void res400_already_published() {
-        createMetadataStateAlreadyPublished(client, url("distribution-1"));
+        createMetadataStateAlreadyPublished(client, url("distribution-1"), ALBERT_TOKEN);
     }
 
     @Test
     @DisplayName("HTTP 400: You can not change state to DRAFT")
     public void res400_change_to_draft() {
-        createMetadataStateChangeToDraft(client, url("distribution-1"));
+        createMetadataStateChangeToDraft(client, url("distribution-1"), ALBERT_TOKEN);
     }
 
     @Test

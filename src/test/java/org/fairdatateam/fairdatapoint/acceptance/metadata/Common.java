@@ -36,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-import static org.fairdatateam.fairdatapoint.WebIntegrationTest.ALBERT_TOKEN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -56,11 +55,12 @@ public class Common {
         assertThat(dto, is(nullValue()));
     }
 
-    public static void createMetadataStateAlreadyPublished(TestRestTemplate client, URI url) {
-        // GIVEN:
+    public static void createMetadataStateAlreadyPublished(TestRestTemplate client, URI url, String token) {
+        // GIVEN: a caller who does hold permission on this record, so the request reaches
+        // the validator instead of being refused for permission before getting there.
         RequestEntity<MetaStateChangeDTO> request = RequestEntity
                 .put(url)
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .body(new MetaStateChangeDTO(MetadataState.PUBLISHED));
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {
@@ -74,11 +74,12 @@ public class Common {
         assertThat(result.getBody().getMessage(), is(equalTo("Metadata is already published")));
     }
 
-    public static void createMetadataStateChangeToDraft(TestRestTemplate client, URI url) {
-        // GIVEN:
+    public static void createMetadataStateChangeToDraft(TestRestTemplate client, URI url, String token) {
+        // GIVEN: a caller who does hold permission on this record, so the request reaches
+        // the validator instead of being refused for permission before getting there.
         RequestEntity<MetaStateChangeDTO> request = RequestEntity
                 .put(url)
-                .header(HttpHeaders.AUTHORIZATION, ALBERT_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .body(new MetaStateChangeDTO(MetadataState.DRAFT));
         ParameterizedTypeReference<ErrorDTO> responseType = new ParameterizedTypeReference<>() {

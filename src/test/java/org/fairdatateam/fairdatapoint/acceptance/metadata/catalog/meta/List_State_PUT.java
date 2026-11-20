@@ -77,7 +77,7 @@ public class List_State_PUT extends WebIntegrationTest {
         };
 
         // AND: Prepare database
-        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).get();
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).orElseThrow();
         metadata.setState(MetadataState.DRAFT);
         metadataStateRepository.save(metadata);
 
@@ -90,15 +90,43 @@ public class List_State_PUT extends WebIntegrationTest {
     }
 
     @Test
+    @DisplayName("HTTP 403: User without permission")
+    public void res403_noPermission() {
+        // GIVEN: an authenticated user who has no permission on this catalog
+        RequestEntity<MetaStateChangeDTO> request = RequestEntity
+                .put(url("catalog-1"))
+                .header(HttpHeaders.AUTHORIZATION, NIKOLA_TOKEN)
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .body(reqDto());
+        ParameterizedTypeReference<String> responseType = new ParameterizedTypeReference<>() {
+        };
+
+        // AND: the record starts out as a draft
+        Metadata metadata = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).orElseThrow();
+        metadata.setState(MetadataState.DRAFT);
+        metadataStateRepository.save(metadata);
+
+        // WHEN:
+        ResponseEntity<String> result = client.exchange(request, responseType);
+
+        // THEN: the request is refused
+        assertThat(result.getStatusCode(), is(equalTo(HttpStatus.FORBIDDEN)));
+
+        // AND: the record was not actually published
+        Metadata metadataAfter = metadataStateRepository.findByUri(metadataFixtures.catalog1().getUri()).orElseThrow();
+        assertThat(metadataAfter.getState(), is(equalTo(MetadataState.DRAFT)));
+    }
+
+    @Test
     @DisplayName("HTTP 400: Metadata is already published")
     public void res400_already_published() {
-        createMetadataStateAlreadyPublished(client, url("catalog-1"));
+        createMetadataStateAlreadyPublished(client, url("catalog-1"), ALBERT_TOKEN);
     }
 
     @Test
     @DisplayName("HTTP 400: You can not change state to DRAFT")
     public void res400_change_to_draft() {
-        createMetadataStateChangeToDraft(client, url("catalog-1"));
+        createMetadataStateChangeToDraft(client, url("catalog-1"), ALBERT_TOKEN);
     }
 
     @Test
