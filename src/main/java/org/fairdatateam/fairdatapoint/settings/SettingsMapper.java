@@ -124,7 +124,7 @@ public class SettingsMapper {
                 .enabled(settingsPing.isEnabled())
                 .endpoints(settingsPing.getEndpoints())
                 .endpointsFromConfig(pingProperties.getEndpoints())
-                .interval(pingProperties.getInterval().toString())
+                .interval("n/a (deprecated)")
                 .build();
     }
 
