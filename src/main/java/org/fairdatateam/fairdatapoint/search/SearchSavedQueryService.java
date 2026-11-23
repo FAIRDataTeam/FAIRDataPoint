@@ -22,13 +22,13 @@
  */
 package org.fairdatateam.fairdatapoint.search;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,18 +36,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SearchSavedQueryService {
 
     private static final String MSG_CANNOT_UPDATE = "User is not allowed to update the query";
 
-    @Autowired
-    private SearchSavedQueryRepository repository;
+    private final SearchSavedQueryRepository repository;
 
-    @Autowired
-    private SearchSavedQueryMapper mapper;
+    private final SearchSavedQueryMapper mapper;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
     public List<SearchSavedQueryDTO> getAll() {
         final Optional<User> optionalUser = currentUserProvider.getCurrentUser();
