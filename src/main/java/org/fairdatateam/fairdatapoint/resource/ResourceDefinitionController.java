@@ -24,10 +24,10 @@ package org.fairdatateam.fairdatapoint.resource;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionChangeDTO;
 import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +42,12 @@ import static java.lang.String.format;
 @Tag(name = "Metadata Model")
 @RestController
 @RequestMapping("/resource-definitions")
+@RequiredArgsConstructor
 public class ResourceDefinitionController {
 
     private static final String NOT_FOUND_MSG = "Resource Definition '%s' doesn't exist";
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ResourceDefinitionDTO>> getResourceDefinitions() {
