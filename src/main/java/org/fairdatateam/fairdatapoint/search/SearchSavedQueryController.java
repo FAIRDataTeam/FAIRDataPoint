@@ -24,12 +24,12 @@ package org.fairdatateam.fairdatapoint.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.search.dto.SearchResultDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryChangeDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchSavedQueryDTO;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,15 +44,14 @@ import static java.lang.String.format;
 @Tag(name = "Search")
 @RestController
 @RequestMapping("/search/query/saved")
+@RequiredArgsConstructor
 public class SearchSavedQueryController {
 
     private static final String NOT_FOUND_MSG = "Saved query '%s' doesn't exist";
 
-    @Autowired
-    private SearchSavedQueryService searchSavedQueryService;
+    private final SearchSavedQueryService searchSavedQueryService;
 
-    @Autowired
-    private SearchService searchService;
+    private final SearchService searchService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SearchSavedQueryDTO>> getAll() {
