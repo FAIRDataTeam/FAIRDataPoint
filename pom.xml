@@ -59,7 +59,7 @@
         <spring-security-acl-mongodb.version>6.0.5</spring-security-acl-mongodb.version>
 
         <!-- Core -->
-        <springdoc-openapi-starter-webmvc-ui.version>3.2.0</springdoc-openapi-starter-webmvc-ui.version>
+        <springdoc-openapi-starter-webmvc-ui.version>3.2.1</springdoc-openapi-starter-webmvc-ui.version>
         <mongock-bom.version>5.5.1</mongock-bom.version>
         <rdf4j-bom.version>6.1.0</rdf4j-bom.version>
         <jjwt-api.version>0.13.0</jjwt-api.version>
