@@ -110,12 +110,12 @@ public class EventService {
     }
 
     /**
-     * Creates a new ping event for a matching index entry in the database. Creates the index entry if necessary.
-     * Aborts if the clientUrl from the ping body is denied, e.g. if it contains localhost.
+     * Creates a new incoming ping {@code Event} for a matching index entry in the database. Creates the index entry if
+     * necessary. Aborts if the {@code clientUrl} from the ping body is denied, e.g. if it contains localhost.
      */
     @RequiredEnabledIndexFeature
     @SneakyThrows
-    public Event handleIncomingPing(String clientUrl, HttpServletRequest request) {
+    public Event createIncomingPingEvent(String clientUrl, HttpServletRequest request) {
         // todo: Note that the events stored in the database contain an Exchange with copies of the ping Request and
         //  corresponding Response. These are never used internally and are not exposed via the API (EventDTO only
         //  contains uuid, type, created, and finished). So, it looks like this is only intended for audit or diagnostic

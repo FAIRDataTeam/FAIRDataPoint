@@ -92,7 +92,7 @@ public class IndexPingController {
         final String remoteAddr = request.getRemoteAddr();
         log.info("Received ping from {} ({})", remoteAddr, clientUrl);
         eventService.checkRateLimit(remoteAddr);
-        final Event event = eventService.handleIncomingPing(clientUrl, request);
+        final Event event = eventService.createIncomingPingEvent(clientUrl, request);
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(clientUrl);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
