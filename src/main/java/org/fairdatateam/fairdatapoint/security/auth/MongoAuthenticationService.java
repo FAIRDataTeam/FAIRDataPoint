@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.security.auth;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,12 +30,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MongoAuthenticationService {
 
     private static final String DEFAULT_CREDENTIALS = "";
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public Authentication getAuthentication(String userUuid) {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(userUuid);

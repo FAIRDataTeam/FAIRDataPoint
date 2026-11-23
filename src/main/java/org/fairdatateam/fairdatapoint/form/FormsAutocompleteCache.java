@@ -22,7 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.form;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Component;
@@ -30,10 +30,10 @@ import org.springframework.stereotype.Component;
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.FORMS_AUTOCOMPLETE_CACHE;
 
 @Component
+@RequiredArgsConstructor
 public class FormsAutocompleteCache {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
     public void clear() {
         cache().clear();

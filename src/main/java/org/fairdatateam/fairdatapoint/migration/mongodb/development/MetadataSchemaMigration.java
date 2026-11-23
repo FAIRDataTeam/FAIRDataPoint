@@ -22,19 +22,18 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MetadataSchemaMigration implements Migration {
 
-    @Autowired
-    private MetadataSchemaFixtures metadataSchemaFixtures;
+    private final MetadataSchemaFixtures metadataSchemaFixtures;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
 
     public void runMigration() {
         metadataSchemaRepository.deleteAll();

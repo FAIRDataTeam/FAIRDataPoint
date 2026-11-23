@@ -23,8 +23,8 @@
 package org.fairdatateam.fairdatapoint.security.apikey;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +37,10 @@ import static java.lang.String.format;
 @Tag(name = "Authentication and Authorization")
 @RestController
 @RequestMapping("/api-keys")
+@RequiredArgsConstructor
 public class ApiKeyController {
 
-    @Autowired
-    private ApiKeyService apiKeyService;
+    private final ApiKeyService apiKeyService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ApiKeyDTO>> getApiKeys() {

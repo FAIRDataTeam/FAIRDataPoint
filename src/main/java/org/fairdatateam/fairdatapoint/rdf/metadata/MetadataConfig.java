@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,10 +31,10 @@ import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.removeLastSlas
 
 @Deprecated(since = "1.22.3", forRemoval = true)
 @Configuration
+@RequiredArgsConstructor
 public class MetadataConfig {
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
     // todo: get rid of the removeLastSlash() hack and then remove this class altogether (see #1061)
     @Bean(name = "persistentUrl")

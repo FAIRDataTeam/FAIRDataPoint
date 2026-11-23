@@ -25,12 +25,11 @@ package org.fairdatateam.fairdatapoint.rdf.schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.*;
-import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +44,7 @@ import static java.lang.String.format;
 @Tag(name = "Metadata Model")
 @RestController
 @RequestMapping("/metadata-schemas")
+@RequiredArgsConstructor
 public class MetadataSchemaController {
 
     private static final String NOT_FOUND_MSG =
@@ -52,11 +52,7 @@ public class MetadataSchemaController {
     private static final String NOT_FOUND_VERSION_MSG =
             "Metadata Schema '%s' doesn't exist with version '%s'";
 
-    @Autowired
-    private MetadataSchemaService metadataSchemaService;
-
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final MetadataSchemaService metadataSchemaService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MetadataSchemaDTO>> getSchemas(

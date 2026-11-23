@@ -22,16 +22,16 @@
  */
 package org.fairdatateam.fairdatapoint.user;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.dto.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserMapper {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDTO toDTO(User user) {
         return

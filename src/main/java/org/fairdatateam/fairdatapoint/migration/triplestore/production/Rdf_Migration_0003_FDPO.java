@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.R3D;
@@ -36,7 +37,6 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,6 +50,7 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.s;
         description = "Comply with FDP-O Metadata Service")
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
 
     private static final String LEGACY_CONFORMS_TO = "https://www.purl.org/fairtools/fdp/schema/0.1/fdpMetadata";
@@ -64,8 +65,7 @@ public class Rdf_Migration_0003_FDPO implements RdfProductionMigration {
     private static final String MSG_ADD = "Adding: {} {} {}";
     private static final String MSG_REMOVE = "Removing: {} {} {}";
 
-    @Autowired
-    private Repository repository;
+    private final Repository repository;
 
     public void runMigration() {
         removeOldConformsTo();

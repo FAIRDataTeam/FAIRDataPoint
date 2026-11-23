@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.form;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.settings.SettingsAutocompleteSource;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.eclipse.rdf4j.query.TupleQuery;
@@ -29,20 +30,19 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class RdfEntitiesSparqlRetriever implements RdfEntitiesRetriever {
 
     private static final String KEY_URI = "entity";
     private static final String KEY_LABEL = "entityLabel";
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
     @Override
     public Map<String, String> retrieve(String rdfType) {

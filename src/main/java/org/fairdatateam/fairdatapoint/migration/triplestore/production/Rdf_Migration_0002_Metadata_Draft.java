@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateRepository;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
@@ -32,7 +33,6 @@ import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @RdfMigrationAnnotation(
@@ -41,13 +41,12 @@ import org.springframework.stereotype.Service;
         description = "Support metadata in DRAFT state")
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class Rdf_Migration_0002_Metadata_Draft implements RdfProductionMigration {
 
-    @Autowired
-    private Repository repository;
+    private final Repository repository;
 
-    @Autowired
-    private MetadataStateRepository metadataStateRepository;
+    private final MetadataStateRepository metadataStateRepository;
 
     public void runMigration() {
         createRepositoryInTripleStore();

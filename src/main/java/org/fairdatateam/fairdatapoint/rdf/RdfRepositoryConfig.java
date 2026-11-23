@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -33,7 +34,6 @@ import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.eclipse.rdf4j.sail.Sail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.eclipse.rdf4j.sail.nativerdf.NativeStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -45,10 +45,10 @@ import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.removeLastSlas
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class RdfRepositoryConfig {
 
-    @Autowired
-    private RdfRepositoryProperties rdfRepositoryProperties;
+    private final RdfRepositoryProperties rdfRepositoryProperties;
 
     @Bean(initMethod = "init", destroyMethod = "shutDown")
     public Repository repository(ApplicationContext context)

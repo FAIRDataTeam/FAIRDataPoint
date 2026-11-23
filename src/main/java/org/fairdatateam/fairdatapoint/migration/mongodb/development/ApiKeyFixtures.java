@@ -22,11 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.security.apikey.ApiKey;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ApiKeyFixtures {
 
     public static final String ALBERT_API_KEY =
@@ -35,8 +36,7 @@ public class ApiKeyFixtures {
     public static final String NIKOLA_API_KEY =
             "dd5dc3b53b6145cfa9f6c58b72ebad21cd2f860ace62451ba4e3c74a0e63540a";
 
-    @Autowired
-    private UserFixtures userFixtures;
+    private final UserFixtures userFixtures;
 
     public ApiKey albertApiKey() {
         return new ApiKey(

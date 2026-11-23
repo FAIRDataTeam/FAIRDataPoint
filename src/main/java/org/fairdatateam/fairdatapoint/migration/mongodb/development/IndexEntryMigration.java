@@ -22,19 +22,18 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class IndexEntryMigration implements Migration {
 
-    @Autowired
-    private IndexEntryFixtures indexEntryFixtures;
+    private final IndexEntryFixtures indexEntryFixtures;
 
-    @Autowired
-    private IndexEntryRepository indexEntryRepository;
+    private final IndexEntryRepository indexEntryRepository;
 
     public void runMigration() {
         indexEntryRepository.deleteAll();

@@ -22,14 +22,15 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserFixtures {
 
     public static final String ADMIN_EMAIL = "admin@example.com";
@@ -42,8 +43,7 @@ public class UserFixtures {
 
     private static final String PASSWORD = "password";
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public User admin() {
         return new User(
