@@ -22,19 +22,18 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.security.apikey.ApiKeyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ApiKeyMigration implements Migration {
 
-    @Autowired
-    private ApiKeyFixtures apiKeyFixtures;
+    private final ApiKeyFixtures apiKeyFixtures;
 
-    @Autowired
-    private ApiKeyRepository apiKeyRepository;
+    private final ApiKeyRepository apiKeyRepository;
 
     public void runMigration() {
         apiKeyRepository.deleteAll();
