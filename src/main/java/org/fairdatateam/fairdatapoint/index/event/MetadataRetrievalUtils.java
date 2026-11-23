@@ -32,7 +32,6 @@ import org.fairdatateam.fairdatapoint.rdf.vocabulary.DCAT3;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -180,8 +179,7 @@ public class MetadataRetrievalUtils {
         parser.parse(new StringReader(metadata), String.valueOf(StandardCharsets.UTF_8));
         final ArrayList<Statement> statements = new ArrayList<>(collector.getStatements());
 
-        return findFDPResource(statements)
-                .map(fdpUri -> extractFDPMetadata(statements, fdpUri));
+        return findFDPUri(statements).map(fdpUri -> extractFDPMetadata(statements, fdpUri));
     }
 
     /**
@@ -190,7 +188,7 @@ public class MetadataRetrievalUtils {
      * specified list of RDF statements.
      */
     private static RepositoryMetadata extractFDPMetadata(
-            ArrayList<Statement> statements, Resource fdpUri
+            ArrayList<Statement> statements, IRI fdpUri
     ) {
         // initialize FDP metadata
         final RepositoryMetadata fdpMetadata = new RepositoryMetadata();
@@ -226,13 +224,16 @@ public class MetadataRetrievalUtils {
     }
 
     /**
-     * Returns the first found RDF subject URI that represents an FDP from the specified list of statements.
+     * Returns the first found RDF subject IRI that represents an FDP from the specified list of statements.
      */
-    private static Optional<Resource> findFDPResource(ArrayList<Statement> statements) {
+    private static Optional<IRI> findFDPUri(ArrayList<Statement> statements) {
         for (Statement statement : statements) {
-            if (statement.getPredicate().equals(RDF.TYPE)
-                    && REPOSITORY_TYPES.stream().anyMatch(statement.getObject()::equals)) {
-                return Optional.of(statement.getSubject());
+            if (
+                    statement.getPredicate().equals(RDF.TYPE)
+                    && REPOSITORY_TYPES.stream().anyMatch(statement.getObject()::equals)
+                    && statement.getSubject() instanceof IRI subjectUri
+            ) {
+                return Optional.of(subjectUri);
             }
         }
         return Optional.empty();
