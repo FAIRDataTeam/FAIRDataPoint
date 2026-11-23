@@ -238,8 +238,7 @@ public class EventService {
     @Async
     @RequiredEnabledIndexFeature
     public void triggerMetadataRetrieval(Event triggerEvent) {
-        final String clientUrl = triggerEvent.getRelatedTo().getClientUrl();
-        log.info("Initiating metadata retrieval for {} (triggered by event {})", clientUrl, triggerEvent.getUuid());
+        log.info("Metadata retrieval triggered by event {}", triggerEvent.getUuid());
         final Iterable<Event> retrievalEvents = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
         for (Event retrievalEvent : retrievalEvents) {
             // prepareEvents assigns the triggerEvent from IndexEntry to retrievalEvent, so the clientUrl must be the
