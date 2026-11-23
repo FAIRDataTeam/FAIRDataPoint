@@ -282,10 +282,10 @@ public class EventService {
     }
 
     @RequiredEnabledIndexFeature
-    public Event acceptAdminTrigger(HttpServletRequest request, @Valid PingDTO pingDTO) {
+    public Event acceptAdminTrigger(String remoteAddr, @Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Event event = eventMapper.toAdminTriggerEvent(authentication, clientUrl, request.getRemoteAddr());
+        final Event event = eventMapper.toAdminTriggerEvent(authentication, clientUrl, remoteAddr);
         final IndexEntry indexEntry = indexEntryService.getEntryByClientUrl(clientUrl)
                 .orElseGet(() -> indexEntryService.createNewEntry(clientUrl));
         event.setRelatedTo(indexEntry);
@@ -294,9 +294,9 @@ public class EventService {
     }
 
     @RequiredEnabledIndexFeature
-    public Event acceptAdminTriggerAll(HttpServletRequest request) {
+    public Event acceptAdminTriggerAll(String remoteAddr) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Event event = eventMapper.toAdminTriggerEvent(authentication, null, request.getRemoteAddr());
+        final Event event = eventMapper.toAdminTriggerEvent(authentication, null, remoteAddr);
         event.setFinishedNow();
         return eventRepository.save(event);
     }

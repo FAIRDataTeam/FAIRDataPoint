@@ -87,7 +87,7 @@ public class IndexEntryController {
         if (detailDTO.isPresent()) {
             final String clientUrl = detailDTO.get().getClientUrl();
             if (detailDTO.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
-                final Event event = eventService.acceptAdminTrigger(request, new PingDTO(clientUrl));
+                final Event event = eventService.acceptAdminTrigger(request.getRemoteAddr(), new PingDTO(clientUrl));
                 eventService.triggerMetadataRetrieval(event);
                 indexEntryService.harvest(clientUrl);
             }

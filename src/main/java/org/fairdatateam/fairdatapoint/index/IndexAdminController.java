@@ -57,7 +57,7 @@ public class IndexAdminController {
             HttpServletRequest request
     ) throws RdfRepositoryException {
         log.info("Received ping trigger request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTrigger(request, reqDTO);
+        final Event event = eventService.acceptAdminTrigger(request.getRemoteAddr(), reqDTO);
         eventService.triggerMetadataRetrieval(event);
         indexEntryService.harvest(reqDTO.getClientUrl());
     }
@@ -68,7 +68,7 @@ public class IndexAdminController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void triggerMetadataRetrieveAll(HttpServletRequest request) {
         log.info("Received ping trigger all request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTriggerAll(request);
+        final Event event = eventService.acceptAdminTriggerAll(request.getRemoteAddr());
         eventService.triggerMetadataRetrieval(event);
     }
 }
