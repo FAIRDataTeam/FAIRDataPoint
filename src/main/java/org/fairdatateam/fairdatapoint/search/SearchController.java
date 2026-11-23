@@ -24,10 +24,10 @@ package org.fairdatateam.fairdatapoint.search;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.search.dto.*;
 import org.eclipse.rdf4j.query.MalformedQueryException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,10 +38,10 @@ import java.util.List;
 @Tag(name = "Search")
 @RestController
 @RequestMapping("/search")
+@RequiredArgsConstructor
 public class SearchController {
 
-    @Autowired
-    private SearchService searchService;
+    private final SearchService searchService;
 
     @PostMapping(
             path = "",
