@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.migration.triplestore.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaStateChangeDTO;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.migration.mongodb.development.ResourceDefinitionFixtures;
@@ -36,7 +37,6 @@ import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataStateService;
 import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,33 +46,26 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getUri;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
+@RequiredArgsConstructor
 public class RdfMetadataMigration implements Migration {
 
-    @Autowired
-    private MetadataRdfRepository metadataRdfRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
-    @Autowired
-    private RdfMetadataFixtures rdfMetadataFixtures;
+    private final RdfMetadataFixtures rdfMetadataFixtures;
 
-    @Autowired
     @Qualifier("genericMetadataService")
-    private MetadataService genericMetadataService;
+    private final MetadataService genericMetadataService;
 
-    @Autowired
-    private UserFixtures userFixtures;
+    private final UserFixtures userFixtures;
 
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+    private final ResourceDefinitionFixtures resourceDefinitionFixtures;
 
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private final MongoAuthenticationService mongoAuthenticationService;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
     public void runMigration() {
         try {
