@@ -23,60 +23,47 @@
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
 import org.fairdatateam.fairdatapoint.settings.SettingsCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
 @Profile(Profiles.NON_PRODUCTION)
+@RequiredArgsConstructor
 public class DevelopmentMigrationRunner {
 
-    @Autowired
-    private UserMigration userMigration;
+    private final UserMigration userMigration;
 
-    @Autowired
-    private MembershipMigration membershipMigration;
+    private final MembershipMigration membershipMigration;
 
-    @Autowired
-    private AclMigration aclMigration;
+    private final AclMigration aclMigration;
 
-    @Autowired
-    private ResourceDefinitionMigration resourceDefinitionMigration;
+    private final ResourceDefinitionMigration resourceDefinitionMigration;
 
-    @Autowired
-    private MetadataSchemaMigration metadataSchemaMigration;
+    private final MetadataSchemaMigration metadataSchemaMigration;
 
-    @Autowired
-    private ApiKeyMigration apiKeyMigration;
+    private final ApiKeyMigration apiKeyMigration;
 
-    @Autowired
-    private MetadataMigration metadataMigration;
+    private final MetadataMigration metadataMigration;
 
-    @Autowired
-    private IndexEntryMigration indexEntryMigration;
+    private final IndexEntryMigration indexEntryMigration;
 
-    @Autowired
-    private EventMigration eventMigration;
+    private final EventMigration eventMigration;
 
-    @Autowired
-    private SettingsMigration settingsMigration;
+    private final SettingsMigration settingsMigration;
 
-    @Autowired
-    private SettingsCache settingsCache;
+    private final SettingsCache settingsCache;
 
-    @Autowired
-    private ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
+    private final ResourceDefinitionTargetClassesCache resourceDefinitionTargetClassesCache;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
 
     @PostConstruct
     public void run() {
