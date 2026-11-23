@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
@@ -31,7 +32,6 @@ import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static java.lang.String.format;
@@ -39,19 +39,16 @@ import static org.fairdatateam.fairdatapoint.rdf.metadata.MetadataGetter.getPare
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
+@RequiredArgsConstructor
 public class MetadataValidator {
 
-    @Autowired
-    private MetadataRdfRepository metadataRdfRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
-    @Autowired
-    private StandaloneShaclValidator standaloneShaclValidator;
+    private final StandaloneShaclValidator standaloneShaclValidator;
 
-    @Autowired
-    private MetadataSchemaService metadataSchemaService;
+    private final MetadataSchemaService metadataSchemaService;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
     public void validate(Model metadata, IRI uri, ResourceDefinition definition) throws MetadataServiceException {
         validateByShacl(metadata, uri);
