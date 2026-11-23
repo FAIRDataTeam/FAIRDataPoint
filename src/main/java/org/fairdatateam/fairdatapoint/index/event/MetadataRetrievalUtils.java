@@ -133,7 +133,7 @@ public class MetadataRetrievalUtils {
      * Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
      */
     public static Exchange retrieveFDPMetadata(String clientUrl, Duration timeout) {
-        final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
+        final Exchange exchange = new Exchange(ExchangeDirection.OUTGOING);
         try {
             // define request
             final HttpRequest request = HttpRequest.newBuilder()
@@ -141,26 +141,26 @@ public class MetadataRetrievalUtils {
                     .timeout(timeout)
                     .header(HttpHeaders.ACCEPT, RDFFormat.TURTLE.getDefaultMIMEType())
                     .GET().build();
-            ex.getRequest().setFromHttpRequest(request);
-            ex.setState(ExchangeState.Requested);
+            exchange.getRequest().setFromHttpRequest(request);
+            exchange.setState(ExchangeState.Requested);
             // execute request (blocking)
             final HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-            ex.getResponse().setFromHttpResponse(response);
-            ex.setState(ExchangeState.Retrieved);
+            exchange.getResponse().setFromHttpResponse(response);
+            exchange.setState(ExchangeState.Retrieved);
         }
         catch (InterruptedException exception) {
-            ex.setState(ExchangeState.Timeout);
-            ex.setError("Timeout");
+            exchange.setState(ExchangeState.Timeout);
+            exchange.setError("Timeout");
         }
         catch (IllegalArgumentException exception) {
-            ex.setState(ExchangeState.Failed);
-            ex.setError("Invalid URI: " + exception.getMessage());
+            exchange.setState(ExchangeState.Failed);
+            exchange.setError("Invalid URI: " + exception.getMessage());
         }
         catch (IOException exception) {
-            ex.setState(ExchangeState.Failed);
-            ex.setError("IO error: " + exception.getMessage());
+            exchange.setState(ExchangeState.Failed);
+            exchange.setError("IO error: " + exception.getMessage());
         }
-        return ex;
+        return exchange;
     }
 
     public static Optional<RepositoryMetadata> parseFDPMetadata(
