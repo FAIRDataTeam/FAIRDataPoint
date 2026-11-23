@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.settings;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.search.dto.SearchFilterDTO;
 import org.fairdatateam.fairdatapoint.search.dto.SearchFilterItemDTO;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
@@ -29,23 +30,19 @@ import org.fairdatateam.fairdatapoint.ping.PingProperties;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryProperties;
 import org.fairdatateam.fairdatapoint.search.SearchMapper;
 import org.fairdatateam.fairdatapoint.settings.dto.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class SettingsMapper {
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
-    @Autowired
-    private PingProperties pingProperties;
+    private final PingProperties pingProperties;
 
-    @Autowired
-    private RdfRepositoryProperties rdfRepositoryProperties;
+    private final RdfRepositoryProperties rdfRepositoryProperties;
 
-    @Autowired
-    private SearchMapper searchMapper;
+    private final SearchMapper searchMapper;
 
     public SettingsDTO toDTO(Settings settings) {
         return SettingsDTO
