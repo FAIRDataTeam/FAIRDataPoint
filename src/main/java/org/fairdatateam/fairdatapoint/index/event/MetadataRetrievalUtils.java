@@ -178,15 +178,15 @@ public class MetadataRetrievalUtils {
     }
 
     private static RepositoryMetadata extractFDPMetadata(
-            ArrayList<Statement> statements, Resource fdp
+            ArrayList<Statement> statements, Resource fdpUri
     ) {
         final RepositoryMetadata fdpMetadata = new RepositoryMetadata();
         fdpMetadata.setMetadataVersion(VERSION);
-        fdpMetadata.setRepositoryUri(fdp.toString());
+        fdpMetadata.setRepositoryUri(fdpUri.toString());
 
         Value publisher = null;
         for (Statement statement : statements) {
-            if (statement.getSubject().equals(fdp)) {
+            if (statement.getSubject().equals(fdpUri)) {
                 if (MAPPING.containsKey(statement.getPredicate())) {
                     fdpMetadata.getMetadata()
                             .put(MAPPING.get(
