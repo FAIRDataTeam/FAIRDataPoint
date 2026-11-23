@@ -48,6 +48,9 @@ public class IndexAdminController {
 
     private final IndexEntryService indexEntryService;
 
+    /**
+     * Triggers basic metadata retrieval, followed by harvesting, for the FDP specified in the request body.
+     */
     @Operation(hidden = true)
     @PostMapping("/trigger")
     @PreAuthorize("hasRole('ADMIN')")
@@ -62,6 +65,9 @@ public class IndexAdminController {
         indexEntryService.harvest(reqDTO.getClientUrl());
     }
 
+    /**
+     * Triggers basic metadata retrieval for all registered FDPs. Does not trigger harvesting.
+     */
     @Operation(hidden = true)
     @PostMapping("/trigger-all")
     @PreAuthorize("hasRole('ADMIN')")

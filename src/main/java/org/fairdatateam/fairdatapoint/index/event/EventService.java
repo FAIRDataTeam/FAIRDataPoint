@@ -281,11 +281,16 @@ public class EventService {
         executor.submit(this::resumeUnfinishedEvents);
     }
 
+    /**
+     * Creates and persists a new admin trigger {@code Event} for a single FDP represented by the specified
+     * {@code clientUrl}. Also creates and persists a new {@code IndexEntry} for the URL if that does no exist yet.
+     */
     @RequiredEnabledIndexFeature
     public Event acceptAdminTrigger(String remoteAddr, @Valid PingDTO pingDTO) {
         final String clientUrl = pingDTO.getClientUrl();
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event = eventMapper.toAdminTriggerEvent(authentication, clientUrl, remoteAddr);
+        // get existing index entry or create a new one if necessary
         final IndexEntry indexEntry = indexEntryService.getEntryByClientUrl(clientUrl)
                 .orElseGet(() -> indexEntryService.createNewEntry(clientUrl));
         event.setRelatedTo(indexEntry);
@@ -293,6 +298,9 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    /**
+     * Creates and persists a new admin trigger {@code Event} that triggers metadata retrieval for all registered FDPs.
+     */
     @RequiredEnabledIndexFeature
     public Event acceptAdminTriggerAll(String remoteAddr) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
