@@ -22,13 +22,13 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.schema;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaChangeDTO;
 import org.fairdatateam.fairdatapoint.rdf.schema.dto.MetadataSchemaVersionDTO;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -39,16 +39,14 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Component
+@RequiredArgsConstructor
 public class MetadataSchemaValidator {
 
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private final MetadataSchemaDraftRepository metadataSchemaDraftRepository;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
     private void validateShacl(String shaclDefinition) {
         try {
