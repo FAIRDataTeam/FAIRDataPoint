@@ -22,19 +22,18 @@
  */
 package org.fairdatateam.fairdatapoint.security.membership;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.user.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MemberMapper {
 
-    @Autowired
-    private MembershipMapper membershipMapper;
+    private final MembershipMapper membershipMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     public MemberDTO toDTO(User user, Membership membership) {
         return
