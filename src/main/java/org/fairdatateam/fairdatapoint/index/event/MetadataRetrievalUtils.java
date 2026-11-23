@@ -166,6 +166,10 @@ public class MetadataRetrievalUtils {
         return exchange;
     }
 
+    /**
+     * Parses a raw response body into a list of RDF statements, then extracts the required metadata from that list.
+     * Returns a {@code RepositoryMetadata} (i.e. FDP metadata) object.
+     */
     public static Optional<RepositoryMetadata> parseFDPMetadata(
             String metadata
     ) throws IOException {
@@ -180,13 +184,19 @@ public class MetadataRetrievalUtils {
                 .map(fdpUri -> extractFDPMetadata(statements, fdpUri));
     }
 
+    /**
+     * Returns a {@code RepositoryMetadata} (i.e. FDP metadata) object with {@code title}, {@code description},
+     * {@code version}, {@code publisher}, {@code publisherName}, and {@code country} (deprecated), extracted from the
+     * specified list of RDF statements.
+     */
     private static RepositoryMetadata extractFDPMetadata(
             ArrayList<Statement> statements, Resource fdpUri
     ) {
+        // initialize FDP metadata
         final RepositoryMetadata fdpMetadata = new RepositoryMetadata();
         fdpMetadata.setMetadataVersion(VERSION);
         fdpMetadata.setRepositoryUri(fdpUri.toString());
-
+        // add title, description, version, publisher, and country, if present (see MAPPING)
         Value publisher = null;
         for (Statement statement : statements) {
             if (statement.getSubject().equals(fdpUri)) {
@@ -201,7 +211,7 @@ public class MetadataRetrievalUtils {
                 }
             }
         }
-
+        // add publisher name if present
         if (publisher != null) {
             for (Statement statement : statements) {
                 if (statement.getSubject().equals(publisher)) {
@@ -215,6 +225,9 @@ public class MetadataRetrievalUtils {
         return fdpMetadata;
     }
 
+    /**
+     * Returns the first found RDF subject URI that represents an FDP from the specified list of statements.
+     */
     private static Optional<Resource> findFDPResource(ArrayList<Statement> statements) {
         for (Statement statement : statements) {
             if (statement.getPredicate().equals(RDF.TYPE)
