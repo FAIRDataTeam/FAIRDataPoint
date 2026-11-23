@@ -24,12 +24,12 @@ package org.fairdatateam.fairdatapoint.security.token;
 
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.security.auth.AuthDTO;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
 import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class JwtService {
 
     /**
@@ -72,15 +73,12 @@ public class JwtService {
     @Value("${security.jwt.token.expiration:14}")
     private long expiration;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Lazy
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private final MongoAuthenticationService mongoAuthenticationService;
 
     private JwtParser parser;
 
