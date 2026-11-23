@@ -34,5 +34,6 @@ import org.fairdatateam.fairdatapoint.index.http.Exchange;
 public class MetadataRetrieval {
     private String error;
     private Exchange exchange;
+    // todo: "Repository" should be "FDP"
     private RepositoryMetadata metadata;
 }

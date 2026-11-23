@@ -40,6 +40,7 @@ public class RepositoryMetadata {
 
     private Integer metadataVersion = CURRENT_VERSION;
 
+    // todo: "repository" should be "fdp"
     private String repositoryUri;
 
     @NotNull

@@ -198,18 +198,18 @@ public class EventService {
             if (exchange.getState() == ExchangeState.Retrieved) {
                 try {
                     log.info("Parsing metadata for {}", clientUrl);
-                    final Optional<RepositoryMetadata> metadata = parseFDPMetadata(exchange.getResponse().getBody());
-                    if (metadata.isPresent()) {
-                        retrieval.setMetadata(metadata.orElseThrow());
-                        indexEntry.setCurrentMetadata(metadata.orElseThrow());
+                    final Optional<RepositoryMetadata> fdpMetadata = parseFDPMetadata(exchange.getResponse().getBody());
+                    if (fdpMetadata.isPresent()) {
+                        retrieval.setMetadata(fdpMetadata.orElseThrow());
+                        indexEntry.setCurrentMetadata(fdpMetadata.orElseThrow());
                         indexEntry.setState(IndexEntryState.Valid);
                         log.info("Storing metadata for {}", clientUrl);
                         indexEntryService.saveEntry(indexEntry);
                     }
                     else {
-                        log.info("Repository not found in metadata for {}", clientUrl);
+                        log.info("FDP not found in metadata for {}", clientUrl);
                         indexEntry.setState(IndexEntryState.Invalid);
-                        retrieval.setError("Repository not found in metadata");
+                        retrieval.setError("FDP not found in metadata");
                     }
                 }
                 catch (Exception exception) {
@@ -230,8 +230,8 @@ public class EventService {
         indexEntry.setLastRetrievalTime(Instant.now());
         retrievalEvent.setFinishedNow();
         final Event updatedRetrievalEvent = eventRepository.save(retrievalEvent);
-        // save the updated index entry (updatedRetrievalEvent.getRelatedTo() should be exactly the same as indexEntry,
-        // and currently is, but this is not 100% guaranteed for all repository implementations)
+        // save the updated index entry (we save updatedRetrievalEvent.getRelatedTo() instead of indexEntry,
+        // even though they are currently exactly the same, because this is more robust w.r.t. future changes)
         indexEntryService.saveEntry(updatedRetrievalEvent.getRelatedTo());
     }
 
