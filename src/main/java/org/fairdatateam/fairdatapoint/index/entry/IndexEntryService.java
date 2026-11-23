@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.index.entry;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.rdf.metadata.MetadataRdfRepository;
@@ -36,7 +37,6 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.TreeModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -55,32 +55,26 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @Slf4j
 @Service
 @Validated
+@RequiredArgsConstructor
 public class IndexEntryService {
 
     private static final String MSG_NOT_FOUND = "Index entry not found";
 
     private static final String FILTER_ALL = "ALL";
 
-    @Autowired
-    private IndexEntryRepository repository;
+    private final IndexEntryRepository repository;
 
-    @Autowired
-    private IndexSettingsService indexSettingsService;
+    private final IndexSettingsService indexSettingsService;
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private IndexEntryMapper mapper;
+    private final IndexEntryMapper mapper;
 
-    @Autowired
-    private MetadataRdfRepository metadataRdfRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
-    @Autowired
-    private HarvesterService harvesterService;
+    private final HarvesterService harvesterService;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
     @RequiredEnabledIndexFeature
     public Iterable<IndexEntry> getAllEntries() {
