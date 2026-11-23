@@ -26,6 +26,7 @@ import org.eclipse.rdf4j.model.IRI;
 
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
+@Deprecated(since = "1.23.1", forRemoval = true)
 public final class R3D {
 
     public static final String NAMESPACE = "http://www.re3data.org/schema/3-0#";
