@@ -24,9 +24,9 @@ package org.fairdatateam.fairdatapoint.settings;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.settings.dto.SettingsDTO;
 import org.fairdatateam.fairdatapoint.settings.dto.SettingsUpdateDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Client")
 @RestController
 @RequestMapping("/settings")
+@RequiredArgsConstructor
 public class SettingsController {
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
