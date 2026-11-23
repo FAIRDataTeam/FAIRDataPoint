@@ -29,7 +29,6 @@ import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDetailDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryInfoDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryUpdateDTO;
-import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
@@ -87,7 +86,7 @@ public class IndexEntryController {
         if (detailDTO.isPresent()) {
             final String clientUrl = detailDTO.get().getClientUrl();
             if (detailDTO.get().getPermit().equals(IndexEntryPermit.ACCEPTED)) {
-                final Event event = eventService.acceptAdminTrigger(request.getRemoteAddr(), new PingDTO(clientUrl));
+                final Event event = eventService.createAdminTriggerEvent(request.getRemoteAddr(), clientUrl);
                 eventService.triggerMetadataRetrieval(event);
                 indexEntryService.harvest(clientUrl);
             }

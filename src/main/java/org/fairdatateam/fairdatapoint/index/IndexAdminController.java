@@ -55,14 +55,14 @@ public class IndexAdminController {
     @PostMapping("/trigger")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void triggerMetadataRetrieve(
-            @RequestBody @Valid PingDTO reqDTO,
+    public void triggerSingleMetadataRetrievalAndHarvesting(
+            @RequestBody @Valid PingDTO pingDTO,
             HttpServletRequest request
     ) throws RdfRepositoryException {
-        log.info("Received ping trigger request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTrigger(request.getRemoteAddr(), reqDTO);
+        final String clientUrl = pingDTO.getClientUrl();
+        final Event event = eventService.createAdminTriggerEvent(request.getRemoteAddr(), clientUrl);
         eventService.triggerMetadataRetrieval(event);
-        indexEntryService.harvest(reqDTO.getClientUrl());
+        indexEntryService.harvest(clientUrl);
     }
 
     /**
@@ -72,9 +72,8 @@ public class IndexAdminController {
     @PostMapping("/trigger-all")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void triggerMetadataRetrieveAll(HttpServletRequest request) {
-        log.info("Received ping trigger all request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTriggerAll(request.getRemoteAddr());
+    public void triggerAllMetadataRetrievals(HttpServletRequest request) {
+        final Event event = eventService.createAdminTriggerAllEvent(request.getRemoteAddr());
         eventService.triggerMetadataRetrieval(event);
     }
 }

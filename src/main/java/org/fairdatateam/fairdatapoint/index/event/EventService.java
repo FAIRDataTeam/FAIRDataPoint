@@ -24,14 +24,12 @@ package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryState;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
-import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.exception.PingDeniedException;
 import org.fairdatateam.fairdatapoint.index.exception.RateLimitException;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
@@ -286,8 +284,8 @@ public class EventService {
      * {@code clientUrl}. Also creates and persists a new {@code IndexEntry} for the URL if that does no exist yet.
      */
     @RequiredEnabledIndexFeature
-    public Event acceptAdminTrigger(String remoteAddr, @Valid PingDTO pingDTO) {
-        final String clientUrl = pingDTO.getClientUrl();
+    public Event createAdminTriggerEvent(String remoteAddr, String clientUrl) {
+        log.info("Creating admin trigger event for {}, requested by {}", clientUrl, remoteAddr);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event = eventMapper.toAdminTriggerEvent(authentication, clientUrl, remoteAddr);
         // get existing index entry or create a new one if necessary
@@ -302,7 +300,8 @@ public class EventService {
      * Creates and persists a new admin trigger {@code Event} that triggers metadata retrieval for all registered FDPs.
      */
     @RequiredEnabledIndexFeature
-    public Event acceptAdminTriggerAll(String remoteAddr) {
+    public Event createAdminTriggerAllEvent(String remoteAddr) {
+        log.info("Creating admin trigger event for all FDPs, requested by {}", remoteAddr);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Event event = eventMapper.toAdminTriggerEvent(authentication, null, remoteAddr);
         event.setFinishedNow();
