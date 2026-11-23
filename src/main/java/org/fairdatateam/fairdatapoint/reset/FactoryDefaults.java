@@ -436,7 +436,8 @@ public class FactoryDefaults {
     }
 
     // Repository RDF statements
-
+    // todo: these legacy statements belong in Rdf_Migration_0001_Init and should be removed from here
+    @Deprecated(since = "1.23.1", forRemoval = true)
     public static List<Statement> repositoryStatements(
             String persistentUrl, String license, String language, String accessRightsDescription
     ) {
