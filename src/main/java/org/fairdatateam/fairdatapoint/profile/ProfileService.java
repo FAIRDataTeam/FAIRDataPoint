@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.profile;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
@@ -34,7 +35,6 @@ import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -45,19 +45,17 @@ import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.*;
 
 @Service
+@RequiredArgsConstructor
 public class ProfileService {
 
     private static final String PROFILE_PREFIX = "http://www.w3.org/ns/dx/prof/";
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
     private Model getProfileForResourceDefinition(
             ResourceDefinition resourceDefinition, IRI uri
