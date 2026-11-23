@@ -25,10 +25,10 @@ package org.fairdatateam.fairdatapoint.openapi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -40,16 +40,15 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class OpenApiService {
 
     private static final String MSG_ADD = "Adding OpenAPI paths: {}";
     private static final String MSG_REMOVE = "Removing OpenAPI paths: {}";
 
-    @Autowired
-    private OpenAPI openAPI;
+    private final OpenAPI openAPI;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
     private Paths getGenericPaths() {
         return (Paths) openAPI.getExtensions().get("fdpGenericPaths");
