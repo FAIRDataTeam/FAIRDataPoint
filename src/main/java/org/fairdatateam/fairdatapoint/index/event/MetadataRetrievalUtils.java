@@ -177,7 +177,7 @@ public class MetadataRetrievalUtils {
         final ArrayList<Statement> statements = new ArrayList<>(collector.getStatements());
 
         return findFDPResource(statements)
-                .map(fdp -> extractFDPMetadata(statements, fdp));
+                .map(fdpUri -> extractFDPMetadata(statements, fdpUri));
     }
 
     private static RepositoryMetadata extractFDPMetadata(
