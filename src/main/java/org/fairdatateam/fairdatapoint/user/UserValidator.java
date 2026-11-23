@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.user;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,10 +31,10 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Service
+@RequiredArgsConstructor
 public class UserValidator {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public void validateEmail(String uuid, String email) {
         final Optional<User> userEmail = userRepository.findByEmail(email);
