@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.rdf.schema;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
@@ -32,7 +33,6 @@ import org.fairdatateam.fairdatapoint.rdf.RdfIOUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.fairdatateam.fairdatapoint.common.util.SemVer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -49,28 +49,23 @@ import static java.util.stream.Collectors.toMap;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MetadataSchemaService {
 
     private static final String MSG_ERROR_PARENTS_PUBLISH =
             "Cannot publish as not all parents (via extends) are published";
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
 
-    @Autowired
-    private MetadataSchemaDraftRepository metadataSchemaDraftRepository;
+    private final MetadataSchemaDraftRepository metadataSchemaDraftRepository;
 
-    @Autowired
-    private MetadataSchemaMapper metadataSchemaMapper;
+    private final MetadataSchemaMapper metadataSchemaMapper;
 
-    @Autowired
-    private MetadataSchemaValidator metadataSchemaValidator;
+    private final MetadataSchemaValidator metadataSchemaValidator;
 
-    @Autowired
-    private ResourceDefinitionTargetClassesCache targetClassesCache;
+    private final ResourceDefinitionTargetClassesCache targetClassesCache;
 
-    @Autowired
-    private String persistentUrl;
+    private final String persistentUrl;
 
     // ===============================================================================================
     // Schema drafts
