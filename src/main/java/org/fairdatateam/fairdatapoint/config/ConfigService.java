@@ -22,29 +22,26 @@
  */
 package org.fairdatateam.fairdatapoint.config;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ConfigService {
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
     public BootstrapConfigDTO getBootstrapConfig() {
         final Settings settings = settingsService.getOrDefaults();

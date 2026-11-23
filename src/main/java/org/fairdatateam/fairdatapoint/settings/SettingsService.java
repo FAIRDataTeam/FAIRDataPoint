@@ -22,29 +22,26 @@
  */
 package org.fairdatateam.fairdatapoint.settings;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.settings.dto.SettingsDTO;
 import org.fairdatateam.fairdatapoint.settings.dto.SettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.search.SearchFilterCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class SettingsService {
 
-    @Autowired
-    private SettingsRepository repository;
+    private final SettingsRepository repository;
 
-    @Autowired
-    private SettingsMapper mapper;
+    private final SettingsMapper mapper;
 
-    @Autowired
-    private SettingsCache settingsCache;
+    private final SettingsCache settingsCache;
 
-    @Autowired
-    private SearchFilterCache searchFilterCache;
+    private final SearchFilterCache searchFilterCache;
 
     public Settings getOrDefaults() {
         return settingsCache.getOrDefaults();

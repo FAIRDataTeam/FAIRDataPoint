@@ -22,24 +22,22 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionRepository;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionMigration implements Migration {
 
-    @Autowired
-    private ResourceDefinitionFixtures resourceDefinitionFixtures;
+    private final ResourceDefinitionFixtures resourceDefinitionFixtures;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
     public void runMigration() {
         resourceDefinitionRepository.deleteAll();

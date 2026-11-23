@@ -25,6 +25,7 @@ package org.fairdatateam.fairdatapoint.rdf.metadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.dto.MetaDTO;
@@ -37,7 +38,6 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,28 +53,23 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Tag(name = "Metadata")
 @RestController
+@RequiredArgsConstructor
 public class GenericMetaController {
 
     private static final int SUPPORTED_URL_FRAGMENTS = 3;
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
-    @Autowired
-    private GenericMetadataService metadataService;
+    private final GenericMetadataService metadataService;
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
     @Operation(hidden = true)
     @GetMapping(path = {"meta", "{oUrlPrefix:[^.]+}/{oRecordId:[^.]+}/meta"})

@@ -22,10 +22,10 @@
  */
 package org.fairdatateam.fairdatapoint.security;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
 import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,10 +37,10 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Service
+@RequiredArgsConstructor
 public class MongoUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String uuid) {

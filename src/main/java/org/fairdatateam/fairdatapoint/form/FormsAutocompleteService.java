@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.form;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -32,19 +32,16 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FormsAutocompleteService {
 
-    @Autowired
-    private FormsAutocompleteCache cache;
+    private final FormsAutocompleteCache cache;
 
-    @Autowired
-    private RdfEntitiesNamespaceRetriever namespaceRetriever;
+    private final RdfEntitiesNamespaceRetriever namespaceRetriever;
 
-    @Autowired
-    private RdfEntitiesSparqlRetriever sparqlRetriever;
+    private final RdfEntitiesSparqlRetriever sparqlRetriever;
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
     public List<FormAutocompleteItemDTO> searchItems(FormAutocompleteRequestDTO reqDto) {
         RdfEntityCacheContainer container = cache.get(reqDto.getRdfType());

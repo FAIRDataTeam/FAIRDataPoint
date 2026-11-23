@@ -22,12 +22,12 @@
  */
 package org.fairdatateam.fairdatapoint.resource;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionChangeDTO;
 import org.fairdatateam.fairdatapoint.resource.dto.ResourceDefinitionDTO;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipService;
 import org.fairdatateam.fairdatapoint.openapi.OpenApiService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -39,32 +39,25 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionService {
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private ResourceDefinitionValidator resourceDefinitionValidator;
+    private final ResourceDefinitionValidator resourceDefinitionValidator;
 
-    @Autowired
-    private ResourceDefinitionMapper resourceDefinitionMapper;
+    private final ResourceDefinitionMapper resourceDefinitionMapper;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
-    @Autowired
-    private ResourceDefinitionTargetClassesCache targetClassesCache;
+    private final ResourceDefinitionTargetClassesCache targetClassesCache;
 
-    @Autowired
-    private MembershipService membershipService;
+    private final MembershipService membershipService;
 
-    @Autowired
-    private OpenApiService openApiService;
+    private final OpenApiService openApiService;
 
     public ResourceDefinitionDTO toDTO(ResourceDefinition definition) {
         return resourceDefinitionMapper.toDTO(definition, getTargetClassUris(definition));

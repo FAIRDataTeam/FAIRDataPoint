@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.security.apikey;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ForbiddenException;
 import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.user.User;
@@ -29,7 +30,6 @@ import org.fairdatateam.fairdatapoint.user.UserRole;
 import org.fairdatateam.fairdatapoint.security.auth.MongoAuthenticationService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -39,23 +39,20 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ApiKeyService {
 
     private static final int TOKEN_SIZE = 128;
 
     private static final String MSG_LOGIN_FIRST = "You have to log in";
 
-    @Autowired
-    private ApiKeyRepository apiKeyRepository;
+    private final ApiKeyRepository apiKeyRepository;
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
-    @Autowired
-    private MongoAuthenticationService mongoAuthenticationService;
+    private final MongoAuthenticationService mongoAuthenticationService;
 
-    @Autowired
-    private ApiKeyMapper apiKeyMapper;
+    private final ApiKeyMapper apiKeyMapper;
 
     public List<ApiKeyDTO> getAll() {
         final Optional<User> user = currentUserProvider.getCurrentUser();

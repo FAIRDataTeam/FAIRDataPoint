@@ -22,10 +22,10 @@
  */
 package org.fairdatateam.fairdatapoint.user;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.security.membership.MemberService;
 import org.fairdatateam.fairdatapoint.security.CurrentUserProvider;
 import org.fairdatateam.fairdatapoint.user.dto.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -37,22 +37,18 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private CurrentUserProvider currentUserProvider;
+    private final CurrentUserProvider currentUserProvider;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private UserValidator userValidator;
+    private final UserValidator userValidator;
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
     public List<UserDTO> getUsers() {
         return

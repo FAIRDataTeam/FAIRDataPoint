@@ -27,12 +27,11 @@
  */
 package org.fairdatateam.fairdatapoint.rdf.metadata;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.rdf4j.model.IRI;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nonnull;
@@ -41,12 +40,11 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class MetricsMetadataService {
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
 
     public List<Metric> generateMetrics(@Nonnull IRI metadataURI) {
         final Settings settings = settingsService.getOrDefaults();

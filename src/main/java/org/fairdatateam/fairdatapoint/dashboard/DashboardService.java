@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.dashboard;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.security.membership.MemberDTO;
 import org.fairdatateam.fairdatapoint.security.membership.MembershipDTO;
 import org.fairdatateam.fairdatapoint.rdf.metadata.Metadata;
@@ -36,7 +37,6 @@ import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionService;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -49,23 +49,19 @@ import static org.fairdatateam.fairdatapoint.rdf.RdfUtil.getObjectsBy;
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 
 @Service
+@RequiredArgsConstructor
 public class DashboardService {
 
-    @Autowired
     @Qualifier("genericMetadataService")
-    private MetadataService metadataService;
+    private final MetadataService metadataService;
 
-    @Autowired
-    private MetadataStateService metadataStateService;
+    private final MetadataStateService metadataStateService;
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
-    @Autowired
-    private ResourceDefinitionService resourceDefinitionService;
+    private final ResourceDefinitionService resourceDefinitionService;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
     public List<DashboardItemDTO> getDashboard(IRI repositoryUri) throws MetadataServiceException {
         final ResourceDefinition resourceDefinition = resourceDefinitionService.getByUrlPrefix("");

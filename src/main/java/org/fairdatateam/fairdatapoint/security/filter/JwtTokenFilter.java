@@ -26,11 +26,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ErrorDTO;
 import org.fairdatateam.fairdatapoint.common.error.UnauthorizedException;
 import org.fairdatateam.fairdatapoint.security.apikey.ApiKeyService;
 import org.fairdatateam.fairdatapoint.security.token.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -44,16 +44,14 @@ import java.io.IOException;
 import static org.fairdatateam.fairdatapoint.common.util.HttpUtil.getToken;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    @Autowired
-    private ApiKeyService apiKeyService;
+    private final ApiKeyService apiKeyService;
 
-    @Autowired
-    private JsonMapper jsonMapper;
+    private final JsonMapper jsonMapper;
 
     @Override
     public void doFilterInternal(

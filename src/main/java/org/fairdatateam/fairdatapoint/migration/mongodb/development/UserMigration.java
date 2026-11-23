@@ -22,19 +22,18 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.migration.Migration;
 import org.fairdatateam.fairdatapoint.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserMigration implements Migration {
 
-    @Autowired
-    private UserFixtures userFixtures;
+    private final UserFixtures userFixtures;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public void runMigration() {
         userRepository.deleteAll();

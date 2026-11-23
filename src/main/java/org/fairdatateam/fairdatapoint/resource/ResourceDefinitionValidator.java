@@ -22,8 +22,8 @@
  */
 package org.fairdatateam.fairdatapoint.resource;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 
@@ -33,13 +33,12 @@ import java.util.Optional;
 import static org.fairdatateam.fairdatapoint.common.util.ValidationUtil.uniquenessValidationFailed;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionValidator {
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
     public void validate(ResourceDefinition reqDto) throws BindException {
         // Check uniqueness

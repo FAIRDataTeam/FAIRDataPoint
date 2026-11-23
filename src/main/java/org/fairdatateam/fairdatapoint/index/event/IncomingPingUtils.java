@@ -23,10 +23,10 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
@@ -34,12 +34,12 @@ import tools.jackson.databind.json.JsonMapper;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class IncomingPingUtils {
 
     private static final Integer VERSION = 1;
 
-    @Autowired
-    private JsonMapper jsonMapper;
+    private final JsonMapper jsonMapper;
 
     public Event prepareEvent(PingDTO reqDto, HttpServletRequest request, String remoteAddr) {
         final IncomingPing incomingPing = new IncomingPing();

@@ -22,9 +22,9 @@
  */
 package org.fairdatateam.fairdatapoint.security.membership;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinition;
 import org.fairdatateam.fairdatapoint.common.util.KnownUUIDs;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,13 +32,12 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@RequiredArgsConstructor
 public class MembershipService {
 
-    @Autowired
-    private MembershipRepository membershipRepository;
+    private final MembershipRepository membershipRepository;
 
-    @Autowired
-    private MembershipMapper membershipMapper;
+    private final MembershipMapper membershipMapper;
 
     public List<MembershipDTO> getMemberships() {
         final List<Membership> memberships = membershipRepository.findAll();

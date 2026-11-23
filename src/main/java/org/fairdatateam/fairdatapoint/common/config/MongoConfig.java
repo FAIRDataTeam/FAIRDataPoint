@@ -26,10 +26,10 @@ import io.mongock.api.config.LegacyMigration;
 import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;
 import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.runner.springboot.base.MongockInitializingBeanRunner;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionCache;
 import org.fairdatateam.fairdatapoint.resource.ResourceDefinitionTargetClassesCache;
 import org.fairdatateam.fairdatapoint.settings.SettingsCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,16 +46,14 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
             "org.fairdatateam.security.acls"
         }
 )
+@RequiredArgsConstructor
 public class MongoConfig {
 
-    @Autowired
-    private ResourceDefinitionCache resourceDefinitionCache;
+    private final ResourceDefinitionCache resourceDefinitionCache;
 
-    @Autowired
-    private ResourceDefinitionTargetClassesCache targetClassesCache;
+    private final ResourceDefinitionTargetClassesCache targetClassesCache;
 
-    @Autowired
-    private SettingsCache settingsCache;
+    private final SettingsCache settingsCache;
 
     @Bean("mongockRunner")
     public MongockInitializingBeanRunner mongockApplicationRunner(

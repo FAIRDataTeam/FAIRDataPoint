@@ -23,7 +23,7 @@
 package org.fairdatateam.fairdatapoint.settings;
 
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -31,15 +31,14 @@ import org.springframework.stereotype.Service;
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.SETTINGS_CACHE;
 
 @Service
+@RequiredArgsConstructor
 public class SettingsCache {
 
     private static final String SETTINGS_KEY = "settings";
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private SettingsRepository settingsRepository;
+    private final SettingsRepository settingsRepository;
 
     @PostConstruct
     public void updateCachedSettings() {

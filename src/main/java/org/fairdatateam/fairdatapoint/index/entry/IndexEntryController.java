@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.index.entry;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryDetailDTO;
 import org.fairdatateam.fairdatapoint.index.entry.dto.IndexEntryInfoDTO;
@@ -33,7 +34,6 @@ import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.event.Event;
 import org.fairdatateam.fairdatapoint.index.event.EventService;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,19 +47,16 @@ import java.util.Optional;
 @Tag(name = "Index")
 @RestController
 @RequestMapping("/index/entries")
+@RequiredArgsConstructor
 public class IndexEntryController {
 
-    @Autowired
-    private IndexEntryService service;
+    private final IndexEntryService service;
 
-    @Autowired
-    private HarvesterService harvesterService;
+    private final HarvesterService harvesterService;
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
-    @Autowired
-    private IndexEntryService indexEntryService;
+    private final IndexEntryService indexEntryService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<IndexEntryDTO> getEntriesPage(

@@ -23,9 +23,9 @@
 package org.fairdatateam.fairdatapoint.resource;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchemaRepository;
 import org.fairdatateam.fairdatapoint.rdf.schema.MetadataSchema;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Service;
@@ -35,16 +35,14 @@ import java.util.*;
 import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.RESOURCE_DEFINITION_TARGET_CLASSES_CACHE;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceDefinitionTargetClassesCache {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private ResourceDefinitionRepository resourceDefinitionRepository;
+    private final ResourceDefinitionRepository resourceDefinitionRepository;
 
-    @Autowired
-    private MetadataSchemaRepository metadataSchemaRepository;
+    private final MetadataSchemaRepository metadataSchemaRepository;
 
     @PostConstruct
     public void computeCache() {

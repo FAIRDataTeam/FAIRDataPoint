@@ -22,15 +22,15 @@
  */
 package org.fairdatateam.fairdatapoint.migration.mongodb.development;
 
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.settings.SettingsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class SettingsMigration {
 
-    @Autowired
-    private SettingsRepository settingsRepository;
+    private final SettingsRepository settingsRepository;
 
     public void runMigration() {
         settingsRepository.deleteAll();

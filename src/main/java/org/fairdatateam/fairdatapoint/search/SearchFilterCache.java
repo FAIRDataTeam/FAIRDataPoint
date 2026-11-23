@@ -23,10 +23,10 @@
 package org.fairdatateam.fairdatapoint.search;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.label.LabelService;
 import org.fairdatateam.fairdatapoint.settings.SettingsCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.stereotype.Component;
@@ -36,16 +36,14 @@ import static org.fairdatateam.fairdatapoint.common.config.CacheConfig.SEARCH_FI
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SearchFilterCache {
 
-    @Autowired
-    private ConcurrentMapCacheManager cacheManager;
+    private final ConcurrentMapCacheManager cacheManager;
 
-    @Autowired
-    private SettingsCache settingsCache;
+    private final SettingsCache settingsCache;
 
-    @Autowired
-    private LabelService labelService;
+    private final LabelService labelService;
 
     @PostConstruct
     public void clearCache() {

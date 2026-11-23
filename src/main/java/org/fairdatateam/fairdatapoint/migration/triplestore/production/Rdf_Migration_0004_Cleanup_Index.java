@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.migration.triplestore.production;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryRepository;
@@ -34,7 +35,6 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
@@ -45,22 +45,18 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
         description = "Cleanup harvested record stored in separate named graphs")
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class Rdf_Migration_0004_Cleanup_Index implements RdfProductionMigration {
 
-    @Autowired
-    private Repository repository;
+    private final Repository repository;
 
-    @Autowired
-    private MetadataRdfRepository metadataRdfRepository;
+    private final MetadataRdfRepository metadataRdfRepository;
 
-    @Autowired
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private IndexEntryRepository indexEntryRepository;
+    private final IndexEntryRepository indexEntryRepository;
 
-    @Autowired
-    private InstanceProperties instanceProperties;
+    private final InstanceProperties instanceProperties;
 
     @Override
     public void runMigration() {
