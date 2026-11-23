@@ -67,7 +67,10 @@ public class MetadataRetrievalUtils {
             FDP.METADATASERVICE
     );
 
-    private static final Map<IRI, String> MAPPING = Map.of(
+    /**
+     * Specifies which predicates are to be included in the FDP metadata
+     */
+    private static final Map<IRI, String> METADATA_MAPPING = Map.of(
             DCTERMS.TITLE, "title",
             DCTERMS.DESCRIPTION, "description",
             DCAT3.VERSION, "version",
@@ -187,9 +190,9 @@ public class MetadataRetrievalUtils {
         Value publisher = null;
         for (Statement statement : statements) {
             if (statement.getSubject().equals(fdpUri)) {
-                if (MAPPING.containsKey(statement.getPredicate())) {
+                if (METADATA_MAPPING.containsKey(statement.getPredicate())) {
                     fdpMetadata.getMetadata()
-                            .put(MAPPING.get(
+                            .put(METADATA_MAPPING.get(
                                     statement.getPredicate()),
                                     statement.getObject().stringValue());
                 }
