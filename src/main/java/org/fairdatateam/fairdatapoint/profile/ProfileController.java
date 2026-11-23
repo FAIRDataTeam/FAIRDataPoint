@@ -24,10 +24,10 @@ package org.fairdatateam.fairdatapoint.profile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.common.error.ResourceNotFoundException;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,14 +42,13 @@ import static org.fairdatateam.fairdatapoint.common.util.ValueFactoryHelper.i;
 @Tag(name = "Client")
 @RestController
 @RequestMapping("/profile")
+@RequiredArgsConstructor
 public class ProfileController {
 
-    @Autowired
     @Qualifier("persistentUrl")
-    private String persistentUrl;
+    private final String persistentUrl;
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
     @GetMapping(path = "/{uuid}", produces = {
         "text/turtle",
