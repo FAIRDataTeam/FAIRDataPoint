@@ -45,8 +45,7 @@ public class IndexSettingsService {
     private final InstanceProperties instanceProperties;
 
     /**
-     * Returns true if the FDP URL in the ping body matches any of the patterns in the
-     * <code>IndexSettingsPing.denyList</code>
+     * Returns true if the FDP URL in the ping body matches any pattern from the {@code IndexSettingsPing.denyList}
      */
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(String clientUrl) {
