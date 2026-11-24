@@ -30,8 +30,10 @@ import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.index.RequiredEnabledIndexFeature;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -45,17 +47,23 @@ public class IndexSettingsService {
     private final InstanceProperties instanceProperties;
 
     /**
-     * Returns true if the FDP URL in the ping body matches any pattern from the {@code IndexSettingsPing.denyList}
+     * Returns true, i.e. denies the ping, if the {@code clientUrl} is invalid or if its host part matches any of the
+     * hosts from the {@code IndexSettingsPing.denyList}.
+     * @see <a href="https://www.rfc-editor.org/info/rfc3986/#section-3.2.2">RFC 3986 host</a>
      */
     @RequiredEnabledIndexFeature
     public boolean isPingDenied(String clientUrl) {
         log.info("Checking if clientUrl matches deny list: {}", clientUrl);
-        return getOrDefaults()
-                .getPing()
-                .getDenyList()
-                .parallelStream()
-                // todo: check parsed URL hostname against denyList instead of using regex
-                .anyMatch(pattern -> Pattern.matches(pattern, clientUrl));
+        try {
+            // validate the URI and deny if clientUrl is not a valid
+            final URI clientURI = new URI(clientUrl);
+            // deny if the URI's host part matches any of the denied hosts from the settings
+            final List<String> deniedHosts = getOrDefaults().getPing().getDenyList();
+            return deniedHosts.stream().anyMatch(deniedHost -> clientURI.getHost().equalsIgnoreCase(deniedHost));
+        } catch (URISyntaxException exception) {
+            log.warn("Not a valid URI: {} ({})", clientUrl, exception);
+            return true;
+        }
     }
 
     @RequiredEnabledIndexFeature
