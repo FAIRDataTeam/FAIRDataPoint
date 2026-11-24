@@ -31,7 +31,8 @@ import java.util.List;
 
 class IndexSettingsTestFactory {
 
-    static final String INVALID_HOSTNAME = "http://localhost.*$";
+    // this is the old regex pattern from IndexSettingsPing <=1.23.2
+    static final String INVALID_HOSTNAME = "^(http|https)://localhost(:[0-9]+){0,1}.*$";
 
     static final String VALID_HOSTNAME = "localhost";
 
