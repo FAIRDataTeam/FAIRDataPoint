@@ -60,8 +60,9 @@ public class IndexSettingsService {
             // deny if the URI's host part matches any of the denied hosts from the settings
             final List<String> deniedHosts = getOrDefaults().getPing().getDenyList();
             return deniedHosts.stream().anyMatch(deniedHost -> clientURI.getHost().equalsIgnoreCase(deniedHost));
-        } catch (URISyntaxException exception) {
-            log.warn("Not a valid URI: {} ({})", clientUrl, exception);
+        }
+        catch (URISyntaxException exception) {
+            log.warn("Ping denied because URI is invalid: {} ({})", clientUrl, exception);
             return true;
         }
     }
