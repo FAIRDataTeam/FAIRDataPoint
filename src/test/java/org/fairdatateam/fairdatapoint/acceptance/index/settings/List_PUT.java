@@ -60,11 +60,17 @@ public class List_PUT extends WebIntegrationTest {
     }
 
     private IndexSettings customSettings1() {
-        return createIndexSettings(true);
+        final IndexSettings settings = createIndexSettings();
+        settings.setAutoPermit(true);
+        return settings;
     }
 
     private IndexSettings customSettings2() {
-        return createIndexSettings(true, Duration.ofDays(14), Duration.ofMinutes(2));
+        final IndexSettings settings = createIndexSettings();
+        settings.setAutoPermit(true);
+        settings.getPing().setValidDuration(Duration.ofDays(14));
+        settings.getRetrieval().setTimeout(Duration.ofMinutes(2));
+        return settings;
     }
 
     private IndexSettingsUpdateDTO customSettingsUpdateDTO() {

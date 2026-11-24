@@ -31,20 +31,18 @@ import java.util.List;
 
 class IndexSettingsTestFactory {
 
-    private static final Duration DEFAULT_TIMEOUT_DURATION = Duration.ofSeconds(55);
-    private static final Duration DEFAULT_VALID_DURATION = Duration.ofDays(5);
-    private static final boolean DEFAULT_AUTO_PERMIT = false;
-
     /**
      * Returns an IndexSettings instance with the specified test settings
      */
-    static IndexSettings createIndexSettings(
-            boolean autoPermit, Duration validDuration, Duration timeoutDuration
-    ) {
+    static IndexSettings createIndexSettings() {
+        final boolean autoPermit = false;
         final List<String> deniedHosts = List.of("localhost");
         final Duration rateLimitDuration = Duration.ofMinutes(17);
-        final Duration rateLimitWait = Duration.ofHours(16);
         final int rateLimitHits = 666;
+        final Duration rateLimitWait = Duration.ofHours(16);
+        final Duration timeoutDuration = Duration.ofSeconds(55);
+        final Duration validDuration = Duration.ofDays(5);
+
         final IndexSettingsPing indexSettingsPing = IndexSettingsPing.builder()
                 .denyList(deniedHosts)
                 .rateLimitDuration(rateLimitDuration)
@@ -60,13 +58,5 @@ class IndexSettingsTestFactory {
                 .retrieval(indexSettingsRetrieval)
                 .autoPermit(autoPermit)
                 .build();
-    }
-
-    static IndexSettings createIndexSettings(boolean autoPermit) {
-        return createIndexSettings(autoPermit, DEFAULT_VALID_DURATION, DEFAULT_TIMEOUT_DURATION);
-    }
-
-    static IndexSettings createIndexSettings() {
-        return createIndexSettings(DEFAULT_AUTO_PERMIT, DEFAULT_VALID_DURATION, DEFAULT_TIMEOUT_DURATION);
     }
 }
