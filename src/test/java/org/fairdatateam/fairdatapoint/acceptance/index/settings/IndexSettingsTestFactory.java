@@ -41,7 +41,7 @@ class IndexSettingsTestFactory {
     static IndexSettings createIndexSettings(
             boolean autoPermit, Duration validDuration, Duration timeoutDuration
     ) {
-        final List<String> deniedHosts = List.of("http://localhost.*$");
+        final List<String> deniedHosts = List.of("localhost");
         final Duration rateLimitDuration = Duration.ofMinutes(17);
         final Duration rateLimitWait = Duration.ofHours(16);
         final int rateLimitHits = 666;
