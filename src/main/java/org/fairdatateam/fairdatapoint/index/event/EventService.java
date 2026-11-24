@@ -98,12 +98,13 @@ public class EventService {
     @RequiredEnabledIndexFeature
     @SneakyThrows
     public Event acceptIncomingPing(PingDTO reqDto, HttpServletRequest request) {
+        final String clientUrl = reqDto.getClientUrl();
         final String remoteAddr = request.getRemoteAddr();
         final IndexSettingsPing pingSettings = indexSettingsService.getOrDefaults().getPing();
 
-        if (indexSettingsService.isPingDenied(reqDto)) {
+        if (indexSettingsService.isPingDenied(clientUrl)) {
             log.info("Received ping is denied");
-            throw new PingDeniedException(reqDto.getClientUrl());
+            throw new PingDeniedException(clientUrl);
         }
 
         final Instant rateLimitSince = Instant.now().minus(pingSettings.getRateLimitDuration());
