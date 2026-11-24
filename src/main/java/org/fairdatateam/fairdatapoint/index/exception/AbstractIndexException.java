@@ -22,9 +22,11 @@
  */
 package org.fairdatateam.fairdatapoint.index.exception;
 
+import lombok.Getter;
 import org.fairdatateam.fairdatapoint.common.error.ErrorDTO;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public abstract class AbstractIndexException extends RuntimeException {
 
     private final HttpStatus status;
@@ -32,10 +34,6 @@ public abstract class AbstractIndexException extends RuntimeException {
     public AbstractIndexException(String message, HttpStatus status) {
         super(message);
         this.status = status;
-    }
-
-    public HttpStatus getStatus() {
-        return status;
     }
 
     public ErrorDTO getErrorDTO() {

@@ -27,7 +27,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.rdf.RdfRepositoryException;
 import org.fairdatateam.fairdatapoint.index.entry.IndexEntryService;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
@@ -38,7 +37,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Index")
-@Slf4j
 @RestController
 @RequestMapping("/index/admin")
 @RequiredArgsConstructor
@@ -48,27 +46,32 @@ public class IndexAdminController {
 
     private final IndexEntryService indexEntryService;
 
+    /**
+     * Triggers basic metadata retrieval, followed by harvesting, for the FDP specified in the request body.
+     */
     @Operation(hidden = true)
     @PostMapping("/trigger")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void triggerMetadataRetrieve(
-            @RequestBody @Valid PingDTO reqDto,
+    public void triggerSingleMetadataRetrievalAndHarvesting(
+            @RequestBody @Valid PingDTO pingDTO,
             HttpServletRequest request
     ) throws RdfRepositoryException {
-        log.info("Received ping trigger request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTrigger(request, reqDto);
+        final String clientUrl = pingDTO.getClientUrl();
+        final Event event = eventService.createAdminTriggerEvent(request.getRemoteAddr(), clientUrl);
         eventService.triggerMetadataRetrieval(event);
-        indexEntryService.harvest(reqDto.getClientUrl());
+        indexEntryService.harvest(clientUrl);
     }
 
+    /**
+     * Triggers basic metadata retrieval for all registered FDPs. Does not trigger harvesting.
+     */
     @Operation(hidden = true)
     @PostMapping("/trigger-all")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void triggerMetadataRetrieveAll(HttpServletRequest request) {
-        log.info("Received ping trigger all request from {}", request.getRemoteAddr());
-        final Event event = eventService.acceptAdminTriggerAll(request);
+    public void triggerAllMetadataRetrievals(HttpServletRequest request) {
+        final Event event = eventService.createAdminTriggerAllEvent(request.getRemoteAddr());
         eventService.triggerMetadataRetrieval(event);
     }
 }

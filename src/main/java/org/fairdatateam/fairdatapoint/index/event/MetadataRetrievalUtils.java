@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
+import org.fairdatateam.fairdatapoint.index.entry.IndexEntry;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeState;
@@ -31,7 +32,6 @@ import org.fairdatateam.fairdatapoint.rdf.vocabulary.DCAT3;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.FDP;
 import org.fairdatateam.fairdatapoint.rdf.vocabulary.R3D;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.vocabulary.DCTERMS;
@@ -59,8 +59,6 @@ import java.util.Optional;
 
 public class MetadataRetrievalUtils {
 
-    private static final EventType EVENT_TYPE = EventType.MetadataRetrieval;
-
     private static final Integer VERSION = 1;
 
     private static final List<IRI> REPOSITORY_TYPES = List.of(
@@ -68,7 +66,10 @@ public class MetadataRetrievalUtils {
             FDP.METADATASERVICE
     );
 
-    private static final Map<IRI, String> MAPPING = Map.of(
+    /**
+     * Specifies which predicates are to be included in the FDP metadata
+     */
+    private static final Map<IRI, String> METADATA_MAPPING = Map.of(
             DCTERMS.TITLE, "title",
             DCTERMS.DESCRIPTION, "description",
             DCAT3.VERSION, "version",
@@ -76,83 +77,99 @@ public class MetadataRetrievalUtils {
             R3D.COUNTRY, "country"
     );
 
+    // todo: replace by RestClient (#1035)
     private static final HttpClient CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
-    public static boolean shouldRetrieve(Event triggerEvent, Duration rateLimitWait) {
-        if (triggerEvent.getRelatedTo() == null) {
+    /**
+     * Returns true if the event has an index entry and the retrieval rate limit has not been exceeded.
+     */
+    public static boolean shouldRetrieveFDPMetadata(Event triggerEvent, Duration rateLimitWait) {
+        final IndexEntry indexEntry = triggerEvent.getRelatedTo();
+        if (indexEntry == null) {
             return false;
         }
-        final Instant lastRetrieval = triggerEvent.getRelatedTo().getLastRetrievalTime();
+        final Instant lastRetrieval = indexEntry.getLastRetrievalTime();
         if (lastRetrieval == null) {
             return true;
         }
         return Duration.between(lastRetrieval, Instant.now()).compareTo(rateLimitWait) > 0;
     }
 
+    /**
+     * Returns a list of metadata retrieval Events. If the trigger event is an incoming ping or an admin trigger with a
+     * clientUrl, the list contains a single event. If the trigger event is an admin trigger without clientUrl, the list
+     * contains events for all registered index entries (FDPs).
+     */
     public static Iterable<Event> prepareEvents(
             Event triggerEvent, IndexEntryService indexEntryService
     ) {
         final ArrayList<Event> events = new ArrayList<>();
         if (triggerEvent.getType() == EventType.IncomingPing) {
-            events.add(new Event(VERSION, triggerEvent,
-                    triggerEvent.getRelatedTo(), new MetadataRetrieval()));
+            // create a single retrieval event for the index entry from the incoming ping event
+            events.add(new Event(VERSION, triggerEvent, triggerEvent.getRelatedTo(), new MetadataRetrieval()));
         }
         else if (triggerEvent.getType() == EventType.AdminTrigger) {
             if (triggerEvent.getAdminTrigger().getClientUrl() == null) {
+                // create retrieval events for *all* registered index entries
                 indexEntryService.getAllEntries().forEach(
                         entry -> {
-                            events.add(
-                                    new Event(VERSION, triggerEvent,
-                                            entry, new MetadataRetrieval())
-                            );
+                            events.add(new Event(VERSION, triggerEvent, entry, new MetadataRetrieval()));
                         }
                 );
             }
             else {
-                events.add(new Event(VERSION, triggerEvent,
-                        triggerEvent.getRelatedTo(), new MetadataRetrieval()));
+                // create a single retrieval event for the index entry from the admin trigger event
+                events.add(new Event(VERSION, triggerEvent, triggerEvent.getRelatedTo(), new MetadataRetrieval()));
             }
         }
         return events;
     }
 
-    public static void retrieveRepositoryMetadata(Event event, Duration timeout) {
-        if (event.getType() != EVENT_TYPE) {
-            throw new IllegalArgumentException("Invalid event type");
-        }
-        final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
-        event.getMetadataRetrieval().setExchange(ex);
+    /**
+     * Performs the actual HTTP request that retrieves metadata from an indexed FDP, and returns the result in an
+     * {@code Exchange} object. The resulting response body, headers, etc., are copied over to the
+     * {@code Exchange.response}. The {@code ExchangeState} is updated based on the request outcome.
+     * Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
+     */
+    public static Exchange retrieveFDPMetadata(String clientUrl, Duration timeout) {
+        final Exchange exchange = new Exchange(ExchangeDirection.OUTGOING);
         try {
+            // define request
             final HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(event.getRelatedTo().getClientUrl()))
+                    .uri(URI.create(clientUrl))
                     .timeout(timeout)
                     .header(HttpHeaders.ACCEPT, RDFFormat.TURTLE.getDefaultMIMEType())
                     .GET().build();
-            ex.getRequest().setFromHttpRequest(request);
-            ex.setState(ExchangeState.Requested);
-            final HttpResponse<String> response =
-                    CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-            ex.getResponse().setFromHttpResponse(response);
-            ex.setState(ExchangeState.Retrieved);
+            exchange.getRequest().setFromHttpRequest(request);
+            exchange.setState(ExchangeState.Requested);
+            // execute request (blocking)
+            final HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+            exchange.getResponse().setFromHttpResponse(response);
+            exchange.setState(ExchangeState.Retrieved);
         }
         catch (InterruptedException exception) {
-            ex.setState(ExchangeState.Timeout);
-            ex.setError("Timeout");
+            exchange.setState(ExchangeState.Timeout);
+            exchange.setError("Timeout");
         }
         catch (IllegalArgumentException exception) {
-            ex.setState(ExchangeState.Failed);
-            ex.setError("Invalid URI: " + exception.getMessage());
+            exchange.setState(ExchangeState.Failed);
+            exchange.setError("Invalid URI: " + exception.getMessage());
         }
         catch (IOException exception) {
-            ex.setState(ExchangeState.Failed);
-            ex.setError("IO error: " + exception.getMessage());
+            exchange.setState(ExchangeState.Failed);
+            exchange.setError("IO error: " + exception.getMessage());
         }
+        return exchange;
     }
 
-    public static Optional<RepositoryMetadata> parseRepositoryMetadata(
+    /**
+     * Parses a raw response body into a list of RDF statements, then extracts the required metadata from that list.
+     * Returns a {@code RepositoryMetadata} (i.e. FDP metadata) object.
+     */
+    public static Optional<RepositoryMetadata> parseFDPMetadata(
             String metadata
     ) throws IOException {
         final RDFParser parser = Rio.createParser(RDFFormat.TURTLE);
@@ -162,23 +179,28 @@ public class MetadataRetrievalUtils {
         parser.parse(new StringReader(metadata), String.valueOf(StandardCharsets.UTF_8));
         final ArrayList<Statement> statements = new ArrayList<>(collector.getStatements());
 
-        return findRepository(statements)
-                .map(repository -> extractRepositoryMetadata(statements, repository));
+        return findFDPUri(statements).map(fdpUri -> extractFDPMetadata(statements, fdpUri));
     }
 
-    private static RepositoryMetadata extractRepositoryMetadata(
-            ArrayList<Statement> statements, Resource repository
+    /**
+     * Returns a {@code RepositoryMetadata} (i.e. FDP metadata) object with {@code title}, {@code description},
+     * {@code version}, {@code publisher}, {@code publisherName}, and {@code country} (deprecated), extracted from the
+     * specified list of RDF statements.
+     */
+    private static RepositoryMetadata extractFDPMetadata(
+            ArrayList<Statement> statements, IRI fdpUri
     ) {
-        final RepositoryMetadata repositoryMetadata = new RepositoryMetadata();
-        repositoryMetadata.setMetadataVersion(VERSION);
-        repositoryMetadata.setRepositoryUri(repository.toString());
-
+        // initialize FDP metadata
+        final RepositoryMetadata fdpMetadata = new RepositoryMetadata();
+        fdpMetadata.setMetadataVersion(VERSION);
+        fdpMetadata.setRepositoryUri(fdpUri.toString());
+        // add title, description, version, publisher, and country, if present (see MAPPING)
         Value publisher = null;
         for (Statement statement : statements) {
-            if (statement.getSubject().equals(repository)) {
-                if (MAPPING.containsKey(statement.getPredicate())) {
-                    repositoryMetadata.getMetadata()
-                            .put(MAPPING.get(
+            if (statement.getSubject().equals(fdpUri)) {
+                if (METADATA_MAPPING.containsKey(statement.getPredicate())) {
+                    fdpMetadata.getMetadata()
+                            .put(METADATA_MAPPING.get(
                                     statement.getPredicate()),
                                     statement.getObject().stringValue());
                 }
@@ -187,26 +209,31 @@ public class MetadataRetrievalUtils {
                 }
             }
         }
-
+        // add publisher name if present
         if (publisher != null) {
             for (Statement statement : statements) {
                 if (statement.getSubject().equals(publisher)) {
                     if (statement.getPredicate().equals(FOAF.NAME)) {
-                        repositoryMetadata.getMetadata()
+                        fdpMetadata.getMetadata()
                                 .put("publisherName", statement.getObject().stringValue());
                     }
                 }
             }
         }
-
-        return repositoryMetadata;
+        return fdpMetadata;
     }
 
-    private static Optional<Resource> findRepository(ArrayList<Statement> statements) {
+    /**
+     * Returns the first found RDF subject IRI that represents an FDP from the specified list of statements.
+     */
+    private static Optional<IRI> findFDPUri(ArrayList<Statement> statements) {
         for (Statement statement : statements) {
-            if (statement.getPredicate().equals(RDF.TYPE)
-                    && REPOSITORY_TYPES.stream().anyMatch(statement.getObject()::equals)) {
-                return Optional.of(statement.getSubject());
+            if (
+                    statement.getPredicate().equals(RDF.TYPE)
+                    && REPOSITORY_TYPES.stream().anyMatch(statement.getObject()::equals)
+                    && statement.getSubject() instanceof IRI subjectUri
+            ) {
+                return Optional.of(subjectUri);
             }
         }
         return Optional.empty();
