@@ -66,8 +66,8 @@
 
         <!-- Temporary overrides of spring-boot managed versions (todo: remove once spring-boot catches up) -->
         <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html -->
-        <jackson-2-bom.version>2.22.4</jackson-2-bom.version>
-        <jackson-bom.version>3.2.4</jackson-bom.version>
+        <jackson-2-databind.version>2.22.4</jackson-2-databind.version>
+        <jackson-3-databind.version>3.2.4</jackson-3-databind.version>
         <tomcat.version>11.0.29</tomcat.version>
 
         <!-- Transitive dependency override (todo: remove when #937 is fixed) -->
@@ -110,6 +110,17 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>${plexus-utils.version}</version>
+            </dependency>
+            <!-- todo: remove jackson overrides when spring-boot managed dependencies catch up -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-2-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-3-databind.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
