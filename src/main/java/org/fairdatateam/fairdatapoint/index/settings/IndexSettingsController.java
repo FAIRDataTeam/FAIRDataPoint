@@ -47,8 +47,8 @@ public class IndexSettingsController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public IndexSettingsDTO updateIndexSettings(@RequestBody @Valid IndexSettingsUpdateDTO reqDto) {
-        return indexSettingsService.updateSettings(reqDto);
+    public IndexSettingsDTO updateIndexSettings(@RequestBody @Valid IndexSettingsUpdateDTO indexSettingsUpdateDTO) {
+        return indexSettingsService.updateSettings(indexSettingsUpdateDTO);
     }
 
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
