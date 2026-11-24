@@ -35,6 +35,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,6 +45,10 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 @DisplayName("GET /index/settings")
 public class List_GET extends WebIntegrationTest {
+
+    private static final String INVALID_HOSTNAME = "http://localhost.*$";
+
+    private static final String VALID_HOSTNAME = "localhost";
 
     @Autowired
     private IndexSettingsRepository indexSettingsRepository;
@@ -96,6 +101,7 @@ public class List_GET extends WebIntegrationTest {
     public void res200_customSettings() {
         // GIVEN: prepare data
         IndexSettings settings = IndexSettingsTestFactory.createIndexSettings();
+        settings.getPing().setDenyList(List.of(INVALID_HOSTNAME, VALID_HOSTNAME));
         indexSettingsRepository.deleteAll();
         indexSettingsRepository.insert(settings);
 
