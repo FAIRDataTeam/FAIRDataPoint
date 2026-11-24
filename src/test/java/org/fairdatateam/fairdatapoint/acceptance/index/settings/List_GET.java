@@ -38,6 +38,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
+import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.INVALID_HOSTNAME;
+import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.VALID_HOSTNAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -45,10 +47,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 @DisplayName("GET /index/settings")
 public class List_GET extends WebIntegrationTest {
-
-    private static final String INVALID_HOSTNAME = "http://localhost.*$";
-
-    private static final String VALID_HOSTNAME = "localhost";
 
     @Autowired
     private IndexSettingsRepository indexSettingsRepository;

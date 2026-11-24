@@ -31,12 +31,16 @@ import java.util.List;
 
 class IndexSettingsTestFactory {
 
+    static final String INVALID_HOSTNAME = "http://localhost.*$";
+
+    static final String VALID_HOSTNAME = "localhost";
+
     /**
      * Returns an IndexSettings instance with the specified test settings
      */
     static IndexSettings createIndexSettings() {
         final boolean autoPermit = false;
-        final List<String> deniedHosts = List.of("localhost");
+        final List<String> deniedHosts = List.of(VALID_HOSTNAME);
         final Duration rateLimitDuration = Duration.ofMinutes(17);
         final int rateLimitHits = 666;
         final Duration rateLimitWait = Duration.ofHours(16);

@@ -31,15 +31,19 @@ import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.createIndexSettings;
+import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -187,11 +191,17 @@ public class List_PUT extends WebIntegrationTest {
         assertThat("No settings are created", indexSettingsRepository.findAll().size(), is(equalTo(0)));
     }
 
-    @Test
-    @DisplayName("HTTP 400: invalid list")
-    public void res400_invalidList() {
+    // source of values for parameterized test
+    private static Stream<List<String>> invalidDenyLists() {
+        return Stream.of(null, List.of(INVALID_HOSTNAME, VALID_HOSTNAME));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidDenyLists")
+    public void putReturns400IfDenyListContainsInvalidHostname(List<String> invalidDenyList) {
         // GIVEN: prepare data
-        IndexSettingsUpdateDTO reqDTO = invalidUpdateDTO2();
+        IndexSettingsUpdateDTO invalidUpdateDTO = customSettingsUpdateDTO();
+        invalidUpdateDTO.getPing().setDenyList(invalidDenyList);
         indexSettingsRepository.deleteAll();
 
         // AND: prepare request
@@ -200,7 +210,7 @@ public class List_PUT extends WebIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(reqDTO);
+                .body(invalidUpdateDTO);
 
         // WHEN
         ResponseEntity<IndexSettingsDTO> result = client.exchange(request, responseType);
