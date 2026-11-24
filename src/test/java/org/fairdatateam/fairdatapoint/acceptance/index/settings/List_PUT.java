@@ -29,8 +29,6 @@ import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsRetrievalD
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
-import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsPing;
-import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +37,9 @@ import org.springframework.http.*;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Objects;
 
+import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.createIndexSettings;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -62,33 +60,11 @@ public class List_PUT extends WebIntegrationTest {
     }
 
     private IndexSettings customSettings1() {
-        return new IndexSettings()
-                .toBuilder()
-                .ping(
-                        new IndexSettingsPing()
-                                .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
-                                .rateLimitDuration(Duration.ofMinutes(17))
-                                .validDuration(Duration.ofDays(5))
-                                .rateLimitHits(666)
-                                .build()
-                )
-                .retrieval(
-                        new IndexSettingsRetrieval()
-                                .toBuilder()
-                                .rateLimitWait(Duration.ofHours(16))
-                                .timeout(Duration.ofSeconds(55))
-                                .build()
-                )
-                .autoPermit(true)
-                .build();
+        return createIndexSettings(true);
     }
 
     private IndexSettings customSettings2() {
-        IndexSettings settings = customSettings1();
-        settings.getPing().setValidDuration(Duration.ofDays(14));
-        settings.getRetrieval().setTimeout(Duration.ofMinutes(2));
-        return settings;
+        return createIndexSettings(true, Duration.ofDays(14), Duration.ofMinutes(2));
     }
 
     private IndexSettingsUpdateDTO customSettingsUpdateDTO() {
