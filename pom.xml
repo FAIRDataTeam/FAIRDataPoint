@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.2</version>
+        <version>4.2.0</version>
         <!-- spring-boot managed dependencies: https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
@@ -59,14 +59,16 @@
         <spring-security-acl-mongodb.version>6.0.5</spring-security-acl-mongodb.version>
 
         <!-- Core -->
-        <springdoc-openapi-starter-webmvc-ui.version>3.2.0</springdoc-openapi-starter-webmvc-ui.version>
+        <springdoc-openapi-starter-webmvc-ui.version>3.2.1</springdoc-openapi-starter-webmvc-ui.version>
         <mongock-bom.version>5.5.1</mongock-bom.version>
         <rdf4j-bom.version>6.1.0</rdf4j-bom.version>
         <jjwt-api.version>0.13.0</jjwt-api.version>
 
         <!-- Temporary overrides of spring-boot managed versions (todo: remove once spring-boot catches up) -->
         <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html -->
-        <tomcat.version>11.0.26</tomcat.version>
+        <jackson-bom-2.version>2.22.4</jackson-bom-2.version>
+        <jackson-bom-3.version>3.2.4</jackson-bom-3.version>
+        <tomcat.version>11.0.29</tomcat.version>
 
         <!-- Transitive dependency override (todo: remove when #937 is fixed) -->
         <plexus-utils.version>3.6.2</plexus-utils.version>
@@ -88,6 +90,21 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- todo: remove jackson overrides when spring-boot managed dependencies catch up -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom-2.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom-3.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>io.mongock</groupId>
                 <artifactId>mongock-bom</artifactId>
