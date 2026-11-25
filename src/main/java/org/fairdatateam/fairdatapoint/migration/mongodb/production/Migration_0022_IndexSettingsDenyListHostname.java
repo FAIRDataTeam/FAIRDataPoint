@@ -71,14 +71,15 @@ public class Migration_0022_IndexSettingsDenyListHostname {
 
     /**
      * Replaces all items matching oldValue in the indexSettings.ping.denyList array by newValue.
+     * Note that the indexSettings collection is created lazily, so it only exists if an admin has ever actively
+     * updated the index settings. Also note that there should only ever be at most *one* indexSettings document.
      */
     private void replacePingDenyListItem(String oldValue, String newValue) {
         // https://www.mongodb.com/docs/drivers/java/sync/current/crud/update-documents/embedded-arrays/
         // https://www.mongodb.com/docs/manual/core/document/#std-label-document-dot-notation
         // https://www.mongodb.com/docs/manual/reference/bson-types/
 
-        // The indexSettings collection is created lazily, so it only exists if an admin has ever actively updated the
-        // index settings. Also note that there should only ever be at most *one* indexSettings document.
+        // get the index settings collection
         final MongoCollection<Document> settingsCollection = database.getCollection(COLLECTION_INDEX_SETTINGS);
 
         // prepare to select documents that have a ping denyList that is an array
