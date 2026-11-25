@@ -27,12 +27,15 @@ import org.fairdatateam.fairdatapoint.common.config.InstanceProperties;
 import org.fairdatateam.fairdatapoint.settings.Settings;
 import org.fairdatateam.fairdatapoint.settings.SettingsService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -50,6 +53,8 @@ public class PingService {
 
     private final SettingsService settingsService;
 
+    private final ThreadPoolTaskScheduler scheduler;
+
     /**
      * Constructor (autowired)
      */
@@ -57,48 +62,78 @@ public class PingService {
             InstanceProperties instanceProperties,
             PingProperties pingProperties,
             RestClient.Builder restClientBuilder,
-            SettingsService settingsService
+            SettingsService settingsService,
+            ThreadPoolTaskScheduler scheduler
     ) {
         this.restClient = restClientBuilder.build();
         this.instanceProperties = instanceProperties;
         this.pingProperties = pingProperties;
         this.settingsService = settingsService;
+        this.scheduler = scheduler;
     }
 
-    @Scheduled(
-            initialDelayString = "${ping.initDelay:#{10*1000}}",
-            fixedRateString = "${ping.interval:P7D}"
-    )
-    public void ping() {
+    /**
+     * Schedules a single ping attempt to the specified index URL after delay specified in <code>ping.delay</code>
+     */
+    private void schedulePingAttempt(String indexUrl, int attempt) {
+        final Instant startTime = Instant.now().plus(pingProperties.getDelay());
+        scheduler.schedule(() -> executePing(indexUrl, attempt), startTime);
+    }
+
+    /**
+     * Schedules a single registration ping for each FDP index specified in the <code>ping.endpoints</code> property,
+     * as soon as the application is ready.
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    void schedulePings() {
         final Settings settings = settingsService.getOrDefaults();
-        if (!settings.getPing().isEnabled() || !pingProperties.isEnabled()) {
+        // handle possibly missing settings
+        final boolean settingsPingEnabled = settings != null
+                && settings.getPing() != null
+                && settings.getPing().isEnabled();
+        // only continue if ping is enabled in both settings and config properties
+        // (config determines if ping can be enabled via settings)
+        final boolean configPingEnabled = pingProperties.isEnabled();
+        if (!settingsPingEnabled || !configPingEnabled) {
+            log.info("Index ping is disabled (settings: {}, config: {})", settingsPingEnabled, configPingEnabled);
             return;
         }
-        final List<String> endpoints = Stream.concat(
+        // combine endpoints from both settings and config properties
+        final List<String> indexUrls = Stream.concat(
                 pingProperties.getEndpoints().stream(),
                 settings.getPing().getEndpoints().stream()
-        ).distinct().toList();
-        for (String endpoint : endpoints) {
-            pingEndpoint(
-                    endpoint.trim(),
-                    Map.of("clientUrl", instanceProperties.getClientUrl())
-            );
+        ).map(String::trim).distinct().toList();
+        // schedule initial ping attempts for all index URLs
+        for (String indexUrl : indexUrls) {
+            schedulePingAttempt(indexUrl, 1);
         }
     }
 
+    /**
+     * POSTs the <code>pingContent</code> as JSON to the specified FDP-index endpoint.
+     * Reschedules itself if the ping fails, up to specified maximum number of attempts.
+     */
     @Async
-    void pingEndpoint(String endpoint, Map<String, String> pingContent) {
+    void executePing(String indexUrl, int attempt) {
+        if (attempt > pingProperties.getMaxAttempts()) {
+            log.warn("Registration for index {} failed. Aborting after {} attempts. Restart app to try again.",
+                    indexUrl, pingProperties.getMaxAttempts());
+            return;
+        }
         try {
-            log.info("Pinging {}", endpoint);
+            log.info("Pinging {}", indexUrl);
+            // blocking request, raises HttpClientErrorException for 4xx or HttpServerErrorException for 5xx response
             restClient.post()
-                    .uri(endpoint)
+                    .uri(indexUrl)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(pingContent)
+                    .body(Map.of("clientUrl", instanceProperties.getClientUrl()))
                     .retrieve()
                     .toEntity(String.class);
         }
         catch (Exception exception) {
-            log.warn("Failed to ping {}: {}", endpoint, exception.getMessage());
+            log.warn("Failed to ping {}: {}", indexUrl, exception.getMessage());
+            // schedule new attempt (indirect recursion)
+            schedulePingAttempt(indexUrl, attempt + 1);
         }
     }
 }
