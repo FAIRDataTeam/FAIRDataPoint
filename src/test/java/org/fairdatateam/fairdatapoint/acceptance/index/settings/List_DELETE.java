@@ -35,8 +35,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.time.Duration;
-import java.util.Collections;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,28 +54,6 @@ public class List_DELETE extends WebIntegrationTest {
 
     private URI url() {
         return URI.create("/index/settings");
-    }
-
-    private IndexSettings customSettings() {
-        return new IndexSettings()
-                .toBuilder()
-                .ping(
-                        new IndexSettingsPing()
-                                .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
-                                .rateLimitDuration(Duration.ofMinutes(17))
-                                .validDuration(Duration.ofDays(5))
-                                .rateLimitHits(666)
-                                .build()
-                )
-                .retrieval(
-                        new IndexSettingsRetrieval()
-                                .toBuilder()
-                                .rateLimitWait(Duration.ofHours(16))
-                                .timeout(Duration.ofSeconds(55))
-                                .build()
-                )
-                .build();
     }
 
     @Test
@@ -124,7 +100,7 @@ public class List_DELETE extends WebIntegrationTest {
                 .retrieval(IndexSettingsRetrieval.getDefault())
                 .autoPermit(true)
                 .build();
-        IndexSettings customSettings = customSettings();
+        IndexSettings customSettings = IndexSettingsTestFactory.createIndexSettings();
         indexSettingsRepository.deleteAll();
         indexSettingsRepository.insert(customSettings);
 

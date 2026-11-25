@@ -28,6 +28,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.fairdatateam.fairdatapoint.index.settings.ValidDuration;
+import org.fairdatateam.fairdatapoint.index.settings.ValidHostname;
 
 import java.util.List;
 
@@ -45,5 +46,5 @@ public class IndexSettingsPingDTO {
     @NotNull
     private Integer rateLimitHits;
     @NotNull
-    private List<String> denyList;
+    private List<@ValidHostname String> denyList;
 }

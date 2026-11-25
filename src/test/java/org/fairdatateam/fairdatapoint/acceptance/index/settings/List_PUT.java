@@ -29,19 +29,21 @@ import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsRetrievalD
 import org.fairdatateam.fairdatapoint.index.settings.dto.IndexSettingsUpdateDTO;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRepository;
 import org.fairdatateam.fairdatapoint.index.settings.IndexSettings;
-import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsPing;
-import org.fairdatateam.fairdatapoint.index.settings.IndexSettingsRetrieval;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
+import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -62,30 +64,14 @@ public class List_PUT extends WebIntegrationTest {
     }
 
     private IndexSettings customSettings1() {
-        return new IndexSettings()
-                .toBuilder()
-                .ping(
-                        new IndexSettingsPing()
-                                .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
-                                .rateLimitDuration(Duration.ofMinutes(17))
-                                .validDuration(Duration.ofDays(5))
-                                .rateLimitHits(666)
-                                .build()
-                )
-                .retrieval(
-                        new IndexSettingsRetrieval()
-                                .toBuilder()
-                                .rateLimitWait(Duration.ofHours(16))
-                                .timeout(Duration.ofSeconds(55))
-                                .build()
-                )
-                .autoPermit(true)
-                .build();
+        final IndexSettings settings = createIndexSettings();
+        settings.setAutoPermit(true);
+        return settings;
     }
 
     private IndexSettings customSettings2() {
-        IndexSettings settings = customSettings1();
+        final IndexSettings settings = createIndexSettings();
+        settings.setAutoPermit(true);
         settings.getPing().setValidDuration(Duration.ofDays(14));
         settings.getRetrieval().setTimeout(Duration.ofMinutes(2));
         return settings;
@@ -205,11 +191,17 @@ public class List_PUT extends WebIntegrationTest {
         assertThat("No settings are created", indexSettingsRepository.findAll().size(), is(equalTo(0)));
     }
 
-    @Test
-    @DisplayName("HTTP 400: invalid list")
-    public void res400_invalidList() {
+    // source of values for parameterized test
+    private static Stream<List<String>> invalidDenyLists() {
+        return Stream.of(null, List.of(INVALID_HOSTNAME, VALID_HOSTNAME));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidDenyLists")
+    public void putReturns400IfDenyListContainsInvalidHostname(List<String> invalidDenyList) {
         // GIVEN: prepare data
-        IndexSettingsUpdateDTO reqDTO = invalidUpdateDTO2();
+        IndexSettingsUpdateDTO invalidUpdateDTO = customSettingsUpdateDTO();
+        invalidUpdateDTO.getPing().setDenyList(invalidDenyList);
         indexSettingsRepository.deleteAll();
 
         // AND: prepare request
@@ -218,7 +210,7 @@ public class List_PUT extends WebIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(reqDTO);
+                .body(invalidUpdateDTO);
 
         // WHEN
         ResponseEntity<IndexSettingsDTO> result = client.exchange(request, responseType);

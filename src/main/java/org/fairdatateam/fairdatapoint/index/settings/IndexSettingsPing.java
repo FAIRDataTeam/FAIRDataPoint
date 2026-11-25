@@ -26,7 +26,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -40,6 +39,7 @@ public class IndexSettingsPing {
     private static final int DEFAULT_VALID_DAYS = 7;
     private static final int DEFAULT_LIMIT_DURATION_HOURS = 6;
     private static final int DEFAULT_LIMIT_HITS = 10;
+    private static final List<String> DEFAULT_DENIED_HOSTS = List.of("localhost");
 
     @NotNull
     private Duration validDuration;
@@ -58,7 +58,7 @@ public class IndexSettingsPing {
         ping.setValidDuration(Duration.ofDays(DEFAULT_VALID_DAYS));
         ping.setRateLimitDuration(Duration.ofHours(DEFAULT_LIMIT_DURATION_HOURS));
         ping.setRateLimitHits(DEFAULT_LIMIT_HITS);
-        ping.setDenyList(Collections.singletonList("^(http|https)://localhost(:[0-9]+){0,1}.*$"));
+        ping.setDenyList(DEFAULT_DENIED_HOSTS);
         return ping;
     }
 }

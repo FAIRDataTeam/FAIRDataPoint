@@ -35,10 +35,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
+import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.INVALID_HOSTNAME;
+import static org.fairdatateam.fairdatapoint.acceptance.index.settings.IndexSettingsTestFactory.VALID_HOSTNAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -56,28 +57,6 @@ public class List_GET extends WebIntegrationTest {
 
     private URI url() {
         return URI.create("/index/settings");
-    }
-
-    private IndexSettings customSettings() {
-        return new IndexSettings()
-                .toBuilder()
-                .ping(
-                        new IndexSettingsPing()
-                                .toBuilder()
-                                .denyList(Collections.singletonList("http://localhost.*$"))
-                                .rateLimitDuration(Duration.ofMinutes(17))
-                                .validDuration(Duration.ofDays(5))
-                                .rateLimitHits(666)
-                                .build()
-                )
-                .retrieval(
-                        new IndexSettingsRetrieval()
-                                .toBuilder()
-                                .rateLimitWait(Duration.ofHours(16))
-                                .timeout(Duration.ofSeconds(55))
-                                .build()
-                )
-                .build();
     }
 
     @Test
@@ -119,7 +98,8 @@ public class List_GET extends WebIntegrationTest {
     @DisplayName("HTTP 200: custom settings")
     public void res200_customSettings() {
         // GIVEN: prepare data
-        IndexSettings settings = customSettings();
+        IndexSettings settings = IndexSettingsTestFactory.createIndexSettings();
+        settings.getPing().setDenyList(List.of(INVALID_HOSTNAME, VALID_HOSTNAME));
         indexSettingsRepository.deleteAll();
         indexSettingsRepository.insert(settings);
 
