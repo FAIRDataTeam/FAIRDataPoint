@@ -96,6 +96,8 @@ public class Migration_0022_IndexSettingsDenyListHostname {
 
         // apply the update to the selected items
         final Document result = settingsCollection.findOneAndUpdate(documentFilter, update, options);
-        if (result != null) log.info("denyList updated: {}", result.toJson());
+        if (result != null) {
+            log.info("denyList updated: {}", result.toJson());
+        }
     }
 }
