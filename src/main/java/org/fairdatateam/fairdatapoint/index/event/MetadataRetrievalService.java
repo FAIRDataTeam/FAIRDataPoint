@@ -23,7 +23,6 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.fairdatapoint.common.util.SafeUrlValidator;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
@@ -61,6 +60,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.fairdatateam.fairdatapoint.common.util.SafeUrlValidator.isSafeHttpUrl;
 
 @Slf4j
 @Service
@@ -141,7 +142,9 @@ public class MetadataRetrievalService {
         try {
             // validate URL
             final URI clientURI = new URI(clientUrl);
-            SafeUrlValidator.isSafeHttpUrl(clientURI.toURL());
+            if (!isSafeHttpUrl(clientURI.toURL())) {
+                throw new IllegalArgumentException("Unsafe URL");
+            }
             // execute request (blocking)
             restClient.method(HttpMethod.GET)
                     .uri(clientURI)
@@ -161,10 +164,10 @@ public class MetadataRetrievalService {
                         return exchange.getResponse().getBody();
                     });
         }
-        catch (URISyntaxException | MalformedURLException | ResourceAccessException exception) {
-            log.error("Metadata retrieval failed", exception);
+        catch (URISyntaxException | MalformedURLException | IllegalArgumentException | ResourceAccessException e) {
+            log.error("Metadata retrieval failed", e);
             exchange.setState(ExchangeState.Failed);
-            exchange.setError(exception.getMessage());
+            exchange.setError(e.getMessage());
         }
         return exchange;
     }
