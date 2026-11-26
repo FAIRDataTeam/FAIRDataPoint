@@ -23,6 +23,7 @@
 package org.fairdatateam.fairdatapoint.index.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fairdatateam.fairdatapoint.common.util.SafeUrlValidator;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
@@ -50,6 +51,7 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -137,7 +139,9 @@ public class MetadataRetrievalService {
     public Exchange retrieveRepositoryMetadata(String clientUrl) {
         final Exchange exchange = new Exchange(ExchangeDirection.OUTGOING);
         try {
+            // validate URL
             final URI clientURI = new URI(clientUrl);
+            SafeUrlValidator.isSafeHttpUrl(clientURI.toURL());
             // execute request (blocking)
             restClient.method(HttpMethod.GET)
                     .uri(clientURI)
@@ -157,7 +161,7 @@ public class MetadataRetrievalService {
                         return exchange.getResponse().getBody();
                     });
         }
-        catch (URISyntaxException | ResourceAccessException exception) {
+        catch (URISyntaxException | MalformedURLException | ResourceAccessException exception) {
             log.error("Metadata retrieval failed", exception);
             exchange.setState(ExchangeState.Failed);
             exchange.setError(exception.getMessage());
