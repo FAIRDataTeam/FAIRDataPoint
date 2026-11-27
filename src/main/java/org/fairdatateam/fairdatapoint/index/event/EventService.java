@@ -82,6 +82,8 @@ public class EventService {
 
     private final IndexSettingsService indexSettingsService;
 
+    private final MetadataRetrievalService metadataRetrievalService;
+
     public Iterable<Event> getEvents(IndexEntry indexEntry) {
         // TODO: make events pagination in the future
         return eventRepository.getAllByRelatedTo(indexEntry,
@@ -151,19 +153,21 @@ public class EventService {
     private void processMetadataRetrieval(Event event) {
         final IndexSettingsRetrieval retrievalSettings = indexSettingsService.getOrDefaults().getRetrieval();
         final String clientUrl = event.getRelatedTo().getClientUrl();
-        if (MetadataRetrievalUtils.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
+        if (metadataRetrievalService.shouldRetrieve(event, retrievalSettings.getRateLimitWait())) {
             indexEntryRepository.save(event.getRelatedTo());
             eventRepository.save(event);
             event.execute();
 
             log.info("Retrieving metadata for {}", clientUrl);
-            MetadataRetrievalUtils.retrieveRepositoryMetadata(event, retrievalSettings.getTimeout());
+            metadataRetrievalService.retrieveRepositoryMetadata(event);
             final Exchange exchange = event.getMetadataRetrieval().getExchange();
+
+            log.info("Processing result of metadata retrieval");
             if (exchange.getState() == ExchangeState.Retrieved) {
                 try {
                     log.info("Parsing metadata for {}", clientUrl);
                     final Optional<RepositoryMetadata> metadata =
-                            MetadataRetrievalUtils.parseRepositoryMetadata(exchange.getResponse().getBody());
+                            metadataRetrievalService.parseRepositoryMetadata(exchange.getResponse().getBody());
                     if (metadata.isPresent()) {
                         event.getMetadataRetrieval().setMetadata(metadata.get());
                         event.getRelatedTo().setCurrentMetadata(metadata.get());
@@ -202,7 +206,7 @@ public class EventService {
     @RequiredEnabledIndexFeature
     public void triggerMetadataRetrieval(Event triggerEvent) {
         log.info("Initiating metadata retrieval triggered by {}", triggerEvent.getUuid());
-        final Iterable<Event> events = MetadataRetrievalUtils.prepareEvents(triggerEvent, indexEntryService);
+        final Iterable<Event> events = metadataRetrievalService.prepareEvents(triggerEvent, indexEntryService);
         for (Event event : events) {
             log.info("Triggering metadata retrieval for {} as {}", event.getRelatedTo().getClientUrl(),
                     event.getUuid());
