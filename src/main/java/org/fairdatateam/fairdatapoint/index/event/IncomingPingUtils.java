@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.fairdatateam.fairdatapoint.index.event.dto.PingDTO;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
@@ -58,19 +59,15 @@ public class IncomingPingUtils {
         return new Event(VERSION, incomingPing);
     }
 
-    private Map<String, List<String>> getHeaders(HttpServletRequest request) {
-        final Map<String, List<String>> map = new HashMap<>();
-        final Iterator<String> requestI = request.getHeaderNames().asIterator();
-        while (requestI.hasNext()) {
-            final String headerName = requestI.next();
-            final List<String> headerValues = new ArrayList<>();
-            final Iterator<String> headerI = request.getHeaders(headerName).asIterator();
-            while (headerI.hasNext()) {
-                headerValues.add(headerI.next());
-            }
-            map.put(headerName, headerValues);
+    /**
+     * Returns an {@code org.springframework.http.HttpHeaders} object with headers from an {@code HttpServletRequest}.
+     */
+    private HttpHeaders getHeaders(HttpServletRequest request) {
+        final HttpHeaders headers = new HttpHeaders();
+        for (String headerName : Collections.list(request.getHeaderNames())) {
+            headers.put(headerName, Collections.list(request.getHeaders(headerName)));
         }
-        return map;
+        return headers;
     }
 
 }
