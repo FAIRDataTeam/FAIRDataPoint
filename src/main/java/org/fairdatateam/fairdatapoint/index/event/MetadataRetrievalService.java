@@ -50,6 +50,7 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -59,6 +60,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.fairdatateam.fairdatapoint.common.util.SafeUrlValidator.isSafeHttpUrl;
 
 @Slf4j
 @Service
@@ -129,43 +132,44 @@ public class MetadataRetrievalService {
     }
 
     /**
-     * Performs the actual HTTP request that retrieves metadata from an indexed FDP, and stores the result in an
-     * {@code Exchange} object that is attached to the existing event. The resulting response body, headers, etc.,
-     * are copied over to the {@code Exchange.response}. The {@code ExchangeState} is updated based on the request
-     * outcome. Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
+     * Performs the actual HTTP request that retrieves metadata from an indexed FDP, and returns the result in an
+     * {@code Exchange} object. The resulting response body, headers, etc., are copied over to the
+     * {@code Exchange.response}. The {@code ExchangeState} is updated based on the request outcome.
+     * Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
      */
-    public void retrieveRepositoryMetadata(Event event) {
-        if (event.getType() != EventType.MetadataRetrieval) {
-            throw new IllegalArgumentException("Invalid event type");
-        }
-        final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
-        event.getMetadataRetrieval().setExchange(ex);
+    public Exchange retrieveRepositoryMetadata(String clientUrl) {
+        final Exchange exchange = new Exchange(ExchangeDirection.OUTGOING);
         try {
-            final URI clientURI = new URI(event.getRelatedTo().getClientUrl());
+            // validate URL
+            final URI clientURI = new URI(clientUrl);
+            if (!isSafeHttpUrl(clientURI.toURL())) {
+                throw new IllegalArgumentException("Unsafe URL");
+            }
             // execute request (blocking)
             restClient.method(HttpMethod.GET)
                     .uri(clientURI)
                     .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
                     .exchange((request, response) -> {
                         // update exchange with request info
-                        ex.getRequest().setFromHttpRequest(request);
-                        ex.setState(ExchangeState.Requested);
+                        exchange.getRequest().setFromHttpRequest(request);
+                        exchange.setState(ExchangeState.Requested);
                         // update exchange with response info
-                        ex.getResponse().setFromConvertibleClientHttpResponse(response);
+                        exchange.getResponse().setFromConvertibleClientHttpResponse(response);
                         if (response.getStatusCode().is2xxSuccessful()) {
-                            ex.setState(ExchangeState.Retrieved);
+                            exchange.setState(ExchangeState.Retrieved);
                         }
                         else {
-                            ex.setState(ExchangeState.Failed);
+                            exchange.setState(ExchangeState.Failed);
                         }
-                        return ex.getResponse().getBody();
+                        return exchange.getResponse().getBody();
                     });
         }
-        catch (URISyntaxException | ResourceAccessException exception) {
-            log.error("Metadata retrieval failed", exception);
-            ex.setState(ExchangeState.Failed);
-            ex.setError(exception.getMessage());
+        catch (URISyntaxException | MalformedURLException | IllegalArgumentException | ResourceAccessException e) {
+            log.error("Metadata retrieval failed", e);
+            exchange.setState(ExchangeState.Failed);
+            exchange.setError(e.getMessage());
         }
+        return exchange;
     }
 
     public Optional<RepositoryMetadata> parseRepositoryMetadata(
