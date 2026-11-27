@@ -28,7 +28,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpRequest;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -37,7 +39,7 @@ public class Request {
     private String method;
     private String url;
     private String body;
-    private Map<String, String> headers;
+    private Map<String, List<String>> headers;
 
     public void setFromHttpServletRequest(HttpServletRequest request) {
         method = request.getMethod();
@@ -47,6 +49,7 @@ public class Request {
     public void setFromHttpRequest(HttpRequest request) {
         method = request.getMethod().toString();
         url = request.getURI().toString();
-        headers = request.getHeaders().toSingleValueMap();
+        headers = request.getHeaders().headerSet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> List.copyOf(entry.getValue())));
     }
 }

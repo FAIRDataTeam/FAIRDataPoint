@@ -28,7 +28,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -38,14 +40,15 @@ public class Response {
     private String url;
     private String origin;
 
-    private Map<String, String> headers;
+    private Map<String, List<String>> headers;
     private String body;
 
     public void setFromConvertibleClientHttpResponse(
             RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response
     ) throws IOException {
         code = response.getStatusCode().value();
-        headers = response.getHeaders().toSingleValueMap();
+        headers = response.getHeaders().headerSet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> List.copyOf(entry.getValue())));
         body = response.bodyTo(String.class);
     }
 }
