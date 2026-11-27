@@ -128,10 +128,10 @@ public class MetadataRetrievalService {
     }
 
     /**
-     * Performs the actual HTTP request that retrieves metadata from an indexed FDP, and returns the result in an
-     * {@code Exchange} object. The resulting response body, headers, etc., are copied over to the
-     * {@code Exchange.response}. The {@code ExchangeState} is updated based on the request outcome.
-     * Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
+     * Performs the actual HTTP request that retrieves metadata from an indexed FDP, and stores the result in an
+     * {@code Exchange} object that is attached to the existing event. The resulting response body, headers, etc.,
+     * are copied over to the {@code Exchange.response}. The {@code ExchangeState} is updated based on the request
+     * outcome. Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
      */
     public void retrieveRepositoryMetadata(Event event) {
         if (event.getType() != EventType.MetadataRetrieval) {
