@@ -142,22 +142,21 @@ public class MetadataRetrievalService {
         try {
             final URI clientURI = new URI(event.getRelatedTo().getClientUrl());
             // execute request (blocking)
-            String responseBody = restClient.method(HttpMethod.GET)
+            restClient.method(HttpMethod.GET)
                     .uri(clientURI)
                     .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
                     .exchange((request, response) -> {
                         ex.getRequest().setFromHttpRequest(request);
-                        ex.getResponse().setFromHttpResponse(response);
+                        ex.getResponse().setFromConvertibleClientHttpResponse(response);
                         if (response.getStatusCode().is2xxSuccessful()) {
                             ex.setState(ExchangeState.Retrieved);
-                            return response.bodyTo(String.class);
+                            return ex.getResponse().getBody();
                         }
                         else {
                             throw new RuntimeException("Failed to GET metadata from %s (status %s)".formatted(
                                     clientURI.getHost(), response.getStatusCode()));
                         }
                     });
-            log.debug("Response body from {}: {}", clientURI.getHost(), responseBody);
         }
         catch (RuntimeException | URISyntaxException exception) {
             ex.setState(ExchangeState.Failed);
