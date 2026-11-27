@@ -58,19 +58,16 @@ public class IncomingPingUtils {
         return new Event(VERSION, incomingPing);
     }
 
+    /**
+     * Returns a {@code Map} of header names and values from an {@code HttpServletRequest}.
+     */
     private Map<String, List<String>> getHeaders(HttpServletRequest request) {
-        final Map<String, List<String>> map = new HashMap<>();
-        final Iterator<String> requestI = request.getHeaderNames().asIterator();
-        while (requestI.hasNext()) {
-            final String headerName = requestI.next();
-            final List<String> headerValues = new ArrayList<>();
-            final Iterator<String> headerI = request.getHeaders(headerName).asIterator();
-            while (headerI.hasNext()) {
-                headerValues.add(headerI.next());
-            }
-            map.put(headerName, headerValues);
+        final Map<String, List<String>> headers = new HashMap<>();
+        for (String headerName : Collections.list(request.getHeaderNames())) {
+            final List<String> headerValues = Collections.list(request.getHeaders(headerName));
+            headers.put(headerName, List.copyOf(headerValues));
         }
-        return map;
+        return headers;
     }
 
 }

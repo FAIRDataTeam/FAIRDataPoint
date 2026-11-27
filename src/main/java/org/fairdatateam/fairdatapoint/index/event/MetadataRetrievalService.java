@@ -22,6 +22,7 @@
  */
 package org.fairdatateam.fairdatapoint.index.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.fairdatateam.fairdatapoint.index.RepositoryMetadata;
 import org.fairdatateam.fairdatapoint.index.http.Exchange;
 import org.fairdatateam.fairdatapoint.index.http.ExchangeDirection;
@@ -41,14 +42,16 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParser;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
@@ -57,9 +60,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class MetadataRetrievalUtils {
-
-    private static final EventType EVENT_TYPE = EventType.MetadataRetrieval;
+@Slf4j
+@Service
+public class MetadataRetrievalService {
 
     private static final Integer VERSION = 1;
 
@@ -76,12 +79,18 @@ public class MetadataRetrievalUtils {
             R3D.COUNTRY, "country"
     );
 
-    private static final HttpClient CLIENT = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_2)
-            .followRedirects(HttpClient.Redirect.ALWAYS)
-            .build();
+    private static final MediaType TURTLE = MediaType.parseMediaType(RDFFormat.TURTLE.getDefaultMIMEType());
 
-    public static boolean shouldRetrieve(Event triggerEvent, Duration rateLimitWait) {
+    private final RestClient restClient;
+
+    /**
+     * Constructor (autowired)
+     */
+    public MetadataRetrievalService(RestClient.Builder restClientBuilder) {
+        this.restClient = restClientBuilder.build();
+    }
+
+    public boolean shouldRetrieve(Event triggerEvent, Duration rateLimitWait) {
         if (triggerEvent.getRelatedTo() == null) {
             return false;
         }
@@ -92,7 +101,7 @@ public class MetadataRetrievalUtils {
         return Duration.between(lastRetrieval, Instant.now()).compareTo(rateLimitWait) > 0;
     }
 
-    public static Iterable<Event> prepareEvents(
+    public Iterable<Event> prepareEvents(
             Event triggerEvent, IndexEntryService indexEntryService
     ) {
         final ArrayList<Event> events = new ArrayList<>();
@@ -119,40 +128,47 @@ public class MetadataRetrievalUtils {
         return events;
     }
 
-    public static void retrieveRepositoryMetadata(Event event, Duration timeout) {
-        if (event.getType() != EVENT_TYPE) {
+    /**
+     * Performs the actual HTTP request that retrieves metadata from an indexed FDP, and stores the result in an
+     * {@code Exchange} object that is attached to the existing event. The resulting response body, headers, etc.,
+     * are copied over to the {@code Exchange.response}. The {@code ExchangeState} is updated based on the request
+     * outcome. Note that the HTTP request execution is synchronous, blocking until the HTTP response is obtained.
+     */
+    public void retrieveRepositoryMetadata(Event event) {
+        if (event.getType() != EventType.MetadataRetrieval) {
             throw new IllegalArgumentException("Invalid event type");
         }
         final Exchange ex = new Exchange(ExchangeDirection.OUTGOING);
         event.getMetadataRetrieval().setExchange(ex);
         try {
-            final HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(event.getRelatedTo().getClientUrl()))
-                    .timeout(timeout)
-                    .header(HttpHeaders.ACCEPT, RDFFormat.TURTLE.getDefaultMIMEType())
-                    .GET().build();
-            ex.getRequest().setFromHttpRequest(request);
-            ex.setState(ExchangeState.Requested);
-            final HttpResponse<String> response =
-                    CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-            ex.getResponse().setFromHttpResponse(response);
-            ex.setState(ExchangeState.Retrieved);
+            final URI clientURI = new URI(event.getRelatedTo().getClientUrl());
+            // execute request (blocking)
+            restClient.method(HttpMethod.GET)
+                    .uri(clientURI)
+                    .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
+                    .exchange((request, response) -> {
+                        // update exchange with request info
+                        ex.getRequest().setFromHttpRequest(request);
+                        ex.setState(ExchangeState.Requested);
+                        // update exchange with response info
+                        ex.getResponse().setFromConvertibleClientHttpResponse(response);
+                        if (response.getStatusCode().is2xxSuccessful()) {
+                            ex.setState(ExchangeState.Retrieved);
+                        }
+                        else {
+                            ex.setState(ExchangeState.Failed);
+                        }
+                        return ex.getResponse().getBody();
+                    });
         }
-        catch (InterruptedException exception) {
-            ex.setState(ExchangeState.Timeout);
-            ex.setError("Timeout");
-        }
-        catch (IllegalArgumentException exception) {
+        catch (URISyntaxException | ResourceAccessException exception) {
+            log.error("Metadata retrieval failed", exception);
             ex.setState(ExchangeState.Failed);
-            ex.setError("Invalid URI: " + exception.getMessage());
-        }
-        catch (IOException exception) {
-            ex.setState(ExchangeState.Failed);
-            ex.setError("IO error: " + exception.getMessage());
+            ex.setError(exception.getMessage());
         }
     }
 
-    public static Optional<RepositoryMetadata> parseRepositoryMetadata(
+    public Optional<RepositoryMetadata> parseRepositoryMetadata(
             String metadata
     ) throws IOException {
         final RDFParser parser = Rio.createParser(RDFFormat.TURTLE);

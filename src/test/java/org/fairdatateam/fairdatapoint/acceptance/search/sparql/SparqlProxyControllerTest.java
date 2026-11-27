@@ -24,6 +24,7 @@ package org.fairdatateam.fairdatapoint.acceptance.search.sparql;
 
 import org.fairdatateam.fairdatapoint.Profiles;
 import org.fairdatateam.fairdatapoint.index.entry.HarvesterService;
+import org.fairdatateam.fairdatapoint.index.event.MetadataRetrievalService;
 import org.fairdatateam.fairdatapoint.ping.PingService;
 import org.fairdatateam.fairdatapoint.search.SparqlProxyController;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,6 +92,9 @@ public class SparqlProxyControllerTest {
     // mock all other beans that use a RestClient, to prevent MockRestServiceServer binding issues
     @MockitoBean
     HarvesterService harvesterService;
+
+    @MockitoBean
+    MetadataRetrievalService metadataRetrievalService;
 
     @MockitoBean
     PingService pingService;

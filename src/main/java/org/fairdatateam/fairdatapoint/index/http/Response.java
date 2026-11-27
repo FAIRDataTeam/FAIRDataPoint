@@ -25,10 +25,12 @@ package org.fairdatateam.fairdatapoint.index.http;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.client.RestClient;
 
-import java.net.http.HttpResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -41,10 +43,12 @@ public class Response {
     private Map<String, List<String>> headers;
     private String body;
 
-    public void setFromHttpResponse(HttpResponse<String> response) {
-        code = response.statusCode();
-        url = response.uri().toString();
-        headers = response.headers().map();
-        body = response.body();
+    public void setFromConvertibleClientHttpResponse(
+            RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse response
+    ) throws IOException {
+        code = response.getStatusCode().value();
+        headers = response.getHeaders().headerSet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> List.copyOf(entry.getValue())));
+        body = response.bodyTo(String.class);
     }
 }
