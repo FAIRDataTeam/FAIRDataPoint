@@ -45,6 +45,7 @@ import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
@@ -146,19 +147,22 @@ public class MetadataRetrievalService {
                     .uri(clientURI)
                     .headers(httpHeaders -> httpHeaders.setAccept(List.of(TURTLE)))
                     .exchange((request, response) -> {
+                        // update exchange with request info
                         ex.getRequest().setFromHttpRequest(request);
+                        ex.setState(ExchangeState.Requested);
+                        // update exchange with response info
                         ex.getResponse().setFromConvertibleClientHttpResponse(response);
                         if (response.getStatusCode().is2xxSuccessful()) {
                             ex.setState(ExchangeState.Retrieved);
-                            return ex.getResponse().getBody();
                         }
                         else {
-                            throw new RuntimeException("Failed to GET metadata from %s (status %s)".formatted(
-                                    clientURI.getHost(), response.getStatusCode()));
+                            ex.setState(ExchangeState.Failed);
                         }
+                        return ex.getResponse().getBody();
                     });
         }
-        catch (RuntimeException | URISyntaxException exception) {
+        catch (URISyntaxException | ResourceAccessException exception) {
+            log.error("Metadata retrieval failed", exception);
             ex.setState(ExchangeState.Failed);
             ex.setError(exception.getMessage());
         }
