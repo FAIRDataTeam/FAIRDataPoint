@@ -47,7 +47,7 @@ public class IncomingPingUtils {
         final Exchange ex = new Exchange(ExchangeDirection.INCOMING, remoteAddr);
         incomingPing.setExchange(ex);
 
-        ex.getRequest().setHeaders(getHeaders(request));
+        ex.getRequest().setHeaders(getHeaders(request).toSingleValueMap());
         ex.getRequest().setFromHttpServletRequest(request);
         try {
             ex.getRequest().setBody(jsonMapper.writeValueAsString(reqDto));

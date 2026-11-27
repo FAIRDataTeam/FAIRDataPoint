@@ -26,8 +26,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
+
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -36,7 +37,7 @@ public class Request {
     private String method;
     private String url;
     private String body;
-    private HttpHeaders headers;
+    private Map<String, String> headers;
 
     public void setFromHttpServletRequest(HttpServletRequest request) {
         method = request.getMethod();
@@ -46,6 +47,6 @@ public class Request {
     public void setFromHttpRequest(HttpRequest request) {
         method = request.getMethod().toString();
         url = request.getURI().toString();
-        headers = request.getHeaders();
+        headers = request.getHeaders().toSingleValueMap();
     }
 }
