@@ -66,8 +66,8 @@
 
         <!-- Temporary overrides of spring-boot managed versions (todo: remove once spring-boot catches up) -->
         <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html -->
-        <jackson-bom-2.version>2.22.4</jackson-bom-2.version>
-        <jackson-bom-3.version>3.2.4</jackson-bom-3.version>
+        <jackson-bom-2.version>2.23.0</jackson-bom-2.version>
+        <jackson-bom-3.version>3.3.0</jackson-bom-3.version>
         <tomcat.version>11.0.29</tomcat.version>
 
         <!-- Transitive dependency override (todo: remove when #937 is fixed) -->
